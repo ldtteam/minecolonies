@@ -11,7 +11,6 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles the server telling nearby clients to render a particle effect.
@@ -69,7 +68,6 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
         buf.writeInt(side);
     }
 
-    @Nullable
     @Override
     protected void messageOnClientThread(final BlockParticleEffectMessage message, final MessageContext ctx)
     {

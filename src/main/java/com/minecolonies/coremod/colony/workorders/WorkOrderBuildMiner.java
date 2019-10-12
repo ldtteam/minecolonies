@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -50,13 +51,13 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
 
     /**
      * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound.
+     *  @param compound NBT Tag compound.
+     * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final IWorkManager manager)
     {
-        super.readFromNBT(compound);
+        super.readFromNBT(compound, manager);
         minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
     }
 
@@ -73,7 +74,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onAdded(final Colony colony, final boolean readingFromNbt)
+    public void onAdded(final IColony colony, final boolean readingFromNbt)
     {
         /*
          * Override this to avoid action!
@@ -81,7 +82,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onRemoved(final Colony colony)
+    public void onRemoved(final IColony colony)
     {
         /*
          * Override this to avoid action!
@@ -89,7 +90,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onCompleted(final Colony colony)
+    public void onCompleted(final IColony colony)
     {
         /*
          * Override this to avoid action!
@@ -97,7 +98,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     @Override
-    public boolean isValid(final Colony colony)
+    public boolean isValid(final IColony colony)
     {
         return colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }

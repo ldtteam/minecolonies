@@ -33,7 +33,7 @@ public final class RaiderConstants
     public static final int    TIME_TO_COUNTDOWN           = 240;
     public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
-    public static final int    SPEED_EFFECT_DURATION       = 240;
+    public static final int    SPEED_EFFECT_DURATION       = 60;
     public static final int    SPEED_EFFECT_MULTIPLIER     = 2;
 
     /**
@@ -64,12 +64,13 @@ public final class RaiderConstants
     /**
      * Values used for AI Task's Priorities.
      */
-    public static final int    PRIORITY_ZERO               = 0;
-    public static final int    PRIORITY_ONE                = 1;
-    public static final int    PRIORITY_TWO                = 2;
-    public static final int    PRIORITY_THREE              = 3;
-    public static final int    PRIORITY_FOUR               = 4;
-    public static final int    PRIORITY_FIVE               = 5;
+    public static final int PRIORITY_ZERO  = 0;
+    public static final int PRIORITY_ONE   = 1;
+    public static final int PRIORITY_TWO   = 2;
+    public static final int PRIORITY_THREE = 3;
+    public static final int PRIORITY_FOUR  = 4;
+    public static final int PRIORITY_FIVE  = 5;
+    public static final int PRIORITY_SIX   = 6;
 
     /**
      * Other various values used for AI Tasks.
@@ -82,11 +83,13 @@ public final class RaiderConstants
      */
     public static final double FOLLOW_RANGE                = 35.0D;
     public static final double MOVEMENT_SPEED              = 0.25D;
-    public static final double ARMOR                       = 1.5D;
+    public static final double ARMOR                       = 0.5D;
     public static final double CHIEF_ARMOR                 = 8D;
     public static final double BARBARIAN_BASE_HEALTH       = 5;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
-    
+    public static final double ATTACK_SPEED_DIVIDER = 3;
+
+
     /**
      * Private constructor to hide implicit one.
      */

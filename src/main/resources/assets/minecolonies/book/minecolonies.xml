@@ -1655,7 +1655,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:fishing_rod"/>
@@ -1673,7 +1673,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:wooden_door"/>
@@ -1692,7 +1692,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:wooden_axe"/>
@@ -1710,7 +1710,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:wooden_pickaxe"/>
@@ -1729,7 +1729,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:hoe"/>
@@ -1766,7 +1766,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:torch"/>
@@ -1784,7 +1784,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:bow"/>
@@ -1803,7 +1803,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:leather_boots"/>
@@ -1821,7 +1821,7 @@
             <p></p>
             <big_recipe>
                 <stack item="minecraft:planks" meta="0"/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
                 <stack item="minecraft:planks" meta="2"/>
                 <stack item="minecraft:planks" meta="3"/>
                 <stack item="minecraft:chest"/>
@@ -1848,7 +1848,7 @@
                 <stack item="minecraft:stick"/>
                 <space/>
                 <space/>
-                <stack item="minecolonies:scepterGold"/>
+                <stack item="structurize:sceptergold"/>
             </big_recipe>
             <p></p>
             <p></p>

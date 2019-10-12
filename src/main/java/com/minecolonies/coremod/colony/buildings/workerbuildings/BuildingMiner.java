@@ -1,18 +1,20 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
@@ -120,7 +122,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param c colony containing the building.
      * @param l location of the building.
      */
-    public BuildingMiner(final Colony c, final BlockPos l)
+    public BuildingMiner(final IColony c, final BlockPos l)
     {
         super(c, l);
 
@@ -132,16 +134,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
-        keepX.put(stackLadder::isItemEqual, STACKSIZE);
-        keepX.put(stackFence::isItemEqual, STACKSIZE);
-        keepX.put(stackTorch::isItemEqual, STACKSIZE);
-        keepX.put(stackCobble::isItemEqual, STACKSIZE);
-        keepX.put(stackSlab::isItemEqual, STACKSIZE);
-        keepX.put(stackPlanks::isItemEqual, STACKSIZE);
-        keepX.put(stackDirt::isItemEqual, STACKSIZE);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(stackLadder::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackFence::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackTorch::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackCobble::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackSlab::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackPlanks::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackDirt::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     /**
@@ -185,6 +187,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.miner;
+    }
+
     /**
      * Create the job for the miner.
      *
@@ -193,20 +201,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobMiner(citizen);
     }
 
-    /**
-     * Reads the information from NBT from permanent storage.
-     *
-     * @param compound the compound key.
-     */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
 
         startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
@@ -241,16 +244,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
-    /**
-     * Writes the information to NBT to store it permanently.
-     *
-     * @param compound the compound key.
-     */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
-
+        final NBTTagCompound compound = super.serializeNBT();
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -291,6 +288,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             levelTagList.appendTag(levelCompound);
         }
         compound.setTag(TAG_LEVELS, levelTagList);
+        return compound;
     }
 
     /**
@@ -535,7 +533,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public void resetStartingLevelShaft()
     {
-        this.startingLevelShaft = 0;
+        this.startingLevelShaft = 1;
     }
 
     /**
@@ -604,13 +602,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final CitizenData citizen = getMainCitizen();
+        final ICitizenData citizen = getMainCitizen();
         if (citizen == null)
         {
             return;
         }
 
-        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class);
+        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getPosition());
 
         for (final WorkOrderBuildMiner wo : list)
         {
@@ -643,7 +641,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

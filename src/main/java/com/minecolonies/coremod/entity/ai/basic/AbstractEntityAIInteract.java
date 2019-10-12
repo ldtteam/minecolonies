@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.managers.interfaces.IStatisticAchievementManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -11,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
     /**
      * The amount of xp the entity gains per block mined.
@@ -116,7 +116,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
+        return mineBlock(blockToMine, worker.getCurrentPosition());
     }
 
     /**
@@ -210,7 +210,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             }
         }
         //if block in statistic then increment that statistic.
-        triggerMinedBlock(blockToMine);
+        triggerMinedBlock(curBlockState);
 
         if (blockBreakAction == null)
         {
@@ -248,18 +248,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
 
-        final ItemStack tool = worker.getHeldItemMainhand();
-
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-              && curBlock.getHarvestTool(world.getBlockState(blockToMine)) != null)
-        {
-            Log.getLogger().info(String.format(
-              "ForgeHook not in sync with EfficientTool for %s and %s\n"
-                + "Please report to MineColonies with this text to add support!",
-              curBlock, tool
-            ));
-        }
-
         if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.getPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
@@ -271,32 +259,38 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
     }
 
-    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    /**
+     * Trigger that a block was succesfully mined.
+     * @param blockToMine the mined blockState.
+     */
+    protected void triggerMinedBlock(@NotNull final IBlockState blockToMine)
     {
-        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+        final IStatisticAchievementManager statsManager = this.getOwnBuilding().getColony().getStatsManager();
+        final Block block = blockToMine.getBlock();
+        if (block == (Blocks.COAL_ORE)
+              || block == (Blocks.IRON_ORE)
+              || block == (Blocks.LAPIS_ORE)
+              || block == (Blocks.GOLD_ORE)
+              || block == (Blocks.REDSTONE_ORE)
+              || block == (Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores");
+            statsManager.incrementStatistic("ores");
         }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        if (block == Blocks.DIAMOND_ORE)
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds");
+            statsManager.incrementStatistic("diamonds");
         }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
+        if (block == Blocks.CARROTS)
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots");
+            statsManager.incrementStatistic("carrots");
         }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
+        if (block == Blocks.POTATOES)
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes");
+            statsManager.incrementStatistic("potatoes");
         }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
+        if (block == Blocks.WHEAT)
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat");
+            statsManager.incrementStatistic("wheat");
         }
     }
 

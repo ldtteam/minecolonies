@@ -10,7 +10,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.tileentity.TileEntity;
@@ -27,16 +27,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
 {
-    /**
-     * Button leading the player to the next page.
-     */
-    private static final String BUTTON_PREV_PAGE = "prevPage";
-
-    /**
-     * Button leading the player to the previous page.
-     */
-    private static final String BUTTON_NEXT_PAGE = "nextPage";
-
     /**
      * Tag of the pages view.
      */
@@ -98,16 +88,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     private static final String TAG_ICON = "icon";
 
     /**
-     * Button leading to the previous page.
-     */
-    private Button buttonPrevPage;
-
-    /**
-     * Button leading to the next page.
-     */
-    private Button buttonNextPage;
-
-    /**
      * List of fields the building seeds.
      */
     private List<BlockPos> fields = new ArrayList<>();
@@ -130,8 +110,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     public WindowHutFarmer(final BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
-        registerButton(BUTTON_PREV_PAGE, this::prevClicked);
-        registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
     }
@@ -146,17 +124,17 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         final int row = fieldList.getListElementIndexByPane(button);
         final BlockPos field = fields.get(row);
         final TileEntity entity = world.getTileEntity(field);
-        if(entity instanceof ScarecrowTileEntity)
+        if (entity instanceof TileEntityScarecrow)
         {
             if (button.getLabel().equals(RED_X))
             {
                 button.setLabel(APPROVE);
-                building.changeFields(field, false, (ScarecrowTileEntity) entity);
+                building.changeFields(field, false, (TileEntityScarecrow) entity);
             }
             else
             {
                 button.setLabel(RED_X);
-                building.changeFields(field, true, (ScarecrowTileEntity) entity);
+                building.changeFields(field, true, (TileEntityScarecrow) entity);
             }
 
             pullLevelsFromHut();
@@ -206,10 +184,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         }
 
-        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
-
         fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);
         fieldList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -223,15 +197,15 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final BlockPos field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getLocation())));
-                final String direction = BlockPosUtil.calcDirection(building.getLocation(), field);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
+                final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
                 final TileEntity entity = world.getTileEntity(field);
-                if(entity instanceof ScarecrowTileEntity)
+                if (entity instanceof TileEntityScarecrow)
                 {
                     @NotNull final String owner =
-                            ((ScarecrowTileEntity) entity).getOwner().isEmpty()
+                      ((TileEntityScarecrow) entity).getOwner().isEmpty()
                                     ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
-                                    : ((ScarecrowTileEntity) entity).getOwner();
+                        : ((TileEntityScarecrow) entity).getOwner();
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
@@ -242,7 +216,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
                     assignButton.setEnabled(building.assignFieldManually());
 
-                    if (((ScarecrowTileEntity) entity).isTaken())
+                    if (((TileEntityScarecrow) entity).isTaken())
                     {
                         assignButton.setLabel(RED_X);
                     }
@@ -255,9 +229,9 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                         }
                     }
 
-                    if (((ScarecrowTileEntity) entity).getSeed() != null)
+                    if (((TileEntityScarecrow) entity).getSeed() != null)
                     {
-                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((ScarecrowTileEntity) entity).getSeed());
+                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((TileEntityScarecrow) entity).getSeed());
                     }
                 }
             }
@@ -282,26 +256,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
         }
-    }
-
-    /**
-     * Action performed when previous button is clicked.
-     */
-    private void prevClicked()
-    {
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-        buttonPrevPage.setEnabled(false);
-        buttonNextPage.setEnabled(true);
-    }
-
-    /**
-     * Action performed when next button is clicked.
-     */
-    private void nextClicked()
-    {
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-        buttonPrevPage.setEnabled(true);
-        buttonNextPage.setEnabled(false);
     }
 }
 

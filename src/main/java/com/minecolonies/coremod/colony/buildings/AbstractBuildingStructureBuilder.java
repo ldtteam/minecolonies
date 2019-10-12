@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -68,12 +69,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Progress stage of the builder.
      */
-    private Structure.Stage progressStage;
+    private StructureIterator.Stage progressStage;
 
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
+    private Map<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
 
     /**
      * The progress counter of the builder.
@@ -86,7 +87,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param c the colony.
      * @param l the position.
      */
-    public AbstractBuildingStructureBuilder(final Colony c, final BlockPos l)
+    public AbstractBuildingStructureBuilder(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -103,14 +104,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(super.getRequiredItemsAndAmount());
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount());
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -129,9 +129,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
@@ -145,14 +145,15 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         if (compound.hasKey(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.readFromNBT(compound, TAG_PROGRESS_POS);
-            progressStage = Structure.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
+            progressStage = StructureIterator.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
@@ -170,6 +171,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
             compound.setInteger(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
+
+        return compound;
     }
 
     /**
@@ -184,14 +187,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         updateAvailableResources();
         buf.writeInt(neededResources.size());
+        double qty = 0;
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+            qty += resource.getAmount();
         }
 
-        final CitizenData data = this.getMainCitizen();
+        final ICitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
@@ -204,31 +209,36 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 ByteBufUtils.writeUTF8String(buf, name);
 
                 final String desc;
-                if(pos.equals(getLocation()))
+                if(pos.equals(getPosition()))
                 {
                     desc = "here";
                 }
                 else
                 {
-                    final BlockPos relativePos = getLocation().subtract(pos);
+                    final BlockPos relativePos = getPosition().subtract(pos);
                     final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
                     final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
                     desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
                 }
 
                 ByteBufUtils.writeUTF8String(buf, desc);
+                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty/workOrderBuildDecoration.getAmountOfRes());
             }
             else
             {
                 ByteBufUtils.writeUTF8String(buf, "-");
                 ByteBufUtils.writeUTF8String(buf, "");
+                buf.writeDouble(0.0);
             }
         }
         else
         {
             ByteBufUtils.writeUTF8String(buf, "-");
             ByteBufUtils.writeUTF8String(buf, "");
+            buf.writeDouble(0.0);
         }
+        ByteBufUtils.writeUTF8String(buf, (getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
+
     }
 
     /**
@@ -238,6 +248,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     private void updateAvailableResources()
     {
+
         getMainCitizenEntity().ifPresent(structureBuilder -> {
             final InventoryCitizen structureBuilderInventory = getMainCitizen().getInventory();
             if (structureBuilderInventory == null)
@@ -258,9 +269,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-
+                if (getTileEntity() != null)
+                {
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
+                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                }
             }
         });
     }
@@ -359,7 +372,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param blockPos the last blockPos.
      * @param stage the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
         this.progressPos = blockPos;
         this.progressStage = stage;
@@ -379,7 +392,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, Structure.Stage> getProgress()
+    public Tuple<BlockPos, StructureIterator.Stage> getProgress()
     {
         if (this.progressPos == null)
         {

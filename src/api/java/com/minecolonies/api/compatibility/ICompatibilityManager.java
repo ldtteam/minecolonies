@@ -4,9 +4,13 @@ import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for all compatabilityManagers.
@@ -15,16 +19,29 @@ import java.util.List;
 public interface ICompatibilityManager
 {
     /**
+     * Getter for the different meshes the sifter is allowed to use.
+     * @return a copy of the list of tuples containing the itemStorage and the chance of it breaking.
+     */
+    List<Tuple<ItemStorage, Double>> getMeshes();
+
+    /**
+     * Getter for the blocks which can be sieved.
+     * @return a copy of the list of itemStorages.
+     */
+    ArrayList<ItemStorage> getSievableBlock();
+
+    /**
+     * Get a random item return for a certain mesh and certain block which is in the sieve.
+     * @param mesh the used mesh.
+     * @param block the used block.
+     * @return the ItemStack.
+     */
+    ItemStack getRandomSieveResultForMeshAndBlock(ItemStorage mesh, ItemStorage block);
+
+    /**
      * Method called to instantiate the requirements.
      */
     void discover();
-
-    /**
-     * Gets the leave matching a sapling.
-     * @param stack the sapling.
-     * @return the leave block.
-     */
-    IBlockState getLeafForSapling(final ItemStack stack);
 
     /**
      * Gets the sapling matching a leave.
@@ -38,6 +55,31 @@ public interface ICompatibilityManager
      * @return the list of saplings.
      */
     List<ItemStorage> getCopyOfSaplings();
+
+    /**
+     * Get a set of all fuel items.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getFuel();
+
+    /**
+     * Get a set of all food items.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getFood();
+
+    /**
+     * Get a set of all smeltable ores.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getSmeltableOres();
+
+    /**
+     * Check if a stack belongs to a minable ore.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
      * Get a copy of the list of compostable items.
@@ -60,11 +102,23 @@ public interface ICompatibilityManager
     boolean isOre(ItemStack stack);
 
     /**
+     * Get a list of all blocks.
+     * @return the immutable list.
+     */
+    List<ItemStack> getBlockList();
+
+    /**
      * Test if an itemStack is compostable
      * @param stack the stack to test
      * @return true if so
      */
     boolean isCompost(ItemStack stack);
+
+    /**
+     * Get a map of all the crusher modes.
+     * @return the modes.
+     */
+    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.
@@ -92,4 +146,17 @@ public interface ICompatibilityManager
      * @return true if so.
      */
     boolean isDiscoveredAlready();
+
+    /**
+     * If an itemStack is a lucky block which can result in an extra ore drop.
+     * @param itemStack the stack to check.
+     * @return true if so.
+     */
+    boolean isLuckyBlock(final ItemStack itemStack);
+
+    /**
+     * Get a random lucky ore from a luckyblock.
+     * @return the lucky ore.
+     */
+    ItemStack getRandomLuckyOre();
 }

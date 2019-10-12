@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -80,7 +80,7 @@ public class EntityAISleep extends EntityAIBase
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             wokeUp = false;
-            final Colony colony = citizen.getCitizenColonyHandler().getColony();
+            final IColony colony = citizen.getCitizenColonyHandler().getColony();
             if (colony == null || colony.getBuildingManager().getBuilding(citizen.getHomePosition()) == null)
             {
                 return true;
@@ -88,7 +88,7 @@ public class EntityAISleep extends EntityAIBase
 
             if (usedBed == null)
             {
-                final AbstractBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())
@@ -98,7 +98,8 @@ public class EntityAISleep extends EntityAIBase
                         state = state.getBlock().getExtendedState(state, world, pos);
                         if (state.getBlock() == Blocks.BED
                               && !state.getValue(BlockBed.OCCUPIED)
-                              && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                              && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD)
+                              && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
                             citizen.world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, true), 0x03);

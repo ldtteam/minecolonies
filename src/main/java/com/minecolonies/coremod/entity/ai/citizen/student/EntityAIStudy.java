@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.student;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The Entity AI study class.
@@ -44,9 +44,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(STUDY, false, this::study)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(STUDY, this::study)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -61,11 +61,11 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      * The AI task for the student to study.
      * For this he should walk between the different bookcase hit them once and then stand around for a while.
      *
-     * @return the next AIState.
+     * @return the next IAIState.
      */
-    private AIState study()
+    private IAIState study()
     {
-        final CitizenData data = worker.getCitizenData();
+        final ICitizenData data = worker.getCitizenData();
         if (data == null)
         {
             setDelay(STUDY_DELAY);
@@ -149,7 +149,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      *
      * @return the next state.
      */
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {

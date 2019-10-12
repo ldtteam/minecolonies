@@ -1,7 +1,0 @@
-{
-  "parent": "block/pane_side_alt",
-  "textures": {
-    "edge": "minecolonies:blocks/paperwall/paperwall_birch_top",
-    "pane": "minecolonies:blocks/paperwall/paperwall_birch_white"
-  }
-}

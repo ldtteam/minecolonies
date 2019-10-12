@@ -1,13 +1,14 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
+    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
     <list id="unassigned" size="70% 120" pos="60 70" align="TOP_MIDDLE">
-        <view size="70% 30">
+        <view size="70% 40">
             <label id="citizen" size="60 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
-            <label id="job" size="60 12" pos="5 14" textalign="MIDDLE_LEFT" color="red"/>
-            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
+            <label id="job" size="60 12" pos="5 14" textalign="MIDDLE_LEFT" color="yellow"/>
+            <label id="living" size="60 12" pos="5 24" textalign="MIDDLE_LEFT" color="red"/>
+            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonAssign)"/>
         </view>
     </list>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>

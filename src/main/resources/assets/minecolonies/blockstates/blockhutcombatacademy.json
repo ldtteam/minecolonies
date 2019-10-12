@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutcombatacademy"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutcombatacademy",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutcombatacademy",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutcombatacademy",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutcombatacademy",
+      "y": 270
+    }
+  }
+}

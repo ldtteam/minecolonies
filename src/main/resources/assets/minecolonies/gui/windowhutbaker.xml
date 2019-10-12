@@ -2,23 +2,11 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
-	    <view id="pageActions" size="100% 100%">
-        	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
-    	</view>
-        <view id="pageRecipes" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.workerHuts.baker.recipes):"/>
-
-            <list id="recipes" size="164 185" pos="13 29">
-                <view size="100% 30">
-                    <box size="100% 30" linewidth="2">
-                        <button id="assignRecipe" pos="95 10" size="40 15"/>
-                        <label id="name" color="black" pos="20 5"/>
-                        <itemicon id="icon" size="16 16" pos="0 0"/>
-                    </box>
-                </view>
-            </list>
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
+        </view>
+        <view id="recipes" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

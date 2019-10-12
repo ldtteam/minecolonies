@@ -1,0 +1,43 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"13": "blocks/quartz_block_bottom",
+		"1_2": "blocks/cauldron_inner",
+        "particle": "blocks/quartz_block_bottom"
+    },
+	"elements": [
+		{
+			"name": "Charcoal",
+			"from": [4.8, 0.05, 5.5],
+			"to": [5.05, 0.3, 7],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [8.3, 8, 2]},
+			"faces": {
+				"north": {"uv": [0, 0, 0.25, 0.25], "texture": "#1_2"},
+				"east": {"uv": [0, 0, 1.5, 0.25], "texture": "#1_2"},
+				"south": {"uv": [0, 0, 0.25, 0.25], "texture": "#1_2"},
+				"west": {"uv": [0, 0, 1.5, 0.25], "texture": "#1_2"},
+				"up": {"uv": [0, 0, 0.25, 1.5], "texture": "#1_2"},
+				"down": {"uv": [0, 0, 0.25, 1.5], "texture": "#1_2"}
+			}
+		},
+		{
+			"name": "Paper",
+			"from": [6.3, 0, 6],
+			"to": [9.55, 0.05, 10],
+			"faces": {
+				"north": {"uv": [0, 0, 3.25, 0.05], "texture": "#13"},
+				"east": {"uv": [0, 0, 4, 0.05], "texture": "#13"},
+				"south": {"uv": [0, 0, 3.25, 0.05], "texture": "#13"},
+				"west": {"uv": [0, 0, 4, 0.05], "texture": "#13"},
+				"up": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#13"},
+				"down": {"uv": [0, 0, 16, 16], "rotation": 270, "texture": "#13"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "WritingSet-charcoal",
+			"children": [0, 1]
+		}
+	]
+}

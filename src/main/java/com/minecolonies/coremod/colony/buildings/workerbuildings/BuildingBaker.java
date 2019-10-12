@@ -1,23 +1,23 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.network.messages.AssignBakerRecipeMessage;
-
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
@@ -26,35 +26,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * Building for the baker.
+ * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuildingWorker
+public class BuildingBaker extends AbstractFilterableListBuilding
 {
     /**
-     * General baker description key.
+     * General bakery description key.
      */
     private static final String BAKER = "Baker";
 
     /**
-     * Max hut level of the baker.
+     * Max hut level of the bakery.
      */
     private static final int BAKER_HUT_MAX_LEVEL = 5;
 
@@ -82,12 +76,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Tag used to store the recipes positions.
      */
     private static final String TAG_RECIPE_POS = "recipePos";
-    /**
-     * Tag used to store the recipes map.
-     */
-    private static final String TAG_RECIPES = "recipesBaker";
 
-    
     /**
      * Tag used to store the furnaces map.
      */
@@ -105,32 +94,26 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
     /**
-     * Map of tasks for the baker to work on.
+     * Map of tasks for the bakery to work on.
      */
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
 
     /**
-     * Arraylist of all recipes the baker is allower to bake.
-     */
-    private boolean[] recipesAllowed;
-    
-    /**
-     * Constructor for the baker building.
+     * Constructor for the bakery building.
      *
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingBaker(final Colony c, final BlockPos l)
+    public BuildingBaker(final IColony c, final BlockPos l)
     {
         super(c, l);
         for (final IRecipeStorage storage : BakerRecipes.getRecipes())
         {
             for (final ItemStack stack : storage.getInput())
             {
-                keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
+                keepX.put(stack::isItemEqual, new Tuple<>(WHEAT_TO_KEEP, true));
             }
         }
-        recipesAllowed = new boolean[BakerRecipes.getRecipes().size()];
     }
 
     /**
@@ -146,9 +129,9 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * Gets the max level of the baker's hut.
+     * Gets the max level of the bakery's hut.
      *
-     * @return The max level of the baker's hut.
+     * @return The max level of the bakery's hut.
      */
     @Override
     public int getMaxBuildingLevel()
@@ -185,16 +168,17 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobBaker(citizen);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
         tasks.clear();
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
+
         final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < taskTagList.tagCount(); ++i)
         {
@@ -221,30 +205,13 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
         }
-
-        if (compound.hasKey(TAG_RECIPES))
-        {
-            final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-            
-            for (int i = 0; i < recipeTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
-                recipesAllowed[i] = recipeCompound.getBoolean(TAG_RECIPE_POS);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < recipesAllowed.length; ++i)
-            {
-                recipesAllowed[i] = true;
-            }
-        }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
@@ -279,22 +246,13 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
 
-        @NotNull final NBTTagList recipesTagList = new NBTTagList();
-        for (int i=0;i< recipesAllowed.length; i++)
-        {
-            @NotNull final NBTTagCompound recipeCompound = new NBTTagCompound();
-            recipeCompound.setBoolean(TAG_RECIPE_POS, recipesAllowed[i]);
-            recipesTagList.appendTag(recipeCompound);
-        }
-        compound.setTag(TAG_RECIPES, recipesTagList);
-    
-    
+        return compound;
     }
 
     /**
-     * The name of the baker's job.
+     * The name of the bakery's job.
      *
-     * @return The name of the baker's job.
+     * @return The name of the bakery's job.
      */
     @NotNull
     @Override
@@ -320,7 +278,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * Checks the furnaces of the baker if they're ready.
+     * Checks the furnaces of the bakery if they're ready.
      */
     private void checkFurnaces()
     {
@@ -412,7 +370,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * Get the map of current tasks in the baker.
+     * Get the map of current tasks in the bakery.
      *
      * @return the map of states and products.
      */
@@ -472,118 +430,34 @@ public class BuildingBaker extends AbstractBuildingWorker
         furnaces.replace(currentFurnace, bakingProduct);
     }
 
-    
-    /**
-     * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
-     *
-     * @param pos position of the recipe 
-     * @return a boolean if the recipe is allowed to be produced. 
-     */
-    public boolean isRecipeAllowed(final int pos)
-    {
-    	if (pos >= recipesAllowed.length)
-    	{
-    		return false;
-    	}
-    	
-    	return recipesAllowed[pos];
-    }
-
-    
-    /**
-     * update the Recipe Allowed option to the new settings of value
-     *
-     * @param pos   index pointer for array position of which Recipe to alter
-     * @param value boolean value if Recipe is Allowed to be made 
-     */
-    public void setRecipeAllowed(final int pos, final boolean value)
-    {
-    	if (pos < recipesAllowed.length)
-    	{
-    		recipesAllowed[pos] = value;
-    	}
-    }
-
     @Override
     public boolean canCraftComplexRecipes()
     {
         return true;
     }
 
-    /**
-     * Method to serialize data to send it to the view.
-     *
-     * @param buf the used ByteBuffer.
-     */
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public BuildingEntry getBuildingRegistryEntry()
     {
-        super.serializeToView(buf);
-        
-        buf.writeInt(recipesAllowed.length);
-        for (int i = 0; i < recipesAllowed.length; i++)
-        {
-            buf.writeBoolean(recipesAllowed[i]);
-        }
+        return ModBuildings.bakery;
     }
 
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractFilterableListsView
     {
-
-        /*
-         * list of recipes for the baker, 
-         * true - indicates baker is able to make recipe
-         */
-        boolean[] recipesAllowed;
-
         /**
-         * The client view constructor for the baker building.
+         * The client view constructor for the bakery building.
          *
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
 
-        
-        /**
-         * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
-         *
-         * @param pos position of the recipe 
-         * @return a boolean if the recipe is allowed to be produced. 
-         */
-        public boolean isRecipeAllowed(final int pos)
-        {
-            if (pos >= recipesAllowed.length)
-            {
-                return false;
-            }
-
-            return recipesAllowed[pos];
-        }
-
-        /**
-         * update the Recipe Allowed option to the new settings of value
-         *
-         * @param pos   index pointer for array position of which Recipe to alter
-         * @param value boolean value if Recipe is Allowed to be made 
-         * @param block block position of the building.
-         */
-        public void setRecipeAllowed(final int pos, final  boolean value,final BlockPos block)
-        {
-            MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
-            if (pos < recipesAllowed.length)
-            {
-                recipesAllowed[pos] = value;
-            }
-        }
-
-        
         /**
          * Creates a new window for the building.
          *
@@ -609,19 +483,5 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             return Skill.DEXTERITY;
         }
-
-
-        @Override
-        public void deserialize(@NotNull final ByteBuf buf)
-        {
-            super.deserialize(buf);
-            final int size = buf.readInt();
-            recipesAllowed = new boolean[size];
-            for (int i = 0; i < size; i++)
-            {
-                recipesAllowed[i] = buf.readBoolean();
-            }
-        }
-
     }
 }

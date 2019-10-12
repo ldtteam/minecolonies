@@ -137,16 +137,26 @@ public final class LanguageHandler
      */
     public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
     {
+        final ITextComponent textComponent = buildChatComponent(key, message);
+        sendPlayersMessage(players, textComponent);
+    }
+
+    /**
+     * Send message to a list of players.
+     *
+     * @param players the list of players.
+     * @param component the text component..
+     */
+    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final ITextComponent component)
+    {
         if (players == null || players.isEmpty())
         {
             return;
         }
 
-        final ITextComponent textComponent = buildChatComponent(key, message);
-
         for (@NotNull final EntityPlayer player : players)
         {
-            player.sendMessage(textComponent);
+            player.sendMessage(component);
         }
     }
 }

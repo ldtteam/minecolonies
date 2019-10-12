@@ -49,7 +49,7 @@ public final class RequestHandler
 
     public static void registerRequest(final IStandardRequestManager manager, final IRequest<?> request)
     {
-        if (manager.getRequestIdentitiesDataStore().getIdentities().containsKey(request.getToken()) ||
+        if (manager.getRequestIdentitiesDataStore().getIdentities().containsKey(request.getId()) ||
               manager.getRequestIdentitiesDataStore().getIdentities().containsValue(request))
         {
             throw new IllegalArgumentException("The given request is already known to this manager");
@@ -57,7 +57,7 @@ public final class RequestHandler
 
         LogHandler.log("Registering request: " + request);
 
-        manager.getRequestIdentitiesDataStore().getIdentities().put(request.getToken(), request);
+        manager.getRequestIdentitiesDataStore().getIdentities().put(request.getId(), request);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class RequestHandler
         {
             case PRIORITY_BASED:
                 return assignRequestDefault(manager, request, resolverTokenBlackList);
-            case FASTED_FIRST:
+            case FASTEST_FIRST:
             {
                 MineColonies.getLogger().warn("Fastest First strategy not implemented yet.");
                 return assignRequestDefault(manager, request, resolverTokenBlackList);
@@ -115,13 +115,13 @@ public final class RequestHandler
     public static IToken<?> assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         //Check if the request is registered
-        getRequest(manager, request.getToken());
+        getRequest(manager, request.getId());
 
         LogHandler.log("Starting resolver assignment search for request: " + request);
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
         requestTypes.remove(TypeConstants.OBJECT);
 
         final List<TypeToken> typeIndexList = new LinkedList<>(requestTypes);
@@ -142,7 +142,7 @@ public final class RequestHandler
         for (final IRequestResolver<?> resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
-            if (resolverTokenBlackList.contains(resolver.getRequesterId()))
+            if (resolverTokenBlackList.contains(resolver.getId()))
             {
                 continue;
             }
@@ -165,14 +165,16 @@ public final class RequestHandler
             LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
 
             ResolverHandler.addRequestToResolver(manager, resolver, request);
+            //TODO: Change this false to simulation.
+            resolver.onAssignedToThisResolver(manager, request, false);
 
             for (final IToken<?> childRequestToken :
               attemptResult)
             {
                 @SuppressWarnings(RAWTYPES) final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
 
-                childRequest.setParent(request.getToken());
-                request.addChild(childRequest.getToken());
+                childRequest.setParent(request.getId());
+                request.addChild(childRequest.getId());
 
                 if (!isAssigned(manager, childRequestToken))
                 {
@@ -189,7 +191,7 @@ public final class RequestHandler
                 }
             }
 
-            return resolver.getRequesterId();
+            return resolver.getId();
         }
 
         return null;
@@ -210,7 +212,7 @@ public final class RequestHandler
     {
         //Get the current resolver
         IRequestResolver currentResolver = null;
-        if (RequestHandler.isAssigned(manager, request.getToken()))
+        if (RequestHandler.isAssigned(manager, request.getId()))
         {
             currentResolver = ResolverHandler.getResolverForRequest(manager, request);
         }
@@ -222,28 +224,28 @@ public final class RequestHandler
         }
 
         //Cancel the request to restart the search
-        processInternalCancellation(manager, request.getToken());
+        processInternalCancellation(manager, request.getId());
 
         if (currentResolver != null)
         {
-            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(currentResolver.getRequesterId()))
+            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(currentResolver.getId()))
             {
-                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getRequesterId()).remove(request.getToken());
-                if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getRequesterId()).isEmpty())
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getId()).remove(request.getId());
+                if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getId()).isEmpty())
                 {
-                    manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(currentResolver.getRequesterId());
+                    manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(currentResolver.getId());
                 }
             }
         }
 
-        manager.updateRequestState(request.getToken(), RequestState.REPORTED);
+        manager.updateRequestState(request.getId(), RequestState.REPORTED);
         IToken<?> resolver = assignRequest(manager, request, resolverTokenBlackList);
 
         if (parent != null)
         {
             request.setParent(parent);
             final IRequest parentRequest = RequestHandler.getRequest(manager, parent);
-            parentRequest.addChild(request.getToken());
+            parentRequest.addChild(request.getId());
         }
 
         return resolver;
@@ -276,7 +278,7 @@ public final class RequestHandler
         request.getRequester().onRequestComplete(manager, token);
 
         //Retrieve a followup request.
-        @SuppressWarnings(RAWTYPES) final IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
+        final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
 
         //Check if the request has a parent
         if (request.hasParent())
@@ -284,26 +286,30 @@ public final class RequestHandler
             @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(manager, request.getParent());
 
             //Assign the followup to the parent as a child so that processing is still halted.
-            if (followupRequest != null)
+            if (followupRequests != null && !followupRequests.isEmpty())
             {
-                parentRequest.addChild(followupRequest.getToken());
+                followupRequests.forEach(followupRequest -> parentRequest.addChild(followupRequest.getId()));
+                followupRequests.forEach(followupRequest -> followupRequest.setParent(parentRequest.getId()));
             }
 
-            manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
-            parentRequest.removeChild(request.getToken());
+            manager.updateRequestState(request.getId(), RequestState.RECEIVED);
+            parentRequest.removeChild(request.getId());
+
+            request.setParent(null);
 
             if (!parentRequest.hasChildren() && parentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 resolveRequest(manager, parentRequest);
             }
-
-            request.setParent(null);
         }
 
         //Assign the followup request if need be
-        if (followupRequest != null && !isAssigned(manager, followupRequest.getToken()))
+        if (followupRequests != null && !followupRequests.isEmpty() &&
+              followupRequests.stream().anyMatch(followupRequest -> !isAssigned(manager, followupRequest.getId())))
         {
-            assignRequest(manager, followupRequest);
+            followupRequests.stream()
+              .filter(followupRequest -> !isAssigned(manager, followupRequest.getId()))
+              .forEach(unassignedFollowupRequest -> assignRequest(manager, unassignedFollowupRequest));
         }
     }
 
@@ -412,18 +418,18 @@ public final class RequestHandler
         {
             final IRequest currentParent = RequestHandler.getRequest(manager, target.getParent());
 
-            currentParent.removeChild(target.getToken());
+            currentParent.removeChild(target.getId());
             target.setParent(null);
         }
 
         if (newParent != null)
         {
             //Switch out the parent, and add the old child to the cleanup request as new child
-            newParent.addChild(target.getToken());
-            target.setParent(newParent.getToken());
+            newParent.addChild(target.getId());
+            target.setParent(newParent.getId());
 
             //Assign the new parent request if it is not assigned yet.
-            if (!RequestHandler.isAssigned(manager, newParent.getToken()))
+            if (!RequestHandler.isAssigned(manager, newParent.getId()))
             {
                 RequestHandler.assignRequest(manager, newParent);
             }
@@ -441,8 +447,8 @@ public final class RequestHandler
     @SuppressWarnings({UNCHECKED, RAWTYPES})
     public static void resolveRequest(final IStandardRequestManager manager, final IRequest request)
     {
-        getRequest(manager, request.getToken());
-        if (!isAssigned(manager, request.getToken()))
+        getRequest(manager, request.getId());
+        if (!isAssigned(manager, request.getId()))
         {
             throw new IllegalArgumentException("The given request is not resolved");
         }
@@ -480,10 +486,10 @@ public final class RequestHandler
         if (isAssigned(manager, token))
         {
             final IRequestResolver<?> resolver = ResolverHandler.getResolverForRequest(manager, token);
-            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).remove(token);
-            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).isEmpty())
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(token);
+            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
             {
-                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getRequesterId());
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
             }
         }
 
@@ -519,6 +525,24 @@ public final class RequestHandler
         LogHandler.log("Retrieving the request for: " + token);
 
         return manager.getRequestIdentitiesDataStore().getIdentities().get(token);
+    }
+
+    /**
+     * Returns all requests made by a given requester.
+     *
+     * @param manager THe manager.
+     * @param requester The requester in question.
+     *
+     * @return A collection with request instances that are made by the given requester.
+     */
+    public static Collection<IRequest<?>> getRequestsMadeByRequester(final IStandardRequestManager manager, final IRequester requester)
+    {
+        return manager.getRequestIdentitiesDataStore()
+          .getIdentities()
+          .values()
+          .stream()
+          .filter(iRequest -> iRequest.getRequester().getId().equals(requester.getId()))
+          .collect(Collectors.toList());
     }
 
     /**

@@ -213,6 +213,11 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
 
         bipedBody.addChild(umbrella);
         bipedBody.addChild(umbrellaHand);
+
+        bipedBody.addChild(leftArm1);
+        bipedBody.addChild(leftArm2);
+        bipedLeftArm.showModel = false;
+        this.bipedHeadwear.showModel = false;
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -224,21 +229,15 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
 
     @Override
     public void render(
-                        final Entity entity,
-                        final float limbSwing,
-                        final float limbSwingAmount,
-                        final float ageInTicks,
-                        final float netHeadYaw,
-                        final float headPitch,
-                        final float scaleFactor)
+      final Entity entity,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
     {
-        bipedHead.render(scaleFactor);
-        bipedBody.render(scaleFactor);
-        bipedRightArm.render(scaleFactor);
-        leftArm2.render(scaleFactor);
-        leftArm1.render(scaleFactor);
-        bipedRightLeg.render(scaleFactor);
-        bipedLeftLeg.render(scaleFactor);
+        super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
     }
 }

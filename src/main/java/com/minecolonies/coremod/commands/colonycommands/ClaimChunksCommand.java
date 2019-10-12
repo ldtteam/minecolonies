@@ -3,8 +3,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -12,7 +10,9 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,13 +51,16 @@ public class ClaimChunksCommand implements IActionCommand
             final int range = actionMenuState.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenuState.getBooleanForArgument("add");
 
+            final World senderWorld = sender.getEntityWorld();
+            final BlockPos senderPos = sender.getPosition();
+
             if (range > Configurations.gameplay.workingRangeTownHallChunks * 2)
             {
                 sender.sendMessage(new TextComponentString(TOO_MANY_CHUNKS));
                 return;
             }
 
-            final IChunkmanagerCapability chunkManager = sender.getEntityWorld().getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+            final IChunkmanagerCapability chunkManager = senderWorld.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
             if (chunkManager == null)
             {
                 Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
@@ -70,8 +73,7 @@ public class ClaimChunksCommand implements IActionCommand
                 return;
             }
 
-            final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunk(sender.getPosition());
-            ChunkDataHelper.claimChunksInRange(colonyId, dimId, add == null || add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
+            ChunkDataHelper.claimChunksInRange(colonyId, dimId, add == null || add, senderPos, range, 0, senderWorld);
             sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
         }
         else

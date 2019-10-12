@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -135,7 +137,7 @@ public class RaidManager implements IRaiderManager
 
         BlockPos thePos = center;
         double distance = 0;
-        AbstractBuilding theBuilding = null;
+        IBuilding theBuilding = null;
         for (final BlockPos pos : positions)
         {
             final double currentDistance = center.distanceSq(pos);
@@ -231,7 +233,21 @@ public class RaidManager implements IRaiderManager
                 }
                 else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
-                    StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
+                    // Load the backup from before spawning
+                    try
+                    {
+                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
+                          new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                          entry.getKey(),
+                          0,
+                          Mirror.NONE,
+                          true);
+                    }
+                    catch(final NullPointerException | ArrayIndexOutOfBoundsException e)
+                    {
+                        Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
+                    }
+
                     schematicMap.remove(entry.getKey());
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),

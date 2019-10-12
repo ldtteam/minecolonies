@@ -2,6 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -14,15 +17,12 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,7 +79,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private final ScrollingList resourceList;
+    private ScrollingList resourceList;
     /**
      * The colony id.
      */
@@ -89,11 +89,25 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      */
     private int lifeCount = 0;
 
-    public WindowClipBoard(@Nullable final int colonyId)
+    /**
+     * Constructor of the clipboard GUI.
+     * @param colonyId the colony id to check the requests for.
+     */
+    public WindowClipBoard(final int colonyId)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         this.colonyId = colonyId;
+    }
+
+    /**
+     * Constructor of the clipboard GUI.
+     * @param s the description string of the style.
+     * @param colony the colony id.
+     */
+    public WindowClipBoard(final String s, final IColonyView colony)
+    {
+        super(s);
+        this.colonyId = colony.getID();
     }
 
     /**
@@ -103,6 +117,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
             final ImmutableList<IRequest> openRequests = getOpenRequests();
@@ -129,37 +144,48 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            final ColonyView view = ColonyManager.getColonyView(colonyId);
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
         });
     }
 
-    private ImmutableList<IRequest> getOpenRequests()
+    /**
+     * The requests to display.
+     * @return the list of requests.
+     */
+    public ImmutableList<IRequest> getOpenRequests()
     {
-        final ArrayList<IRequest> requests = Lists.newArrayList();
-        final ColonyView view = ColonyManager.getColonyView(colonyId);
+        final ArrayList<IRequest<?>> requests = Lists.newArrayList();
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
 
         if (view == null)
         {
             return ImmutableList.of();
         }
 
-        final IPlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
-        final IRetryingRequestResolver retryingRequestResolver = view.getRequestManager().getRetryingRequestResolver();
+        final IRequestManager requestManager = view.getRequestManager();
+
+        if (requestManager == null)
+        {
+            return ImmutableList.of();
+        }
+
+        final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
+        final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
         final Set<IToken> requestTokens = new HashSet<>();
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
+        requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation()
+        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
                 .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
-                .thenComparingInt(request -> request.getToken().hashCode()));
+                .thenComparingInt((IRequest request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
@@ -191,6 +217,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 cancel(button);
                 break;
             default:
+                super.onButtonClicked(button);
                 break;
         }
     }
@@ -201,7 +228,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(null, getOpenRequests().get(row), colonyId);
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colonyId);
             window.open();
         }
     }
@@ -213,7 +240,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         if (getOpenRequests().size() > row && row >= 0)
         {
             @NotNull final IRequest request = getOpenRequests().get(row);
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getToken(), RequestState.CANCELLED, null));
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getId(), RequestState.CANCELLED, null));
         }
     }
 }

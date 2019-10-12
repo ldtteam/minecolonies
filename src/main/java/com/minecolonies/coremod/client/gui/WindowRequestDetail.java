@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,10 +11,7 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -68,11 +67,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private static final int Y_OFFSET_EACH_TEXTFIELD = 10;
 
     /**
-     * Wrap after x amount of symbols the text.
-     */
-    //private static final int WRAP_AFTER_X = 30;
-
-    /**
      * Resolver string.
      */
     private static final String RESOLVER = "resolver";
@@ -81,10 +75,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Resolver string.
      */
     private static final String DELIVERY_IMAGE = "deliveryImage";
-    /**
-     * The citizen of the request.
-     */
-    private final CitizenDataView citizen;
+
     /**
      * The request itself.
      */
@@ -99,15 +90,20 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private int lifeCount = 0;
 
     /**
-     * Constructor for the window when the player wants to hire a worker for a certain job.
-     *
-     * @param c       the colony view.
-     * @param request the building position.
+     * The previous window.
      */
-    public WindowRequestDetail(@Nullable final CitizenDataView c, final IRequest request, final int colonyId)
+    private final Window prevWindow;
+
+    /**
+     * Open the request detail.
+     * @param prevWindow the window we're coming from.
+     * @param request the request.
+     * @param colonyId the colony id.
+     */
+    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.citizen = c;
+        this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;
     }
@@ -175,13 +171,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final ColonyView view = ColonyManager.getColonyView(colonyId);
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-        targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
+        targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final ColonyView colony = ColonyManager.getColonyView(colonyId);
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         if(colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -190,14 +186,14 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         try
         {
-            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getToken());
+            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getId());
             if(resolver == null)
             {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
         }
         catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {
@@ -218,13 +214,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (citizen != null)
-        {
-            MineColonies.proxy.showCitizenWindow(citizen);
-        }
-        else
-        {
-            MineColonies.proxy.openClipBoardWindow(colonyId);
-        }
+        prevWindow.open();
     }
 }

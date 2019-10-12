@@ -92,8 +92,7 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
-          @NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
         {
             final NBTTagCompound compound = new NBTTagCompound();
 

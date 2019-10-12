@@ -11,10 +11,11 @@
       "ore": "plankWood"
     },
     "C": {
-      "item": "minecraft:chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     },
     "T": {
-      "item": "minecolonies:sceptergold"
+      "item": "structurize:sceptergold"
     }
   },
   "result": {

@@ -1,15 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -27,6 +29,10 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
      * Id of the position label.
      */
     private static final String LABEL_POS = "pos";
+    /**
+     * Id of the position label.
+     */
+    private static final String LABEL_CURRENNT = "current";
 
     /**
      * Suffix for the window.
@@ -56,7 +62,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Colony View of the colony.
      */
-    private final ColonyView colonyView;
+    private final IColonyView IColonyView;
 
     /**
      * Creates the Window object.
@@ -66,7 +72,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     public WindowBarracksBuilding(final BuildingBarracks.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
-        colonyView = building.getColony();
+        IColonyView = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
     }
 
@@ -88,20 +94,27 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         super.onOpened();
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
+            final List<BlockPos> spawnPoints = IColonyView.getLastSpawnPoints();
+            if(IColonyView.isRaiding())
+            {
+                findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
+            }
             positionsList.setDataProvider(new ScrollingList.DataProvider()
             {
                 @Override
                 public int getElementCount()
                 {
-                    return colonyView.getLastSpawnPoints().size();
+                    return spawnPoints.size() - (IColonyView.isRaiding() ? 1 : 0);
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
-
-                    final BlockPos pos = colonyView.getLastSpawnPoints().get(index);
-                    rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
+                    final BlockPos pos = spawnPoints.get(index);
+                    if(!(IColonyView.isRaiding() && index == spawnPoints.size()-1))
+                    {
+                        rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
+                    }
                 }
             });
         }
@@ -114,7 +127,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
      */
     private String mountDistanceString(final BlockPos pos)
     {
-        final long distance = BlockPosUtil.getDistance2D(pos, building.getLocation());
+        final long distance = BlockPosUtil.getDistance2D(pos, building.getPosition());
         final String distanceDesc;
         if (distance < QUITE_CLOSE)
         {
@@ -128,7 +141,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         {
             distanceDesc = LanguageHandler.format(REALLY_FAR_DESC);
         }
-        final String directionDest = BlockPosUtil.calcDirection(building.getLocation(), pos);
+        final String directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
         return distanceDesc + " " + directionDest;
     }
 }

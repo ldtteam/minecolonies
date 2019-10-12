@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
@@ -103,8 +105,8 @@ public class StandardRequestManager implements IStandardRequestManager
         ResolverHandler.registerResolver(this, playerRequestResolver);
         ResolverHandler.registerResolver(this, retryingRequestResolver);
 
-        this.playerRequestResolverId = playerRequestResolver.getRequesterId();
-        this.retryingRequestResolverId = retryingRequestResolver.getRequesterId();
+        this.playerRequestResolverId = playerRequestResolver.getId();
+        this.retryingRequestResolverId = retryingRequestResolver.getId();
     }
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
@@ -152,19 +154,16 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
         markDirty();
-        return request.getToken();
+        return request.getId();
     }
 
     /**
      * Mark the request manager and colony as dirty.
      */
-    private void markDirty()
+    @Override
+    public void markDirty()
     {
-        dirty = true;
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        this.setDirty(true);
     }
 
     /**
@@ -174,12 +173,18 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public boolean isDirty()
     {
-        if (dirty)
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(final boolean isDirty)
+    {
+        this.dirty = isDirty;
+
+        if (this.isDirty())
         {
-            dirty = false;
-            return true;
+            colony.markDirty();
         }
-        return false;
     }
 
     /**
@@ -228,11 +233,6 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<?> internalRequest = RequestHandler.getRequestOrNull(this, token);
 
-        if (internalRequest == null)
-        {
-            return null;
-        }
-
         return internalRequest;
     }
 
@@ -249,7 +249,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 
-        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getId());
     }
 
     /**
@@ -298,7 +298,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
         if (!ItemStackUtils.isEmpty(stack))
         {
-            request.setDelivery(stack);
+            request.overrideCurrentDeliveries(ImmutableList.of(stack));
         }
 
         updateRequestState(token, RequestState.OVERRULED);
@@ -324,6 +324,17 @@ public class StandardRequestManager implements IStandardRequestManager
     public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
     {
         ProviderHandler.removeProvider(this, provider);
+    }
+
+    /**
+     * Method used to reassign requests based on a predicate.
+     *
+     * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
+     */
+    @Override
+    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        ResolverHandler.onColonyUpdate(this, shouldTriggerReassign);
     }
 
     /**

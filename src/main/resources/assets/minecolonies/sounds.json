@@ -209,6 +209,24 @@
       }
     ]
   },
+  "mob.citizen.child.laugh1": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/child/laugh1",
+        "stream": false
+      }
+    ]
+  },
+  "mob.citizen.child.laugh2": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/child/laugh2",
+        "stream": false
+      }
+    ]
+  },
   "mob.hunter.death": {
     "category": "neutral",
     "sounds": [
@@ -2852,5 +2870,4 @@
       }
     ]
   }
-
 }

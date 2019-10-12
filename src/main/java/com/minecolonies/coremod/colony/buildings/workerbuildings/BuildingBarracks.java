@@ -1,23 +1,34 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.huts.BlockHutBarracksTower;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Building class for the Barracks.
@@ -35,9 +46,14 @@ public class BuildingBarracks extends AbstractBuilding
     private static final int BARRACKS_HUT_MAX_LEVEL = 5;
 
     /**
-     * Tower position offset.
+     * The tag to store the tower list to NBT.
      */
-    private static final int TOWER_OFFSET = 8;
+    private static final String TAG_TOWERS = "towers";
+
+    /**
+     * The list of barracksTowers.
+     */
+    private final List<BlockPos> towers = new ArrayList<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -45,7 +61,7 @@ public class BuildingBarracks extends AbstractBuilding
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    public BuildingBarracks(@NotNull final Colony colony, final BlockPos pos)
+    public BuildingBarracks(@NotNull final IColony colony, final BlockPos pos)
     {
         super(colony, pos);
     }
@@ -60,7 +76,7 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return BARRACKS_HUT_MAX_LEVEL;
     }
 
     @Override
@@ -70,216 +86,96 @@ public class BuildingBarracks extends AbstractBuilding
 
         if (world != null)
         {
-            for (int i = 1; i <= getBuildingLevel() && i < BARRACKS_HUT_MAX_LEVEL; i++)
+            for (final BlockPos tower : towers)
             {
-                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
-
-                if (world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower)
-                {
-                    world.setBlockState(tuple.getFirst(), Blocks.AIR.getDefaultState());
-                }
+                world.setBlockState(tower, Blocks.AIR.getDefaultState());
             }
         }
-
         super.onDestroyed();
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void registerBlockPosition(@NotNull final IBlockState block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        final World world = getColony().getWorld();
-
-        if (world != null)
+        super.registerBlockPosition(block, pos, world);
+        if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution || block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
-
-            for (int i = 1; i <= newLevel && i < BARRACKS_HUT_MAX_LEVEL; i++)
+            if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
-
-                if (!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
+                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHorizontal.FACING, block.getValue(BlockHorizontal.FACING)));
+                final TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TileEntityColonyBuilding)
                 {
-                    world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
-                    getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()), world);
+                    ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
                 }
-                final AbstractBuilding building = getColony().getBuildingManager().getBuilding(tuple.getFirst());
-                if (building instanceof BuildingBarracksTower)
+                getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
+            }
+            final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
+            if (building instanceof BuildingBarracksTower)
+            {
+                building.setStyle(this.getStyle());
+                ((BuildingBarracksTower) building).addBarracks(getPosition());
+                if (!towers.contains(pos))
                 {
-                    building.setStyle(this.getStyle());
-                    ((BuildingBarracksTower) building).addBarracks(getLocation());
+                    towers.add(pos);
                 }
             }
-
-            //TODO: Implement the following properly. Once we've got textures and etc for a Substitution block.
-            /*for (final Tuple<BlockPos, EnumFacing> tower : getBarracksTowers())
-            {
-
-                if (world.getBlockState(tower.getFirst()).getBlock() instanceof BlockBarracksTowerSubstitution)
-                {
-                    world.setBlockState(tower.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tower.getSecond()));
-
-                    final TileEntity barracksTowerEntity = world.getTileEntity(tower.getFirst());
-
-                    if (barracksTowerEntity != null)
-                    {
-                        getColonyByPosFromWorld().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) barracksTowerEntity, world);
-                    }
-                }
-
-                final AbstractBuilding building = getColonyByPosFromWorld().getBuildingManager().getBuilding(tower.getFirst());
-                if (building instanceof BuildingBarracksTowerNew)
-                {
-                    building.setStyle(this.getStyle());
-                    ((BuildingBarracksTowerNew) building).addBarracks(getLocation());
-                }
-            }*/
         }
-        super.onUpgradeComplete(newLevel);
+    }
+
+    @Override
+    public int getClaimRadius(final int newLevel)
+    {
+        int sum = newLevel;
+        for (final BlockPos pos : towers)
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+            if (building != null)
+            {
+                sum += building.getBuildingLevel();
+            }
+        }
+        return Math.max(1, sum / getMaxBuildingLevel());
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.barracks;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
+        towers.clear();
+        towers.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
+                        .map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS))
+                        .collect(Collectors.toList()));
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        final NBTTagList towerTagList = towers.stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_POS, pos)).collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_TOWERS, towerTagList);
+
+        return compound;
     }
 
     /**
-     * Calculate position and facing of the tower to add.
-     *
-     * @param level the level of the barracks.
-     * @return a tuple with position and facing.
-     */
-    private final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
-    {
-
-        BlockPos position = getLocation();
-        int tempLevel = level;
-
-        if (isMirrored())
-        {
-            tempLevel += Constants.ROTATE_ONCE;
-        }
-
-        switch (getRotation())
-        {
-            case Constants.ROTATE_ONCE:
-                tempLevel += Constants.ROTATE_THREE_TIMES;
-                break;
-            case Constants.ROTATE_TWICE:
-                tempLevel += Constants.ROTATE_ONCE;
-                break;
-            case Constants.ROTATE_THREE_TIMES:
-                tempLevel += Constants.ROTATE_TWICE;
-                break;
-            default:
-                //do nothing
-        }
-
-        if (tempLevel > Constants.MAX_ROTATIONS)
-        {
-            tempLevel -= Constants.MAX_ROTATIONS;
-        }
-
-        EnumFacing facing = EnumFacing.NORTH;
-
-        final String styleName = getStyle().toLowerCase(Locale.ENGLISH);
-        int offset = TOWER_OFFSET;
-        if (styleName.contains("birch"))
-        {
-            offset++;
-        }
-        else if (styleName.contains("sandstone"))
-        {
-            offset--;
-        }
-        
-        switch (tempLevel)
-        {
-            case Constants.ROTATE_ONCE:
-                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.WEST, offset);
-                break;
-            case Constants.ROTATE_TWICE:
-                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.EAST, offset);
-                facing = EnumFacing.SOUTH;
-                break;
-            case Constants.ROTATE_THREE_TIMES:
-                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.EAST, offset);
-                facing = EnumFacing.WEST;
-                break;
-            case Constants.MAX_ROTATIONS:
-                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.WEST, offset);
-                facing = EnumFacing.EAST;
-                break;
-            default:
-                //do nothing
-        }
-
-        return new Tuple<>(position, facing);
-    }
-
-    /**
-     * Return list of all the Barrack's Towers.
-     *
-     * @return a tuple with position and facing.
-     */
-    /*
-    private List<Tuple<BlockPos, EnumFacing>> getBarracksTowers()
-    {
-        final StructureName sn =
-          new StructureName(
-            Structures.SCHEMATICS_PREFIX,
-            getStyle(),
-            getSchematicName() + getBuildingLevel());
-
-        final String structureName = sn.toString();
-        final StructureWrapper wrapper = new StructureWrapper(getColonyByPosFromWorld().getWorld(), structureName);
-
-        BlockPos barracksPos = null;
-        final List<Template.BlockInfo> barracksTowers = new ArrayList<>();
-
-        for (final Template.BlockInfo block : wrapper.getStructure().getStructure().getTemplate().blocks)
-        {
-            if (block.blockState.getBlock() instanceof BlockHutBarracks)
-            {
-                barracksPos = block.pos;
-            }
-
-            if (block.blockState.getBlock() instanceof BlockBarracksTowerSubstitution)
-            {
-                barracksTowers.add(block);
-            }
-        }
-
-        final List<Tuple<BlockPos, EnumFacing>> towers = new ArrayList<>();
-
-        if (barracksPos != null)
-        {
-            for (final Template.BlockInfo block : barracksTowers)
-            {
-                final int xDif = barracksPos.getX() - block.pos.getX();
-                final int yDif = barracksPos.getY() - block.pos.getY();
-                final int zDif = barracksPos.getZ() - block.pos.getZ();
-
-                final int towerX = getLocation().getX() + xDif;
-                final int towerY = getLocation().getY() - yDif;
-                final int towerZ = getLocation().getZ() + zDif;
-
-                final BlockPos towerPos = new BlockPos(towerX, towerY, towerZ);
-                final EnumFacing towerFacing = block.blockState.getValue(BlockBarracksTowerSubstitution.FACING);
-
-                towers.add(new Tuple<>(towerPos, towerFacing));
-            }
-        }
-
-        return towers;
-    }
-    */
-
-    /**
-     * BuildingDeliveryman View.
+     * Barracks building View.
      */
     public static class View extends AbstractBuildingView
     {
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the barracks view.
          *
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

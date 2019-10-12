@@ -1,33 +1,37 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.items.ModItems;
-import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.StatList;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -51,7 +55,12 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
 
-    private boolean complete;
+    /**
+     * The state at the offset position.
+     */
+    private IBlockState state;
+
+    private boolean                  complete;
     private String                   structureName;
     private String                   workOrderName;
     private int                      rotation;
@@ -77,20 +86,21 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     /**
      * Create the building that was made with the build tool.
      * Item in inventory required
-     *
-     * @param structureName String representation of a structure
+     *  @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
+     * @param state
      */
-    public BuildToolPasteMessage(final String structureName,
-            final String workOrderName, final BlockPos pos,
-            final int rotation, final boolean isHut,
-            final Mirror mirror, final boolean complete,
-    final WindowBuildTool.FreeMode freeMode)
+    public BuildToolPasteMessage(
+      final String structureName,
+      final String workOrderName, final BlockPos pos,
+      final int rotation, final boolean isHut,
+      final Mirror mirror, final boolean complete,
+      final WindowBuildTool.FreeMode freeMode, final IBlockState state)
     {
         super();
         this.structureName = structureName;
@@ -101,6 +111,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         this.mirror = mirror == Mirror.FRONT_BACK;
         this.complete = complete;
         this.freeMode = freeMode;
+        this.state = state;
     }
 
     /**
@@ -129,6 +140,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             freeMode = WindowBuildTool.FreeMode.values()[modeId];
         }
+
+        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
     }
 
     /**
@@ -162,6 +175,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             buf.writeInt(freeMode.ordinal());
         }
+
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
     }
 
     @Override
@@ -178,21 +193,20 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             if (message.isHut)
             {
-                handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.state);
             }
 
-
-            StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
 
             if (message.isHut)
             {
-                @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
+                @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), message.pos);
                 if (building != null)
                 {
                     building.onUpgradeComplete(building.getBuildingLevel());
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
+                    ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorldFromEntity(player));
                 }
             }
         }
@@ -224,33 +238,15 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
-                StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                        message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
                 player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
-                fillChest((TileEntityChest) player.getServerWorld().getTileEntity(message.pos.up(chestHeight)));
             }
             else
             {
                 LanguageHandler.sendPlayerMessage(player, "item.supplyChestDeployer.missing");
             }
         }
-    }
-
-    /**
-     * Fills the content of the supplychest with the buildTool and townHall.
-     *
-     * @param chest the chest to fill.
-     */
-    private static void fillChest(@Nullable final TileEntityChest chest)
-    {
-        if (chest == null)
-        {
-            Log.getLogger().error("Supply chest tile entity was null.");
-            return;
-        }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
-        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**
@@ -262,16 +258,17 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
+     * @param state         The state of the hut.
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final IBlockState state)
     {
-        final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
+        final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && !ColonyManager.isTooCloseToColony(world, buildPos))
+              && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))
         {
             return;
         }
@@ -281,7 +278,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
+            world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror);
         }
@@ -302,7 +299,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                                        final StructureName sn,
                                        final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
-        @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+        @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
         if (building == null)
         {
@@ -312,7 +309,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             if (building.getTileEntity() != null)
             {
-                final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
+                final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
                 if (colony == null)
                 {
                     Log.getLogger().info("No colony for " + player.getName());
@@ -337,6 +334,23 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
 
             building.setStyle(sn.getStyle());
             building.setRotation(rotation);
+
+            if (!(building instanceof PostBox))
+            {
+                ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
+                final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
+                final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                  = ColonyUtils.calculateCorners(building.getPosition(),
+                  world,
+                  wrapper,
+                  workOrder.getRotation(world),
+                  workOrder.isMirrored());
+
+                building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                building.setHeight(wrapper.getHeight());
+            }
+
             if (mirror)
             {
                 building.invertMirror();

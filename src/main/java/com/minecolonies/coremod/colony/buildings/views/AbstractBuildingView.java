@@ -1,21 +1,24 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
+import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,10 +29,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
@@ -41,23 +41,23 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
  * Mutable operations on a View result in a message to the server to perform the operation.
  */
-public abstract class AbstractBuildingView implements IRequester
+public abstract class AbstractBuildingView implements IBuildingView
 {
     /**
      * The colony of the building.
      */
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * It's location.
      */
     @NotNull
-    private final BlockPos   location;
+    private final BlockPos location;
 
     /**
      * The building level.
      */
-    private int buildingLevel    = 0;
+    private int buildingLevel = 0;
 
     /**
      * The max building level.
@@ -67,7 +67,12 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * The dm priority.
      */
-    private int buildingDmPrio   = 1;
+    private int buildingDmPrio = 1;
+
+    /**
+     * The dm priority.
+     */
+    private boolean buildingDmPrioState = false;
 
     /**
      * Rotation of the building.
@@ -82,7 +87,17 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * The workOrderLevel.
      */
-    private int workOrderLevel   = NO_WORK_ORDER;
+    private int workOrderLevel = NO_WORK_ORDER;
+
+    /**
+     * Resolver collection.
+     */
+    private ImmutableCollection<IToken<?>> resolvers;
+
+    /**
+     * Requester ID.
+     */
+    private IToken<?> requesterId;
 
     /**
      * The data store id for request system related data.
@@ -101,12 +116,22 @@ public abstract class AbstractBuildingView implements IRequester
     private String style;
 
     /**
+     * The custom name of the building.
+     */
+    private String customName = "";
+
+    /**
+     * The claim radius.
+     */
+    private int claimRadius = 0;
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
      * @param l The location of the building.
      */
-    protected AbstractBuildingView(final ColonyView c, @NotNull final BlockPos l)
+    protected AbstractBuildingView(final IColonyView c, @NotNull final BlockPos l)
     {
         colony = c;
         location = new BlockPos(l);
@@ -117,6 +142,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return A BlockPos because the building ID is its location.
      */
+    @Override
     @NotNull
     public BlockPos getID()
     {
@@ -129,8 +155,9 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return A BlockPos, where this building is.
      */
+    @Override
     @NotNull
-    public BlockPos getLocation()
+    public BlockPos getPosition()
     {
         return location;
     }
@@ -140,6 +167,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return AbstractBuilding current level.
      */
+    @Override
     public int getBuildingLevel()
     {
         return buildingLevel;
@@ -150,6 +178,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return AbstractBuilding max level.
      */
+    @Override
     public int getBuildingMaxLevel()
     {
         return buildingMaxLevel;
@@ -160,6 +189,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return true if the building is at its max level.
      */
+    @Override
     public boolean isBuildingMaxLevel()
     {
         return buildingLevel >= buildingMaxLevel;
@@ -170,6 +200,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return 0 if none, othewise the current level worked on
      */
+    @Override
     public int getCurrentWorkOrderLevel()
     {
         return workOrderLevel;
@@ -177,17 +208,31 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the schematic name.
+     *
      * @return the schematic name.
      */
+    @Override
     public String getSchematicName()
     {
         return schematicName;
     }
 
     /**
+     * Getter for the custom building name.
+     * @return the name.
+     */
+    @Override
+    public String getCustomName()
+    {
+        return this.customName;
+    }
+
+    /**
      * Getter for the style.
+     *
      * @return the style string.
      */
+    @Override
     public String getStyle()
     {
         return style;
@@ -195,8 +240,10 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the rotation.
+     *
      * @return the rotation.
      */
+    @Override
     public int getRotation()
     {
         return rotation;
@@ -204,8 +251,10 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the mirror.
+     *
      * @return true if mirrored.
      */
+    @Override
     public boolean isMirrored()
     {
         return isBuildingMirrored;
@@ -216,29 +265,52 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return 0 if none, othewise the current level worked on
      */
+    @Override
     public boolean hasWorkOrder()
     {
         return workOrderLevel != NO_WORK_ORDER;
     }
 
+    /**
+     * Check if the building is current being built.
+     * @return true if so.
+     */
+    @Override
     public boolean isBuilding()
     {
         return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
     }
 
+    /**
+     * Check if the building is currently being repaired.
+     * @return true if so.
+     */
+    @Override
     public boolean isRepairing()
     {
         return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
     }
 
     /**
+     * Get the claim radius for the building.
+     * @return the radius.
+     */
+    @Override
+    public int getClaimRadius()
+    {
+        return this.claimRadius;
+    }
+
+    /**
      * Open the associated BlockOut window for this building.
      * If the player is sneaking open the inventory else open the GUI directly.
+     *
      * @param shouldOpenInv if the player is sneaking.
      */
+    @Override
     public void openGui(final boolean shouldOpenInv)
     {
-        if(shouldOpenInv)
+        if (shouldOpenInv)
         {
             MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
         }
@@ -257,6 +329,7 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return BlockOut window.
      */
+    @Override
     @Nullable
     public Window getWindow()
     {
@@ -268,16 +341,39 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @param buf The buffer to read this view from.
      */
+    @Override
     public void deserialize(@NotNull final ByteBuf buf)
     {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
+        buildingDmPrioState = buf.readBoolean();
         workOrderLevel = buf.readInt();
         style = ByteBufUtils.readUTF8String(buf);
         schematicName = ByteBufUtils.readUTF8String(buf);
+        customName = ByteBufUtils.readUTF8String(buf);
+
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
+        claimRadius = buf.readInt();
+
+        final List<IToken<?>> list = new ArrayList<>();
+        final int resolverSize = buf.readInt();
+        for (int i = 0; i < resolverSize; i++)
+        {
+            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            if (compound != null)
+            {
+                list.add(StandardFactoryController.getInstance().deserialize(compound));
+            }
+        }
+
+        resolvers = ImmutableList.copyOf(list);
+        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        if (compound != null)
+        {
+            requesterId = StandardFactoryController.getInstance().deserialize(compound);
+        }
 
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
@@ -292,7 +388,8 @@ public abstract class AbstractBuildingView implements IRequester
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    private Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
+    @Override
+    public Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
     {
         return getDataStore().getOpenRequestsByCitizen();
     }
@@ -302,24 +399,26 @@ public abstract class AbstractBuildingView implements IRequester
         return getDataStore().getCitizensByRequest();
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<R> requestType)
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
+    @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenDataView data)
     {
         if (data == null || getColony() == null || getColony().getRequestManager() == null)
         {
-            return  ImmutableList.of();
+            return ImmutableList.of();
         }
 
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
@@ -329,15 +428,25 @@ public abstract class AbstractBuildingView implements IRequester
 
         final Collection<IToken<?>> list = getOpenRequestsByCitizen().get(data.getId());
 
-        if(list == null || list.isEmpty())
+        if (list == null || list.isEmpty())
         {
             return ImmutableList.of();
         }
 
         return ImmutableList.copyOf(list
-                .stream().filter(Objects::nonNull)
-                .map(getColony().getRequestManager()::getRequestForToken)
-                .filter(Objects::nonNull).iterator());
+                                      .stream().filter(Objects::nonNull)
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(Objects::nonNull).iterator());
+    }
+
+    @Override
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getOpenRequestsOfBuilding()
+    {
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
+                                      .filter(Objects::nonNull)
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(Objects::nonNull).iterator());
     }
 
     /**
@@ -345,20 +454,22 @@ public abstract class AbstractBuildingView implements IRequester
      *
      * @return ColonyView, client side interpretations of Colony.
      */
-    public ColonyView getColony()
+    @Override
+    public IColonyView getColony()
     {
         return colony;
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-                                                                                               @NotNull final CitizenDataView citizenData,
-                                                                                               final Class<R> requestType,
-                                                                                               final Predicate<IRequest<? extends R>> filter)
+      @NotNull final ICitizenDataView citizenData,
+      final Class<R> requestType,
+      final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -367,46 +478,55 @@ public abstract class AbstractBuildingView implements IRequester
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
-        //NOOP; Is Client side view.
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public ILocation getRequesterLocation()
-    {
-        //NOOP; Is Client side view.
-        return null;
+        return requesterId;
     }
 
     @NotNull
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //NOOP; Is Client side view.
+        final IRequest<?> request = manager.getRequestForToken(token);
+
+        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
     }
 
     @NotNull
     @Override
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //NOOP; Is Client side view.
+        final IRequest request = manager.getRequestForToken(token);
+
+        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
     }
 
     @NotNull
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest request = manager.getRequestForToken(token);
+
         try
         {
-            if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
+            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
                 return new TextComponentString("<UNKNOWN>");
             }
 
-            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
+            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
         }
         catch (final Exception ex)
         {
@@ -415,8 +535,55 @@ public abstract class AbstractBuildingView implements IRequester
         }
     }
 
+    /**
+     * Getter to get the location of this locatable.
+     *
+     * @return The location of the locatable.
+     */
+    @NotNull
+    @Override
+    public ILocation getLocation()
+    {
+        return new StaticLocation(this.getPosition(), colony.getDimension());
+    }
+
+    /**
+     * Get the delivery priority of the building.
+     *
+     * @return int, delivery priority.
+     */
+    @Override
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
+    }
+
+    /**
+     * Get the delivery priority state of the building.
+     *
+     * @return boolean, delivery priority state.
+     */
+    @Override
+    public boolean isBuildingDmPrioState()
+    {
+        return buildingDmPrioState;
+    }
+
+    @Override
+    public ImmutableCollection<IToken<?>> getResolverIds()
+    {
+        return resolvers;
+    }
+
+    /**
+     * Setter for the custom name.
+     * Sets the name on the client side and sends it to the server.
+     * @param name the new name.
+     */
+    @Override
+    public void setCustomName(final String name)
+    {
+        this.customName = name;
+        MineColonies.getNetwork().sendToServer(new HutRenameMessage(colony, name, this));
     }
 }

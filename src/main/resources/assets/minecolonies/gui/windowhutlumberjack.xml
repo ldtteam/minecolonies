@@ -3,21 +3,18 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
-        	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
+            <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
-        <view id="saplingActions" size="100% 100%">
+        <view id="saplings" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
+        </view>
+        <view id="settings" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)"/>
-            <list id="trees" size="164 151" pos="13 29">
-                <box size="100% 30" linewidth="2">
-                    <itemicon id="symbol" size="16 16" pos="5 2"/>
-                    <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
-                </box>
-            </list>
-            <button id="toggleAll" size="100 15" pos="45 185" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
-            <button id="saplingReplant" size="100 15" pos="45 203" label=""/>
+            <label id="desc" size="130 11" pos="70 15" color="black" label="$(com.minecolonies.coremod.gui.workerHuts.settings)"/>
+
+            <buttonimage id="saplingReplant" textcolor="black" size="86 17" pos="50 70" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="toggleRestriction" textcolor="black" size="86 17" pos="50 90" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="giveTool" textcolor="black" size="86 17" pos="50 110" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

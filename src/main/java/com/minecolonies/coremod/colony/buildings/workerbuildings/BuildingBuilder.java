@@ -1,22 +1,26 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +39,17 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER = "Builder";
+    private static final String BUILDER     = "Builder";
+
+    /**
+     * NBT tag to store if mobs already got purged.
+     */
+    private static final String TAG_PURGE_MOBS = "purgedMobs";
+
+    /**
+     * Check if the builder purged mobs already at this day.
+     */
+    private boolean purgedMobsToday = false;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -43,13 +57,13 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingBuilder(final Colony c, final BlockPos l)
+    public BuildingBuilder(final IColony c, final BlockPos l)
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     /**
@@ -83,6 +97,18 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.builder;
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        this.purgedMobsToday = false;
+    }
+
+    @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         //Only the chests and racks because he shouldn't fill up the furnaces.
@@ -90,6 +116,40 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         {
             addContainerPosition(pos);
         }
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
+        this.purgedMobsToday = compound.getBoolean(TAG_PURGE_MOBS);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        compound.setBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
+
+        return compound;
+    }
+
+    /**
+     * Set if mobs have been purged by this builder at his hut already today.
+     * @param purgedMobsToday true if so.
+     */
+    public void setPurgedMobsToday(final boolean purgedMobsToday)
+    {
+        this.purgedMobsToday = purgedMobsToday;
+    }
+
+    /**
+     * Check if the builder has purged the mobs already.
+     * @return true if so.
+     */
+    public boolean hasPurgedMobsToday()
+    {
+        return purgedMobsToday;
     }
 
     /**
@@ -100,7 +160,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobBuilder(citizen);
     }
@@ -120,17 +180,25 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final CitizenData citizen = getMainCitizen();
+        final ICitizenData citizen = getMainCitizen();
         if (citizen == null)
         {
             return;
         }
 
         final List<WorkOrderBuildDecoration> list = new ArrayList<>();
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getPosition()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class, getPosition()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
+
+        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        if (order != null)
+        {
+            citizen.getJob(JobBuilder.class).setWorkOrder(order);
+            order.setClaimedBy(citizen);
+            return;
+        }
 
         for (final WorkOrderBuildDecoration wo: list)
         {
@@ -141,7 +209,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 continue;
             }
 
-            for (@NotNull final CitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
+            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
             {
                 final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
 
@@ -186,7 +254,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

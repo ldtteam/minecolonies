@@ -1,15 +1,14 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -55,11 +54,11 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
     {
         if (isPlayerOpped(sender))
         {
-            colony.getCitizenManager().spawnCitizen(null, colony.getWorld(), true);
+            colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true);
         }
     }
 
@@ -100,8 +99,13 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     @Override
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+        final World world = player.getEntityWorld();
         return super.canPlayerUseCommand(player, theCommand, colonyId)
-                 && ColonyManager.getColonyByWorld(colonyId, world) != null && ColonyManager.getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
+                 && IColonyManager.getInstance().getColonyByWorld(colonyId, world) != null && (
+          IColonyManager.getInstance().getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER) || IColonyManager.getInstance()
+                                                                                                                                  .getColonyByWorld(colonyId, world)
+                                                                                                                                  .getPermissions()
+                                                                                                                                  .getRank(player)
+                                                                                                                                  .equals(Rank.OFFICER));
     }
 }

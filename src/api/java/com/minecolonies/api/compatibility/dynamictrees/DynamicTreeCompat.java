@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility.dynamictrees;
 
 import com.ferreusveritas.dynamictrees.blocks.BlockBranch;
 import com.ferreusveritas.dynamictrees.blocks.BlockDynamicLeaves;
+import com.ferreusveritas.dynamictrees.blocks.BlockTrunkShell;
 import com.ferreusveritas.dynamictrees.items.Seed;
 import com.ferreusveritas.dynamictrees.trees.TreeFamily;
 import com.minecolonies.api.util.Log;
@@ -108,6 +109,30 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     public static boolean isDynamicLeavesBlock(final Block block)
     {
         return instance.checkForDynamicLeavesBlock(block);
+    }
+
+    /**
+     * Check whether the block is a shell block.
+     *
+     * @param block the block to check
+     * @return true if it is a shell block.
+     */
+    @Override
+    @Optional.Method(modid = DYNAMIC_MODID)
+    protected boolean checkForDynamicTrunkShellBlock(final Block block)
+    {
+        return block instanceof BlockTrunkShell;
+    }
+
+    /**
+     * Check whether the block is a shell block.
+     *
+     * @param block the block to check
+     * @return true if it is a shell block.
+     */
+    public static boolean isDynamicTrunkShellBlock(final Block block)
+    {
+        return instance.checkForDynamicTrunkShellBlock(block);
     }
 
     /**

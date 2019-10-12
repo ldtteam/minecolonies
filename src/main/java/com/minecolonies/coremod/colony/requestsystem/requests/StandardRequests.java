@@ -1,15 +1,18 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,7 +27,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Spliterator;
@@ -83,16 +85,36 @@ public final class StandardRequests
          */
         private ImmutableList<ItemStack> displayList;
 
+        /**
+         * The Stacklist which is being requested.
+         */
+        private StackList stackList;
+
+        /**
+         * Constructor of the request.
+         * @param requester the requester.
+         * @param token the token assigned to this request.
+         * @param requested the request data.
+         */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
         {
             super(requester, token, requested);
-            displayList = ImmutableList.copyOf(requested.getStacks());
+            this.displayList = ImmutableList.copyOf(requested.getStacks());
+            this.stackList = requested;
         }
 
+        /**
+         * Constructor of the request.
+         * @param requester the requester.
+         * @param token the token assigned to this request.
+         * @param state the state of the request.
+         * @param requested the request data.
+         */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StackList requested)
         {
             super(requester, token, state, requested);
-            displayList = ImmutableList.copyOf(requested.getStacks());
+            this.displayList = ImmutableList.copyOf(requested.getStacks());
+            this.stackList = requested;
         }
 
         @NotNull
@@ -100,7 +122,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.LIST_REQUEST_DISPLAY_STRING));
+            result.appendSibling(new TextComponentTranslation(stackList.getDescription()));
             return result;
         }
 
@@ -131,21 +153,13 @@ public final class StandardRequests
             super(requester, token, state, requested);
         }
 
-        /**
-         * Method to get the ItemStack used for the getDelivery.
-         *
-         * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
-         */
-        @Nullable
+        @NotNull
         @Override
-        public ItemStack getDelivery()
+        public ImmutableList<ItemStack> getDeliveries()
         {
-            if (getResult() != null && !ItemStackUtils.isEmpty(getResult().getStack()))
-            {
-                return getResult().getStack();
-            }
-
-            return ItemStackUtils.EMPTY;
+            //This request type has no deliverable.
+            //It is the delivery.
+            return ImmutableList.of();
         }
 
         @NotNull
@@ -169,6 +183,130 @@ public final class StandardRequests
         public ResourceLocation getDisplayIcon()
         {
             return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
+        }
+    }
+
+	/**
+	 * An abstract implementation for crafting requests
+	 */
+    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
+    {
+
+        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final C requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected AbstractCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final C requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public final ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            final ITextComponent preType = new TextComponentTranslation(getTranslationKey());
+
+            result.appendSibling(preType);
+
+            preType.appendSibling(getRequest().getStack().getTextComponent());
+
+            return result;
+        }
+
+        protected abstract String getTranslationKey();
+
+        @NotNull
+        @Override
+        public final List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public final ResourceLocation getDisplayIcon()
+        {
+            return new ResourceLocation(getDisplayIconFile());
+        }
+
+        protected abstract String getDisplayIconFile();
+
+    }
+
+	/**
+	 * The crafting request for private crafting of a citizen
+	 */
+    public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting>
+    {
+
+        protected PrivateCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final PrivateCrafting requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected PrivateCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state, @NotNull final PrivateCrafting requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @Override
+        protected String getTranslationKey()
+        {
+            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+        }
+
+        @Override
+        protected String getDisplayIconFile()
+        {
+            return "minecolonies:textures/gui/citizen/crafting_public.png";
+        }
+    }
+
+	/**
+	 * The public crafting requests, used for workers that perform crafting
+	 */
+    public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting>
+    {
+
+        protected PublicCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final PublicCrafting requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected PublicCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state, @NotNull final PublicCrafting requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @Override
+        protected String getTranslationKey()
+        {
+            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+        }
+
+        @Override
+        protected String getDisplayIconFile()
+        {
+            return "minecolonies:textures/gui/citizen/crafting_public.png";
         }
     }
 
@@ -196,29 +334,29 @@ public final class StandardRequests
 
             result.appendSibling(preType);
 
-            preType.appendSibling(getRequest().getToolClass().getDisplayName());
+            result.appendSibling(getRequest().getToolClass().getDisplayName());
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
-                preType.appendText(" ");
-                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
-                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
+                result.appendText(" ");
+                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
             {
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
-                    preType.appendText(" ");
-                    preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                    result.appendText(" ");
+                    result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
-                preType.appendText(" ");
-                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
-                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
+                result.appendText(" ");
+                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
 
-            return preType;
+            return result;
         }
 
         @NotNull
@@ -342,7 +480,7 @@ public final class StandardRequests
                                 Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
                             }
 
-                            return stacks.stream().filter(ColonyManager.getCompatibilityManager()::isOre);
+                            return stacks.stream().filter(IColonyManager.getInstance().getCompatibilityManager()::isOre);
                         }).collect(Collectors.toList()));
             }
             return oreExamples;

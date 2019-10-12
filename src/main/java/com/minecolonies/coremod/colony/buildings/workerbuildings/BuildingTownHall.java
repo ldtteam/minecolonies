@@ -1,11 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.permissions.PermissionEvent;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +26,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT
 /**
  * Class used to manage the townHall building block.
  */
-public class BuildingTownHall extends BuildingHome
+public class BuildingTownHall extends AbstractBuilding implements ITownHall
 {
     /**
      * Description of the block used to set this block.
@@ -42,7 +49,7 @@ public class BuildingTownHall extends BuildingHome
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingTownHall(final Colony c, final BlockPos l)
+    public BuildingTownHall(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -75,11 +82,18 @@ public class BuildingTownHall extends BuildingHome
         }
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.townHall;
+    }
+
     /**
      * Add a colony permission event to the colony.
      * Reduce the list by one if bigger than a treshhold.
      * @param event the event to add.
      */
+    @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
         if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
@@ -98,6 +112,7 @@ public class BuildingTownHall extends BuildingHome
     {
         super.serializeToView(buf);
 
+        buf.writeBoolean(Configurations.gameplay.canPlayerUseColonyTPCommand);
         buf.writeInt(permissionEvents.size());
         for(final PermissionEvent event: permissionEvents)
         {
@@ -105,10 +120,26 @@ public class BuildingTownHall extends BuildingHome
         }
     }
 
+    @Override
+    public int getClaimRadius(final int newLevel)
+    {
+        if (newLevel + 1 < Configurations.gameplay.minTownHallPadding)
+        {
+            return Configurations.gameplay.minTownHallPadding;
+        }
+        return newLevel + 1;
+    }
+
+    @Override
+    public boolean canBeGathered()
+    {
+        return false;
+    }
+
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends BuildingHome.View
+    public static class View extends AbstractBuildingView implements ITownHallView
     {
         /**
          * List of permission events of the colony.
@@ -116,12 +147,17 @@ public class BuildingTownHall extends BuildingHome
         private final List<PermissionEvent> permissionEvents = new LinkedList();
 
         /**
+         * If the player is allowed to do townHall teleport.
+         */
+        private boolean canPlayerUseTP = false;
+
+        /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -138,6 +174,7 @@ public class BuildingTownHall extends BuildingHome
         {
             super.deserialize(buf);
 
+            canPlayerUseTP = buf.readBoolean();
             final int size = buf.readInt();
             for(int i = 0; i < size; i++)
             {
@@ -149,9 +186,20 @@ public class BuildingTownHall extends BuildingHome
          * Get a list of permission events.
          * @return a copy of the list of events.
          */
+        @Override
         public List<PermissionEvent> getPermissionEvents()
         {
             return new LinkedList<>(permissionEvents);
+        }
+
+        /**
+         * Check if the player can use the teleport command.
+         * @return true if so.
+         */
+        @Override
+        public boolean canPlayerUseTP()
+        {
+            return canPlayerUseTP;
         }
     }
 }

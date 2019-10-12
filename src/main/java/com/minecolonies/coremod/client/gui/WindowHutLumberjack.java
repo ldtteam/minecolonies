@@ -1,83 +1,62 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ItemIcon;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.SwitchView;
+import com.minecolonies.blockout.controls.ButtonImage;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.network.messages.LumberjackScepterMessage;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
-import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
+import com.minecolonies.coremod.network.messages.LumberjackRestrictionToggleMessage;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 
 /**
- * Window for the fisherman hut.
+ * Window for the lumberjack hut.
  */
-public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLumberjack.View>
+public class WindowHutLumberjack extends AbstractHutFilterableLists
 {
-    /**
-     * Id of the list in the pane.
-     */
-    private static final String LIST_SAPLINGS = "trees";
-
-    /**
-     * Page the sapling selector is at.
-     */
-    private static final String PAGE_SAPLINGS = "saplingActions";
-
-    /**
-     * Id of the button to change between true and false of the sapling.
-     */
-    private static final String BUTTON_CURRENT_SAPLING = "switch";
-
-    /**
-     * Id of the button to switch all buttons.
-     */
-    private static final String BUTTON_TOGGLE_ALL = "toggleAll";
-
     /**
      * Id of the button to toggle replant of saplings
      */
     private static final String BUTTON_TOGGLE_REPLANT = "saplingReplant";
 
     /**
-     * String describing on for the gui.
+     * Id of the button to give tool
      */
-    private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    private static final String BUTTON_GIVE_TOOL = "giveTool";
 
     /**
-     * String describing off for the gui.
+     * Id of the button to toggle restrict
      */
-    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    private static final String BUTTON_TOGGLE_RESTRICTION = "toggleRestriction";
 
     /**
-     * Id of the pages view.
+     * View containing the list.
      */
-    private static final String VIEW_PAGES = "pages";
+    private static final String PAGE_ITEMS_VIEW = "saplings";
+
     /**
-     * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
+     * The resource string.
      */
-    private final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
+    private static final String RESOURCE_STRING = ":gui/windowhutlumberjack.xml";
+
     /**
      * The building of the lumberjack (Client side representation).
      */
     private final BuildingLumberjack.View ownBuilding;
-    /**
-     * Scrolling list containing the saplings.
-     */
-    private ScrollingList saplingsList;
 
     /**
      * Constructor for the window of the lumberjack.
@@ -86,81 +65,105 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutLumberjack.xml");
+        super(building, Constants.MOD_ID + RESOURCE_STRING);
+
+        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
+          this,
+          building,
+          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.saplingList"),
+          PAGE_ITEMS_VIEW,
+          true);
+        views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
-        pullLevelsFromHut();
+
+        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
+        registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
+        registerButton(BUTTON_GIVE_TOOL, this::giveTool);
+
+
+        setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
+        setupRestrictionButton(findPaneOfTypeByID(BUTTON_TOGGLE_RESTRICTION, Button.class));
+        setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
+
+
     }
 
+    private void giveTool()
+    {
+        givePlayerScepter();
+    }
+
+    /**
+     * Send message to player to add scepter to his inventory.
+     *
+     */
+    private void givePlayerScepter()
+    {
+        MineColonies.getNetwork().sendToServer(new LumberjackScepterMessage(building.getID(), building.getColony().getID()));
+    }
+
+    @Override
+    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
+    {
+        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+    }
+
+    /**
+     * Setup replant button with correct string.
+     *
+     * @param button the button to setup.
+     */
+    private void setupReplantButton(final Button button)
+    {
+        if (ownBuilding.shouldReplant)
+        {
+            button.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
+        }
+    }
+
+    /**
+     * Setup giveTool button with correct string.
+     *
+     * @param button the button to setup.
+     */
+    private void setupGiveToolButton(final Button button)
+    {
+        // TODO: Use localisation when this has proper UI
+        button.setLabel(LanguageHandler.format("Give tool"));
+    }
+
+    /**
+     * Setup toggleRestriction button with correct string.
+     *
+     * @param button the button to setup.
+     */
+    private void setupRestrictionButton(final Button button)
+    {
+        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon" : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff" ));
+    }
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
      */
-    private void switchReplant()
+    private void switchReplant(final Button replant)
     {
         ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
-        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, ownBuilding.shouldReplant));
-        updateReplantButton();
-    }
-
-    private void updateReplantButton()
-    {
-        final Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
-
-        if (ownBuilding.shouldReplant)
-        {
-            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
-        }
-        else
-        {
-            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
-        }
+        setupReplantButton(replant);
+        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, ownBuilding.shouldReplant));
     }
 
     /**
-     * Retrieve levels from the building to display in GUI.
+     * Method to send the message to switch the toggle to the server, then updates button
      */
-    private void pullLevelsFromHut()
+    private void toggleRestriction(final Button restriction)
     {
-        if (building.getColony().getBuilding(building.getID()) != null)
-        {
-            treesToFell.clear();
-            treesToFell.putAll(building.treesToFell);
-        }
-    }
-
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-        updateReplantButton();
-        saplingsList = findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class);
-        saplingsList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return treesToFell.size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final ItemStack sapling = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[index].getItemStack();
-                rowPane.findPaneOfTypeByID("symbol", ItemIcon.class).setItem(sapling);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(sapling.getDisplayName());
-
-                final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_CURRENT_SAPLING, Button.class);
-
-                if (treesToFell.containsKey(new ItemStorage(sapling)) && treesToFell.get(new ItemStorage(sapling)))
-                {
-                    switchButton.setLabel(ON);
-                }
-                else
-                {
-                    switchButton.setLabel(OFF);
-                }
-            }
-        });
+        ownBuilding.shouldRestrict = !ownBuilding.shouldRestrict;
+        setupRestrictionButton(restriction);
+        MineColonies.getNetwork().sendToServer(new LumberjackRestrictionToggleMessage(ownBuilding, ownBuilding.shouldRestrict));
     }
 
     /**
@@ -173,63 +176,6 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     public String getBuildingName()
     {
         return COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK;
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_SAPLINGS))
-        {
-            pullLevelsFromHut();
-            window.findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class).refreshElementPanes();
-        }
-    }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_CURRENT_SAPLING:
-                final int row = saplingsList.getListElementIndexByPane(button);
-                final ItemStorage saplingStack = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[row];
-                final boolean shouldCut = !treesToFell.get(saplingStack);
-                
-                treesToFell.put(saplingStack, shouldCut);
-                MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack.getItemStack(), shouldCut));
-
-                this.ownBuilding.treesToFell.clear();
-                this.ownBuilding.treesToFell.putAll(treesToFell);
-                break;
-            case BUTTON_TOGGLE_ALL:
-                final boolean on = button.getLabel().equals(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
-
-                if (on)
-                {
-                    button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_OFF));
-                }
-                else
-                {
-                    button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
-                }
-
-                for (final Map.Entry<ItemStorage, Boolean> entry : new HashSet<Map.Entry<ItemStorage, Boolean>>(treesToFell.entrySet()))
-                {
-                    treesToFell.put(entry.getKey(), on);
-                }
-                this.ownBuilding.treesToFell.clear();
-                this.ownBuilding.treesToFell.putAll(treesToFell);
-                break;
-            case BUTTON_TOGGLE_REPLANT:
-                switchReplant();
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
     }
 }
 

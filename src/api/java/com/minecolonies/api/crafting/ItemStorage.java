@@ -192,7 +192,9 @@ public class ItemStorage
 
         return stack.isItemEqual(that.getItemStack())
                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
-                && (this.shouldIgnoreNBTValue || that.getItemStack().getTagCompound() == this.getItemStack().getTagCompound());
+                && (this.shouldIgnoreNBTValue
+                      || (that.getItemStack().getTagCompound() == null && this.getItemStack().getTagCompound() == null)
+                      || that.getItemStack().getTagCompound().equals(this.getItemStack().getTagCompound()));
     }
 
     /**

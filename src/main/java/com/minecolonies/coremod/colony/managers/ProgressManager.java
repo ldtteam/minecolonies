@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyProgressType;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.managers.interfaces.IProgressManager;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -73,6 +73,10 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FIRST_CITIZEN_SPAWNED);
         }
+        else if (total == 4)
+        {
+            trigger(FOUR_CITIZENS_SPAWNED);
+        }
         else if (total == 5)
         {
             trigger(FIVE_CITIZENS_SPAWNED);
@@ -100,7 +104,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void progressWorkOrderPlacement(final AbstractWorkOrder workOrder)
+    public void progressWorkOrderPlacement(final IWorkOrder workOrder)
     {
         if (workOrder instanceof WorkOrderBuildBuilding && ((WorkOrderBuildBuilding) workOrder).getStructureName().contains("Builder"))
         {
@@ -109,7 +113,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void progressBuildBuilding(final AbstractBuilding building, final int totalLevels, final int totalHousing)
+    public void progressBuildBuilding(final IBuilding building, final int totalLevels, final int totalHousing)
     {
         if (building instanceof BuildingBuilder)
         {

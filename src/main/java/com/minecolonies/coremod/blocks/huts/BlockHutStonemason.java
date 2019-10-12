@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,12 +11,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
 {
-    public BlockHutStonemason()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()
@@ -22,4 +18,9 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
         return "blockHutStonemason";
     }
 
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.stoneMason;
+    }
 }

@@ -1,31 +1,37 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.*;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
  * AI class for the builder.
@@ -91,12 +97,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Max distance to placing block.
      */
-    private static final int MAX_DISTANCE = 5;
+    private static final int MAX_DISTANCE = 10;
 
     /**
      * After which distance the builder has to recalculate his position.
      */
-    private static final double ACCEPTANCE_DISTANCE = 12;
+    private static final double ACCEPTANCE_DISTANCE = 20;
+
+    /**
+     * Building level to purge mobs at the build site.
+     */
+    private static final int LEVEL_TO_PURGE_MOBS    = 4;
 
     /**
      * The id in the list of the last picked up item.
@@ -112,10 +123,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(this::checkIfExecute, true, this::getState),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PICK_UP, false, this::pickUpMaterial)
+          new AITarget(IDLE, START_WORKING, 100),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100),
+          new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
@@ -123,7 +133,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public AIState getStateAfterPickUp()
+    public IAIState getStateAfterPickUp()
     {
         return PICK_UP;
     }
@@ -132,10 +142,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * State to pick up material before going back to work.
      * @return the next state to go to.
      */
-    public AIState pickUpMaterial()
+    public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
-        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
+        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>();
+        for (final BuildingBuilderResource stack : building.getNeededResources().values())
+        {
+            neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
+        }
+
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) <= MIN_OPEN_SLOTS)
         {
             pickUpCount = 0;
@@ -144,7 +159,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
-        return GATHERING_REQUIRED_MATERIALS;
+
+        if (currentStructure == null)
+        {
+            return IDLE;
+        }
+
+        if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
+        {
+            needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
+        }
+
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
+        {
+            return getState();
+        }
+        else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
+        {
+            return GATHERING_REQUIRED_MATERIALS;
+        }
+
+        return pickUpMaterial();
     }
 
     @Override
@@ -153,14 +188,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return BuildingBuilder.class;
     }
 
-    private boolean checkIfExecute()
+    /**
+     * Checks if we got a valid workorder.
+     *
+     * @return true if we got a workorder to work with
+     */
+    private boolean checkForWorkOrder()
     {
-        setDelay(1);
-
         if (!job.hasWorkOrder())
         {
             getOwnBuilding(AbstractBuildingStructureBuilder.class).searchWorkOrder();
-            return true;
+            return false;
         }
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
@@ -168,14 +206,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
-            return true;
+            return false;
         }
 
-        final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
-            return true;
+            return false;
         }
 
         if (!job.hasStructure())
@@ -183,11 +221,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             super.initiate();
         }
 
-        return false;
+        return true;
     }
 
     @Override
-    public AIState switchStage(final AIState state)
+    public IAIState switchStage(final IAIState state)
     {
         if (job.getWorkOrder() instanceof WorkOrderBuildRemoval && state.equals(BUILDING_STEP))
         {
@@ -196,8 +234,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return super.switchStage(state);
     }
 
-
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {
@@ -206,14 +243,40 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return START_BUILDING;
     }
 
+    /**
+     * Kill all mobs at the building site.
+     */
+    private void killMobs()
+    {
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
+        {
+            final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
+            final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
+            if (building != null)
+            {
+                world.getEntitiesWithinAABB(EntityMob.class, building.getTargetableArea(world)).forEach(Entity::setDead);
+            }
+        }
+    }
+
     @Override
-    public AIState afterRequestPickUp()
+    public void checkForExtraBuildingActions()
+    {
+        if (!getOwnBuilding(BuildingBuilder.class).hasPurgedMobsToday())
+        {
+            killMobs();
+            getOwnBuilding(BuildingBuilder.class).setPurgedMobsToday(true);
+        }
+    }
+
+    @Override
+    public IAIState afterRequestPickUp()
     {
         return INVENTORY_FULL;
     }
 
     @Override
-    public AIState afterDump()
+    public IAIState afterDump()
     {
         return PICK_UP;
     }
@@ -269,7 +332,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
+        final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {
@@ -299,7 +362,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final int initialDelay = super.getBlockMiningDelay(block, pos);
 
-        if (pos.getY() > DEPTH_LEVEL_0)
+        if (pos.getY() > DEPTH_LEVEL_0 || !Configurations.gameplay.restrictBuilderUnderground)
         {
             return (int) (initialDelay * SPEED_BUFF_0);
         }

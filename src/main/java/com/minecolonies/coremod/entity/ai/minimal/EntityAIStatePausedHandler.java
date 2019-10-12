@@ -1,67 +1,60 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.entity.EntityCitizen;
-
-import java.util.Random;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
- * Static class for handling AI in paused state
+ * Class for handling AI in paused state
  */
 public final class EntityAIStatePausedHandler
 {
-    private static Random                 random = new Random();
-
     /**
      * The worker which is paused
      */
-    private static EntityCitizen          worker;
-    private static AbstractBuildingWorker building;
+    private final AbstractEntityCitizen worker;
+    private final IBuildingWorker       building;
 
     /**
      * Wander AI task if worker paused
      */
-    private static EntityAICitizenWander  wander;
-    private static final double           RANDOM_MODIFIER = 1.0D / 30.0D;
+    private EntityAICitizenWander         wander;
+    private static final double           RANDOM_MODIFIER = 1.0D / 40.0D;
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private EntityAIStatePausedHandler()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    /**
-     * Class constructor
+     * Create a new state paused handler
      * 
      * @param w paused worker
      * @param b his building
      */
-    @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition","PMD.EmptyIfStmt"})
-    public static void doPause(final EntityCitizen w, final AbstractBuildingWorker b)
+    public EntityAIStatePausedHandler(final AbstractEntityCitizen w, final IBuildingWorker b)
     {
-        worker = w;
-        building = b;
-        wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
+        this.worker = w;
+        this.building = b;
+    }
 
+    /**
+     * Proceed pausing <br>
+     * If walking keeps walking <br>
+     * Else pick a new activity
+     */
+    @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition","PMD.EmptyIfStmt"})
+    public void doPause()
+    {
         // Jump out if walking.
-        if (wander.shouldContinueExecuting())
+        if (wander != null && wander.shouldContinueExecuting())
         {
             return;
         }
 
         // Pick random activity. TODO: add also random near building picker
-        final int percent = random.nextInt(100);
+        final int percent = worker.getRNG().nextInt(100);
         if(percent < 8)
         {
             goCheckOwnWorkerBuilding();
         }
-        else if (percent < 40)
+        else if (percent < 35)
         {
             wanderAround();
         }
@@ -74,7 +67,7 @@ public final class EntityAIStatePausedHandler
     /**
      * I should look at the work of others.
      */
-    private static void wanderAround()
+    private void wanderAround()
     {
         wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
         if (wander.shouldExecute())
@@ -86,9 +79,9 @@ public final class EntityAIStatePausedHandler
     /**
      * Somebody is tricking my chest!
      */
-    private static void goCheckOwnWorkerBuilding()
+    private void goCheckOwnWorkerBuilding()
     {
-        wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
+        wander = new EntityAICitizenCheckWorkerBuilding(worker, (worker.getRNG().nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
         if (wander.shouldExecute())
         {
             wander.startExecuting();

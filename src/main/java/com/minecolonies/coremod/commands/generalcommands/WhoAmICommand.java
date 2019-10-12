@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -31,7 +31,7 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
     /**
      * Player description string.
      */
-    public static final String TELL_HIM = "You are %s, your colony is %s at position %s";
+    public static final String TELL_HIM = "You are %s, your colony is %s, with ID:%d at position %s";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -70,12 +70,12 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
             return;
         }
 
-        final IColony colony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
         final BlockPos pos = colony.getCenter();
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getFormattedText();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        sender.sendMessage(new TextComponentString(String.format(TELL_HIM, playerName, colonyName, posString)));
+        sender.sendMessage(new TextComponentString(String.format(TELL_HIM, playerName, colonyName, colony.getID(), posString)));
     }
 
     @NotNull

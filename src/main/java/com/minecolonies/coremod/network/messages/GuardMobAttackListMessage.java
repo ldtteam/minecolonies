@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -77,11 +78,11 @@ public class GuardMobAttackListMessage extends AbstractMessage<GuardMobAttackLis
     @Override
     protected void messageOnClientThread(final GuardMobAttackListMessage message, final MessageContext ctx)
     {
-        final ColonyView colonyView = ColonyManager.getColonyView(message.colonyId);
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(message.colonyId, Minecraft.getMinecraft().world.provider.getDimension());
 
-        if (colonyView != null)
+        if (IColonyView != null)
         {
-            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) colonyView.getBuilding(message.buildingId);
+            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) IColonyView.getBuilding(message.buildingId);
 
             if (buildingView != null)
             {

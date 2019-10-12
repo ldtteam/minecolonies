@@ -1,18 +1,23 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.api.util.BlockPosUtil;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
@@ -20,7 +25,9 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
  */
 public class WorkOrderBuildDecoration extends AbstractWorkOrder
 {
-    private static final String TAG_BUILDING       = "building";
+    /**
+     * NBT Tags for storage.
+     */
     private static final String TAG_WORKORDER_NAME = "workOrderName";
     private static final String TAG_IS_CLEARED     = "cleared";
     private static final String TAG_IS_REQUESTED   = "requested";
@@ -29,17 +36,18 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
+    private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
     protected boolean  isBuildingMirrored;
-    protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
     protected String   md5;
     protected boolean  cleared;
     protected String   workOrderName;
-
+    protected int      amountOfRes;
+    protected boolean levelUp = false;
     protected boolean hasSentMessageForThisWorkOrder = false;
-    private boolean requested;
+    private   boolean requested;
 
     /**
      * Unused constructor for reflection.
@@ -73,6 +81,14 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
+     * Make a decoration level up with this.
+     */
+    public void setLevelUp()
+    {
+        this.levelUp = true;
+    }
+
+    /**
      * Get the name of the work order.
      *
      * @return the work order name
@@ -88,10 +104,9 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final IWorkManager manager)
     {
-        super.readFromNBT(compound);
-        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        super.readFromNBT(compound, manager);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
@@ -115,6 +130,8 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        amountOfRes = compound.getInteger(TAG_AMOUNT_OF_RES);
+        levelUp = compound.getBoolean(TAG_LEVEL);
     }
 
     /**
@@ -126,7 +143,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
         if (workOrderName != null)
         {
             compound.setString(TAG_WORKORDER_NAME, workOrderName);
@@ -147,10 +163,12 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
         compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
+        compound.setInteger(TAG_AMOUNT_OF_RES, amountOfRes);
+        compound.setBoolean(TAG_LEVEL, levelUp);
     }
 
     @Override
-    public boolean isValid(final Colony colony)
+    public boolean isValid(final IColony colony)
     {
         return true;
     }
@@ -166,7 +184,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @return true if he is able to.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected boolean canBuild(@NotNull final CitizenData citizen)
+    protected boolean canBuild(@NotNull final ICitizenData citizen)
     {
         return true;
     }
@@ -209,7 +227,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onAdded(final Colony colony, final boolean readingFromNbt)
+    public void onAdded(final IColony colony, final boolean readingFromNbt)
     {
         super.onAdded(colony, readingFromNbt);
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
@@ -219,7 +237,22 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onRemoved(final Colony colony)
+    public void onCompleted(final IColony colony)
+    {
+        super.onCompleted(colony);
+
+        if (this.levelUp)
+        {
+            final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
+            if (tileEntity instanceof TileEntityDecorationController)
+            {
+                ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
+            }
+        }
+    }
+
+    @Override
+    public void onRemoved(final IColony colony)
     {
         super.onRemoved(colony);
         ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
@@ -309,5 +342,23 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public boolean isMirrored()
     {
         return isBuildingMirrored;
+    }
+
+    /**
+     * Set the amount of resources this building requires.
+     * @param amountOfRes the amount.
+     */
+    public void setAmountOfRes(final int amountOfRes)
+    {
+        this.amountOfRes = amountOfRes;
+    }
+
+    /**
+     * Amount of resources this building requires.
+     * @return the amount.
+     */
+    public int getAmountOfRes()
+    {
+        return amountOfRes;
     }
 }

@@ -18,10 +18,8 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
@@ -93,7 +91,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
-        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getToken() != getCurrentlyBeingReassignedRequest()
+        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getId() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
     }
 
@@ -107,14 +105,14 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
-        delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
-        assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
+        delays.put(request.getId(), getMaximalDelayBetweenRetriesInTicks());
+        assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
     }
 
     @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
     {
         //Gets never called, since these will never get completed, only overruled or reassigned.
         return null;
@@ -124,10 +122,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        if (assignedRequests.containsKey(request.getToken()))
+        if (assignedRequests.containsKey(request.getId()))
         {
-            delays.remove(request.getToken());
-            assignedRequests.remove(request.getToken());
+            delays.remove(request.getId());
+            assignedRequests.remove(request.getId());
         }
 
         //No further processing needed.
@@ -182,7 +180,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
             assignedRequests.put(t, ++currentAttempt);
 
-            if (resultingResolver != null && !resultingResolver.equals(getRequesterId()))
+            if (resultingResolver != null && !resultingResolver.equals(getId()))
             {
                 assignedRequests.remove(t);
                 delays.remove(t);
@@ -217,14 +215,14 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return id;
     }
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
         return location;
     }
@@ -265,5 +263,23 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public Map<IToken<?>, Integer> getAssignedRequests()
     {
         return assignedRequests;
+    }
+
+    @Override
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        new ArrayList<>(assignedRequests.keySet()).stream()
+                .map(manager::getRequestForToken)
+                .filter(shouldTriggerReassign)
+                .filter(Objects::nonNull)
+                .forEach(request ->
+                {
+                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+
+                    if (newResolverToken != getId())
+                    {
+                        assignedRequests.remove(request.getId());
+                    }
+                });
     }
 }

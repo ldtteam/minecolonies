@@ -53,7 +53,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param primaryOutput   the primary output of the recipe.
      * @param intermediate    the intermediate to use (e.g furnace).
      */
-    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -80,7 +80,7 @@ public class RecipeStorage implements IRecipeStorage
                 continue;
             }
 
-            ItemStorage storage = new ItemStorage(stack);
+            ItemStorage storage = new ItemStorage(stack.copy());
             if(items.contains(storage))
             {
                 final int index = items.indexOf(storage);
@@ -93,6 +93,7 @@ public class RecipeStorage implements IRecipeStorage
         return items;
     }
 
+    @NotNull
     @Override
     public ItemStack getPrimaryOutput()
     {
@@ -209,6 +210,7 @@ public class RecipeStorage implements IRecipeStorage
                 secondaryStacks.add(container);
             }
         }
+        secondaryStacks.add(getPrimaryOutput());
         if(secondaryStacks.size() > getInput().size())
         {
             int freeSpace = 0;
@@ -217,10 +219,7 @@ public class RecipeStorage implements IRecipeStorage
                 freeSpace+= handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
             }
 
-            if(freeSpace < secondaryStacks.size() - getInput().size())
-            {
-                return false;
-            }
+            return freeSpace >= secondaryStacks.size() - getInput().size();
         }
         return true;
     }
@@ -233,29 +232,44 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }
 
-        for (final ItemStack stack : input)
+        for (final ItemStorage stack : getCleanedInput())
         {
-            int amountNeeded = ItemStackUtils.getSize(stack);
+            int amountNeeded = stack.getAmount();
+
+            if (amountNeeded == 0)
+            {
+                break;
+            }
+
             for (final IItemHandler handler : handlers)
             {
-                final int slotOfStack = InventoryUtils.
-                        findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
+                int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
-                while (slotOfStack != -1)
+                while (slotOfStack != -1 && amountNeeded > 0)
                 {
                     final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
-                    handler.extractItem(slotOfStack, amountNeeded, false);
+                    final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false).copy();
+                    slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
-                    if (count >= amountNeeded)
+                    //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
+                    //Deletes some items, but hey.
+                    if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
                     {
-                        break;
+                        return false;
                     }
+
                     amountNeeded -= count;
+                }
+
+                // stop looping handlers if we have what we need
+                if (amountNeeded <= 0)
+                {
+                    break;
                 }
             }
         }

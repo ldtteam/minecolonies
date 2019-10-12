@@ -1,19 +1,28 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -39,12 +48,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
      * @param c the colony.
      * @param l the location
      */
-    public BuildingCook(final Colony c, final BlockPos l)
+    public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(ItemStackUtils.ISFOOD, STACKSIZE);
-        keepX.put(ItemStackUtils.ISCOOKABLE, STACKSIZE);
-        keepX.put(TileEntityFurnace::isItemFuel, STACKSIZE);
+        keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
+        keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
+        keepX.put(TileEntityFurnace::isItemFuel, new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
@@ -62,7 +71,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobCook(citizen);
     }
@@ -86,10 +95,50 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return true;
     }
 
+    @Override
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    {
+        if (stack.isEmpty())
+        {
+            return 0;
+        }
+
+        if (ISFOOD.test(stack) && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        {
+            final ItemStorage kept = new ItemStorage(stack);
+            if (localAlreadyKept.contains(kept))
+            {
+                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+            }
+            localAlreadyKept.add(kept);
+            return 0;
+        }
+
+        final Predicate<ItemStack> allowedFuel = theStack -> getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(theStack));
+        if (allowedFuel.test(stack) && localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        {
+            final ItemStorage kept = new ItemStorage(stack);
+            if (localAlreadyKept.contains(kept))
+            {
+                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+            }
+            localAlreadyKept.add(kept);
+            return 0;
+        }
+
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.cook;
+    }
+
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the cook view.
@@ -97,7 +146,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -106,7 +155,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, COOK_DESC);
+            return new WindowHutCook(this);
         }
 
         @NotNull

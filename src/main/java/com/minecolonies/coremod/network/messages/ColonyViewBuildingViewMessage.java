@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +20,11 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     private ByteBuf  buildingData;
 
     /**
+     * Dimension of the colony.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewBuildingViewMessage()
@@ -32,12 +37,14 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
      *
      * @param building AbstractBuilding to add or update a view.
      */
-    public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
+    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.buildingData = Unpooled.buffer();
         building.serializeToView(this.buildingData);
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -45,6 +52,7 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
+        dimension = buf.readInt();
         buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());
     }
@@ -54,12 +62,13 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(dimension);
         buf.writeBytes(buildingData);
     }
 
     @Override
     protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
+        IColonyManager.getInstance().handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, message.dimension);
     }
 }

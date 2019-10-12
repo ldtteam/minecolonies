@@ -1,12 +1,15 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
             <label size="164 11" pos="13 32" color="black" textalign="MIDDLE"
+                label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints.current):"/>
+            <label id="current" size="164 11" pos="13 43" color="black" textalign="MIDDLE"/>
+            <label size="164 11" pos="13 54" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints):"/>
-            <list id="positions" size="164 66" pos="13 43">
+            <list id="positions" size="164 45" pos="13 65">
                 <box size="100% 11" linewidth="1">
                     <label id="pos" size="100% 11" color="black"/>
                 </box>

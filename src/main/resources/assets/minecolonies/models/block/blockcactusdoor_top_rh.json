@@ -1,7 +1,0 @@
-{
-    "parent": "block/door_top_rh",
-    "textures": {
-        "bottom": "minecolonies:blocks/door_cactus_lower",
-        "top": "minecolonies:blocks/door_cactus_upper"
-    }
-}

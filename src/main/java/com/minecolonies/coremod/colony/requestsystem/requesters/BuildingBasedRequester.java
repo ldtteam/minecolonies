@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.colony.requestsystem.requesters;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -51,21 +51,21 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
-        compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
-        compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(getLocation()));
+        compound.setTag(NBT_ID, controller.serialize(getId()));
 
         return compound;
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return requesterId;
     }
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
         return location;
     }
@@ -95,13 +95,6 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         updateBuilding();
         return Optional.ofNullable(building);
     }
-
-    @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
-    {
-        updateBuilding();
-        return Optional.ofNullable(building);
-    }
     
     private void updateBuilding()
     {
@@ -111,7 +104,7 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         }
 
         final World world = MineColonies.proxy.getWorld(location.getDimension());
-        final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
+        final IColony colony = IColonyManager.getInstance().getClosestIColony(world, location.getInDimensionLocation());
 
         if (colony == null)
         {

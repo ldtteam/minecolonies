@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
@@ -13,8 +13,8 @@
 
             <label size="164 11" pos="13 29" id="constructionName" textalign="MIDDLE" label="" color="black"/>
             <label size="164 11" pos="13 40" id="constructionPos" textalign="MIDDLE" label="" color="black"/>
-
-            <list id="resources" size="164 163" pos="13 51">
+            <label size="164 11" pos="13 51" id="progress" textalign="MIDDLE" label="" color="black"/>
+            <list id="resources" size="164 163" pos="13 62">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
                     <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>

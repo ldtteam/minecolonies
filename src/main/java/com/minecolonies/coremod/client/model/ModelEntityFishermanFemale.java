@@ -167,14 +167,14 @@ public class ModelEntityFishermanFemale extends ModelBiped
         setRotation(bipedBody, 0F, 0F, 0F);
 
         rightBoot = new ModelRenderer(this, 20, 102);
-        rightBoot.addBox(-2.7F, 4F, -2.5F, 5, 2, 5);
+        rightBoot.addBox(-0.5F, -7F, -2.5F, 5, 2, 5);
         rightBoot.setRotationPoint(-2F, 12F, 0F);
         rightBoot.setTextureSize(256, 128);
         rightBoot.mirror = true;
         setRotation(rightBoot, 0F, 0F, 0F);
 
         leftBoot = new ModelRenderer(this, 0, 102);
-        leftBoot.addBox(-2.3F, 4F, -2.49F, 5, 2, 5);
+        leftBoot.addBox(-4.5F, -7F, -2.5F, 5, 2, 5);
         leftBoot.setRotationPoint(2F, 12F, 0F);
         leftBoot.setTextureSize(256, 128);
         leftBoot.mirror = true;
@@ -251,6 +251,37 @@ public class ModelEntityFishermanFemale extends ModelBiped
         setRotation(hairBack9, 0F, 0F, 0F);
 
         bipedHeadwear.isHidden = true;
+
+        bipedBody.addChild(string);
+        bipedBody.addChild(string2);
+
+        bipedBody.addChild(hookTie1);
+        bipedBody.addChild(hookTie2);
+        bipedBody.addChild(hookTie3);
+
+        bipedBody.addChild(fish1);
+        bipedBody.addChild(fish2);
+        bipedBody.addChild(fish3);
+
+        bipedBody.addChild(reel);
+        bipedBody.addChild(line);
+        bipedBody.addChild(pole);
+
+        bipedBody.addChild(chest);
+
+        bipedRightLeg.addChild(rightBoot);
+        bipedLeftLeg.addChild(leftBoot);
+
+        bipedHead.addChild(hairBack1);
+        bipedHead.addChild(hairBack2);
+        bipedHead.addChild(hairBack3);
+        bipedHead.addChild(hairBack4);
+        bipedHead.addChild(hairBack5);
+        bipedHead.addChild(hairBack6);
+        bipedHead.addChild(hairBack7);
+        bipedHead.addChild(hairBack8);
+        bipedHead.addChild(hairBack9);
+        bipedHead.addChild(hairBack10);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -260,45 +291,17 @@ public class ModelEntityFishermanFemale extends ModelBiped
         model.rotateAngleZ = z;
     }
 
+    @Override
     public void render(
-                        final Entity entity,
-                        final float limbSwing,
-                        final float limbSwingAmount,
-                        final float ageInTicks,
-                        final float netHeadYaw,
-                        final float headPitch,
-                        final float scaleFactor)
+      @NotNull final Entity entity,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
-
-        string.render(scaleFactor);
-        string2.render(scaleFactor);
-
-        hookTie1.render(scaleFactor);
-        hookTie2.render(scaleFactor);
-        hookTie3.render(scaleFactor);
-        fish1.render(scaleFactor);
-        fish2.render(scaleFactor);
-        fish3.render(scaleFactor);
-
-        reel.render(scaleFactor);
-        line.render(scaleFactor);
-        pole.render(scaleFactor);
-
-        chest.render(scaleFactor);
-
-        rightBoot.render(scaleFactor);
-        leftBoot.render(scaleFactor);
-
-        hairBack1.render(scaleFactor);
-        hairBack2.render(scaleFactor);
-        hairBack3.render(scaleFactor);
-        hairBack4.render(scaleFactor);
-        hairBack5.render(scaleFactor);
-        hairBack6.render(scaleFactor);
-        hairBack7.render(scaleFactor);
-        hairBack8.render(scaleFactor);
-        hairBack9.render(scaleFactor);
-        hairBack10.render(scaleFactor);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
     }
 }

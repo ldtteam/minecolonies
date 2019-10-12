@@ -26,6 +26,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private static final int MIN_DISTANCE = 25;
 
     /**
+     * Range to the proxy.
+     */
+    private static final int PROXY_RANGE  = 3;
+
+    /**
      * The entity entity associated with the proxy.
      */
     private final EntityLiving entity;
@@ -84,7 +89,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         }
 
         final double distanceToPath = careAboutY()
-                ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared(entity.getPosition(), target);
+                ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -97,7 +102,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                 currentProxy = target;
             }
 
-            this.resetProxyList();
+            proxyList.clear();
             return takeTheDirectPath(target, range, onMove);
         }
 
@@ -106,11 +111,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        final double distanceToProxy = BlockPosUtil.getDistanceSquared2D(entity.getPosition(), currentProxy);
-        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target)
-                                             : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), proxyList.get(0));
-        final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(currentProxy, target)
-                                                : BlockPosUtil.getDistanceSquared2D(currentProxy, proxyList.get(0));
+        final double distanceToProxy = BlockPosUtil.getDistanceSquared(entity.getPosition(), currentProxy);
+        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target)
+                                             : BlockPosUtil.getDistanceSquared(entity.getPosition(), proxyList.get(0));
+        final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(currentProxy, target)
+                                                : BlockPosUtil.getDistanceSquared(currentProxy, proxyList.get(0));
         if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
             if (proxyList.isEmpty())
@@ -124,7 +129,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             proxyList.remove(0);
         }
 
-        if (currentProxy != null && !isLivingAtSiteWithMove(entity, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
+        if (currentProxy != null && !isLivingAtSiteWithMove(entity, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), PROXY_RANGE))
         {
             //only walk to the block
             return !onMove;
@@ -263,17 +268,18 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
 
         for (final BlockPos wayPoint : getWayPoints())
         {
-            final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
-            final double currentWeight = simpleDistance * simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);
+            final double simpleDistance = careAboutY() ? BlockPosUtil.getDistanceSquared(position, wayPoint) : BlockPosUtil.getDistanceSquared2D(position, wayPoint);
+            final double targetDistance = careAboutY() ? BlockPosUtil.getDistanceSquared(wayPoint, target) : BlockPosUtil.getDistanceSquared2D(wayPoint, target);
+            final double currentWeight = simpleDistance * simpleDistance + targetDistance + targetDistance;
             if (currentWeight < weight
-                  && BlockPosUtil.getDistanceSquared2D(wayPoint, target) < distanceToPath
+                  && targetDistance < distanceToPath
                   && simpleDistance > MIN_DISTANCE
                   && simpleDistance < distanceToPath
-                  && !proxyList.contains(proxyPoint))
+                  && !proxyList.contains(wayPoint))
             {
                 proxyPoint = wayPoint;
                 weight = currentWeight;
-                distance = simpleDistance;
+                distance = targetDistance;
             }
         }
 
@@ -286,7 +292,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         {
             proxyList.add(proxyPoint);
 
-            getProxy(target, proxyPoint, distanceToPath - distance);
+            getProxy(target, proxyPoint, distance);
 
             return proxyList.get(0);
         }

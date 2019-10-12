@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Interface used to describe classes that function as managers for requests inside a colony.
@@ -77,7 +78,12 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
-    <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+    default <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+    {
+        final IToken<?> token = createRequest(requester, object);
+        assignRequest(token);
+        return token;
+    }
 
     /**
      * Method used to reassign a given request.
@@ -159,6 +165,12 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
     void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
 
     /**
+     * Method used to indicate that a colony has updated their available items.
+     * @param shouldTriggerReassign The request assigned
+     */
+    void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign);
+
+    /**
      * Get the player resolve.
      *
      * @return the player resolver object.
@@ -191,4 +203,15 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @return true if so.
      */
     boolean isDirty();
+
+    /**
+     * Sets if dirty and needs to be updated.
+     * @param isDirty true if so.
+     */
+    void setDirty(boolean isDirty);
+
+    /**
+     * Marks this manager dirty.
+     */
+    void markDirty();
 }

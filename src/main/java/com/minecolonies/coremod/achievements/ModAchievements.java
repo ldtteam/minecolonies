@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.achievements;
 
+import com.minecolonies.api.achievements.IMineColoniesAchievement;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 
@@ -37,10 +38,6 @@ public final class ModAchievements
      * Place a supply chest.
      */
     public static final MineColoniesAchievement achievementGetSupply      = new MineColoniesAchievement("supply", 0, -2, ModItems.supplyChest, null);
-    /**
-     * Use the building tool.
-     */
-    public static final MineColoniesAchievement achievementWandOfbuilding = new MineColoniesAchievement("wandofbuilding", 0, -2, ModItems.buildTool, null);
 
     /**
      * Place a townhall.
@@ -75,12 +72,12 @@ public final class ModAchievements
     public static final MineColoniesAchievement achievementBuildingColonist   = new MineColoniesAchievement("upgrade.colonist.first",
             2,
             18,
-            ModBlocks.blockHutCitizen,
+      ModBlocks.blockHutHome,
             achievementTownhall);
     /**
      * Max out a builder.
      */
-    public static final MineColoniesAchievement achievementUpgradeColonistMax = new MineColoniesAchievement("upgrade.colonist.max", 4, 18, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementUpgradeColonistMax = new MineColoniesAchievement("upgrade.colonist.max", 4, 18, ModBlocks.blockHutHome,
             achievementBuildingColonist);
 
     /**
@@ -135,33 +132,33 @@ public final class ModAchievements
     /**
      * Upgrade a guard to lv 1.
      */
-    public static final MineColoniesAchievement achievementBuildingGuard
-            = new MineColoniesAchievement("upgrade.guard.first", 2, 6, ModBlocks.blockHutGuardTower, achievementTownhall);
+    public static final MineColoniesAchievement  achievementBuildingGuard
+                                                                                = new MineColoniesAchievement("upgrade.guard.first", 2, 6, ModBlocks.blockHutGuardTower, achievementTownhall);
     /**
      * Max out a guard.
      */
-    public static final MineColoniesAchievement achievementUpgradeGuardMax     = new MineColoniesAchievement("upgrade.guard.max", 4, 6, ModBlocks.blockHutGuardTower,
+    public static final MineColoniesAchievement  achievementUpgradeGuardMax     = new MineColoniesAchievement("upgrade.guard.max", 4, 6, ModBlocks.blockHutGuardTower,
             achievementBuildingGuard);
     /**
      * Death achievements.
      */
-    public static final MineColoniesAchievement achievementMinerDeathLava      = new MineColoniesAchievement("miner.death.lava", -2, 8, Items.LAVA_BUCKET,
+    public static final IMineColoniesAchievement achievementMinerDeathLava      = new MineColoniesAchievement("miner.death.lava", -2, 8, Items.LAVA_BUCKET,
             achievementBuildingMiner);
-    public static final MineColoniesAchievement achievementMinerDeathFall      = new MineColoniesAchievement("miner.death.fall", -4, 8, Items.FEATHER,
+    public static final IMineColoniesAchievement achievementMinerDeathFall      = new MineColoniesAchievement("miner.death.fall", -4, 8, Items.FEATHER,
             achievementBuildingMiner);
-    public static final MineColoniesAchievement achievementLumberjackDeathTree = new MineColoniesAchievement("lumberjack.death.tree", -2, 11, Blocks.SAPLING,
+    public static final IMineColoniesAchievement achievementLumberjackDeathTree = new MineColoniesAchievement("lumberjack.death.tree", -2, 11, Blocks.SAPLING,
             achievementBuildingLumberjack);
-    public static final MineColoniesAchievement achievementFisherDeathGuardian = new MineColoniesAchievement("fisher.death.guardian", -2, 4, Blocks.SEA_LANTERN,
+    public static final MineColoniesAchievement  achievementFisherDeathGuardian = new MineColoniesAchievement("fisher.death.guardian", -2, 4, Blocks.SEA_LANTERN,
             achievementBuildingFisher);
-    public static final MineColoniesAchievement achievementGuardDeathEnderman  = new MineColoniesAchievement("guard.death.enderman", -2, 6, Items.ENDER_PEARL,
+    public static final IMineColoniesAchievement achievementGuardDeathEnderman  = new MineColoniesAchievement("guard.death.enderman", -2, 6, Items.ENDER_PEARL,
             achievementBuildingGuard);
-    public static final MineColoniesAchievement achievementPlayerDeathGuard    = new MineColoniesAchievement("player.death.guard", -4, 6, Items.ARROW,
+    public static final MineColoniesAchievement  achievementPlayerDeathGuard    = new MineColoniesAchievement("player.death.guard", -4, 6, Items.ARROW,
             achievementBuildingGuard);
 
     /**
      * Do something for the first time.
      */
-    public static final MineColoniesAchievement achievementBuildOneHut      = new MineColoniesAchievement("builder.hutsBuilt.one", 4, 3, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementBuildOneHut      = new MineColoniesAchievement("builder.hutsBuilt.one", 4, 3, ModBlocks.blockHutHome,
             achievementBuildingBuilder);
     public static final MineColoniesAchievement achievementCatchOneFish     = new MineColoniesAchievement("fisher.fishCaught.one", 4, 5, Items.FISH,
             achievementBuildingFisher);
@@ -185,7 +182,7 @@ public final class ModAchievements
     /**
      * Do something for the 25th time.
      */
-    public static final MineColoniesAchievement achievementBuild25Huts       = new MineColoniesAchievement("builder.hutsBuilt.25", 6, 3, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementBuild25Huts       = new MineColoniesAchievement("builder.hutsBuilt.25", 6, 3, ModBlocks.blockHutHome,
             achievementBuildOneHut);
     public static final MineColoniesAchievement achievementCatch25Fish       = new MineColoniesAchievement("fisher.fishCaught.25", 6, 5, Items.FISH,
             achievementCatchOneFish);
@@ -209,7 +206,7 @@ public final class ModAchievements
     /**
      * Do something for the 100th time.
      */
-    public static final MineColoniesAchievement achievementBuild100Huts       = new MineColoniesAchievement("builder.hutsBuilt.100", 8, 3, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementBuild100Huts       = new MineColoniesAchievement("builder.hutsBuilt.100", 8, 3, ModBlocks.blockHutHome,
             achievementBuild25Huts);
     public static final MineColoniesAchievement achievementCatch100Fish       = new MineColoniesAchievement("fisher.fishCaught.100", 8, 5, Items.FISH,
             achievementCatch25Fish);
@@ -233,7 +230,7 @@ public final class ModAchievements
     /**
      * Do something for the 500th time.
      */
-    public static final MineColoniesAchievement achievementBuild500Huts       = new MineColoniesAchievement("builder.hutsBuilt.500", 10, 3, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementBuild500Huts       = new MineColoniesAchievement("builder.hutsBuilt.500", 10, 3, ModBlocks.blockHutHome,
             achievementBuild100Huts);
     public static final MineColoniesAchievement achievementCatch500Fish       = new MineColoniesAchievement("fisher.fishCaught.500", 10, 5, Items.FISH,
             achievementCatch100Fish);
@@ -257,13 +254,13 @@ public final class ModAchievements
     /**
      * Do something for the 1000th time.
      */
-    public static final MineColoniesAchievement achievementBuild1000Huts       = new MineColoniesAchievement("builder.hutsBuilt.1000", 12, 3, ModBlocks.blockHutCitizen,
+    public static final MineColoniesAchievement achievementBuild1000Huts = new MineColoniesAchievement("builder.hutsBuilt.1000", 12, 3, ModBlocks.blockHutHome,
             achievementBuild500Huts);
-    public static final MineColoniesAchievement achievementCatch1000Fish       = new MineColoniesAchievement("fisher.fishCaught.1000", 12, 5, Items.FISH,
+    public static final MineColoniesAchievement achievementCatch1000Fish = new MineColoniesAchievement("fisher.fishCaught.1000", 12, 5, Items.FISH,
             achievementCatch500Fish);
-    public static final MineColoniesAchievement achievementKill1000Mobs        = new MineColoniesAchievement("guard.mobsKilled.1000", 12, 7, Items.ENDER_EYE,
+    public static final MineColoniesAchievement achievementKill1000Mobs  = new MineColoniesAchievement("guard.mobsKilled.1000", 12, 7, Items.ENDER_EYE,
             achievementKill500Mobs);
-    public static final MineColoniesAchievement achievementMine1000Ores        = new MineColoniesAchievement("miner.oresMined.1000", 12, 9, Blocks.LAPIS_ORE,
+    public static final MineColoniesAchievement achievementMine1000Ores  = new MineColoniesAchievement("miner.oresMined.1000", 12, 9, Blocks.LAPIS_ORE,
             achievementMine500Ores);
     public static final MineColoniesAchievement achievementMine1000Diamonds    = new MineColoniesAchievement("miner.diamondsMined.1000", 12, 10, Items.DIAMOND,
             achievementMine500Diamonds);
@@ -282,22 +279,22 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeSettlement
-            = new MineColoniesAchievement("size.settlement", 4, 1, ModItems.itemAchievementProxySettlement, achievementTownhall);
+    public static final IMineColoniesAchievement achievementSizeSettlement
+                                                                     = new MineColoniesAchievement("size.settlement", 4, 1, ModItems.itemAchievementProxySettlement, achievementTownhall);
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeTown       =
+    public static final IMineColoniesAchievement achievementSizeTown =
             new MineColoniesAchievement("size.town", 6, 1, ModItems.itemAchievementProxyTown, achievementSizeSettlement);
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeCity       = new MineColoniesAchievement("size.city", 8, 1, ModItems.itemAchievementProxyCity, achievementSizeTown);
+    public static final IMineColoniesAchievement achievementSizeCity = new MineColoniesAchievement("size.city", 8, 1, ModItems.itemAchievementProxyCity, achievementSizeTown);
 
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeMetropolis
+    public static final IMineColoniesAchievement achievementSizeMetropolis
             = new MineColoniesAchievement("size.metropolis", 10, 1, ModItems.itemAchievementProxyMetropolis, achievementSizeCity);
 
     // MineColoniesAchievement pages
@@ -307,7 +304,6 @@ public final class ModAchievements
     private static final MineColoniesAchievementPage achievementPageMineColonies = new MineColoniesAchievementPage(
                                                                                                         Constants.MOD_NAME,
                                                                                                         achievementGetSupply,
-                                                                                                        achievementWandOfbuilding,
                                                                                                         achievementTownhall,
                                                                                                         achievementBuildingTownhall,
                                                                                                         achievementUpgradeTownhallMax,

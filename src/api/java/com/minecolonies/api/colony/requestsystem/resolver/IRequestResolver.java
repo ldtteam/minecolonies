@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Used to resolve a request.
@@ -78,6 +79,17 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
+     * Called by the manager given to indicate that this request has been assigned to you.
+     * @param manager The systems manager.
+     * @param request The request assigned.
+     * @param simulation True when simulating.
+     */
+    default void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation)
+    {
+        //Noop
+    }
+
+    /**
      * Method called by the given manager to request a followup request.
      * This should generally return a request that brings the result of the completed request to its requester.
      *
@@ -86,7 +98,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest<?> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
+    List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
@@ -105,6 +117,16 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      */
     @Nullable
     IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+
+    /**
+     * Called by manager given to indicate that a colony has updated their available items.
+     * @param manager The systems manager.
+     * @param shouldTriggerReassign The request assigned
+     */
+    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        //Noop
+    }
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,

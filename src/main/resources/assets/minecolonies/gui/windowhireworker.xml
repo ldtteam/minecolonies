@@ -1,8 +1,8 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <label size="100% 11" pos="0 45" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
-    <list id="unemployed" size="100% 120" pos="60 70" align="TOP_MIDDLE">
+    <label size="100% 11" pos="0 20" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
+    <list id="unemployed" size="100% 120" pos="60 40" align="TOP_MIDDLE">
         <view size="100% 30">
             <label id="citizen" size="60 12" pos="0 4" textalign="MIDDLE_LEFT" color="yellow"/>
             <button id="done" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
@@ -13,6 +13,9 @@
             <label id="attributes" size="100% 12" pos="0 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
         </view>
     </list>
-    <label id="autoHireWarn" size="100% 11" pos="0 195" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.auto.hire.warning)"/>
-    <button id="cancel" size="200 20" pos="110 210" label="$(gui.cancel)"/>
+    <label id="buildingHireMode" size="100% 11" pos="0 160" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
+    <button id="mode" size="200 20" pos="110 175"/>
+
+    <label id="autoHireWarn" size="100% 11" pos="0 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.auto.hire.warning)"/>
+    <button id="cancel" size="200 20" pos="110 215" label="$(gui.cancel)"/>
 </window>

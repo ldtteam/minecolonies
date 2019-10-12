@@ -1,19 +1,22 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.managers.interfaces.IColonyPackageManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
@@ -203,15 +206,18 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || hasNewSubscribers)
         {
+            final ByteBuf colonyByteBuf = Unpooled.buffer();
+            ColonyView.serializeNetworkData(colony, colonyByteBuf, hasNewSubscribers);
             for (final EntityPlayerMP player : subscribers)
             {
                 final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
                 {
-                    MineColonies.getNetwork().sendTo(new ColonyViewMessage(colony, isNewSubscriber), player);
+                    MineColonies.getNetwork().sendTo(new ColonyViewMessage(colony, colonyByteBuf, isNewSubscriber), player);
                 }
             }
         }
+        colony.getRequestManager().setDirty(false);
     }
 
     @Override
@@ -233,10 +239,10 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
-        final WorkManager workManager = colony.getWorkManager();
+        final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || hasNewSubscribers)
         {
-            for (final AbstractWorkOrder workOrder : workManager.getWorkOrders().values())
+            for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
@@ -268,10 +274,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void addSubscribers(@NotNull final EntityPlayerMP subscriber)
     {
-        if(!subscribers.contains(subscriber))
-        {
-            subscribers.add(subscriber);
-        }
+        subscribers.add(subscriber);
     }
 
     @Override

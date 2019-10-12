@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -28,7 +28,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
     /**
-     * Structure name and location.
+     * StructureIterator name and location.
      */
     private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/SupplyShip";
 
@@ -191,6 +191,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos)
     {
-        return !ColonyManager.isCoordinateInAnyColony(world, pos);
+        return !IColonyManager.getInstance().isCoordinateInAnyColony(world, pos);
     }
 }

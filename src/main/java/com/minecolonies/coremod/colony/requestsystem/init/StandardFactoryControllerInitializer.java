@@ -45,6 +45,9 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PublicWorkerCraftingRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingProductionResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PublicWorkerCraftingProductionResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
@@ -58,7 +61,10 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestableTypeRequestResolverAssignmentDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemBuildingDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemDeliveryManJobDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemCrafterJobDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardDataStoreManager.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PublicCraftingRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PrivateCraftingRequestFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

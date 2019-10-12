@@ -3,12 +3,12 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -17,7 +17,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
@@ -28,86 +29,26 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 {
     public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
-        super(location, token);
+        super(location, token, false);
     }
 
     @Nullable
     @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request == null)
-        {
-            return Optional.empty();
-        }
-
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(request.getParent());
-            if (parent.getRequester() instanceof IBuildingBasedRequester)
-            {
-                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken(), 0);
-            }
-        }
-
-        if (request.getRequester() instanceof IBuildingBasedRequester)
-        {
-            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token, 0);
-        }
-
-        return Optional.empty();
-    }
-
-    @Nullable
-    @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request == null || counter > 20)
-        {
-            return Optional.empty();
-        }
-
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(request.getParent());
-            if (parent.getRequester() instanceof IBuildingBasedRequester)
-            {
-                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken(), counter+1);
-            }
-        }
-
-        if (request.getRequester() instanceof IBuildingBasedRequester)
-        {
-            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token, counter+1);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final ItemStack stack)
-    {
-        return building.getFirstRecipe(stack) != null;
-    }
-
-    @Nullable
-    @Override
-    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> completedRequest)
-    {
-        //No followup needed.
+        //No followup needed, crafting already completed at the requesting building / worker.
         return null;
     }
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
     @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         //NOOP
     }
@@ -151,7 +92,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
-        return request.getRequester().getDisplayName(manager, request.getToken())
+        return request.getRequester().getDisplayName(manager, request.getId())
                  .appendSibling(new TextComponentString(" ("))
                  .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
                  .appendSibling(new TextComponentString(")"));
@@ -161,5 +102,17 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     public int getPriority()
     {
         return CONST_CRAFTING_RESOLVER_PRIORITY;
+    }
+
+    @Override
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    {
+        return building.getFirstRecipe(stackPredicate) != null;
+    }
+
+    @Override
+    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count)
+    {
+        return new PrivateCrafting(stack, count);
     }
 }

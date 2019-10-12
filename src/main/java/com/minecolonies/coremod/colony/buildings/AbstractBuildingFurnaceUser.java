@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -20,7 +23,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Abstract Class for all furnace users.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
+public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableListBuilding
 {
     /**
      * Tag to store the furnace position.
@@ -33,6 +36,11 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     private static final String TAG_FURNACES = "furnaces";
 
     /**
+     * The list of fuel.
+     */
+    public static final String FUEL_LIST = "fuel";
+
+    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
@@ -43,7 +51,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location
      */
-    public AbstractBuildingFurnaceUser(final Colony c, final BlockPos l)
+    public AbstractBuildingFurnaceUser(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -59,9 +67,21 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+        super.deserializeNBT(compound);
+        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        {
+            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList furnacesTagList = new NBTTagList();
         for (@NotNull final BlockPos entry : furnaces)
         {
@@ -70,17 +90,8 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-    }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
-        {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
-        }
+        return compound;
     }
 
     @Override
@@ -92,5 +103,25 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
             furnaces.add(pos);
         }
         markDirty();
+    }
+
+    /**
+     * Getter for all allowed fuel from the building.
+     * @return the list of itemStacks.
+     */
+    public List<ItemStack> getAllowedFuel()
+    {
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+    }
+
+    /**
+     * Check if an ItemStack is one of the accepted fuel items.
+     *
+     * @param stack the itemStack to check.
+     * @return true if so.
+     */
+    public boolean isAllowedFuel(final ItemStack stack)
+    {
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

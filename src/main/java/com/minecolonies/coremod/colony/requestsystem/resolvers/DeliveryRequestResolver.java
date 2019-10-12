@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -10,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
@@ -37,8 +37,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public boolean canResolve(
-      @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -46,7 +45,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+        final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                               .stream()
                                               .filter(citizenData -> citizenData.getCitizenEntity()
                                                                        .map(entityCitizen -> requestToCheck.getRequest()
@@ -62,8 +61,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -72,7 +70,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
         final Colony colony = (Colony) manager.getColony();
         //We can do an instant get here, since we are already filtering on anything that has no entity.
-        final CitizenData freeDeliveryMan = colony.getCitizenManager()
+        final ICitizenData freeDeliveryMan = colony.getCitizenManager()
                                               .getCitizens()
                                               .stream()
                                               .filter(citizenData -> citizenData.getCitizenEntity()
@@ -81,7 +79,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
                                                                        .orElse(false))
                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                              .min(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                              .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                      .thenComparing(Comparator.comparing(c -> {
                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
@@ -97,48 +95,45 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
-        job.addRequest(request.getToken());
+        job.addRequest(request.getId());
 
         return Lists.newArrayList();
     }
 
     @Override
-    public void resolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+            final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                                   .stream()
-                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
+                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getId()))
                                                   .findFirst()
                                                   .orElse(null);
 
             if (freeDeliveryMan == null)
             {
-                MineColonies.getLogger().error("Parent cancellation failed! Unknown request: " + request.getToken());
+                MineColonies.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId());
             }
             else
             {
                 final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
-                job.onTaskDeletion(request.getToken());
+                job.onTaskDeletion(request.getId());
             }
         }
 
@@ -146,8 +141,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestBeingOverruled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         onRequestCancelled(manager, request);
     }

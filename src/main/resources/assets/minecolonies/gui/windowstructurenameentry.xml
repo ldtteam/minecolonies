@@ -1,6 +1,6 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <label size="100% 11" pos="0 100" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.structure.edit.title)"/>
     <input id="name" size="250 18" pos="85 110" maxlength="50"/>
     <button id="done" size="200 20" pos="110 170" label="$(gui.done)"/>

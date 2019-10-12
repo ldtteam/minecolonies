@@ -1,0 +1,45 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <label size="200 11" pos="100 50" textalign="TOP_MIDDLE" color="white"
+           label="$(com.minecolonies.coremod.gui.townHall.hirecitizen1)"/>
+    <label size="200 11" pos="100 61" textalign="TOP_MIDDLE" color="white"
+           label="$(com.minecolonies.coremod.gui.townHall.hirecitizen2)"/>
+    <label size="200 11" pos="100 72" textalign="TOP_MIDDLE" color="white"
+           label="$(com.minecolonies.coremod.gui.townHall.hirecitizen3)"/>
+    <box size="163 100" linewidth="2" pos="127 87">
+        <buttonimage label="16x" textcolor="black" id="hiretopleft" size="80 48" pos="0 0" maxlength="300"
+                     source="minecolonies:textures/gui/citizen/colonist_request_button.png" imagesize="80 48"
+                     disabled="minecolonies:textures/gui/citizen/colonist_request_button_dark.png" disabledsize="80 48"
+                     highlight="minecolonies:textures/gui/citizen/colonist_request_button_light.png" highlightsize="80 48"
+        />
+        <itemicon id="hiretoplefticon" size="30 30" pos="50 9"/>
+
+
+        <buttonimage id="hiretopright" textcolor="black" size="80 48" pos="83 0" maxlength="300"
+                     source="minecolonies:textures/gui/citizen/colonist_request_button.png" imagesize="80 48"
+                     disabled="minecolonies:textures/gui/citizen/colonist_request_button_dark.png" disabledsize="80 48"
+                     highlight="minecolonies:textures/gui/citizen/colonist_request_button_light.png" highlightsize="80 48"
+        />
+        <itemicon id="hiretoprighticon" size="30 30" pos="133 9"/>
+
+
+        <buttonimage id="hirebottomleft" textcolor="black" size="80 48" pos="0 51" maxlength="300"
+                     source="minecolonies:textures/gui/citizen/colonist_request_button.png" imagesize="80 48"
+                     disabled="minecolonies:textures/gui/citizen/colonist_request_button_dark.png" disabledsize="80 48"
+                     highlight="minecolonies:textures/gui/citizen/colonist_request_button_light.png" highlightsize="80 48"
+        />
+        <itemicon id="hirebottomlefticon" size="30 30" pos="50 60"/>
+
+
+        <buttonimage id="hirebottomright" textcolor="black" size="80 48" pos="83 51" maxlength="300"
+                     source="minecolonies:textures/gui/citizen/colonist_request_button.png" imagesize="80 48"
+                     disabled="minecolonies:textures/gui/citizen/colonist_request_button_dark.png" disabledsize="80 48"
+                     highlight="minecolonies:textures/gui/citizen/colonist_request_button_light.png" highlightsize="80 48"
+        />
+        <itemicon id="hirebottomrighticon" size="30 30" pos="133 60"/>
+
+    </box>
+    <button id="done" size="200 20" pos="110 200" label="$(gui.done)"/>
+</window>

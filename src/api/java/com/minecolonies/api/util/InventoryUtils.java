@@ -1,5 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -10,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -229,9 +233,13 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -243,9 +251,13 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
     }
 
     /**
@@ -256,9 +268,13 @@ public class InventoryUtils
      *                                    stacks to count.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -270,9 +286,13 @@ public class InventoryUtils
      * @param itemDamage  the damage value.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -284,9 +304,13 @@ public class InventoryUtils
      * @param itemDamage  the damage value of the item.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item item, final int itemDamage)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
     }
 
     /**
@@ -299,9 +323,13 @@ public class InventoryUtils
      *                                    to.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemCountInItemHandler(itemHandler, itemStackSelectionPredicate) > 0;
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && getItemCountInItemHandler(itemHandler, itemStackSelectionPredicate) > 0;
     }
 
     /**
@@ -310,9 +338,13 @@ public class InventoryUtils
      * @param itemHandler The {@link IItemHandler}.
      * @return True if the {@link IItemHandler} is full, false when not.
      */
-    public static boolean isItemHandlerFull(@NotNull final IItemHandler itemHandler)
+    public static boolean isItemHandlerFull(@Nullable final IItemHandler itemHandler)
     {
-        return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null || getFirstOpenSlotFromItemHandler(itemHandler) == -1;
     }
 
     /**
@@ -321,8 +353,13 @@ public class InventoryUtils
      * @param itemHandler The {@link IItemHandler} to check.
      * @return slot index or -1 if none found.
      */
-    public static int getFirstOpenSlotFromItemHandler(@NotNull final IItemHandler itemHandler)
+    public static int getFirstOpenSlotFromItemHandler(@Nullable final IItemHandler itemHandler)
     {
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+            return -1;
+        }
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
@@ -335,8 +372,13 @@ public class InventoryUtils
      * @param itemHandler the inventory.
      * @return the amount of open slots.
      */
-    public static long openSlotCount(final IItemHandler itemHandler)
+    public static long openSlotCount(@Nullable final IItemHandler itemHandler)
     {
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+            return 0;
+        }
         return IntStream.range(0, itemHandler.getSlots())
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
                  .count();
@@ -480,22 +522,22 @@ public class InventoryUtils
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
         final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
-                                                .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .filter(Objects::nonNull)
-                                                .collect(Collectors.toSet());
+          .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toSet());
+
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
             final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null);
-            if (!handlerList.contains(nullHandler))
+            if (nullHandler != null)
             {
                 handlerList.add(nullHandler);
             }
         }
 
         handlerList.removeIf(Objects::isNull);
-
         return handlerList;
     }
 
@@ -746,7 +788,14 @@ public class InventoryUtils
      */
     public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemCountInProvider(Provider, itemStackSelectionPredicate) > 0;
+        for (IItemHandler handler : getItemHandlersFromProvider(Provider))
+        {
+            if (findFirstSlotInItemHandlerWith(handler, itemStackSelectionPredicate) != -1)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -882,7 +931,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
+     * @return Empty when fully transfered, otherwise return the remain of a partial transfer of the itemStack.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
@@ -906,18 +955,18 @@ public class InventoryUtils
             }
             else
             {
-                ItemStack resultStack = itemStack;
+                ItemStack leftOver = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isEmpty(leftOver) && slot != -1 && slot != itemHandler.getSlots())
                 {
-                    resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isEmpty(resultStack))
+                    leftOver = itemHandler.insertItem(slot, leftOver, false);
+                    if (!ItemStackUtils.isEmpty(leftOver))
                     {
                         slot++;
                     }
                 }
 
-                return resultStack;
+                return leftOver;
             }
         }
         else
@@ -1480,6 +1529,50 @@ public class InventoryUtils
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
+     * to the given target {@link IItemHandler}.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param count the quantity.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferXOfItemStackIntoNextFreeSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                sourceHandler.extractItem(sourceIndex, count, false);
+                return true;
+            }
+        }
+
+        final ItemStack originalStack = sourceStack.copy();
+        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
+        {
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
+            sourceHandler.extractItem(sourceIndex, usedAmount, false);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param sourceHandler The {@link IItemHandler} that works as Source.
@@ -1811,6 +1904,35 @@ public class InventoryUtils
      *                       Source.
      * @param sourceIndex    The index of the slot that is being extracted
      *                       from.
+     * @param count the quantity.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferXOfItemStackIntoNextFreeSlotFromProvider(
+      @NotNull final ICapabilityProvider sourceProvider,
+               final int sourceIndex,
+               final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, count, targetHandler))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link
+     * ICapabilityProvider} to the given target {@link IItemHandler}.
+     *
+     * @param sourceProvider The {@link ICapabilityProvider} that works as
+     *                       Source.
+     * @param sourceIndex    The index of the slot that is being extracted
+     *                       from.
      * @param targetHandler  The {@link IItemHandler} that works as Target.
      * @return True when the swap was successful, false when not.
      */
@@ -1951,37 +2073,34 @@ public class InventoryUtils
      */
     public static boolean removeStackFromItemHandler(final IItemHandler handler, final ItemStack input)
     {
+        final ItemStack workingStack = input.copy();
         int maxTries = 0;
-        maxTries += ItemStackUtils.getSize(input);
+        maxTries += ItemStackUtils.getSize(workingStack);
 
-        boolean success = true;
-        int i = 0;
         int tries = 0;
         while (tries < maxTries)
         {
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, input::isItemEqual);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
 
             if (slot == -1)
             {
-                success = false;
-                i++;
-                continue;
+                return false;
             }
 
-            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(input), false));
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(workingStack), false));
 
-            if (removedSize == ItemStackUtils.getSize(input))
+            if (removedSize == ItemStackUtils.getSize(workingStack))
             {
-                i++;
+                return true;
             }
             else
             {
-                ItemStackUtils.changeSize(input, -removedSize);
+                ItemStackUtils.changeSize(workingStack, -removedSize);
             }
             tries++;
         }
 
-        return success && i >= 1;
+        return false;
     }
 
     /**
@@ -2149,5 +2268,329 @@ public class InventoryUtils
             entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
             worldIn.spawnEntity(entityitem);
         }
+    }
+
+    /**
+     * Calculates howmany items match the given predicate that are in the list.
+     *
+     * @return The sum of the itemstack sizes that match the predicate
+     */
+    public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, @NotNull final Predicate<ItemStack> stackPredicate)
+    {
+        return stacks.stream().filter(ItemStackUtils::isNotEmpty).filter(stackPredicate).mapToInt(ItemStackUtils::getSize).sum();
+    }
+
+    /**
+	 * Checks if all stacks given in the list are in the itemhandler given
+	 * 
+	 * @param stacks The stacks that should be in the itemhandler
+	 * @param handler The itemhandler to check in
+	 * @return True when all stacks are in the handler, false when not
+	 */
+    public static boolean areAllItemsInItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        return areAllItemsInItemHandlerList(stacks, ImmutableList.of(handler));
+    }
+
+	/**
+	 * Checks if all stacks given in the list are in the capability provider given
+	 * 
+	 * @param stacks The stacks that should be in the itemhandler
+	 * @param provider The provider to check in
+	 * @return True when all stacks are in the handler, false when not
+	 */
+    public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final ICapabilityProvider provider)
+    {
+        return areAllItemsInItemHandlerList(stacks, getItemHandlersFromProvider(provider));
+    }
+
+    /**
+	 * Checks if all stacks given in the list are in at least one of the given the itemhandlers
+	 * 
+	 * @param stacks The stacks that should be in the itemhandlers
+	 * @param handlers The itemhandlers to check in
+	 * @return True when all stacks are in at least one of the handlers, false when not
+	 */
+    public static boolean areAllItemsInItemHandlerList(@NotNull final List<ItemStack> stacks, @NotNull final Collection<IItemHandler> handlers)
+    {
+        if (stacks.isEmpty())
+        {
+            return true;
+        }
+
+        if (handlers.isEmpty())
+        {
+            return false;
+        }
+
+        final Map<ItemStack, Integer> requiredCountForStacks = getMergedCountedStacksFromList(stacks);
+
+        return requiredCountForStacks.keySet().stream().allMatch(itemStack -> {
+            final int countInHandlerList = handlers.stream().mapToInt(handler -> getItemCountInItemHandler(handler, itemStack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, itemStack1))).sum();
+            return countInHandlerList >= requiredCountForStacks.get(itemStack);
+        });
+    }
+
+	/**
+	 * This method calculates the amount of items in itemstacks are contained within a list.
+	 *
+ 	 * @param stacks The stacks to count.
+	 * @return A map with a entry for each unique unified itemstack and its count in the list.
+	 */
+    public static Map<ItemStack, Integer> getMergedCountedStacksFromList(@NotNull final List<ItemStack> stacks)
+    {
+        final Map<ItemStack, Integer> requiredCountForStacks = Maps.newHashMap();
+        stacks.forEach(targetStack -> {
+            final Optional<ItemStack>
+              alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
+
+            final ItemStack inputUnitStack = targetStack.copy();
+            inputUnitStack.setCount(1);
+
+            if (alreadyContained.isPresent())
+            {
+                requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
+            }
+            else
+            {
+                requiredCountForStacks.put(inputUnitStack, targetStack.getCount());
+            }
+        });
+
+        return requiredCountForStacks;
+    }
+	
+	/**
+	 * This method splits a map with an entry for each unique unified itemstack and its count
+	 * into a list of itemstacks that represent the maps, taken the max stack size into account.
+	 * 
+	 * @param mergedCountedStacks the map with the unique unified itemstacks and their counts.
+	 * @return The list of itemstacks that represent the map, taken the max stack size into account.
+	 */
+    public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
+    {
+        final List<ItemStack> list = Lists.newArrayList();
+        mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
+            final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
+
+            for (int i = 0; i < minimalFullStacks; i++)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(tobeAdded.getMaxStackSize());
+
+                list.add(tobeAdded);
+            }
+
+            if (residualStackSize > 0)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(residualStackSize);
+
+                list.add(tobeAdded);
+            }
+        });
+
+        return list;
+    }
+
+	/**
+	 * Method searches a list of itemstacks given and an itemhandler to find the stacks that do not appear in the itemhandler. If multiple of the same itemstack appear their sum will be taken into account.
+	 * 
+	 * @param stacks The stacks to check
+	 * @param handler The handler to check in
+	 * @return The list of missing stacks. Or an empty list if all stacks and at least their sizes are present.
+	 */
+    public static List<ItemStack> getMissingFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        final List<ItemStack> result = Lists.newArrayList();
+
+        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
+        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
+
+        final Map<ItemStack, Integer> resultingMissing = new HashMap<>();
+        inputCounts
+          .forEach((itemStack, count) -> {
+
+              int remainingCount = count;
+              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
+              {
+                  ItemStack containedStack = entry.getKey();
+                  Integer containedCount = entry.getValue();
+                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
+                  {
+                      remainingCount -= containedCount;
+                  }
+              }
+
+              if (remainingCount > 0)
+              {
+                  resultingMissing.put(itemStack, count);
+              }
+          });
+
+        resultingMissing
+          .forEach((itemStack, count) -> {
+              final int fullStackCount = count / itemStack.getMaxStackSize();
+              final int missingPartialCount = count % itemStack.getMaxStackSize();
+
+              for (int i = 0; i < fullStackCount; i++)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(targetStack.getMaxStackSize());
+
+                  result.add(targetStack);
+              }
+
+              if (missingPartialCount != 0)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(missingPartialCount);
+
+                  result.add(targetStack);
+              }
+          });
+
+        return result;
+    }
+
+	/**
+	 * Searches a given itemhandler for the stacks given and returns the list that is contained in the itemhandler
+	 * 
+	 * @param stacks The stacks to search for
+	 * @param handler The handler to search in
+	 * @return The sublist of the stacks list contained in the itemhandler.
+	 */
+    public static List<ItemStack> getContainedFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        final List<ItemStack> result = Lists.newArrayList();
+
+        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
+        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
+
+        final Map<ItemStack, Integer> resultingContained = new HashMap<>();
+        inputCounts
+          .forEach((itemStack, count) -> {
+
+              int remainingCount = count;
+              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
+              {
+                  ItemStack containedStack = entry.getKey();
+                  final Integer containedCount = entry.getValue();
+                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
+                  {
+                      remainingCount -= containedCount;
+                  }
+              }
+
+              if (remainingCount <= 0)
+              {
+                  resultingContained.put(itemStack, count);
+              }
+          });
+
+        resultingContained
+          .forEach((itemStack, count) -> {
+              final int fullStackCount = count / itemStack.getMaxStackSize();
+              final int missingPartialCount = count % itemStack.getMaxStackSize();
+
+              for (int i = 0; i < fullStackCount; i++)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(targetStack.getMaxStackSize());
+
+                  result.add(targetStack);
+              }
+
+              if (missingPartialCount != 0)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(missingPartialCount);
+
+                  result.add(targetStack);
+              }
+          });
+
+        return result;
+    }
+
+	/**
+	 * Unifies a list of stacks so that they are all packed to together to the max stack size.
+	 * 
+	 * @param stacks The stacks to pack.
+	 * @return The packed stacks
+	 */
+    public static List<ItemStack> processItemStackListAndMerge(@NotNull final List<ItemStack> stacks)
+    {
+        return splitMergedCountedStacksIntoMaxContentStacks(getMergedCountedStacksFromList(stacks));
+    }
+
+	/**
+	 * Attempts a swap with the given itemstacks, from the source to the target inventory. Itemstacks in the target that match the given toKeepInTarget predicate will not be swapped out, if swapping is needed
+	 *
+	 * @param targetInventory The target inventory.
+	 * @param sourceInventories The source inventory.
+	 * @param toSwap The list of stacks to swap.
+	 * @param toKeepInTarget The predicate that determines what not to swap in the target.
+	 * @return True when moving was successfull, false when not
+	 */
+    public static boolean moveItemStacksWithPossibleSwap(@NotNull final IItemHandler targetInventory, @NotNull final Collection<IItemHandler> sourceInventories, @NotNull final List<ItemStack> toSwap, @NotNull final Predicate<ItemStack> toKeepInTarget)
+    {
+        if (targetInventory.getSlots() < toSwap.size())
+		{
+            return false;
+		}
+	
+        final Predicate<ItemStack> wantToKeep = toKeepInTarget.or(stack -> ItemStackUtils.compareItemStackListIgnoreStackSize(toSwap, stack));
+
+        swapping:
+        for (final ItemStack itemStack : toSwap)
+        {
+            for (final IItemHandler sourceInventory : sourceInventories)
+            {
+                if (removeStackFromItemHandler(sourceInventory, itemStack))
+                {
+                    ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
+
+                    if (forcingResult != null && !forcingResult.isEmpty())
+                    {
+                        addItemStackToItemHandler(sourceInventory, forcingResult);
+                    }
+                }
+            }
+
+			return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by 1.
+     * @param invWrapper the inventory item handler.
+     * @param itemStack the itemStack to decrease.
+     */
+    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack)
+    {
+        reduceStackInItemHandler(invWrapper, itemStack, 1);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     * @param invWrapper the inventory item handler.
+     * @param itemStack the itemStack to decrease.
+     * @param quantity the quantity.
+     */
+    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack, final int quantity)
+    {
+        for (int i = 0; i < invWrapper.getSlots(); i++)
+        {
+            if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
+            {
+                invWrapper.getStackInSlot(i).shrink(quantity);
+                return;
+            }
+        }
+
     }
 }

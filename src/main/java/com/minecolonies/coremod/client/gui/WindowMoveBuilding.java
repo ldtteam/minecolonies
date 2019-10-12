@@ -1,21 +1,29 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.lib.BlueprintUtils;
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
+import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
-import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
-import com.minecolonies.structures.helpers.Settings;
-import com.minecolonies.structures.helpers.Structure;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +69,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     /**
      * Building related to this.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * Creates a window move building for a specific structure.
@@ -70,7 +78,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      * @param building      the building.
      * @param schematicName the schematic name.
      */
-    public WindowMoveBuilding(@Nullable final BlockPos pos, final AbstractBuildingView building, final String schematicName)
+    public WindowMoveBuilding(@Nullable final BlockPos pos, final IBuildingView building, final String schematicName)
     {
         super(Constants.MOD_ID + MOVE_BUILDING_SOURCE_SUFFIX);
         this.building = building;
@@ -122,16 +130,16 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 Settings.instance.mirror();
             }
             Settings.instance.setPosition(pos);
+
+            final PlacementSettings settings = new PlacementSettings( Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation()));
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
                     building.getSchematicName() + building.getBuildingLevel());
-            final Structure structure = new Structure(null,
-                    structureName.toString(),
-                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
+            final Structure structure = new Structure(Minecraft.getMinecraft().world, structureName.toString(), settings);
 
             final String md5 = Structures.getMD5(structureName.toString());
-            if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
+            if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
             {
-                if (structure.isTemplateMissing())
+                if (structure.isBluePrintMissing())
                 {
                     Log.getLogger().info("Template structure " + structureName + " missing");
                 }
@@ -143,12 +151,12 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 Log.getLogger().info("Request To Server for structure " + structureName);
                 if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
                 {
-                    MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+                    Structurize.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
                     return;
                 }
                 else
                 {
-                    Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+                    Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen");
                 }
             }
             Settings.instance.setStructureName(structureName.toString());
@@ -161,9 +169,9 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        if (ColonyManager.isSchematicDownloaded())
+        if (IColonyManager.getInstance().isSchematicDownloaded())
         {
-            ColonyManager.setSchematicDownloaded(false);
+            IColonyManager.getInstance().setSchematicDownloaded(false);
         }
     }
 
@@ -245,20 +253,28 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (Settings.instance.getStructureName() == null)
+        {
+            return;
+        }
         final StructureName structureName = new StructureName(Settings.instance.getStructureName());
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            WindowBuildTool.requestScannedSchematic(structureName, false, false);
+            WindowBuildTool.requestScannedSchematic(structureName);
         }
         else
         {
+            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());
+            final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),
                     Settings.instance.getPosition(),
                     Settings.instance.getRotation(),
-                    Settings.instance.getMirror(), building));
+                    Settings.instance.getMirror(),
+              building,
+              state));
         }
 
         if (!GuiScreen.isShiftKeyDown())
@@ -274,6 +290,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         building.openGui(false);
         Settings.instance.reset();
+        Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(Unpooled.buffer(), false));
         close();
     }
 
@@ -300,10 +317,25 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 settings.setRotation(Rotation.NONE);
         }
         Settings.instance.setRotation(rotation);
-
+        settings.setMirror(Settings.instance.getMirror());
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
+            Settings.instance.getActiveStructure().setPlacementSettings(settings);
+        }
+    }
+
+    /**
+     * Called when the window is closed.
+     * Updates state via {@link LSStructureDisplayerMessage}
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            final ByteBuf buffer = Unpooled.buffer();
+            Settings.instance.toBytes(buffer);
+            Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
         }
     }
 }

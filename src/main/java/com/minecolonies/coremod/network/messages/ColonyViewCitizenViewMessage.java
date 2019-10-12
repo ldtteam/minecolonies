@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -19,6 +19,11 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     private ByteBuf citizenBuffer;
 
     /**
+     * The dimension the citizen is in.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewCitizenViewMessage()
@@ -32,11 +37,13 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
      * @param colony  Colony of the citizen
      * @param citizen Citizen data of the citizen to update view
      */
-    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final CitizenData citizen)
+    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final ICitizenData citizen)
     {
+        super();
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
         this.citizenBuffer = Unpooled.buffer();
+        this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
@@ -45,6 +52,7 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
+        dimension = buf.readInt();
         this.citizenBuffer = buf.retain();
     }
 
@@ -53,12 +61,13 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
+        buf.writeInt(dimension);
         buf.writeBytes(citizenBuffer);
     }
 
     @Override
     protected void messageOnClientThread(final ColonyViewCitizenViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer);
+        IColonyManager.getInstance().handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
     }
 }

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -29,7 +32,7 @@ public final class BuildingUtils
      */
     public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
     {
-        final BlockPos location = building.getLocation();
+        final BlockPos location = building.getPosition();
         final int x1;
         final int z1;
         final int x3;
@@ -46,8 +49,8 @@ public final class BuildingUtils
 
             final String structureName = sn.toString();
 
-            final StructureWrapper wrapper = new StructureWrapper(world, structureName);
-            wrapper.rotate(building.getRotation(), world, location, building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            final Structure wrapper = new Structure(world, structureName, new PlacementSettings());
+            wrapper.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, location, building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
 
             final BlockPos pos = location;
             wrapper.setPosition(pos);

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -8,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +43,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T> generic token.
      * @return the token representing the request outside of the management system.
      */
-    <T extends IToken> T getToken();
+    <T extends IToken> T getId();
 
     /**
      * Used to determine which type of request this is.
@@ -50,7 +52,7 @@ public interface IRequest<R extends IRequestable>
      * @return The class that represents this Type of Request.
      */
     @NotNull
-    TypeToken<? extends R> getRequestType();
+    TypeToken<? extends R> getType();
 
     /**
      * Returns the current state of the request.
@@ -216,22 +218,26 @@ public interface IRequest<R extends IRequestable>
     boolean canBeDelivered();
 
     /**
-     * Method to get the ItemStack used for the getDelivery.
+     * Method to get the ItemStacks used for the delivery.
      *
-     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
+     * @return The ItemStacks that the Deliveryman transports around. {@link NonNullList#isEmpty()} means no delivery possible.
      */
     @NotNull
-    ItemStack getDelivery();
+    ImmutableList<ItemStack> getDeliveries();
 
     /**
-     * Method used to set the delivery on a Request.
-     * Should set the result.
-     * <p>
-     * Noop this if it is not supported.
-     *
-     * @param delivery The delivery that is being made.
+     * Sets the deliveries of this request to the given stacks
+     * 
+     * @param stacks The stacks that will be the deliveries.
      */
-    void setDelivery(@Nullable final ItemStack delivery);
+    void overrideCurrentDeliveries(@NotNull final ImmutableList<ItemStack> stacks);
+
+    /**
+     * Adds a single stack as a delivery to this request.
+     * 
+     * @param stack The stack that should be treated as a new delivery.
+     */
+    void addDelivery(@NotNull final ItemStack stack);
 
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.

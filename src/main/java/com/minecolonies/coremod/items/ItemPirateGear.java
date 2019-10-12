@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 public class ItemPirateGear extends ItemArmor
 {
     public static final ArmorMaterial PIRATE_ARMOR_1 =
-      EnumHelper.addArmorMaterial("minecolonies:pirate", "minecolonies:pirate", 1500, new int[] {2, 4, 3, 1}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 10F);
+      EnumHelper.addArmorMaterial("minecolonies:pirate", "minecolonies:pirate", 33, new int[] {3, 6, 8, 3}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 1F);
     public static final ArmorMaterial PIRATE_ARMOR_2 =
-      EnumHelper.addArmorMaterial("minecolonies:pirate2", "minecolonies:pirate2", 1500, new int[] {3, 5, 4, 2}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 6F);
+      EnumHelper.addArmorMaterial("minecolonies:pirate2", "minecolonies:pirate2", 15, new int[] {2, 5, 7, 2}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 4F);
 
     /**
      * Constructor method for the Chief Sword Item

@@ -175,6 +175,17 @@ public final class Compatibility
     }
 
     /**
+     * Check whether the block is a shell block.
+     *
+     * @param block the block to check
+     * @return true if it is a shell block.
+     */
+    public static boolean isDynamicTrunkShell(final Block block)
+    {
+        return DynamicTreeCompat.isDynamicTrunkShellBlock(block);
+    }
+
+    /**
      * Returns drops of a dynamic seed as List
      *
      * @param world      world the Leaf is in

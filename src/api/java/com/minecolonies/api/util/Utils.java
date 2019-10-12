@@ -37,20 +37,20 @@ public final class Utils
      */
     @Nullable
     public static BlockPos scanForBlockNearPoint(
-                                                  @NotNull final World world,
-                                                  @NotNull final BlockPos point,
-                                                  final int radiusX,
-                                                  final int radiusY,
-                                                  final int radiusZ,
-                                                  final int height,
-                                                  final Block... blocks)
+      @NotNull final World world,
+      @NotNull final BlockPos point,
+      final int radiusX,
+      final int radiusY,
+      final int radiusZ,
+      final int height,
+      final Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
-        for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
+        for (int j = point.getY(); j <= point.getY() + radiusY; j++)
         {
-            for (int j = point.getY() - radiusY; j <= point.getY() + radiusY; j++)
+            for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
             {
                 for (int k = point.getZ() - radiusZ; k <= point.getZ() + radiusZ; k++)
                 {

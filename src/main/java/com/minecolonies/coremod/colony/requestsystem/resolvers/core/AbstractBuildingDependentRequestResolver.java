@@ -35,10 +35,10 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            if (requesterLocation.equals(getRequesterLocation()))
+            final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
+            if (requesterLocation.equals(getLocation()))
             {
-                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r);
+                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getId()).map(r -> (AbstractBuilding) r);
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
@@ -54,26 +54,8 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
         if (request.getRequester() instanceof BuildingBasedRequester)
         {
             final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-            final ILocation requesterLocation = requester.getRequesterLocation();
-            if (requesterLocation.equals(getRequesterLocation()))
-            {
-                return requester.getBuilding(manager, token);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    @Nullable
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.getRequester() instanceof BuildingBasedRequester)
-        {
-            final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-            final ILocation requesterLocation = requester.getRequesterLocation();
-            if (requesterLocation.equals(getRequesterLocation()))
+            final ILocation requesterLocation = requester.getLocation();
+            if (requesterLocation.equals(getLocation()))
             {
                 return requester.getBuilding(manager, token);
             }
@@ -89,7 +71,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     public List<IToken<?>> attemptResolve(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
@@ -101,7 +83,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     public void resolve(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 

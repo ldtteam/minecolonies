@@ -13,23 +13,15 @@ buildscript {
 }
 
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.0.9"
+    id "com.matthewprenger.cursegradle" version "1.1.0"
 }
 repositories {
     maven {
-        name 'DVS1 Maven FS'
-        url 'http://dvs1.progwml6.com/files/maven'
+        name 'LDTTeam - Modding'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "modmaven.k-4u.nl"
-    }
-    maven {
-        url 'http://dogforce-games.com/maven'
-    }
-    maven {
-        url 'https://ldtteam.jfrog.io/ldtteam/modding'
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -61,15 +53,6 @@ sourceSets {
         }
         compileClasspath += sourceSets.api.compileClasspath
     }
-    structures {
-        java {
-            srcDir 'src/structures/java'
-        }
-        resources {
-            srcDir 'src/structures/resources'
-        }
-        compileClasspath += sourceSets.api.compileClasspath
-    }
     main {
         java {
             srcDir 'src/main/java'
@@ -77,7 +60,6 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
         }
-        compileClasspath += sourceSets.structures.output
         compileClasspath += sourceSets.blockOut.output
         compileClasspath += sourceSets.api.output
     }
@@ -98,26 +80,31 @@ configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+configurations {
+    contained {
+        transitive = false
+    }
+}
+
 dependencies {
+    contained "com.ldtteam:structurize:${config.minecraft_version}-${config.structurize_version}"
+    deobfCompile "com.ldtteam:structurize:${config.minecraft_version}-${config.structurize_version}"
+
+    compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}:api"
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12.2-${config.tinker_version}"
     deobfCompile "com.ferreusveritas.dynamictrees:DynamicTrees:1.12.2-${config.dynamic_tree_version}"
     deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:${config.guidebook_version}"
     deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:${config.guidebook_core_version}"
-    compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
-
-    structuresCompile sourceSets.api.output
-    //blockOutCompile sourceSets.api.output
 
     // compile against the JEI API but do not include it at runtime
     deobfProvided "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}:api"
     // at runtime, use the full JEI jar
     runtime "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}"
 
-    testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
 
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.+"
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
     testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
@@ -175,35 +162,54 @@ task blockOutJar(type: Jar) {
     classifier 'blockOut'
 }
 
-task structuresJar(type: Jar){
-    from sourceSets.structures.output
-    classifier 'structures'
+task minimalJar(type: Jar) {
+    from sourceSets.api.output
+    from sourceSets.blockOut.output
+    from sourceSets.main.output
+
+    classifier = 'minimal'
+
+    manifest {
+        attributes([
+            'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
+            'Timestamp': System.currentTimeMillis(),
+            'FMLAT': "minecolonies_at.cfg"
+        ])
+    }
 }
 
 jar {
     from sourceSets.api.output
     from sourceSets.blockOut.output
-    from sourceSets.structures.output
     from sourceSets.main.output
-    
-    classifier = 'universal'
+
+    from(configurations.contained.files) {
+        include '*'
+        into 'META-INF/libraries'
+    }
 
     manifest {
-        attributes 'FMLAT': "minecolonies_at.cfg"
+        attributes([
+                'ContainedDeps': configurations.contained.files.collect { it.name }.join(' '),
+                'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
+                'Timestamp': System.currentTimeMillis(),
+                'FMLAT': "minecolonies_at.cfg"
+        ])
     }
+
+    classifier = 'universal'
 }
 
 reobf {
     jar {}
     apiJar {}
+    minimalJar {}
     blockOutJar {}
-    structuresJar {}
 }
 
 javadoc {
     source += sourceSets.api.allSource
     source += sourceSets.blockOut.allSource
-    source += sourceSets.structures.allSource
 }
 
 idea {
@@ -242,6 +248,7 @@ curseforge {
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact apiJar
+            addArtifact minimalJar
         }
     }
     else

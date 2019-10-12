@@ -1,55 +1,55 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.ICitizenAssignable;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Abstract class handling requests from the building side.
  */
-public abstract class AbstractCitizenAssignable extends AbstractSchematicProvider
+public abstract class AbstractCitizenAssignable extends AbstractSchematicProvider implements ICitizenAssignable
 {
     /**
      * The colony the building belongs to.
      */
     @NotNull
-    protected final Colony colony;
+    protected final IColony colony;
 
     /**
      * List of worker assosiated to the building.
      */
-    private final List<CitizenData> assignedCitizen = new ArrayList();
+    private final List<ICitizenData> assignedCitizen = Lists.newArrayList();
 
     /**
      * Constructor for the abstract class which receives the position and colony.
      * @param pos
      * @param colony
      */
-    public AbstractCitizenAssignable(final BlockPos pos, final Colony colony)
+    public AbstractCitizenAssignable(final BlockPos pos, final IColony colony)
     {
         super(pos);
         this.colony = colony;
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         assignedCitizen.clear();
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
     }
 
     /**
@@ -57,8 +57,9 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return {@link com.minecolonies.coremod.colony.Colony} of the current object.
      */
+    @Override
     @NotNull
-    public Colony getColony()
+    public IColony getColony()
     {
         return colony;
     }
@@ -66,13 +67,11 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     /**
      * Method to do things when a block is destroyed.
      */
+    @Override
     public void onDestroyed()
     {
-        if (hasAssignedCitizen())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's Entity properly
-            assignedCitizen.clear();
-        }
+        // EntityCitizen will detect the workplace is gone and fix up it's Entity properly
+        assignedCitizen.clear();
     }
 
     /**
@@ -80,6 +79,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
+    @Override
     public void onServerTick(final TickEvent.ServerTickEvent event)
     {
         // Can be overridden by other buildings.
@@ -90,6 +90,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
+    @Override
     public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         // Can be overridden by other buildings.
@@ -102,7 +103,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return the matching CitizenData.
      */
-    public CitizenData getMainCitizen()
+    @Override
+    public ICitizenData getMainCitizen()
     {
         if (assignedCitizen.isEmpty())
         {
@@ -116,7 +118,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return {@link CitizenData} of the current building
      */
-    public List<CitizenData> getAssignedCitizen()
+    @Override
+    public List<ICitizenData> getAssignedCitizen()
     {
         return new ArrayList<>(assignedCitizen);
     }
@@ -126,7 +129,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @param citizen Citizen to be removed.
      */
-    public void removeCitizen(final CitizenData citizen)
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
     {
         if (isCitizenAssigned(citizen))
         {
@@ -141,7 +145,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * @param citizen {@link CitizenData} you want to compare
      * @return true if same citizen, otherwise false
      */
-    public boolean isCitizenAssigned(final CitizenData citizen)
+    @Override
+    public boolean isCitizenAssigned(final ICitizenData citizen)
     {
         return assignedCitizen.contains(citizen);
     }
@@ -151,7 +156,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return the EntityCitizen of that worker.
      */
-    public Optional<EntityCitizen> getMainCitizenEntity()
+    @Override
+    public Optional<AbstractEntityCitizen> getMainCitizenEntity()
     {
         if (assignedCitizen.isEmpty())
         {
@@ -165,7 +171,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return true if building has worker, otherwise false.
      */
-    public boolean hasAssignedCitizen()
+    @Override
+    public final boolean hasAssignedCitizen()
     {
         return !assignedCitizen.isEmpty();
     }
@@ -175,20 +182,22 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
+    @Override
     @Nullable
-    public List<Optional<EntityCitizen>> getAssignedEntities()
+    public List<Optional<AbstractEntityCitizen>> getAssignedEntities()
     {
-        return assignedCitizen.stream().filter(Objects::nonNull).map(CitizenData::getCitizenEntity).collect(Collectors.toList());
+        return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getCitizenEntity).collect(Collectors.toList());
     }
 
     /**
      * Assign the citizen to the current building.
      *
-     * @param citizen {@link CitizenData} of the worker
+     * @param citizen {@link ICitizenData} of the worker
      */
-    public boolean assignCitizen(final CitizenData citizen)
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
     {
-        if (assignedCitizen.contains(citizen))
+        if (assignedCitizen.contains(citizen) || isFull())
         {
             return false;
         }
@@ -209,7 +218,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * @param citizen Citizen to check.
      * @return True if citizen lives here, otherwise false.
      */
-    public boolean hasAssignedCitizen(final CitizenData citizen)
+    @Override
+    public boolean hasAssignedCitizen(final ICitizenData citizen)
     {
         return assignedCitizen.contains(citizen);
     }
@@ -220,6 +230,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return true if so.
      */
+    @Override
     public boolean isFull()
     {
         return assignedCitizen.size() >= getMaxInhabitants();
@@ -230,6 +241,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return Max inhabitants.
      */
+    @Override
     public int getMaxInhabitants()
     {
         return 1;

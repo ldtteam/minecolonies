@@ -2,22 +2,24 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_
 /**
  * Class of the warehouse building.
  */
-public class BuildingDeliveryman extends AbstractBuildingWorker
+public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuildingDeliveryman
 {
 
     private static final String DELIVERYMAN = "Deliveryman";
@@ -45,7 +47,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location
      */
-    public BuildingDeliveryman(final Colony c, final BlockPos l)
+    public BuildingDeliveryman(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -55,6 +57,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @return the building.
      */
+    @Override
     public ILocation getBuildingToDeliver()
     {
         return this.buildingToDeliver;
@@ -65,6 +68,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @param building building to deliver to.
      */
+    @Override
     public void setBuildingToDeliver(final ILocation building)
     {
         this.buildingToDeliver = building;
@@ -84,35 +88,29 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        final ImmutableCollection<IRequestResolver<?>> supers = super.getResolvers();
+        final ImmutableCollection<IRequestResolver<?>> supers = super.createResolvers();
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(),
+        builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.deliveryman;
+    }
+
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobDeliveryman(citizen);
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
     }
 
     @NotNull
@@ -129,11 +127,11 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     }
 
     @Override
-    public void removeCitizen(final CitizenData citizen)
+    public void removeCitizen(final ICitizenData citizen)
     {
         if (citizen != null)
         {
-            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             optCitizen.ifPresent(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }
@@ -152,7 +150,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

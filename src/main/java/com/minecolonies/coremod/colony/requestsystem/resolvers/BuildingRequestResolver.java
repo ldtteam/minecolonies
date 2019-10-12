@@ -9,17 +9,18 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
@@ -53,12 +54,12 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
-        if (building.getCitizenForRequest(request.getToken()).isPresent() && building.getCitizenForRequest(request.getToken()).get().isRequestAsync(request.getToken()))
+        if (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId()))
         {
             return false;
         }
@@ -79,23 +80,33 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
-        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).filter(Objects::nonNull).collect(Collectors.toSet()));
+        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+        tileEntities.removeIf(Objects::isNull);
 
-        request.setDelivery(tileEntities.stream()
-                              .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-                              .filter(itemStacks -> !itemStacks.isEmpty())
-                              .flatMap(List::stream)
-                              .findFirst()
-                              .orElse(ItemStackUtils.EMPTY));
+        final int total = request.getRequest().getCount();
+        final AtomicInteger current = new AtomicInteger(0);
 
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        tileEntities.stream()
+          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+          .filter(itemStacks -> !itemStacks.isEmpty())
+          .flatMap(List::stream)
+          .forEach(stack ->
+          {
+              if (current.get() < total)
+              {
+                  request.addDelivery(stack);
+                  current.getAndAdd(stack.getCount());
+              }
+          });
+
+        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
+    public List<IRequest<?>> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,14 +24,25 @@ public class Stack implements IDeliverable
     @NotNull
     private final ItemStack theStack;
 
-    @NotNull
+    /**
+     * If meta should match.
+     */
     private boolean matchMeta = false;
 
-    @NotNull
+    /**
+     * If NBT should match.
+     */
     private boolean matchNBT = false;
 
-    @NotNull
+    /**
+     * If oredict should match.
+     */
     private boolean matchOreDic = false;
+
+    /**
+     * The required count.
+     */
+    private int count = 0;
 
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
@@ -49,7 +61,16 @@ public class Stack implements IDeliverable
         }
 
         setMatchMeta(true).setMatchNBT(true);
-        this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        this.count = (Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+    }
+
+    /**
+     * Transform an itemStorage into this predicate.
+     * @param itemStorage the storage to use.
+     */
+    public Stack (@NotNull final ItemStorage itemStorage)
+    {
+        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), false, false, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -74,12 +95,22 @@ public class Stack implements IDeliverable
         this.result = result;
     }
 
+    /**
+     * Set if NBT has to match
+     * @param match true if so.
+     * @return an instance of this.
+     */
     public Stack setMatchNBT(final boolean match)
     {
         this.matchNBT = match;
         return this;
     }
 
+    /**
+     * Set if meta has to match
+     * @param match true if so.
+     * @return an instance of this.
+     */
     public Stack setMatchMeta(final boolean match)
     {
         this.matchMeta = match;
@@ -99,7 +130,7 @@ public class Stack implements IDeliverable
         compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
         compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.setBoolean(NBT_MATCHOREDIC, input.matchOreDic);
-
+        compound.setInteger("size", input.count);
         if (!ItemStackUtils.isEmpty(input.result))
         {
             compound.setTag(NBT_RESULT, input.result.serializeNBT());
@@ -121,8 +152,10 @@ public class Stack implements IDeliverable
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
-
-        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
+        final int size = compound.getInteger("size");
+        final Stack theStack = new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
+        theStack.setCount(size);
+        return theStack;
     }
 
     @Override
@@ -139,14 +172,25 @@ public class Stack implements IDeliverable
     @Override
     public int getCount()
     {
-        return theStack.getCount();
+        return this.count;
     }
 
     @NotNull
     public ItemStack getStack()
     {
         return theStack;
-    }    @Override
+    }
+
+    /**
+     * Set the count of the stack.
+     * @param count the count to set.
+     */
+    public void setCount(final int count)
+    {
+        this.count = count;
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
@@ -156,7 +200,9 @@ public class Stack implements IDeliverable
     {
         this.matchOreDic = match;
         return this;
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public ItemStack getResult()
     {

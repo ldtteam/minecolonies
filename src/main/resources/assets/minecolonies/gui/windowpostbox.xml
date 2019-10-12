@@ -1,0 +1,46 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="440 244" pos="-120 0"/>
+
+    <label id="desc" size="130 11" pos="-60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>
+    <input id="name" size="150 18" pos="-70 30" maxlength="25"/>
+
+    <list id="resources" size="215 136" pos="-87 50">
+        <box size="100% 18" linewidth="2">
+            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <label id="resourceName" size="100 12" pos="20 1" color="black"/>
+            <input id="qty" size="25 18" pos="113 1" maxlength="25"/>
+
+            <buttonimage label="$(com.minecolonies.coremod.gui.workerHuts.request)" id="request" pos="140 1" size="64 15"
+                         source="minecolonies:textures/gui/builderhut/builder_button_small.png" textcolor="black"/>
+        </box>
+    </list>
+
+    <label size="158 11" pos="116 28" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <list id="requests" size="158 184" pos="136 44">
+        <box id="requestx" size="100% 40" linewidth="2">
+            <!--Item icon -->
+            <itemicon id="requestStack" size="16 16" pos="1 3"/>
+            <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
+
+            <!--Request name-->
+            <buttonimage id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
+            <label id="shortDetail" size="50 12" pos="20 1" color="black"/>
+            <label id="requester" size="50 12" pos="20 13" color="black"/>
+
+            <!-- Color green if possible? -->
+            <buttonimage id="fulfill" size="37 16" pos="20 23" textcolor="black"
+                         label="$(com.minecolonies.coremod.gui.citizen.requestsFulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+
+            <!-- button to cancel the request-->
+            <buttonimage id="cancel" size="37 16" pos="110 23" textcolor="black"
+                         label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+        </box>
+    </list>
+
+    <buttonimage id="inventory" size="86 17" pos="52 210" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(container.inventory)"/>
+</window>

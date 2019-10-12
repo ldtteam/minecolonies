@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -77,9 +77,9 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                                 {
                                     if (buildingId != null && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                                     {
-                                        final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
-                                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
-                                        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+                                        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
+                                        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+                                        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
 
                                         building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                                     }
@@ -160,7 +160,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
         }
         else
         {
-            slot.onSlotChanged();
+            slot.putStack(stackCopy);
         }
 
         return stackCopy;
