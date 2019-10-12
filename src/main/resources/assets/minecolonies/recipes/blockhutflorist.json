@@ -11,7 +11,8 @@
       "ore": "plankWood"
     },
     "B": {
-      "item": "minecraft:red_flower"
+      "item": "minecraft:red_flower",
+      "data": 0
     },
     "T": {
       "item": "structurize:sceptergold"
