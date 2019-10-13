@@ -269,6 +269,14 @@ public class InventoryUtils
         return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
+    public static int getItemCountInItemHandlers(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> itemStackPredicate)
+    {
+        return itemHandlers.stream().filter(Objects::nonNull)
+                 .flatMap(handler -> filterItemHandler(handler, itemStackPredicate).stream())
+                 .mapToInt(ItemStackUtils::getSize)
+                 .sum();
+    }
+
     /**
      * Checks if a player has a block in the {@link IItemHandler}. Checked by
      * {@link #getItemCountInItemHandler(IItemHandler, Block)} &gt; 0;

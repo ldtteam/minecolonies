@@ -190,13 +190,26 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
     {
+        return getFirstFullFillableRecipe(tempStack, tempStack.getCount());
+    }
+
+    /**
+     * Get a fullfillable recipe to execute, with at least a given count.
+     *
+     * @param tempStack The temp stack to match.
+     * @param count     The count to craft.
+     * @return The recipe or null.
+     */
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count)
+    {
         for(final IToken token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(tempStack.getCount(), handlers.toArray(new IItemHandler[0])))
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }
