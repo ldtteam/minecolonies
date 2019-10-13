@@ -198,7 +198,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                if(storage.canFullFillRecipe(tempStack.getCount(), handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }
@@ -207,13 +207,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         return null;
     }
 
-    /**
-     * Get a fullfillable recipe to execute.
-     * @param stackPredicate the predicate to check for fullfillment.
-     * @return the recipe or null.
-     */
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
     {
         for(final IToken token : recipes)
         {
@@ -221,7 +216,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                if(storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }

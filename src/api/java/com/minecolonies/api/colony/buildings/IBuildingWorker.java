@@ -85,9 +85,10 @@ public interface IBuildingWorker extends ISchematicProvider, ICitizenAssignable,
     /**
      * Get a fullfillable recipe to execute.
      * @param stackPredicate the predicate to check for fullfillment.
+     * @param count the count to produce.
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate);
+    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count);
 
     /**
      * Try to fullfill a recipe.
