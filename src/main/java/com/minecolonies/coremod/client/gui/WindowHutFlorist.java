@@ -54,7 +54,19 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        switch (ownBuilding.getBuildingLevel())
+        {
+            case 0:
+            case 1:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> storage.getDamageValue() == 0).filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+            case 2:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+            case 3:
+            case 4:
+            case 5:
+            default:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables();
+        }
     }
 
     @Override
