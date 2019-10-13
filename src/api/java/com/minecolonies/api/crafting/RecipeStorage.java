@@ -1,6 +1,8 @@
 package com.minecolonies.api.crafting;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.Block;
@@ -131,31 +133,17 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories)
     {
-        final int neededMultiplier = (int) Math.ceil( (qty * 1.0) / this.primaryOutput.getCount() );
+        final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage stack : items)
         {
-            int amountNeeded = stack.getAmount() * neededMultiplier;
-            boolean hasStack = false;
-            for (final IItemHandler handler : inventories)
-            {
-                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
+            final int availableCount = InventoryUtils.getItemCountInItemHandlers(
+              ImmutableList.copyOf(inventories),
+              itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                             && itemStack.isItemEqual(stack.getItemStack()));
 
-                if (hasStack)
-                {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                            && itemStack.isItemEqual(stack.getItemStack()));
-                    if (count >= amountNeeded)
-                    {
-                        break;
-                    }
-                    hasStack = false;
-                    amountNeeded -= count;
-                }
-            }
-
-            if (!hasStack)
+            if (availableCount < stack.getAmount() * neededMultiplier)
             {
                 return false;
             }

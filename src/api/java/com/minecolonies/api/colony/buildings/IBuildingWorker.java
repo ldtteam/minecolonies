@@ -75,12 +75,22 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
     @Nullable
     IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate);
 
+
     /**
      * Get a fullfillable recipe to execute.
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.
      */
     IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack);
+
+    /**
+     * Get a fullfillable recipe to execute, with at least a given count.
+     *
+     * @param tempStack The temp stack to match.
+     * @param count     The count to craft.
+     * @return The recipe or null.
+     */
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count);
 
     /**
      * Get a fullfillable recipe to execute.
