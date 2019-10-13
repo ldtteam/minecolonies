@@ -351,7 +351,7 @@ public class RequestHandler implements IRequestHandler
         manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestBeingCancelled(manager, request);
 
         //This will notify everyone :D
-        manager.updateRequestState(token, RequestState.RESOLVED);
+        manager.updateRequestState(token, RequestState.COMPLETED);
 
         //Cancellation complete
         manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestCancelled(manager, request);
