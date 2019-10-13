@@ -4,11 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
@@ -16,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsVi
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -24,9 +27,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * The florist building.
@@ -51,7 +59,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     /**
      * Tag to store the plant ground list.
      */
-    private static final String TAG_PLANTGROUND = "barrels";
+    private static final String TAG_PLANTGROUND = "plantGround";
 
     /**
      * List of registered barrels.
@@ -67,7 +75,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem("flowers", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> stack.getItem() == ModItems.compost, new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -153,6 +161,36 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.florist;
+    }
+
+    /**
+     * Remove a piece of plantable ground because invalid.
+     * @param pos the pos to remove it at.
+     */
+    public void removePlantableGround(final BlockPos pos)
+    {
+        this.plantGround.remove(pos);
+    }
+
+    /**
+     * Get a random flower to grow at the moment.
+     * @return the flower to grow.
+     */
+    @Nullable
+    public ItemStack getFlowerToGrow()
+    {
+        final List<ItemStorage> stacks = IColonyManager.getInstance().getCompatibilityManager()
+                                           .getCopyOfPlantables().stream()
+                                           .filter(stack -> !isAllowedItem("flowers", stack))
+                                           .collect(Collectors.toList());
+
+        if (stacks.isEmpty())
+        {
+            return null;
+        }
+
+        Collections.shuffle(stacks);
+        return stacks.get(0).getItemStack();
     }
 
     /**

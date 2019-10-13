@@ -4,13 +4,19 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
 
 /**
  * Florist window class. Specifies the extras the florist has for its list.
@@ -46,9 +52,30 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
           building,
           LanguageHandler.format("com.minecolonies.gui.workerHuts.florist.flowers"),
           PAGE_ITEMS_VIEW,
-          false);
+          true);
         views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
+    }
+
+    @Override
+    public void onButtonClicked(@NotNull final Button button)
+    {
+        if (Objects.equals(button.getID(), BUTTON_SWITCH))
+        {
+            if (ownBuilding.getBuildingLevel() <= 3)
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.gui.workerhuts.florist.toolow");
+                return;
+            }
+
+            if (ownBuilding.getBuildingLevel() < 5 && button.getLabel().equals(ON) && building.getSize("flowers") >= 5)
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.gui.workerhuts.florist.toomany");
+                return;
+            }
+        }
+
+        super.onButtonClicked(button);
     }
 
     @Override

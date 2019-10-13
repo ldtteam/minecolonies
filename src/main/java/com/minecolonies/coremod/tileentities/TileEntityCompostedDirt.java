@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.blockout.Log;
+import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
@@ -13,6 +15,8 @@ import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
+
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The composted dirty tileEntity to grow all kinds of flowers.
@@ -32,12 +36,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
     /**
      * Chance to grow something (per second).
      */
-    private int percentage = 20;
+    private double percentage = 1.0D;
 
     /**
      * Max tick limit.
      */
-    private final static int TICKER_LIMIT = 450;
+    private final static int TICKER_LIMIT = 300;
 
     /**
      * Random tick.
@@ -53,10 +57,11 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
     public void update()
     {
         final World world = this.getWorld();
-        if(!world.isRemote && this.composted)
+        if(!world.isRemote && this.composted && ticker % TICKS_SECOND == 0)
         {
             this.updateTick(world);
         }
+        ticker++;
     }
 
     /**
@@ -78,21 +83,35 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
               this.getPos().getY()+1, this.getPos().getZ()+0.5,
               1, 0.2, 0, 0.2, 0);
         }
-        ticker++;
 
-        if(this.ticker%(TICKER_LIMIT/20)==0)
+        if(random.nextDouble() * 100 <= this.percentage)
         {
-            if(random.nextInt(100) <= this.percentage)
+            final BlockPos position = pos.up();
+            if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
             {
-                final BlockPos position = pos.up();
-                if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
+                if (flower.getItem() instanceof ItemSeeds)
+                {
+                    worldIn.setBlockState(position, ((ItemSeeds) flower.getItem()).getPlant(world, position));
+                }
+                else if (flower.getItem() instanceof ItemBlock)
+                {
+                    if (((ItemBlock) flower.getItem()).getBlock() instanceof BlockDoublePlant)
+                    {
+                        ((BlockDoublePlant) ((ItemBlock) flower.getItem()).getBlock()).placeAt(worldIn, position, BlockDoublePlant.EnumPlantType.byMetadata(flower.getMetadata()), 0x03);
+                    }
+                    else
+                    {
+                        worldIn.setBlockState(position, ((ItemBlock) flower.getItem()).getBlock().getStateFromMeta(flower.getMetadata()));
+                    }
+                }
+                else
                 {
                     worldIn.setBlockState(position, BlockUtils.getBlockStateFromStack(flower));
                 }
             }
         }
 
-        if(this.ticker >= TICKER_LIMIT)
+        if(this.ticker >= TICKER_LIMIT * TICKS_SECOND)
         {
             this.ticker = 0;
             this.composted = false;
@@ -104,7 +123,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
      * @param percentage the chance for this block to appear per second.
      * @param flower the flower to grow.
      */
-    public void compost(final int percentage, @NotNull final ItemStack flower)
+    public void compost(final double percentage, @NotNull final ItemStack flower)
     {
         if(percentage >= 0 && percentage <= 100)
         {
@@ -112,7 +131,6 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
             try
             {
                 this.flower = flower;
-                Log.getLogger().info(flower.getItem().getItemStackDisplayName(flower));
             }
             catch (Exception e)
             {
