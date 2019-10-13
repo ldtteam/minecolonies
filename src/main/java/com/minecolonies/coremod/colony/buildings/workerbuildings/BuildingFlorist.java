@@ -1,29 +1,65 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowHutFlorist;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder.MAX_BUILDING_LEVEL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The florist building.
  */
-public class BuildingFlorist extends AbstractBuildingWorker
+public class BuildingFlorist extends AbstractFilterableListBuilding
 {
     /**
      * Florist.
      */
-    private static final String FLORIST = "florist";
+    private static final String FLORIST = "Florist";
 
     /**
-     * The abstract constructor of the building.
+     * Maximum building level
+     */
+    private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * Tag to store the plant ground position.
+     */
+    private static final String TAG_POS = "pos";
+
+    /**
+     * Tag to store the plant ground list.
+     */
+    private static final String TAG_PLANTGROUND = "barrels";
+
+    /**
+     * List of registered barrels.
+     */
+    private final List<BlockPos> plantGround = new ArrayList<>();
+
+    /**
+     * The constructor of the building.
      *
      * @param c the colony
      * @param l the position
@@ -31,11 +67,22 @@ public class BuildingFlorist extends AbstractBuildingWorker
     public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put((stack) -> isAllowedItem("flowers", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+    }
+
+    /**
+     * Return a list of barrels assigned to this hut.
+     *
+     * @return copy of the list
+     */
+    public List<BlockPos> getPlantGround()
+    {
+        return ImmutableList.copyOf(plantGround);
     }
 
     @NotNull
     @Override
-    public AbstractJob createJob(final ICitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobFlorist(citizen);
     }
@@ -60,8 +107,95 @@ public class BuildingFlorist extends AbstractBuildingWorker
     }
 
     @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(block, pos, world);
+        if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos))
+        {
+            plantGround.add(pos);
+        }
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
+        final NBTTagList compostBinTagList = compound.getTagList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < compostBinTagList.tagCount(); ++i)
+        {
+            plantGround.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        @NotNull final NBTTagList compostBinTagList = new NBTTagList();
+        for (@NotNull final BlockPos entry : plantGround)
+        {
+            @NotNull final NBTTagCompound compostBinCompound = new NBTTagCompound();
+            compostBinCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
+            compostBinTagList.appendTag(compostBinCompound);
+        }
+        compound.setTag(TAG_PLANTGROUND, compostBinTagList);
+
+        return compound;
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+    }
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.florist;
+    }
+
+    /**
+     * The client side representation of the building.
+     */
+    public static class View extends AbstractFilterableListsView
+    {
+        /**
+         * Instantiates the view of the building.
+         *
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
+        public View(final IColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+        }
+
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutFlorist(this);
+        }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.CHARISMA;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.INTELLIGENCE;
+        }
     }
 }

@@ -180,5 +180,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.stoneSmeltery);
         reg.register(ModJobs.crusher);
         reg.register(ModJobs.sifter);
+        reg.register(ModJobs.florist);
     }
 }

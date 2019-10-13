@@ -962,3 +962,5 @@ tile.minecolonies.composted_dirt.name=Composted Dirt
 com.minecolonies.coremod.composted_dirt.player_use_message=This block can be only used by the Florist worker!
 com.minecolonies.coremod.job.florist=Florist
 tile.minecolonies.blockHutFlorist.name=Flower Shop
+com.minecolonies.coremod.gui.workerHuts.florist=Florist
+com.minecolonies.gui.workerHuts.florist.flowers=Plantables
