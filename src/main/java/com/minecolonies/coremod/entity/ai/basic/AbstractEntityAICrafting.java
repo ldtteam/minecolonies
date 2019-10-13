@@ -171,7 +171,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for(final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate) < inputStorage.getAmount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -262,7 +262,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                     job.setCraftCounter(0);
                     currentRecipeStorage = null;
                     worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                    worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                     worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
                 }
                 else
                 {
