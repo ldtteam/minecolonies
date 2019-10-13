@@ -88,9 +88,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, DECIDE),
-          new AITarget(DECIDE, this::decide),
-          new AITarget(FLORIST_HARVEST, this::harvest),
-          new AITarget(FLORIST_COMPOST, this::compost)
+          new AITarget(DECIDE, this::decide, TICKS_SECOND),
+          new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
+          new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -104,7 +104,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private IAIState decide()
     {
-        setDelay(TICKS_SECOND);
         if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
         {
             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.florist.noplantground");
@@ -161,7 +160,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private IAIState compost()
     {
-        setDelay(TICKS_SECOND);
         if (compostPosition == null)
         {
             return START_WORKING;
@@ -197,7 +195,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private IAIState harvest()
     {
-        setDelay(TICKS_SECOND);
         if (harvestPosition == null)
         {
             return START_WORKING;
