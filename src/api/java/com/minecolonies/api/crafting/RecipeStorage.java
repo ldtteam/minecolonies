@@ -124,17 +124,19 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
+     * @param qty the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
     @Override
-    public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
+    public boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories)
     {
+        final int neededMultiplier = (int) Math.ceil( (qty * 1.0) / this.primaryOutput.getCount() );
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage stack : items)
         {
-            int amountNeeded = stack.getAmount();
+            int amountNeeded = stack.getAmount() * neededMultiplier;
             boolean hasStack = false;
             for (final IItemHandler handler : inventories)
             {
@@ -241,7 +243,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
+        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }
