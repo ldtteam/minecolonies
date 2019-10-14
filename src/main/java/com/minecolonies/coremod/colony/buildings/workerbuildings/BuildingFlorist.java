@@ -179,8 +179,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     @Nullable
     public ItemStack getFlowerToGrow()
     {
-        final List<ItemStorage> stacks = IColonyManager.getInstance().getCompatibilityManager()
-                                           .getCopyOfPlantables().stream()
+        final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
                                            .filter(stack -> !isAllowedItem("flowers", stack))
                                            .collect(Collectors.toList());
 
@@ -191,6 +190,28 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
         Collections.shuffle(stacks);
         return stacks.get(0).getItemStack();
+    }
+
+    /**
+     * Get the plantables from the compatibility manager the florist can build at the current level.
+     * @param level the building level.
+     * @return the restricted list.
+     */
+    public static List<ItemStorage> getPlantablesForBuildingLevel(final int level)
+    {
+        switch (level)
+        {
+            case 0:
+            case 1:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> storage.getDamageValue() == 0).filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+            case 2:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+            case 3:
+            case 4:
+            case 5:
+            default:
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables();
+        }
     }
 
     /**

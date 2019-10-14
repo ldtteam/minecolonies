@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -103,6 +104,10 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
                     {
                         worldIn.setBlockState(position, ((ItemBlock) flower.getItem()).getBlock().getStateFromMeta(flower.getMetadata()));
                     }
+                }
+                else if (flower.getItem() instanceof ItemBlockSpecial)
+                {
+                    worldIn.setBlockState(position, ((ItemBlockSpecial) flower.getItem()).getBlock().getStateFromMeta(flower.getMetadata()));
                 }
                 else
                 {

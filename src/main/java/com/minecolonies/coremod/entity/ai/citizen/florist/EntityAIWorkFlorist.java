@@ -60,6 +60,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     private static final double PERCENT_CHANGE_FOR_GROWTH = 0.5;
 
     /**
+     * Base XP gain for the florist for composting or harvesting.
+     */
+    private static final double BASE_XP_GAIN = 0.5;
+
+    /**
      * Position the florist should harvest a flower at now.
      */
     private BlockPos harvestPosition;
@@ -184,7 +189,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
         }
 
-        incrementActionsDoneAndDecSaturation();
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        incrementActionsDone();
+        worker.decreaseSaturationForContinuousAction();
         compostPosition = null;
         return START_WORKING;
     }
@@ -210,7 +217,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             return getState();
         }
 
-        incrementActionsDoneAndDecSaturation();
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        incrementActionsDone();
+        worker.decreaseSaturationForContinuousAction();
         harvestPosition = null;
         return START_WORKING;
     }
@@ -233,7 +242,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return (int) (1 + Math.max(0,  5 - 0.1 * worker.getCitizenExperienceHandler().getLevel()));
+        return 10 * (int) (1 + Math.max(0,  5 - 0.1 * worker.getCitizenExperienceHandler().getLevel()));
     }
 
     /**
