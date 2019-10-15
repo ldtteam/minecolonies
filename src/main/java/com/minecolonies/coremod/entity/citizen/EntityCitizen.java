@@ -792,7 +792,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setCustomName(@javax.annotation.Nullable final ITextComponent name)
     {
-        if (citizenData != null && citizenColonyHandler.getColony() != null)
+        if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
             if (!name.getFormattedText().contains(citizenData.getName()) && MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() >= 0)
             {
