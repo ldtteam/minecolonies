@@ -969,3 +969,5 @@ com.minecolonies.gui.workerhuts.florist.toomany=You can deactivate max 5 options
 com.minecolonies.coremod.florist.noplantground=I am missing any composted dirt to plant on, please repair or upgrade my building!
 com.minecolonies.coremod.florist.nocompost=I need compost to plant my flowers!
 com.minecolonies.coremod.florist.noflowers=I can't work, all flowers are disabled!
+com.minecolonies.coremod.gui.townHall.population.florists=Florists: %d
+com.minecolonies.coremod.gui.townHall.population.bakerys=Bakeries: %d
