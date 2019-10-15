@@ -103,7 +103,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                             {
                                 itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
                             }
-                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
+                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), false));
                         }
 
                         final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
@@ -111,7 +111,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                         {
                             output.setAmount(recipeOutputs.get(output).getA() + output.getAmount());
                         }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), true));
+                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
                     }
                 }
             }
