@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
@@ -23,6 +22,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_FLOWERS_IN_CONFIG;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_PLANT_GROUND_FLORIST;
 
 /**
  * Florist AI class.
@@ -62,7 +63,27 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     /**
      * Base XP gain for the florist for composting or harvesting.
      */
-    private static final double BASE_XP_GAIN = 0.5;
+    private static final double BASE_XP_GAIN     = 0.5;
+
+    /**
+     * Quantity of compost to request at a time.
+     */
+    private static final int COMPOST_REQUEST_QTY     = 16;
+
+    /**
+     * Base block mining delay multiplier.
+     */
+    private static final int BASE_BLOCK_MINING_DELAY = 10;
+
+    /**
+     * The per level mining delay bonus.
+     */
+    private static final double PER_LEVEL_BONUS = 0.1;
+
+    /**
+     * Max level bonus is this x 10.
+     */
+    private static final double MAX_BONUS = 5;
 
     /**
      * Position the florist should harvest a flower at now.
@@ -111,7 +132,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.florist.noplantground");
+            chatSpamFilter.talkWithoutSpam(NO_PLANT_GROUND_FLORIST);
             return IDLE;
         }
 
@@ -133,7 +154,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
             else
             {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.compost, 16));
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.compost, COMPOST_REQUEST_QTY));
             }
         }
 
@@ -185,7 +206,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
             else
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.florist.noflowers");
+                chatSpamFilter.talkWithoutSpam(NO_FLOWERS_IN_CONFIG);
             }
         }
 
@@ -242,7 +263,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return 10 * (int) (1 + Math.max(0,  5 - 0.1 * worker.getCitizenExperienceHandler().getLevel()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0,  MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenExperienceHandler().getLevel()));
     }
 
     /**

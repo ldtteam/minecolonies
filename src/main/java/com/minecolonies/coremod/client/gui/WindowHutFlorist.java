@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,8 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
 
 /**
@@ -31,7 +31,12 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING = ":gui/windowhutflorist.xml";
+    private static final String RESOURCE_STRING       = ":gui/windowhutflorist.xml";
+
+    /**
+     * The max level the building doesn't let filtering yet.
+     */
+    private static final int MAX_LEVEL_BEFORE_SORTING = 3;
 
     /**
      * The building of the florist (Client side representation).
@@ -50,7 +55,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
         final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
           this,
           building,
-          LanguageHandler.format("com.minecolonies.gui.workerHuts.florist.flowers"),
+          LanguageHandler.format(FLORIST_FLOWER_DESC),
           PAGE_ITEMS_VIEW,
           true);
         views.put(PAGE_ITEMS_VIEW, window);
@@ -62,15 +67,15 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     {
         if (Objects.equals(button.getID(), BUTTON_SWITCH))
         {
-            if (ownBuilding.getBuildingLevel() <= 3)
+            if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.gui.workerhuts.florist.toolow");
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
                 return;
             }
 
-            if (ownBuilding.getBuildingLevel() < 5 && button.getLabel().equals(ON) && building.getSize("flowers") >= 5)
+            if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getLabel().equals(ON) && building.getSize(PAGE_ITEMS_VIEW) >= MAX_BUILDING_LEVEL)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.gui.workerhuts.florist.toomany");
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, TOO_MANY_FILTERED_FLORIST);
                 return;
             }
         }
@@ -87,6 +92,6 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.florist";
+        return FLORIST_BUILDING_NAME;
     }
 }

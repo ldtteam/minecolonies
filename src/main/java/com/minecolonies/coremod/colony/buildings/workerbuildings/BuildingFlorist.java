@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
@@ -60,6 +61,16 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
      * Tag to store the plant ground list.
      */
     private static final String TAG_PLANTGROUND = "plantGround";
+
+    /**
+     * Name to filter the list for.
+     */
+    private static final String FLOWER_NAME    = "flower";
+
+    /**
+     * The basic flower metadata for level 1.
+     */
+    private static final int BASIC_FLOWER_META = 0;
 
     /**
      * List of registered barrels.
@@ -180,7 +191,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     public ItemStack getFlowerToGrow()
     {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !isAllowedItem("flowers", stack))
+                                           .filter(stack -> !isAllowedItem(FLORIST_FLOWER_LIST, stack))
                                            .collect(Collectors.toList());
 
         if (stacks.isEmpty())
@@ -203,9 +214,9 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         {
             case 0:
             case 1:
-                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> storage.getDamageValue() == 0).filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> storage.getDamageValue() == BASIC_FLOWER_META).filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains(FLOWER_NAME)).collect(Collectors.toList());
             case 2:
-                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains("flower")).collect(Collectors.toList());
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains(FLOWER_NAME)).collect(Collectors.toList());
             case 3:
             case 4:
             case 5:
