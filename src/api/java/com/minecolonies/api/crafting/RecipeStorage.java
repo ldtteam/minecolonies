@@ -259,6 +259,7 @@ public class RecipeStorage implements IRecipeStorage
                     //Deletes some items, but hey.
                     if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
                     {
+                        handler.insertItem(slotOfStack, extractedStack, false);
                         return false;
                     }
 
