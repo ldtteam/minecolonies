@@ -98,7 +98,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack);
+        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
