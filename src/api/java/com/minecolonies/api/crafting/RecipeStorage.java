@@ -1,6 +1,8 @@
 package com.minecolonies.api.crafting;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.Block;
@@ -124,36 +126,24 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
+     * @param qty the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
     @Override
-    public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
+    public boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories)
     {
+        final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage stack : items)
         {
-            int amountNeeded = stack.getAmount();
-            boolean hasStack = false;
-            for (final IItemHandler handler : inventories)
-            {
-                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
+            final int availableCount = InventoryUtils.getItemCountInItemHandlers(
+              ImmutableList.copyOf(inventories),
+              itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                             && itemStack.isItemEqual(stack.getItemStack()));
 
-                if (hasStack)
-                {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                            && itemStack.isItemEqual(stack.getItemStack()));
-                    if (count >= amountNeeded)
-                    {
-                        break;
-                    }
-                    hasStack = false;
-                    amountNeeded -= count;
-                }
-            }
-
-            if (!hasStack)
+            if (availableCount < stack.getAmount() * neededMultiplier)
             {
                 return false;
             }
@@ -241,7 +231,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
+        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }
@@ -269,6 +259,7 @@ public class RecipeStorage implements IRecipeStorage
                     //Deletes some items, but hey.
                     if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
                     {
+                        handler.insertItem(slotOfStack, extractedStack, false);
                         return false;
                     }
 
