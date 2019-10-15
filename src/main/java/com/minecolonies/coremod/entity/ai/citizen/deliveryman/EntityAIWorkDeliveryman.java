@@ -501,6 +501,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final IBuildingContainer building = ITileEntityColonyBuilding.getBuilding();
 
         boolean success = true;
+        boolean extracted = false;
         final InvWrapper workerInventory = new InvWrapper(worker.getInventoryCitizen());
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
@@ -510,6 +511,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 continue;
             }
 
+            extracted = true;
             final ItemStack insertionResultStack;
 
             if (ITileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
@@ -543,6 +545,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not loose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
+        }
+
+        if (!extracted)
+        {
+            lastDelivery = deliveryHut.getBuildingToDeliver();
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
+            deliveryHut.setBuildingToDeliver(null);
+            job.finishRequest(false);
+
+            setDelay(WAIT_DELAY);
+            return DUMPING;
         }
 
         lastDelivery = deliveryHut.getBuildingToDeliver();

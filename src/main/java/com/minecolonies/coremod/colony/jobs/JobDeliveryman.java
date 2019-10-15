@@ -226,7 +226,7 @@ public class JobDeliveryman extends AbstractJob
         this.setReturning(true);
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
-        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
+        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.CANCELLED);
 
         //Just to be sure lets delete them!
         if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())

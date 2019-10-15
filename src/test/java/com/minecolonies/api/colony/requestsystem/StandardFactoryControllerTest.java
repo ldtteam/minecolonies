@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 /**
- * Test for the implementation of {@link IFactoryController} in {@link StandardFactoryController}
+ * Test for the initializer of {@link IFactoryController} in {@link StandardFactoryController}
  * Uses the {@link StandardTokenFactory} to Test the {@link StandardFactoryController}
  */
 public class StandardFactoryControllerTest

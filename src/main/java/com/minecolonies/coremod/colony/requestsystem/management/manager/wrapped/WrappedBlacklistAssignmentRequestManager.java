@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped
 
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -32,6 +31,6 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
     @Override
     public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
     {
-        RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
+        wrappedManager.getRequestHandler().assignRequest(wrappedManager.getRequestHandler().getRequest(token), blackListedResolvers);
     }
 }
