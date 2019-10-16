@@ -74,16 +74,13 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     {
         if (isItGhostTime)
         {
-            GlStateManager.enableAlphaTest();
             GlStateManager.enableBlend();
-
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.3F);
 
             super.doRender(entity, x, y, z, f, partialTicks);
 
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1F);
 
-            GlStateManager.disableAlphaTest();
             GlStateManager.disableBlend();
         }
         else
@@ -102,7 +99,10 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         {
             entityModel = (citizen.isFemale() ? new ModelEntityCitizenFemaleCitizen() : new CitizenModel(0.0F));
         }
+
         entityModel.isChild = citizen.isChild();
+        entityModel.swingProgress = citizen.swingProgress;
+
     }
 
     private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -36,7 +37,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * Increase this value to make the product creation progress way slower.
      */
-    public static final int PROGRESS_MULTIPLIER = 50;
+    public static final int PROGRESS_MULTIPLIER = 10;
 
     /**
      * Max level which should have an effect on the speed of the worker.
@@ -46,17 +47,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * Times the product needs to be hit.
      */
-    private static final int HITTING_TIME = 3;
-
+    private static final int                                HITTING_TIME = 3;
     /**
-     * The recipe storage he is currently working on.
+     * The current request that is being crafted;
      */
-    protected IRecipeStorage currentRecipeStorage;
-
+    public               IRequest<? extends PublicCrafting> currentRequest;
     /**
-     * The current request.
+     * The current recipe that is being crafted.
      */
-    protected IRequest<? extends PublicCrafting> currentRequest;
+    protected            IRecipeStorage                     currentRecipeStorage;
 
     /**
      * Initialize the crafter job and add all his tasks.
@@ -103,7 +102,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
-        if (currentRecipeStorage != null)
+        if (currentRequest != null && currentRecipeStorage != null)
         {
             return QUERY_ITEMS;
         }
@@ -117,14 +116,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      */
     private IAIState getRecipe()
     {
-        currentRequest= job.getCurrentTask();
+        final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
 
-        if (currentRequest == null)
+        if (currentTask == null)
         {
             return START_WORKING;
         }
         final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentRequest.getRequest().getStack());
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
         if (currentRecipeStorage == null)
         {
@@ -132,6 +131,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             setDelay(TICKS_20);
             return START_WORKING;
         }
+
+        currentRequest = currentTask;
+        job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(currentRequest.getRequest().getCount(), currentRecipeStorage));
+
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
@@ -168,7 +171,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for(final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) < inputStorage.getAmount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -176,6 +179,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;
+                currentRequest = null;
                 return GET_RECIPE;
             }
         }
@@ -195,66 +199,94 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
+        if (currentRequest == null)
+        {
+            return GET_RECIPE;
+        }
+
         if (walkToBuilding())
         {
             setDelay(STANDARD_DELAY);
             return getState();
         }
 
-        if (job.getMaxCraftingCount() == 0)
-        {
-            final IRequest<? extends PublicCrafting> craftingRequest = job.getCurrentTask();
-            final PublicCrafting crafting = craftingRequest.getRequest();
-            job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage));
-        }
+        job.setProgress(job.getProgress() + 1);
 
-        if (job.getMaxCraftingCount() == 0)
-        {
-            job.finishRequest(false);
-            job.setMaxCraftingCount(0);
-            job.setProgress(0);
-            job.setCraftCounter(0);
-            setDelay(TICKS_20);
-            return START_WORKING;
-        }
-
-        job.setProgress(job.getProgress()+1);
-
-        worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
+        worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();
+
+        if (currentRequest != null && currentRequest.getState() == RequestState.CANCELLED)
+        {
+            currentRequest = null;
+            incrementActionsDone();
+            job.setMaxCraftingCount(0);
+            job.setProgress(0);
+            job.setCraftCounter(0);
+            currentRecipeStorage = null;
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
+            return START_WORKING;
+        }
+
         if (job.getProgress() >= getRequiredProgressForMakingRawMaterial())
         {
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (job.getCraftCounter() <= job.getMaxCraftingCount() && currentRequest != null)
+                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
                 {
-                    currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
-                    currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                    job.setCraftCounter(job.getCraftCounter()+1);
+                    currentRequest = null;
+                    incrementActionsDone();
+                    job.finishRequest(false);
+                    job.setMaxCraftingCount(0);
+                    job.setProgress(0);
+                    job.setCraftCounter(0);
+                    setDelay(TICKS_20);
+                    worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                    worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
+                    return START_WORKING;
                 }
 
-                incrementActionsDoneAndDecSaturation();
-                job.setMaxCraftingCount(0);
-                job.setProgress(0);
-                job.setCraftCounter(0);
-                currentRecipeStorage = null;
-                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                job.setCraftCounter(job.getCraftCounter() + 1);
+
+                if (job.getCraftCounter() == job.getMaxCraftingCount())
+                {
+                    incrementActionsDone();
+                    job.setMaxCraftingCount(0);
+                    job.setProgress(0);
+                    job.setCraftCounter(0);
+                    currentRecipeStorage = null;
+                    worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                    worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
+                }
+                else
+                {
+                    job.setProgress(0);
+                    return GET_RECIPE;
+                }
+
                 return START_WORKING;
             }
             else
             {
+                currentRequest = null;
                 job.finishRequest(false);
                 job.setMaxCraftingCount(0);
                 job.setProgress(0);
                 job.setCraftCounter(0);
+                incrementActionsDoneAndDecSaturation();
                 setDelay(TICKS_20);
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
         }
+
         return getState();
     }
 
@@ -265,8 +297,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             job.finishRequest(true);
             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
             currentRequest = null;
         }
+
+        getOwnBuilding().setPickUpPriority(1);
+
         return super.afterDump();
     }
 

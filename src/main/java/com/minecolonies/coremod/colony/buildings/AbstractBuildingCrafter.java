@@ -13,15 +13,15 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,14 +55,29 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     }
 
     @Override
+    public boolean canBeGathered()
+    {
+        return super.canBeGathered() &&
+                 this.getAssignedCitizen().stream()
+                    .map(c -> c.getJob(AbstractJobCrafter.class))
+                    .filter(Objects::nonNull)
+                    .allMatch(AbstractJobCrafter::hasTask);
+    }
+
+    @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        final ImmutableCollection<IRequestResolver<?>> supers = super.createResolvers();
+        final Collection<IRequestResolver<?>> supers =
+          super.createResolvers().stream()
+            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver)).collect(
+            Collectors.toList());
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -88,7 +103,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                             {
                                 itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
                             }
-                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
+                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), false));
                         }
 
                         final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
@@ -96,7 +111,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                         {
                             output.setAmount(recipeOutputs.get(output).getA() + output.getAmount());
                         }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), true));
+                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
                     }
                 }
             }
@@ -116,7 +131,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
 
     /**
@@ -137,18 +152,20 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
 
         /**
          * Check if an additional recipe can be added.
+         *
          * @return true if so.
          */
         public boolean canRecipeBeAdded()
         {
-            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
         }
     }
 
     /**
      * Check if an additional recipe can be added.
+     *
      * @param learnedRecipes the learned recipes.
-     * @param buildingLevel the building level.
+     * @param buildingLevel  the building level.
      * @return true if so.
      */
     public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
