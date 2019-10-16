@@ -40,6 +40,13 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
     void alterPickUpPriority(int value);
 
     /**
+     * Sets the pickup priority to the given value.
+     *
+     * @param pickUpPriority The new pickup priority.
+     */
+    void setPickUpPriority(int pickUpPriority);
+
+    /**
      * Check if the priority is static and it shouldn't change.
      *
      * @return the priority state, a boolean.

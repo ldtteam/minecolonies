@@ -369,7 +369,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
 
         final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
-        if (storage.canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
+        if (storage.canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
         {
             final List<ItemStack> list = new ArrayList<>();
 

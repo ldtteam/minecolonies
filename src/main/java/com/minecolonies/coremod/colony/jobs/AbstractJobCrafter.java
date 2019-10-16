@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.mojang.realmsclient.client.Request;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -167,7 +168,15 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
             return null;
         }
 
-        return (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        //This cleans up the state after something went wrong.
+        IRequest<R> request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        while(request == null)
+        {
+            getTaskQueueFromDataStore().remove(getTaskQueueFromDataStore().peekFirst());
+            request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        }
+
+        return request;
     }
 
     /**
@@ -195,10 +204,6 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.CANCELLED);
-
-        //Just to be sure lets delete them!
-        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
-            getTaskQueueFromDataStore().removeFirst();
     }
 
     /**
@@ -212,7 +217,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         {
             getTaskQueueFromDataStore().remove(token);
         }
-        else
+        else if (getAssignedTasksFromDataStore().contains(token))
         {
             getAssignedTasksFromDataStore().remove(token);
         }
