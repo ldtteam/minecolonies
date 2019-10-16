@@ -108,10 +108,10 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         if (item instanceof BlockItem)
         {
             final Block block = ((BlockItem) item).getBlock();
-            if (block == Blocks.STONE
-                || block == Blocks.STONE_BRICKS
-                || block == Blocks.SMOOTH_STONE
-                  || block instanceof GlazedTerracottaBlock)
+            if (block == Blocks.STONE ||
+                    block == Blocks.STONE_BRICKS ||
+                    block == Blocks.SMOOTH_STONE ||
+                    block instanceof GlazedTerracottaBlock)
             {
                 return true;
             }
