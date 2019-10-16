@@ -105,7 +105,10 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
         {
             final Item item = storage.getPrimaryOutput().getItem();
-            if (item.isIn(Tags.Items.STONE) || item.isIn(Tags.Items.COBBLESTONE) || item.isIn(ItemTags.STONE_BRICKS))
+            if (
+                    item.isIn(Tags.Items.STONE)
+                            || item.isIn(Tags.Items.COBBLESTONE)
+                            || item.isIn(ItemTags.STONE_BRICKS))
             {
                 return true;
             }
@@ -123,8 +126,12 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                 if (stack.getItem() instanceof BlockItem)
                 {
                     final Block block = ((BlockItem) stack.getItem()).getBlock();
-                    if (block.isIn(Tags.Blocks.STONE) || block.isIn(Tags.Blocks.COBBLESTONE) || block.isIn(BlockTags.STONE_BRICKS))
-                    {
+                    if (
+                            block.isIn(Tags.Blocks.STONE)
+                                    || block.isIn(Tags.Blocks.COBBLESTONE)
+                                    || block.isIn(BlockTags.STONE_BRICKS)
+                                    || block.asItem().getRegistryName().getPath().contains("smooth_stone")
+                    ) {
                         amountOfValidBlocks++;
                         continue;
                     }
