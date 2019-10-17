@@ -42,42 +42,29 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        return null;
+        return;
     }
 
     @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        //NOOP
-    }
 
-    @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        /**
-         * Nothing to be done.
-         */
-    }
-
-    @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        //Noop
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        IRequest<?> request = manager.getRequestForToken(token);
 
-        if (request == null)
-        {
-            return new TextComponentString("<UNKNOWN>");
-        }
+    }
 
+    @NotNull
+    @Override
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull IRequest<?> request)
+    {
         if (request.hasParent())
         {
             request = manager.getRequestForToken(request.getParent());
@@ -92,7 +79,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
-        return request.getRequester().getDisplayName(manager, request.getId())
+        return request.getRequester().getRequesterDisplayName(manager, request)
                  .appendSibling(new TextComponentString(" ("))
                  .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
                  .appendSibling(new TextComponentString(")"));
