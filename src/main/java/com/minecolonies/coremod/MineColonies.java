@@ -1,11 +1,13 @@
 package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.advancements.open_gui_window.OpenGuiWindowTrigger;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -130,6 +132,8 @@ public class MineColonies
         proxy.registerEntities();
         proxy.registerEntityRendering();
         proxy.registerEvents();
+
+        AdvancementTriggers.preInit();
 
         @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
@@ -295,6 +299,10 @@ public class MineColonies
 
         //JEI Messages
         getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, ++id, Side.SERVER);
+
+        //Advancement Messages
+        getNetwork().registerMessage(OpenGuiWindowTriggerMessage.class, OpenGuiWindowTriggerMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ClickGuiButtonTriggerMessage.class, ClickGuiButtonTriggerMessage.class, ++id, Side.SERVER);
     }
 
     public static SimpleNetworkWrapper getNetwork()

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -7,6 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.AdvancementUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -362,6 +364,9 @@ public class BuildingHome extends AbstractBuilding
                     }
                 }
             }
+            final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
+
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getPosition());
         }

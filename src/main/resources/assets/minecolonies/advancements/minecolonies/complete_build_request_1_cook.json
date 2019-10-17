@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/citizen_eat_food_first",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockHutCook"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_cook.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_cook.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "sawmill": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "cook",
+        "level": 1
+      }
+    }
+  }
+}

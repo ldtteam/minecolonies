@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
@@ -243,6 +242,13 @@ public class EntityAIEatTask extends EntityAIBase
         final ItemFood itemFood = (ItemFood) stack.getItem();
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (citizenColony != null )
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
+        }
+
         citizenData.markDirty();
         citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
 

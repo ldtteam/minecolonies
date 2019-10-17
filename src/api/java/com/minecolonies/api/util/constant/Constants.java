@@ -70,6 +70,19 @@ public final class Constants
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
 
     /**
+     * Advancement Criterion Names
+     */
+    public static final String CRITERION_SUPPLY_PLACED = "supply_placed";
+    public static final String CRITERION_STRUCTURE_PLACED = "structure_placed";
+    public static final String CRITERION_CREATE_BUILD_REQUEST = "create_build_request";
+    public static final String CRITERION_OPEN_GUI_WINDOW = "open_gui_window";
+    public static final String CRITERION_CLICK_GUI_BUTTON = "click_gui_button";
+    public static final String CRITERION_CITIZEN_EAT_FOOD = "citizen_eat_food";
+    public static final String CRITERION_BUILDING_ADD_RECIPE = "building_add_recipe";
+    public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
+    public static final String CRITERION_COLONY_POPULATION = "colony_population";
+
+    /**
      * The oredict entry of an ore.
      */
     public static final String ORE_STRING = "ore";
