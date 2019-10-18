@@ -168,6 +168,15 @@ public class EventHandler
     }
 
     /**
+     * Called when a chunk gets unloaded
+     */
+    @SubscribeEvent
+    public void onChunkUnLoad(final ChunkEvent.Unload event)
+    {
+        ChunkDataHelper.unloadChunk(event.getChunk(), event.getWorld());
+    }
+
+    /**
      * Event called when the player enters a new chunk.
      *
      * @param event the event.

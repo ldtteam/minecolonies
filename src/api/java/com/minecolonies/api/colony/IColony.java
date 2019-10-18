@@ -325,4 +325,25 @@ public interface IColony
      * Sets whether the colony has a child.
      */
     void updateHasChilds();
+
+    /**
+     * Adds a loaded chunk to the colony list
+     *
+     * @param chunkPos chunk to add
+     */
+    void addLoadedChunk(long chunkPos);
+
+    /**
+     * Adds a chunk from the colony list
+     *
+     * @param chunkPos chunk to remove
+     */
+    void removeLoadedChunk(long chunkPos);
+
+    /**
+     * Returns the amount of loaded chunks
+     *
+     * @return amount of chunks
+     */
+    int getLoadedChunkCount();
 }

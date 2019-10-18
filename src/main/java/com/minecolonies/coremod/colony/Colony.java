@@ -78,6 +78,11 @@ public class Colony implements IColony
     private int dimensionId;
 
     /**
+     * List of loaded chunks for the colony.
+     */
+    private Set<Long> loadedChunks = new HashSet<>();
+
+    /**
      * List of waypoints of the colony.
      */
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
@@ -1632,5 +1637,23 @@ public class Colony implements IColony
             }
         }
         this.hasChilds = false;
+    }
+
+    @Override
+    public void addLoadedChunk(final long chunkPos)
+    {
+        loadedChunks.add(chunkPos);
+    }
+
+    @Override
+    public void removeLoadedChunk(final long chunkPos)
+    {
+        loadedChunks.remove(chunkPos);
+    }
+
+    @Override
+    public int getLoadedChunkCount()
+    {
+        return loadedChunks.size();
     }
 }

@@ -454,6 +454,24 @@ public final class ColonyView implements IColonyView
     {
     }
 
+    @Override
+    public void addLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public void removeLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public int getLoadedChunkCount()
+    {
+        return 0;
+    }
+
     /**
      * Sets if citizens can move in.
      *
