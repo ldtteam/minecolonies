@@ -20,11 +20,10 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -255,7 +254,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
-                world.getEntitiesWithinAABB(MobEntity.class, building.getTargetableArea(world)).forEach(Entity::remove);
+                world.getEntitiesWithinAABB(MonsterEntity.class, building.getTargetableArea(world)).forEach(Entity::remove);
             }
         }
     }
