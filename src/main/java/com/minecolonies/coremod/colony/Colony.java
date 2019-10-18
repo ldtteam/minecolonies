@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -920,7 +921,8 @@ public class Colony implements IColony
                 if (world.isBlockLoaded(key))
                 {
                     @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
-                    if (world.getBlockState(key).getBlock() != (value.getBlock()))
+                    final Block worldBlock = world.getBlockState(key).getBlock();
+                    if (worldBlock != (value.getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
                     {
                         wayPoints.remove(key);
                         markDirty();
