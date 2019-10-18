@@ -130,6 +130,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> siftableBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
+
     public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize;
 
     /*  ------------------------------------------------------------------------------ *
@@ -447,6 +449,17 @@ public class CommonConfiguration extends AbstractConfiguration
                      "3,3,minecraft:magma_cream,5",
                      "3,3,minecraft:player_head,5"),
           s -> s instanceof String);
+
+        listOfPlantables = defineList(builder, "listofplantables",
+          Arrays.asList
+                   ( "minecraft:tallgrass",
+                     "minecraft:yellow_flower",
+                     "minecraft:red_flower",
+                     "minecraft:double_plant",
+                     "minecraft:cactus",
+                     "minecraft:reeds"),
+          s -> s instanceof String);
+
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
 
 

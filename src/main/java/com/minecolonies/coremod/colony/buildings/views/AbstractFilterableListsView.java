@@ -72,6 +72,16 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
     }
 
     /**
+     * Get the size of allowed items.
+     * @param key the key to check for.
+     * @return the size.
+     */
+    public int getSize(final String key)
+    {
+        return listsOfItems.getOrDefault(key, new ArrayList<>()).size();
+    }
+
+    /**
      * Remove an item from the view and notify the server side.
      * @param id the id.
      * @param item the item to remove.

@@ -40,6 +40,9 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new,
           ModBlocks.blockHutWareHouse).build(null).setRegistryName(Constants.MOD_ID, "warehouse");
 
+        MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityWareHouse::new,
+          ModBlocks.blockHutWareHouse).build(null).setRegistryName(Constants.MOD_ID, "warehouse");
+
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
           MinecoloniesTileEntities.BARREL,

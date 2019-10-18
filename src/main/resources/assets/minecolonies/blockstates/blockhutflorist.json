@@ -1,0 +1,32 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "minecolonies:blockhutflorist#base",
+      "Solid": "minecolonies:blockhutflorist#base",
+      "Cutout": "minecolonies:blockhutflorist#overlay"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "facing=east": {
+      "y": 0
+    },
+    "facing=south": {
+      "y": 90
+    },
+    "facing=west": {
+      "y": 180
+    },
+    "facing=north": {
+      "y": 270
+    },
+    "base": [{
+      "model": "minecolonies:blockhutfloristflowers"
+    }],
+    "overlay": [{
+      "model": "minecolonies:blockhutflorist"
+    }]
+  }
+}
