@@ -12,9 +12,8 @@ import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,14 +135,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             return IDLE;
         }
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         final long distance = BlockPosUtil.getDistance2D(worker.getPosition(), getOwnBuilding().getPosition());
         if (distance > MAX_DISTANCE && walkToBuilding())
         {
             return DECIDE;
         }
 
-        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), IS_COMPOST);
+        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST);
         if (amountOfCompostInInv <= 0)
         {
             final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_COMPOST);
@@ -200,7 +199,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         if (entity instanceof TileEntityCompostedDirt)
         {
             @Nullable final ItemStack stack = getOwnBuilding(BuildingFlorist.class).getFlowerToGrow();
-            if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), IS_COMPOST))
+            if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
             {
                 ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding(BuildingFlorist.class).getFlowerToGrow());
             }

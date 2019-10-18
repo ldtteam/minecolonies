@@ -452,12 +452,17 @@ public class CommonConfiguration extends AbstractConfiguration
 
         listOfPlantables = defineList(builder, "listofplantables",
           Arrays.asList
-                   ( "minecraft:tallgrass",
-                     "minecraft:yellow_flower",
-                     "minecraft:red_flower",
-                     "minecraft:double_plant",
+                   ("minecraft:sunflower",
+                     "minecraft:lilac",
+                     "minecraft:rose_bush",
+                     "minecraft:peony",
+                     "minecraft:tall_grass",
+                     "minecraft:large_fern",
+                     "minecraft:fern",
+                     "minecraft:sugar_cane",
                      "minecraft:cactus",
-                     "minecraft:reeds"),
+                     "small_flowers"
+                   ),
           s -> s instanceof String);
 
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);

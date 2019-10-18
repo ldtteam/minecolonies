@@ -11,7 +11,7 @@ public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
     @Override
     public String getName()
     {
-        return "blockHutFlorist";
+        return "blockhutflorist";
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.views.View;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -69,13 +69,13 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
         {
             if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
                 return;
             }
 
             if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getLabel().equals(ON) && building.getSize(PAGE_ITEMS_VIEW) >= MAX_BUILDING_LEVEL)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, TOO_MANY_FILTERED_FLORIST);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_FLORIST);
                 return;
             }
         }

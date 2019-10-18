@@ -1,7 +1,7 @@
 {
   "variants": {
-    "normal": {
-      "model": "minecolonies:composteddirt"
+    "": {
+      "model": "minecolonies:block/composteddirt"
     }
   }
 }

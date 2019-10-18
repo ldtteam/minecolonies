@@ -1,28 +1,28 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import net.minecraft.block.BlockDoublePlant;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBlockSpecial;
-import net.minecraft.item.ItemSeeds;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DoublePlantBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
 /**
  * The composted dirty tileEntity to grow all kinds of flowers.
  */
-public class TileEntityCompostedDirt extends TileEntity implements ITickable
+public class TileEntityCompostedDirt extends TileEntity implements ITickableTileEntity
 {
     /**
      * If currently composted.
@@ -54,8 +54,16 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
      */
     private ItemStack flower;
 
+    /**
+     * Constructor to create an instance of this tileEntity.
+     */
+    public TileEntityCompostedDirt()
+    {
+        super(MinecoloniesTileEntities.COMPOSTED_DIRT);
+    }
+
     @Override
-    public void update()
+    public void tick()
     {
         final World world = this.getWorld();
         if(!world.isRemote && this.composted && ticker % TICKS_SECOND == 0)
@@ -79,8 +87,8 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
         if(this.composted)
         {
-            ((WorldServer)worldIn).spawnParticle(
-              EnumParticleTypes.VILLAGER_HAPPY, this.getPos().getX()+0.5,
+            ((ServerWorld)worldIn).spawnParticle(
+              ParticleTypes.HAPPY_VILLAGER, this.getPos().getX()+0.5,
               this.getPos().getY()+1, this.getPos().getZ()+0.5,
               1, 0.2, 0, 0.2, 0);
         }
@@ -90,24 +98,16 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
             final BlockPos position = pos.up();
             if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
             {
-                if (flower.getItem() instanceof ItemSeeds)
+                if (flower.getItem() instanceof BlockItem)
                 {
-                    worldIn.setBlockState(position, ((ItemSeeds) flower.getItem()).getPlant(world, position));
-                }
-                else if (flower.getItem() instanceof ItemBlock)
-                {
-                    if (((ItemBlock) flower.getItem()).getBlock() instanceof BlockDoublePlant)
+                    if (((BlockItem) flower.getItem()).getBlock() instanceof DoublePlantBlock)
                     {
-                        ((BlockDoublePlant) ((ItemBlock) flower.getItem()).getBlock()).placeAt(worldIn, position, BlockDoublePlant.EnumPlantType.byMetadata(flower.getMetadata()), 0x03);
+                        ((DoublePlantBlock) ((BlockItem) flower.getItem()).getBlock()).placeAt(worldIn, position, UPDATE_FLAG);
                     }
                     else
                     {
-                        worldIn.setBlockState(position, ((ItemBlock) flower.getItem()).getBlock().getStateFromMeta(flower.getMetadata()));
+                        worldIn.setBlockState(position, ((BlockItem) flower.getItem()).getBlock().getDefaultState());
                     }
-                }
-                else if (flower.getItem() instanceof ItemBlockSpecial)
-                {
-                    worldIn.setBlockState(position, ((ItemBlockSpecial) flower.getItem()).getBlock().getStateFromMeta(flower.getMetadata()));
                 }
                 else
                 {

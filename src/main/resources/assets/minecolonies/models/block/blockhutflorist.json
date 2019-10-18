@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"18": "minecraft:blocks/flower_rose",
-		"19": "minecraft:blocks/flower_blue_orchid",
-		"20": "minecraft:blocks/flower_tulip_pink",
-		"particle": "minecraft:blocks/concrete_powder_red"
+		"18": "minecraft:block/flower_rose",
+		"19": "minecraft:block/flower_blue_orchid",
+		"20": "minecraft:block/flower_tulip_pink",
+		"particle": "minecraft:block/concrete_powder_red"
 	},
 	"elements": [
 		{

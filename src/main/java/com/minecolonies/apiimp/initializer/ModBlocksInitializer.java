@@ -129,7 +129,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutStoneSmeltery.registerBlockItem(registry, properties);
         ModBlocks.blockHutCrusher.registerBlockItem(registry, properties);
         ModBlocks.blockHutSifter.registerBlockItem(registry, properties);
-        ModBlocks.blockHutFlorist.registerItemBlock(registry);
+        ModBlocks.blockHutFlorist.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
@@ -138,6 +138,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
-        ModBlocks.blockCompostedDirt.registerItemBlock(registry);
+        ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
     }
 }

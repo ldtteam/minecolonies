@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -11,17 +12,17 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,7 +46,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     /**
      * Florist.
      */
-    private static final String FLORIST = "Florist";
+    private static final String FLORIST = "florist";
 
     /**
      * Maximum building level
@@ -136,36 +137,30 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList compostBinTagList = compound.getTagList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < compostBinTagList.tagCount(); ++i)
+        final ListNBT compostBinTagList = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            plantGround.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+            plantGround.add(NBTUtil.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        @NotNull final NBTTagList compostBinTagList = new NBTTagList();
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT compostBinTagList = new ListNBT();
         for (@NotNull final BlockPos entry : plantGround)
         {
-            @NotNull final NBTTagCompound compostBinCompound = new NBTTagCompound();
-            compostBinCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            compostBinTagList.appendTag(compostBinCompound);
+            @NotNull final CompoundNBT compostBinCompound = new CompoundNBT();
+            compostBinCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            compostBinTagList.add(compostBinCompound);
         }
-        compound.setTag(TAG_PLANTGROUND, compostBinTagList);
+        compound.put(TAG_PLANTGROUND, compostBinTagList);
 
         return compound;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
     }
 
     @Override
@@ -214,9 +209,14 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         {
             case 0:
             case 1:
-                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(storage -> storage.getDamageValue() == BASIC_FLOWER_META).filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains(FLOWER_NAME)).collect(Collectors.toList());
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
+                         .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
+                         .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
+                         .collect(Collectors.toList());
             case 2:
-                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream().filter(itemStorage -> itemStorage.getItem().getRegistryName().getPath().contains(FLOWER_NAME)).collect(Collectors.toList());
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
+                         .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
+                         .collect(Collectors.toList());
             case 3:
             case 4:
             case 5:
@@ -239,12 +239,6 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
-        }
-
-        @Override
-        public void deserialize(@NotNull final ByteBuf buf)
-        {
-            super.deserialize(buf);
         }
 
         @NotNull

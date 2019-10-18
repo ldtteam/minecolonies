@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
@@ -249,15 +250,16 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        for (final String string : Configurations.gameplay.listOfPlantables)
+        for (final String string : IMinecoloniesAPI.getInstance().getConfig().getCommon().listOfPlantables.get())
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
                 return true;
             }
-            for (final int id : OreDictionary.getOreIDs(itemStack))
+
+            for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                if (OreDictionary.getOreName(id).equals(string))
+                if (tag.toString().contains(string))
                 {
                     return true;
                 }
