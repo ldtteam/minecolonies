@@ -113,7 +113,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, DECIDE),
+          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
           new AITarget(DECIDE, this::decide, TICKS_SECOND),
           new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
           new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
