@@ -275,6 +275,17 @@ public class Configurations
                                                      "treeSapling"
                                                    };
 
+        @Config.Comment("The items and item-tags that the florist can plant.")
+        public String[] listOfPlantables = new String[]
+                                                   {
+                                                     "minecraft:tallgrass",
+                                                     "minecraft:yellow_flower",
+                                                     "minecraft:red_flower",
+                                                     "minecraft:double_plant",
+                                                     "minecraft:cactus",
+                                                     "minecraft:reeds",
+                                                   };
+
         @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions). [Default: false]")
         public boolean pvp_mode = false;
 

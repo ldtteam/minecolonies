@@ -466,6 +466,20 @@ public enum AIWorkerState implements IAIState
     SIFT(true),
 
             /*
+### Florist ###
+     */
+
+    /**
+     * Let the florist harvest a flower.
+     */
+    FLORIST_HARVEST(true),
+
+    /**
+     * Let the florist compost the block.
+     */
+    FLORIST_COMPOST(true),
+
+    /*
 ### Avoid-AI ###
      */
 
