@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
 
@@ -221,6 +222,16 @@ public class StackList implements IDeliverable
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
+    }
+
+    @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        return new StackList(this.theStacks.stream().map(s -> {
+            final ItemStack newStack = s.copy();
+            newStack.setCount(newCount);
+            return newStack;
+        }).collect(Collectors.toList()), this.description);
     }
 
     public StackList setMatchOreDic(final boolean match)

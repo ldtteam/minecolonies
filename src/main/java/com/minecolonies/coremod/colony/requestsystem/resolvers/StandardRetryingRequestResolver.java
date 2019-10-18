@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +88,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
         return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getId() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
@@ -97,13 +96,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         return ImmutableList.of();
     }
 
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
         delays.put(request.getId(), getMaximalDelayBetweenRetriesInTicks());
         assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
@@ -120,22 +119,20 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         if (assignedRequests.containsKey(request.getId()))
         {
             delays.remove(request.getId());
             assignedRequests.remove(request.getId());
         }
-
-        //No further processing needed.
-        return null;
     }
 
     @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public void onAssignedRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        onRequestCancelled(manager, request);
+
     }
 
     @Override
@@ -147,7 +144,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void update()
     {
-        LogHandler.log("Starting reassignment.");
+        manager.getLogger().debug("Starting reassignment.");
 
         //Lets decrement all delays
         getAllAssignedRequests().forEach(t -> {
@@ -190,10 +187,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {
-            LogHandler.log("Failed to reassign a retryable request: " + id);
+            manager.getLogger().debug("Failed to reassign a retryable request: " + id);
         });
 
-        LogHandler.log("Finished reassignment.");
+        manager.getLogger().debug("Finished reassignment.");
     }
 
     @Override
@@ -228,20 +225,20 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         //Noop, we do not schedule child requests. So this is never called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         //Noop, see onRequestComplete.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TextComponentString("Player");
     }

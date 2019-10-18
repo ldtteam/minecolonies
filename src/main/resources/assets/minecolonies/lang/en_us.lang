@@ -217,8 +217,8 @@ com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizen Chests:
 com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
-com.minecolonies.coremod.job.Ranger=Knight
-com.minecolonies.coremod.job.Knight=Ranger
+com.minecolonies.coremod.job.Ranger=Ranger
+com.minecolonies.coremod.job.Knight=Knight
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Unemployed: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Nodes

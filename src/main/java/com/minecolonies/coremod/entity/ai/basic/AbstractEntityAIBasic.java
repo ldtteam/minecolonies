@@ -910,10 +910,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected void cancelAsynchRequestForArmor(final IToolType armorType)
     {
         final List<IRequest<? extends Tool>> openRequests =
-          getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(Tool.class), iRequest -> iRequest.getRequest().getToolClass() == armorType);
+          getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
         for (final IRequest token : openRequests)
         {
-            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.COMPLETED);
+            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
         }
     }
 

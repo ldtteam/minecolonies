@@ -56,10 +56,11 @@ public interface IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
+     * @param qty the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
-    boolean canFullFillRecipe(@NotNull final IItemHandler... inventories);
+    boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories);
 
     default boolean fullFillRecipe(@NotNull final IItemHandler... inventories)
     {
