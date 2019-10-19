@@ -819,6 +819,7 @@ public class Permissions implements IPermissions
      * @param player {@link EntityPlayer} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
+    @Override
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());

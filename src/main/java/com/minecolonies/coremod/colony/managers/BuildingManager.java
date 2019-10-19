@@ -72,7 +72,7 @@ public class BuildingManager implements IBuildingManager
     /**
      * Variable to check if the fields needs to be synched.
      */
-    private boolean isFieldsDirty    = false;
+    private boolean isFieldsDirty = false;
 
     /**
      * Counter for world ticks.
@@ -86,6 +86,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Creates the BuildingManager for a colony.
+     *
      * @param colony the colony.
      */
     public BuildingManager(final Colony colony)
@@ -108,7 +109,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if(compound.hasKey(TAG_NEW_FIELDS))
+        if (compound.hasKey(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -159,12 +160,12 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void sendPackets(final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers)
+    public void sendPackets(final Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers)
     {
-        sendBuildingPackets(oldSubscribers, hasNewSubscribers, subscribers);
-        sendFieldPackets(hasNewSubscribers, subscribers);
+        sendBuildingPackets(closeSubscribers, newSubscribers);
+        sendFieldPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
-        isFieldsDirty    = false;
+        isFieldsDirty = false;
     }
 
     @Override
@@ -327,9 +328,9 @@ public class BuildingManager implements IBuildingManager
                 tileEntity.setBuilding(building);
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockType().getClass(),
-                        tileEntity.getPosition()));
+                  colony.getID(),
+                  tileEntity.getBlockType().getClass(),
+                  tileEntity.getPosition()));
                 if (tileEntity.isMirrored())
                 {
                     building.invertMirror();
@@ -369,9 +370,9 @@ public class BuildingManager implements IBuildingManager
             else
             {
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockType().getClass(),
-                        tileEntity.getPosition()));
+                  colony.getID(),
+                  tileEntity.getBlockType().getClass(),
+                  tileEntity.getPosition()));
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
@@ -391,9 +392,9 @@ public class BuildingManager implements IBuildingManager
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
-                    colony.getID(),
-                    building.getID(),
-                    building.getSchematicName()));
+              colony.getID(),
+              building.getID(),
+              building.getSchematicName()));
         }
 
         if (building instanceof BuildingTownHall)
@@ -492,25 +493,19 @@ public class BuildingManager implements IBuildingManager
         }
     }
 
-
-
     /**
      * Sends packages to update the buildings.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    private void sendBuildingPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers)
+    private void sendBuildingPackets(final Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers)
     {
-        if (isBuildingsDirty || hasNewSubscribers)
+        if (isBuildingsDirty || !newSubscribers.isEmpty())
         {
+            final Set<EntityPlayerMP> players = isBuildingsDirty ? closeSubscribers : newSubscribers;
             for (@NotNull final IBuilding building : buildings.values())
             {
-                if (building.isDirty() || hasNewSubscribers)
+                if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    subscribers.stream()
-                            .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -518,18 +513,17 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
-     *
-     * @param hasNewSubscribers the new subscribers.
      */
-    private void sendFieldPackets(final boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers)
+    private void sendFieldPackets(final Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers)
     {
-        if (isFieldsDirty || hasNewSubscribers)
+        if (isFieldsDirty || !newSubscribers.isEmpty())
         {
+            final Set<EntityPlayerMP> players = isFieldsDirty ? closeSubscribers : newSubscribers;
             for (final IBuilding building : buildings.values())
             {
                 if (building instanceof BuildingFarmer)
                 {
-                    subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -542,7 +536,7 @@ public class BuildingManager implements IBuildingManager
      */
     private void addField(@NotNull final BlockPos pos)
     {
-        if(!fields.contains(pos))
+        if (!fields.contains(pos))
         {
             fields.add(pos);
         }

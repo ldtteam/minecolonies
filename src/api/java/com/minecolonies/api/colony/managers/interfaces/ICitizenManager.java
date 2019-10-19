@@ -29,14 +29,12 @@ public interface ICitizenManager
 
     /**
      * Sends packages to update the citizens.
-     *  @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     * @param subscribers all subscribers
+     *  @param closeSubscribers    the existing subscribers.
+     * @param newSubscribers new subscribers
      */
     void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
-            final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers);
+      @NotNull final Set<EntityPlayerMP> closeSubscribers,
+      @NotNull final Set<EntityPlayerMP> newSubscribers);
 
     /**
      * Spawn a brand new Citizen.

@@ -7,6 +7,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -173,7 +174,10 @@ public class EventHandler
     @SubscribeEvent
     public void onChunkUnLoad(final ChunkEvent.Unload event)
     {
-        ChunkDataHelper.unloadChunk(event.getChunk(), event.getWorld());
+        if (event.getWorld() instanceof WorldServer)
+        {
+            ChunkDataHelper.unloadChunk(event.getChunk(), event.getWorld());
+        }
     }
 
     /**
@@ -190,58 +194,77 @@ public class EventHandler
         if (entity instanceof EntityPlayerMP)
         {
             final World world = entity.getEntityWorld();
-            MineColonies.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks), (EntityPlayerMP) event.getEntity());
+            MineColonies.getNetwork()
+              .sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks),
+                (EntityPlayerMP) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
+            MineColonies.getNetwork().sendTo(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z), (EntityPlayerMP) entity);
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-            // Add new subscribers to colony.
-            for (final int colonyId : newCloseColonies.getAllCloseColonies())
-            {
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
-                if (colony != null)
-                {
-                    colony.getPackageManager().addSubscribers(player);
-                }
-            }
-
-            //Remove old subscribers from colony.
-            for (final int colonyId : oldCloseColonies.getAllCloseColonies())
-            {
-                if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
-                {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
-                    if (colony != null)
-                    {
-                        colony.getPackageManager().removeSubscriber(player);
-                    }
-                }
-            }
-
+            // Check if we get into a differently claimed chunk
             if (newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
             {
-                if (newCloseColonies.getOwningColony() == 0)
+                // Remove visiting/subscriber from old colony
+                final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), world);
+                if (oldColony != null)
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
-                    if (colony != null)
-                    {
-                        colony.removeVisitingPlayer(player);
-                    }
-                    return;
+                    oldColony.removeVisitingPlayer(player);
+                    oldColony.getPackageManager().removeSubscriber(player);
                 }
 
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
-                if (colony != null)
+                // Add visiting/subscriber to new colony
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), world);
+                if (newColony != null)
                 {
-                    colony.addVisitingPlayer(player);
+                    newColony.addVisitingPlayer(player);
+                    newColony.getPackageManager().addSubscribers(player);
                 }
+            }
+        }
+    }
+
+    /**
+     * Event called when a player enters the world.
+     *
+     * @param event player enter world event
+     */
+    @SubscribeEvent
+    public void onPlayerEnterWorld(final net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if (event.player instanceof EntityPlayerMP)
+        {
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+            {
+                final Rank rank = colony.getPermissions().getRank(event.player);
+                if (rank == Rank.OFFICER || rank == Rank.OWNER)
+                {
+                    colony.getPackageManager().addOfficerSubscriber((EntityPlayerMP) event.player);
+                }
+            }
+        }
+    }
+
+    /**
+     * Event called when a player leaves the world.
+     *
+     * @param event player leaves world event
+     */
+    @SubscribeEvent
+    public void onPlayerLeaveWorld(final net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event)
+    {
+        if (event.player instanceof EntityPlayerMP)
+        {
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+            {
+                colony.getPackageManager().removeSubscriber((EntityPlayerMP) event.player);
+                colony.getPackageManager().removeOfficerSubscriber((EntityPlayerMP) event.player);
             }
         }
     }
@@ -430,7 +453,6 @@ public class EventHandler
                 if (!stack.isEmpty() && !world.isRemote)
                 {
                     MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (EntityPlayerMP) event.getPlayer());
-
                 }
                 event.setCanceled(true);
             }
@@ -698,12 +720,12 @@ public class EventHandler
 
         if (!world.isRemote
               && Configurations.gameplay.protectVillages
-                  && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
+              && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
-                Log.getLogger().warn("Village close by!");
-                LanguageHandler.sendPlayerMessage(player,
-                        "tile.blockHutTownHall.messageTooCloseToVillage");
-                return false;
+            Log.getLogger().warn("Village close by!");
+            LanguageHandler.sendPlayerMessage(player,
+              "tile.blockHutTownHall.messageTooCloseToVillage");
+            return false;
         }
         return true;
     }

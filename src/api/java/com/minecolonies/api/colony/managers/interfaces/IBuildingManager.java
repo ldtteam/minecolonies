@@ -48,11 +48,10 @@ public interface IBuildingManager
 
     /**
      * Send packets of the buildings to the subscribers.
-     * @param oldSubscribers the old subs.
-     * @param hasNewSubscribers if there are new ones.
-     * @param subscribers all the subs.
+     * @param closeSubscribers the old subs.
+     * @param newSubscribers new subs.
      */
-    void sendPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers);
+    void sendPackets(Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers);
 
     /**
      * Tick the buildings on world tick.

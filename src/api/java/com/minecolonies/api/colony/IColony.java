@@ -308,6 +308,9 @@ public interface IColony
 
     void increaseBoughtCitizenCost();
 
+    @NotNull
+    List<EntityPlayer> getImportantMessageEntityPlayers();
+
     boolean isManualHiring();
 
     boolean isManualHousing();

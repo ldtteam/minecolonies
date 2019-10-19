@@ -1211,6 +1211,12 @@ public final class ColonyView implements IColonyView
 
     }
 
+    @Override
+    public List<EntityPlayer> getImportantMessageEntityPlayers()
+    {
+        return null;
+    }
+
     /**
      * Get the style of the colony.
      * @return the current default style.

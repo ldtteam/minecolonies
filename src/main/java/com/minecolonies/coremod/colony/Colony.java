@@ -26,7 +26,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1100,7 +1099,15 @@ public class Colony implements IColony
     @NotNull
     public List<EntityPlayer> getMessageEntityPlayers()
     {
-        return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
+        return new ArrayList<>(packageManager.getSubscribers());
+    }
+
+    // TODO use important message for various messages.
+    @Override
+    @NotNull
+    public List<EntityPlayer> getImportantMessageEntityPlayers()
+    {
+        return new ArrayList<>(packageManager.getOfficerSubscribers());
     }
 
     /**

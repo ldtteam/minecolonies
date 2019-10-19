@@ -110,28 +110,23 @@ public class CitizenManager implements ICitizenManager
 
     @Override
     public void sendPackets(
-      @NotNull final Set<EntityPlayerMP> oldSubscribers,
-      final boolean hasNewSubscribers,
-      @NotNull final Set<EntityPlayerMP> subscribers)
+      @NotNull final Set<EntityPlayerMP> closeSubscribers,
+      @NotNull final Set<EntityPlayerMP> newSubscribers)
     {
-        if (isCitizensDirty || hasNewSubscribers)
+        if (isCitizensDirty || !newSubscribers.isEmpty())
         {
+            final Set<EntityPlayerMP> players = isCitizensDirty ? closeSubscribers : newSubscribers;
             for (@NotNull final ICitizenData citizen : citizens.values())
             {
                 if (citizen.getCitizenEntity().isPresent())
                 {
-                    if (citizen.isDirty() || hasNewSubscribers)
+                    if (citizen.isDirty() || !newSubscribers.isEmpty())
                     {
-                        subscribers.stream()
-                          .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                          .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                        players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
-
-            subscribers.stream()
-              .filter(player -> !oldSubscribers.contains(player))
-              .forEach(player -> MineColonies.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
+            players.forEach(player -> MineColonies.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
         }
     }
 

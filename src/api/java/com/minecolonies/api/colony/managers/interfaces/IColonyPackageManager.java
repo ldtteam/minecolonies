@@ -35,35 +35,25 @@ public interface IColonyPackageManager
 
     /**
      * Update the colony view.
-     * @param oldSubscribers the old subs.
-     * @param hasNewSubscribers if there are new subs.
      */
-    void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendColonyViewPackets();
 
     /**
      * Sends packages to update the permissions.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendPermissionsPackets();
 
 
     /**
      * Sends packages to update the workOrders.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendWorkOrderPackets();
 
 
     /**
      * Sends packages to update the schematics.
-     *
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendSchematicsPackets(final boolean hasNewSubscribers);
+    void sendSchematicsPackets();
 
     /**
      * Mark the package manager dirty.
@@ -76,9 +66,15 @@ public interface IColonyPackageManager
      */
     void addSubscribers(@NotNull final EntityPlayerMP subscriber);
 
+    void addOfficerSubscriber(@NotNull EntityPlayerMP subscriber);
+
+    void removeOfficerSubscriber(@NotNull EntityPlayerMP subscriber);
+
     /**
      * Remove an old subsriber from the colony.
      * @param player the subscriber to remove.
      */
     void removeSubscriber(@NotNull final EntityPlayerMP player);
+
+    Set<EntityPlayerMP> getOfficerSubscribers();
 }

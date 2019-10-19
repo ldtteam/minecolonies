@@ -37,6 +37,8 @@ public interface IPermissions
     @Nullable
     String getOwnerName();
 
+    boolean isSubscriber(@NotNull EntityPlayer player);
+
     /**
      * Returns whether the player is a member of the colony.
      *
