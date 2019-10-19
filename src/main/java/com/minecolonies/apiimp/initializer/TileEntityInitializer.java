@@ -5,10 +5,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,12 +37,16 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new,
           ModBlocks.blockHutWareHouse).build(null).setRegistryName(Constants.MOD_ID, "warehouse");
 
+        MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new,
+          ModBlocks.blockCompostedDirt).build(null).setRegistryName(Constants.MOD_ID, "composteddirt");
+
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
           MinecoloniesTileEntities.BARREL,
           MinecoloniesTileEntities.BUILDING,
           MinecoloniesTileEntities.DECO_CONTROLLER,
           MinecoloniesTileEntities.RACK,
-          MinecoloniesTileEntities.WAREHOUSE);
+          MinecoloniesTileEntities.WAREHOUSE,
+          MinecoloniesTileEntities.COMPOSTED_DIRT);
     }
 }

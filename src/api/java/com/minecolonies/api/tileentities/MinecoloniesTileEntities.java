@@ -24,4 +24,7 @@ public class MinecoloniesTileEntities
 
     @ObjectHolder("warehouse")
     public static TileEntityType<?> WAREHOUSE;
+
+    @ObjectHolder("composteddirt")
+    public static TileEntityType<?> COMPOSTED_DIRT;
 }

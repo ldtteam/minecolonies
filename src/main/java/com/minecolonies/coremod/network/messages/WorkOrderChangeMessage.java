@@ -123,7 +123,7 @@ public class WorkOrderChangeMessage implements IMessage
             {
                 colony.getWorkManager().removeWorkOrder(workOrderId);
             }
-            else
+            else if (colony.getWorkManager().getWorkOrder(workOrderId) != null)
             {
                 colony.getWorkManager().getWorkOrder(workOrderId).setPriority(priority);
             }

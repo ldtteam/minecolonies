@@ -37,12 +37,12 @@ public class ViewFilterableList
     /**
      * Switch button Id.
      */
-    private static final String BUTTON_SWITCH = "switch";
+    public static final String BUTTON_SWITCH = "switch";
 
     /**
      * String describing on for the gui.
      */
-    private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    public static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
 
     /**
      * String describing off for the gui.
