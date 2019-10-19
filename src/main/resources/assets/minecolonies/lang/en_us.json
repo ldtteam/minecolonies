@@ -21,6 +21,9 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
 
+  "minecolonies.config.listofplantables": "Florist Flowers",
+  "minecolonies.config.listofplantables.comment": "The items and item-tags that the florist can plant.",
+
   "item.minecolonies.scepterlumberjack.name": "Lumberjack-scepter",
   "item.minecolonies.scepterlumberjack.usedstart": "First, position set.",
   "item.minecolonies.scepterlumberjack.usedend": "Second, position set.",
@@ -1121,5 +1124,20 @@
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
-  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d"
+  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
+
+  "block.minecolonies.composted_dirt": "Composted Dirt",
+  "com.minecolonies.coremod.composted_dirt.player_use_message": "This block can be only used by the Florist worker!",
+  "com.minecolonies.coremod.job.florist": "Florist",
+  "tile.minecolonies.blockhutflorist.name": "Flower Shop",
+  "com.minecolonies.coremod.gui.workerhuts.florist": "Florist",
+  "com.minecolonies.gui.workerhuts.florist.flowers": "Plantables",
+  "com.minecolonies.gui.workerhuts.florist.toolow": "The florist currently randomly generates the flowers in the list, upgrade to level 4 or above to select them manually!",
+  "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",
+  "com.minecolonies.coremod.florist.noplantground": "I am missing any composted dirt to plant on, please repair or upgrade my building!",
+  "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
+  "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
+  "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d",
+  "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d",
+  "block.minecolonies.blockhutflorist": "Flower Shop"
 }

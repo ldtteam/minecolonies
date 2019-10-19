@@ -232,6 +232,13 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.POSTBOX_ID))
                                  .createBuildingEntry();
 
+        ModBuildings.florist = new BuildingEntry.Builder()
+                                 .setBuildingBlock(ModBlocks.blockHutFlorist)
+                                 .setBuildingProducer(BuildingFlorist::new)
+                                 .setBuildingViewProducer(() -> BuildingFlorist.View::new)
+                                 .setRegistryName(new ResourceLocation(ModBuildings.FLORIST_ID))
+                                 .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -262,5 +269,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.townHall);
         reg.register(ModBuildings.wareHouse);
         reg.register(ModBuildings.postBox);
+        reg.register(ModBuildings.florist);
     }
 }

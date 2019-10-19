@@ -12,7 +12,6 @@ import net.minecraft.item.*;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -22,8 +21,6 @@ import net.minecraft.world.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 {
