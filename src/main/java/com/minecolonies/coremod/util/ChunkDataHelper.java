@@ -100,15 +100,14 @@ public final class ChunkDataHelper
                     }
                 }
             }
-
-            final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-            if (closeCap != null)
+        }
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if (closeCap != null)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.provider.getDimension());
+            if (colony != null)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.provider.getDimension());
-                if (colony != null)
-                {
-                    colony.addLoadedChunk(ChunkPos.asLong(chunk.x, chunk.z));
-                }
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.x, chunk.z));
             }
         }
     }
