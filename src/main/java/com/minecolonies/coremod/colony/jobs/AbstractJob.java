@@ -430,4 +430,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
             workerAI.get().resetAI();
         }
     }
+
+    @Override
+    public boolean allowsAvoidance()
+    {
+        return true;
+    }
 }
