@@ -35,4 +35,10 @@ public interface ICitizenJobHandler
      */
     @Nullable
     IJob getColonyJob();
+
+    /**
+     * Method to check if the citizen job allows to run the avoidance task.
+     * @return true if so.
+     */
+    boolean shouldRunAvoidance();
 }
