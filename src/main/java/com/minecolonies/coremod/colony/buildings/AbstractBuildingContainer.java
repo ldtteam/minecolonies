@@ -6,7 +6,9 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import io.netty.util.internal.MathUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
@@ -19,6 +21,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -131,18 +134,18 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void alterPickUpPriority(final int value)
     {
-        if (this.pickUpPriority + value < 1)
-        {
-            this.pickUpPriority = 1;
-        }
-        else if (this.pickUpPriority + value > MAX_PRIO)
-        {
-            this.pickUpPriority = MAX_PRIO;
-        }
-        else
-        {
-            this.pickUpPriority += value;
-        }
+        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 1, MAX_PRIO);
+    }
+
+    /**
+     * Sets the pickup priority to the given value.
+     *
+     * @param pickUpPriority The new pickup priority.
+     */
+    @Override
+    public void setPickUpPriority(final int pickUpPriority)
+    {
+        this.pickUpPriority = MathHelper.clamp(pickUpPriority, 1, MAX_PRIO);
     }
 
     /**

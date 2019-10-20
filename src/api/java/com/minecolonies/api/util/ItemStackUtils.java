@@ -210,10 +210,13 @@ public final class ItemStackUtils
                 entity.getArmorInventoryList().forEach(item -> request.add(new ItemStorage(item)));
                 entity.getHeldEquipment().forEach(item -> request.add(new ItemStorage(item)));
             }
+
+            /*
+            todo: deactivated until forge fixes this problem.
             else if (!(entity instanceof MobEntity))
             {
                 request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
-            }
+            }*/
 
             return request.stream().filter(stack -> !stack.getItemStack().isEmpty()).collect(Collectors.toList());
         }

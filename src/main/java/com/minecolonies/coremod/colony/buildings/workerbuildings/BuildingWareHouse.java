@@ -37,9 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class of the warehouse building.
@@ -64,7 +62,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The list of deliverymen registered to this building.
      */
-    private static final List<Vec3d> registeredDeliverymen = new ArrayList<>();
+    private static final Set<Vec3d> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
@@ -174,9 +172,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return the unmodifiable List of positions of them.
      */
     @Override
-    public List<Vec3d> getRegisteredDeliverymen()
+    public Set<Vec3d> getRegisteredDeliverymen()
     {
-        return new ArrayList<>(Collections.unmodifiableList(registeredDeliverymen));
+        return new HashSet<>(Collections.unmodifiableSet(registeredDeliverymen));
     }
 
     @Override

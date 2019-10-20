@@ -81,13 +81,14 @@ public class BuildToolPlaceMessage implements IMessage
     /**
      * Create the building that was made with the build tool.
      * Item in inventory required
-     *  @param structureName String representation of a structure
+     *
+     * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
-     * @param state the state.
+     * @param state         the state.
      */
     public BuildToolPlaceMessage(
       final String structureName,
@@ -128,7 +129,6 @@ public class BuildToolPlaceMessage implements IMessage
         mirror = buf.readBoolean();
 
         state = Block.getStateById(buf.readInt());
-
     }
 
     /**
@@ -223,7 +223,8 @@ public class BuildToolPlaceMessage implements IMessage
 
                 boolean complete = false;
                 int level = 0;
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), itemStack -> itemStack.isItemEqual(new ItemStack(Item.getItemFromBlock(block), 1)));
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                  itemStack -> itemStack.isItemEqual(new ItemStack(Item.getItemFromBlock(block), 1)));
                 if (slot != -1)
                 {
                     final ItemStack stack = player.inventory.getStackInSlot(slot);
@@ -237,10 +238,10 @@ public class BuildToolPlaceMessage implements IMessage
                         if (compound.keySet().contains(TAG_PASTEABLE))
                         {
                             String schematic = sn.toString();
-                            schematic = schematic.substring(0, schematic.length()-1);
+                            schematic = schematic.substring(0, schematic.length() - 1);
                             schematic += level;
                             InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
-                              buildPos, rotation,mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                              buildPos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
                             complete = true;
                         }
                     }
@@ -277,17 +278,20 @@ public class BuildToolPlaceMessage implements IMessage
             String schem = sn.toString();
             String woName = workOrderName;
 
-            if (schem.matches("^.*[a-zA-Z_-]\\d$"))
+            if (!schem.contains("cache"))
             {
+                if (schem.matches("^.*[a-zA-Z_-]\\d$"))
+                {
 
-                schem = schem.replaceAll("\\d$", "");
-                schem+='1';
-            }
+                    schem = schem.replaceAll("\\d$", "");
+                    schem += '1';
+                }
 
-            if (woName.matches("^.*[a-zA-Z_-]\\d$"))
-            {
-                woName = woName.replaceAll("\\d$", "");
-                woName+='1';
+                if (woName.matches("^.*[a-zA-Z_-]\\d$"))
+                {
+                    woName = woName.replaceAll("\\d$", "");
+                    woName += '1';
+                }
             }
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror), false);
@@ -300,14 +304,15 @@ public class BuildToolPlaceMessage implements IMessage
 
     /**
      * setup the building once it has been placed.
-     * @param world         World the hut is being placed into.
-     * @param player        Who placed the hut.
-     * @param sn            The name of the structure.
-     * @param rotation      The number of times the structure should be rotated.
-     * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the structure is mirrored.
-     * @param level         the future initial building level.
-     * @param complete      if pasted.
+     *
+     * @param world    World the hut is being placed into.
+     * @param player   Who placed the hut.
+     * @param sn       The name of the structure.
+     * @param rotation The number of times the structure should be rotated.
+     * @param buildPos The location the hut is being placed.
+     * @param mirror   Whether or not the structure is mirrored.
+     * @param level    the future initial building level.
+     * @param complete if pasted.
      */
     private static void setupBuilding(
       @NotNull final World world, @NotNull final PlayerEntity player,

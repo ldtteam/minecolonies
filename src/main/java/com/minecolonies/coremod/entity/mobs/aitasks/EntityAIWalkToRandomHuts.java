@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.LEVITATION_EFFECT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
 
@@ -154,6 +155,11 @@ public class EntityAIWalkToRandomHuts extends Goal
      */
     private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
+        if (this.entity.isPotionActive(LEVITATION_EFFECT))
+        {
+            return true;
+        }
+
         if (handleProxyWhileMoving())
         {
             return proxy.walkToBlock(site, range, true);

@@ -1,0 +1,36 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"18": "minecraft:block/flower_rose",
+		"19": "minecraft:block/flower_blue_orchid",
+		"20": "minecraft:block/flower_tulip_pink",
+		"particle": "minecraft:block/concrete_powder_red"
+	},
+	"elements": [
+		{
+			"name": "Sack-small-label",
+			"from": [11.5, 20, 13.2],
+			"to": [13.75, 22.25, 13.25],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#18"}
+			}
+		},
+		{
+			"name": "Sack-small-label",
+			"from": [9.5, 20, 11.45],
+			"to": [11.75, 22.25, 11.5],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [11, 27, 12.25]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#19"}
+			}
+		},
+		{
+			"name": "Sack-small-label",
+			"from": [1.5, 20, 11.45],
+			"to": [3.75, 22.25, 11.5],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#20"}
+			}
+		}
+	]
+}

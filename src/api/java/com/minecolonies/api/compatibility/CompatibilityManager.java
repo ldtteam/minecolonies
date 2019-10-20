@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
@@ -80,6 +81,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of all the items that can be composted
      */
     private final Set<ItemStorage> compostableItems = new HashSet<>();
+
+    /**
+     * List of all the items that can be composted
+     */
+    private final Set<ItemStorage> plantables = new HashSet<>();
 
     /**
      * List of all the items that can be used as fuel
@@ -174,6 +180,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverOres();
         Log.getLogger().info("Finished discovering oreBlocks");
         discoverCompostableItems();
+        discoverPlantables();
         discoverLuckyOres();
         discoverCrusherModes();
         discoverSifting();
@@ -218,6 +225,32 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
+        {
+            if (itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+
+            for (final ResourceLocation tag : itemStack.getItem().getTags())
+            {
+                if (tag.toString().contains(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPlantable(final ItemStack itemStack)
+    {
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for (final String string : IMinecoloniesAPI.getInstance().getConfig().getCommon().listOfPlantables.get())
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -300,6 +333,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfCompostableItems()
     {
         return ImmutableList.copyOf(compostableItems);
+    }
+
+    @Override
+    public List<ItemStorage> getCopyOfPlantables()
+    {
+        return ImmutableList.copyOf(plantables);
     }
 
     @Override
@@ -470,6 +509,18 @@ public class CompatibilityManager implements ICompatibilityManager
         if (compostableItems.isEmpty())
         {
             compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering compostables");
+    }
+
+    /**
+     * Create complete list of compostable items.
+     */
+    private void discoverPlantables()
+    {
+        if (plantables.isEmpty())
+        {
+            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
