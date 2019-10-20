@@ -456,7 +456,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial Citizens
-        if (colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getCommon().initialCitizenAmount.get())
+        if (colony.canMoveIn() && colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getCommon().initialCitizenAmount.get())
         {
             int respawnInterval = MineColonies.getConfig().getCommon().citizenRespawnInterval.get() * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
