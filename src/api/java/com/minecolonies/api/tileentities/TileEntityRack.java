@@ -525,6 +525,10 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public BlockPos getNeighbor()
     {
+        if (relativeNeighbor == null)
+        {
+            return null;
+        }
         return pos.subtract(relativeNeighbor);
     }
 

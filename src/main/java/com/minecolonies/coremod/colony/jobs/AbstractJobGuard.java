@@ -73,4 +73,10 @@ public abstract class AbstractJobGuard extends AbstractJob
         }
         return null;
     }
+
+    @Override
+    public boolean allowsAvoidance()
+    {
+        return false;
+    }
 }
