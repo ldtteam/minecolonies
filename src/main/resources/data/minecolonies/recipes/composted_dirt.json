@@ -7,15 +7,13 @@
   ],
   "key": {
     "X": {
-      "item": "minecraft:dirt",
-      "data": 0
+      "item": "minecraft:dirt"
     },
     "P": {
       "item": "minecolonies:compost"
     }
   },
   "result": {
-    "item": "minecolonies:composted_dirt",
-    "data": 0
+    "item": "minecolonies:composted_dirt"
   }
 }
