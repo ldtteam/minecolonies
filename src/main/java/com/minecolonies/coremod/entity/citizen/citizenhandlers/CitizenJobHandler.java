@@ -131,6 +131,6 @@ public class CitizenJobHandler implements ICitizenJobHandler
     @Override
     public boolean shouldRunAvoidance()
     {
-        return getColonyJob() != null && getColonyJob().allowsAvoidance();
+        return getColonyJob() == null || getColonyJob().allowsAvoidance();
     }
 }
