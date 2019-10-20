@@ -7,12 +7,10 @@
   ],
   "key": {
     "X": {
-      "type": "forge:ore_dict",
-      "ore": "plankWood"
+      "tag": "minecraft:planks"
     },
     "B": {
-      "item": "minecraft:red_flower",
-      "data": 0
+      "item": "minecraft:poppy"
     },
     "T": {
       "item": "structurize:sceptergold"
