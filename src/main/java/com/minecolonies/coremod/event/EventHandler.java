@@ -16,6 +16,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -67,6 +68,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -756,6 +759,16 @@ public class EventHandler
     public void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
         IColonyManager.getInstance().onWorldLoad(event.getWorld());
+
+        // Global events
+        // Halloween ghost mode
+        if (Configurations.gameplay.holidayFeatures &&
+              (LocalDateTime.now().getDayOfMonth() == 31 && LocalDateTime.now().getMonth() == Month.OCTOBER
+                 || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
+                 || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
+        {
+            RenderBipedCitizen.isItGhostTime = true;
+        }
     }
 
     /**

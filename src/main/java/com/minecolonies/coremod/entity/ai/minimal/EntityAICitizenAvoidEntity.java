@@ -225,7 +225,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (citizen.isCurrentlyFleeing())
+        if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance())
         {
             startingPos = citizen.getPosition();
             fleeingCounter = 0;
@@ -241,7 +241,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldContinueExecuting()
     {
         stateMachine.tick();
-        return citizen.isCurrentlyFleeing();
+        return citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance();
     }
 
     /**

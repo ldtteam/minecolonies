@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -51,10 +50,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
+            if (!isRequestChainValid(manager, requestToCheck))
+                return false;
+
             final Colony colony = (Colony) manager.getColony();
             final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
@@ -72,14 +74,68 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return false;
     }
 
+    public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
+    {
+        if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
+            return false;
+
+        if (!requestToCheck.hasParent())
+            return true;
+
+        final IRequest<?> parentRequest = manager.getRequestForToken(requestToCheck.getParent());
+
+        //Should not happen but just to be sure.
+        if (parentRequest == null)
+            return true;
+
+        return isRequestChainValid(manager, parentRequest);
+    }
+
     @Nullable
     @Override
     @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
     /**
      * Moving the curly braces really makes the code hard to read.
      */
-    public List<IToken<?>> attemptResolve(
+    public List<IToken<?>> attemptResolveRequest(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+        if (manager.getColony().getWorld().isRemote)
+            return Lists.newArrayList();
+
+        if (!(manager.getColony() instanceof Colony))
+            return Lists.newArrayList();
+
+        final Colony colony = (Colony) manager.getColony();
+
+        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+
+        final int totalRequested = request.getRequest().getCount();
+        final int totalAvailable = wareHouses.stream()
+                                     .map(wareHouse -> wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack)))
+                                     .filter(itemStacks -> !itemStacks.isEmpty())
+                                     .flatMap(List::stream)
+                                     .mapToInt(ItemStack::getCount)
+                                     .sum();
+
+        if (totalAvailable >= totalRequested)
+            return Lists.newArrayList();
+
+        final int totalRemainingRequired = totalRequested - totalAvailable;
+        final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
+        return Lists.newArrayList(manager.createRequest(this, remainingRequest));
+    }
+
+    @Override
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
+    }
+
+    @Nullable
+    @Override
+    public List<IRequest<?>> getFollowupRequestForCompletion(
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -89,35 +145,35 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         final Colony colony = (Colony) manager.getColony();
         final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-        List<IToken<?>> deliveries = Lists.newArrayList();
-        int remainingCount = request.getRequest().getCount();
+        List<IRequest<?>> deliveries = Lists.newArrayList();
+        int remainingCount = completedRequest.getRequest().getCount();
 
         tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)
         {
-            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
             for (final ItemStack stack :
               targetStacks)
             {
-                if (ItemStackUtils.isEmpty(stack))	
-		{
+                if (ItemStackUtils.isEmpty(stack))
+                {
                     continue;
-		}
+                }
 
                 final ItemStack matchingStack = stack.copy();
                 matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
 
                 final ItemStack deliveryStack = matchingStack.copy();
-                request.addDelivery(deliveryStack.copy());
+                completedRequest.addDelivery(deliveryStack.copy());
 
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
                 final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
 
-                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getLocation(), deliveryStack.copy());
+                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy());
 
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getLocation(), request.getId()), delivery);
+                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
 
-                deliveries.add(requestToken);
+                deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
 
                 if (remainingCount <= 0)
@@ -130,31 +186,15 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return deliveries.isEmpty() ? null : deliveries;
     }
 
-    @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
-        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
-    }
-
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
-    {
-        //No followup needed.
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IRequest<?> onRequestCancelled(
+    public void onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        return null;
     }
 
     @Override
-    public void onRequestBeingOverruled(
+    public void onAssignedRequestCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
@@ -169,28 +209,18 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //Somebody cancelled the delivery.
-        //reassign the parent request.
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(token);
-
-            if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
-                manager.reassignRequest(parent.getId(), ImmutableList.of());
-        }
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }

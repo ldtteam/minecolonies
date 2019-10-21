@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -39,7 +40,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @param manager        The manager that is checking if this resolver could resolve that request.
      * @return True when this resolver COULD resolve the given request, false when not.
      */
-    boolean canResolve(@NotNull IRequestManager manager, IRequest<? extends R> requestToCheck);
+    boolean canResolveRequest(@NotNull IRequestManager manager, IRequest<? extends R> requestToCheck);
 
     /**
      * Method used to attempt a resolving operation.
@@ -59,7 +60,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IToken<?>> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    List<IToken<?>> attemptResolveRequest(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method used to resolve a given request.
@@ -76,7 +77,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
-    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    void resolveRequest(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Called by the manager given to indicate that this request has been assigned to you.
@@ -84,39 +85,28 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @param request The request assigned.
      * @param simulation True when simulating.
      */
-    default void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation)
+    default void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation)
     {
         //Noop
     }
 
     /**
-     * Method called by the given manager to request a followup request.
-     * This should generally return a request that brings the result of the completed request to its requester.
-     *
-     * @param manager          The manager that requests to followup request.
-     * @param completedRequest The request that has been completed and the given manager is requesting a followup for.
-     * @return The followup request for the completed request. Null if none is needed.
-     */
-    @Nullable
-    List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
-
-    /**
-     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
-     * and that the resolver of the parent did not return a cleanup request.
-     * <p>
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     * <p>
-     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     * Indicates that a assigned request has been cancelled.
+     * Is called before graph is updated.
      *
      * @param manager The manager that indicates the cancelling
      * @param request The request that has been cancelled.
-     * @return the new request if necessary. It should not be assigned yet.
-     *
-     * @throws IllegalArgumentException is thrown when the cancelling failed.
      */
-    @Nullable
-    IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    void onAssignedRequestBeingCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+
+    /**
+     * Indicates that a assigned request has been cancelled.
+     * Is called after the graph has been updated.
+     *
+     * @param manager The manager that indicates the cancelling
+     * @param request The request that has been cancelled.
+     */
+    void onAssignedRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Called by manager given to indicate that a colony has updated their available items.
@@ -128,21 +118,11 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
         //Noop
     }
 
-    /**
-     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
-     * and that the resolver of the parent did not return a cleanup request.
-     * <p>
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     * <p>
-     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
-     *
-     * @param manager The manager that indicates the cancelling
-     * @param request The request that has been cancelled.
-     *
-     * @throws IllegalArgumentException is thrown when the cancelling failed.
-     */
-    void onRequestBeingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    @Nullable
+    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest)
+    {
+        return Lists.newArrayList();
+    }
 
     /**
      * The priority of this resolver.

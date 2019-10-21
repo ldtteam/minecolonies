@@ -320,7 +320,19 @@ public final class TranslationConstants
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG   = "com.minecolonies.coremod.general.offBig";
     @NonNls
-    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                 = "com.minecolonies.coremod.general.cantTakeEquipped";
+    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED  = "com.minecolonies.coremod.general.cantTakeEquipped";
+    @NonNls
+    public static final String TOO_LOW_LEVEL_TO_FILTER_FLORIST = "com.minecolonies.gui.workerhuts.florist.toolow";
+    @NonNls
+    public static final String TOO_MANY_FILTERED_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomany";
+    @NonNls
+    public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerHuts.florist";
+    @NonNls
+    public static final String FLORIST_FLOWER_DESC = "com.minecolonies.gui.workerHuts.florist.flowers";
+    @NonNls
+    public static final String NO_PLANT_GROUND_FLORIST = "com.minecolonies.coremod.florist.noplantground";
+    @NonNls
+    public static final String NO_FLOWERS_IN_CONFIG = "com.minecolonies.coremod.florist.noflowers";
 
     private TranslationConstants()
     {

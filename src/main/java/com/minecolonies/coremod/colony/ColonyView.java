@@ -438,6 +438,23 @@ public final class ColonyView implements IColonyView
     }
 
     /**
+     * Tries to use a given amount of additional growth-time for childs.
+     *
+     * @param amount amount to use
+     * @return true if used up.
+     */
+    @Override
+    public boolean useAdditionalChildTime(final int amount)
+    {
+        return false;
+    }
+
+    @Override
+    public void updateHasChilds()
+    {
+    }
+
+    /**
      * Sets if citizens can move in.
      *
      * @param newMoveIn true if citizens can move in.
