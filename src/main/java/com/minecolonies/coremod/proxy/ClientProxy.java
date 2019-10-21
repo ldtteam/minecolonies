@@ -225,6 +225,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutStoneSmeltery);
         createCustomModel(ModBlocks.blockHutCrusher);
         createCustomModel(ModBlocks.blockHutSifter);
+        createCustomModel(ModBlocks.blockHutFlorist);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
@@ -263,6 +264,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);
+        createCustomModel(ModBlocks.blockCompostedDirt);
     }
 
     @Override
