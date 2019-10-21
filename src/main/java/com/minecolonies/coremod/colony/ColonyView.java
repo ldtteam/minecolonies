@@ -1093,6 +1093,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public boolean areAllColonyChunksLoaded()
+    {
+        return false;
+    }
+
+    @Override
     public Map<BlockPos, IBlockState> getWayPoints()
     {
         return wayPoints;

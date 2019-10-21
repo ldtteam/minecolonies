@@ -88,10 +88,10 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     /**
      * On tick of the world.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param colony {@link TickEvent.WorldTickEvent}
      */
     @Override
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
+    public void onWorldTick(final IColony colony)
     {
         // Can be overridden by other buildings.
     }

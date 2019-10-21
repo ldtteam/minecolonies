@@ -43,6 +43,8 @@ public interface IColony
 
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
+    boolean areAllColonyChunksLoaded();
+
     /**
      * Returns the position of the colony.
      *

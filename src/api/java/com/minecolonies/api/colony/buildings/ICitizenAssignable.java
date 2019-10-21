@@ -35,9 +35,9 @@ public interface ICitizenAssignable extends ISchematicProvider
     /**
      * On tick of the world.
      *
-     * @param event {@link TickEvent.WorldTickEvent}
+     * @param colony {@link TickEvent.WorldTickEvent}
      */
-    void onWorldTick(TickEvent.WorldTickEvent event);
+    void onWorldTick(IColony colony);
 
     /**
      * Get the main worker of the building (the first in the list).

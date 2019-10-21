@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
@@ -27,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,6 +67,11 @@ public class CitizenManager implements ICitizenManager
      * The colony of the manager.
      */
     private final Colony colony;
+
+    /**
+     * The initial citizen spawn interval
+     */
+    int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -439,12 +444,12 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
+    public void onWorldTick(final IColony colony)
     {
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
         //  Every CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-        if (Colony.shallUpdate(event.world, CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
+        if (colony.hasTownHall() && colony.areAllColonyChunksLoaded())
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
@@ -452,13 +457,13 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial Citizens
-        if (colony.hasTownHall() && getCitizens().size() < Configurations.gameplay.initialCitizenAmount)
+        if (this.colony.hasTownHall() && getCitizens().size() < Configurations.gameplay.initialCitizenAmount)
         {
-            int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
-            respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
+            respawnInterval -= 500 + (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
-            if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
+            if (respawnInterval <= 0)
             {
+                respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
                 // Make sure the initial citizen contain both genders
                 final CitizenData newCitizen = createAndRegisterNewCitizenData();
 
@@ -472,7 +477,7 @@ public class CitizenManager implements ICitizenManager
                     newCitizen.setIsFemale(false);
                 }
 
-                spawnOrCreateCitizen(newCitizen, event.world, null, true);
+                spawnOrCreateCitizen(newCitizen, colony.getWorld(), null, true);
             }
         }
     }

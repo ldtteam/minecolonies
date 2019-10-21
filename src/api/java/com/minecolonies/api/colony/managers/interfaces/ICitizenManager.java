@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,9 +158,9 @@ public interface ICitizenManager
 
     /**
      * Actions to execute on a specific world tick event.
-     * @param event the event.
+     * @param colony the event.
      */
-    void onWorldTick(final TickEvent.WorldTickEvent event);
+    void onWorldTick(final IColony colony);
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.

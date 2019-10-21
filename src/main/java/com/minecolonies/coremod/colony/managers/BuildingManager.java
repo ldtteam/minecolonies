@@ -4,6 +4,7 @@ import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -73,11 +74,6 @@ public class BuildingManager implements IBuildingManager
      * Variable to check if the fields needs to be synched.
      */
     private boolean isFieldsDirty = false;
-
-    /**
-     * Counter for world ticks.
-     */
-    private int tickCounter = 0;
 
     /**
      * The colony of the manager.
@@ -169,27 +165,16 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
+    public void onWorldTick(final IColony colony)
     {
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
-            if (event.world.isBlockLoaded(building.getPosition()))
+            if (colony.getWorld().isBlockLoaded(building.getPosition()))
             {
-                if (tickCounter == 20)
-                {
-                    building.secondsWorldTick(event);
-                }
-
-                building.onWorldTick(event);
+                building.onWorldTick(colony);
             }
         }
-
-        if (tickCounter == 20)
-        {
-            tickCounter = 0;
-        }
-        tickCounter++;
     }
 
     @Override
@@ -199,7 +184,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
+    public void cleanUpBuildings(@NotNull final IColony colony)
     {
         @Nullable final List<IBuilding> removedBuildings = new ArrayList<>();
 
@@ -209,7 +194,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final IBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getPosition();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
+            if (colony.getWorld().isBlockLoaded(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
                 removedBuildings.add(building);
@@ -220,9 +205,9 @@ public class BuildingManager implements IBuildingManager
 
         for (@NotNull final BlockPos pos : tempFields)
         {
-            if (event.world.isBlockLoaded(pos))
+            if (colony.getWorld().isBlockLoaded(pos))
             {
-                final TileEntityScarecrow scarecrow = (TileEntityScarecrow) event.world.getTileEntity(pos);
+                final TileEntityScarecrow scarecrow = (TileEntityScarecrow) colony.getWorld().getTileEntity(pos);
                 if (scarecrow == null)
                 {
                     removeField(pos);

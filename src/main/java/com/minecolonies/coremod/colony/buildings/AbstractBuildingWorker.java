@@ -35,7 +35,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -449,19 +448,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     /**
      * @see AbstractBuilding#onUpgradeComplete(int)
+     * @param colony
      */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(event);
-
-        //
-        // Code below this check won't lag each tick anymore
-        //
-        if (!Colony.shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
-        {
-            return;
-        }
+        super.onWorldTick(colony);
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)

@@ -254,15 +254,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
-     */
-    @Override
-    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        // Empty, override to use
-    }
-
-    /**
      * Adds work orders to the {@link Colony#getWorkManager()}.
      *
      * @param level   Desired level.

@@ -13,6 +13,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
@@ -88,6 +90,23 @@ public final class MobEventsUtils
         }
 
         BarbarianEventUtils.barbarianEvent(world, colony, targetSpawnPoint, raidNumber, horde);
+    }
+
+    /**
+     * Checks if a raid is triggered
+     */
+    public static boolean checkForRaid(final IColony colony)
+    {
+        if (colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
+              && Configurations.gameplay.doBarbariansSpawn
+              && colony.getRaiderManager().canHaveRaiderEvents()
+              && !colony.getPackageManager().getOfficerSubscribers().isEmpty()
+              && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony))
+        {
+            MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+        }
+
+        return false;
     }
 
     /**

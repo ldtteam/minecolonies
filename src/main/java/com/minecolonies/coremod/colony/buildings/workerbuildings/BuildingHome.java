@@ -31,6 +31,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 
@@ -240,26 +241,14 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final IColony colony)
     {
         if (childCreationTimer > childCreationInterval)
         {
             childCreationTimer = 0;
             trySpawnChild();
         }
-        childCreationTimer++;
-    }
-
-    @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        //
-        // Code below this check won't lag each tick anymore
-        //
-        if (!Colony.shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
-        {
-            return;
-        }
+        childCreationTimer+= TWENTYFIVESEC;
 
         if (getAssignedCitizen().size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
         {

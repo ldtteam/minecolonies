@@ -36,7 +36,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Whether there will be a raid in this colony tonight.
      */
-    private boolean raidTonight                             = false;
+    private boolean raidTonight = false;
 
     /**
      * Whether or not the raid has been calculated for today.
@@ -70,6 +70,7 @@ public class RaidManager implements IRaiderManager
 
     /**
      * Creates the RaidManager for a colony.
+     *
      * @param colony the colony.
      */
     public RaidManager(final Colony colony)
@@ -131,9 +132,9 @@ public class RaidManager implements IRaiderManager
         }
 
         final List<BlockPos> positions = colony.getWayPoints().keySet().stream().filter(
-                pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
+          pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
         positions.addAll(colony.getBuildingManager().getBuildings().keySet().stream().filter(
-                pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
+          pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
 
         BlockPos thePos = center;
         double distance = 0;
@@ -154,7 +155,7 @@ public class RaidManager implements IRaiderManager
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
-                    = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
+              = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
         }
 
         if (thePos.equals(center))
@@ -196,10 +197,10 @@ public class RaidManager implements IRaiderManager
     @Override
     public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
     {
-        for(final UUID uuid : new ArrayList<>(horde))
+        for (final UUID uuid : new ArrayList<>(horde))
         {
             final Entity raiderEntity = world.getEntityFromUuid(uuid);
-            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
+            if (raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
             {
                 horde.remove(uuid);
             }
@@ -210,11 +211,11 @@ public class RaidManager implements IRaiderManager
 
     private void sendHordeMessage()
     {
-        if(horde.isEmpty())
+        if (horde.isEmpty())
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
         }
-        else if(horde.size() <= SMALL_HORDE_SIZE)
+        else if (horde.size() <= SMALL_HORDE_SIZE)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ONLY_X_BARBARIANS_LEFT_MESSAGE, horde.size());
         }
@@ -223,37 +224,34 @@ public class RaidManager implements IRaiderManager
     @Override
     public void onWorldTick(@NotNull final World world)
     {
-        if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
+        for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
         {
-            for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
+            if (entry.getKey().equals(BlockPos.ORIGIN))
             {
-                if (entry.getKey().equals(BlockPos.ORIGIN))
+                schematicMap.remove(entry.getKey());
+            }
+            else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+            {
+                // Load the backup from before spawning
+                try
                 {
-                    schematicMap.remove(entry.getKey());
+                    InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
+                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                      entry.getKey(),
+                      0,
+                      Mirror.NONE,
+                      true);
                 }
-                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                catch (final NullPointerException | ArrayIndexOutOfBoundsException e)
                 {
-                    // Load the backup from before spawning
-                    try
-                    {
-                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
-                          new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
-                          entry.getKey(),
-                          0,
-                          Mirror.NONE,
-                          true);
-                    }
-                    catch(final NullPointerException | ArrayIndexOutOfBoundsException e)
-                    {
-                        Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
-                    }
+                    Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
+                }
 
-                    schematicMap.remove(entry.getKey());
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      PIRATES_SAILING_OFF_MESSAGE, colony.getName());
-                    return;
-                }
+                schematicMap.remove(entry.getKey());
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  PIRATES_SAILING_OFF_MESSAGE, colony.getName());
+                return;
             }
         }
     }
@@ -287,7 +285,6 @@ public class RaidManager implements IRaiderManager
             {
                 raiders.add((AbstractEntityMinecoloniesMob) raider);
             }
-
         }
         return raiders;
     }
@@ -306,7 +303,8 @@ public class RaidManager implements IRaiderManager
             final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
             final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
             schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
-                                      .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
+                                  .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS),
+                                    raiderTagCompound -> new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
         }
     }
 
@@ -315,8 +313,8 @@ public class RaidManager implements IRaiderManager
     {
         final NBTTagCompound raiderCompound = new NBTTagCompound();
         @NotNull final NBTTagList raiderTagList = schematicMap.entrySet().stream()
-                                                      .map(this::writeMapEntryToNBT)
-                                                      .collect(NBTUtils.toNBTTagList());
+                                                    .map(this::writeMapEntryToNBT)
+                                                    .collect(NBTUtils.toNBTTagList());
 
         raiderCompound.setTag(TAG_SCHEMATIC_LIST, raiderTagList);
         compound.setTag(TAG_RAID_MANAGER, raiderCompound);
@@ -324,6 +322,7 @@ public class RaidManager implements IRaiderManager
 
     /**
      * Writes the map entry to NBT of the schematic map.
+     *
      * @param entry the entry to write to NBT.
      * @return an NBTTAGCompound
      */

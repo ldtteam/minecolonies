@@ -30,7 +30,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -262,17 +261,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(event);
-
-        //
-        // Code below this check won't lag each tick anymore
-        //
-        if (!Colony.shallUpdate(event.world, WAIT_TICKS))
-        {
-            return;
-        }
+        super.onWorldTick(colony);
 
         checkFurnaces();
     }
