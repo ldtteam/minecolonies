@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -52,13 +51,12 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyState.ACTIVE;
-import static com.minecolonies.coremod.colony.ColonyState.INACTIVE;
-import static com.minecolonies.coremod.colony.ColonyState.UNLOADED;
+import static com.minecolonies.coremod.colony.ColonyState.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -322,7 +320,7 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition(UNLOADED,() -> true, this::updateState, 100));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE,() -> true ,this::updateState, 100));
 
-
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateSubscribers, () -> ACTIVE, 100));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::tickRequests, () -> ACTIVE, 11));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::checkDayTime, () -> ACTIVE, 20));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
@@ -354,6 +352,15 @@ public class Colony implements IColony
         }
 
         return INACTIVE;
+    }
+
+    /**
+     * Updates the existing subscribers
+     */
+    private boolean updateSubscribers()
+    {
+        packageManager.updateSubscribers();
+        return false;
     }
 
     /**
@@ -391,6 +398,7 @@ public class Colony implements IColony
     private boolean worldTickUnloaded()
     {
         updateChildTime();
+        updateSubscribers();
         return false;
     }
 
