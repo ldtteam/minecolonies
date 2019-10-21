@@ -59,6 +59,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutStoneSmeltery = new BlockHutStoneSmeltery().registerBlock(registry);
         ModBlocks.blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
         ModBlocks.blockHutSifter = new BlockHutSifter().registerBlock(registry);
+        ModBlocks.blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
 
         ModBlocks.blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
@@ -68,6 +69,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController(Material.WOOD).registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
+        ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
     }
 
     /**
@@ -107,6 +109,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutStoneSmeltery.registerItemBlock(registry);
         ModBlocks.blockHutCrusher.registerItemBlock(registry);
         ModBlocks.blockHutSifter.registerItemBlock(registry);
+        ModBlocks.blockHutFlorist.registerItemBlock(registry);
 
         ModBlocks.blockConstructionTape.registerItemBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution.registerItemBlock(registry);
@@ -116,5 +119,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockBarrel.registerItemBlock(registry);
         ModBlocks.blockPostBox.registerItemBlock(registry);
         ModBlocks.blockDecorationPlaceholder.registerItemBlock(registry);
+        ModBlocks.blockCompostedDirt.registerItemBlock(registry);
     }
 }
