@@ -57,6 +57,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
         citizen.getDataManager().set(DATA_LEVEL, level);
+        if (citizen.getCitizenData().getJob() != null)
+        {
+            citizen.getCitizenData().getJob().onLevelUp(level);
+        }
     }
 
     /**

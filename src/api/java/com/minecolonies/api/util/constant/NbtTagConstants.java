@@ -92,6 +92,7 @@ public final class NbtTagConstants
     public static final String TAG_MOURNING             = "mourning";
     public static final String TAG_PAUSED               = "paused";
     public static final String TAG_CHILD                = "child";
+    public static final String TAG_CHILD_TIME                = "childTime";
     public static final String TAG_BOUGHT_CITIZENS      = "bought_citizen";
     public static final String TAG_JUST_ATE             = "justAte";
     public static final String TAG_EXPLOSIONS           = "Explosions";
@@ -437,6 +438,13 @@ public final class NbtTagConstants
     public static final String TAG_CRUSHER_MODE  = "Crushermode";
     public static final String TAG_JOB_TYPE      = "type";
     public static final String NBT_SLOT          = "Slot";
+
+    /**
+     * Crafter job tags.
+     */
+    public static final String TAG_PROGRESS    = "progress";
+    public static final String TAG_MAX_COUNTER = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER  = "craftCounter";
 
     /**
      * Private constructor to hide the implicit one.

@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Abstract skeleton implementation of a request.
+ * Abstract skeleton initializer of a request.
  *
  * @param <R> The type of request this is.
  */
@@ -139,7 +138,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        LogHandler.log("Updated state from: " + getId() + " to: " + state);
+        manager.getLogger().debug("Updated state from: " + getId() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
@@ -160,7 +159,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * A RequestResolver can compare this object however way it sees fit.
      * <p>
      * During the resolving process this object is called multiple times. But at least twice.
-     * A cached implementation is preferred.
+     * A cached initializer is preferred.
      *
      * @return The object that is actually requested.
      */
@@ -250,7 +249,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        LogHandler.log("Added child:" + child + " to: " + getId());
     }
 
     /**
@@ -290,7 +288,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        LogHandler.log("Removed child: " + child + " from: " + getId());
     }
 
     /**
@@ -374,7 +371,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getId());
+                manager.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getId());
             }
         }
         catch (final IllegalArgumentException ex)

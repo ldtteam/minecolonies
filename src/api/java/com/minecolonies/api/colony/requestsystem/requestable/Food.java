@@ -66,6 +66,12 @@ public class Food implements IDeliverable
     }
 
     @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        return new Food(newCount);
+    }
+
+    @Override
     public int getCount()
     {
         return count;

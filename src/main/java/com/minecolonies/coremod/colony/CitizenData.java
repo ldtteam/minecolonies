@@ -16,8 +16,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
@@ -601,11 +599,8 @@ public class CitizenData implements ICitizenData
             markDirty();
         }
 
-        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
-        {
-            homeBuilding = building;
-            markDirty();
-        }
+        homeBuilding = building;
+        markDirty();
 
         if (getCitizenEntity().isPresent() && getCitizenEntity().get().getCitizenJobHandler().getColonyJob() == null)
         {
@@ -874,6 +869,7 @@ public class CitizenData implements ICitizenData
         }
         final Tuple<Integer, Double> entry = queryLevelExperienceMap();
         this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(lvl, entry.getSecond()));
+        job.onLevelUp(lvl);
     }
 
     /**
@@ -1278,6 +1274,11 @@ public class CitizenData implements ICitizenData
     {
         this.isChild = isChild;
         markDirty();
+
+        if (colony != null)
+        {
+            colony.updateHasChilds();
+        }
     }
 
     /**

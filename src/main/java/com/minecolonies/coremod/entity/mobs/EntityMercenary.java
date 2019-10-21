@@ -12,12 +12,14 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -391,7 +393,9 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityMercenaryAI(this));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityMob.class, false));
+        this.tasks.addTask(2, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(3, new EntityAIOpenFenceGate(this, true));
+        this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityMob.class, false));
     }
 
     @NotNull

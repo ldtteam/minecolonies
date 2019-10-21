@@ -55,7 +55,10 @@ public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
 
     public abstract boolean tryMoveToBlockPos(final BlockPos position, final double speed);
 
+    public abstract TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
+
     public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
+
 
     public abstract PathResult moveToEntityLiving(@NotNull final Entity e, final double speed);
 }

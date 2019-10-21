@@ -13,10 +13,10 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.coremod.colony.testutils.ColonyMock;
 import com.minecolonies.coremod.util.ModifyableLambdaWrapper;
 import com.minecolonies.testutils.MatcherUtils;
+import org.apache.logging.log4j.LogManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -32,7 +32,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * This class allows for the setup of mocked request managers during testing.
- * This class defines the behaviour of the request manager in all cases, regardless of implementation.
+ * This class defines the behaviour of the request manager in all cases, regardless of initializer.
  */
 public final class RequestManagerMock
 {
@@ -60,6 +60,8 @@ public final class RequestManagerMock
 
         final IColony colony = ColonyMock.mockBlank();
         final IStandardRequestManager requestManager = mockBlank();
+
+        when(requestManager.getLogger()).thenReturn(LogManager.getLogger("minecolonies.requestsystem.test"));
 
         when(colony.getRequestManager()).thenReturn(requestManager);
         when(requestManager.getColony()).thenReturn(colony);
@@ -160,7 +162,7 @@ public final class RequestManagerMock
                 requestResolverProviderToRequestResolverMultiMap.remove(requestResolverProvider.getId(), resolverToken);
                 requestResolverToRequestResolverProviderMap.remove(resolverToken);
 
-                LogHandler.log("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
+                requestManager.getLogger().info("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
             }
 
             requestResolverProviderBiMap.remove(requestResolverProvider.getId());

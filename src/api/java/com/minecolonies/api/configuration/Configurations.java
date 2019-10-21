@@ -275,6 +275,17 @@ public class Configurations
                                                      "treeSapling"
                                                    };
 
+        @Config.Comment("The items and item-tags that the florist can plant.")
+        public String[] listOfPlantables = new String[]
+                                                   {
+                                                     "minecraft:tallgrass",
+                                                     "minecraft:yellow_flower",
+                                                     "minecraft:red_flower",
+                                                     "minecraft:double_plant",
+                                                     "minecraft:cactus",
+                                                     "minecraft:reeds",
+                                                   };
+
         @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions). [Default: false]")
         public boolean pvp_mode = false;
 
@@ -285,6 +296,7 @@ public class Configurations
         public boolean holidayFeatures = true;
 
         @Config.Comment("AI Update rate, increase to improve performance. [Default: 1]")
+        @Config.RangeInt(min = 1,max = 10000)
         public int updateRate = 1;
 
         @Config.Comment("Quantity of dirt per Compost filling. [Default: 1]")
