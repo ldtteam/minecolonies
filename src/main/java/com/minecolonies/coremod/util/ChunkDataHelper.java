@@ -463,6 +463,11 @@ public final class ChunkDataHelper
 
         if (add)
         {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.provider.getDimension());
+            if (colony != null)
+            {
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.x, chunk.z));
+            }
             cap.setOwningColony(id);
             cap.addColony(id);
         }

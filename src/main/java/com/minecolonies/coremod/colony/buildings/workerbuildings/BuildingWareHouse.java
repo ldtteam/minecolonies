@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
@@ -38,9 +39,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class of the warehouse building.
@@ -65,7 +64,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The list of deliverymen registered to this building.
      */
-    private static final List<Vec3d> registeredDeliverymen = new ArrayList<>();
+    private static final Set<Vec3d> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
@@ -148,8 +147,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (final Vec3d pos : registeredDeliverymenCopy)
         {
             final IColony colony = getColony();
-            if (colony != null && colony.getWorld() != null
-                  && (!(colony.getWorld().getBlockState(new BlockPos(pos)).getBlock() instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
+            final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
+            if (!(building instanceof BuildingDeliveryman) || !building.hasAssignedCitizen())
             {
                 registeredDeliverymen.remove(pos);
             }
@@ -174,9 +173,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return the unmodifiable List of positions of them.
      */
     @Override
-    public List<Vec3d> getRegisteredDeliverymen()
+    public Set<Vec3d> getRegisteredDeliverymen()
     {
-        return new ArrayList<>(Collections.unmodifiableList(registeredDeliverymen));
+        return new HashSet<>(Collections.unmodifiableSet(registeredDeliverymen));
     }
 
     @Override

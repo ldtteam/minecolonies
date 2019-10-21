@@ -84,6 +84,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
+     * List of all the items that can be composted
+     */
+    private final Set<ItemStorage> plantables = new HashSet<>();
+
+    /**
      * List of all the items that can be used as fuel
      */
     private final Set<ItemStorage> fuel = new HashSet<>();
@@ -176,6 +181,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverOres();
         Log.getLogger().info("Finished discovering oreBlocks");
         discoverCompostableItems();
+        discoverPlantables();
         discoverLuckyOres();
         discoverCrusherModes();
         discoverSifting();
@@ -225,6 +231,31 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         for (final String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if (itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            for (final int id : OreDictionary.getOreIDs(itemStack))
+            {
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPlantable(final ItemStack itemStack)
+    {
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for (final String string : Configurations.gameplay.listOfPlantables)
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -306,6 +337,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfCompostableItems()
     {
         return ImmutableList.copyOf(compostableItems);
+    }
+
+    @Override
+    public List<ItemStorage> getCopyOfPlantables()
+    {
+        return ImmutableList.copyOf(plantables);
     }
 
     @Override
@@ -480,6 +517,18 @@ public class CompatibilityManager implements ICompatibilityManager
         if (compostableItems.isEmpty())
         {
             compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering compostables");
+    }
+
+    /**
+     * Create complete list of compostable items.
+     */
+    private void discoverPlantables()
+    {
+        if (plantables.isEmpty())
+        {
+            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }

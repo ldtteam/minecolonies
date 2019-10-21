@@ -111,7 +111,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
             {
                 colony.getWorkManager().removeWorkOrder(message.workOrderId);
             }
-            else
+            else if (colony.getWorkManager().getWorkOrder(message.workOrderId) != null)
             {
                 colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
             }
