@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.util.InstantStructurePlacer;
-import com.ldtteam.structurize.management.StructureName;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -137,7 +137,7 @@ public class RaidManager implements IRaiderManager
 
         BlockPos thePos = center;
         double distance = 0;
-        AbstractBuilding theBuilding = null;
+        IBuilding theBuilding = null;
         for (final BlockPos pos : positions)
         {
             final double currentDistance = center.distanceSq(pos);

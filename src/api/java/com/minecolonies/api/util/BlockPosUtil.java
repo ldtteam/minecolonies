@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -333,11 +334,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * X+Y Distance between two BlockPos.
+     * X+Z Distance between two BlockPos.
      *
      * @param block1 position one.
      * @param block2 position two.
-     * @return X+Y distance
+     * @return X+Z distance
      */
     public static long getDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
     {
@@ -345,6 +346,21 @@ public final class BlockPosUtil
         final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
 
         return Math.abs(xDiff + zDiff);
+    }
+
+    /**
+     * Maximum of x/z distance between two blocks.
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return X or Z distance
+     */
+    public static int getMaxDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
+    {
+        final int xDif = Math.abs(block1.getX() - block2.getX());
+        final int zDif = Math.abs(block1.getZ() - block2.getZ());
+
+        return Math.max(xDif, zDif);
     }
 
     /**
@@ -432,6 +448,23 @@ public final class BlockPosUtil
     public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final IBlockState state, final int flag)
     {
         return worldIn.setBlockState(coords, state, flag);
+    }
+
+    /**
+     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
+     *
+     * @param living      A living entity.
+     * @param destination chunk coordinates to check moving to.
+     * @return True when XYZ is found, an set moving to, otherwise false.
+     */
+    public static boolean tryMoveBaseCitizenEntityToXYZ(@NotNull final AbstractEntityCitizen living, @NotNull final BlockPos destination)
+    {
+        if (!(living instanceof EntityLiving))
+        {
+            return false;
+        }
+
+        return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }
 
     /**

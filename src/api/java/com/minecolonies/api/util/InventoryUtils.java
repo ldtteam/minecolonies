@@ -277,6 +277,14 @@ public class InventoryUtils
         return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
+    public static int getItemCountInItemHandlers(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> itemStackPredicate)
+    {
+        return itemHandlers.stream().filter(Objects::nonNull)
+                 .flatMap(handler -> filterItemHandler(handler, itemStackPredicate).stream())
+                 .mapToInt(ItemStackUtils::getSize)
+                 .sum();
+    }
+
     /**
      * Checks if a player has a block in the {@link IItemHandler}. Checked by
      * {@link #getItemCountInItemHandler(IItemHandler, Block, int)} &gt; 0;
@@ -531,7 +539,10 @@ public class InventoryUtils
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
             final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null);
-            handlerList.add(nullHandler);
+            if (nullHandler != null)
+            {
+                handlerList.add(nullHandler);
+            }
         }
 
         handlerList.removeIf(Objects::isNull);
@@ -785,7 +796,14 @@ public class InventoryUtils
      */
     public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemCountInProvider(Provider, itemStackSelectionPredicate) > 0;
+        for (IItemHandler handler : getItemHandlersFromProvider(Provider))
+        {
+            if (findFirstSlotInItemHandlerWith(handler, itemStackSelectionPredicate) != -1)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

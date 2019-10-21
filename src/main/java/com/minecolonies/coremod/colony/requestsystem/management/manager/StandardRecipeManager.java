@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StandardRecipeManager implements IRecipeManager
@@ -78,6 +79,7 @@ public class StandardRecipeManager implements IRecipeManager
     {
         recipes.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
     }
 }

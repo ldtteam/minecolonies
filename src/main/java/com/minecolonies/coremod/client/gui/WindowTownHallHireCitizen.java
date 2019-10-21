@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
@@ -41,14 +42,14 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
     /**
      * The client side colony data
      */
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallHireCitizen(final ColonyView c)
+    public WindowTownHallHireCitizen(final IColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;

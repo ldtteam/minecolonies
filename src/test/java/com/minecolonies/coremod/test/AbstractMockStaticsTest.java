@@ -1,9 +1,14 @@
 package com.minecolonies.coremod.test;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
+import net.minecraft.init.Bootstrap;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -28,11 +33,26 @@ public abstract class AbstractMockStaticsTest
     @Mock
     private Logger logger;
 
+    private IColonyManager colonyManagerToMock;
+    private ICitizenDataManager citizenDataManagerToMock;
+
     @Before
     public void setupStaticMocks() throws Exception
     {
+        Bootstrap.register();
+        IMinecoloniesAPI mockedMinecoloniesApi = Mockito.mock(IMinecoloniesAPI.class);
+
+        colonyManagerToMock = Mockito.mock(IColonyManager.class);
+        citizenDataManagerToMock = Mockito.mock(ICitizenDataManager.class);
+
+        when(mockedMinecoloniesApi.getColonyManager()).thenReturn(colonyManagerToMock);
+        when(mockedMinecoloniesApi.getCitizenDataManager()).thenReturn(citizenDataManagerToMock);
+
+        MinecoloniesAPIProxy.getInstance().setApiInstance(mockedMinecoloniesApi);
+
         CompatibilityManager testedClass = Mockito.spy(new CompatibilityManager());
         doNothing().when(testedClass).discover();
+
 
         mockStatic(ColonyManager.class);
         mockStatic(LanguageHandler.class);

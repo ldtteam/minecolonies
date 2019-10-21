@@ -1,25 +1,25 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structures.lib.BlueprintUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
-import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.helpers.Structure;
-import net.minecraft.block.state.IBlockState;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
@@ -69,7 +69,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     /**
      * Building related to this.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * Creates a window move building for a specific structure.
@@ -78,7 +78,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      * @param building      the building.
      * @param schematicName the schematic name.
      */
-    public WindowMoveBuilding(@Nullable final BlockPos pos, final AbstractBuildingView building, final String schematicName)
+    public WindowMoveBuilding(@Nullable final BlockPos pos, final IBuildingView building, final String schematicName)
     {
         super(Constants.MOD_ID + MOVE_BUILDING_SOURCE_SUFFIX);
         this.building = building;
@@ -169,9 +169,9 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        if (ColonyManager.isSchematicDownloaded())
+        if (IColonyManager.getInstance().isSchematicDownloaded())
         {
-            ColonyManager.setSchematicDownloaded(false);
+            IColonyManager.getInstance().setSchematicDownloaded(false);
         }
     }
 
@@ -265,7 +265,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());
             final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),

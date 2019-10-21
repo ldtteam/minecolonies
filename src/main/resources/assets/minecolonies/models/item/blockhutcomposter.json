@@ -1,3 +1,40 @@
 {
-  "parent": "minecolonies:block/blockhutcomposter"
+  "parent": "minecolonies:block/blockhutcomposter",
+  "display": {
+    "gui": {
+      "rotation": [30, 40, 0],
+      "translation": [0, -1, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [30, 40, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "thirdperson_righthand": {
+      "rotation": [30, 40, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "firstperson_lefthand": {
+      "rotation": [30, 40, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.3, 0.3, 0.3]
+    },
+    "firstperson_righthand": {
+      "rotation": [30, 40, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.3, 0.3, 0.3]
+    },
+    "ground": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.3, 0.3, 0.3]
+    },
+    "fixed": {
+      "rotation": [0, 180, 45],
+      "translation": [-3, -3, -2],
+      "scale": [0.8, 0.8, 0.8]
+    }
+  }
 }

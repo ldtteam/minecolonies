@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import io.netty.util.internal.MathUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,9 +21,9 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Class containing the container action of the buildings.
  */
-public abstract class AbstractBuildingContainer extends AbstractCitizenAssignable implements ICapabilityProvider
+public abstract class AbstractBuildingContainer extends AbstractCitizenAssignable implements IBuildingContainer
 {
     /**
      * A list which contains the position of all containers which belong to the
@@ -54,7 +55,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * The tileEntity of the building.
      */
-    private TileEntityColonyBuilding tileEntity;
+    protected AbstractTileEntityColonyBuilding tileEntity;
 
     /**
      * Priority of the building in the pickUpList.
@@ -70,15 +71,15 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * The constructor for the building container.
      * @param pos the position of it.
      */
-    public AbstractBuildingContainer(final BlockPos pos, final Colony colony)
+    public AbstractBuildingContainer(final BlockPos pos, final IColony colony)
     {
         super(pos, colony);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
 
         final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.tagCount(); ++i)
@@ -97,9 +98,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList containerTagList = new NBTTagList();
         for (@NotNull final BlockPos pos : containerList)
         {
@@ -108,6 +110,8 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         compound.setTag(TAG_CONTAINERS, containerTagList);
         compound.setInteger(TAG_PRIO, this.pickUpPriority);
         compound.setBoolean(TAG_PRIO_MODE, this.priorityStatic);
+
+        return compound;
     }
 
     /**
@@ -115,6 +119,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @return the priority, an integer.
      */
+    @Override
     public int getPickUpPriority()
     {
         return this.pickUpPriority;
@@ -125,20 +130,21 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @param value the new prio to add to.
      */
+    @Override
     public void alterPickUpPriority(final int value)
     {
-        if (this.pickUpPriority + value < 1)
-        {
-            this.pickUpPriority = 1;
-        }
-        else if (this.pickUpPriority + value > MAX_PRIO)
-        {
-            this.pickUpPriority = MAX_PRIO;
-        }
-        else
-        {
-            this.pickUpPriority += value;
-        }
+        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 1, MAX_PRIO);
+    }
+
+    /**
+     * Sets the pickup priority to the given value.
+     *
+     * @param pickUpPriority The new pickup priority.
+     */
+    @Override
+    public void setPickUpPriority(final int pickUpPriority)
+    {
+        this.pickUpPriority = MathHelper.clamp(pickUpPriority, 1, MAX_PRIO);
     }
 
     /**
@@ -146,6 +152,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @return the priority state, a boolean.
      */
+    @Override
     public boolean isPriorityStatic()
     {
         return this.priorityStatic;
@@ -154,6 +161,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * Change the current priority state.
      */
+    @Override
     public void alterPriorityState()
     {
         this.priorityStatic = !this.priorityStatic;
@@ -164,6 +172,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @param pos position to add.
      */
+    @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
         if (!containerList.contains(pos))
@@ -177,6 +186,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @param pos position to remove.
      */
+    @Override
     public void removeContainerPosition(final BlockPos pos)
     {
         containerList.remove(pos);
@@ -187,6 +197,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      *
      * @return a copy of the list to avoid currentModification exception.
      */
+    @Override
     public List<BlockPos> getAdditionalCountainers()
     {
         return new ArrayList<>(containerList);
@@ -199,6 +210,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * @param blockState to be registered
      * @param pos   of the blockState
      */
+    @Override
     public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         registerBlockPosition(blockState.getBlock(), pos, world);
@@ -211,6 +223,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * @param block to be registered
      * @param pos   of the block
      */
+    @Override
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
@@ -227,6 +240,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * @param world the world to do it in.
      * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
      */
+    @Override
     public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
         if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
@@ -253,55 +267,32 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
-    public void setTileEntity(final TileEntityColonyBuilding te)
-    {
-        tileEntity = te;
-    }
-
-    /**
      * Returns the tile entity that belongs to the colony building.
      *
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
-    public TileEntityColonyBuilding getTileEntity()
+    @Override
+    public AbstractTileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid())
-                && colony != null
-                && colony.getWorld() != null
-                && getLocation() != null
-                && colony.getWorld().getBlockState(getLocation())
-                != Blocks.AIR && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
-        {
-            final TileEntity te = getColony().getWorld().getTileEntity(getLocation());
-            if (te instanceof TileEntityColonyBuilding)
-            {
-                tileEntity = (TileEntityColonyBuilding) te;
-                if (tileEntity.getBuilding() == null)
-                {
-                    tileEntity.setColony(colony);
-                    tileEntity.setBuilding(this);
-                }
-            }
-            else
-            {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
-                Log.getLogger().error("Trying to restore order!");
-                colony.getWorld().setTileEntity(getLocation(), new TileEntityColonyBuilding());
-            }
-        }
-
         return tileEntity;
+    }
+
+    /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link AbstractTileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
+     */
+    @Override
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
+    {
+        tileEntity = te;
     }
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
 
     @Override
     public boolean hasCapability(
-            @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+      @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
     {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
     }

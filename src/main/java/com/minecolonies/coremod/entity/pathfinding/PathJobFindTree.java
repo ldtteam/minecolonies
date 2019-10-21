@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,7 +40,16 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * The Colony the tree is in.
      */
-    private final Colony colony;
+    private final IColony colony;
+
+    private BlockPos startRestriction = null;
+    private BlockPos endRestriction = null;
+
+    public void setAreaRestriction(final BlockPos start, final BlockPos end)
+    {
+        this.startRestriction = start;
+        this.endRestriction = end;
+    }
 
     /**
      * AbstractPathJob constructor.
@@ -55,7 +67,7 @@ public class PathJobFindTree extends AbstractPathJob
                             final BlockPos home,
                             final int range,
                             final List<ItemStorage> treesToCut,
-                            final Colony colony,
+                            final IColony colony,
                             final EntityLivingBase entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
@@ -65,14 +77,30 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     /**
-     * Custom result of the class which contains the position of the tree.
+     * AbstractPathJob constructor.
+     *
+     * @param world      the world within which to path.
+     * @param start      the start position from which to path from.
+     * @param home       the position of the worker hut.
+     * @param startRestriction    start of the restricted area.
+     * @param endRestriction      end of the restricted area.
+     * @param treesToCut the trees the lj is supposed to cut.
+     * @param entity the entity.
      */
-    public static class TreePathResult extends PathResult
+    public PathJobFindTree(
+            final World world,
+            @NotNull final BlockPos start,
+            final BlockPos home,
+            final BlockPos startRestriction,
+            final BlockPos endRestriction,
+            final List<ItemStorage> treesToCut,
+            final IColony colony,
+            final EntityLivingBase entity)
     {
-        /**
-         * Position of the found tree.
-         */
-        public BlockPos treeLocation;
+        super(world, startRestriction, endRestriction, new TreePathResult(), entity);
+        this.treesToNotCut = treesToCut;
+        this.hutLocation = home;
+        this.colony = colony;
     }
 
     @NotNull

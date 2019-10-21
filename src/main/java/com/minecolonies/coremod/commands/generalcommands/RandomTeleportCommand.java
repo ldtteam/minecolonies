@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -150,7 +150,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
             final BlockPos tpPos = new BlockPos(x, STARTING_Y, z);
 
-            final Colony colony = ColonyManager.getClosestColony(sender.getEntityWorld(), tpPos);
+            final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
             if (colony != null && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
             {

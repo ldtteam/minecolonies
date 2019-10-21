@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.ColorConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
@@ -11,13 +13,12 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.HiringMode;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,12 +43,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     /**
      * The colony.
      */
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * Contains all the citizens.
      */
-    private List<CitizenDataView> citizens = new ArrayList<>();
+    private List<ICitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Holder of a list element
@@ -60,7 +61,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
      * @param c          the colony view.
      * @param buildingId the building position.
      */
-    public WindowHireWorker(final ColonyView c, final BlockPos buildingId)
+    public WindowHireWorker(final IColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + HIRE_WORKER_SUFFIX);
         this.colony = c;
@@ -147,7 +148,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     {
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
-        @NotNull final CitizenDataView citizen = citizens.get(row);
+        @NotNull final ICitizenDataView citizen = citizens.get(row);
 
         MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
         citizen.setPaused(!citizen.isPaused());
@@ -161,7 +162,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     {
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
-        @NotNull final CitizenDataView citizen = citizens.get(row);
+        @NotNull final ICitizenDataView citizen = citizens.get(row);
 
         MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
         building.removeWorkerId(id);
@@ -176,12 +177,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     private void doneClicked(@NotNull final Button button)
     {
         final int row = citizenList.getListElementIndexByPane(button);
-        final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
-        @NotNull final CitizenDataView citizen = citizens.get(row);
+        final int id = citizens.get(row).getId();
+        @NotNull final ICitizenDataView citizen = citizens.get(row);
 
         building.addWorkerId(id);
         MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
-        citizen.setWorkBuilding(building.getLocation());
+        citizen.setWorkBuilding(building.getPosition());
         onOpened();
     }
 
@@ -197,7 +198,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
                      .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
-                                          || building.getLocation().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(CitizenDataView::getName))
+                                          || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 
@@ -231,9 +232,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final CitizenDataView citizen = citizens.get(index);
-                final AbstractBuildingWorker.Skill primary = building.getPrimarySkill();
-                final AbstractBuildingWorker.Skill secondary = building.getSecondarySkill();
+                @NotNull final ICitizenDataView citizen = citizens.get(index);
+                final IBuildingWorker.Skill primary = building.getPrimarySkill();
+                final IBuildingWorker.Skill secondary = building.getSecondarySkill();
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
@@ -267,15 +268,15 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
+                @NotNull final String strength = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.STRENGTH),
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()));
-                @NotNull final String charisma = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.CHARISMA),
+                @NotNull final String charisma = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.CHARISMA),
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()));
-                @NotNull final String dexterity = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.DEXTERITY),
+                @NotNull final String dexterity = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.DEXTERITY),
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()));
-                @NotNull final String endurance = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.ENDURANCE),
+                @NotNull final String endurance = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.ENDURANCE),
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()));
-                @NotNull final String intelligence = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.INTELLIGENCE),
+                @NotNull final String intelligence = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.INTELLIGENCE),
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
 
                 //Creates the list of attributes for each citizen
@@ -289,18 +290,18 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     private static String createAttributeText(final String color, final String text)
     {
-        return color + text + ColorConstants.WHITE;
+        return color + text + TextFormatting.RESET.toString();
     }
 
-    private static String createColor(final AbstractBuildingWorker.Skill primary, final AbstractBuildingWorker.Skill secondary, final AbstractBuildingWorker.Skill current)
+    private static String createColor(final IBuildingWorker.Skill primary, final IBuildingWorker.Skill secondary, final IBuildingWorker.Skill current)
     {
         if (primary == current)
         {
-            return ColorConstants.GREEN + "§l";
+            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
         }
         if (secondary == current)
         {
-            return ColorConstants.YELLOW + "§o";
+            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
         }
         return "";
     }

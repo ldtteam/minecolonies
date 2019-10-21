@@ -1,26 +1,36 @@
 package com.minecolonies.coremod.proxy;
 
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.LootTableConstants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
+import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.RecipeBook;
@@ -49,8 +59,10 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
  * CommonProxy of the minecolonies mod (Server and Client).
  */
 @Mod.EventBusSubscriber
-public class CommonProxy implements IProxy
+public abstract class CommonProxy implements IProxy
 {
+    static CommonMinecoloniesAPIImpl apiImpl;
+
     /**
      * Spawn egg colors.
      */
@@ -64,6 +76,11 @@ public class CommonProxy implements IProxy
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
+
+    CommonProxy()
+    {
+        apiImpl = new CommonMinecoloniesAPIImpl();
+    }
 
     /**
      * Adds an entity's custom data to the map for temporary storage.
@@ -98,7 +115,7 @@ public class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        ModBlocks.init(event.getRegistry());
+        ModBlocksInitializer.init(event.getRegistry());
     }
 
     /**
@@ -120,8 +137,38 @@ public class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
-        ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
+        ModItemsInitializer.init(event.getRegistry());
+        ModBlocksInitializer.registerItemBlock(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void registerBuildingTypes(@NotNull final RegistryEvent.Register<BuildingEntry> event)
+    {
+        ModBuildingsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
+    {
+        ModJobsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerGuardTypes(final RegistryEvent.Register<GuardType> event)
+    {
+        ModGuardTypesInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
+    {
+        apiImpl.registerCustomRegistries(event);
+    }
+
+    @Override
+    public void setupApi()
+    {
+        MinecoloniesAPIProxy.getInstance().setApiInstance(apiImpl);
     }
 
     @Override
@@ -134,12 +181,13 @@ public class CommonProxy implements IProxy
     public void registerTileEntities()
     {
         GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, new ResourceLocation(Constants.MOD_ID, "colonybuilding"));
-        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
+        GameRegistry.registerTileEntity(TileEntityScarecrow.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
         GameRegistry.registerTileEntity(TileEntityWareHouse.class, new ResourceLocation(Constants.MOD_ID, "warehouse"));
         GameRegistry.registerTileEntity(TileEntityRack.class, new ResourceLocation(Constants.MOD_ID, "rack"));
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
         GameRegistry.registerTileEntity(TileEntityBarrel.class, new ResourceLocation(Constants.MOD_ID, "barrel"));
         GameRegistry.registerTileEntity(TileEntityDecorationController.class, new ResourceLocation(Constants.MOD_ID, "decorationcontroller"));
+        GameRegistry.registerTileEntity(TileEntityCompostedDirt.class, new ResourceLocation(Constants.MOD_ID + ":CompostedDirt"));
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
@@ -150,14 +198,6 @@ public class CommonProxy implements IProxy
 
     }
 
-    /*
-    * @param entityName A unique name for the entity
-    * @param id A mod specific ID for the entity
-    * @param mod The mod
-    * @param trackingRange The range at which MC will send tracking updates
-    * @param updateFrequency The frequency of tracking updates
-    * @param sendsVelocityUpdates Whether to send velocity information packets as well
-    * */
     @Override
     public void registerEntities()
     {
@@ -185,6 +225,14 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(BARBARIAN,
           EntityBarbarian.class,
           "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(MERCENARY,
+          EntityMercenary.class,
+          "Mercenary",
           getNextEntityId(),
           MineColonies.instance,
           Constants.ENTITY_TRACKING_RANGE,
@@ -233,14 +281,14 @@ public class CommonProxy implements IProxy
           true);
 
         //Register Barbarian loot tables.
-        LootTableList.register(EntityBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityChiefBarbarian.LOOT_TABLE);
+        LootTableList.register(LootTableConstants.MELEE_BARBARIAN_DROPS);
+        LootTableList.register(LootTableConstants.ARCHER_BARBARIAN_DROPS);
+        LootTableList.register(LootTableConstants.CHIEF_BARBARIAN_DROPS);
 
         //Register Pirate loot tables.
-        LootTableList.register(EntityPirate.LOOT_TABLE);
-        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
-        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
+        LootTableList.register(LootTableConstants.MELEE_PIRATE_DROPS);
+        LootTableList.register(LootTableConstants.ARCHER_PIRATE_DROPS);
+        LootTableList.register(LootTableConstants.CHIEF_PIRATE_DROPS);
 
         //Register Barbarian spawn eggs
         EntityRegistry.registerEgg(BARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN);
@@ -270,7 +318,7 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void showCitizenWindow(final CitizenDataView citizen)
+    public void showCitizenWindow(final ICitizenDataView citizen)
     {
         /*
          * Intentionally left empty.
@@ -279,6 +327,14 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull IBlockState state, @NotNull final ItemStack stack)
     {
         /*
          * Intentionally left empty.

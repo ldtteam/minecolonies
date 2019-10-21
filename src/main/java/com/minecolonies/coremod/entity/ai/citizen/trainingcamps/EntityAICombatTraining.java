@@ -1,26 +1,26 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
@@ -68,7 +68,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     /**
      * The current training partner of this guard.
      */
-    private EntityCitizen trainingPartner;
+    private AbstractEntityCitizen trainingPartner;
 
     /**
      * Counter of how often we tried to hit the target.
@@ -213,7 +213,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.swingArm(EnumHand.MAIN_HAND);
                 worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.attackEntityFrom(new DamageSource(worker.getName()), 0.0F);
+                trainingPartner.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
             worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, worker.getAIMoveSpeed());

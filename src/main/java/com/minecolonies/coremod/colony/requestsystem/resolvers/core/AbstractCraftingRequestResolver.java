@@ -59,7 +59,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation()));
+            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
         }
 
         return Optional.empty();
@@ -67,20 +67,20 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 	//Noop
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            if (isPublicCrafter || requesterLocation.equals(getRequesterLocation()))
+            final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
+            if (isPublicCrafter || requesterLocation.equals(getLocation()))
             {
-                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r);
+                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getId()).map(r -> (AbstractBuilding) r);
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
@@ -159,9 +159,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
@@ -196,9 +196,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count);
 
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
@@ -210,7 +210,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 
 

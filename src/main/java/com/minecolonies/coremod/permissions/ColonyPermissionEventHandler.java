@@ -1,20 +1,22 @@
 package com.minecolonies.coremod.permissions;
 
+import com.ldtteam.structurize.items.ItemScanTool;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.ldtteam.structurize.items.ItemScanTool;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -38,7 +40,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,7 +54,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_B
  */
 public class ColonyPermissionEventHandler
 {
-
     /**
      * The colony involved in this permission-check event
      */
@@ -69,6 +73,11 @@ public class ColonyPermissionEventHandler
      * Detect if the town-hall break was valid.
      */
     private boolean validTownHallBreak = false;
+
+    /**
+     * The last time the player was notified about not having permission.
+     */
+    private Map<UUID, Long> lastPlayerNotificationTick = new HashMap<>();
 
     /**
      * Create this EventHandler.
@@ -142,7 +151,7 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos the location of the action which was denied
      */
-    private static void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
+    private void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
         if (event.isCancelable())
@@ -167,7 +176,12 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+            final long worldTime = player.world.getWorldTime();
+            if (!lastPlayerNotificationTick.containsKey(player.getUniqueID()) || lastPlayerNotificationTick.get(player.getUniqueID()) + (Constants.TICKS_SECOND * Configurations.gameplay.secondsBetweenPermissionMessages ) < worldTime)
+            {
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+                lastPlayerNotificationTick.put(player.getUniqueID(), worldTime);
+            }
         }
     }
 
@@ -187,7 +201,7 @@ public class ColonyPermissionEventHandler
 
         if (event.getState().getBlock() instanceof AbstractBlockHut)
         {
-            @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
+            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, event.getPos());
             if (building == null)
             {
                 return;
@@ -201,7 +215,7 @@ public class ColonyPermissionEventHandler
 
             if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
             {
-                if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_HUTS))
+                if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), event.getWorld(), event, event.getPos()))
                 {
                     return;
                 }
@@ -211,12 +225,12 @@ public class ColonyPermissionEventHandler
 
             if (Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
-                ColonyManager.deleteColonyByWorld(building.getColony().getID(), false, event.getWorld());
+                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getWorld());
             }
         }
         else
         {
-            checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_BLOCKS);
+            checkEventCancelation(Action.BREAK_BLOCKS, event.getPlayer(), event.getWorld(), event, event.getPos());
         }
     }
 
@@ -596,7 +610,7 @@ public class ColonyPermissionEventHandler
             final Permissions perms = colony.getPermissions();
             if (event.getTarget() instanceof EntityCitizen)
             {
-                final EntityCitizen citizen = (EntityCitizen) event.getTarget();
+                final AbstractEntityCitizen citizen = (AbstractEntityCitizen) event.getTarget();
                 if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
                 {
                     return;

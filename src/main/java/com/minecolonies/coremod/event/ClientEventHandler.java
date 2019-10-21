@@ -2,41 +2,31 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintRenderHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.items.ModItems;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
+import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
@@ -53,7 +43,7 @@ public class ClientEventHandler
     /**
      * The currently displayed citizen.
      */
-    private CitizenDataView citizen = null;
+    private final CitizenDataView citizen = null;
 
     /**
      * The ticks passed since showing the sign.
@@ -73,7 +63,7 @@ public class ClientEventHandler
     /**
      * The colony view required here.
      */
-    private ColonyView view = null;
+    private final IColonyView view = null;
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
@@ -93,14 +83,14 @@ public class ClientEventHandler
             final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
             if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                final ColonyView tempView = ColonyManager.getClosestColonyView(world, player.getPosition());
+                final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
                 if (tempView != null)
                 {
                     if (wayPointTemplate == null)
                     {
                         wayPointTemplate = new Structure(world, "schematics/infrastructure/Waypoint", settings).getBluePrint();
                     }
-                    BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
+                    BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate);
                 }
             }
         }
@@ -114,14 +104,14 @@ public class ClientEventHandler
             }
             final NBTTagCompound compound = stack.getTagCompound();
 
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID), player.world.provider.getDimension());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_ID), player.world.provider.getDimension());
             if (colony == null)
             {
                 return;
             }
 
             final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
-            final AbstractBuildingView hut = colony.getBuilding(guardTower);
+            final IBuildingView hut = colony.getBuilding(guardTower);
 
             if (partolPointTemplate == null)
             {

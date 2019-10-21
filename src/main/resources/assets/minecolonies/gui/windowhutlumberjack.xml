@@ -1,0 +1,23 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <switch id="pages" size="100% 100%">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
+        </view>
+        <view id="saplings" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
+        </view>
+        <view id="settings" size="100% 100%">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label id="desc" size="130 11" pos="70 15" color="black" label="$(com.minecolonies.coremod.gui.workerHuts.settings)"/>
+
+            <buttonimage id="saplingReplant" textcolor="black" size="86 17" pos="50 70" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="toggleRestriction" textcolor="black" size="86 17" pos="50 90" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="giveTool" textcolor="black" size="86 17" pos="50 110" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+        </view>
+    </switch>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
+</window>

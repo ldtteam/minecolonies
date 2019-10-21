@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.requester;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -16,19 +17,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken<?> getRequesterId();
-
-    /**
-     * Method used to get the location that a delivery has to be brought to.
-     * Usually this points for a Building to its Postbox.
-     *
-     * @return The location of the targetpoint of a delivery to this location.
-     */
-    @NotNull
-    default ILocation getDeliveryLocation()
-    {
-        return getRequesterLocation();
-    }
+    IToken getId();
 
     /**
      * Method to get the location of this locatable.
@@ -36,30 +25,30 @@ public interface IRequester
      * @return the location.
      */
     @NotNull
-    ILocation getRequesterLocation();
+    ILocation getLocation();
 
     /**
      * Method called by the request system to notify this requester that a request is complete.
      *
-     * @param token the token of the request.
+     * @param request the request.
      */
     @NotNull
-    void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
      *
-     * @param token The token of the request.
+     * @param request the request.
      */
     @NotNull
-    void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
      * Gets the name of the requester that requested the request given by the token.
      *
-     * @param token The token of the request for which the name of the requester is retrieved
+     * @param request the request for which the name of the requester is retrieved
      * @return The display name of the requester.
      */
     @NotNull
-    ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 }

@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -28,7 +30,6 @@ import java.util.List;
 
 public class BuildingComposter extends AbstractFilterableListBuilding
 {
-
     /**
      * Description of the job for this building
      */
@@ -70,10 +71,10 @@ public class BuildingComposter extends AbstractFilterableListBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingComposter(@NotNull final Colony c, final BlockPos l)
+    public BuildingComposter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem(new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> isAllowedItem("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**
@@ -88,7 +89,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobComposter(citizen);
     }
@@ -123,24 +124,9 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList compostBinTagList = new NBTTagList();
-        for (@NotNull final BlockPos entry : barrels)
-        {
-            @NotNull final NBTTagCompound compostBinCompound = new NBTTagCompound();
-            compostBinCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            compostBinTagList.appendTag(compostBinCompound);
-        }
-        compound.setTag(TAG_BARRELS, compostBinTagList);
-        compound.setBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         final NBTTagList compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.tagCount(); ++i)
         {
@@ -153,10 +139,33 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        @NotNull final NBTTagList compostBinTagList = new NBTTagList();
+        for (@NotNull final BlockPos entry : barrels)
+        {
+            @NotNull final NBTTagCompound compostBinCompound = new NBTTagCompound();
+            compostBinCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
+            compostBinTagList.appendTag(compostBinCompound);
+        }
+        compound.setTag(TAG_BARRELS, compostBinTagList);
+        compound.setBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
+
+        return compound;
+    }
+
+    @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(retrieveDirtFromCompostBin);
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.composter;
     }
 
     /**
@@ -181,7 +190,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * If the composter should retrieve dirt from his compost bin.
@@ -194,7 +203,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

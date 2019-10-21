@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Abstract skeleton implementation of a request.
+ * Abstract skeleton initializer of a request.
  *
  * @param <R> The type of request this is.
  */
@@ -74,6 +73,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         children = new ArrayList<>();
     }
 
+    
+
     /**
      * Used to determine which type of request this is.
      * Only RequestResolvers for this Type are then used to resolve the this.
@@ -83,7 +84,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public TypeToken<? extends R> getRequestType()
+    public TypeToken<? extends R> getType()
     {
         return TypeToken.of((Class<? extends R>) getRequest().getClass());
     }
@@ -108,7 +109,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getToken()
+    public <T extends IToken> T getId()
     {
         return (T) token;
     }
@@ -137,13 +138,13 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        LogHandler.log("Updated state from: " + getToken() + " to: " + state);
+        manager.getLogger().debug("Updated state from: " + getId() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
             try
             {
-                manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
+                manager.getRequestForToken(getParent()).childStateUpdated(manager, getId());
             }
             catch (final IllegalArgumentException ex)
             {
@@ -158,7 +159,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * A RequestResolver can compare this object however way it sees fit.
      * <p>
      * During the resolving process this object is called multiple times. But at least twice.
-     * A cached implementation is preferred.
+     * A cached initializer is preferred.
      *
      * @return The object that is actually requested.
      */
@@ -248,7 +249,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        LogHandler.log("Added child:" + child + " to: " + getToken());
     }
 
     /**
@@ -288,7 +288,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        LogHandler.log("Removed child: " + child + " from: " + getToken());
     }
 
     /**
@@ -363,7 +362,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         if (!this.children.contains(child))
         {
             //WHAT? log and return.
-            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getToken() + " as it was not registered.");
+            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getId() + " as it was not registered.");
         }
 
         try
@@ -372,7 +371,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
+                manager.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getId());
             }
         }
         catch (final IllegalArgumentException ex)
@@ -484,7 +483,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         final AbstractRequest<?> that = (AbstractRequest<?>) o;
 
-        if (!getToken().equals(that.getToken()))
+        if (!getId().equals(that.getId()))
         {
             return false;
         }
@@ -522,7 +521,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Override
     public int hashCode()
     {
-        int result1 = getToken().hashCode();
+        int result1 = getId().hashCode();
         result1 = 31 * result1 + requested.hashCode();
         result1 = 31 * result1 + getChildren().hashCode();
         result1 = 31 * result1 + getRequester().hashCode();

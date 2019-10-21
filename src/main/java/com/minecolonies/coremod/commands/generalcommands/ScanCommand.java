@@ -8,6 +8,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.CommandBlockBaseLogic;
+import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -36,7 +38,7 @@ public class ScanCommand implements IActionCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final EntityPlayerMP playerArgument = actionMenuState.getOnlinePlayerForArgument("player");
+        final String playerArgument = actionMenuState.getStringForArgument("player");
 
         // Will throw ClassCastException if null, but should never be null as these values are required.
         final int x1 = actionMenuState.getIntegerForArgument("x1");
@@ -60,10 +62,18 @@ public class ScanCommand implements IActionCommand
             server.addScheduledTask(() ->
             {
                 @Nullable final World world = server.getEntityWorld();
-                @NotNull final EntityPlayerMP player;
+                final EntityPlayer player;
                 if (playerArgument != null)
                 {
-                    player = playerArgument;
+                    if (playerArgument.equalsIgnoreCase("@p"))
+                    {
+                        final BlockPos pos = sender.getPosition();
+                        player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 50, false);
+                    }
+                    else
+                    {
+                        player = world.getPlayerEntityByName(playerArgument);
+                    }
                 }
                 else if (sender instanceof EntityPlayer)
                 {
@@ -74,6 +84,13 @@ public class ScanCommand implements IActionCommand
                     sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
                     return;
                 }
+
+                if (player == null)
+                {
+                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    return;
+                }
+
                 ItemScanTool.saveStructure(world, from, to, player, name == null ? "" : name);
                 sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
             });

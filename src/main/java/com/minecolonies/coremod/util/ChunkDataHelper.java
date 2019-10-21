@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IChunkmanagerCapability;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -20,13 +22,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.CHUNK_INFO_PATH;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.DISTANCE_TO_LOAD_IMMEDIATELY;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
+import static com.minecolonies.coremod.MineColonies.*;
 
 /**
  * Class to take care of chunk data helper.
@@ -165,21 +163,152 @@ public final class ChunkDataHelper
     /**
      * Notify all chunks in the range of the colony about the colony.
      *
-     * @param world the world of the colony.
-     * @param add   remove or add
+     * @param world the world.
+     * @param add if add or remove.
+     * @param id the colony id.
+     * @param center the center chunk.
+     * @param dimension the dimension.
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
+        final int range = Configurations.gameplay.workingRangeTownHallChunks;
+        final int buffer = Configurations.gameplay.townHallPaddingChunk;
+
+        claimChunksInRange(id, dimension, add, center, range, buffer, world);
+    }
+
+    /**
+     * Notify all chunks in the range of the colony about the colony.
+     *
+     * --- This is only for dynamic claiming ---
+     *
+     * @param world the world it was placed in.
+     * @param add if add or remove.
+     * @param id the id of the colony.
+     * @param center the center position of the colony.
+     * @param dimension the dimension it was placed in.
+     * @param range the range to claim.
+     */
+    public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension, final int range)
+    {
+        claimChunksInRange(id, dimension, add, range, world, center);
+    }
+
+    /**
+     * Check if all chunks within a certain range can be claimed, if range is too big this might require to load chunks.
+     * Use carefully.
+     *
+     * --- This is only for dynamic claiming ---
+     *
+     * @param w the world.
+     * @param pos the center position.
+     * @param range the range to check.
+     * @return true if possible.
+     */
+    public static boolean canClaimChunksInRange(final World w, final BlockPos pos, final int range)
+    {
+        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        if (worldCapability == null)
+        {
+            return true;
+        }
+        final Chunk centralChunk = w.getChunk(pos);
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
+        for (int i = chunkX - range; i <= chunkX + range; i++)
+        {
+            for (int j = chunkZ - range; j <= chunkZ + range; j++)
+            {
+                final Chunk chunk = w.getChunk(i, j);
+                final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                if (colonyCap == null)
+                {
+                    return false;
+                }
+                final ChunkLoadStorage storage = worldCapability.getChunkStorage(chunk.x, chunk.z);
+                if (storage != null)
+                {
+                    storage.applyToCap(colonyCap);
+                }
+                if (colonyCap.getOwningColony() != 0)
+                {
+                    return false;
+                }
+            }
+        }
+       return true;
+    }
+
+
+    /**
+     * Claim a number of chunks in a certain range around a position.
+     *
+     * --- This is only for dynamic claiming ---
+     *
+     * @param colonyId  the colony id.
+     * @param dimension the dimension.
+     * @param add       if claim or unclaim.
+     * @param range     the range.
+     * @param world     the world.
+     * @param center    the center position to be claimed.
+     */
+    public static void claimChunksInRange(
+      final int colonyId,
+      final int dimension,
+      final boolean add,
+      final int range,
+      final World world,
+      final BlockPos center)
+    {
         final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, id);
+        loadChunkAndAddData(world, center, add, colonyId, center);
 
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
 
-        final int range = Configurations.gameplay.workingRangeTownHallChunks;
-        final int buffer = Configurations.gameplay.townHallPaddingChunk;
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        if (chunkManager == null)
+        {
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            return;
+        }
 
-        claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, buffer, world);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
+        if (colony == null)
+        {
+            return;
+        }
+
+        int additionalChunksToLoad = 0;
+        for (int i = chunkX - range; i <= chunkX + range; i++)
+        {
+            for (int j = chunkZ - range; j <= chunkZ + range; j++)
+            {
+                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
+                if (Configurations.gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(Configurations.gameplay.workingRangeTownHall, 2))
+                {
+                    continue;
+                }
+
+                if (i == chunkX && j == chunkZ)
+                {
+                    continue;
+                }
+                if (loadChunkAndAddData(world, pos, add, colonyId, center))
+                {
+                    continue;
+                }
+
+                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), dimension, center);
+                if (!chunkManager.addChunkStorage(i, j, newStorage))
+                {
+                    additionalChunksToLoad++;
+                }
+            }
+        }
+        final IColonyManagerCapability cap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 
     /**
@@ -188,8 +317,7 @@ public final class ChunkDataHelper
      * @param colonyId  the colony id.
      * @param dimension the dimension.
      * @param add       if claim or unclaim.
-     * @param chunkX    the chunkX starter position.
-     * @param chunkZ    the chunkZ starter position.
+     * @param center    the center position to be claimed.
      * @param range     the range.
      * @param buffer    the buffer.
      * @param world     the world.
@@ -198,12 +326,17 @@ public final class ChunkDataHelper
       final int colonyId,
       final int dimension,
       final boolean add,
-      final int chunkX,
-      final int chunkZ,
+      final BlockPos center,
       final int range,
       final int buffer,
       final World world)
     {
+        final Chunk centralChunk = world.getChunk(center);
+        loadChunkAndAddData(world, center, add, colonyId);
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
@@ -311,6 +444,46 @@ public final class ChunkDataHelper
         else
         {
             cap.removeColony(id);
+        }
+
+        chunk.markDirty();
+        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        return true;
+    }
+
+    /**
+     * Add the data to the chunk directly for dynamic claiming.
+     *
+     * ----- Only for dynamic claiming -----
+     *
+     * @param world the world.
+     * @param pos   the position.
+     * @param add   if add or delete.
+     * @param id    the id.
+     * @param buildingPos the building pos.
+     * @return true if successful.
+     */
+    public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final BlockPos buildingPos)
+    {
+        if (!world.isBlockLoaded(pos))
+        {
+            return false;
+        }
+
+        final Chunk chunk = world.getChunk(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if (cap == null)
+        {
+            return false;
+        }
+
+        if (add)
+        {
+            cap.addBuildingClaim(id, buildingPos);
+        }
+        else
+        {
+            cap.removeBuildingClaim(id, buildingPos);
         }
 
         chunk.markDirty();

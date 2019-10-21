@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
@@ -25,7 +26,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
@@ -111,7 +111,7 @@ public class StandardRequestManagerTest
         resolverLowPrio = spy(new StringResolver(0));
         resolverHighPrio = spy(new StringResolver(1));
 
-        doThrow(new AssertionError("Lower priority resolver got called!")).when(resolverLowPrio).resolve(anyObject(), anyObject());
+        doThrow(new AssertionError("Lower priority resolver got called!")).when(resolverLowPrio).resolveRequest(anyObject(), anyObject());
 
         provider = new TestResolvingProvider(resolverLowPrio, resolverHighPrio);
     }
@@ -142,7 +142,7 @@ public class StandardRequestManagerTest
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
 
-        requestManager.updateRequestState(request.getToken(), RequestState.RECEIVED);
+        requestManager.updateRequestState(request.getId(), RequestState.RECEIVED);
 
         requestManager.onProviderRemovedFromColony(provider);
     }
@@ -202,7 +202,7 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getToken()
+        public IToken getId()
         {
             return token;
         }
@@ -379,14 +379,14 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends StringRequestable> requestToCheck)
+        public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends StringRequestable> requestToCheck)
         {
             return true;
         }
 
         @Nullable
         @Override
-        public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
             if (request.getRequest().content.length() == 1)
             {
@@ -399,10 +399,10 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void resolve(final IRequestManager manager, final IRequest<? extends StringRequestable> request) throws RuntimeException
+        public void resolveRequest(final IRequestManager manager, final IRequest<? extends StringRequestable> request) throws RuntimeException
         {
             System.out.println(request.getRequest().content);
-            manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+            manager.updateRequestState(request.getId(), RequestState.RESOLVED);
         }
 
         @SuppressWarnings(RAWTYPES)
@@ -416,14 +416,13 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public IRequest<?> onRequestCancelled(
+        public void onAssignedRequestBeingCancelled(
           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
-            return null;
         }
 
         @Override
-        public void onRequestBeingOverruled(
+        public void onAssignedRequestCancelled(
           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
 
@@ -437,33 +436,35 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getRequesterId()
+        public IToken getId()
         {
             return token;
         }
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
-            return TestRequester.INSTANCE.getRequesterLocation();
-        }
-
-        @Override
-        public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
-        {
-            //NOOP
-        }
-
-        @Override
-        public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
-        {
-            //NOOP
+            return TestRequester.INSTANCE.getLocation();
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+        {
+
+        }
+
+        @NotNull
+        @Override
+        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+        {
+
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             //Not used in test.
             return null;
@@ -528,33 +529,35 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getRequesterId()
+        public IToken getId()
         {
             return token;
         }
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
             return null;
         }
 
+        @NotNull
         @Override
-        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
-            return;
-        }
 
-        @Override
-        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-        {
-            return;
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+        {
+
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             return new TextComponentString("Test Requester");
         }

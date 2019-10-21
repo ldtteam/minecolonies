@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -74,7 +73,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final Integer page = actionMenuState.getIntegerForArgument("page");
         executeShared(server, sender, colony, page);
     }
@@ -85,29 +84,29 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         int colonyId = getIthArgument(args, 0, getColonyId(sender));
         final Integer page = getIthArgument(args, 1, 1);
 
-        Colony colony = null;
+        IColony colony = null;
         if (sender instanceof EntityPlayer)
         {
             if (colonyId == -1)
             {
-                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
                 if (icolony != null)
                 {
                     colonyId = icolony.getID();
                 }
             }
         }
-        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         executeShared(server, sender, colony, page);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final Integer pageProvided) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final Integer pageProvided) throws CommandException
     {
         int page;
         if (null != pageProvided)
         {
-            page = pageProvided.intValue();
+            page = pageProvided;
         }
         else
         {
@@ -124,7 +123,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             }
         }
 
-        final List<CitizenData> citizens = colony.getCitizenManager().getCitizens();
+        final List<ICitizenData> citizens = colony.getCitizenManager().getCitizens();
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
@@ -139,7 +138,18 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final int pageStartIndex = CITIZENS_ON_PAGE * (page - 1);
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
 
-        final List<CitizenData> citizensPage;
+        final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
+        final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
+        sender.sendMessage(headerLine);
+
+        drawCitizens(sender, citizensPage);
+        drawPageSwitcher(sender, page, citizenCount, halfPage, colony.getID());
+    }
+
+    @NotNull
+    private List<ICitizenData> getCitizensOnPage(final List<ICitizenData> citizens, final int citizenCount, final int pageStartIndex, final int pageStopIndex)
+    {
+        final List<ICitizenData> citizensPage;
 
         if (pageStartIndex < 0 || pageStartIndex >= citizenCount)
         {
@@ -149,11 +159,12 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         {
             citizensPage = citizens.subList(pageStartIndex, pageStopIndex);
         }
+        return citizensPage;
+    }
 
-        final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
-        sender.sendMessage(headerLine);
-
-        for (final CitizenData citizen : citizensPage)
+    private void drawCitizens(@NotNull final ICommandSender sender, final List<ICitizenData> citizensPage)
+    {
+        for (final ICitizenData citizen : citizensPage)
         {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
               citizen.getId(),
@@ -166,7 +177,6 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
                 sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             });
         }
-        drawPageSwitcher(sender, page, citizenCount, halfPage, (null != colony ? colony.getID() : -1));
     }
 
     /**
@@ -178,11 +188,11 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
      */
     private static int getColonyId(@NotNull final ICommandSender sender)
     {
-        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if (tempColony != null)
         {
             final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
-            final Colony colony = ColonyManager.getColonyByPosFromWorld(world, tempColony.getCenter());
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, tempColony.getCenter());
             if (colony != null)
             {
                 return colony.getID();

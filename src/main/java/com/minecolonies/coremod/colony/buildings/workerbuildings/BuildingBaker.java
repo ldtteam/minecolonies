@@ -1,16 +1,19 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
@@ -28,31 +31,24 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * Building for the baker.
+ * Building for the bakery.
  */
 public class BuildingBaker extends AbstractFilterableListBuilding
 {
     /**
-     * General baker description key.
+     * General bakery description key.
      */
     private static final String BAKER = "Baker";
 
     /**
-     * Max hut level of the baker.
+     * Max hut level of the bakery.
      */
     private static final int BAKER_HUT_MAX_LEVEL = 5;
 
@@ -98,17 +94,17 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
     /**
-     * Map of tasks for the baker to work on.
+     * Map of tasks for the bakery to work on.
      */
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
 
     /**
-     * Constructor for the baker building.
+     * Constructor for the bakery building.
      *
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingBaker(final Colony c, final BlockPos l)
+    public BuildingBaker(final IColony c, final BlockPos l)
     {
         super(c, l);
         for (final IRecipeStorage storage : BakerRecipes.getRecipes())
@@ -133,9 +129,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Gets the max level of the baker's hut.
+     * Gets the max level of the bakery's hut.
      *
-     * @return The max level of the baker's hut.
+     * @return The max level of the bakery's hut.
      */
     @Override
     public int getMaxBuildingLevel()
@@ -172,16 +168,17 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobBaker(citizen);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
         tasks.clear();
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
+
         final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < taskTagList.tagCount(); ++i)
         {
@@ -211,9 +208,10 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
@@ -248,13 +246,13 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
 
-        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        return compound;
     }
 
     /**
-     * The name of the baker's job.
+     * The name of the bakery's job.
      *
-     * @return The name of the baker's job.
+     * @return The name of the bakery's job.
      */
     @NotNull
     @Override
@@ -280,7 +278,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Checks the furnaces of the baker if they're ready.
+     * Checks the furnaces of the bakery if they're ready.
      */
     private void checkFurnaces()
     {
@@ -372,7 +370,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Get the map of current tasks in the baker.
+     * Get the map of current tasks in the bakery.
      *
      * @return the map of states and products.
      */
@@ -438,19 +436,24 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         return true;
     }
 
-    /**
-     * The client view for the baker building.
-     */
-    public static class View extends FilterableListView
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
     {
+        return ModBuildings.bakery;
+    }
 
+    /**
+     * The client view for the bakery building.
+     */
+    public static class View extends AbstractFilterableListsView
+    {
         /**
-         * The client view constructor for the baker building.
+         * The client view constructor for the bakery building.
          *
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

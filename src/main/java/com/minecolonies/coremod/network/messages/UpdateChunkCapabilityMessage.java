@@ -93,11 +93,15 @@ public class UpdateChunkCapabilityMessage extends AbstractMessage<UpdateChunkCap
         {
             final Chunk chunk = ctx.getClientHandler().world.getChunk(message.x, message.z);
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-            cap.reset();
-            cap.setOwningColony(message.owningColonyId);
-            for (final int id : message.closeColonies)
+
+            if (cap.getOwningColony() != message.owningColonyId)
             {
-                cap.addColony(id);
+                cap.reset();
+                cap.setOwningColony(message.owningColonyId);
+                for (final int id : message.closeColonies)
+                {
+                    cap.addColony(id);
+                }
             }
         }
     }

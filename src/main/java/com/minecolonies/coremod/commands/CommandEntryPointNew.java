@@ -1,22 +1,19 @@
 package com.minecolonies.coremod.commands;
 
-import java.util.List;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.context.PlayerContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Command entry point to make minecraft inheritance happy.
@@ -25,19 +22,19 @@ public class CommandEntryPointNew extends AbstractCommandParser
 {
     public class MineColonyDataProvider
     {
-        public List<Colony> getColonies()
+        public List<IColony> getColonies()
         {
-            return ColonyManager.getAllColonies();
+            return IColonyManager.getInstance().getAllColonies();
         }
 
         public IColony getIColonyByOwner(final World entityWorld, final EntityPlayer sender)
         {
-            return ColonyManager.getIColonyByOwner(entityWorld, sender);
+            return IColonyManager.getInstance().getIColonyByOwner(entityWorld, sender);
         }
 
-        public Colony getColony(final int colonyNumber, final int senderDimension)
+        public IColony getColony(final int colonyNumber, final int senderDimension)
         {
-            return ColonyManager.getColonyByWorld(colonyNumber, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(senderDimension));
+            return IColonyManager.getInstance().getColonyByWorld(colonyNumber, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(senderDimension));
         }
     }
 

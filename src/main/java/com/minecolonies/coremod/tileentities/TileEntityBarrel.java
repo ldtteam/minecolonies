@@ -1,17 +1,16 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class TileEntityBarrel extends TileEntity implements ITickable
+public class TileEntityBarrel extends AbstractTileEntityBarrel
 {
     /**
      * True if the barrel has finished composting and the items are ready to harvest
@@ -34,10 +33,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * The timer for the composting process
      */
     private int                                     timer          = 0;
-    /**
-     * The number of items it needs to start composting
-     */
-    public static final int                         MAX_ITEMS      = 64;
     /**
      * The number the timer has to reach to finish composting. Number of Minecraft ticks in 2 whole days
      */
@@ -71,7 +66,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      */
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        if(getItems() == TileEntityBarrel.MAX_ITEMS)
+        if (getItems() == AbstractTileEntityBarrel.MAX_ITEMS)
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
@@ -114,12 +109,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             return true;
         }
 
-        if (!this.checkCorrectItem(itemstack))
+        if (!checkCorrectItem(itemstack))
         {
             return false;
         }
 
-        if (items == MAX_ITEMS)
+        if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
             playerIn.sendMessage(new TextComponentTranslation("entity.barrel.working"));
             return false;
@@ -142,7 +137,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //The available items the player has in his hand (Rotten Flesh counts as the double)
         final int availableItems = itemStack.getCount()*factor;
         //The items we need to complete the barrel
-        final int neededItems = MAX_ITEMS - items;
+        final int neededItems = AbstractTileEntityBarrel.MAX_ITEMS - items;
         //The quantity of items that we are going to take from the player
         int itemsToRemove = Math.min(neededItems, availableItems);
 
@@ -155,7 +150,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     public static boolean checkCorrectItem(final ItemStack itemStack)
     {
-        return ColonyManager.getCompatibilityManager().isCompost(itemStack);
+        return IColonyManager.getInstance().getCompatibilityManager().isCompost(itemStack);
     }
 
     /**
@@ -226,6 +221,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Returns the number of items that the block contains
      * @return the number of items
      */
+    @Override
     public int getItems()
     {
         return items;
@@ -235,6 +231,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Returns if the barrel has finished composting
      * @return true if done, false if not
      */
+    @Override
     public boolean isDone()
     {
         return this.done;
@@ -246,9 +243,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Checks if the barrel is composting
      * @return true if the number of items is equal to the maximum. If not, false.
      */
+    @Override
     public boolean checkIfWorking()
     {
-        return this.items == this.MAX_ITEMS;
+        return this.items == MAX_ITEMS;
     }
 
     /***
@@ -256,9 +254,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * @param item the itemStack to be placed inside it.
      * @return false if the item couldn't be cosumed. True if it could
      */
+    @Override
     public boolean addItem(final ItemStack item)
     {
-        if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
+        if (checkCorrectItem(item) && this.items < MAX_ITEMS)
         {
             this.consumeNeededItems(item);
             this.updateBlock(this.world, this.world.getBlockState(this.pos));
@@ -271,6 +270,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Lets the AI retrieve the compost when the barrel has done processing it.
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
+    @Override
     public ItemStack retrieveCompost(final double multiplier)
     {
         if(this.done)

@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.colony.requestsystem.requesters;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -51,42 +52,42 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
-        compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
-        compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(getLocation()));
+        compound.setTag(NBT_ID, controller.serialize(getId()));
 
         return compound;
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return requesterId;
     }
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
         return location;
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestComplete(manager, token));
+        getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestComplete(manager, request));
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestCancelled(manager, token));
+        getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestCancelled(manager, request));
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
+        return getBuilding(manager, request.getId()).map(requester -> requester.getRequesterDisplayName(manager, request)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
     }
 
     @Override
@@ -104,7 +105,7 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         }
 
         final World world = MineColonies.proxy.getWorld(location.getDimension());
-        final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
+        final IColony colony = IColonyManager.getInstance().getClosestIColony(world, location.getInDimensionLocation());
 
         if (colony == null)
         {

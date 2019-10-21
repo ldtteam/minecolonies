@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemCrafterJobDataStore;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -9,8 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Class of the crafter job.
  */
-public abstract class AbstractJobCrafter extends AbstractJob
+public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>, J extends AbstractJobCrafter<AI, J>> extends AbstractJob
 {
     /**
      * The Token of the data store which belongs to this job.
@@ -30,11 +32,26 @@ public abstract class AbstractJobCrafter extends AbstractJob
     private IToken<?> rsDataStoreToken;
 
     /**
+     * Max crafting count for current recipe.
+     */
+    private int maxCraftingCount = 0;
+
+    /**
+     * Count of already executed recipes.
+     */
+    private int craftCounter = 0;
+
+    /**
+     * Progress of hitting the block.
+     */
+    private int progress = 0;
+
+    /**
      * Instantiates the job for the crafter.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public AbstractJobCrafter(final CitizenData entity)
+    public AbstractJobCrafter(final ICitizenData entity)
     {
         super(entity);
         setupRsDataStore();
@@ -56,10 +73,29 @@ public abstract class AbstractJobCrafter extends AbstractJob
                              .getId();
     }
 
+    @NotNull
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public IModelType getModel()
     {
-        super.readFromNBT(compound);
+        return BipedModelType.CRAFTER;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+
+        compound.setInteger(NbtTagConstants.TAG_PROGRESS, progress);
+        compound.setInteger(NbtTagConstants.TAG_MAX_COUNTER, maxCraftingCount);
+        compound.setInteger(NbtTagConstants.TAG_CRAFT_COUNTER, craftCounter);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
 
         if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
@@ -69,20 +105,21 @@ public abstract class AbstractJobCrafter extends AbstractJob
         {
             setupRsDataStore();
         }
-    }
 
-    @NotNull
-    @Override
-    public RenderBipedCitizen.Model getModel()
-    {
-        return RenderBipedCitizen.Model.CRAFTER;
-    }
+        if (compound.hasKey(NbtTagConstants.TAG_PROGRESS))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_PROGRESS);
+        }
 
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        if (compound.hasKey(NbtTagConstants.TAG_MAX_COUNTER))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_MAX_COUNTER);
+        }
+
+        if (compound.hasKey(NbtTagConstants.TAG_CRAFT_COUNTER))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_CRAFT_COUNTER);
+        }
     }
 
     /**
@@ -124,14 +161,22 @@ public abstract class AbstractJobCrafter extends AbstractJob
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<? extends PublicCrafting>  getCurrentTask()
+    public <R extends PublicCrafting> IRequest<R> getCurrentTask()
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
             return null;
         }
 
-        return (IRequest<? extends PublicCrafting>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        //This cleans up the state after something went wrong.
+        IRequest<R> request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        while(request == null)
+        {
+            getTaskQueueFromDataStore().remove(getTaskQueueFromDataStore().peekFirst());
+            request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        }
+
+        return request;
     }
 
     /**
@@ -156,9 +201,9 @@ public abstract class AbstractJobCrafter extends AbstractJob
             return;
         }
 
-        final IToken<?> current = getTaskQueueFromDataStore().removeFirst();
+        final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
-        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
+        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.CANCELLED);
     }
 
     /**
@@ -204,4 +249,57 @@ public abstract class AbstractJobCrafter extends AbstractJob
         return ImmutableList.copyOf(getAssignedTasksFromDataStore());
     }
 
+    /**
+     * Get the max crafting count for the current recipe.
+     * @return the count.
+     */
+    public int getMaxCraftingCount()
+    {
+        return maxCraftingCount;
+    }
+
+    /**
+     * Set the max crafting count for the current recipe.
+     * @param maxCraftingCount the count to set.
+     */
+    public void setMaxCraftingCount(final int maxCraftingCount)
+    {
+        this.maxCraftingCount = maxCraftingCount;
+    }
+
+    /**
+     * Get the current craft counter.
+     * @return the counter.
+     */
+    public int getCraftCounter()
+    {
+        return craftCounter;
+    }
+
+    /**
+     * Set the current craft counter.
+     * @param craftCounter the counter to set.
+     */
+    public void setCraftCounter(final int craftCounter)
+    {
+        this.craftCounter = craftCounter;
+    }
+
+    /**
+     * Get the crafting progress.
+     * @return the current progress.
+     */
+    public int getProgress()
+    {
+        return progress;
+    }
+
+    /**
+     * Set the crafting progress.
+     * @param progress the current progress.
+     */
+    public void setProgress(final int progress)
+    {
+        this.progress = progress;
+    }
 }

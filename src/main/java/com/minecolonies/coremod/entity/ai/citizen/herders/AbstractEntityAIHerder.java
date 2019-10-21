@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for all Citizen Herder AIs
@@ -102,7 +102,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(getBreedingItems());
+        list.add(getRequestBreedingItems());
         return list;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> itemsNeeded = new ArrayList<>();
-        itemsNeeded.add(getBreedingItems());
+        itemsNeeded.add(getRequestBreedingItems());
         return itemsNeeded;
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
@@ -437,10 +437,15 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            final List<T> animal = allAnimals.stream()
+            final List<T> animals = allAnimals.stream()
                     .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
 
-            final int numOfAnimals = animal.size();
+            if (animals.isEmpty())
+            {
+                return false;
+            }
+
+            final int numOfAnimals = allAnimals.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;
@@ -523,21 +528,21 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
             worker.swingArm(EnumHand.MAIN_HAND);
-            animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
+            animal.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
             worker.decreaseSaturationForAction();
         }
     }
 
     /**
-     * Gets an ItemStack of breedingItem for 2 animals.
+     * Gets an ItemStack of breedingItem for requesting, requests multiple items to decrease work for delivery man
      *
      * @return the BreedingItem stack.
      */
-    public ItemStack getBreedingItems()
+    public ItemStack getRequestBreedingItems()
     {
         final ItemStack breedingItem = getBreedingItem().copy();
-        ItemStackUtils.setSize(breedingItem, 2);
+        ItemStackUtils.setSize(breedingItem, breedingItem.getCount() * 8); // means that we can breed 8 animals before requesting again.
         return breedingItem;
     }
 

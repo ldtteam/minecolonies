@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
-import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
 import net.minecraft.item.Item;
@@ -72,7 +74,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingLibrary(final Colony c, final BlockPos l)
+    public BuildingLibrary(final IColony c, final BlockPos l)
     {
         super(c, l);
 
@@ -147,7 +149,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobStudent(citizen);
     }
@@ -159,9 +161,20 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+        super.deserializeNBT(compound);
+        final NBTTagList furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        {
+            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
         @NotNull final NBTTagList bookcaseTagList = new NBTTagList();
         for (@NotNull final BlockPos entry : bookCases)
         {
@@ -170,17 +183,8 @@ public class BuildingLibrary extends AbstractBuildingWorker
             bookcaseTagList.appendTag(bookCompound);
         }
         compound.setTag(TAG_BOOKCASES, bookcaseTagList);
-    }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
-        {
-            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
-        }
+        return compound;
     }
 
     @Override
@@ -202,7 +206,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     {
         if (bookCases.isEmpty())
         {
-            return getLocation();
+            return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
         if ((colony.getWorld().getBlockState(returnPos).getBlock() instanceof BlockBookshelf))
@@ -210,12 +214,18 @@ public class BuildingLibrary extends AbstractBuildingWorker
             return returnPos;
         }
         bookCases.remove(returnPos);
-        return getLocation();
+        return getPosition();
     }
 
     public List<StudyItem> getStudyItems()
     {
         return studyItems;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.library;
     }
 
     /**
@@ -229,7 +239,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

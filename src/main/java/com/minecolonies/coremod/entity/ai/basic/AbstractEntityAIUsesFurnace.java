@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,10 +18,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -163,15 +163,15 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isSmeltable);
         final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isSmeltable);
 
-        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel);
-        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel);
+        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
+        final int amountOfFuelInInv =
+          InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
 
-        if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0
-                && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())) && !reachedMaxToKeep())
+        if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0 && !reachedMaxToKeep())
         {
-            worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
+            requestSmeltable();
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), req -> req.getShortDisplayString().getUnformattedText().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE))))
         {
             worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingFurnaceUser.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE));
         }
@@ -183,12 +183,18 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         }
         else if(amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
         {
-            needsCurrently = TileEntityFurnace::isItemFuel;
+            needsCurrently = getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel;
             return GATHERING_REQUIRED_MATERIALS;
         }
 
         return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, amountOfSmeltableInBuilding + amountOfSmeltableInInv);
     }
+
+    /**
+     * Request the smeltable item to the building.
+     * Specific worker has to override this.
+     */
+    public abstract void requestSmeltable();
 
     /**
      * Checks if the worker has enough fuel and/or smeltable to start smelting.
@@ -326,11 +332,11 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                         new InvWrapper(furnace), SMELTABLE_SLOT);
             }
 
-            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel)
+            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel)
                     && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                        new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, STACKSIZE,
+                  new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel, STACKSIZE,
                         new InvWrapper(furnace), FUEL_SLOT);
             }
         }

@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -157,7 +157,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         {
             for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!world.isAirBlock(new BlockPos(x, pos.getY()+1, z)))
+                if (world.getBlockState(new BlockPos(x, pos.getY() + 1, z)).getMaterial().isSolid())
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, pos);
                     placementErrorList.add(placementError);
@@ -201,6 +201,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos)
     {
-        return !ColonyManager.isCoordinateInAnyColony(world, pos);
+        return !IColonyManager.getInstance().isCoordinateInAnyColony(world, pos);
     }
 }

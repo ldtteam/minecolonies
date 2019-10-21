@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -70,7 +69,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         // See if we have a valid colony,
-        Colony colony = actionMenuState.getColonyForArgument("colony");
+        IColony colony = actionMenuState.getColonyForArgument("colony");
         EntityPlayer player = null;
         if (null == colony)
         {
@@ -78,7 +77,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             player = actionMenuState.getPlayerForArgument("player");
             if (null != player)
             {
-                final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player);
+                final IColony iColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player);
                 if (iColony != null)
                 {
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
@@ -86,7 +85,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -98,7 +97,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             {
                 player = (EntityPlayer) sender;
                 final UUID mayorID = player.getUniqueID();
-                final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                final IColony iColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), mayorID);
                 if (iColony != null)
                 {
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
@@ -106,7 +105,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -131,7 +130,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
+        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -139,7 +138,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
 
             if (playerProfile != null)
             {
-                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), playerProfile.getId());
+                tempColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), playerProfile.getId());
             }
         }
 
@@ -148,7 +147,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
             {
-                tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
             if (tempColony != null)
@@ -178,7 +177,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(tempColony.getID(), server.getWorld(0));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)
@@ -195,7 +194,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony) throws CommandException
     {
         final BlockPos position = colony.getCenter();
         sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));

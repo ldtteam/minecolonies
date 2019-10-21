@@ -2,13 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.PathResult;
-import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -21,9 +22,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.DECIDE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
@@ -65,7 +66,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * Physical Attack delay in ticks.
      */
-    public static final int RANGED_ATTACK_DELAY_BASE = 70;
+    public static final int RANGED_ATTACK_DELAY_BASE = 30;
 
     /**
      * The path for fleeing
@@ -109,7 +110,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     protected int getAttackRange()
     {
-        return getRealAttackRange() + 10;
+        return getRealAttackRange();
     }
 
     /**
@@ -130,6 +131,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         {
             attackDist += (worker.getCitizenData().getLevel() / 50.0f) * 15;
         }
+
+        if (target != null)
+        {
+            attackDist += worker.getPosY() - target.posY;
+        }
+
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
     }
 
@@ -185,9 +192,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             return GUARD_ATTACK_RANGED;
         }
 
-        final double sqDistanceToEntity = worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ);
+        final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());
         final boolean canSee = worker.getEntitySenses().canSee(target);
-        final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
+        final double sqAttackRange = getRealAttackRange();
 
         if (canSee)
         {
@@ -216,7 +223,10 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         // Move inside attackrange
         else if (sqDistanceToEntity > sqAttackRange || !canSee)
         {
-            worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+            if (worker.getNavigator().noPath())
+            {
+                moveInAttackPosition();
+            }
             worker.getMoveHelper().strafe(0, 0);
             movingToTarget = true;
             strafingTime = -1;
@@ -303,9 +313,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(EnumHand.MAIN_HAND);
 
                 final EntityTippedArrow arrow = new GuardArrow(world, worker);
-                final double xVector = target.posX - worker.posX;
+                final double xVector = target.posX - worker.getPosX();
                 final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
-                final double zVector = target.posZ - worker.posZ;
+                final double zVector = target.posZ - worker.getPosZ();
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 double damage = getRangedAttackDamage();
 
@@ -333,10 +343,10 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 arrow.setDamage(damage);
                 worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.world.spawnEntity(arrow);
+                worker.getEntityWorld().spawnEntity(arrow);
 
-                final double xDiff = target.posX - worker.posX;
-                final double zDiff = target.posZ - worker.posZ;
+                final double xDiff = target.posX - worker.getPosX();
+                final double zDiff = target.posZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 worker.move(MoverType.SELF, goToX, 0, goToZ);
@@ -354,7 +364,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                  * It is possible the object is higher than guard and guard can't get there.
                  * Guard will try to back up to get some distance to be able to shoot target.
                  */
-                if (target.posY > worker.posY + Y_VISION + Y_VISION)
+                if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
                 {
                     fleePath = worker.getNavigator().moveAwayFromEntityLiving(target, 10, getCombatMovementSpeed());
                     fleeing = true;
@@ -385,7 +395,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - worker.getCitizenData().getLevel();
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;
@@ -424,5 +434,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     private double getAimHeight()
     {
         return 3.0D;
+    }
+
+    @Override
+    public void moveInAttackPosition()
+    {
+        worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 4), getCombatMovementSpeed());
     }
 }

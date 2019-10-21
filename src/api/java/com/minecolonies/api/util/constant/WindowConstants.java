@@ -66,6 +66,11 @@ public final class WindowConstants
     public static final String BUTTON_RENAME = "rename";
 
     /**
+     * Id of the mercenary button in the GUI.
+     */
+    public static final String BUTTON_MERCENARY = "mercenaries";
+
+    /**
      * Id of the add player button in the GUI.
      */
     public static final String BUTTON_ADD_PLAYER = "addPlayer";
@@ -1179,6 +1184,21 @@ public final class WindowConstants
      * Id of the pause button
      */
     public static final String BUTTON_RESTART = "restart";
+
+    /**
+     * Id of the build tool suggestion button.
+     */
+    public static final String BUTTON_BUILDTOOL = "buildtool";
+
+    /**
+     * Id of the direct placement button.
+     */
+    public static final String BUTTON_DIRECT                = "direct";
+
+    /**
+     * String of the suggest building GUI.
+     */
+    public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
 
     /**
      * public constructor to hide implicit public one.

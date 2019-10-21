@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.item.ItemSword;
 
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
 /**
  * Class handling the Scimitar item.

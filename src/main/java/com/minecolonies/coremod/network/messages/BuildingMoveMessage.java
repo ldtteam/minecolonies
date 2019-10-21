@@ -1,24 +1,33 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.event.EventHandler;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -85,7 +94,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final BlockPos pos,
       final int rotation,
       final Mirror mirror,
-      final AbstractBuildingView building,
+      final IBuildingView building,
       final IBlockState state)
     {
         super();
@@ -141,7 +150,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
-        handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror, message.buildingId, message.state);
+        handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.buildingId, message.state);
     }
 
     /**
@@ -163,16 +172,16 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
-        final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
+        final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
-                           && !ColonyManager.isTooCloseToColony(world, buildPos))))
+                           && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
         {
             return;
         }
 
-        @Nullable AbstractBuilding oldBuilding = ColonyManager.getBuilding(world, oldBuildingId);
+        @Nullable final IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
         if (oldBuilding instanceof BuildingTownHall)
         {
             if (tempColony != null)
@@ -181,9 +190,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             }
             world.destroyBlock(oldBuildingId, false);
         }
-        else if (oldBuilding instanceof BuildingWareHouse && tempColony != null)
+        else if (oldBuilding instanceof IWareHouse && tempColony != null)
         {
-            tempColony.getBuildingManager().setWareHouse(null);
+            tempColony.getBuildingManager().removeWareHouse((IWareHouse) oldBuilding);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
@@ -211,9 +220,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     private static void setupBuilding(
       @NotNull final World world, @NotNull final EntityPlayer player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, @Nullable final AbstractBuilding oldBuilding)
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, @Nullable final IBuilding oldBuilding)
     {
-        @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+        @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
         if (building == null)
         {
@@ -221,7 +230,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         }
         else
         {
-            final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
             if (colony == null)
             {
                 Log.getLogger().info("No colony for " + player.getName());
@@ -243,11 +252,11 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
 
             if (oldBuilding instanceof AbstractBuildingWorker)
             {
-                final List<CitizenData> workers = oldBuilding.getAssignedCitizen();
-                for (final CitizenData citizen : workers)
+                final List<ICitizenData> workers = oldBuilding.getAssignedCitizen();
+                for (final ICitizenData citizen : workers)
                 {
                     citizen.setWorkBuilding(null);
-                    citizen.setWorkBuilding((AbstractBuildingWorker) building);
+                    citizen.setWorkBuilding((IBuildingWorker) building);
                     building.assignCitizen(citizen);
                 }
             }
@@ -264,13 +273,13 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             }
             else if (oldBuilding instanceof BuildingDeliveryman)
             {
-                ((BuildingDeliveryman) building).setBuildingToDeliver(((BuildingDeliveryman) oldBuilding).getBuildingToDeliver());
+                ((IBuildingDeliveryman) building).setBuildingToDeliver(((IBuildingDeliveryman) oldBuilding).getBuildingToDeliver());
             }
 
             if (oldBuilding instanceof BuildingHome)
             {
-                final List<CitizenData> residents = oldBuilding.getAssignedCitizen();
-                for (final CitizenData citizen : residents)
+                final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
+                for (final ICitizenData citizen : residents)
                 {
                     citizen.setHomeBuilding(building);
                     building.assignCitizen(citizen);

@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -192,7 +192,7 @@ public class Permissions implements IPermissions
      * @param rank   Desired rank.
      * @param action Action that should have desired rank.
      */
-    public final void setPermission(final Rank rank, @NotNull final Action action)
+    public final boolean setPermission(final Rank rank, @NotNull final Action action)
     {
         final int flags = permissionMap.get(rank);
 
@@ -201,7 +201,11 @@ public class Permissions implements IPermissions
         {
             permissionMap.put(rank, Utils.setFlag(flags, action.getFlag()));
             markDirty();
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -268,6 +272,7 @@ public class Permissions implements IPermissions
      * @param rank   Rank to toggle permission.
      * @param action Action to toggle permission.
      */
+    @Override
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
         permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.getFlag()));
@@ -437,8 +442,9 @@ public class Permissions implements IPermissions
      *
      * @return the corresponding entry or null.
      */
+    @Override
     @Nullable
-    private Map.Entry<UUID, Player> getOwnerEntry()
+    public Map.Entry<UUID, Player> getOwnerEntry()
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
@@ -456,6 +462,7 @@ public class Permissions implements IPermissions
      * @param player the player to set.
      * @return true if succesful.
      */
+    @Override
     public boolean setOwner(final EntityPlayer player)
     {
         players.remove(getOwner());
@@ -474,6 +481,7 @@ public class Permissions implements IPermissions
      *
      * @return UUID of the owner.
      */
+    @Override
     @NotNull
     public UUID getOwner()
     {
@@ -569,6 +577,7 @@ public class Permissions implements IPermissions
      * @param action Action you want to perform.
      * @return true if rank has permission for action, otherwise false.
      */
+    @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
@@ -581,6 +590,7 @@ public class Permissions implements IPermissions
      * @param rank the rank.
      * @return set of players.
      */
+    @Override
     public Set<Player> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
@@ -594,6 +604,7 @@ public class Permissions implements IPermissions
      * @param ranks the set of ranks.
      * @return set of players.
      */
+    @Override
     public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return this.players.values().stream()
@@ -643,14 +654,18 @@ public class Permissions implements IPermissions
      * @param rank   Rank to remove permission.
      * @param action Action to remove from rank.
      */
-    public void removePermission(final Rank rank, @NotNull final Action action)
+    public boolean removePermission(final Rank rank, @NotNull final Action action)
     {
         final int flags = permissionMap.get(rank);
         if (Utils.testFlag(flags, action.getFlag()))
         {
             permissionMap.put(rank, Utils.unsetFlag(flags, action.getFlag()));
             markDirty();
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -661,6 +676,7 @@ public class Permissions implements IPermissions
      * @param world the world the player is in.
      * @return True if successful, otherwise false.
      */
+    @Override
     public boolean setPlayerRank(final UUID id, final Rank rank, final World world)
     {
 
@@ -686,18 +702,17 @@ public class Permissions implements IPermissions
     /**
      * Adds a player to the rankings.
      *
-     * @param gameprofile GameProfile of the player.
-     * @param rank        Desired rank.
+     * @param id UUID of the player..
+     * @param rank Desired rank.
+     * @param name name of the player.
      * @return True if succesful, otherwise false.
      */
-    private boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
+    @Override
+    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
     {
-        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+        @NotNull final Player p = new Player(id, name, rank);
 
-        if (players.containsKey(p.getID()))
-        {
-            players.remove(p.getID());
-        }
+        players.remove(p.getID());
         players.put(p.getID(), p);
 
         markDirty();
@@ -727,6 +742,7 @@ public class Permissions implements IPermissions
      * @param world  the world the player is in.
      * @return True if successful, otherwise false.
      */
+    @Override
     public boolean addPlayer(@NotNull final String player, final Rank rank, final World world)
     {
         if (player.isEmpty())
@@ -741,19 +757,16 @@ public class Permissions implements IPermissions
     /**
      * Adds a player to the rankings.
      *
-     * @param id UUID of the player..
-     * @param rank Desired rank.
-     * @param name name of the player.
+     * @param gameprofile GameProfile of the player.
+     * @param rank        Desired rank.
      * @return True if succesful, otherwise false.
      */
-    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
+    @Override
+    public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
-        @NotNull final Player p = new Player(id, name, rank);
+        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
 
-        if (players.containsKey(p.getID()))
-        {
-            players.remove(p.getID());
-        }
+        players.remove(p.getID());
         players.put(p.getID(), p);
 
         markDirty();
@@ -785,6 +798,7 @@ public class Permissions implements IPermissions
      *
      * @return Name of the owner.
      */
+    @Override
     @Nullable
     public String getOwnerName()
     {

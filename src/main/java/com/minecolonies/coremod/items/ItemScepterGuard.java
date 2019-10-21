@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowGuardControl;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -101,13 +103,13 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
             if (colony == null)
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
             final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
-            final AbstractBuildingView hut = colony.getBuilding(guardTower);
+            final IBuildingView hut = colony.getBuilding(guardTower);
 
             if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
             {
@@ -135,19 +137,19 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             return EnumActionResult.FAIL;
         }
-        final Colony colony = ColonyManager.getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
         if (colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
-        final AbstractBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
+        final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;
         }
-        final AbstractBuildingGuards tower = (AbstractBuildingGuards) hut;
+        final IGuardBuilding tower = (IGuardBuilding) hut;
 
         if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
@@ -156,7 +158,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final GuardTask task = GuardTask.values()[compound.getInteger("task")];
-        final CitizenData citizen = tower.getMainCitizen();
+        final ICitizenData citizen = tower.getMainCitizen();
 
         String name = "";
         if (citizen != null)

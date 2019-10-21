@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -70,7 +70,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
-    public BuildRequestMessage(@NotNull final AbstractBuildingView building, final int mode, final BlockPos builder)
+    public BuildRequestMessage(@NotNull final IBuildingView building, final int mode, final BlockPos builder)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -103,13 +103,13 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     @Override
     public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             return;
         }
 
-        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (building == null)
         {
             return;

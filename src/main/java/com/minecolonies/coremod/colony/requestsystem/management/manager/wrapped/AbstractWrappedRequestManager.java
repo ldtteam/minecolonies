@@ -14,13 +14,14 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Wrapper class for a Manager.
@@ -124,7 +125,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     @Override
     public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
-        return RequestHandler.getRequestOrNull(wrappedManager, token);
+        return wrappedManager.getRequestHandler().getRequestOrNull(token);
     }
 
     /**
@@ -253,5 +254,23 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     public void setDirty(final boolean isDirty)
     {
         wrappedManager.setDirty(isDirty);
+    }
+
+    @Override
+    public void markDirty()
+    {
+        wrappedManager.markDirty();
+    }
+
+    @Override
+    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        throw new UnsupportedOperationException("This method cannot be used by Wrapped Request Managers!");
+    }
+
+    @Override
+    public Logger getLogger()
+    {
+        return wrappedManager.getLogger();
     }
 }

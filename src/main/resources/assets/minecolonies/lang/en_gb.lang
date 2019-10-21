@@ -120,6 +120,7 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageWorkerDead=The %s %s has died at %d %d %d of %s!
 item.minecolonies.scepterGuard.name=Guard-scepter
+item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
@@ -901,6 +902,8 @@ tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]
 com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
 com.minecolonies.coremod.general.onBig=On
 com.minecolonies.coremod.general.offBig=Off
+
+com.minecolonies.coremod.general.cantTakeEquipped=The only armour you have got is what you are wearing. Put it in your inventory if you want to give it to me.
 
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter

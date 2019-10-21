@@ -16,18 +16,22 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
@@ -80,11 +84,30 @@ public class StandardRequestManager implements IStandardRequestManager
     @NotNull
     private final IColony colony;
 
+    @NotNull
+    private final Logger logger;
+
+    @NotNull
+    private final IUpdateHandler updateHandler = new UpdateHandler(this);
+
+    @NotNull
+    private final ITokenHandler tokenHandler = new TokenHandler(this);
+
+    @NotNull
+    private final IResolverHandler resolverHandler = new ResolverHandler(this);
+
+    @NotNull
+    private final IRequestHandler requestHandler = new RequestHandler(this);
+
+    @NotNull
+    private final IProviderHandler providerHandler = new ProviderHandler(this);
+
     private int version = -1;
 
     public StandardRequestManager(@NotNull final IColony colony)
     {
         this.colony = colony;
+        this.logger = LogManager.getLogger(String.format("%s.requestsystem.%s", Constants.MOD_ID, colony.getID()));
         reset();
     }
 
@@ -101,11 +124,11 @@ public class StandardRequestManager implements IStandardRequestManager
         final IRequestResolver<?> playerRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, this);
         final IRequestResolver<?> retryingRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
 
-        ResolverHandler.registerResolver(this, playerRequestResolver);
-        ResolverHandler.registerResolver(this, retryingRequestResolver);
+        getResolverHandler().registerResolver(playerRequestResolver);
+        getResolverHandler().registerResolver(retryingRequestResolver);
 
-        this.playerRequestResolverId = playerRequestResolver.getRequesterId();
-        this.retryingRequestResolverId = retryingRequestResolver.getRequesterId();
+        this.playerRequestResolverId = playerRequestResolver.getId();
+        this.retryingRequestResolverId = retryingRequestResolver.getId();
     }
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
@@ -151,21 +174,18 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
-        final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        final IRequest<T> request = getRequestHandler().createRequest(requester, object);
         markDirty();
-        return request.getToken();
+        return request.getId();
     }
 
     /**
      * Mark the request manager and colony as dirty.
      */
-    private void markDirty()
+    @Override
+    public void markDirty()
     {
-        dirty = true;
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        this.setDirty(true);
     }
 
     /**
@@ -182,6 +202,11 @@ public class StandardRequestManager implements IStandardRequestManager
     public void setDirty(final boolean isDirty)
     {
         this.dirty = isDirty;
+
+        if (this.isDirty())
+        {
+            colony.markDirty();
+        }
     }
 
     /**
@@ -193,7 +218,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void assignRequest(@NotNull final IToken<?> token)
     {
-        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+        getRequestHandler().assignRequest(getRequestHandler().getRequest(token));
         markDirty();
     }
 
@@ -219,21 +244,16 @@ public class StandardRequestManager implements IStandardRequestManager
     @Nullable
     public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
     {
-        final IRequest<?> request = RequestHandler.getRequest(this, token);
+        final IRequest<?> request = getRequestHandler().getRequest(token);
         markDirty();
-        return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
+        return getRequestHandler().reassignRequest(request, resolverTokenBlackList);
     }
 
     @Nullable
     @Override
     public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
-        final IRequest<?> internalRequest = RequestHandler.getRequestOrNull(this, token);
-
-        if (internalRequest == null)
-        {
-            return null;
-        }
+        final IRequest<?> internalRequest = getRequestHandler().getRequestOrNull(token);
 
         return internalRequest;
     }
@@ -242,16 +262,16 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public IRequestResolver<?> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
-        return ResolverHandler.getResolver(this, token);
+        return getResolverHandler().getResolver(token);
     }
 
     @Nullable
     @Override
     public IRequestResolver<?> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
     {
-        final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
+        final IRequest<?> request = getRequestHandler().getRequest(requestToken);
 
-        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+        return getResolverForToken(getResolverHandler().getResolverForRequest(request).getId());
     }
 
     /**
@@ -264,46 +284,37 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
-        final IRequest<?> request = RequestHandler.getRequest(this, token);
+        final IRequest<?> request = getRequestHandler().getRequest(token);
 
-        LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
+        getLogger().debug("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 
         request.setState(new WrappedStaticStateRequestManager(this), state);
         markDirty();
 
         switch (request.getState())
         {
+            case RESOLVED:
+                getLogger().debug("Request resolved: " + token + ". Determining followup requests...");
+                getRequestHandler().onRequestResolved(token);
+                return;
             case COMPLETED:
-                LogHandler.log("Request completed: " + token + ". Notifying parent and requester...");
-                RequestHandler.onRequestSuccessful(this, token);
+                getLogger().debug("Request completed: " + token + ". Notifying parent and requester...");
+                getRequestHandler().onRequestCompleted(token);
                 return;
             case OVERRULED:
-                LogHandler.log("Request overruled: " + token + ". Notifying parent, children and requester...");
-                RequestHandler.onRequestOverruled(this, token);
+                getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");
+                getRequestHandler().onRequestOverruled(token);
                 break;
             case CANCELLED:
-                LogHandler.log("Request cancelled: " + token + ". Notifying parent, children and requester...");
-                RequestHandler.onRequestCancelled(this, token);
+                getLogger().debug("Request cancelled: " + token + ". Notifying parent, children and requester...");
+                getRequestHandler().onRequestCancelled(token);
                 return;
             case RECEIVED:
-                LogHandler.log("Request received: " + token + ". Removing from system...");
-                RequestHandler.cleanRequestData(this, token);
+                getLogger().debug("Request received: " + token + ". Removing from system...");
+                getRequestHandler().cleanRequestData(token);
                 return;
             default:
         }
-    }
-
-    @Override
-    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
-    {
-        final IRequest<?> request = RequestHandler.getRequest(this, token);
-
-        if (!ItemStackUtils.isEmpty(stack))
-        {
-            request.overrideCurrentDeliveries(ImmutableList.of(stack));
-        }
-
-        updateRequestState(token, RequestState.OVERRULED);
     }
 
     /**
@@ -314,7 +325,20 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
     {
-        ProviderHandler.registerProvider(this, provider);
+        getProviderHandler().registerProvider(provider);
+    }
+
+    @Override
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
+    {
+        final IRequest<?> request = getRequestHandler().getRequest(token);
+
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            request.overrideCurrentDeliveries(ImmutableList.of(stack));
+        }
+
+        updateRequestState(token, RequestState.OVERRULED);
     }
 
     /**
@@ -325,7 +349,18 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
     {
-        ProviderHandler.removeProvider(this, provider);
+        getProviderHandler().removeProvider(provider);
+    }
+
+    /**
+     * Method used to reassign requests based on a predicate.
+     *
+     * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
+     */
+    @Override
+    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        getResolverHandler().onColonyUpdate(shouldTriggerReassign);
     }
 
     /**
@@ -337,14 +372,14 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public IPlayerRequestResolver getPlayerResolver()
     {
-        return (IPlayerRequestResolver) ResolverHandler.getResolver(this, playerRequestResolverId);
+        return (IPlayerRequestResolver) getResolverHandler().getResolver(playerRequestResolverId);
     }
 
     @NotNull
     @Override
     public IRetryingRequestResolver getRetryingRequestResolver()
     {
-        return (IRetryingRequestResolver) ResolverHandler.getResolver(this, retryingRequestResolverId);
+        return (IRetryingRequestResolver) getResolverHandler().getResolver(retryingRequestResolverId);
     }
 
     @NotNull
@@ -360,7 +395,7 @@ public class StandardRequestManager implements IStandardRequestManager
         setup();
 
         version = -1;
-        UpdateHandler.handleUpdate(this);
+        getUpdateHandler().handleUpdate();
     }
 
     /**
@@ -466,12 +501,10 @@ public class StandardRequestManager implements IStandardRequestManager
         version = -1;
     }
 
-    private void updateIfRequired()
+    @Override
+    public Logger getLogger()
     {
-        if (version < UpdateHandler.getCurrentVersion())
-        {
-            reset();
-        }
+        return logger;
     }
 
     @Override
@@ -514,6 +547,44 @@ public class StandardRequestManager implements IStandardRequestManager
     public IRequestableTypeRequestResolverAssignmentDataStore getRequestableTypeRequestResolverAssignmentDataStore()
     {
         return dataStoreManager.get(requestableTypeRequestResolverAssignmentDataStoreId, TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
+    }
+
+    @Override
+    public IProviderHandler getProviderHandler()
+    {
+        return providerHandler;
+    }
+
+    @Override
+    public IRequestHandler getRequestHandler()
+    {
+        return requestHandler;
+    }
+
+    @Override
+    public IResolverHandler getResolverHandler()
+    {
+        return resolverHandler;
+    }
+
+    @Override
+    public ITokenHandler getTokenHandler()
+    {
+        return tokenHandler;
+    }
+
+    @Override
+    public IUpdateHandler getUpdateHandler()
+    {
+        return updateHandler;
+    }
+
+    private void updateIfRequired()
+    {
+        if (version < updateHandler.getCurrentVersion())
+        {
+            reset();
+        }
     }
 
     @Override

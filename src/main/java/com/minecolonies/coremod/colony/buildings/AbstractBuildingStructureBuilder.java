@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -73,7 +74,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
+    private Map<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
 
     /**
      * The progress counter of the builder.
@@ -86,7 +87,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param c the colony.
      * @param l the position.
      */
-    public AbstractBuildingStructureBuilder(final Colony c, final BlockPos l)
+    public AbstractBuildingStructureBuilder(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -128,9 +129,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
@@ -149,9 +150,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
@@ -169,6 +171,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
             compound.setInteger(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
+
+        return compound;
     }
 
     /**
@@ -192,7 +196,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             qty += resource.getAmount();
         }
 
-        final CitizenData data = this.getMainCitizen();
+        final ICitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
@@ -205,13 +209,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 ByteBufUtils.writeUTF8String(buf, name);
 
                 final String desc;
-                if(pos.equals(getLocation()))
+                if(pos.equals(getPosition()))
                 {
                     desc = "here";
                 }
                 else
                 {
-                    final BlockPos relativePos = getLocation().subtract(pos);
+                    final BlockPos relativePos = getPosition().subtract(pos);
                     final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
                     final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
                     desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
