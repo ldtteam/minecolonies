@@ -70,7 +70,7 @@ files:
         nds: nds_de
         nl: nl_nl
         nn-no: nn_no
-        no: no_no
+        'no': no_no
         oc: oc_fr
         pl: pl_pl
         pt-br: pt_br
