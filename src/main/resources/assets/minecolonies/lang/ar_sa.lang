@@ -7,7 +7,7 @@ tile.minecolonies.blockHutBaker.name=مخبزة
 tile.minecolonies.blockHutBlacksmith.name=Blacksmith
 tile.minecolonies.blockHutBuilder.name=كوخ البناء
 tile.minecolonies.blockHutFarmer.name=مزرعة
-tile.minecolonies.blockHutLumberjack.name=Lumberjack's Hut
+tile.minecolonies.blockHutLumberjack.name=كوخ الحطاب
 tile.minecolonies.blockHutFisherman.name=كوخ صياد السمك
 tile.minecolonies.blockHutMiner.name=المنجم
 tile.minecolonies.blockHutStonemason.name=Stonemason
@@ -58,11 +58,11 @@ entity.miner.messageNeedBetterTools=أحتاج إلى أدوات أفضل!
 entity.miner.messageMoreBlocks=احتاج إلى المزيد من %s!
 entity.miner.messageRequiresBetterHut=يرجى ترقية كوخي لحفر أعمق!
 entity.fisherman.messageWaterTooFar=كوخ الصياد بعيد جدا عن الماء!
-entity.Barbarian.name=Barbarian
+entity.Barbarian.name=البربري
 entity.minecolonies.Barbarian.name=البربري
 entity.minecolonies.ArcherBarbarian.name=الرماة البربريون
 entity.minecolonies.ChiefBarbarian.name=الرئيس البربري
-entity.ChiefBarbarian.name=Chief Barbarian
+entity.ChiefBarbarian.name=الرئيس البربري
 death.attack.entity.Barbarian=%d was Sliced & Diced by a Barbarian!
 death.attack.entity.ChiefBarbarian=%d was Macerated by a Great Chief!
 death.attack.entity.ArcherBarbarian=%d was ravaged by an Archer Barbarian
@@ -210,8 +210,8 @@ com.minecolonies.coremod.gui.townHall.addBlock=إضافة مكعب/ وضعية:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=زيارة صناديق المواطن:
 com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
-com.minecolonies.coremod.job.Ranger=Knight
-com.minecolonies.coremod.job.Knight=Ranger
+com.minecolonies.coremod.job.Ranger=الفارس
+com.minecolonies.coremod.job.Knight=الحارس
 com.minecolonies.coremod.gui.townHall.population.unemployed=العاطلون عن العمل: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Nodes
 com.minecolonies.coremod.gui.hiring.off=أوتوماتيكي
@@ -326,7 +326,7 @@ com.minecolonies.coremod.gui.structure.delete=حذف الهيكل
 com.minecolonies.coremod.gui.structure.delete.title=حذف الهيكل
 com.minecolonies.coremod.gui.structure.delete.body=هل تريد حذف %s؟
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Static
-com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatic
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=أوتوماتيكي
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Happiness Modifiers
 com.minecolonies.coremod.gui.happiness.food=Food Modifier
@@ -814,8 +814,8 @@ com.minecolonies.coremod.progress.newChild=§6 A new child is now happily living
 com.minecolonies.coremod.progress.hireCitizen=§6 Your recruitment package was accepted, a new Citizen arrived!
 
 com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
-com.minecolonies.coremod.gui.townHall.on=On
-com.minecolonies.coremod.gui.townHall.off=Off
+com.minecolonies.coremod.gui.townHall.on=مفعل
+com.minecolonies.coremod.gui.townHall.off=مغلق
 
 com.minecolonies.coremod.gui.hiring.buttonPaused=Pause
 com.minecolonies.coremod.gui.hiring.buttonUnpaused=Unpause
@@ -886,7 +886,7 @@ com.minecolonies.coremod.gui.homeHut.current=Current home:
 com.minecolonies.coremod.gui.homeHut.currently=Currently: %d blocks
 tile.minecolonies.blockHutCrusher.name=Crusher
 com.minecolonies.coremod.gui.workerHuts.Crusher=Crusher
-com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
+com.minecolonies.coremod.gui.workerHuts.crusherSettings=الإعدادات
 com.minecolonies.coremod.gui.workerHuts.save=save
 com.minecolonies.coremod.crusher.toomuch=Set to the current daily max of %d.
 
@@ -899,8 +899,8 @@ tile.blockHutTownHall.abandonMessageLink=[ABANDON]
 tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]
 
 com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
-com.minecolonies.coremod.general.onBig=On
-com.minecolonies.coremod.general.offBig=Off
+com.minecolonies.coremod.general.onBig=مفعل
+com.minecolonies.coremod.general.offBig=مغلق
 
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter
@@ -914,8 +914,8 @@ com.minecolonies.coremod.job.crusher=Crusher
 com.minecolonies.coremod.job.sifter=Sifter
 com.minecolonies.coremod.gui.buildinghiremode=Building Hiring Mode:
 com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
-com.minecolonies.coremod.gui.hiringmode.auto=Automatic
-com.minecolonies.coremod.gui.hiringmode.manual=Manual
+com.minecolonies.coremod.gui.hiringmode.auto=أوتوماتيكي
+com.minecolonies.coremod.gui.hiringmode.manual=يدوي
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
 
 tile.minecolonies.decorationcontroller.name=Decoration Controller

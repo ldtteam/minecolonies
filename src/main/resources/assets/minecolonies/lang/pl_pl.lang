@@ -7,7 +7,7 @@ tile.minecolonies.blockHutBaker.name=Piekarnia
 tile.minecolonies.blockHutBlacksmith.name=Blacksmith
 tile.minecolonies.blockHutBuilder.name=Chata budowniczego
 tile.minecolonies.blockHutFarmer.name=Farma
-tile.minecolonies.blockHutLumberjack.name=Lumberjack's Hut
+tile.minecolonies.blockHutLumberjack.name=Chata drwala
 tile.minecolonies.blockHutFisherman.name=Chata rybaka
 tile.minecolonies.blockHutMiner.name=Kopalnia
 tile.minecolonies.blockHutStonemason.name=Stonemason
@@ -58,11 +58,11 @@ entity.miner.messageNeedBetterTools=Potrzebuję lepszych narzędzi!
 entity.miner.messageMoreBlocks=Potrzebuję więcej %s!
 entity.miner.messageRequiresBetterHut=Ulepsz moją chatę, żebym mógł kopać głębiej!
 entity.fisherman.messageWaterTooFar=Chata rybaka jest zbyt daleko od wody!
-entity.Barbarian.name=Barbarian
+entity.Barbarian.name=Barbarzyńca
 entity.minecolonies.Barbarian.name=Barbarzyńca
 entity.minecolonies.ArcherBarbarian.name=Barbarzyńca łucznik
 entity.minecolonies.ChiefBarbarian.name=Wódz Barbarzyńców
-entity.ChiefBarbarian.name=Chief Barbarian
+entity.ChiefBarbarian.name=Wódz Barbarzyńców
 death.attack.entity.Barbarian=%d was Sliced & Diced by a Barbarian!
 death.attack.entity.ChiefBarbarian=%d was Macerated by a Great Chief!
 death.attack.entity.ArcherBarbarian=%d was ravaged by an Archer Barbarian
@@ -210,8 +210,8 @@ com.minecolonies.coremod.gui.townHall.addBlock=Dodaj blok/położenie:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Odwiedź Skrzynie Mieszkańców:
 com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
-com.minecolonies.coremod.job.Ranger=Knight
-com.minecolonies.coremod.job.Knight=Ranger
+com.minecolonies.coremod.job.Ranger=Rycerz
+com.minecolonies.coremod.job.Knight=Łucznik
 com.minecolonies.coremod.gui.townHall.population.unemployed=Niezatrudnieni: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Nodes
 com.minecolonies.coremod.gui.hiring.off=Automatycznie
@@ -326,7 +326,7 @@ com.minecolonies.coremod.gui.structure.delete=Usuń Strukturę
 com.minecolonies.coremod.gui.structure.delete.title=Usuń Strukturę
 com.minecolonies.coremod.gui.structure.delete.body=Czy na pewno chcesz usunąć %s?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Static
-com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatic
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatycznie
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Happiness Modifiers
 com.minecolonies.coremod.gui.happiness.food=Food Modifier
@@ -814,8 +814,8 @@ com.minecolonies.coremod.progress.newChild=§6 A new child is now happily living
 com.minecolonies.coremod.progress.hireCitizen=§6 Your recruitment package was accepted, a new Citizen arrived!
 
 com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
-com.minecolonies.coremod.gui.townHall.on=On
-com.minecolonies.coremod.gui.townHall.off=Off
+com.minecolonies.coremod.gui.townHall.on=Włączone
+com.minecolonies.coremod.gui.townHall.off=Wyłączone
 
 com.minecolonies.coremod.gui.hiring.buttonPaused=Pause
 com.minecolonies.coremod.gui.hiring.buttonUnpaused=Unpause
@@ -886,7 +886,7 @@ com.minecolonies.coremod.gui.homeHut.current=Current home:
 com.minecolonies.coremod.gui.homeHut.currently=Currently: %d blocks
 tile.minecolonies.blockHutCrusher.name=Crusher
 com.minecolonies.coremod.gui.workerHuts.Crusher=Crusher
-com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
+com.minecolonies.coremod.gui.workerHuts.crusherSettings=Ustawienia
 com.minecolonies.coremod.gui.workerHuts.save=save
 com.minecolonies.coremod.crusher.toomuch=Set to the current daily max of %d.
 
@@ -899,8 +899,8 @@ tile.blockHutTownHall.abandonMessageLink=[ABANDON]
 tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]
 
 com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
-com.minecolonies.coremod.general.onBig=On
-com.minecolonies.coremod.general.offBig=Off
+com.minecolonies.coremod.general.onBig=Włączone
+com.minecolonies.coremod.general.offBig=Wyłączone
 
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter
@@ -914,8 +914,8 @@ com.minecolonies.coremod.job.crusher=Crusher
 com.minecolonies.coremod.job.sifter=Sifter
 com.minecolonies.coremod.gui.buildinghiremode=Building Hiring Mode:
 com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
-com.minecolonies.coremod.gui.hiringmode.auto=Automatic
-com.minecolonies.coremod.gui.hiringmode.manual=Manual
+com.minecolonies.coremod.gui.hiringmode.auto=Automatycznie
+com.minecolonies.coremod.gui.hiringmode.manual=Podręcznik
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
 
 tile.minecolonies.decorationcontroller.name=Decoration Controller
