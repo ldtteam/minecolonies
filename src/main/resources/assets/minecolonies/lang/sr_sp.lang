@@ -120,6 +120,11 @@ achievement.upgrade.townhall.first.desc=Сагради нам градску в�
 tile.minecolonies.blockHutGuardTower.name=Одбрамбена кула
 tile.blockHutTownHall.messageWorkerDead=%s %s је преминуо у %d %d %d од %s!
 item.minecolonies.scepterGuard.name=Заставник
+item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
+item.minecolonies.scepterLumberjack.usedStart=First position set.
+item.minecolonies.scepterLumberjack.usedEnd=Second position set.
+item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
+item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
 
 com.minecolonies.configgui.title=Подешавања MineColonies
 
@@ -153,6 +158,7 @@ com.minecolonies.coremod.gui.townHall.citizens=Становници
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=Већ сте поставили брод за снабдевање или испоставу за снабдевање!
 com.minecolonies.coremod.gui.citizen.skills.endurance=Издржљивост: %d
 com.minecolonies.coremod.gui.townHall.rename.title=Преименујте колонију
+com.minecolonies.coremod.gui.townHall.mercenary.title=Mercenary help
 com.minecolonies.coremod.gui.workerHuts.information=Информација
 com.minecolonies.coremod.gui.hiring.description=Одаберите радника за посао.
 com.minecolonies.coremod.gui.assigning.description=Одаберите становника који ће живети овде.
@@ -210,8 +216,8 @@ com.minecolonies.coremod.gui.townHall.addBlock=Додај блок/позици�
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Завири у шкриње грађана:
 com.minecolonies.coremod.gui.workerHuts.mobsList=Листа напада руље
-com.minecolonies.coremod.job.Ranger=Витез
-com.minecolonies.coremod.job.Knight=Ренџер
+com.minecolonies.coremod.job.Ranger=Ренџер
+com.minecolonies.coremod.job.Knight=Витез
 com.minecolonies.coremod.gui.townHall.population.unemployed=Незапослених: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Чворови
 com.minecolonies.coremod.gui.hiring.off=Аутоматско
@@ -230,6 +236,9 @@ com.minecolonies.coremod.gui.workerHuts.workOrder=Радни налози
 com.minecolonies.coremod.gui.buildtool.nohut=Нема колиба
 com.minecolonies.coremod.gui.citizen.skills=Вештине
 com.minecolonies.coremod.gui.townHall.repair=Поправи градску већницу
+com.minecolonies.coremod.gui.townHall.mercenary=Hire mercenaries
+com.minecolonies.coremod.gui.townHall.mercenaryHire=Запосли
+com.minecolonies.coremod.gui.townHall.mercenaryStory=You've encountered some mercenaries nearby your Colony. They offer to help a while with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!
 com.minecolonies.coremod.gui.townHall.hire=Citizen recruitment
 com.minecolonies.coremod.gui.townHall.hirecitizen1=Choose which recruitment package you want to send.
 com.minecolonies.coremod.gui.townHall.hirecitizen2=Citizens stats increase from Hay - Books - Emeralds to Diamonds.
@@ -327,6 +336,8 @@ com.minecolonies.coremod.gui.structure.delete.title=Обриши структу�
 com.minecolonies.coremod.gui.structure.delete.body=Да ли желите да обришете %s?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Статично
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Аутоматско
+com.minecolonies.coremod.mercenary.mercenaryStealCitizen=%s is unhappy, a mercenary took the %s away!
+com.minecolonies.coremod.mercenary.stealBuilding=A mercenary just stole %s from a building!
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Модификатори среће
 com.minecolonies.coremod.gui.happiness.food=Модификатор хране
@@ -653,6 +664,9 @@ com.minecolonies.coremod.gui.workerHuts.listRecipes=Листа рецепата
 com.minecolonies.coremod.resolvers.crafter.private=Прављење
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=Укључена садња
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=Искључена садња
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionon=Restriction (on)
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff=Restriction (off)
+
 com.minecolonies.coremod.resolvers.crafter.public=Занатлија
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=Још нисте савладали овај рецепт!
@@ -739,6 +753,7 @@ com.minecolonies.coremod.max.schematic.quiteclose=Доста близу
 com.minecolonies.coremod.max.schematic.quitefar=Доста далеко у
 com.minecolonies.coremod.max.schematic.reallyfar=Заиста далеко у
 com.minecolonies.coremod.gui.workerHuts.barbpoints=Границе ширења варвара
+com.minecolonies.coremod.gui.workerHuts.barbpoints.current=Current Barbarian Position
 com.minecolonies.coremod.barbarians.left=Само %d хајдука је остало!
 com.minecolonies.coremod.barbarians.killed=Успешно сте одбранили своју колонију против уљеза!
 com.minecolonies.coremod.gui.workerHuts.reposition=Позиционирање
@@ -811,6 +826,7 @@ com.minecolonies.coremod.progress.nine_citizens_spawned=§6 Како колон�
 com.minecolonies.coremod.progress.twenty_building_levels=§6 Шпијун-варварин је ухваћен на улазу у колонију и чини се да је део веће групе. Размислите о томе да саградите касарне како бисте могли да одбраните колонију.
 com.minecolonies.coremod.progress.not_enough_jobs=§6 Изградња више кућица за становање у односу на број расположивих радних места, имаће лош утицај на расположење грађана.
 com.minecolonies.coremod.progress.newChild=§6 A new child is now happily living in your Colony!
+com.minecolonies.coremod.progress.childGrow=%s grew up and wants a job now.
 com.minecolonies.coremod.progress.hireCitizen=§6 Your recruitment package was accepted, a new Citizen arrived!
 
 com.minecolonies.coremod.gui.townHall.printProgress=Одштампај поруке помоћи:
@@ -826,7 +842,7 @@ com.minecolonies.coremod.gui.townHall.buildingLevel=Ниво градње
 com.minecolonies.coremod.job.composter=Компостер
 com.minecolonies.coremod.gui.warehouse.sort=Сортирај
 com.minecolonies.coremod.gui.auto.hire.warning=Turn the hiring mode of the building or colony to manual to fire this worker or hire another one.
-com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> Колонисти не могу да дођу у колонију јер нема довољно простора око градске већнице!
+com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d
 
 entity.Pirate.name=Пират
 entity.ArcherPirate.name=Стрелац пират
@@ -899,8 +915,10 @@ tile.blockHutTownHall.abandonMessageLink=[ABANDON]
 tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]
 
 com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
-com.minecolonies.coremod.general.onBig=On
-com.minecolonies.coremod.general.offBig=Off
+com.minecolonies.coremod.general.onBig=Укључено
+com.minecolonies.coremod.general.offBig=Искључено
+
+com.minecolonies.coremod.general.cantTakeEquipped=The only armour you have got is what you are wearing. Put it in your inventory if you want to give it to me.
 
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter
@@ -908,17 +926,36 @@ com.minecolonies.coremod.gui.workerHuts.Sifter=Sifter
 com.minecolonies.coremod.sifter.meshBroke=My current mesh broke and I started to work with the default mesh again!
 com.minecolonies.coremod.gui.workerHuts.buy=Buy
 com.minecolonies.coremod.gui.workerHuts.meshSettings=Mesh Settings
-com.minecolonies.coremod.sifter.toomuch=Set to the current daily max of %d.
+com.minecolonies.coremod.sifter.toomuch=Постави тренутни дневни лимит од %d.
 com.minecolonies.coremod.gui.building.rename.title=Rename Your Building
-com.minecolonies.coremod.job.crusher=Crusher
+com.minecolonies.coremod.job.crusher=Дробилица
 com.minecolonies.coremod.job.sifter=Sifter
 com.minecolonies.coremod.gui.buildinghiremode=Building Hiring Mode:
 com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
-com.minecolonies.coremod.gui.hiringmode.auto=Automatic
-com.minecolonies.coremod.gui.hiringmode.manual=Manual
+com.minecolonies.coremod.gui.hiringmode.auto=Аутоматско
+com.minecolonies.coremod.gui.hiringmode.manual=Упутство
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
 
 tile.minecolonies.decorationcontroller.name=Decoration Controller
 com.minecolonies.coremod.gui.deco.namescan=Final file path and filename, no level:
 com.minecolonies.coremod.gui.deco.name=The name of the decoration:
 com.minecolonies.coremod.gui.deco.level=The level of the decoration:
+
+com.minecolonies.coremod.gui.placement.warning=We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.
+com.minecolonies.coremod.gui.placement.buildtool=Use Buildtool
+com.minecolonies.coremod.gui.placement.direct=Place anyway
+com.minecolonies.coremod.gui.townHall.population.childs=Children: %d
+
+tile.minecolonies.composted_dirt.name=Composted Dirt
+com.minecolonies.coremod.composted_dirt.player_use_message=This block can be only used by the Florist worker!
+com.minecolonies.coremod.job.florist=Florist
+tile.minecolonies.blockHutFlorist.name=Flower Shop
+com.minecolonies.coremod.gui.workerHuts.florist=Florist
+com.minecolonies.gui.workerHuts.florist.flowers=Plantables
+com.minecolonies.gui.workerhuts.florist.toolow=The florist currently randomly generates the flowers in the list, upgrade to level 4 or above to select them manually!
+com.minecolonies.gui.workerhuts.florist.toomany=You can deactivate max 5 options. Upgrade to level 5 to restrict it further!
+com.minecolonies.coremod.florist.noplantground=I am missing any composted dirt to plant on, please repair or upgrade my building!
+com.minecolonies.coremod.florist.nocompost=I need compost to plant my flowers!
+com.minecolonies.coremod.florist.noflowers=I can't work, all flowers are disabled!
+com.minecolonies.coremod.gui.townHall.population.florists=Florists: %d
+com.minecolonies.coremod.gui.townHall.population.bakerys=Bakeries: %d
