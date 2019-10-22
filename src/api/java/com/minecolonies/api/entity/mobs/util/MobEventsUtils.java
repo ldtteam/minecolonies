@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
@@ -104,6 +103,7 @@ public final class MobEventsUtils
               && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony))
         {
             MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+            return true;
         }
 
         return false;
