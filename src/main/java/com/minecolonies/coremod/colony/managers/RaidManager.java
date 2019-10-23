@@ -213,7 +213,7 @@ public class RaidManager implements IRaiderManager
     {
         if (horde.isEmpty())
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
         }
         else if (horde.size() <= SMALL_HORDE_SIZE)
         {
@@ -249,7 +249,7 @@ public class RaidManager implements IRaiderManager
 
                 schematicMap.remove(entry.getKey());
                 LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
+                  colony.getImportantMessageEntityPlayers(),
                   PIRATES_SAILING_OFF_MESSAGE, colony.getName());
                 return;
             }
