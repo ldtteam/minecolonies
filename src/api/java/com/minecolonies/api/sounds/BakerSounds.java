@@ -88,6 +88,7 @@ public final class BakerSounds extends AbstractWorkerSounds
         //While there are no male sounds
         if (!isFemale)
         {
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, CitizenSounds.Male.say, getPhraseChance());
             return;
         }
         //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
@@ -126,6 +127,7 @@ public final class BakerSounds extends AbstractWorkerSounds
         //While there are no male sounds
         if (!isFemale)
         {
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, CitizenSounds.Male.say, getPhraseChance());
             return;
         }
 
