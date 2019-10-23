@@ -151,6 +151,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         return this.getDefaultState().with(FACING, facing);
     }
 
+    @Override
+    public BlockState rotate(final BlockState state, final Rotation rot)
+    {
+        return state.with(FACING, rot.rotate(state.get(FACING)));
+    }
+
     /**
      * Event-Handler for placement of this block.
      * <p>
