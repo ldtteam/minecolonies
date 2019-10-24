@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
@@ -101,7 +102,16 @@ public class ColonyPackageManager implements IColonyPackageManager
             return;
         }
 
-        if (closeSubscribers.isEmpty())
+        updateColonyViews();
+    }
+
+    /**
+     * Updates the away timer for the colony.
+     */
+    @Override
+    public void updateAwayTime()
+    {
+        if (globalSubscribers.isEmpty())
         {
             if (ticksPassed >= TICKS_HOUR)
             {
@@ -109,7 +119,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 lastContactInHours++;
                 colony.markDirty();
             }
-            ticksPassed += 100;
+            ticksPassed += UPDATE_SUBSCRIBERS_INTERVAL;
         }
         else if (lastContactInHours != 0)
         {
@@ -117,8 +127,6 @@ public class ColonyPackageManager implements IColonyPackageManager
             ticksPassed = 0;
             colony.markDirty();
         }
-
-        updateColonyViews();
     }
 
     /**

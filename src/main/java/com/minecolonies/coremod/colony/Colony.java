@@ -318,13 +318,13 @@ public class Colony implements IColony
 
         colonyStateMachine = new TickRateStateMachine(INACTIVE, e -> {});
 
-        colonyStateMachine.addTransition(new TickingTransition(INACTIVE,() -> true, this::updateState, 100));
-        colonyStateMachine.addTransition(new TickingTransition(UNLOADED,() -> true, this::updateState, 100));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE,() -> true ,this::updateState, 100));
+        colonyStateMachine.addTransition(new TickingTransition(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
 
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateSubscribers, () -> ACTIVE, 100));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::tickRequests, () -> ACTIVE, 11));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::checkDayTime, () -> ACTIVE, 20));
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
         colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::worldTickSlow , () -> ACTIVE, MAX_TICKRATE));
         colonyStateMachine.addTransition(new TickingTransition(UNLOADED,this::worldTickUnloaded, () -> UNLOADED, MAX_TICKRATE));
@@ -340,14 +340,15 @@ public class Colony implements IColony
         {
             return INACTIVE;
         }
+        packageManager.updateAwayTime();
 
-        if(loadedChunks.size() > 40 && (!packageManager.getSubscribers().isEmpty() || !packageManager.getOfficerSubscribers().isEmpty()))
+        if (loadedChunks.size() > 40 && (!packageManager.getSubscribers().isEmpty() || !packageManager.getGlobalSubscribers().isEmpty()))
         {
             isActive = true;
             return ACTIVE;
         }
 
-        if(!packageManager.getOfficerSubscribers().isEmpty())
+        if (!packageManager.getGlobalSubscribers().isEmpty())
         {
             isActive = true;
             return UNLOADED;

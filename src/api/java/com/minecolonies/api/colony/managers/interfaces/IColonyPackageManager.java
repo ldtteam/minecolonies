@@ -34,6 +34,11 @@ public interface IColonyPackageManager
     void updateSubscribers();
 
     /**
+     * Updates the time the players were away from the colony.
+     */
+    void updateAwayTime();
+
+    /**
      * Update the colony view.
      */
     void sendColonyViewPackets();
