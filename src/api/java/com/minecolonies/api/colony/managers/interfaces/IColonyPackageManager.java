@@ -61,20 +61,35 @@ public interface IColonyPackageManager
     void setDirty();
 
     /**
-     * Add a new subsriber to the colony.
+     * Add a new subscriber to the colony.
      * @param subscriber the subscriber to add.
      */
     void addSubscribers(@NotNull final EntityPlayerMP subscriber);
 
-    void addOfficerSubscriber(@NotNull EntityPlayerMP subscriber);
-
-    void removeOfficerSubscriber(@NotNull EntityPlayerMP subscriber);
+    /**
+     * Adds a new global subscriber to the colony.
+     *
+     * @param subscriber the subscriber to add.
+     */
+    void addGlobalSubscriber(@NotNull EntityPlayerMP subscriber);
 
     /**
-     * Remove an old subsriber from the colony.
+     * Removes an global subscriber from the colony.
+     *
+     * @param subscriber the subscriber to remove.
+     */
+    void removeGlobalSubscriber(@NotNull EntityPlayerMP subscriber);
+
+    /**
+     * Remove a subscriber from the colony.
      * @param player the subscriber to remove.
      */
     void removeSubscriber(@NotNull final EntityPlayerMP player);
 
-    Set<EntityPlayerMP> getOfficerSubscribers();
+    /**
+     * Returns the global subscribers.
+     *
+     * @return global subscribers
+     */
+    Set<EntityPlayerMP> getGlobalSubscribers();
 }

@@ -33,9 +33,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     private Set<EntityPlayerMP> closeSubscribers = new HashSet<>();
 
     /**
-     * The officers which are online.
+     * The global subscribers which are online.
      */
-    private Set<EntityPlayerMP> onlineOfficers = new HashSet<>();
+    private Set<EntityPlayerMP> globalSubscribers = new HashSet<>();
 
     /**
      * New subscribers which havent received a view yet.
@@ -230,29 +230,29 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     /**
-     * On login/promote we're adding colony officers.
+     * On login we're adding global subscribers.
      */
     @Override
-    public void addOfficerSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void addGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
     {
-        onlineOfficers.add(subscriber);
+        globalSubscribers.add(subscriber);
     }
 
     /**
-     * On logoff we're removing colony officers.
+     * On logoff we're removing global subscribers.
      */
     @Override
-    public void removeOfficerSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void removeGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
     {
-        onlineOfficers.remove(subscriber);
+        globalSubscribers.remove(subscriber);
     }
 
     /**
-     * Returns the list of online officers which are subscribed to the colony.
+     * Returns the list of online global subscribers of the colony.
      */
     @Override
-    public Set<EntityPlayerMP> getOfficerSubscribers()
+    public Set<EntityPlayerMP> getGlobalSubscribers()
     {
-        return onlineOfficers;
+        return globalSubscribers;
     }
 }

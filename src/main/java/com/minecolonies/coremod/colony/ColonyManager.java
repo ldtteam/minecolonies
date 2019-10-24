@@ -107,9 +107,8 @@ public final class ColonyManager implements IColonyManager
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
 
-        colony.getPackageManager().addOfficerSubscriber((EntityPlayerMP) player);
+        colony.getPackageManager().addGlobalSubscriber((EntityPlayerMP) player);
         colony.getPackageManager().addSubscribers((EntityPlayerMP) player);
-        colony.getPackageManager().updateSubscribers();
 
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply);
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);

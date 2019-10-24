@@ -1031,9 +1031,9 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public Set<EntityPlayer> getMessageEntityPlayers()
     {
-        return null;
+        return new HashSet<>();
     }
 
     @Override
@@ -1212,7 +1212,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public List<EntityPlayer> getImportantMessageEntityPlayers()
+    public Set<EntityPlayer> getImportantMessageEntityPlayers()
     {
         return null;
     }

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -1099,17 +1100,36 @@ public class Colony implements IColony
 
     @Override
     @NotNull
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public Set<EntityPlayer> getMessageEntityPlayers()
     {
-        return new ArrayList<>(packageManager.getSubscribers());
+        Set<EntityPlayer> players = new HashSet<>();
+
+        for (EntityPlayerMP player : packageManager.getSubscribers())
+        {
+            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES))
+            {
+                players.add(player);
+            }
+        }
+
+        return players;
     }
 
     // TODO use important message for various messages.
     @Override
     @NotNull
-    public List<EntityPlayer> getImportantMessageEntityPlayers()
+    public Set<EntityPlayer> getImportantMessageEntityPlayers()
     {
-        return new ArrayList<>(packageManager.getOfficerSubscribers());
+        final Set<EntityPlayer> playerList = getMessageEntityPlayers();
+
+        for (final EntityPlayerMP player : packageManager.getGlobalSubscribers())
+        {
+            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
+            {
+                playerList.add(player);
+            }
+        }
+        return playerList;
     }
 
     /**
