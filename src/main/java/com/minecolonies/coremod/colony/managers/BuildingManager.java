@@ -505,7 +505,7 @@ public class BuildingManager implements IBuildingManager
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    ColonyUtils.sendToAll(players, new ColonyViewBuildingViewMessage(building));
                 }
             }
         }
@@ -523,7 +523,7 @@ public class BuildingManager implements IBuildingManager
             {
                 if (building instanceof BuildingFarmer)
                 {
-                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    ColonyUtils.sendToAll(players, new ColonyViewBuildingViewMessage(building));
                 }
             }
         }
