@@ -7,7 +7,6 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -242,10 +241,10 @@ public class EventHandler
         {
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                final Rank rank = colony.getPermissions().getRank(event.player);
-                if (rank == Rank.OFFICER || rank == Rank.OWNER)
+                if (colony.getPermissions().hasPermission(event.player, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY)
+                      || colony.getPermissions().hasPermission(event.player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
-                    colony.getPackageManager().addOfficerSubscriber((EntityPlayerMP) event.player);
+                    colony.getPackageManager().addGlobalSubscriber((EntityPlayerMP) event.player);
                 }
             }
         }
@@ -261,10 +260,11 @@ public class EventHandler
     {
         if (event.player instanceof EntityPlayerMP)
         {
+            final EntityPlayerMP player = (EntityPlayerMP) event.player;
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                colony.getPackageManager().removeSubscriber((EntityPlayerMP) event.player);
-                colony.getPackageManager().removeOfficerSubscriber((EntityPlayerMP) event.player);
+                colony.getPackageManager().removeSubscriber(player);
+                colony.getPackageManager().removeGlobalSubscriber(player);
             }
         }
     }
