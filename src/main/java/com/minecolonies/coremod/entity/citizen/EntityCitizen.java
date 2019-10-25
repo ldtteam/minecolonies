@@ -43,6 +43,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -1360,6 +1361,14 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             citizenData.setLastPosition(getPosition());
         }
+    }
+
+    @Override
+    protected void updateEquipmentIfNeeded(final ItemEntity itemEntity)
+    {
+        /*
+         * Intentionally left empty.
+         */
     }
 
     private void updateCitizenStatus()
