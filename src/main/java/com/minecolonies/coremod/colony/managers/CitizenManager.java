@@ -87,6 +87,9 @@ public class CitizenManager implements ICitizenManager
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
                           .map(this::deserializeCitizen)
                           .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
+
+        // Update child state after loading citizen data
+        colony.updateHasChilds();
     }
 
     private ICitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)

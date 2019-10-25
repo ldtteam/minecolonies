@@ -1274,6 +1274,11 @@ public class CitizenData implements ICitizenData
     {
         this.isChild = isChild;
         markDirty();
+
+        if (colony != null)
+        {
+            colony.updateHasChilds();
+        }
     }
 
     /**

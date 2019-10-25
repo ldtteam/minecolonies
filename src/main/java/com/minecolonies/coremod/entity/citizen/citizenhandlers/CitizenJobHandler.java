@@ -135,4 +135,10 @@ public class CitizenJobHandler implements ICitizenJobHandler
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
     }
+
+    @Override
+    public boolean shouldRunAvoidance()
+    {
+        return getColonyJob() == null || getColonyJob().allowsAvoidance();
+    }
 }

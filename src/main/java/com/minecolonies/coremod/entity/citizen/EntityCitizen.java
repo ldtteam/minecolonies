@@ -419,11 +419,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             tasks.addTask(50, new EntityAICitizenChild(this));
             setCitizensize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
-
-            if (citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-            {
-                citizenColonyHandler.getColony().updateHasChilds();
-            }
         }
         else
         {

@@ -75,6 +75,7 @@ public interface IBuildingWorker extends ISchematicProvider, ICitizenAssignable,
     @Nullable
     IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate);
 
+
     /**
      * Get a fullfillable recipe to execute.
      * @param tempStack the stack which should be crafted.
@@ -83,11 +84,21 @@ public interface IBuildingWorker extends ISchematicProvider, ICitizenAssignable,
     IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack);
 
     /**
+     * Get a fullfillable recipe to execute, with at least a given count.
+     *
+     * @param tempStack The temp stack to match.
+     * @param count     The count to craft.
+     * @return The recipe or null.
+     */
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count);
+
+    /**
      * Get a fullfillable recipe to execute.
      * @param stackPredicate the predicate to check for fullfillment.
+     * @param count the count to produce.
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate);
+    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count);
 
     /**
      * Try to fullfill a recipe.

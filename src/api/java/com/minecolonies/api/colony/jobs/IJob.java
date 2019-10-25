@@ -209,4 +209,10 @@ public interface IJob<AI extends EntityAIBase> extends INBTSerializable<NBTTagCo
      * Reset the AI after eating at a restaurant
      */
     void resetAIAfterEating();
+
+    /**
+     * Method to check if the colony job allows avoidance.
+     * @return true if so.
+     */
+    boolean allowsAvoidance();
 }
