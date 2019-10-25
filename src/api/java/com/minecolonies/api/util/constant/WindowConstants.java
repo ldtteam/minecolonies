@@ -11,6 +11,26 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public final class WindowConstants
 {
     /**
+     * Id of the exit button in the GUI.
+     */
+    public static final String BUTTON_EXIT = "exit";
+
+    /**
+     * Id of the info label in the GUI.
+     */
+    public static final String LABEL_INFO = "info";
+
+    /**
+     * Id of the next page button in the info GUI.
+     */
+    public static final String BUTTON_INFO_NEXT_PAGE = "infoNextPage";
+
+    /**
+     * Id of the prev page button in the info GUI.
+     */
+    public static final String BUTTON_INFO_PREV_PAGE = "infoPrevPage";
+
+    /**
      * Id of the info button in the GUI.
      */
     public static final String BUTTON_INFO = "info";

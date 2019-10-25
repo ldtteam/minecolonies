@@ -156,6 +156,7 @@
                 <xs:attribute name="color" type="xs:string"/>
                 <xs:attribute name="hovercolor" type="xs:string"/>
                 <xs:attribute name="shadow" type="xs:boolean"/>
+                <xs:attribute name="wrap" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

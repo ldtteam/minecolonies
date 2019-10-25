@@ -40,6 +40,7 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
 
         this.building = building;
         registerButton(BUTTON_BUILD, this::buildClicked);
+        registerButton(BUTTON_INFO, this::infoClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_EDIT_NAME, this::editName);
 
@@ -53,6 +54,15 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     private void editName()
     {
         @NotNull final WindowHutNameEntry window = new WindowHutNameEntry(building);
+        window.open();
+    }
+
+    /**
+     * Action when info button is clicked.
+     */
+    private void infoClicked()
+    {
+        @NotNull final WindowInfo window = new WindowInfo(building);
         window.open();
     }
 

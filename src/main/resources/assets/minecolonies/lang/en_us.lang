@@ -958,6 +958,20 @@ com.minecolonies.coremod.gui.placement.buildtool=Use Buildtool
 com.minecolonies.coremod.gui.placement.direct=Place anyway
 com.minecolonies.coremod.gui.townHall.population.childs=Children: %d
 
+com.minecolonies.coremod.info.Builder.0.name=Introduction
+com.minecolonies.coremod.info.Builder.0=The builder is the heart of your colony, without it you wouldn't ever be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the builder, the builder at level 0 (no hut) is only able to build one thing, their own hut.\n\n In order for your builder to build huts that are above level 1 their hut must be the same level as the hut wanted, e.g. their hut must be level 3 or above to build a level 3 hut.
+com.minecolonies.coremod.info.Builder.1.name=Restrictions
+com.minecolonies.coremod.info.Builder.1=Now let's cover lumberjack restrictions:\n\n 1. Builders (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. Builders have a maximum range of 100 blocks for buildings for automatic assignment, if your building is outside that range, in the top right of the build building UI you can select which builder to assign to a building
+com.minecolonies.coremod.info.Builder.2.name=FAQ
+com.minecolonies.coremod.info.Builder.2=Now let's cover some frequently asked questions:\n\n Q 1. I'm seeing an item in the Required Resources page that seems unobtainable, or requires Silk Touch?\n   A 1. Things like Air, Dirt Paths, and other blocks will show up in the required resources tab from time to time, while they do show up focus mainly on your builder's Requests tab, he'll usually request the correct block and convert it accordingly (e.g. request Dirt and then use a shovel on it).
+
+com.minecolonies.coremod.info.Lumberjack.0.name=Introduction
+com.minecolonies.coremod.info.Lumberjack.0=The lumberjack is a very simple worker, give him an axe and he'll cut down any trees around him, he'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees he can or can't cut, take a look at the second page.\n Even cooler is the third page, here you can tell the lumberjack to not replant saplings, or you can tell him to be restricted to a certain area (selected with the tool given by the third button on the page).
+com.minecolonies.coremod.info.Lumberjack.1.name=Restrictions
+com.minecolonies.coremod.info.Lumberjack.1=Now that we've covered that, let's cover restrictions:\n\n 1. Lumberjacks unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. Lumberjacks are able to search for trees within a 150 blocks of their worker (not the hut), while searching they start with a 50 block search range and then increase that range by 5 when they do not find a tree.
+com.minecolonies.coremod.info.Lumberjack.2.name=Restrictions
+com.minecolonies.coremod.info.Lumberjack.2=3. The definition of a "Tree" in Minecraft is pretty hazy at best, we've done our best to define a tree, but in some cases it may not be enough. Generally we define a tree as a log and leaves (within a near vicinity), due to this some of your huts or decorations may be affected by the lumberjack, to counter this you can place a piece of Cobblestone below a log to mark it as "not a tree".
+
 advancements.minecolonies.root.title=MineColonies
 advancements.minecolonies.root.description=Start off MineColonies by crafting a Supply Camp or Ship and placing it via right clicking the item on the ground, this will open up the MineColonies Advancements tab!
 advancements.minecolonies.place_townhall.title=Start Your Colony
