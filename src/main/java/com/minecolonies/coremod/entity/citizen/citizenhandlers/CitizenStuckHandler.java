@@ -111,7 +111,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
             return true;
         }
 
-        if (!new AxisAlignedBB(citizen.getCurrentPosition()).expand(1, 1, 1)
+        if (!new AxisAlignedBB(citizen.getCurrentPosition()).expand(1, 1, 1).expand(-1, -1, -1)
                .intersects(new AxisAlignedBB(citizen.getPosition())) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
