@@ -422,6 +422,11 @@ public class Colony implements IColony
         return false;
     }
 
+    /**
+     * Updates the day and night detection.
+     *
+     * @return
+     */
     private boolean checkDayTime()
     {
         if (isDay && !world.isDaytime())
@@ -1185,7 +1190,6 @@ public class Colony implements IColony
         return players;
     }
 
-    // TODO use important message for various messages.
     @Override
     @NotNull
     public Set<EntityPlayer> getImportantMessageEntityPlayers()

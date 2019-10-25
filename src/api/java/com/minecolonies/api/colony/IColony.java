@@ -40,6 +40,11 @@ public interface IColony
 
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
+    /**
+     * Returns whether the colony chunks are loaded
+     *
+     * @return true when loaded.
+     */
     boolean areAllColonyChunksLoaded();
 
     /**
@@ -307,6 +312,10 @@ public interface IColony
 
     void increaseBoughtCitizenCost();
 
+    /**
+     * Returns a set of players receiving important messages for the colony.
+     * @return set of players.
+     */
     @NotNull
     Set<EntityPlayer> getImportantMessageEntityPlayers();
 
