@@ -13,6 +13,7 @@ import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
@@ -33,9 +35,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     private Set<EntityPlayerMP> closeSubscribers = new HashSet<>();
 
     /**
-     * The officers which are online.
+     * The global subscribers which are online.
      */
-    private Set<EntityPlayerMP> onlineOfficers = new HashSet<>();
+    private Set<EntityPlayerMP> globalSubscribers = new HashSet<>();
 
     /**
      * New subscribers which havent received a view yet.
@@ -100,7 +102,16 @@ public class ColonyPackageManager implements IColonyPackageManager
             return;
         }
 
-        if (closeSubscribers.isEmpty())
+        updateColonyViews();
+    }
+
+    /**
+     * Updates the away timer for the colony.
+     */
+    @Override
+    public void updateAwayTime()
+    {
+        if (globalSubscribers.isEmpty())
         {
             if (ticksPassed >= TICKS_HOUR)
             {
@@ -108,7 +119,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 lastContactInHours++;
                 colony.markDirty();
             }
-            ticksPassed += 100;
+            ticksPassed += UPDATE_SUBSCRIBERS_INTERVAL;
         }
         else if (lastContactInHours != 0)
         {
@@ -116,8 +127,6 @@ public class ColonyPackageManager implements IColonyPackageManager
             ticksPassed = 0;
             colony.markDirty();
         }
-
-        updateColonyViews();
     }
 
     /**
@@ -188,7 +197,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
-                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                    ColonyUtils.sendToAll(players, new ColonyViewWorkOrderMessage(colony, workOrder));
                 }
             }
             workManager.setDirty(false);
@@ -201,7 +210,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
             final Set<EntityPlayerMP> players = Structures.isDirty() ? closeSubscribers : newSubscribers;
-            players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+            ColonyUtils.sendToAll(players, new ColonyStylesMessage());
         }
         Structures.clearDirty();
     }
@@ -230,29 +239,29 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     /**
-     * On login/promote we're adding colony officers.
+     * On login we're adding global subscribers.
      */
     @Override
-    public void addOfficerSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void addGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
     {
-        onlineOfficers.add(subscriber);
+        globalSubscribers.add(subscriber);
     }
 
     /**
-     * On logoff we're removing colony officers.
+     * On logoff we're removing global subscribers.
      */
     @Override
-    public void removeOfficerSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void removeGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
     {
-        onlineOfficers.remove(subscriber);
+        globalSubscribers.remove(subscriber);
     }
 
     /**
-     * Returns the list of online officers which are subscribed to the colony.
+     * Returns the list of online global subscribers of the colony.
      */
     @Override
-    public Set<EntityPlayerMP> getOfficerSubscribers()
+    public Set<EntityPlayerMP> getGlobalSubscribers()
     {
-        return onlineOfficers;
+        return globalSubscribers;
     }
 }

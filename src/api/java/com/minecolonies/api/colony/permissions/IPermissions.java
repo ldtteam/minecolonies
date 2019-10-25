@@ -37,6 +37,12 @@ public interface IPermissions
     @Nullable
     String getOwnerName();
 
+    /**
+     * Checks if a user is a subscriber.
+     *
+     * @param player {@link EntityPlayer} to check for subscription.
+     * @return True is subscriber, otherwise false.
+     */
     boolean isSubscriber(@NotNull EntityPlayer player);
 
     /**

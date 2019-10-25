@@ -128,6 +128,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
+        this.setPermission(Rank.OWNER, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Officer
@@ -155,6 +157,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
+        this.setPermission(Rank.OFFICER, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Friend
@@ -552,18 +556,7 @@ public class Permissions implements IPermissions
         compound.setBoolean(TAG_UPDATE, updatedPermissionAlready);
     }
 
-    /**
-     * Returns a set of UUID's that have permission to send (and receive) messages.
-     *
-     * @return Set of UUID's allowed to send and receive messages.
-     */
-    public Set<UUID> getMessagePlayers()
-    {
-        return players.values().stream()
-                 .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
-                 .map(Player::getID)
-                 .collect(Collectors.toSet());
-    }    @Override
+    @Override
     @NotNull
     public Map<UUID, Player> getPlayers()
     {

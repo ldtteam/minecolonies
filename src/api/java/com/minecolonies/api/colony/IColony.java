@@ -18,10 +18,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -179,7 +176,7 @@ public interface IColony
     void removeVisitingPlayer(final EntityPlayer player);
 
     @NotNull
-    List<EntityPlayer> getMessageEntityPlayers();
+    Set<EntityPlayer> getMessageEntityPlayers();
 
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 
@@ -311,7 +308,7 @@ public interface IColony
     void increaseBoughtCitizenCost();
 
     @NotNull
-    List<EntityPlayer> getImportantMessageEntityPlayers();
+    Set<EntityPlayer> getImportantMessageEntityPlayers();
 
     boolean isManualHiring();
 
