@@ -40,18 +40,17 @@ public class ModelEntityChildFemale extends ModelBiped
         overRightLeg.mirror = true;
         setRotation(overRightLeg, 0F, 0F, 0F);
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(256, 128);
+        bipedRightArm = new ModelRenderer(this, 44, 16);
+        bipedRightArm.addBox(0F, 0F, 0F, 4, 12, 4);
+        bipedRightArm.setRotationPoint(-8F, 0F, -2F);
+        bipedRightArm.setTextureSize(128, 64);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        bipedLeftArm.mirror = true;
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(256, 128);
+        bipedLeftArm = new ModelRenderer(this, 44, 16);
+        bipedLeftArm.addBox(0F, 0F, 0F, 4, 12, 4);
+        bipedLeftArm.setRotationPoint(4F, 0F, -2F);
+        bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
