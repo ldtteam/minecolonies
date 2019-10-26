@@ -86,12 +86,12 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * On tick of the world.
+     * On tick of the colony.
      *
-     * @param colony {@link TickEvent.WorldTickEvent}
+     * @param colony the colony which ticks.
      */
     @Override
-    public void onWorldTick(final IColony colony)
+    public void onColonyTick(final IColony colony)
     {
         // Can be overridden by other buildings.
     }

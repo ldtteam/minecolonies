@@ -55,10 +55,10 @@ public interface IBuildingManager
     void sendPackets(Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers);
 
     /**
-     * Tick the buildings on world tick.
+     * Tick the buildings on colony tick.
      * @param colony the event.
      */
-    void onWorldTick(IColony colony);
+    void onColonyTick(IColony colony);
 
     /**
      * Clean up the buildings.

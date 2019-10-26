@@ -237,8 +237,13 @@ public class BuildingHome extends AbstractBuilding
         }
     }
 
+    /**
+     * Updates the child creation timer and tries to assign homeless citizens on colony tick.
+     *
+     * @param colony the colony which ticks.
+     */
     @Override
-    public void onWorldTick(@NotNull final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
         if (childCreationTimer > childCreationInterval)
         {

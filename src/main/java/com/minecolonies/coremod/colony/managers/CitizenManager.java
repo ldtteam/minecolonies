@@ -36,7 +36,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.HAPPINESS_FACTOR;
+import static com.minecolonies.api.util.constant.ColonyConstants.WELL_SATURATED_LIMIT;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZENS;
@@ -444,8 +445,13 @@ public class CitizenManager implements ICitizenManager
         }
     }
 
+    /**
+     * Updates the citizen entities when needed and spawn the initial citizens on colony tick.
+     *
+     * @param colony the colony being ticked.
+     */
     @Override
-    public void onWorldTick(final IColony colony)
+    public void onColonyTick(final IColony colony)
     {
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!

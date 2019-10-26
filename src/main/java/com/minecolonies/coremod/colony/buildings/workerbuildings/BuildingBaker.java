@@ -11,7 +11,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -260,10 +259,15 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         return BAKER;
     }
 
+    /**
+     * Checks the furnaces on colony tick.
+     *
+     * @param colony the colony being ticked
+     */
     @Override
-    public void onWorldTick(@NotNull final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(colony);
+        super.onColonyTick(colony);
 
         checkFurnaces();
     }

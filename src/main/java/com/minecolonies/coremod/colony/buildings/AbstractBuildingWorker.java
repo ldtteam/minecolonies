@@ -20,7 +20,6 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -46,7 +45,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -447,13 +445,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     * @param colony
+     * Auto assigns workers on a tick from the colony.
+     * @param colony the colony being ticked
      */
     @Override
-    public void onWorldTick(@NotNull final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(colony);
+        super.onColonyTick(colony);
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)

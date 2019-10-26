@@ -111,7 +111,7 @@ public interface IWorkManager
      *
      * @param colony {@link TickEvent.WorldTickEvent}.
      */
-    void onWorldTick(@NotNull IColony colony);
+    void onColonyTick(@NotNull IColony colony);
 
     /**
      * Get an ordered list by priority of the work orders.
