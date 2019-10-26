@@ -80,11 +80,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
             requiredItem = new TranslationTextComponent(key, msg);
         }
 
-        final StringTextComponent citizenDescription = new StringTextComponent(" ");
-        citizenDescription.appendText(citizen.getCustomName().getFormattedText()).appendText(": ");
+        final ITextComponent citizenDescription = new StringTextComponent(citizen.getCustomName().getFormattedText());
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
-            final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
+            final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
@@ -96,7 +95,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, colonyDescription, requiredItem);
         }
     }
 
