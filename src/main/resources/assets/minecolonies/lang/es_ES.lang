@@ -121,9 +121,9 @@ tile.minecolonies.blockHutGuardTower.name=Torre del guardia
 tile.blockHutTownHall.messageWorkerDead=¡Un %s %s ha muerto en %d %d %d de %s!
 item.minecolonies.scepterGuard.name=Cetro de guardia
 item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
-item.minecolonies.scepterLumberjack.usedStart=First position set.
-item.minecolonies.scepterLumberjack.usedEnd=Second position set.
-item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
+item.minecolonies.scepterLumberjack.usedStart=Primera posición seleccionada.
+item.minecolonies.scepterLumberjack.usedEnd=Segunda posición seleccionada.
+item.minecolonies.scepterLumberjack.restrictionTooBig=El área %s es muy grande. El área máxima para el Leñador es %s bloques.
 item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
 
 com.minecolonies.configgui.title=Configuración de MineColonies
