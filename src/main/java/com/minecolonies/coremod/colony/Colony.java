@@ -384,12 +384,12 @@ public class Colony implements IColony
     private boolean worldTickSlow()
     {
         buildingManager.cleanUpBuildings(this);
-        MobEventsUtils.checkForRaid(this);
-        citizenManager.onWorldTick(this);
+        MobEventsUtils.tryToRaidColony(this);
+        citizenManager.onColonyTick(this);
         updateAttackingPlayers();
-        raidManager.onWorldTick(world);
-        buildingManager.onWorldTick(this);
-        workManager.onWorldTick(this);
+        raidManager.onColonyTick(this);
+        buildingManager.onColonyTick(this);
+        workManager.onColonyTick(this);
 
         updateChildTime();
         return false;

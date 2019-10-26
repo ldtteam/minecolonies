@@ -157,10 +157,10 @@ public interface ICitizenManager
     void checkCitizensForHappiness();
 
     /**
-     * Actions to execute on a specific world tick event.
+     * Actions to execute on a colony tick.
      * @param colony the event.
      */
-    void onWorldTick(final IColony colony);
+    void onColonyTick(final IColony colony);
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.

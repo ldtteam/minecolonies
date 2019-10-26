@@ -11,7 +11,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
@@ -23,13 +22,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
-import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
@@ -240,8 +237,13 @@ public class BuildingHome extends AbstractBuilding
         }
     }
 
+    /**
+     * Updates the child creation timer and tries to assign homeless citizens on colony tick.
+     *
+     * @param colony the colony which ticks.
+     */
     @Override
-    public void onWorldTick(@NotNull final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
         if (childCreationTimer > childCreationInterval)
         {

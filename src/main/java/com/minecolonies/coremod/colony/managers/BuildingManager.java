@@ -164,15 +164,20 @@ public class BuildingManager implements IBuildingManager
         isFieldsDirty = false;
     }
 
+    /**
+     * Ticks all buildings when this building manager receives a tick.
+     *
+     * @param colony the colony which is being ticked.
+     */
     @Override
-    public void onWorldTick(final IColony colony)
+    public void onColonyTick(final IColony colony)
     {
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
             if (colony.getWorld().isBlockLoaded(building.getPosition()))
             {
-                building.onWorldTick(colony);
+                building.onColonyTick(colony);
             }
         }
     }

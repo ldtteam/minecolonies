@@ -92,21 +92,28 @@ public final class MobEventsUtils
     }
 
     /**
-     * Checks if a raid is triggered
+     * Checks if a raid is possible
      */
-    public static boolean checkForRaid(final IColony colony)
+    public static boolean shouldRaid(final IColony colony)
     {
-        if (colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
+        return colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
               && Configurations.gameplay.doBarbariansSpawn
               && colony.getRaiderManager().canHaveRaiderEvents()
               && !colony.getPackageManager().getGlobalSubscribers().isEmpty()
-              && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony))
+                 && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony);
+    }
+
+    /**
+     * Try to start a raid on a colony
+     *
+     * @param colony colony to raid
+     */
+    public static void tryToRaidColony(final IColony colony)
+    {
+        if (shouldRaid(colony))
         {
             MobEventsUtils.raiderEvent(colony.getWorld(), colony);
-            return true;
         }
-
-        return false;
     }
 
     /**

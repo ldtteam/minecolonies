@@ -10,14 +10,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Handles work orders for a colony.
@@ -259,12 +256,12 @@ public class WorkManager implements IWorkManager
     }
 
     /**
-     * Process updates on the World Tick. Currently, does periodic Work Order cleanup.
+     * Process updates on the Colony Tick. Currently, does periodic Work Order cleanup.
      *
-     * @param colony {@link TickEvent.WorldTickEvent}.
+     * @param colony the colony being ticked.
      */
     @Override
-    public void onWorldTick(@NotNull final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
         @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
         while (iter.hasNext())

@@ -40,6 +40,11 @@ public interface IColony
 
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
+    /**
+     * Returns whether the cunks of the colony are loaded.
+     *
+     * @return
+     */
     boolean areAllColonyChunksLoaded();
 
     /**

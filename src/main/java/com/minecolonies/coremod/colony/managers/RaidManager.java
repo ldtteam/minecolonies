@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
@@ -221,8 +222,13 @@ public class RaidManager implements IRaiderManager
         }
     }
 
+    /**
+     * Updates the pirates ship sailing away.
+     *
+     * @param colony the colony being ticked.
+     */
     @Override
-    public void onWorldTick(@NotNull final World world)
+    public void onColonyTick(@NotNull final IColony colony)
     {
         for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
         {
@@ -230,13 +236,14 @@ public class RaidManager implements IRaiderManager
             {
                 schematicMap.remove(entry.getKey());
             }
-            else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+            else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < colony.getWorld()
+                                                                                                                                                              .getWorldTime())
             {
                 // Load the backup from before spawning
                 try
                 {
-                    InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
-                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                    InstantStructurePlacer.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + this.colony.getID() + this.colony.getDimension() + entry.getKey(),
                       entry.getKey(),
                       0,
                       Mirror.NONE,
@@ -249,8 +256,8 @@ public class RaidManager implements IRaiderManager
 
                 schematicMap.remove(entry.getKey());
                 LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  PIRATES_SAILING_OFF_MESSAGE, colony.getName());
+                  this.colony.getMessageEntityPlayers(),
+                  PIRATES_SAILING_OFF_MESSAGE, this.colony.getName());
                 return;
             }
         }
