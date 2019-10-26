@@ -175,6 +175,11 @@ public interface IColony
      */
     void removeVisitingPlayer(final EntityPlayer player);
 
+    /**
+     * Get the players in the colony which should receive the message.
+     *
+     * @return list of players
+     */
     @NotNull
     Set<EntityPlayer> getMessageEntityPlayers();
 

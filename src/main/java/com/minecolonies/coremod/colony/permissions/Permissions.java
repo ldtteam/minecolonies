@@ -129,7 +129,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
         this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
-        this.setPermission(Rank.OWNER, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY);
+        this.setPermission(Rank.OWNER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Officer
@@ -158,7 +158,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
         this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
-        this.setPermission(Rank.OFFICER, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY);
+        this.setPermission(Rank.OFFICER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Friend
