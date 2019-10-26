@@ -37,7 +37,7 @@ public enum Action
     TELEPORT_TO_COLONY(24),
     EXPLODE(25),
     RECEIVE_MESSAGES_FAR_AWAY(26),
-    CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY(27);
+    CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(27);
 
     private final int flag;
 

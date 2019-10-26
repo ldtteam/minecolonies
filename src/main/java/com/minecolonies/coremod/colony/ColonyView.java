@@ -1214,7 +1214,7 @@ public final class ColonyView implements IColonyView
     @Override
     public Set<EntityPlayer> getImportantMessageEntityPlayers()
     {
-        return null;
+        return new HashSet<>();
     }
 
     /**
