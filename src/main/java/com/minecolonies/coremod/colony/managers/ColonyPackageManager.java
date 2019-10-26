@@ -35,7 +35,8 @@ public class ColonyPackageManager implements IColonyPackageManager
     private Set<EntityPlayerMP> closeSubscribers = new HashSet<>();
 
     /**
-     * The global subscribers which are online.
+     * List of players with global permissions, like receiving important messages from far away.
+     * Populated on player login and logoff.
      */
     private Set<EntityPlayerMP> globalSubscribers = new HashSet<>();
 

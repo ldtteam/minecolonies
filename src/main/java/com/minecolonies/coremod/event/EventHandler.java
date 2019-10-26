@@ -241,7 +241,7 @@ public class EventHandler
         {
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                if (colony.getPermissions().hasPermission(event.player, Action.CAN_KEEEP_COLONY_ACTIVE_WHILE_AWAY)
+                if (colony.getPermissions().hasPermission(event.player, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)
                       || colony.getPermissions().hasPermission(event.player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addGlobalSubscriber((EntityPlayerMP) event.player);
