@@ -401,7 +401,6 @@ public class Colony implements IColony
     private boolean worldTickUnloaded()
     {
         updateChildTime();
-        updateSubscribers();
         return false;
     }
 
