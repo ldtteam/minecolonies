@@ -342,13 +342,13 @@ public class Colony implements IColony
         }
         packageManager.updateAwayTime();
 
-        if (loadedChunks.size() > 40 && (!packageManager.getSubscribers().isEmpty() || !packageManager.getGlobalSubscribers().isEmpty()))
+        if (loadedChunks.size() > 40 && (!packageManager.getCloseSubscribers().isEmpty() || !packageManager.getImportantColonyPlayers().isEmpty()))
         {
             isActive = true;
             return ACTIVE;
         }
 
-        if (!packageManager.getGlobalSubscribers().isEmpty())
+        if (!packageManager.getImportantColonyPlayers().isEmpty())
         {
             isActive = true;
             return UNLOADED;
@@ -427,7 +427,7 @@ public class Colony implements IColony
         {
             isDay = false;
             nightsSinceLastRaid++;
-            if (!packageManager.getSubscribers().isEmpty())
+            if (!packageManager.getCloseSubscribers().isEmpty())
             {
                 citizenManager.checkCitizensForHappiness();
             }
@@ -461,7 +461,7 @@ public class Colony implements IColony
         //Clean up visiting player.
         for (final EntityPlayer player : visitors)
         {
-            if (!packageManager.getSubscribers().contains(player))
+            if (!packageManager.getCloseSubscribers().contains(player))
             {
                 visitingPlayers.remove(player);
                 attackingPlayers.remove(new AttackingPlayer(player));
