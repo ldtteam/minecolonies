@@ -26,7 +26,7 @@ public interface IColonyPackageManager
      * Get all subscribers.
      * @return a copy of the hashset.
      */
-    Set<EntityPlayerMP> getSubscribers();
+    Set<EntityPlayerMP> getCloseSubscribers();
 
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
@@ -69,32 +69,32 @@ public interface IColonyPackageManager
      * Add a new subscriber to the colony.
      * @param subscriber the subscriber to add.
      */
-    void addSubscribers(@NotNull final EntityPlayerMP subscriber);
+    void addCloseSubscriber(@NotNull final EntityPlayerMP subscriber);
 
     /**
      * Adds a new global subscriber to the colony.
      *
      * @param subscriber the subscriber to add.
      */
-    void addGlobalSubscriber(@NotNull EntityPlayerMP subscriber);
+    void addImportantColonyPlayer(@NotNull EntityPlayerMP subscriber);
 
     /**
      * Removes an global subscriber from the colony.
      *
      * @param subscriber the subscriber to remove.
      */
-    void removeGlobalSubscriber(@NotNull EntityPlayerMP subscriber);
+    void removeImportantColonyPlayer(@NotNull EntityPlayerMP subscriber);
 
     /**
      * Remove a subscriber from the colony.
      * @param player the subscriber to remove.
      */
-    void removeSubscriber(@NotNull final EntityPlayerMP player);
+    void removeCloseSubscriber(@NotNull final EntityPlayerMP player);
 
     /**
      * Returns the global subscribers.
      *
      * @return global subscribers
      */
-    Set<EntityPlayerMP> getGlobalSubscribers();
+    Set<EntityPlayerMP> getImportantColonyPlayers();
 }

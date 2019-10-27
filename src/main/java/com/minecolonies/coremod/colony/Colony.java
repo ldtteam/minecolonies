@@ -1173,7 +1173,7 @@ public class Colony implements IColony
     {
         Set<EntityPlayer> players = new HashSet<>();
 
-        for (EntityPlayerMP player : packageManager.getSubscribers())
+        for (EntityPlayerMP player : packageManager.getCloseSubscribers())
         {
             if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES))
             {
@@ -1191,7 +1191,7 @@ public class Colony implements IColony
     {
         final Set<EntityPlayer> playerList = getMessageEntityPlayers();
 
-        for (final EntityPlayerMP player : packageManager.getGlobalSubscribers())
+        for (final EntityPlayerMP player : packageManager.getImportantColonyPlayers())
         {
             if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
             {
@@ -1273,7 +1273,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final EntityPlayerMP player : packageManager.getSubscribers())
+        for (final EntityPlayerMP player : packageManager.getCloseSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }

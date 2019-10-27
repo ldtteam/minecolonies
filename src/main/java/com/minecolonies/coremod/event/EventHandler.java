@@ -215,7 +215,7 @@ public class EventHandler
                 if (oldColony != null)
                 {
                     oldColony.removeVisitingPlayer(player);
-                    oldColony.getPackageManager().removeSubscriber(player);
+                    oldColony.getPackageManager().removeCloseSubscriber(player);
                 }
 
                 // Add visiting/subscriber to new colony
@@ -223,7 +223,7 @@ public class EventHandler
                 if (newColony != null)
                 {
                     newColony.addVisitingPlayer(player);
-                    newColony.getPackageManager().addSubscribers(player);
+                    newColony.getPackageManager().addCloseSubscriber(player);
                 }
             }
         }
@@ -244,7 +244,7 @@ public class EventHandler
                 if (colony.getPermissions().hasPermission(event.player, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)
                       || colony.getPermissions().hasPermission(event.player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
-                    colony.getPackageManager().addGlobalSubscriber((EntityPlayerMP) event.player);
+                    colony.getPackageManager().addImportantColonyPlayer((EntityPlayerMP) event.player);
                 }
             }
         }
@@ -263,8 +263,8 @@ public class EventHandler
             final EntityPlayerMP player = (EntityPlayerMP) event.player;
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                colony.getPackageManager().removeSubscriber(player);
-                colony.getPackageManager().removeGlobalSubscriber(player);
+                colony.getPackageManager().removeCloseSubscriber(player);
+                colony.getPackageManager().removeImportantColonyPlayer(player);
             }
         }
     }

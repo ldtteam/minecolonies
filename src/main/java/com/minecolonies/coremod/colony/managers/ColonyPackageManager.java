@@ -38,7 +38,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * List of players with global permissions, like receiving important messages from far away.
      * Populated on player login and logoff.
      */
-    private Set<EntityPlayerMP> globalSubscribers = new HashSet<>();
+    private Set<EntityPlayerMP> importantColonyPlayers = new HashSet<>();
 
     /**
      * New subscribers which havent received a view yet.
@@ -88,7 +88,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public Set<EntityPlayerMP> getSubscribers()
+    public Set<EntityPlayerMP> getCloseSubscribers()
     {
         return closeSubscribers;
     }
@@ -223,7 +223,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void addSubscribers(@NotNull final EntityPlayerMP subscriber)
+    public void addCloseSubscriber(@NotNull final EntityPlayerMP subscriber)
     {
         if (!closeSubscribers.contains(subscriber))
         {
@@ -233,7 +233,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void removeSubscriber(@NotNull final EntityPlayerMP player)
+    public void removeCloseSubscriber(@NotNull final EntityPlayerMP player)
     {
         newSubscribers.remove(player);
         closeSubscribers.remove(player);
@@ -243,26 +243,26 @@ public class ColonyPackageManager implements IColonyPackageManager
      * On login we're adding global subscribers.
      */
     @Override
-    public void addGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void addImportantColonyPlayer(@NotNull final EntityPlayerMP subscriber)
     {
-        globalSubscribers.add(subscriber);
+        importantColonyPlayers.add(subscriber);
     }
 
     /**
      * On logoff we're removing global subscribers.
      */
     @Override
-    public void removeGlobalSubscriber(@NotNull final EntityPlayerMP subscriber)
+    public void removeImportantColonyPlayer(@NotNull final EntityPlayerMP subscriber)
     {
-        globalSubscribers.remove(subscriber);
+        importantColonyPlayers.remove(subscriber);
     }
 
     /**
      * Returns the list of online global subscribers of the colony.
      */
     @Override
-    public Set<EntityPlayerMP> getGlobalSubscribers()
+    public Set<EntityPlayerMP> getImportantColonyPlayers()
     {
-        return globalSubscribers;
+        return importantColonyPlayers;
     }
 }
