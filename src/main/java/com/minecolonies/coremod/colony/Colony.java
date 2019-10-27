@@ -1333,6 +1333,7 @@ public class Colony implements IColony
     @Override
     public void addVisitingPlayer(final PlayerEntity player)
     {
+        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         final Rank rank = getPermissions().getRank(player);
         if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
