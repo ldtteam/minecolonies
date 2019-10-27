@@ -239,7 +239,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final EntityPlayerMP player : colony.getPackageManager().getSubscribers())
+        for (final EntityPlayerMP player : colony.getPackageManager().getCloseSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
