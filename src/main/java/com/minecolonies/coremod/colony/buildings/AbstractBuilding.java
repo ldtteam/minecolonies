@@ -228,7 +228,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public final void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getSubscribers());
+        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
     }
 
     @Override

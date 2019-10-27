@@ -342,13 +342,13 @@ public class Colony implements IColony
         }
         packageManager.updateAwayTime();
 
-        if (loadedChunks.size() > 40 && (!packageManager.getSubscribers().isEmpty() || !packageManager.getGlobalSubscribers().isEmpty()))
+        if (loadedChunks.size() > 40 && (!packageManager.getCloseSubscribers().isEmpty() || !packageManager.getImportantColonyPlayers().isEmpty()))
         {
             isActive = true;
             return ACTIVE;
         }
 
-        if (!packageManager.getGlobalSubscribers().isEmpty())
+        if (!packageManager.getImportantColonyPlayers().isEmpty())
         {
             isActive = true;
             return UNLOADED;
@@ -432,7 +432,7 @@ public class Colony implements IColony
         {
             isDay = false;
             nightsSinceLastRaid++;
-            if (!packageManager.getSubscribers().isEmpty())
+            if (!packageManager.getCloseSubscribers().isEmpty())
             {
                 citizenManager.checkCitizensForHappiness();
             }
@@ -466,7 +466,7 @@ public class Colony implements IColony
         //Clean up visiting player.
         for (final EntityPlayer player : visitors)
         {
-            if (!packageManager.getSubscribers().contains(player))
+            if (!packageManager.getCloseSubscribers().contains(player))
             {
                 visitingPlayers.remove(player);
                 attackingPlayers.remove(new AttackingPlayer(player));
@@ -1178,7 +1178,7 @@ public class Colony implements IColony
     {
         Set<EntityPlayer> players = new HashSet<>();
 
-        for (EntityPlayerMP player : packageManager.getSubscribers())
+        for (EntityPlayerMP player : packageManager.getCloseSubscribers())
         {
             if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES))
             {
@@ -1195,7 +1195,7 @@ public class Colony implements IColony
     {
         final Set<EntityPlayer> playerList = getMessageEntityPlayers();
 
-        for (final EntityPlayerMP player : packageManager.getGlobalSubscribers())
+        for (final EntityPlayerMP player : packageManager.getImportantColonyPlayers())
         {
             if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
             {
@@ -1277,7 +1277,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final EntityPlayerMP player : packageManager.getSubscribers())
+        for (final EntityPlayerMP player : packageManager.getCloseSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
