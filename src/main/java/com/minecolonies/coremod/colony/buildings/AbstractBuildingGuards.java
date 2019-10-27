@@ -944,7 +944,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 }
                 catch (final Exception e)
                 {
-                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
                 }
             }
         }

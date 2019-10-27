@@ -1333,13 +1333,12 @@ public class Colony implements IColony
     @Override
     public void addVisitingPlayer(final PlayerEntity player)
     {
-        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         final Rank rank = getPermissions().getRank(player);
         if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
         }
     }
 
@@ -1350,7 +1349,7 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
         }
     }
 
