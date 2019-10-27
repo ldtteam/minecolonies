@@ -112,7 +112,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void updateAwayTime()
     {
-        if (globalSubscribers.isEmpty())
+        if (importantColonyPlayers.isEmpty())
         {
             if (ticksPassed >= TICKS_HOUR)
             {

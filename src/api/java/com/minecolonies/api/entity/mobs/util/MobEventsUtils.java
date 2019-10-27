@@ -99,7 +99,7 @@ public final class MobEventsUtils
         return colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
               && Configurations.gameplay.doBarbariansSpawn
               && colony.getRaiderManager().canHaveRaiderEvents()
-              && !colony.getPackageManager().getGlobalSubscribers().isEmpty()
+                 && !colony.getPackageManager().getImportantColonyPlayers().isEmpty()
                  && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony);
     }
 
