@@ -103,10 +103,10 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName());
+        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getFormattedText());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
-        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName().getFormattedText()));
 
         if (colony.getWorld() == null)
         {
