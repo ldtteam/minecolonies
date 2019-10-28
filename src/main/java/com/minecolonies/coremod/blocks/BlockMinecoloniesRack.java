@@ -220,7 +220,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     {
         BlockState tempState = state;
         tempState = tempState.with(VARIANT, RackType.DEFAULT);
-        tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
+        if (placer != null)
+        {
+            tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
+        }
 
         worldIn.setBlockState(pos, tempState, 2);
     }
