@@ -133,7 +133,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void alterPickUpPriority(final int value)
     {
-        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 1, MAX_PRIO);
+        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, -1, MAX_PRIO);
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void setPickUpPriority(final int pickUpPriority)
     {
-        this.pickUpPriority = MathHelper.clamp(pickUpPriority, 1, MAX_PRIO);
+        this.pickUpPriority = MathHelper.clamp(pickUpPriority, -1, MAX_PRIO);
     }
 
     /**

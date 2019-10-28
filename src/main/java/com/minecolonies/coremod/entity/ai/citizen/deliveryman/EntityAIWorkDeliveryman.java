@@ -361,7 +361,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             if (!building.isBeingGathered())
             {
-                completeWeight += building.getPickUpPriority();
+                completeWeight += Math.max(building.getPickUpPriority(), 1);
             }
         }
         final double r = Math.random() * completeWeight;
@@ -373,18 +373,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         Collections.shuffle(buildings);
         for (final IBuilding building : buildings)
         {
-            countWeight += building.getPickUpPriority();
-            if (countWeight >= r)
-            {
-                //Don't let any other dman pick up for now.
-                building.setBeingGathered(true);
-                return building.getID();
-            }
-            else
-            {
-                if (!building.isPriorityStatic() && worker.getRandom().nextInt(100) <= 1)
-                {
-                    building.alterPickUpPriority(1);
+            if(building.getPickUpPriority() > -1) {
+                countWeight += building.getPickUpPriority();
+                if (countWeight >= r) {
+                    //Don't let any other dman pick up for now.
+                    building.setBeingGathered(true);
+                    return building.getID();
+                } else {
+                    if (!building.isPriorityStatic() && worker.getRandom().nextInt(100) <= 1) {
+                        building.alterPickUpPriority(1);
+                    }
                 }
             }
         }
