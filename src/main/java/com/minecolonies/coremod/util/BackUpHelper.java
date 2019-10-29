@@ -30,6 +30,8 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
+    private final static int MAX_COLONY_LOAD = 5000;
+
     /**
      * Private constructor to hide implicit one.
      */
@@ -102,7 +104,8 @@ public final class BackUpHelper
 
         for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
         {
-            for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
+            int missingFilesInRow = 0;
+            for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
             {
                 // Check non-deleted files for colony id + dim
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
@@ -113,6 +116,10 @@ public final class BackUpHelper
                     {
                         loadColonyBackup(i, dim);
                     }
+                }
+                else
+                {
+                    missingFilesInRow++;
                 }
             }
         }
