@@ -200,6 +200,7 @@ public class WorkManager implements IWorkManager
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        workOrders.clear();
         //  Work Orders
         final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); ++i)

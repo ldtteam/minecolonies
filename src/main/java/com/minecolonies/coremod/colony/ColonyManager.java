@@ -917,6 +917,8 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
+            BackUpHelper.loadMissingColonies();
+
             world.addEventListener(new ColonyManagerWorldAccess());
         }
     }

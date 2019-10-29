@@ -212,6 +212,7 @@ public class HappinessData
 
         final int numDeaths = tagCompound.getInteger(TAG_TOTAL_DEATH_MODIFIER);
         final NBTTagList deathTagList = tagCompound.getTagList(TAG_DEATH_MODIFIER, Constants.NBT.TAG_COMPOUND);
+        deathModifier.clear();
         for (int i = 0; i < numDeaths; ++i)
         {
             final NBTTagCompound deathCompound = deathTagList.getCompoundTagAt(i);

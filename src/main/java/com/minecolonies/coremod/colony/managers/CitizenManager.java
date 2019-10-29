@@ -83,6 +83,7 @@ public class CitizenManager implements ICitizenManager
     {
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
+        citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
                           .map(this::deserializeCitizen)
