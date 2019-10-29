@@ -635,6 +635,23 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = splitString[length - 1].toLowerCase(Locale.ENGLISH);
                 jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
             }
+		}
+
+        final Map<String, Integer> jobMaxCountMap = new HashMap<>();
+        for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
+        {
+            if (!building.isBuilding())
+            {
+                String buildingName = building.getSchematicName().toLowerCase();
+                if (!buildingName.equals("warehouse") && !buildingName.equals("barracks") && !buildingName.equals("citizen") && !buildingName.equals("townhall"))
+                {
+                    if (jobCountMap.get(buildingName) == null)
+                    {
+                        jobCountMap.put(buildingName, 0);
+                    }
+                    jobMaxCountMap.put(buildingName, jobMaxCountMap.get(buildingName) == null ? 1 : (jobMaxCountMap.get(buildingName) + 1));
+                }
+            }
         }
 
         final DecimalFormat df = new DecimalFormat("#.#");
@@ -693,7 +710,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = entry.getKey();
                 final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
                 final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+					"com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue(), jobMaxCountMap.get(job));
                 label.setLabelText(numberOfWorkers);
                 jobCountMap.remove(entry.getKey());
             }
