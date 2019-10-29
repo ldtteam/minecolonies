@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,13 +14,13 @@ import java.util.function.Supplier;
  * Consists of a state the transition applies in, a statesupplier which determines its next state and
  * a condition which has to be true to transition into the next state.
  */
-public class BasicTransition implements IStateMachineTransition
+public class BasicTransition<S extends IState> implements IStateMachineTransition<S>
 {
     /**
      * The State we're starting in
      */
     @Nullable
-    private final IAIState state;
+    private final S state;
 
     /**
      * The condition which needs to be met to transition
@@ -31,7 +32,7 @@ public class BasicTransition implements IStateMachineTransition
      * The next state we transition into
      */
     @NotNull
-    private final Supplier<IAIState> nextState;
+    private final Supplier<S> nextState;
 
     /**
      * Creating a new transition from State A to B under condition C
@@ -40,7 +41,7 @@ public class BasicTransition implements IStateMachineTransition
      * @param condition Condition C
      * @param nextState State B
      */
-    public BasicTransition(@NotNull final IAIState state, @NotNull final BooleanSupplier condition, @NotNull final Supplier<IAIState> nextState)
+    public BasicTransition(@NotNull final S state, @NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState)
     {
         this.state = state;
         this.condition = condition;
@@ -50,7 +51,7 @@ public class BasicTransition implements IStateMachineTransition
     /**
      * Protected Constructor to allow subclasses without a state
      */
-    protected BasicTransition(@NotNull final BooleanSupplier condition, @NotNull final Supplier<IAIState> nextState)
+    protected BasicTransition(@NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState)
     {
         this.state = null;
         this.condition = condition;
@@ -62,7 +63,7 @@ public class BasicTransition implements IStateMachineTransition
      *
      * @return IAIState
      */
-    public IAIState getState()
+    public S getState()
     {
         return state;
     }
@@ -72,7 +73,7 @@ public class BasicTransition implements IStateMachineTransition
      *
      * @return next AI state
      */
-    public IAIState getNextState()
+    public S getNextState()
     {
         return nextState.get();
     }

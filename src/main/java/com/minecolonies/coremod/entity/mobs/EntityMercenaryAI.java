@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -38,7 +39,7 @@ public class EntityMercenaryAI extends EntityAIBase
     /**
      * State machine for this AI
      */
-    private final TickRateStateMachine stateMachine;
+    private final TickRateStateMachine<IState> stateMachine;
 
     /**
      * The entity for this AI.
@@ -92,7 +93,7 @@ public class EntityMercenaryAI extends EntityAIBase
 
     private final Random rand = new Random();
 
-    public enum State implements IAIState
+    public enum State implements IState
     {
         INIT,
         SPAWN_EVENT,
@@ -100,12 +101,6 @@ public class EntityMercenaryAI extends EntityAIBase
         FIGHTING,
         ALIVE,
         DEAD;
-
-        @Override
-        public boolean isOkayToEat()
-        {
-            return false;
-        }
     }
 
     public EntityMercenaryAI(final EntityMercenary entityMercenary)
@@ -113,11 +108,11 @@ public class EntityMercenaryAI extends EntityAIBase
         super();
         entity = entityMercenary;
         patrolPoints = new LinkedList<>();
-        stateMachine = new TickRateStateMachine(State.INIT, this::handleAIException);
-        stateMachine.addTransition(new TickingTransition(State.INIT, this::initialize, () -> State.PATROLLING, 10));
-        stateMachine.addTransition(new TickingTransition(State.PATROLLING, this::hasTarget, () -> State.FIGHTING, 5));
-        stateMachine.addTransition(new TickingTransition(State.PATROLLING, this::patrol, () -> State.PATROLLING, 10));
-        stateMachine.addTransition(new TickingTransition(State.FIGHTING, this::fighting, () -> State.PATROLLING, 5));
+        stateMachine = new TickRateStateMachine<>(State.INIT, this::handleAIException);
+        stateMachine.addTransition(new TickingTransition<>(State.INIT, this::initialize, () -> State.PATROLLING, 10));
+        stateMachine.addTransition(new TickingTransition<>(State.PATROLLING, this::hasTarget, () -> State.FIGHTING, 5));
+        stateMachine.addTransition(new TickingTransition<>(State.PATROLLING, this::patrol, () -> State.PATROLLING, 10));
+        stateMachine.addTransition(new TickingTransition<>(State.FIGHTING, this::fighting, () -> State.PATROLLING, 5));
     }
 
     /**
