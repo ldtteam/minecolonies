@@ -30,6 +30,9 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
+    /**
+     * The maximum amount of colonies we're trying to load from a backup
+     */
     private final static int MAX_COLONY_LOAD = 5000;
 
     /**
