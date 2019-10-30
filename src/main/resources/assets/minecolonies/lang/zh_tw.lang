@@ -120,6 +120,11 @@ achievement.upgrade.townhall.first.desc=建造一座市政中心!
 tile.minecolonies.blockHutGuardTower.name=守衛塔
 tile.blockHutTownHall.messageWorkerDead=%s %s 已經死在%s 的 %d %d %d
 item.minecolonies.scepterGuard.name=守衛-杖
+item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
+item.minecolonies.scepterLumberjack.usedStart=First position set.
+item.minecolonies.scepterLumberjack.usedEnd=Second position set.
+item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
+item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
 
 com.minecolonies.configgui.title=創世殖民 配置
 
@@ -153,6 +158,7 @@ com.minecolonies.coremod.gui.townHall.citizens=市民
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=你已經放置了一艘補給船或一座補給營地!
 com.minecolonies.coremod.gui.citizen.skills.endurance=耐力: %d
 com.minecolonies.coremod.gui.townHall.rename.title=重新命名你的殖名地
+com.minecolonies.coremod.gui.townHall.mercenary.title=Mercenary help
 com.minecolonies.coremod.gui.workerHuts.information=資訊
 com.minecolonies.coremod.gui.hiring.description=選擇一個合適的工人.
 com.minecolonies.coremod.gui.assigning.description=選擇一個要住在這裡的市民
@@ -210,8 +216,8 @@ com.minecolonies.coremod.gui.townHall.addBlock=增加方格/位置:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=拜訪市民箱子:
 com.minecolonies.coremod.gui.workerHuts.mobsList=怪物攻擊列表
-com.minecolonies.coremod.job.Ranger=騎士
-com.minecolonies.coremod.job.Knight=遊俠
+com.minecolonies.coremod.job.Ranger=遊俠
+com.minecolonies.coremod.job.Knight=騎士
 com.minecolonies.coremod.gui.townHall.population.unemployed=失業數: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=節點
 com.minecolonies.coremod.gui.hiring.off=自動
@@ -230,6 +236,9 @@ com.minecolonies.coremod.gui.workerHuts.workOrder=工作清單
 com.minecolonies.coremod.gui.buildtool.nohut=沒有小屋
 com.minecolonies.coremod.gui.citizen.skills=屬性
 com.minecolonies.coremod.gui.townHall.repair=修復市政中心
+com.minecolonies.coremod.gui.townHall.mercenary=Hire mercenaries
+com.minecolonies.coremod.gui.townHall.mercenaryHire=僱用
+com.minecolonies.coremod.gui.townHall.mercenaryStory=You've encountered some mercenaries nearby your Colony. They offer to help a while with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!
 com.minecolonies.coremod.gui.townHall.hire=Citizen recruitment
 com.minecolonies.coremod.gui.townHall.hirecitizen1=Choose which recruitment package you want to send.
 com.minecolonies.coremod.gui.townHall.hirecitizen2=Citizens stats increase from Hay - Books - Emeralds to Diamonds.
@@ -327,6 +336,8 @@ com.minecolonies.coremod.gui.structure.delete.title=刪除結構
 com.minecolonies.coremod.gui.structure.delete.body=你想要刪除 %s?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=固定
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=自動
+com.minecolonies.coremod.mercenary.mercenaryStealCitizen=%s is unhappy, a mercenary took the %s away!
+com.minecolonies.coremod.mercenary.stealBuilding=A mercenary just stole %s from a building!
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=幸福程度
 com.minecolonies.coremod.gui.happiness.food=食物滿意度
@@ -653,6 +664,9 @@ com.minecolonies.coremod.gui.workerHuts.listRecipes=配方清單
 com.minecolonies.coremod.resolvers.crafter.private=合成中
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=補種 (開)
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=補種 (關)
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionon=Restriction (on)
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff=Restriction (off)
+
 com.minecolonies.coremod.resolvers.crafter.public=木匠
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=你還沒學到這個配方!
@@ -739,6 +753,7 @@ com.minecolonies.coremod.max.schematic.quiteclose=非常靠近
 com.minecolonies.coremod.max.schematic.quitefar=非常遠離
 com.minecolonies.coremod.max.schematic.reallyfar=離得很遠
 com.minecolonies.coremod.gui.workerHuts.barbpoints=最後一個野蠻人誕生
+com.minecolonies.coremod.gui.workerHuts.barbpoints.current=Current Barbarian Position
 com.minecolonies.coremod.barbarians.left=剩下 %d 個入侵者!
 com.minecolonies.coremod.barbarians.killed=你成功的防守了你的殖民地!
 com.minecolonies.coremod.gui.workerHuts.reposition=重新設置地點
@@ -811,6 +826,7 @@ com.minecolonies.coremod.progress.nine_citizens_spawned=§6 增長的殖民地�
 com.minecolonies.coremod.progress.twenty_building_levels=§6 有一個野蠻人間諜在我們的殖民地旁被抓到了, 他似乎來自一個更大的族群。 你應該考慮建造軍營來保衛你的殖民地.
 com.minecolonies.coremod.progress.not_enough_jobs=§6 建造更多市民小屋而不是更多工作崗位會對你的市民幸福感產生不良影響.
 com.minecolonies.coremod.progress.newChild=§6 A new child is now happily living in your Colony!
+com.minecolonies.coremod.progress.childGrow=%s grew up and wants a job now.
 com.minecolonies.coremod.progress.hireCitizen=§6 Your recruitment package was accepted, a new Citizen arrived!
 
 com.minecolonies.coremod.gui.townHall.printProgress=顯示幫助訊息:
@@ -826,7 +842,7 @@ com.minecolonies.coremod.gui.townHall.buildingLevel=建築等級
 com.minecolonies.coremod.job.composter=堆肥
 com.minecolonies.coremod.gui.warehouse.sort=排序
 com.minecolonies.coremod.gui.auto.hire.warning=Turn the hiring mode of the building or colony to manual to fire this worker or hire another one.
-com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> 移民無法到達你的殖民地, 因為市政中心附近沒有足夠的空間!
+com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d
 
 entity.Pirate.name=海盜
 entity.ArcherPirate.name=海盜弓箭手
@@ -899,8 +915,10 @@ tile.blockHutTownHall.abandonMessageLink=[ABANDON]
 tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]
 
 com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
-com.minecolonies.coremod.general.onBig=On
-com.minecolonies.coremod.general.offBig=Off
+com.minecolonies.coremod.general.onBig=開
+com.minecolonies.coremod.general.offBig=關
+
+com.minecolonies.coremod.general.cantTakeEquipped=The only armour you have got is what you are wearing. Put it in your inventory if you want to give it to me.
 
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter
@@ -908,17 +926,36 @@ com.minecolonies.coremod.gui.workerHuts.Sifter=Sifter
 com.minecolonies.coremod.sifter.meshBroke=My current mesh broke and I started to work with the default mesh again!
 com.minecolonies.coremod.gui.workerHuts.buy=Buy
 com.minecolonies.coremod.gui.workerHuts.meshSettings=Mesh Settings
-com.minecolonies.coremod.sifter.toomuch=Set to the current daily max of %d.
+com.minecolonies.coremod.sifter.toomuch=設定目前每日最大值 %d
 com.minecolonies.coremod.gui.building.rename.title=Rename Your Building
-com.minecolonies.coremod.job.crusher=Crusher
+com.minecolonies.coremod.job.crusher=碎石機
 com.minecolonies.coremod.job.sifter=Sifter
 com.minecolonies.coremod.gui.buildinghiremode=Building Hiring Mode:
 com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
-com.minecolonies.coremod.gui.hiringmode.auto=Automatic
-com.minecolonies.coremod.gui.hiringmode.manual=Manual
+com.minecolonies.coremod.gui.hiringmode.auto=自動
+com.minecolonies.coremod.gui.hiringmode.manual=手動
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
 
 tile.minecolonies.decorationcontroller.name=Decoration Controller
 com.minecolonies.coremod.gui.deco.namescan=Final file path and filename, no level:
 com.minecolonies.coremod.gui.deco.name=The name of the decoration:
 com.minecolonies.coremod.gui.deco.level=The level of the decoration:
+
+com.minecolonies.coremod.gui.placement.warning=We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.
+com.minecolonies.coremod.gui.placement.buildtool=Use Buildtool
+com.minecolonies.coremod.gui.placement.direct=Place anyway
+com.minecolonies.coremod.gui.townHall.population.childs=Children: %d
+
+tile.minecolonies.composted_dirt.name=Composted Dirt
+com.minecolonies.coremod.composted_dirt.player_use_message=This block can be only used by the Florist worker!
+com.minecolonies.coremod.job.florist=Florist
+tile.minecolonies.blockHutFlorist.name=Flower Shop
+com.minecolonies.coremod.gui.workerHuts.florist=Florist
+com.minecolonies.gui.workerHuts.florist.flowers=Plantables
+com.minecolonies.gui.workerhuts.florist.toolow=The florist currently randomly generates the flowers in the list, upgrade to level 4 or above to select them manually!
+com.minecolonies.gui.workerhuts.florist.toomany=You can deactivate max 5 options. Upgrade to level 5 to restrict it further!
+com.minecolonies.coremod.florist.noplantground=I am missing any composted dirt to plant on, please repair or upgrade my building!
+com.minecolonies.coremod.florist.nocompost=I need compost to plant my flowers!
+com.minecolonies.coremod.florist.noflowers=I can't work, all flowers are disabled!
+com.minecolonies.coremod.gui.townHall.population.florists=Florists: %d
+com.minecolonies.coremod.gui.townHall.population.bakerys=Bakeries: %d

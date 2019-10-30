@@ -80,6 +80,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
         {
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
+
         mainModel.isChild = citizen.isChild();
     }
 

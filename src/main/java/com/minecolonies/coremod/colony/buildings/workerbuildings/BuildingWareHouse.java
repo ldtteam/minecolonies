@@ -64,7 +64,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The list of deliverymen registered to this building.
      */
-    private static final Set<Vec3d> registeredDeliverymen = new HashSet<>();
+    private final Set<Vec3d> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
