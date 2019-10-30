@@ -1056,10 +1056,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         entity.getArmorInventoryList().forEach(request::add);
                         entity.getHeldEquipment().forEach(request::add);
                     }
-                    else
-                    {
-                        request.add(entity.getPickedResult(new EntityRayTraceResult(worker)));
-                    }
 
                     request.removeIf(ItemStackUtils::isEmpty);
 
