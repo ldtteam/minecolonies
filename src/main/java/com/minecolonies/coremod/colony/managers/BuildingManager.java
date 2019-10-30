@@ -230,7 +230,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if (removedBuildings.size() >= buildings.values().size())
+        if (!removedBuildings.isEmpty() && removedBuildings.size() >= buildings.values().size())
         {
             Log.getLogger().warn("Colony:"+colony.getID()+" is removing all buildings at once. Did you just load a backup? If not there is a chance that colony data got corrupted and you want to restore a backup.");
         }
