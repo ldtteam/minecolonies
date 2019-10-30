@@ -114,6 +114,7 @@ public final class BackUpHelper
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
                 if (file.exists())
                 {
+                    missingFilesInRow = 0;
                     // Load colony if null
                     if (IColonyManager.getInstance().getColonyByDimension(i, dim) == null)
                     {
