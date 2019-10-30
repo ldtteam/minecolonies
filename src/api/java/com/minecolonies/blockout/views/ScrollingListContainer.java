@@ -22,7 +22,7 @@ public class ScrollingListContainer extends ScrollingContainer
      * @param dataProvider   data provider object, shouldn't be null.
      * @param listNodeParams the xml parameters for this pane.
      */
-    public void refreshElementPanes(final ScrollingList.DataProvider dataProvider, final PaneParams listNodeParams)
+    public void refreshElementPanes(final ScrollingList.DataProvider dataProvider, final PaneParams listNodeParams, final int height)
     {
         final int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
         if (dataProvider != null)
@@ -30,36 +30,38 @@ public class ScrollingListContainer extends ScrollingContainer
             for (int i = 0; i < numElements; ++i)
             {
                 final Pane child;
-                if (i < children.size())
+                if (listElementHeight * i + listElementHeight >= scrollY && listElementHeight * i <= scrollY + height)
                 {
-                    child = children.get(i);
-                }
-                else
-                {
-                    child = Loader.createFromPaneParams(listNodeParams, this);
-                    if (child == null)
+                    if (i < children.size())
                     {
-                        continue;
+                        child = children.get(i);
                     }
-
-                    if (i == 0)
+                    else
                     {
-                        listElementHeight = child.getHeight();
-                    }
-                }
-                child.setPosition(0, i * listElementHeight);
+                        child = Loader.createFromPaneParams(listNodeParams, this);
+                        if (child == null)
+                        {
+                            continue;
+                        }
 
-                dataProvider.updateElement(i, child);
+                        if (i == 0)
+                        {
+                            listElementHeight = child.getHeight();
+                        }
+                    }
+                    child.setPosition(0, i * listElementHeight);
+
+                    dataProvider.updateElement(i, child);
+                }
             }
         }
-
 
         while (children.size() > numElements)
         {
             removeChild(children.get(numElements));
         }
 
-        computeContentHeight();
+        setContentHeight(numElements * listElementHeight);
     }
 
     /**
