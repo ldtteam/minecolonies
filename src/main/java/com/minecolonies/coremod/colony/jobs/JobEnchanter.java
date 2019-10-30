@@ -23,7 +23,7 @@ public class JobEnchanter extends AbstractJob
     @Override
     public JobEntry getJobRegistryEntry()
     {
-        return ModJobs.florist;
+        return ModJobs.enchanter;
     }
 
     @Override

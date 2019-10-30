@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.item.ItemStack;
