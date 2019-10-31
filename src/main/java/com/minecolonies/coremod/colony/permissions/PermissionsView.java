@@ -281,6 +281,12 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
+    public boolean isSubscriber(@NotNull final PlayerEntity player)
+    {
+        return false;
+    }
+
+    @Override
     public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getUniqueID());

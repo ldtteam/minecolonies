@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -9,9 +10,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -19,9 +18,9 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import net.minecraft.block.Block;
-import net.minecraft.block.FurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -30,7 +29,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -261,18 +259,15 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         return BAKER;
     }
 
+    /**
+     * Checks the furnaces on colony tick.
+     *
+     * @param colony the colony being ticked
+     */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(event);
-
-        //
-        // Code below this check won't lag each tick anymore
-        //
-        if (!Colony.shallUpdate(event.world, WAIT_TICKS))
-        {
-            return;
-        }
+        super.onColonyTick(colony);
 
         checkFurnaces();
     }

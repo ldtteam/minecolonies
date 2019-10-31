@@ -56,7 +56,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -229,7 +228,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public final void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getSubscribers());
+        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
     }
 
     @Override
@@ -255,15 +254,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
-    }
-
-    /**
-     * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
-     */
-    @Override
-    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        // Empty, override to use
     }
 
     /**
@@ -328,7 +318,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
 
