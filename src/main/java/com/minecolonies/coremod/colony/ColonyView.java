@@ -454,6 +454,24 @@ public final class ColonyView implements IColonyView
     {
     }
 
+    @Override
+    public void addLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public void removeLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public int getLoadedChunkCount()
+    {
+        return 0;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -1013,9 +1031,9 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public Set<EntityPlayer> getMessageEntityPlayers()
     {
-        return null;
+        return new HashSet<>();
     }
 
     @Override
@@ -1072,6 +1090,12 @@ public final class ColonyView implements IColonyView
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
 
+    }
+
+    @Override
+    public boolean areAllColonyChunksLoaded()
+    {
+        return false;
     }
 
     @Override
@@ -1191,6 +1215,12 @@ public final class ColonyView implements IColonyView
     public void increaseBoughtCitizenCost()
     {
 
+    }
+
+    @Override
+    public Set<EntityPlayer> getImportantMessageEntityPlayers()
+    {
+        return new HashSet<>();
     }
 
     /**
