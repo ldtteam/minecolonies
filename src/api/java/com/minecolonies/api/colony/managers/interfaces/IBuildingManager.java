@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -48,23 +49,22 @@ public interface IBuildingManager
 
     /**
      * Send packets of the buildings to the subscribers.
-     * @param oldSubscribers the old subs.
-     * @param hasNewSubscribers if there are new ones.
-     * @param subscribers all the subs.
+     * @param closeSubscribers the old subs.
+     * @param newSubscribers new subs.
      */
-    void sendPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers);
+    void sendPackets(Set<EntityPlayerMP> closeSubscribers, final Set<EntityPlayerMP> newSubscribers);
 
     /**
-     * Tick the buildings on world tick.
-     * @param event the event.
+     * Tick the buildings on colony tick.
+     * @param colony the event.
      */
-    void onWorldTick(TickEvent.WorldTickEvent event);
+    void onColonyTick(IColony colony);
 
     /**
      * Clean up the buildings.
-     * @param event at the worldTick event.
+     * @param colony at the worldTick event.
      */
-    void cleanUpBuildings(final TickEvent.WorldTickEvent event);
+    void cleanUpBuildings(final IColony colony);
 
     /**
      * Get a certain building.

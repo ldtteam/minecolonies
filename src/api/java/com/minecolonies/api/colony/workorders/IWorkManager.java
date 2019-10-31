@@ -109,9 +109,9 @@ public interface IWorkManager
      * Process updates on the World Tick.
      * Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
+     * @param colony {@link TickEvent.WorldTickEvent}.
      */
-    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
+    void onColonyTick(@NotNull IColony colony);
 
     /**
      * Get an ordered list by priority of the work orders.

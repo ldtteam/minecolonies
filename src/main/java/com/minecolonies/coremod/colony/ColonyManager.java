@@ -20,6 +20,7 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -105,6 +106,9 @@ public final class ColonyManager implements IColonyManager
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
+
+        colony.getPackageManager().addImportantColonyPlayer((EntityPlayerMP) player);
+        colony.getPackageManager().addCloseSubscriber((EntityPlayerMP) player);
 
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply);
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
