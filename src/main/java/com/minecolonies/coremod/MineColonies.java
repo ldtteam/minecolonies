@@ -285,6 +285,7 @@ public class MineColonies
         getNetwork().registerMessage(DecorationControllUpdateMessage.class, DecorationControllUpdateMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(DirectPlaceMessage.class, DirectPlaceMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(EnchanterQtySetMessage.class, EnchanterQtySetMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);

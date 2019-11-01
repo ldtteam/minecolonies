@@ -333,6 +333,9 @@ public final class TranslationConstants
     public static final String NO_PLANT_GROUND_FLORIST = "com.minecolonies.coremod.florist.noplantground";
     @NonNls
     public static final String NO_FLOWERS_IN_CONFIG = "com.minecolonies.coremod.florist.noflowers";
+    @NonNls
+    public static final String NO_WORKERS_TO_DRAIN_SET = "com.minecolonies.coremod.enchanter.nodrainingsset";
+
 
     private TranslationConstants()
     {

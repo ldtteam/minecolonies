@@ -52,9 +52,19 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
+     * The max quantity.
+     */
+    private static final String TAG_QUANTITY = "quantity";
+
+    /**
      * List of buildings the enchanter gathers experience from.
      */
     private Set<BlockPos> buildingToGatherFrom = new HashSet<>();
+
+    /**
+     * The max daily drain per worker.
+     */
+    private int dailyDrain = 1;
 
     /**
      * The constructor of the building.
@@ -120,6 +130,25 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         markDirty();
     }
 
+    /**
+     * Set the daily drainage.
+     * @param qty the quantity to set.
+     */
+    public void setDailyDrainage(final int qty)
+    {
+        this.dailyDrain = qty;
+        markDirty();
+    }
+
+    /**
+     * Get the daily drain
+     * @return the drain
+     */
+    public int getDailyDrain()
+    {
+        return dailyDrain;
+    }
+
     @Override
     public void deserializeNBT(final NBTTagCompound compound)
     {
@@ -128,6 +157,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         buildingToGatherFrom.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
                                       .map(comp -> BlockPosUtil.readFromNBT(comp, TAG_POS))
                                       .collect(Collectors.toList()));
+        dailyDrain = compound.getInteger(TAG_QUANTITY);
     }
 
     @Override
@@ -135,6 +165,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     {
         final NBTTagCompound compound = super.serializeNBT();
         compound.setTag(TAG_GATHER_LIST, buildingToGatherFrom.stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(),TAG_POS, pos)).collect(NBTUtils.toNBTTagList()));
+        compound.setInteger(TAG_QUANTITY, dailyDrain);
         return compound;
     }
 
@@ -147,6 +178,16 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             BlockPosUtil.writeToByteBuf(buf, pos);
         }
+        buf.writeInt(dailyDrain);
+    }
+
+    /**
+     * Return the set of the buildings to gather from.
+     * @return a copy of th eset.
+     */
+    public Set<BlockPos> getBuildingsToGatherFrom()
+    {
+        return new HashSet<>(buildingToGatherFrom);
     }
 
     /**
@@ -158,6 +199,11 @@ public class BuildingEnchanter extends AbstractBuildingWorker
          * List of buildings the enchanter gathers experience from.
          */
         private List<BlockPos> buildingToGatherFrom = new ArrayList<>();
+
+        /**
+         * The daily drainage quantity.
+         */
+        private int qty = 1;
 
         /**
          * Instantiates the view of the building.
@@ -186,6 +232,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
             {
                 buildingToGatherFrom.add(BlockPosUtil.readFromByteBuf(buf));
             }
+            qty = buf.readInt();
         }
 
         /**
@@ -195,6 +242,15 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         public List<BlockPos> getBuildingsToGatherFrom()
         {
             return new ArrayList<>(buildingToGatherFrom);
+        }
+
+        /**
+         * Getter for the daily drain.
+         * @return the daily quantity.
+         */
+        public int getDailyDrain()
+        {
+            return qty;
         }
 
         @NotNull
@@ -229,6 +285,15 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             buildingToGatherFrom.remove(blockPos);
             MineColonies.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, false));
+        }
+
+        /**
+         * Set the daily quantity.
+         * @param qty the qty to set.
+         */
+        public void setQuantity(final int qty)
+        {
+            this.qty = qty;
         }
     }
 }

@@ -975,3 +975,5 @@ tile.minecolonies.blockhutenchanter.name=Enchanter
 com.minecolonies.coremod.job.enchanter=Enchanter
 com.minecolonies.coremod.gui.workerHuts.enchanter=Enchanter
 com.minecolonies.gui.workerhuts.enchanter.workers=Gather Targets
+com.minecolonies.gui.workerhuts.enchanter.daily=Daily XP drain
+com.minecolonies.coremod.enchanter.nodrainingsset=Please configure some workers I can drain experience from to work!
