@@ -1025,7 +1025,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
 
-        getColony().getPackageManager().getSubscribers().forEach(player -> Network
+        getColony().getPackageManager().getCloseSubscribers().forEach(player -> Network
                                                                              .getNetwork()
                                                                              .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
                                                                                  getID(),

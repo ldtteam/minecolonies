@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,12 +105,12 @@ public interface IWorkManager
     void addWorkOrder(@NotNull IWorkOrder order, boolean readingFromNbt);
 
     /**
-     * Process updates on the World Tick.
+     * Process updates on the Colony Tick.
      * Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.event.TickEvent.WorldTickEvent}.
+     * @param colony colony which ticks.
      */
-    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
+    void onColonyTick(@NotNull IColony colony);
 
     /**
      * Get an ordered list by priority of the work orders.
