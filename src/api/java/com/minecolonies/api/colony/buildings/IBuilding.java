@@ -19,7 +19,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,11 +76,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     @Override
     void onDestroyed();
-
-    /**
-     * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
-     */
-    void secondsWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.

@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,6 +101,31 @@ public final class ChunkDataHelper
                         }
                     }
                 }
+            }
+        }
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        if (closeCap != null)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimension().getType().getId());
+            if (colony != null)
+            {
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+            }
+        }
+    }
+
+    /**
+     * Called when a chunk is unloaded
+     */
+    public static void unloadChunk(final Chunk chunk, final World world)
+    {
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        if (closeCap != null)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimension().getType().getId());
+            if (colony != null)
+            {
+                colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
             }
         }
     }
@@ -436,6 +460,11 @@ public final class ChunkDataHelper
 
         if (add)
         {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimension().getType().getId());
+            if (colony != null)
+            {
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+            }
             cap.setOwningColony(id);
             cap.addColony(id);
         }

@@ -184,6 +184,18 @@ public class EventHandler
     }
 
     /**
+     * Called when a chunk gets unloaded
+     */
+    @SubscribeEvent
+    public void onChunkUnLoad(final ChunkEvent.Unload event)
+    {
+        if (event.getWorld() instanceof ServerWorld)
+        {
+            ChunkDataHelper.unloadChunk((Chunk) event.getChunk(), (ServerWorld) event.getWorld());
+        }
+    }
+
+    /**
      * Event called when the player enters a new chunk.
      *
      * @param event the event.
@@ -208,51 +220,70 @@ public class EventHandler
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
-            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.getPos().x, newChunk.getPos().z));
+            Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.getPos().x, newChunk.getPos().z), (ServerPlayerEntity) entity);
             @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
-            // Add new subscribers to colony.
-            for (final int colonyId : newCloseColonies.getAllCloseColonies())
-            {
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((ServerPlayerEntity) entity).getServerWorld());
-                if (colony != null)
-                {
-                    colony.getPackageManager().addSubscribers(player);
-                }
-            }
-
-            //Remove old subscribers from colony.
-            for (final int colonyId : oldCloseColonies.getAllCloseColonies())
-            {
-                if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
-                {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((ServerPlayerEntity) entity).getServerWorld());
-                    if (colony != null)
-                    {
-                        colony.getPackageManager().removeSubscriber(player);
-                    }
-                }
-            }
-
+            // Check if we get into a differently claimed chunk
             if (newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
             {
-                if (newCloseColonies.getOwningColony() == 0)
+                // Remove visiting/subscriber from old colony
+                final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), world);
+                if (oldColony != null)
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), ((ServerPlayerEntity) entity).getServerWorld());
-                    if (colony != null)
-                    {
-                        colony.removeVisitingPlayer(player);
-                    }
-                    return;
+                    oldColony.removeVisitingPlayer(player);
+                    oldColony.getPackageManager().removeCloseSubscriber(player);
                 }
 
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), ((ServerPlayerEntity) entity).getServerWorld());
-                if (colony != null)
+                // Add visiting/subscriber to new colony
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), world);
+                if (newColony != null)
                 {
-                    colony.addVisitingPlayer(player);
+                    newColony.addVisitingPlayer(player);
+                    newColony.getPackageManager().addCloseSubscriber(player);
                 }
+            }
+        }
+    }
+
+    /**
+     * Event called when a player enters the world.
+     *
+     * @param event player enter world event
+     */
+    @SubscribeEvent
+    public void onPlayerEnterWorld(final PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayerEntity)
+        {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+            {
+                if (colony.getPermissions().hasPermission(player, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)
+                      || colony.getPermissions().hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
+                {
+                    colony.getPackageManager().addImportantColonyPlayer(player);
+                }
+            }
+        }
+    }
+
+    /**
+     * Event called when a player leaves the world.
+     *
+     * @param event player leaves world event
+     */
+    @SubscribeEvent
+    public void onPlayerLeaveWorld(final PlayerEvent.PlayerLoggedOutEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayerEntity)
+        {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+            {
+                colony.getPackageManager().removeCloseSubscriber(player);
+                colony.getPackageManager().removeImportantColonyPlayer(player);
             }
         }
     }
