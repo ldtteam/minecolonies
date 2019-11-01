@@ -46,7 +46,7 @@ public class WindowHutEnchanter extends AbstractHutFilterableLists
           building,
           LanguageHandler.format(FLORIST_FLOWER_DESC),
           PAGE_ITEMS_VIEW,
-          true);
+          false);
         views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
     }

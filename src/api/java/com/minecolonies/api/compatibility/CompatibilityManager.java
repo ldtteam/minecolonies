@@ -16,9 +16,11 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -124,6 +126,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
 
     /**
+     * Map of building level to the lis tof possible enchantments.
+     */
+    private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
+
+    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
@@ -187,6 +194,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverSifting();
         discoverFood();
         discoverFuel();
+        discoverEnchantments();
 
         discoveredAlready = true;
     }
@@ -451,6 +459,18 @@ public class CompatibilityManager implements ICompatibilityManager
             return luckyOres.get(0).getItemStack().copy();
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public Tuple<String, Integer> getRandomEnchantment(final int buildingLevel)
+    {
+        final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
+        if (list.isEmpty())
+        {
+            return new Tuple<>("protection", 1);
+        }
+        Collections.shuffle(list);
+        return list.get(0);
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -786,6 +806,50 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished initiating sifter config");
+    }
+
+    /**
+     * Calculate the crusher modes from the config file.
+     */
+    private void discoverEnchantments()
+    {
+        for (final String string : Configurations.gameplay.enchantments)
+        {
+            final String[] split = string.split(":");
+            if (split.length != 4)
+            {
+                Log.getLogger().warn("Invalid enchantment mode setting: " + string);
+                continue;
+            }
+
+            try
+            {
+                final String enchantment = split[1];
+                if (Enchantment.getEnchantmentByLocation(enchantment) == null)
+                {
+                    Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
+                    continue;
+                }
+
+                final int buildingLevel = Integer.parseInt(split[0]);
+                final int enchantmentLevel = Integer.parseInt(split[2]);
+                final int numberOfTickets = Integer.parseInt(split[3]);
+
+                for (int level = buildingLevel; level <= 5; level++)
+                {
+                    final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
+                    for (int i = 0; i < numberOfTickets; i++)
+                    {
+                        list.add(new Tuple<>(enchantment, enchantmentLevel));
+                    }
+                    enchantments.put(level, list);
+                }
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
+            }
+        }
     }
 
     /**

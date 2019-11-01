@@ -971,3 +971,6 @@ com.minecolonies.coremod.florist.nocompost=I need compost to plant my flowers!
 com.minecolonies.coremod.florist.noflowers=I can't work, all flowers are disabled!
 com.minecolonies.coremod.gui.townHall.population.florists=Florists: %d
 com.minecolonies.coremod.gui.townHall.population.bakerys=Bakeries: %d
+tile.minecolonies.blockhutenchanter.name=Enchanter
+com.minecolonies.coremod.job.enchanter=Enchanter
+com.minecolonies.coremod.gui.workerHuts.enchanter=Enchanter

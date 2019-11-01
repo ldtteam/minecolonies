@@ -482,6 +482,32 @@ public class Configurations
                                           "3,3,minecraft:skull:3,5",
                                         };
 
+        @Config.Comment("The blocks which can be sifted for items")
+        public String[] enchantments = new String[]
+                                           {
+                                             //buildinglevel:resource:level:entries
+                                             "1:aqua_affinity:1:1",
+                                             "1:fortune:1:1",
+                                             "1:knockback:1:1",
+                                             "1:looting:1:1",
+
+                                             "2:fortune:1:2",
+                                             "2:knockback:1:2",
+                                             "2:looting:1:2",
+
+                                             "3:fortune:2:1",
+                                             "3:knockback:2:1",
+                                             "3:looting:2:1",
+
+                                             "4:fortune:2:2",
+                                             "4:knockback:2:2",
+                                             "4:looting:2:2",
+
+                                             "5:fortune:3:1",
+                                             "5:knockback:3:1",
+                                             "5:looting:3:1"
+                                           };
+
         @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4. [Default: 0.1]")
         public double fisherSpongeChance = 0.1;
 
