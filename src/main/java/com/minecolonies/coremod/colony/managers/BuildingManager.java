@@ -93,6 +93,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        buildings.clear();
         //  Buildings
         final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
@@ -218,6 +219,11 @@ public class BuildingManager implements IBuildingManager
                     removeField(pos);
                 }
             }
+        }
+
+        if (!removedBuildings.isEmpty() && removedBuildings.size() >= buildings.values().size())
+        {
+            Log.getLogger().warn("Colony:"+colony.getID()+" is removing all buildings at once. Did you just load a backup? If not there is a chance that colony data got corrupted and you want to restore a backup.");
         }
 
         removedBuildings.forEach(IBuilding::destroy);

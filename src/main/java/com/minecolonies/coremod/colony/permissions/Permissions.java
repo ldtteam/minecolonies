@@ -290,6 +290,8 @@ public class Permissions implements IPermissions
      */
     public void loadPermissions(@NotNull final NBTTagCompound compound)
     {
+        players.clear();
+        permissionMap.clear();
         //  Owners
         final NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < ownerTagList.tagCount(); ++i)
