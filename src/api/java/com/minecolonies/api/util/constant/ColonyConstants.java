@@ -53,7 +53,7 @@ public final class ColonyConstants
     /**
      * How often the subscribers get updated in ticks.
      */
-    public static final int UPDATE_SUBSCRIBERS_INTERVAL = 100;
+    public static final int UPDATE_SUBSCRIBERS_INTERVAL = 20;
 
     /**
      * How often the colony state gets updated in ticks.
