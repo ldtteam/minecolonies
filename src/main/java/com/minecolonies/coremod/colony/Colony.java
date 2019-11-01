@@ -343,7 +343,7 @@ public class Colony implements IColony
         }
         packageManager.updateAwayTime();
 
-        if (loadedChunks.size() > 40 && (!packageManager.getCloseSubscribers().isEmpty() || !packageManager.getImportantColonyPlayers().isEmpty()))
+        if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
         {
             isActive = true;
             return ACTIVE;
