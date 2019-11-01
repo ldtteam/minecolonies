@@ -361,7 +361,7 @@ public final class ColonyManager implements IColonyManager
         {
             return true;
         }
-        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().getXStart(), centralChunk.getPos().getZStart());
+        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().x, centralChunk.getPos().z);
         if (storage != null)
         {
             storage.applyToCap(colonyCap);
