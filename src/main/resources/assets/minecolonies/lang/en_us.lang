@@ -974,3 +974,4 @@ com.minecolonies.coremod.gui.townHall.population.bakerys=Bakeries: %d
 tile.minecolonies.blockhutenchanter.name=Enchanter
 com.minecolonies.coremod.job.enchanter=Enchanter
 com.minecolonies.coremod.gui.workerHuts.enchanter=Enchanter
+com.minecolonies.gui.workerhuts.enchanter.workers=Gather Targets

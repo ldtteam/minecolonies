@@ -455,8 +455,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (random.nextInt(ONE_HUNDRED_PERCENT) <= Configurations.gameplay.luckyBlockChance)
         {
-            Collections.shuffle(luckyOres);
-            return luckyOres.get(0).getItemStack().copy();
+            return luckyOres.get(random.nextInt(luckyOres.size() + 1)).getItemStack().copy();
         }
         return ItemStack.EMPTY;
     }
@@ -469,8 +468,8 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             return new Tuple<>("protection", 1);
         }
-        Collections.shuffle(list);
-        return list.get(0);
+
+        return list.get(random.nextInt(list.size() + 1));
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

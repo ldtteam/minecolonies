@@ -1,36 +1,57 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.views.View;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.views.ScrollingList;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
 
 /**
  * Enchanter window class.
  */
-public class WindowHutEnchanter extends AbstractHutFilterableLists
+public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnchanter.View>
 {
-    /**
-     * View containing the list.
-     */
-    private static final String PAGE_ITEMS_VIEW = "enchantments";
-
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING       = ":gui/windowhutenchanter.xml";
+    private static final String RESOURCE_STRING = ":gui/windowhutenchanter.xml";
 
     /**
-     * The building of the florist (Client side representation).
+     * Tag of the list of workers.
      */
-    private final BuildingEnchanter.View ownBuilding;
+    private static final String LIST_WORKERS = "gatherWorkers";
+
+    /**
+     * The label of the worker.
+     */
+    private static final String WORKER_NAME = "workerName";
+
+    /**
+     * The actual list element of the workers.
+     */
+    private ScrollingList workerList;
+
+    /**
+     * The list of already selected buildings.
+     */
+    private List<BlockPos> selectedBuildings;
+
+    /**
+     * All buildings in the colony with worker.
+     */
+    private List<IBuildingView> allBuildings;
 
     /**
      * Constructor for the window of the worker building.
@@ -40,21 +61,71 @@ public class WindowHutEnchanter extends AbstractHutFilterableLists
     public WindowHutEnchanter(final BuildingEnchanter.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-
-        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
-          this,
-          building,
-          LanguageHandler.format(FLORIST_FLOWER_DESC),
-          PAGE_ITEMS_VIEW,
-          false);
-        views.put(PAGE_ITEMS_VIEW, window);
-        this.ownBuilding = building;
+        super.registerButton(BUTTON_SWITCH, this::switchClicked);
     }
 
     @Override
-    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
+    public void onOpened()
     {
-        return BuildingFlorist.getPlantablesForBuildingLevel(building.getBuildingLevel());
+        super.onOpened();
+        //todo add message to sync
+        selectedBuildings = building.getBuildingsToGatherFrom();
+        allBuildings = building.getColony().getBuildings().stream()
+                                                   .filter(b -> b instanceof AbstractBuildingWorker.View)
+                                                   .collect(Collectors.toList());
+        workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
+        workerList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return allBuildings.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                IBuildingView buildingView = allBuildings.get(index);
+                String text = "";
+                if (buildingView instanceof AbstractBuildingWorker.View)
+                {
+                    text += buildingView.getCustomName().isEmpty() ? buildingView.getSchematicName() : buildingView.getCustomName();
+                    text += " " + BlockPosUtil.getDistance2D(building.getID(), building.getPosition()) + "m";
+                    rowPane.findPaneOfTypeByID(WORKER_NAME, Label.class).setLabelText(text);
+                    final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
+                    if (selectedBuildings.contains(buildingView.getID()))
+                    {
+                        switchButton.setLabel(ON);
+                    }
+                    else
+                    {
+                        switchButton.setLabel(OFF);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Fired when assign has been clicked in the field list.
+     *
+     * @param button clicked button.
+     */
+    private void switchClicked(@NotNull final Button button)
+    {
+        final int row = workerList.getListElementIndexByPane(button);
+        if (button.getLabel().equals(OFF))
+        {
+            button.setLabel(ON);
+            building.addWorker(allBuildings.get(row).getID());
+        }
+        else
+        {
+            button.setLabel(OFF);
+            building.removeWorker(allBuildings.get(row).getID());
+        }
+        selectedBuildings = building.getBuildingsToGatherFrom();
+        workerList.refreshElementPanes();
     }
 
     @Override

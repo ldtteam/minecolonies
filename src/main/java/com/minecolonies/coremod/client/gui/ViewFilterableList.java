@@ -35,7 +35,7 @@ public class ViewFilterableList
     /**
      * Description label Id.
      */
-    private static final String DESC_LABEL = "desc";
+    public static final String DESC_LABEL = "desc";
 
     /**
      * Switch button Id.
@@ -50,7 +50,7 @@ public class ViewFilterableList
     /**
      * String describing off for the gui.
      */
-    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    public static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
 
     /**
      * List of all item stacks in the game.
