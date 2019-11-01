@@ -621,6 +621,7 @@ public class Colony implements IColony
         //  Workload
         workManager.read(compound.getCompound(TAG_WORK));
 
+        wayPoints.clear();
         // Waypoints
         final ListNBT wayPointTagList = compound.getList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
@@ -631,6 +632,7 @@ public class Colony implements IColony
             wayPoints.put(pos, state);
         }
 
+        freeBlocks.clear();
         // Free blocks
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
@@ -638,6 +640,7 @@ public class Colony implements IColony
             freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
         }
 
+        freePositions.clear();
         // Free positions
         final ListNBT freePositionTagList = compound.getList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
         for (int i = 0; i < freePositionTagList.size(); ++i)
