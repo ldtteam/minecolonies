@@ -305,6 +305,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
+        schematicMap.clear();
         if (compound.keySet().contains(TAG_RAID_MANAGER))
         {
             final CompoundNBT raiderCompound = compound.getCompound(TAG_RAID_MANAGER);

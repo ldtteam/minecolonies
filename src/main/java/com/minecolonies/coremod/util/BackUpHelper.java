@@ -31,6 +31,11 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 public final class BackUpHelper
 {
     /**
+     * The maximum amount of colonies we're trying to load from a backup
+     */
+    private final static int MAX_COLONY_LOAD = 5000;
+
+    /**
      * Private constructor to hide implicit one.
      */
     private BackUpHelper()
@@ -91,6 +96,38 @@ public final class BackUpHelper
         }
 
         return true;
+    }
+
+    /**
+     * Loads all colonies from backup files which the world cap is missing.
+     */
+    public static void loadMissingColonies()
+    {
+        @NotNull final File saveDir =
+          new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+
+        DimensionType.getAll().forEach(dimensionType ->
+        {
+            int missingFilesInRow = 0;
+            for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
+            {
+                // Check non-deleted files for colony id + dim
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getId()));
+                if (file.exists())
+                {
+                    missingFilesInRow = 0;
+                    // Load colony if null
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getId()) == null)
+                    {
+                        loadColonyBackup(i, dimensionType.getId(), false);
+                    }
+                }
+                else
+                {
+                    missingFilesInRow++;
+                }
+            }
+        });
     }
 
     /**
@@ -292,7 +329,7 @@ public final class BackUpHelper
         }
         else
         {
-            Log.getLogger().warn("Colony is null, creating new colony!");
+            Log.getLogger().warn("Colony is missing, loading backup!");
             final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null).addColony(colony);

@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
@@ -212,6 +212,7 @@ public class HappinessData
 
         final int numDeaths = tagCompound.getInt(TAG_TOTAL_DEATH_MODIFIER);
         final ListNBT deathTagList = tagCompound.getList(TAG_DEATH_MODIFIER, Constants.NBT.TAG_COMPOUND);
+        deathModifier.clear();
         for (int i = 0; i < numDeaths; ++i)
         {
             final CompoundNBT deathCompound = deathTagList.getCompound(i);
