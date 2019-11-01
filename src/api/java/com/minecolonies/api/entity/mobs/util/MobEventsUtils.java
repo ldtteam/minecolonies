@@ -13,6 +13,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +89,31 @@ public final class MobEventsUtils
         }
 
         BarbarianEventUtils.barbarianEvent(world, colony, targetSpawnPoint, raidNumber, horde);
+    }
+
+    /**
+     * Checks if a raid is possible
+     */
+    public static boolean shouldRaid(final IColony colony)
+    {
+        return colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
+              && Configurations.gameplay.doBarbariansSpawn
+              && colony.getRaiderManager().canHaveRaiderEvents()
+                 && !colony.getPackageManager().getImportantColonyPlayers().isEmpty()
+                 && MobEventsUtils.isItTimeToRaid(colony.getWorld(), colony);
+    }
+
+    /**
+     * Try to start a raid on a colony
+     *
+     * @param colony colony to raid
+     */
+    public static void tryToRaidColony(final IColony colony)
+    {
+        if (shouldRaid(colony))
+        {
+            MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+        }
     }
 
     /**
@@ -253,7 +279,7 @@ public final class MobEventsUtils
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
+                      colony.getImportantMessageEntityPlayers(),
                       "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);

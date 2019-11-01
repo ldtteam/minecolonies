@@ -1,10 +1,10 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,10 +106,10 @@ public interface IRaiderManager
     void readFromNBT(@NotNull NBTTagCompound compound);
 
     /**
-     * To be executed on each colony world tick.
-     * @param world the ticking world.
+     * Called on colony tick.
+     * @param colony the colony being ticked.
      */
-    void onWorldTick(@NotNull final World world);
+    void onColonyTick(@NotNull final IColony colony);
 
     /**
      * Writes the raider manager to NBT.
