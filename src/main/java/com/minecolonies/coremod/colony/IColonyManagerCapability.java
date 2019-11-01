@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,11 +15,11 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MISSING_CHUNKS;
 
 /**
  *
@@ -159,11 +162,42 @@ public interface IColonyManagerCapability
         public void readNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
                 @Nullable final Direction side, @NotNull final INBT nbt)
         {
-            if(nbt instanceof CompoundNBT)
+            if (nbt instanceof CompoundNBT)
             {
                 final CompoundNBT compound = (CompoundNBT) nbt;
-                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).filter(Objects::nonNull).forEach(instance::addColony);
+
+                // Load all colonies from Nbt
+                Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
+                for (final INBT tag : compound.getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                {
+                    final IColony colony = Colony.loadColony((CompoundNBT) tag, null);
+                    if (colony != null)
+                    {
+                        tempColonies.put(colony.getCenter(), colony);
+                        instance.addColony(colony);
+                    }
+                }
+
+                // Check colonies for duplicates causing issues.
+                for (final BlockPos pos : tempColonies.keySet())
+                {
+                    // Check if any position has more than one colony
+                    if (tempColonies.get(pos).size() > 1)
+                    {
+                        Log.getLogger().warn("Detected duplicate colonies which are at the same position:");
+                        for (final IColony colony : tempColonies.get(pos))
+                        {
+                            Log.getLogger()
+                              .warn(
+                                "ID: " + colony.getID() + " name:" + colony.getName() + " citizens:" + colony.getCitizenManager().getCitizens().size() + " building count:" + colony
+                                                                                                                                                                                .getBuildingManager()
+                                                                                                                                                                                .getBuildings()
+                                                                                                                                                                                .size());
+                        }
+                        Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
+                    }
+                }
+
                 instance.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
             }
         }
