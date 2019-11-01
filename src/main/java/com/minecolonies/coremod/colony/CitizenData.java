@@ -818,7 +818,7 @@ public class CitizenData implements ICitizenData
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
 
-        BlockPosUtil.writeToByteBuf(buf, lastPosition);
+        BlockPosUtil.writeToByteBuf(buf, lastPosition == null ? BlockPos.ORIGIN : lastPosition);
     }
 
     /**

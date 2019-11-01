@@ -2,12 +2,14 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.MineColonies;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.Set;
 
@@ -24,25 +26,6 @@ public final class ColonyUtils
         /*
          * Intentionally left empty.
          */
-    }
-
-    /**
-     * Checks if the colony has new subscribers.
-     *
-     * @param oldSubscribers old subscribers.
-     * @param subscribers    all subscribers.
-     * @return true if so.
-     */
-    public static boolean hasNewSubscribers(@NotNull final Set<EntityPlayerMP> oldSubscribers, @NotNull final Set<EntityPlayerMP> subscribers)
-    {
-        for (final EntityPlayerMP player : subscribers)
-        {
-            if (!oldSubscribers.contains(player))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -71,5 +54,19 @@ public final class ColonyUtils
         final int z2 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
 
         return new Tuple<>(new Tuple<>(x1, x2), new Tuple<>(z1, z2));
+    }
+
+    /**
+     * Sends a message to all given players.
+     *
+     * @param players the list of players
+     * @param message the message to send
+     */
+    public static void sendToAll(Set<EntityPlayerMP> players, IMessage message)
+    {
+        for (final EntityPlayer player : players)
+        {
+            MineColonies.getNetwork().sendTo(message, (EntityPlayerMP) player);
+        }
     }
 }
