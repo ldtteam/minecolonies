@@ -16,16 +16,15 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.EnchanterWorkerSetMessage;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.AbstractInt2BooleanMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -54,17 +53,27 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     /**
      * The max quantity.
      */
-    private static final String TAG_QUANTITY = "quantity";
+    private static final String TAG_QUANTITY      = "quantity";
+
+    /**
+     * Tag to store if a building was gathered already.
+     */
+    private static final String TAG_GATHERED_ALREADY = "gatheredalready";
 
     /**
      * List of buildings the enchanter gathers experience from.
      */
-    private Set<BlockPos> buildingToGatherFrom = new HashSet<>();
+    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap();
 
     /**
      * The max daily drain per worker.
      */
     private int dailyDrain = 1;
+
+    /**
+     * The random variable.
+     */
+    private Random random = new Random();
 
     /**
      * The constructor of the building.
@@ -116,7 +125,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
      */
     public void addWorker(final BlockPos blockPos)
     {
-        buildingToGatherFrom.add(blockPos);
+        buildingToGatherFrom.put(blockPos, false);
         markDirty();
     }
 
@@ -150,22 +159,50 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     }
 
     @Override
+    public void onWakeUp()
+    {
+        final Set<BlockPos> keys = buildingToGatherFrom.keySet();
+        buildingToGatherFrom.clear();
+        keys.forEach(k -> buildingToGatherFrom.put(k, false));
+    }
+
+    @Override
     public void deserializeNBT(final NBTTagCompound compound)
     {
         super.deserializeNBT(compound);
         buildingToGatherFrom.clear();
-        buildingToGatherFrom.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
-                                      .map(comp -> BlockPosUtil.readFromNBT(comp, TAG_POS))
-                                      .collect(Collectors.toList()));
+        NBTUtils.streamCompound(compound.getTagList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
+                                      .map(this::deserializeListElement)
+                                      .forEach(t -> buildingToGatherFrom.put(t.getFirst(), t.getSecond()));
         dailyDrain = compound.getInteger(TAG_QUANTITY);
+    }
+
+    /**
+     * Helper to deserialize a list element from nbt.
+     * @param nbtTagCompound the compound to deserialize from.
+     * @return the resulting blockPos/boolean tuple.
+     */
+    private Tuple<BlockPos, Boolean> deserializeListElement(final NBTTagCompound nbtTagCompound)
+    {
+        final BlockPos pos = BlockPosUtil.readFromNBT(nbtTagCompound, TAG_POS);
+        final boolean gatheredAlready = nbtTagCompound.getBoolean(TAG_GATHERED_ALREADY);
+        return new Tuple<>(pos, gatheredAlready);
     }
 
     @Override
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound compound = super.serializeNBT();
-        compound.setTag(TAG_GATHER_LIST, buildingToGatherFrom.stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(),TAG_POS, pos)).collect(NBTUtils.toNBTTagList()));
+        compound.setTag(TAG_GATHER_LIST, buildingToGatherFrom.entrySet().stream().map(this::serializeListElement).collect(NBTUtils.toNBTTagList()));
         compound.setInteger(TAG_QUANTITY, dailyDrain);
+        return compound;
+    }
+
+    private NBTTagCompound serializeListElement(final Map.Entry<BlockPos, Boolean> entry)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        BlockPosUtil.writeToNBT(compound,TAG_POS, entry.getKey());
+        compound.setBoolean(TAG_GATHERED_ALREADY, entry.getValue());
         return compound;
     }
 
@@ -174,7 +211,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
         buf.writeInt(buildingToGatherFrom.size());
-        for (final BlockPos pos : buildingToGatherFrom)
+        for (final BlockPos pos : buildingToGatherFrom.keySet())
         {
             BlockPosUtil.writeToByteBuf(buf, pos);
         }
@@ -187,7 +224,31 @@ public class BuildingEnchanter extends AbstractBuildingWorker
      */
     public Set<BlockPos> getBuildingsToGatherFrom()
     {
-        return new HashSet<>(buildingToGatherFrom);
+        return new HashSet<>(buildingToGatherFrom.keySet());
+    }
+
+    /**
+     * Get a random worker building id to gather xp from.
+     * @return the unique pos id of it.
+     */
+    @Nullable
+    public BlockPos getRandomBuildingToDrainFrom()
+    {
+        final List<BlockPos> buildings = buildingToGatherFrom.entrySet().stream().filter(k -> !k.getValue()).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (buildings.isEmpty())
+        {
+            return null;
+        }
+        return buildings.get(random.nextInt(buildings.size()));
+    }
+
+    /**
+     * Set the building as gathered.
+     * @param pos the pos of the building.
+     */
+    public void setAsGathered(final BlockPos pos)
+    {
+        buildingToGatherFrom.put(pos, true);
     }
 
     /**

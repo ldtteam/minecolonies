@@ -1,18 +1,27 @@
 package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -37,6 +46,27 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      * Predicate to define an ancient tome which can be enchanted.
      */
     private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.getItem() == ModItems.ancientTome;
+
+    /**
+     * Min distance to drain from citizen.
+     */
+    private static final long MIN_DISTANCE_TO_DRAIN = 5;
+
+    /**
+     * Max progress ticks until drainage is complete (per Level).
+     */
+    private static final int MAX_PROGRESS_TICKS = 5;
+
+    /**
+     * The citizen entity to gather from.
+     */
+    private ICitizenData citizenToGatherFrom = null;
+
+    /**
+     * Variable to check if the draining is in progress.
+     * And at which tick it is.
+     */
+    private int progressTicks = 0;
 
     /**
      * Creates the abstract part of the AI.
@@ -74,13 +104,19 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
         if (worker.getCitizenExperienceHandler().getLevel() < getOwnBuilding().getBuildingLevel())
         {
-            if (getOwnBuilding(BuildingEnchanter.class).getBuildingsToGatherFrom().isEmpty())
+            final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
+            if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
                 chatSpamFilter.talkWithoutSpam(NO_WORKERS_TO_DRAIN_SET);
                 return IDLE;
             }
 
-            //todo random draw (check if worker was drained today already).
+            final BlockPos posToDrainFrom = enchanterBuilding.getRandomBuildingToDrainFrom();
+            if (posToDrainFrom == null)
+            {
+                return IDLE;
+            }
+            job.setBuildingToDrainFrom(posToDrainFrom);
             return ENCHANTER_DRAIN;
         }
 
@@ -100,24 +136,121 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         return ENCHANT;
     }
 
+    /**
+     * Actually do the enchanting.
+     * Making some great effects for some time and then apply a random enchantment.
+     * Reduce own levels depending on the found enchantment.
+     * @return the next state to go to.
+     */
     private IAIState enchant()
     {
+        //todo make particle effects
+
+        //todo reuse progress variable
+
         //todo enchant
-        return null;
+        return getState();
     }
 
+    /**
+     * Gather experience from a worker.
+     * Go to the hut of the worker.
+     * Wait for the worker.
+     * Drain, and then return to work building.
+     * @return next state to go to.
+     */
     private IAIState gatherAndDrain()
     {
-        //todo go to worker place
-        //todo wait there for worker
-        //todo if not appear go back
-        //todo if appear start
+        if (job.getPosToDrainFrom() == null)
+        {
+            return IDLE;
+        }
+
+        if (walkToBlock(job.getPosToDrainFrom()))
+        {
+            return DECIDE;
+        }
+
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
+        if (buildingWorker == null)
+        {
+            resetDraining();
+            getOwnBuilding(BuildingEnchanter.class).removeWorker(job.getPosToDrainFrom());
+            return IDLE;
+        }
+
+        if (citizenToGatherFrom == null)
+        {
+            final List<Optional<AbstractEntityCitizen>> workers = buildingWorker.getAssignedEntities().stream()
+                                                                    .filter(e -> e.isPresent() && e.get().getCitizenData().getLevel() > 0)
+                                                                    .collect(Collectors.toList());
+            final Optional<AbstractEntityCitizen> citizen;
+            if (workers.size() > 1)
+            {
+                citizen = workers.get(new Random().nextInt(workers.size()));
+            }
+            else
+            {
+                if (workers.isEmpty())
+                {
+                    resetDraining();
+                    return DECIDE;
+                }
+                citizen = workers.get(0);
+            }
+
+            citizen.ifPresent(abstractEntityCitizen -> citizenToGatherFrom = abstractEntityCitizen.getCitizenData());
+            progressTicks = 0;
+            return getState();
+        }
+
+        if (!citizenToGatherFrom.getCitizenEntity().isPresent())
+        {
+            citizenToGatherFrom = null;
+            return getState();
+        }
+
+        if (progressTicks == 0)
+        {
+            // If worker is too far away wait.
+            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
+            {
+                return getState();
+            }
+
+            if (!job.incrementWaitingTicks())
+            {
+                resetDraining();
+                return DECIDE;
+            }
+        }
+
+        if (progressTicks >= MAX_PROGRESS_TICKS * Math.max(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel()))
+        {
+            resetDraining();
+            return DECIDE;
+        }
+        progressTicks++;
+
+
         //todo start drainage with effects travelling between both
-        //todo stop workers AI for a moment there (entitycitizen)=
+
         //todo add random enchant to worker drained from
+
         //todo remove 50% of xp only and give us full (make this configurable)
-        //todo set worker as gathered today (entityCitizen)
-        return null;
+
+        return getState();
+    }
+
+    /**
+     * Helper method to reset all variables of the draining.
+     */
+    private void resetDraining()
+    {
+        getOwnBuilding(BuildingEnchanter.class).setAsGathered(job.getPosToDrainFrom());
+        citizenToGatherFrom = null;
+        job.setBuildingToDrainFrom(null);
+        progressTicks = 0;
     }
 
 }

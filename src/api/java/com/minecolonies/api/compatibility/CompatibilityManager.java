@@ -455,7 +455,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (random.nextInt(ONE_HUNDRED_PERCENT) <= Configurations.gameplay.luckyBlockChance)
         {
-            return luckyOres.get(random.nextInt(luckyOres.size() + 1)).getItemStack().copy();
+            return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
     }
