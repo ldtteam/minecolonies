@@ -947,12 +947,12 @@ com.minecolonies.coremod.gui.placement.direct=Всё равно поставит
 com.minecolonies.coremod.gui.townHall.population.childs=Дети: %d
 
 tile.minecolonies.composted_dirt.name=Composted Dirt
-com.minecolonies.coremod.composted_dirt.player_use_message=This block can be only used by the Florist worker!
+com.minecolonies.coremod.composted_dirt.player_use_message=Этот блок может быть использован только рабочим-флористом!
 com.minecolonies.coremod.job.florist=Флорист
 tile.minecolonies.blockHutFlorist.name=Цветочный магазин
 com.minecolonies.coremod.gui.workerHuts.florist=Флорист
-com.minecolonies.gui.workerHuts.florist.flowers=Plantables
-com.minecolonies.gui.workerhuts.florist.toolow=The florist currently randomly generates the flowers in the list, upgrade to level 4 or above to select them manually!
+com.minecolonies.gui.workerHuts.florist.flowers=То, что можно посадить
+com.minecolonies.gui.workerhuts.florist.toolow=Флорист в данный момент случайным образом генерирует цветы в списке. Улучшите здание до 4 уровня или выше, чтобы выбирать их вручную!
 com.minecolonies.gui.workerhuts.florist.toomany=Вы можете деактивировать максимум 5 опций. Улучшите до 5 уровня, чтобы ограничений было меньше!
 com.minecolonies.coremod.florist.noplantground=У меня отсутствует компостная земля, на которой можно сажать! Пожалуйста, почините или улучшите мое здание!
 com.minecolonies.coremod.florist.nocompost=Мне нужен компост, чтобы сажать мои цветочки!
