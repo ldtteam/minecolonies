@@ -19,6 +19,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -1425,6 +1426,22 @@ public class CitizenData implements ICitizenData
     public void setJustAte(final boolean justAte)
     {
         this.justAte = justAte;
+    }
+
+    @Override
+    public double drainExperience(final int maxDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double xpDrain = ExperienceUtils.getXPNeededForNextLevel(Math.max(0, entry.getFirst() - maxDrain)) * maxDrain;
+            final double newXp = entry.getSecond() - (xpDrain / Configurations.gameplay.enchanterExperienceMultiplier);
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            return xpDrain;
+        }
+        return 0;
     }
 
     @Override

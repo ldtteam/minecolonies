@@ -611,6 +611,9 @@ public class Configurations
 
         @Config.Comment("Disable citizen voices. [Default: false]")
         public boolean disableCitizenVoices = false;
+
+        @Config.Comment("Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]")
+        public double enchanterExperienceMultiplier = 2;
     }
 
     public static class Compatibility

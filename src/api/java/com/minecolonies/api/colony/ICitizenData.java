@@ -480,4 +480,11 @@ public interface ICitizenData extends INBTSerializable<NBTTagCompound>
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
+
+    /**
+     * Drain experience from the worker.
+     * @param maxDrain the max to drain.
+     * @return the drained amount x2.
+     */
+    double drainExperience(int maxDrain);
 }

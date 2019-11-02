@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -187,7 +188,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final Optional<AbstractEntityCitizen> citizen;
             if (workers.size() > 1)
             {
-                citizen = workers.get(new Random().nextInt(workers.size()));
+                citizen = workers.get(worker.getRandom().nextInt(workers.size()));
             }
             else
             {
@@ -225,7 +226,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             }
         }
 
-        if (progressTicks >= MAX_PROGRESS_TICKS * Math.max(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel()))
+        final int maxDrain = Math.max(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
+        if (progressTicks >= MAX_PROGRESS_TICKS * maxDrain)
         {
             resetDraining();
             return DECIDE;
@@ -233,12 +235,24 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         progressTicks++;
 
 
+
         //todo start drainage with effects travelling between both
 
-        //todo add random enchant to worker drained from
+        final int size = citizenToGatherFrom.getInventory().getSizeInventory();
+        final int attempts = getOwnBuilding().getBuildingLevel();
 
-        //todo remove 50% of xp only and give us full (make this configurable)
+        for (int i = 0; i < attempts; i++)
+        {
+            int randomSlot = worker.getRandom().nextInt(size);
+            final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
+            if (!stack.isEmpty() && stack.isItemEnchantable())
+            {
+                EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, 1, false);
+                break;
+            }
+        }
 
+        worker.getCitizenExperienceHandler().addExperience(citizenToGatherFrom.drainExperience(maxDrain));
         return getState();
     }
 
