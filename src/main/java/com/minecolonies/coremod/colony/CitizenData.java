@@ -1434,11 +1434,14 @@ public class CitizenData implements ICitizenData
         if (job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            final double xpDrain = ExperienceUtils.getXPNeededForNextLevel(Math.max(0, entry.getFirst() - maxDrain)) * maxDrain;
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(maxDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
             final double newXp = entry.getSecond() - (xpDrain / Configurations.gameplay.enchanterExperienceMultiplier);
             final int newLevel = ExperienceUtils.calculateLevel(newXp);
 
             this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
             return xpDrain;
         }
         return 0;

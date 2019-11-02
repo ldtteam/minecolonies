@@ -161,7 +161,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     @Override
     public void onWakeUp()
     {
-        final Set<BlockPos> keys = buildingToGatherFrom.keySet();
+        final Set<BlockPos> keys = new HashSet<>(buildingToGatherFrom.keySet());
         buildingToGatherFrom.clear();
         keys.forEach(k -> buildingToGatherFrom.put(k, false));
     }

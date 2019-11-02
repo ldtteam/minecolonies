@@ -1,26 +1,37 @@
 package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
+import com.minecolonies.coremod.util.ExperienceUtils;
+import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -56,7 +67,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     /**
      * Max progress ticks until drainage is complete (per Level).
      */
-    private static final int MAX_PROGRESS_TICKS = 5;
+    private static final int MAX_PROGRESS_TICKS = 20;
 
     /**
      * The citizen entity to gather from.
@@ -80,12 +91,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         super(job);
         super.registerTargets(
             new AITarget(IDLE, START_WORKING, TICKS_SECOND),
-            new AITarget(DECIDE, this::decide, TICKS_SECOND),
-            new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, TICKS_SECOND),
+          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
+          new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
             new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
-                                                                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
+        worker.getCitizenExperienceHandler()
+          .setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma() + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -121,8 +133,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return ENCHANTER_DRAIN;
         }
 
-        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), IS_ANCIENT_TOME);
-        if (amountOfCompostInInv <= 0)
+        final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), IS_ANCIENT_TOME);
+        if (ancientTomesInInv <= 0)
         {
             final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfCompostInBuilding > 0)
@@ -145,12 +157,57 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      */
     private IAIState enchant()
     {
-        //todo make particle effects
+        final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), IS_ANCIENT_TOME);
+        if (ancientTomesInInv < 1)
+        {
+            return DECIDE;
+        }
 
-        //todo reuse progress variable
+        if (progressTicks++ < MAX_PROGRESS_TICKS * getOwnBuilding().getBuildingLevel())
+        {
+            MineColonies.getNetwork().sendToAllTracking(
+              new CircleParticleEffectMessage(
+                worker.getPositionVector().add(0, 2, 0),
+                EnumParticleTypes.ENCHANTMENT_TABLE,
+                progressTicks), worker);
 
-        //todo enchant
-        return getState();
+            MineColonies.getNetwork().sendToAllTracking(
+              new CircleParticleEffectMessage(
+                worker.getPositionVector().add(0, 1.5, 0),
+                EnumParticleTypes.ENCHANTMENT_TABLE,
+                progressTicks), worker);
+
+            MineColonies.getNetwork().sendToAllTracking(
+              new CircleParticleEffectMessage(
+                worker.getPositionVector().add(0, 1, 0),
+                EnumParticleTypes.ENCHANTMENT_TABLE,
+                progressTicks), worker);
+
+            if (worker.getRandom().nextBoolean())
+            {
+                worker.swingArm(EnumHand.MAIN_HAND);
+            }
+            else
+            {
+                worker.swingArm(EnumHand.OFF_HAND);
+            }
+            return getState();
+        }
+
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), IS_ANCIENT_TOME);
+        if (slot != -1)
+        {
+            final Tuple<String, Integer> enchantment = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantment(getOwnBuilding().getBuildingLevel());
+            final ICitizenData data = worker.getCitizenData();
+            if (data != null)
+            {
+                data.drainExperience(enchantment.getSecond());
+                worker.getCitizenExperienceHandler().updateLevel();
+                new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(enchantment.getFirst()), enchantment.getSecond())));
+            }
+        }
+        progressTicks = 0;
+        return IDLE;
     }
 
     /**
@@ -169,7 +226,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
         if (walkToBlock(job.getPosToDrainFrom()))
         {
-            return DECIDE;
+            return getState();
         }
 
         final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
@@ -216,27 +273,55 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             // If worker is too far away wait.
             if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
             {
+                if (!job.incrementWaitingTicks())
+                {
+                    resetDraining();
+                    return DECIDE;
+                }
                 return getState();
             }
+        }
 
-            if (!job.incrementWaitingTicks())
-            {
-                resetDraining();
-                return DECIDE;
-            }
+        progressTicks++;
+        // If worker is too far away wait.
+        if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
+        {
+            return getState();
         }
 
         final int maxDrain = Math.max(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
-        if (progressTicks >= MAX_PROGRESS_TICKS * maxDrain)
+        if (progressTicks < MAX_PROGRESS_TICKS * maxDrain)
         {
-            resetDraining();
-            return DECIDE;
+            final Vec3d start = worker.getPositionVector().add(0,2,0);
+            final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
+
+            MineColonies.getNetwork().sendToAllTracking(
+              new StreamParticleEffectMessage(
+                start,
+                goal,
+                EnumParticleTypes.ENCHANTMENT_TABLE,
+                progressTicks%MAX_PROGRESS_TICKS,
+                MAX_PROGRESS_TICKS), worker);
+
+            MineColonies.getNetwork().sendToAllTracking(
+              new CircleParticleEffectMessage(
+                start,
+                EnumParticleTypes.VILLAGER_HAPPY,
+                progressTicks), worker);
+
+            WorkerUtil.faceBlock(new BlockPos(goal), worker);
+
+            return getState();
         }
-        progressTicks++;
 
-
-
-        //todo start drainage with effects travelling between both
+        if (worker.getRandom().nextBoolean())
+        {
+            worker.swingArm(EnumHand.MAIN_HAND);
+        }
+        else
+        {
+            worker.swingArm(EnumHand.OFF_HAND);
+        }
 
         final int size = citizenToGatherFrom.getInventory().getSizeInventory();
         final int attempts = getOwnBuilding().getBuildingLevel();
@@ -252,8 +337,16 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             }
         }
 
-        worker.getCitizenExperienceHandler().addExperience(citizenToGatherFrom.drainExperience(maxDrain));
-        return getState();
+        worker.getCitizenData().addExperience(citizenToGatherFrom.drainExperience(maxDrain));
+        while (ExperienceUtils.getXPNeededForNextLevel(worker.getCitizenData().getLevel()) < worker.getCitizenData().getExperience())
+        {
+            worker.getCitizenData().levelUp();
+        }
+        worker.getCitizenExperienceHandler().updateLevel();
+        worker.getCitizenData().markDirty();
+
+        resetDraining();
+        return IDLE;
     }
 
     /**

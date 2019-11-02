@@ -294,6 +294,8 @@ public class MineColonies
         getNetwork().registerMessage(LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(StreamParticleEffectMessage.class, StreamParticleEffectMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(CircleParticleEffectMessage.class, CircleParticleEffectMessage.class, ++id, Side.CLIENT);
 
         //JEI Messages
         getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, ++id, Side.SERVER);
