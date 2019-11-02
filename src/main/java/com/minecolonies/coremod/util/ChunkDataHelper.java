@@ -286,18 +286,18 @@ public final class ChunkDataHelper
       final World world,
       final BlockPos center)
     {
-        final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, colonyId, center);
-
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
             return;
         }
+
+        final Chunk centralChunk = world.getChunk(center);
+        loadChunkAndAddData(world, center, add, colonyId, center, chunkManager);
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
 
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
         if (colony == null)
@@ -320,7 +320,7 @@ public final class ChunkDataHelper
                 {
                     continue;
                 }
-                if (loadChunkAndAddData(world, pos, add, colonyId, center))
+                if (loadChunkAndAddData(world, pos, add, colonyId, center, chunkManager))
                 {
                     continue;
                 }
@@ -356,18 +356,18 @@ public final class ChunkDataHelper
       final int buffer,
       final World world)
     {
-        final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, colonyId);
-
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
             return;
         }
+
+        final Chunk centralChunk = world.getChunk(center);
+        loadChunkAndAddData(world, center, add, colonyId, chunkManager);
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
 
         final int maxRange = range * 2 + buffer;
         int additionalChunksToLoad = 0;
@@ -382,7 +382,7 @@ public final class ChunkDataHelper
 
                 if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY
                       && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
-                      && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId))
+                      && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId, chunkManager))
                 {
                     continue;
                 }
@@ -442,7 +442,7 @@ public final class ChunkDataHelper
      * @param id    the id.
      * @return true if successful.
      */
-    public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id)
+    public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final IChunkmanagerCapability chunkManager)
     {
         if (!world.isBlockLoaded(pos))
         {
@@ -459,6 +459,13 @@ public final class ChunkDataHelper
         if (cap == null)
         {
             return false;
+        }
+
+        // Before directly adding cap data, apply data from our cache.
+        final ChunkLoadStorage chunkLoadStorage = chunkManager.getChunkStorage(chunk.x,chunk.z);
+        if (chunkLoadStorage != null)
+        {
+            chunkLoadStorage.applyToCap(cap);
         }
 
         if (add)
@@ -493,7 +500,7 @@ public final class ChunkDataHelper
      * @param buildingPos the building pos.
      * @return true if successful.
      */
-    public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final BlockPos buildingPos)
+    public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final BlockPos buildingPos, final IChunkmanagerCapability chunkManager)
     {
         if (!world.isBlockLoaded(pos))
         {
@@ -505,6 +512,13 @@ public final class ChunkDataHelper
         if (cap == null)
         {
             return false;
+        }
+
+        // Before directly adding cap data, apply data from our cache.
+        final ChunkLoadStorage chunkLoadStorage = chunkManager.getChunkStorage(chunk.x,chunk.z);
+        if (chunkLoadStorage != null)
+        {
+            chunkLoadStorage.applyToCap(cap);
         }
 
         if (add)

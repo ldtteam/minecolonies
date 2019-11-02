@@ -914,6 +914,7 @@ public final class ColonyManager implements IColonyManager
                     Log.getLogger().info(String.format("Server UUID %s", serverUUID));
                 }
                 loaded = true;
+                BackUpHelper.loadMissingColonies();
             }
 
             for (@NotNull final IColony c : getColonies(world))

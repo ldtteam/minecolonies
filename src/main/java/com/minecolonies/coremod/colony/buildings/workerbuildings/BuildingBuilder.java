@@ -188,7 +188,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
         final List<WorkOrderBuildDecoration> list = new ArrayList<>();
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getPosition()));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class, getPosition()));
+        // WorkOrderBuildDecoration is the superclass of BuildBuilding and thus returns both
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
