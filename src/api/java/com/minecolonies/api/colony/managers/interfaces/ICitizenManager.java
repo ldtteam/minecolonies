@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,14 +29,12 @@ public interface ICitizenManager
 
     /**
      * Sends packages to update the citizens.
-     *  @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     * @param subscribers all subscribers
+     *  @param closeSubscribers    the existing subscribers.
+     * @param newSubscribers new subscribers
      */
     void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
-            final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers);
+      @NotNull final Set<EntityPlayerMP> closeSubscribers,
+      @NotNull final Set<EntityPlayerMP> newSubscribers);
 
     /**
      * Spawn a brand new Citizen.
@@ -159,10 +157,10 @@ public interface ICitizenManager
     void checkCitizensForHappiness();
 
     /**
-     * Actions to execute on a specific world tick event.
-     * @param event the event.
+     * Actions to execute on a colony tick.
+     * @param colony the event.
      */
-    void onWorldTick(final TickEvent.WorldTickEvent event);
+    void onColonyTick(final IColony colony);
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.

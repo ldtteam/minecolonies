@@ -49,6 +49,16 @@ public class ScrollingContainer extends View
         setScrollY(scrollY);
     }
 
+    /**
+     * Compute the height in pixels of the container.
+     */
+    public void setContentHeight(final int size)
+    {
+        contentHeight = size;
+        // Recompute scroll
+        setScrollY(scrollY);
+    }
+
     public int getMaxScrollY()
     {
         return Math.max(0, contentHeight - getHeight());

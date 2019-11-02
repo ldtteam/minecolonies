@@ -18,10 +18,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -42,6 +39,13 @@ public interface IColony
     HappinessData getHappinessData();
 
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
+
+    /**
+     * Returns whether the colony chunks are loaded
+     *
+     * @return true when loaded.
+     */
+    boolean areAllColonyChunksLoaded();
 
     /**
      * Returns the position of the colony.
@@ -176,8 +180,13 @@ public interface IColony
      */
     void removeVisitingPlayer(final EntityPlayer player);
 
+    /**
+     * Get the players in the colony which should receive the message.
+     *
+     * @return list of players
+     */
     @NotNull
-    List<EntityPlayer> getMessageEntityPlayers();
+    Set<EntityPlayer> getMessageEntityPlayers();
 
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 
@@ -308,6 +317,13 @@ public interface IColony
 
     void increaseBoughtCitizenCost();
 
+    /**
+     * Returns a set of players receiving important messages for the colony.
+     * @return set of players.
+     */
+    @NotNull
+    Set<EntityPlayer> getImportantMessageEntityPlayers();
+
     boolean isManualHiring();
 
     boolean isManualHousing();
@@ -325,4 +341,25 @@ public interface IColony
      * Sets whether the colony has a child.
      */
     void updateHasChilds();
+
+    /**
+     * Adds a loaded chunk to the colony list
+     *
+     * @param chunkPos chunk to add
+     */
+    void addLoadedChunk(long chunkPos);
+
+    /**
+     * Adds a chunk from the colony list
+     *
+     * @param chunkPos chunk to remove
+     */
+    void removeLoadedChunk(long chunkPos);
+
+    /**
+     * Returns the amount of loaded chunks
+     *
+     * @return amount of chunks
+     */
+    int getLoadedChunkCount();
 }

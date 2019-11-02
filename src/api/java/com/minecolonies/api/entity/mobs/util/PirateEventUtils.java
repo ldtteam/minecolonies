@@ -73,7 +73,7 @@ public final class PirateEventUtils
         InstantStructurePlacer.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
         loadSpawners(world, targetSpawnPoint, shipSize);
         LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
+          colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE_PIRATE + raidNumber, colony.getName());
     }
 
