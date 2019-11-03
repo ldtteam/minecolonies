@@ -487,4 +487,10 @@ public interface ICitizenData extends INBTSerializable<NBTTagCompound>
      * @return the drained amount x2.
      */
     double drainExperience(int maxDrain);
+
+    /**
+     * Directly spend a cetain number of experiment levels.
+     * @param levels the levels to spend.
+     */
+    void spendLevels(int levels);
 }

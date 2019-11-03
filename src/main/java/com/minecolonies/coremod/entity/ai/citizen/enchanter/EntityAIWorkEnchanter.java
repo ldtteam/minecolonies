@@ -215,7 +215,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                     return IDLE;
                 }
 
-                data.drainExperience(enchantment.getSecond());
+                data.spendLevels(enchantment.getSecond());
                 worker.getCitizenExperienceHandler().updateLevel();
 
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(ModItems.ancientTome));

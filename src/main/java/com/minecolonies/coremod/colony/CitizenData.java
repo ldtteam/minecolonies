@@ -1429,12 +1429,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public double drainExperience(final int maxDrain)
+    public double drainExperience(final int levelDrain)
     {
         if (job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            final double drain = ExperienceUtils.getXPNeededForNextLevel(maxDrain - 1);
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
 
             final double xpDrain = Math.min(drain, entry.getSecond());
             final double newXp = entry.getSecond() - (xpDrain / Configurations.gameplay.enchanterExperienceMultiplier);
@@ -1445,6 +1445,23 @@ public class CitizenData implements ICitizenData
             return xpDrain;
         }
         return 0;
+    }
+
+    @Override
+    public void spendLevels(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
+            final double newXp = entry.getSecond() - xpDrain;
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+        }
     }
 
     @Override
