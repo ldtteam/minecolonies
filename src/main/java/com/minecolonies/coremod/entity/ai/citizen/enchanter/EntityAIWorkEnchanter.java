@@ -140,8 +140,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
         if (ancientTomesInInv <= 0)
         {
-            final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
-            if (amountOfCompostInBuilding > 0)
+            final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
+            if (amountOfAncientTomes > 0)
             {
                 needsCurrently = IS_ANCIENT_TOME;
                 return GATHERING_REQUIRED_MATERIALS;
