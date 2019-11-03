@@ -300,12 +300,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         }
 
         progressTicks++;
-        // If worker is too far away wait.
-        if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
-        {
-            return getState();
-        }
-
         final int maxDrain = Math.min(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
         if (progressTicks < MAX_PROGRESS_TICKS * maxDrain)
         {
