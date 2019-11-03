@@ -95,8 +95,8 @@ public class UpdateChunkRangeCapabilityMessage extends AbstractMessage<UpdateChu
                 final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
                 if (cap != null)
                 {
-                    cap.setOwningColony(c.getSecond());
-                    cap.addColony(c.getSecond());
+                    cap.setOwningColony(c.getSecond(), chunk);
+                    cap.addColony(c.getSecond(), chunk);
                 }
             }
         }

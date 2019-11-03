@@ -3,6 +3,7 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -203,37 +204,38 @@ public class ChunkLoadStorage
      * Apply this ChunkLoadStorage to a capability.
      * @param cap the capability to apply it to.
      */
-    public void applyToCap(final IColonyTagCapability cap)
+    public void applyToCap(final IColonyTagCapability cap, final Chunk chunk)
     {
         if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
             if (this.getColonyId() > 0)
             {
-                cap.setOwningColony(this.colonyId);
+                cap.setOwningColony(this.colonyId, chunk);
             }
 
             for (final int tempColonyId : coloniesToAdd)
             {
-                cap.addColony(tempColonyId);
+                cap.addColony(tempColonyId, chunk);
             }
 
             for (final int tempColonyId : coloniesToRemove)
             {
-                cap.removeColony(tempColonyId);
+                cap.removeColony(tempColonyId, chunk);
             }
         }
         else
         {
             for (final Tuple<Integer, BlockPos> tuple : unClaimingBuilding)
             {
-                cap.removeBuildingClaim(tuple.getFirst(), tuple.getSecond());
+                cap.removeBuildingClaim(tuple.getFirst(), tuple.getSecond(), chunk);
             }
 
             for (final Tuple<Integer, BlockPos> tuple : claimingBuilding)
             {
-                cap.addBuildingClaim(tuple.getFirst(), tuple.getSecond());
+                cap.addBuildingClaim(tuple.getFirst(), tuple.getSecond(), chunk);
             }
         }
+        chunk.markDirty();
     }
 
     /**

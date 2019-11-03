@@ -96,11 +96,11 @@ public class UpdateChunkCapabilityMessage extends AbstractMessage<UpdateChunkCap
 
             if (cap.getOwningColony() != message.owningColonyId)
             {
-                cap.reset();
-                cap.setOwningColony(message.owningColonyId);
+                cap.reset(chunk);
+                cap.setOwningColony(message.owningColonyId, chunk);
                 for (final int id : message.closeColonies)
                 {
-                    cap.addColony(id);
+                    cap.addColony(id, chunk);
                 }
             }
         }
