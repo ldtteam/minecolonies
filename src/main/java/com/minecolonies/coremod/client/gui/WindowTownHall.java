@@ -23,6 +23,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -635,6 +636,20 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = splitString[length - 1].toLowerCase(Locale.ENGLISH);
                 jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
             }
+		}
+
+        final Map<String, Integer> jobMaxCountMap = new HashMap<>();
+        for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
+        {
+            if (!building.isBuilding() && building instanceof AbstractBuildingWorker.View)
+            {
+                final String buildingName = building.getSchematicName().toLowerCase();
+                if (jobCountMap.get(buildingName) == null)
+                {
+                    jobCountMap.put(buildingName, 0);
+                }
+                jobMaxCountMap.put(buildingName, jobMaxCountMap.get(buildingName) == null ? 1 : (jobMaxCountMap.get(buildingName) + 1));
+            }
         }
 
         final DecimalFormat df = new DecimalFormat("#.#");
@@ -693,7 +708,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = entry.getKey();
                 final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
                 final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+					"com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue(), jobMaxCountMap.get(job));
                 label.setLabelText(numberOfWorkers);
                 jobCountMap.remove(entry.getKey());
             }
