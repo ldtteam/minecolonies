@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -93,7 +94,7 @@ public class CitizenManager implements ICitizenManager
     public void read(@NotNull final CompoundNBT compound)
     {
         maxCitizens = compound.getInt(TAG_MAX_CITIZENS);
-        potentialMaxCitizens = compound.getInteger(TAG_POTENTIAL_MAX_CITIZENS);
+        potentialMaxCitizens = compound.getInt(TAG_POTENTIAL_MAX_CITIZENS);
 
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
@@ -116,7 +117,7 @@ public class CitizenManager implements ICitizenManager
     public void write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
-        compound.setInteger(TAG_POTENTIAL_MAX_CITIZENS, potentialMaxCitizens);
+        compound.putInt(TAG_POTENTIAL_MAX_CITIZENS, potentialMaxCitizens);
 
         @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
         compound.put(TAG_CITIZENS, citizenTagList);
@@ -360,7 +361,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getPotentialMaxCitizens()
     {
-        return Math.min(potentialMaxCitizens, Configurations.gameplay.maxCitizenPerColony);
+        return Math.min(potentialMaxCitizens, MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxCitizenPerColony.get());
     }
 
     /**

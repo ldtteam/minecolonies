@@ -131,7 +131,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher.registerBlockItem(registry, properties);
         ModBlocks.blockHutSifter.registerBlockItem(registry, properties);
         ModBlocks.blockHutFlorist.registerBlockItem(registry, properties);
-        ModBlocks.blockHutEnchanter.registerItemBlock(registry);
+        ModBlocks.blockHutEnchanter.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);

@@ -42,7 +42,8 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
         super(type);
     }
 
-    public void update()
+    @Override
+    public void tick()
     {
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;

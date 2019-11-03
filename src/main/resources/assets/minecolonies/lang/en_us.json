@@ -1141,7 +1141,8 @@
   "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
   "block.minecolonies.blockhutflorist": "Flower Shop",
 
-  "tile.minecolonies.blockhutenchanter.name": "Enchanter",
+  "block.minecolonies.blockhutenchanter": "Enchanter",
+  "block.minecolonies.blockhutenchanter.name": "Enchanter",
   "com.minecolonies.coremod.job.enchanter": "Enchanter",
   "com.minecolonies.coremod.gui.workerhuts.enchanter": "Enchanter,",
   "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather, Targets",

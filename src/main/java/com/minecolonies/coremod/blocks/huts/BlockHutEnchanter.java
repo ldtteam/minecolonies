@@ -29,6 +29,8 @@ public class BlockHutEnchanter extends AbstractBlockHut<BlockHutEnchanter>
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return new TileEntityEnchanter();
+        final TileEntityEnchanter building = new TileEntityEnchanter();
+        building.registryName = this.getBuildingEntry().getRegistryName();
+        return building;
     }
 }

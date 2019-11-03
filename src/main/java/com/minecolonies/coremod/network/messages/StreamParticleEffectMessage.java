@@ -8,6 +8,7 @@ import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,8 +97,8 @@ public class StreamParticleEffectMessage implements IMessage
 
         this.stage = buf.readInt();
         this.maxStage = buf.readInt();
+        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
 
-        this.type = EnumParticleTypes.values()[buf.readInt()];
     }
 
     @Override
@@ -113,7 +114,7 @@ public class StreamParticleEffectMessage implements IMessage
 
         buf.writeInt(this.stage);
         buf.writeInt(this.maxStage);
-        this.type.write(buf);
+        buf.writeResourceLocation(this.type.getRegistryName());
     }
 
     @Nullable

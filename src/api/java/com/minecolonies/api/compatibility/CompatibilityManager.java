@@ -798,7 +798,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String enchantment = split[1];
-                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft:",enchantment)).isPresent())
+                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft",enchantment)).isPresent())
                 {
                     Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
                     continue;

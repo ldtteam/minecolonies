@@ -42,7 +42,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     /**
      * Enchanter.
      */
-    private static final String ENCHANTER = "Enchanter";
+    private static final String ENCHANTER = "enchanter";
 
     /**
      * Maximum building level
