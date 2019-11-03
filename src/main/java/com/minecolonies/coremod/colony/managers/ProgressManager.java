@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyProgressType;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -188,6 +188,7 @@ public class ProgressManager implements IProgressManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
+        notifiedProgress.clear();
         final CompoundNBT progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
         final ListNBT progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)

@@ -55,19 +55,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Citizen will try to pick up a certain item.
      *
-     * @param ItemEntity the item he wants to pickup.
+     * @param itemEntity the item he wants to pickup.
      */
     @Override
-    public void tryPickupItemEntity(@NotNull final ItemEntity ItemEntity)
+    public void tryPickupItemEntity(@NotNull final ItemEntity itemEntity)
     {
         if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
         {
-            if (ItemEntity.cannotPickup())
+            if (itemEntity.cannotPickup())
             {
                 return;
             }
 
-            final ItemStack itemStack = ItemEntity.getItem();
+            final ItemStack itemStack = itemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStack);
@@ -81,7 +81,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                   SoundCategory.AMBIENT,
                   (float) DEFAULT_VOLUME,
                   (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
-                citizen.onItemPickup(ItemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                citizen.onItemPickup(itemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 final ItemStack overrulingStack = itemStack.copy();
                 overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
@@ -93,7 +93,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
                 if (ItemStackUtils.isEmpty(resultStack))
                 {
-                    ItemEntity.remove();
+                    itemEntity.remove();
                 }
             }
         }

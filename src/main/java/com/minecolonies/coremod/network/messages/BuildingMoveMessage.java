@@ -243,7 +243,7 @@ public class BuildingMoveMessage implements IMessage
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
             if (colony == null)
             {
-                Log.getLogger().info("No colony for " + player.getName());
+                Log.getLogger().info("No colony for " + player.getName().getFormattedText());
                 return;
             }
 

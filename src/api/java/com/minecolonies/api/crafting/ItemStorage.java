@@ -6,6 +6,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -69,7 +70,7 @@ public class ItemStorage
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().map(g -> g.index).collect(Collectors.toList());
     }
 
     /**

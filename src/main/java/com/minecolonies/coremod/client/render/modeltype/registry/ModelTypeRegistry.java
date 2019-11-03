@@ -41,6 +41,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
         register(BipedModelType.ARCHER_GUARD, new CitizenModel(), new CitizenModel());
         register(BipedModelType.KNIGHT_GUARD, new CitizenModel(), new CitizenModel());
+        register(BipedModelType.CHILD, new ModelEntityChildMale(), new ModelEntityChildFemale());
     }
 
     @Override
