@@ -168,6 +168,6 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
     @Override
     public String getBuildingName()
     {
-        return FLORIST_BUILDING_NAME;
+        return ENCHANTER_BUILDING_NAME;
     }
 }

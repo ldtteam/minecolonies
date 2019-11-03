@@ -328,6 +328,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerHuts.florist";
     @NonNls
+    public static final String ENCHANTER_BUILDING_NAME = "com.minecolonies.coremod.gui.workerHuts.enchanter";
+    @NonNls
     public static final String FLORIST_FLOWER_DESC = "com.minecolonies.gui.workerHuts.florist.flowers";
     @NonNls
     public static final String NO_PLANT_GROUND_FLORIST = "com.minecolonies.coremod.florist.noplantground";
