@@ -297,7 +297,7 @@ public class CitizenManager implements ICitizenManager
                     }
                     else
                     {
-                        newMaxCitizens += potentialMax;
+                        potentialMax += 1;
                     }
                 }
             }
