@@ -469,7 +469,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return new Tuple<>("protection", 1);
         }
 
-        return list.get(random.nextInt(list.size() + 1));
+        return list.get(random.nextInt(list.size()));
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

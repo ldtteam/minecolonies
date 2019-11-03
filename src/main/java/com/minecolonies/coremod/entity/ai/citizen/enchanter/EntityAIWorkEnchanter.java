@@ -70,6 +70,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     private static final int MAX_PROGRESS_TICKS = 20;
 
     /**
+     * Max progress ticks until drainage is complete (per Level).
+     */
+    private static final int MAX_ENCHANTMENT_TICKS = 60 * 5;
+
+    /**
      * The citizen entity to gather from.
      */
     private ICitizenData citizenToGatherFrom = null;
@@ -168,7 +173,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return DECIDE;
         }
 
-        if (progressTicks++ < MAX_PROGRESS_TICKS * getOwnBuilding().getBuildingLevel())
+        if (progressTicks++ < MAX_ENCHANTMENT_TICKS / getOwnBuilding().getBuildingLevel())
         {
             MineColonies.getNetwork().sendToAllTracking(
               new CircleParticleEffectMessage(
