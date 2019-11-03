@@ -121,9 +121,9 @@ tile.minecolonies.blockHutGuardTower.name=NöbetçiKulesi
 tile.blockHutTownHall.messageWorkerDead=%s %s %s üzerinde şu konumda %d %d %d öldü!
 item.minecolonies.scepterGuard.name=Nöbetçi-asası
 item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
-item.minecolonies.scepterLumberjack.usedStart=First position set.
-item.minecolonies.scepterLumberjack.usedEnd=Second position set.
-item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
+item.minecolonies.scepterLumberjack.usedStart=İlk pozisyon belirlendi.
+item.minecolonies.scepterLumberjack.usedEnd=İkinci pozisyon belirlendi.
+item.minecolonies.scepterLumberjack.restrictionTooBig=%s bölgesi çok büyük. Oduncu için gereken maksimum bölge %s blok.
 item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
 
 com.minecolonies.configgui.title=MineColonies Ayarı
