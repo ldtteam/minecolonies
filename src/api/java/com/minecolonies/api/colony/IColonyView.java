@@ -191,6 +191,8 @@ public interface IColonyView extends IColony
      */
     int getCitizenCount();
 
+    int getLimitCitizenCount();
+
     /**
      * Getter for the citizens map.
      *

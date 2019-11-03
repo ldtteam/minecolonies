@@ -23,6 +23,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -123,6 +124,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
 
     /**
+     * Map of building level to the lis tof possible enchantments.
+     */
+    private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
+
+    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
@@ -186,6 +192,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverSifting();
         discoverFood();
         discoverFuel();
+        discoverEnchantments();
 
         discoveredAlready = true;
     }
@@ -453,10 +460,21 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (random.nextInt(ONE_HUNDRED_PERCENT) <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get())
         {
-            Collections.shuffle(luckyOres);
-            return luckyOres.get(0).getItemStack().copy();
+            return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public Tuple<String, Integer> getRandomEnchantment(final int buildingLevel)
+    {
+        final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
+        if (list.isEmpty())
+        {
+            return new Tuple<>("protection", 1);
+        }
+
+        return list.get(random.nextInt(list.size()));
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -761,6 +779,50 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished initiating sifter config");
+    }
+
+    /**
+     * Calculate the crusher modes from the config file.
+     */
+    private void discoverEnchantments()
+    {
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enchantments.get())
+        {
+            final String[] split = string.split(":");
+            if (split.length != 4)
+            {
+                Log.getLogger().warn("Invalid enchantment mode setting: " + string);
+                continue;
+            }
+
+            try
+            {
+                final String enchantment = split[1];
+                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft:",enchantment)).isPresent())
+                {
+                    Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
+                    continue;
+                }
+
+                final int buildingLevel = Integer.parseInt(split[0]);
+                final int enchantmentLevel = Integer.parseInt(split[2]);
+                final int numberOfTickets = Integer.parseInt(split[3]);
+
+                for (int level = buildingLevel; level <= 5; level++)
+                {
+                    final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
+                    for (int i = 0; i < numberOfTickets; i++)
+                    {
+                        list.add(new Tuple<>(enchantment, enchantmentLevel));
+                    }
+                    enchantments.put(level, list);
+                }
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
+            }
+        }
     }
 
     /**

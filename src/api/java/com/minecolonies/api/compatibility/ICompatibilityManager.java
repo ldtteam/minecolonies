@@ -172,4 +172,11 @@ public interface ICompatibilityManager
      * @return the lucky ore.
      */
     ItemStack getRandomLuckyOre();
+
+    /**
+     * Get a random enchantment for a certain building level.
+     * @param buildingLevel the building level.
+     * @return a tuple of enchantment + level.
+     */
+    Tuple<String, Integer> getRandomEnchantment(final int buildingLevel);
 }
