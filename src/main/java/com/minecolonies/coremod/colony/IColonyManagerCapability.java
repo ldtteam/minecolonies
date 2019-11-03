@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,20 +16,19 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- *
  * Capability for the colony tag for chunks
  */
 public interface IColonyManagerCapability
 {
     /**
      * Create a colony and return it.
-     * @param w the world the colony is in.
+     *
+     * @param w   the world the colony is in.
      * @param pos the position of the colony.
      * @return the created colony.
      */
@@ -34,12 +36,14 @@ public interface IColonyManagerCapability
 
     /**
      * Delete a colony with a certain id.
+     *
      * @param id the id of the colony.
      */
     void deleteColony(final int id);
 
     /**
      * Get a colony with a certain id.
+     *
      * @param id the id of the colony.
      * @return the colony or null.
      */
@@ -48,30 +52,35 @@ public interface IColonyManagerCapability
 
     /**
      * Get a list of all colonies.
+     *
      * @return a complete list.
      */
     List<IColony> getColonies();
 
     /**
      * add a new colony to the capability.
+     *
      * @param colony the colony to add.
      */
     void addColony(IColony colony);
 
     /**
      * Set how many chunks are missing to load.
+     *
      * @param amount the amount.
      */
     void setMissingChunksToLoad(int amount);
 
     /**
      * Get how many chunks are missing to load.
+     *
      * @return the amount of chunks.
      */
     int getMissingChunksToLoad();
 
     /**
      * Get the top most id of all colonies.
+     *
      * @return the top most id.
      */
     int getTopID();
@@ -156,14 +165,41 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public void readNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
-                @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
+        public void readNBT(
+          @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
+          @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
         {
-            if(nbt instanceof NBTTagCompound)
+            if (nbt instanceof NBTTagCompound)
             {
                 final NBTTagCompound compound = (NBTTagCompound) nbt;
-                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).filter(Objects::nonNull).forEach(instance::addColony);
+
+                // Load all colonies from Nbt
+                Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
+                for (final NBTBase tag : compound.getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                {
+                    final IColony colony = Colony.loadColony((NBTTagCompound) tag, null);
+                    if (colony != null)
+                    {
+                        tempColonies.put(colony.getCenter(), colony);
+                        instance.addColony(colony);
+                    }
+                }
+
+                // Check colonies for duplicates causing issues.
+                for (final BlockPos pos:tempColonies.keySet())
+                {
+                    // Check if any position has more than one colony
+                    if (tempColonies.get(pos).size() > 1)
+                    {
+                        Log.getLogger().warn("Detected duplicate colonies which are at the same position:");
+                        for (final IColony colony: tempColonies.get(pos))
+                        {
+                            Log.getLogger().warn("ID: "+colony.getID()+" name:"+colony.getName()+" citizens:"+colony.getCitizenManager().getCitizens().size()+ " building count:"+colony.getBuildingManager().getBuildings().size());
+                        }
+                        Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
+                    }
+                }
+
                 instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }
