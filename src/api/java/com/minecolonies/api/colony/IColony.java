@@ -44,6 +44,13 @@ public interface IColony
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
+     * Returns whether the colony chunks are loaded
+     *
+     * @return true when loaded.
+     */
+    boolean areAllColonyChunksLoaded();
+
+    /**
      * Returns the position of the colony.
      *
      * @return pos of the colony.
@@ -176,6 +183,11 @@ public interface IColony
      */
     void removeVisitingPlayer(final PlayerEntity player);
 
+    /**
+     * Get the players in the colony which should receive the message.
+     *
+     * @return list of players
+     */
     @NotNull
     List<PlayerEntity> getMessagePlayerEntitys();
 
@@ -306,6 +318,14 @@ public interface IColony
 
     void increaseBoughtCitizenCost();
 
+    /**
+     * Returns a set of players receiving important messages for the colony.
+     *
+     * @return set of players.
+     */
+    @NotNull
+    List<PlayerEntity> getImportantMessageEntityPlayers();
+
     boolean isManualHiring();
 
     boolean isManualHousing();
@@ -324,4 +344,25 @@ public interface IColony
      * Sets whether the colony has a child.
      */
     void updateHasChilds();
+
+    /**
+     * Adds a loaded chunk to the colony list
+     *
+     * @param chunkPos chunk to add
+     */
+    void addLoadedChunk(long chunkPos);
+
+    /**
+     * Adds a chunk from the colony list
+     *
+     * @param chunkPos chunk to remove
+     */
+    void removeLoadedChunk(long chunkPos);
+
+    /**
+     * Returns the amount of loaded chunks
+     *
+     * @return amount of chunks
+     */
+    int getLoadedChunkCount();
 }

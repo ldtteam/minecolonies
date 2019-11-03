@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.Network;
@@ -15,19 +14,16 @@ import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_SUBSCRIBER_UPDATE;
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
@@ -38,16 +34,21 @@ public class ColonyPackageManager implements IColonyPackageManager
     private static final int CHANCE_TO_UPDATE = 1000;
 
     /**
-     * List of players subscribing to the colony already known for a long time.
+     * List of players close to the colony receiving updates. Populated by chunk entry events
      */
     @NotNull
-    private Set<ServerPlayerEntity> oldSubscribers = new HashSet<>();
+    private Set<ServerPlayerEntity> closeSubscribers = new HashSet<>();
 
     /**
-     * List of players subscribing to the colony.
+     * List of players with global permissions, like receiving important messages from far away.
+     * Populated on player login and logoff.
      */
-    @NotNull
-    private Set<ServerPlayerEntity> subscribers   = new HashSet<>();
+    private Set<ServerPlayerEntity> importantColonyPlayers = new HashSet<>();
+
+    /**
+     * New subscribers which havent received a view yet.
+     */
+    private Set<ServerPlayerEntity> newSubscribers = new HashSet<>();
 
     /**
      * Variables taking care of updating the views.
@@ -71,6 +72,7 @@ public class ColonyPackageManager implements IColonyPackageManager
 
     /**
      * Creates the ColonyPackageManager for a colony.
+     *
      * @param colony the colony.
      */
     public ColonyPackageManager(final Colony colony)
@@ -91,53 +93,31 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public Set<ServerPlayerEntity> getSubscribers()
+    public Set<ServerPlayerEntity> getCloseSubscribers()
     {
-        final Set<ServerPlayerEntity> set = new HashSet<>(oldSubscribers);
-        set.addAll(subscribers);
-        return set;
+        return closeSubscribers;
     }
 
     @Override
     public void updateSubscribers()
     {
         final World world = colony.getWorld();
-        // If the world or server is null, don't try to update the subscribers this tick.
+        // If the world or server is null, don't try to update the closeSubscribers this tick.
         if (world == null || world.getServer() == null)
         {
             return;
         }
 
-        // Add owners
-        world.getServer().getPlayerList().getPlayers()
-                .stream()
-                .filter(colony.getPermissions()::isSubscriber)
-                .forEach(subscribers::add);
+        updateColonyViews();
+    }
 
-        //  Add nearby players
-        for (final PlayerEntity o : world.getPlayers())
-        {
-            if (o instanceof ServerPlayerEntity)
-            {
-                @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) o;
-
-                if (player.connection.networkTickCount < 5)
-                {
-                    continue;
-                }
-
-                final double distance = player.getDistanceSq(new Vec3d(colony.getCenter()));
-                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
-                {
-                    // Players become subscribers if they come within 16 blocks of the edge of the colony
-                    // Players remain subscribers while they remain within double the colony's radius
-                    subscribers.add(player);
-                }
-            }
-        }
-
-        if (subscribers.isEmpty())
+    /**
+     * Updates the away timer for the colony.
+     */
+    @Override
+    public void updateAwayTime()
+    {
+        if (importantColonyPlayers.isEmpty())
         {
             if (ticksPassed >= TICKS_HOUR)
             {
@@ -145,7 +125,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 lastContactInHours++;
                 colony.markDirty();
             }
-            ticksPassed++;
+            ticksPassed += UPDATE_SUBSCRIBERS_INTERVAL;
         }
         else if (lastContactInHours != 0)
         {
@@ -153,117 +133,92 @@ public class ColonyPackageManager implements IColonyPackageManager
             ticksPassed = 0;
             colony.markDirty();
         }
-
-        final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
-        updateColonyViews(hasNewSubscribers);
     }
 
-
     /**
-     * Update the subscribers of the colony.
-     * @param hasNewSubscribers check if there are new ones.
+     * Update the closeSubscribers of the colony.
      */
-    public void updateColonyViews(final boolean hasNewSubscribers)
+    public void updateColonyViews()
     {
-        if (!subscribers.isEmpty())
+        if (!closeSubscribers.isEmpty())
         {
-            //  Determine if any new subscribers were added this pass
-
             //  Send each type of update packet as appropriate:
-            //      - To Subscribers if the data changes
+            //      - To close Subscribers if the data changes
             //      - To New Subscribers even if it hasn't changed
 
             //ColonyView
-            sendColonyViewPackets(oldSubscribers, hasNewSubscribers);
+            sendColonyViewPackets();
 
             //Permissions
-            sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
+            sendPermissionsPackets();
 
             //WorkOrders
-            sendWorkOrderPackets(oldSubscribers, hasNewSubscribers);
+            sendWorkOrderPackets();
 
-            colony.getCitizenManager().sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
+            colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
+            colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
 
-            colony.getBuildingManager().sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
-
-            //schematics
-            if (Structures.isDirty())
-            {
-                sendSchematicsPackets(hasNewSubscribers);
-                Structures.clearDirty();
-            }
+            sendSchematicsPackets();
         }
 
         isDirty = false;
         colony.getPermissions().clearDirty();
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
-        oldSubscribers = new HashSet<>(subscribers);
-        subscribers = new HashSet<>();
+        newSubscribers = new HashSet<>();
     }
 
     @Override
-    public void sendColonyViewPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendColonyViewPackets()
     {
-        if (isDirty || hasNewSubscribers)
+        if (isDirty || !newSubscribers.isEmpty())
         {
             final PacketBuffer colonyPacketBuffer = new PacketBuffer(Unpooled.buffer());
-            ColonyView.serializeNetworkData(colony, colonyPacketBuffer, hasNewSubscribers);
-            for (final ServerPlayerEntity player : subscribers)
-            {
-                final boolean isNewSubscriber = !oldSubscribers.contains(player);
-                if (isDirty || isNewSubscriber)
-                {
-                    Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, isNewSubscriber), player);
-                }
-            }
+            ColonyView.serializeNetworkData(colony, colonyPacketBuffer, !newSubscribers.isEmpty());
+            final Set<ServerPlayerEntity> players = isDirty ? closeSubscribers : newSubscribers;
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
         }
         colony.getRequestManager().setDirty(false);
     }
 
     @Override
-    public void sendPermissionsPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendPermissionsPackets()
     {
         final Permissions permissions = colony.getPermissions();
-        if (permissions.isDirty() || hasNewSubscribers || colony.getWorld().rand.nextInt(CHANCE_TO_UPDATE) <= 1)
+        if (permissions.isDirty() || !newSubscribers.isEmpty())
         {
-            subscribers
-                    .stream()
-                    .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
-            {
-                final Rank rank = permissions.getRank(player);
-                Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, rank), player);
-            });
+            final Set<ServerPlayerEntity> players = permissions.isDirty() ? closeSubscribers : newSubscribers;
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
         }
     }
 
     @Override
-    public void sendWorkOrderPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendWorkOrderPackets()
     {
         final IWorkManager workManager = colony.getWorkManager();
-        if (workManager.isDirty() || hasNewSubscribers)
+        if (workManager.isDirty() || !newSubscribers.isEmpty())
         {
+            final Set<ServerPlayerEntity> players = workManager.isDirty() ? closeSubscribers : newSubscribers;
             for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
-                    subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                    ColonyUtils.sendToAll(players, new ColonyViewWorkOrderMessage(colony, workOrder));
                 }
             }
-
             workManager.setDirty(false);
         }
     }
 
     @Override
-    public void sendSchematicsPackets(final boolean hasNewSubscribers)
+    public void sendSchematicsPackets()
     {
-        if (Structures.isDirty() || hasNewSubscribers)
+        if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
-            subscribers.stream()
-                    .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), player));
+            final Set<ServerPlayerEntity> players = Structures.isDirty() ? closeSubscribers : newSubscribers;
+            ColonyUtils.sendToAll(players, new ColonyStylesMessage());
         }
+        Structures.clearDirty();
     }
 
     @Override
@@ -273,17 +228,46 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void addSubscribers(@NotNull final ServerPlayerEntity subscriber)
+    public void addCloseSubscriber(@NotNull final ServerPlayerEntity subscriber)
     {
-        subscribers.add(subscriber);
+        if (!closeSubscribers.contains(subscriber))
+        {
+            closeSubscribers.add(subscriber);
+            newSubscribers.add(subscriber);
+        }
     }
 
     @Override
-    public void removeSubscriber(@NotNull final ServerPlayerEntity player)
+    public void removeCloseSubscriber(@NotNull final ServerPlayerEntity player)
     {
-        if(!colony.getMessagePlayerEntitys().contains(player))
-        {
-            subscribers.remove(player);
-        }
+        newSubscribers.remove(player);
+        closeSubscribers.remove(player);
+    }
+
+    /**
+     * On login we're adding global subscribers.
+     */
+    @Override
+    public void addImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
+    {
+        importantColonyPlayers.add(subscriber);
+    }
+
+    /**
+     * On logoff we're removing global subscribers.
+     */
+    @Override
+    public void removeImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
+    {
+        importantColonyPlayers.remove(subscriber);
+    }
+
+    /**
+     * Returns the list of online global subscribers of the colony.
+     */
+    @Override
+    public Set<ServerPlayerEntity> getImportantColonyPlayers()
+    {
+        return importantColonyPlayers;
     }
 }

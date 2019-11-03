@@ -45,7 +45,7 @@ public final class BarbarianEventUtils
         }
 
         LanguageHandler.sendPlayersMessage(
-          colony.getMessagePlayerEntitys(),
+          colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
         MobSpawnUtils.spawn(ModEntities.BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world, colony);

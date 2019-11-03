@@ -103,7 +103,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
           0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
         this.setMotion(vec3d);
         this.rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180F / (float) Math.PI));
-        this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) MathHelper.sqrt(func_213296_b(vec3d))) * (double) (180F / (float) Math.PI));
+        this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) MathHelper.sqrt(horizontalMag(vec3d))) * (double) (180F / (float) Math.PI));
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
         final FishingRodItem item = (FishingRodItem) this.getAngler().getHeldItemMainhand().getItem();
@@ -193,7 +193,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             IFluidState ifluidstate = this.world.getFluidState(blockpos);
             if (ifluidstate.isTagged(FluidTags.WATER))
             {
-                f = ifluidstate.func_215679_a(this.world, blockpos);
+                f = ifluidstate.getActualHeight(this.world, blockpos);
             }
 
             if (this.currentState == NewBobberEntity.State.FLYING)
@@ -299,7 +299,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private void updateRotation()
     {
         Vec3d vec3d = this.getMotion();
-        float f = MathHelper.sqrt(func_213296_b(vec3d));
+        float f = MathHelper.sqrt(horizontalMag(vec3d));
         this.rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180F / (float) Math.PI));
 
         for (this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) f) * (double) (180F / (float) Math.PI));
