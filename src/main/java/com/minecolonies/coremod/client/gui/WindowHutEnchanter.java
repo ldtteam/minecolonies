@@ -83,7 +83,8 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
         super.onOpened();
         selectedBuildings = building.getBuildingsToGatherFrom();
         allBuildings = building.getColony().getBuildings().stream()
-                                                   .filter(b -> b instanceof AbstractBuildingWorker.View)
+                                                   .filter(b -> b instanceof AbstractBuildingWorker.View && !(b instanceof BuildingEnchanter.View))
+                                                   .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(), b2.getPosition())))
                                                    .collect(Collectors.toList());
         qtyInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
         qtyInput.setText(String.valueOf(building.getDailyDrain()));

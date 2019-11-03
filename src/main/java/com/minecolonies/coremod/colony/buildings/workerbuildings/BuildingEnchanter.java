@@ -84,7 +84,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     public BuildingEnchanter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> stack.getItem() == ModItems.compost, new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> stack.getItem() == ModItems.ancientTome, new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull

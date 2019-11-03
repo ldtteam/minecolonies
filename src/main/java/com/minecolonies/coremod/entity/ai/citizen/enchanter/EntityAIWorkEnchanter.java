@@ -91,13 +91,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         super(job);
         super.registerTargets(
             new AITarget(IDLE, START_WORKING, TICKS_SECOND),
-          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
+            new AITarget(DECIDE, this::decide, TICKS_SECOND),
             new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
             new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler()
-          .setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma() + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
+        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma() + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -147,6 +146,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         }
 
         return ENCHANT;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return 1;
     }
 
     /**
@@ -201,9 +206,21 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final ICitizenData data = worker.getCitizenData();
             if (data != null)
             {
+                final int openSlot = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(worker.getInventoryCitizen()));
+                if (openSlot == -1)
+                {
+                    //Dump if there is no open slot.
+                    incrementActionsDone();
+                    progressTicks = 0;
+                    return IDLE;
+                }
+
                 data.drainExperience(enchantment.getSecond());
                 worker.getCitizenExperienceHandler().updateLevel();
-                new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(enchantment.getFirst()), enchantment.getSecond())));
+
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(ModItems.ancientTome));
+                worker.getInventoryCitizen().setInventorySlotContents(openSlot,ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(enchantment.getFirst()), enchantment.getSecond())));
+                incrementActionsDoneAndDecSaturation();
             }
         }
         progressTicks = 0;
@@ -289,7 +306,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return getState();
         }
 
-        final int maxDrain = Math.max(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
+        final int maxDrain = Math.min(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
         if (progressTicks < MAX_PROGRESS_TICKS * maxDrain)
         {
             final Vec3d start = worker.getPositionVector().add(0,2,0);
@@ -358,6 +375,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         citizenToGatherFrom = null;
         job.setBuildingToDrainFrom(null);
         progressTicks = 0;
+        incrementActionsDoneAndDecSaturation();
     }
-
 }
