@@ -489,7 +489,7 @@ public enum AIWorkerState implements IAIState
     ENCHANTER_DRAIN(true),
 
     /**
-     * Enchant anancient tome.
+     * Enchant ancient tome.
      */
     ENCHANT(false),
 

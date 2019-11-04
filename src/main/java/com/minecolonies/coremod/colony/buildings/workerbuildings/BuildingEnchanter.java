@@ -28,18 +28,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The enchanter building.
  */
 public class BuildingEnchanter extends AbstractBuildingWorker
 {
-    /**
-     * Nbt tag for the list of buildings to gather.
-     */
-    private static final String TAG_GATHER_LIST = "buildingstogather";
-
     /**
      * Enchanter.
      */
@@ -49,16 +44,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
      * Maximum building level
      */
     private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * The max quantity.
-     */
-    private static final String TAG_QUANTITY      = "quantity";
-
-    /**
-     * Tag to store if a building was gathered already.
-     */
-    private static final String TAG_GATHERED_ALREADY = "gatheredalready";
 
     /**
      * List of buildings the enchanter gathers experience from.

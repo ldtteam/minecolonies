@@ -11,18 +11,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TO_DRAIN;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAITING_TICKS;
+
 public class JobEnchanter extends AbstractJob
 {
-    /**
-     * The tag to store the building he is currently draining from.
-     */
-    private static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
-
-    /**
-     * The waiting ticks currently.
-     */
-    private static final String TAG_WAITING_TICKS = "waitingticks";
-
     /**
      * Max waiting ticks.
      */

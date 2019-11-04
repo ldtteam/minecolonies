@@ -127,7 +127,7 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
 
     /**
-     * Map of building level to the lis tof possible enchantments.
+     * Map of building level to the list of possible enchantments.
      */
     private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
 
@@ -814,7 +814,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Calculate the crusher modes from the config file.
+     * Discover the possible enchantments from file.
      */
     private void discoverEnchantments()
     {
