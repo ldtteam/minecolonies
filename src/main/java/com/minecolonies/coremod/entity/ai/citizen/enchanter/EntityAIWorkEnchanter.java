@@ -17,10 +17,7 @@ import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
@@ -207,7 +204,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), IS_ANCIENT_TOME);
         if (slot != -1)
         {
-            final Tuple<String, Integer> enchantment = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantment(getOwnBuilding().getBuildingLevel());
             final ICitizenData data = worker.getCitizenData();
             if (data != null)
             {
@@ -220,11 +216,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                     return IDLE;
                 }
 
-                data.spendLevels(enchantment.getSecond());
+                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
+
+                data.spendLevels(tuple.getSecond());
                 worker.getCitizenExperienceHandler().updateLevel();
+                worker.getInventoryCitizen().setInventorySlotContents(openSlot,tuple.getFirst());
 
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(ModItems.ancientTome));
-                worker.getInventoryCitizen().setInventorySlotContents(openSlot,ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(enchantment.getFirst()), enchantment.getSecond())));
                 incrementActionsDoneAndDecSaturation();
             }
         }

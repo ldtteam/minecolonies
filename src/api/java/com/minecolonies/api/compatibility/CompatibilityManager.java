@@ -17,6 +17,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -461,15 +462,20 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Tuple<String, Integer> getRandomEnchantment(final int buildingLevel)
+    public Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel)
     {
         final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
+        final Tuple<String, Integer> ench;
+
         if (list.isEmpty())
         {
-            return new Tuple<>("protection", 1);
+            ench = new Tuple<>("protection", 1);
         }
-
-        return list.get(random.nextInt(list.size()));
+        else
+        {
+            ench = list.get(random.nextInt(list.size()));
+        }
+        return new Tuple<>(ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(ench.getFirst()), ench.getSecond())), ench.getSecond());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

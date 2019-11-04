@@ -484,7 +484,7 @@ public interface ICitizenData extends INBTSerializable<NBTTagCompound>
     /**
      * Drain experience from the worker.
      * @param maxDrain the max to drain.
-     * @return the drained amount x2.
+     * @return the drained amount including a configured draining bonus.
      */
     double drainExperience(int maxDrain);
 
