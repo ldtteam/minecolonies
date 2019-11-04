@@ -448,6 +448,15 @@ public final class NbtTagConstants
     public static final String TAG_CRAFT_COUNTER  = "craftCounter";
 
     /**
+     * Enchanter tags
+     */
+    public static final String TAG_GATHER_LIST = "buildingstogather";
+    public static final String TAG_QUANTITY      = "quantity";
+    public static final String TAG_GATHERED_ALREADY = "gatheredalready";
+    public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
+    public static final String TAG_WAITING_TICKS = "waitingticks";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

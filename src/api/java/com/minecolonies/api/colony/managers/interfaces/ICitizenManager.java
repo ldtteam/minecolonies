@@ -141,6 +141,7 @@ public interface ICitizenManager
 
     /**
      * Get potential max citizens of the colony.
+     * The potential considers all available beds including not assigned guard towers.
      * @return the amount.
      */
     int getPotentialMaxCitizens();
