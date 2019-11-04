@@ -219,11 +219,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
                 final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
 
-                data.spendLevels(tuple.getSecond());
+                data.spendLevels(tuple.getB());
                 worker.getCitizenExperienceHandler().updateLevel();
-                worker.getInventoryCitizen().setInventorySlotContents(openSlot,tuple.getFirst());
+                worker.getInventoryCitizen().setStackInSlot(openSlot, tuple.getA());
 
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(ModItems.ancientTome));
+                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.ancientTome));
                 incrementActionsDoneAndDecSaturation();
             }
         }

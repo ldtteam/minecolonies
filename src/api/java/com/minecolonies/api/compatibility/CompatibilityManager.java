@@ -9,10 +9,8 @@ import com.minecolonies.api.util.BlockStateStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -479,7 +477,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(ench.getFirst()), ench.getSecond())), ench.getSecond());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft", ench.getA())).get(), ench.getB())), ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
