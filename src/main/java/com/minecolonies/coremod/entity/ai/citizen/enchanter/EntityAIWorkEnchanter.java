@@ -17,9 +17,7 @@ import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
@@ -207,7 +205,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
         if (slot != -1)
         {
-            final Tuple<String, Integer> enchantment = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantment(getOwnBuilding().getBuildingLevel());
             final ICitizenData data = worker.getCitizenData();
             if (data != null)
             {
@@ -220,12 +217,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                     return IDLE;
                 }
 
-                data.spendLevels(enchantment.getB());
-                worker.getCitizenExperienceHandler().updateLevel();
+                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
 
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.ancientTome));
-                worker.getInventoryCitizen().setStackInSlot(openSlot,
-                  EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft",enchantment.getA())).get(), enchantment.getB())));
+                data.spendLevels(tuple.getSecond());
+                worker.getCitizenExperienceHandler().updateLevel();
+                worker.getInventoryCitizen().setInventorySlotContents(openSlot,tuple.getFirst());
+
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(ModItems.ancientTome));
                 incrementActionsDoneAndDecSaturation();
             }
         }

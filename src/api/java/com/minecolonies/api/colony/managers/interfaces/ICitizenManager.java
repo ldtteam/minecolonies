@@ -159,6 +159,7 @@ public interface ICitizenManager
 
     /**
      * Set the new potential max citizens.
+     * The potential considers all available beds including not assigned guard towers.
      * @param newMaxCitizens the potential amount to set.
      */
     void setPotentialMaxCitizens(final int newMaxCitizens);

@@ -47,23 +47,22 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
     {
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;
-        PlayerEntity lvt_1_1_ =
-          this.world.getClosestPlayer((double) ((float) this.pos.getX() + 0.5F), (double) ((float) this.pos.getY() + 0.5F), (double) ((float) this.pos.getZ() + 0.5F), 3.0D, false);
-        if (lvt_1_1_ != null)
+        PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F), ((float) this.pos.getY() + 0.5F), ((float) this.pos.getZ() + 0.5F), 3.0D, false);
+        if (player != null)
         {
-            double lvt_2_1_ = lvt_1_1_.posX - (double) ((float) this.pos.getX() + 0.5F);
-            double lvt_4_1_ = lvt_1_1_.posZ - (double) ((float) this.pos.getZ() + 0.5F);
-            this.tRot = (float) MathHelper.atan2(lvt_4_1_, lvt_2_1_);
+            double playerXPos = player.posX - (double) ((float) this.pos.getX() + 0.5F);
+            double playerZPos = player.posZ - (double) ((float) this.pos.getZ() + 0.5F);
+            this.tRot = (float) MathHelper.atan2(playerZPos, playerXPos);
             this.bookSpread += 0.1F;
             if (this.bookSpread < 0.5F || rand.nextInt(40) == 0)
             {
-                float lvt_6_1_ = this.flipT;
+                float flip = this.flipT;
 
                 do
                 {
                     this.flipT += (float) (rand.nextInt(4) - rand.nextInt(4));
                 }
-                while (lvt_6_1_ == this.flipT);
+                while (flip == this.flipT);
             }
         }
         else
@@ -92,24 +91,23 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
             this.tRot += 6.2831855F;
         }
 
-        float lvt_2_2_;
-        for (lvt_2_2_ = this.tRot - this.bookRotation; lvt_2_2_ >= 3.1415927F; lvt_2_2_ -= 6.2831855F)
+        float circleBasedRot;
+        for (circleBasedRot = this.tRot - this.bookRotation; circleBasedRot >= 3.1415927F; circleBasedRot -= 6.2831855F)
         {
         }
 
-        while (lvt_2_2_ < -3.1415927F)
+        while (circleBasedRot < -3.1415927F)
         {
-            lvt_2_2_ += 6.2831855F;
+            circleBasedRot += 6.2831855F;
         }
 
-        this.bookRotation += lvt_2_2_ * 0.4F;
+        this.bookRotation += circleBasedRot * 0.4F;
         this.bookSpread = MathHelper.clamp(this.bookSpread, 0.0F, 1.0F);
         ++this.tickCount;
         this.pageFlipPrev = this.pageFlip;
-        float lvt_3_1_ = (this.flipT - this.pageFlip) * 0.4F;
-        float lvt_4_2_ = 0.2F;
-        lvt_3_1_ = MathHelper.clamp(lvt_3_1_, -0.2F, 0.2F);
-        this.flipA += (lvt_3_1_ - this.flipA) * 0.9F;
+        float pageFlip = (this.flipT - this.pageFlip) * 0.4F;
+        pageFlip = MathHelper.clamp(pageFlip, -0.2F, 0.2F);
+        this.flipA += (pageFlip - this.flipA) * 0.9F;
         this.pageFlip += this.flipA;
     }
 }

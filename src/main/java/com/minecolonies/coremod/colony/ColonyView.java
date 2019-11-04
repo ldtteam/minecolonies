@@ -602,17 +602,11 @@ public final class ColonyView implements IColonyView
         return citizenCount;
     }
 
-    /**
-     * Returns the maximum amount of citizen in the colony considering guard towers
-     *
-     * @return maximum amount of citizens.
-     */
     @Override
-    public int getLimitCitizenCount()
+    public int getCitizenCountLimit()
     {
         return citizenCountWithEmptyGuardTowers;
     }
-
 
     /**
      * Getter for the citizens map.

@@ -191,7 +191,12 @@ public interface IColonyView extends IColony
      */
     int getCitizenCount();
 
-    int getLimitCitizenCount();
+    /**
+     * Returns the maximum amount of citizen in the colony considering guard towers
+     *
+     * @return maximum amount of citizens.
+     */
+    int getCitizenCountLimit();
 
     /**
      * Getter for the citizens map.
