@@ -477,7 +477,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft", ench.getA())).get(), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation(ench.getA())).get(), ench.getB())), ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -791,7 +791,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enchantments.get())
         {
-            final String[] split = string.split(":");
+            final String[] split = string.split(",");
             if (split.length != 4)
             {
                 Log.getLogger().warn("Invalid enchantment mode setting: " + string);
@@ -801,7 +801,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String enchantment = split[1];
-                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation("minecraft",enchantment)).isPresent())
+                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation(enchantment)).isPresent())
                 {
                     Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
                     continue;
