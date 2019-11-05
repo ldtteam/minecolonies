@@ -820,7 +820,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         for (final String string : Configurations.gameplay.enchantments)
         {
-            final String[] split = string.split(":");
+            final String[] split = string.split(",");
             if (split.length != 4)
             {
                 Log.getLogger().warn("Invalid enchantment mode setting: " + string);
@@ -855,6 +855,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
             }
         }
+        Log.getLogger().warn("Done with enchantments");
     }
 
     /**
