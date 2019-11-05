@@ -42,7 +42,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
           this,
           building,
 
-          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.bakery.recipes"),
+          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.baker.recipes"),
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, window);
