@@ -72,11 +72,11 @@ public final class TranslationConstants
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_SATURATION_7     = "com.minecolonies.coremod.saturation.7";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GUI_BAKER        = "com.minecolonies.coremod.gui.workerHuts.bakery";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_BAKER        = "com.minecolonies.coremod.gui.workerHuts.baker";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_BAKER        = "com.minecolonies.coremod.job.bakery";
+    public static final     String COM_MINECOLONIES_COREMOD_JOB_BAKER        = "com.minecolonies.coremod.job.baker";
     @NonNls
-    public static final     String BAKER_HAS_NO_FURNACES_MESSAGE             = "com.minecolonies.coremod.bakery.noFurnace";
+    public static final     String BAKER_HAS_NO_FURNACES_MESSAGE             = "com.minecolonies.coremod.baker.noFurnace";
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_JOB_BUILDER      = "com.minecolonies.coremod.job.Builder";
     @NonNls
@@ -310,7 +310,7 @@ public final class TranslationConstants
     @NonNls
     public static final     String UNABLE_TO_ADD_RECIPE_MESSAGE              = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final     String BAKER_HAS_NO_RECIPES                      = "com.minecolonies.coremod.bakery.noRecipe";
+    public static final     String BAKER_HAS_NO_RECIPES                      = "com.minecolonies.coremod.baker.noRecipe";
     @NonNls
     public static final     String FERTLIZER                                 = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
