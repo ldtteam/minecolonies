@@ -88,7 +88,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @Override
     public String getJobName()
     {
-        return SMELTERY_DESC;
+        return "Smelter";
     }
 
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
