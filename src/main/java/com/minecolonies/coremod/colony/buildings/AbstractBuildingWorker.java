@@ -509,6 +509,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
         ByteBufUtils.writeUTF8String(buf, this.getJobName());
+        buf.writeInt(getMaxInhabitants());
     }
 
     /**
@@ -593,6 +594,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private String jobName;
 
         /**
+         * The max amount of inhabitants
+         */
+        private int maxInhabitants = 1;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -650,6 +656,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
             this.jobName = ByteBufUtils.readUTF8String(buf);
+            this.maxInhabitants = buf.readInt();
         }
 
         /**
@@ -783,6 +790,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         public String getJobName()
         {
             return this.jobName;
+        }
+
+        /**
+         * Get the max number of inhabitants
+         * @return max inhabitants
+         */
+        public int getMaxInhabitants()
+        {
+            return this.maxInhabitants;
         }
     }
 }
