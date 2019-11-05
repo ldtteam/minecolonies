@@ -128,7 +128,8 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                     if (block.isIn(Tags.Blocks.STONE) ||
                             block.isIn(Tags.Blocks.COBBLESTONE) ||
                             block.isIn(BlockTags.STONE_BRICKS) ||
-                            block.asItem().getRegistryName().getPath().contains("smooth_stone"))
+                            block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
+                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") )
                     {
                         amountOfValidBlocks++;
                         continue;
