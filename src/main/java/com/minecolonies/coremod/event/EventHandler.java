@@ -247,6 +247,19 @@ public class EventHandler
                     colony.getPackageManager().addImportantColonyPlayer((EntityPlayerMP) event.player);
                 }
             }
+
+            // Add visiting/subscriber to colony we're logging into
+            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX,event.player.posY, event.player.posZ));
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+            if (cap != null && cap.getOwningColony() != 0)
+            {
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(),event.player.dimension);
+                if (colony != null)
+                {
+                    colony.addVisitingPlayer(event.player);
+                    colony.getPackageManager().addCloseSubscriber((EntityPlayerMP) event.player);
+                }
+            }
         }
     }
 
