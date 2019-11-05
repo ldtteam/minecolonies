@@ -508,6 +508,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
+        ByteBufUtils.writeUTF8String(buf, this.getJobName());
     }
 
     /**
@@ -587,6 +588,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private HiringMode hiringMode;
 
         /**
+         * The name of the job.
+         */
+        private String jobName;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -643,6 +649,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
+            this.jobName = ByteBufUtils.readUTF8String(buf);
         }
 
         /**
@@ -766,6 +773,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             this.hiringMode = hiringMode;
             MineColonies.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
+        }
+
+        /**
+         * Get the name of the job.
+         * @return job name.
+         */
+        @Override
+        public String getJobName()
+        {
+            return this.jobName;
         }
     }
 }
