@@ -451,16 +451,16 @@ public final class ChunkDataHelper
             return false;
         }
 
-        if (cap.getOwningColony() == id && add)
-        {
-            return true;
-        }
-
         // Before directly adding cap data, apply data from our cache.
         final ChunkLoadStorage chunkLoadStorage = chunkManager.getChunkStorage(chunk.x,chunk.z);
         if (chunkLoadStorage != null)
         {
             chunkLoadStorage.applyToCap(cap, chunk);
+        }
+
+        if (cap.getOwningColony() == id && add)
+        {
+            return true;
         }
 
         if (add)

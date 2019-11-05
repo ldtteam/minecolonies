@@ -93,7 +93,7 @@ public class ChunkLoadStorage
      */
     public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final int dimension, final boolean owning)
     {
-        this.colonyId = owning ? colonyId : 0;
+        this.colonyId = owning && add ? colonyId : 0;
         this.xz = xz;
         this.dimension = dimension;
         if(add)
@@ -262,7 +262,8 @@ public class ChunkLoadStorage
                 {
                     this.coloniesToRemove.remove(new Integer(tempColonyId));
                 }
-                else if (!this.coloniesToAdd.contains(tempColonyId))
+
+                if (!this.coloniesToAdd.contains(tempColonyId))
                 {
                     this.coloniesToAdd.add(tempColonyId);
                 }
@@ -279,13 +280,14 @@ public class ChunkLoadStorage
                 {
                     this.coloniesToAdd.remove(new Integer(tempColonyId));
                 }
-                else if (!this.coloniesToRemove.contains(tempColonyId))
+
+                if (!this.coloniesToRemove.contains(tempColonyId))
                 {
                     this.coloniesToRemove.add(tempColonyId);
                 }
             }
 
-            if (newStorage.getColonyId() > 0 || !newStorage.coloniesToRemove.isEmpty())
+            if (newStorage.getColonyId() > 0 && !newStorage.coloniesToAdd.isEmpty())
             {
                 this.colonyId = newStorage.getColonyId();
             }
