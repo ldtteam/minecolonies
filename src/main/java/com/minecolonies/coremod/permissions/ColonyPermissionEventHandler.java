@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,7 +11,6 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -19,11 +19,11 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
 import net.minecraft.util.math.BlockPos;
@@ -449,7 +449,9 @@ public class ColonyPermissionEventHandler
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.pvp.townhall.break.start", event.getEntityPlayer().getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.pvp.townhall.break.start",
+                  event.getEntityPlayer().getName());
                 breakProgressOnTownHall = 0;
                 validTownHallBreak = false;
             }

@@ -514,7 +514,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 }
             }
         }
-        return super.getCapability(capability);
+        return super.getCapability(capability, dir);
     }
 
     /**
