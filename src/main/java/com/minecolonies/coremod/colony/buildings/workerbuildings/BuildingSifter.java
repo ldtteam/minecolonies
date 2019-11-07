@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -192,6 +193,12 @@ public class BuildingSifter extends AbstractBuildingWorker
         {
             this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
         }
+    }
+
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        return false;
     }
 
     /**

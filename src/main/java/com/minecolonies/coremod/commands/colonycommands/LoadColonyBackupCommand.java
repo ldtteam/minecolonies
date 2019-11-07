@@ -77,7 +77,7 @@ public class LoadColonyBackupCommand extends AbstractSingleCommand implements IA
 
         final int colonyId = actionMenuState.getIntegerForArgument("colony");
         final int dimension = actionMenuState.getIntegerForArgument("dimension");
-        server.addScheduledTask(() -> BackUpHelper.loadColonyBackup(colonyId, dimension));
+        server.addScheduledTask(() -> BackUpHelper.loadColonyBackup(colonyId, dimension, true));
     }
 
     @NotNull
