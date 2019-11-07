@@ -6,12 +6,10 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.client.render.RenderFishHook;
-import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -141,6 +139,7 @@ public class MineColonies
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
     }
 
     /**

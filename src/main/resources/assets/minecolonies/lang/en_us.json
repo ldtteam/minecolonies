@@ -684,7 +684,7 @@
   "block.blockHut.warehouse.limit": "The amount of warehouses is limited to 1 per colony.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker": "Baker",
-  "com.minecolonies.coremod.baker.nofurnace": "My building doesn't have any furnaces, please repair it.",
+  "com.minecolonies.coremod.bakery.nofurnace": "My building doesn't have any furnaces, please repair it.",
 
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Tasklist",
 
@@ -1139,5 +1139,19 @@
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
   "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
-  "block.minecolonies.blockhutflorist": "Flower Shop"
+  "block.minecolonies.blockhutflorist": "Flower Shop",
+
+  "block.minecolonies.blockhutenchanter": "Enchanter",
+  "block.minecolonies.blockhutenchanter.name": "Enchanter",
+  "com.minecolonies.coremod.job.enchanter": "Enchanter",
+  "com.minecolonies.coremod.gui.workerhuts.enchanter": "Enchanter,",
+  "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather, Targets",
+  "com.minecolonies.gui.workerhuts.enchanter.daily": "Daily, XP drain",
+  "com.minecolonies.coremod.enchanter.nodrainingsset": "Please, configure some workers I can drain experience from to work!",
+
+  "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
+  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]",
+
+  "minecolonies.config.enchantments": "Enchantments",
+  "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter"
 }

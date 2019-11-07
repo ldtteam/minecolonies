@@ -130,6 +130,8 @@ public class NetworkChannel
         registerMessage(++idx, DecorationControllUpdateMessage.class, DecorationControllUpdateMessage::new);
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
+        registerMessage(++idx, EnchanterQtySetMessage.class, EnchanterQtySetMessage::new);
+        registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -139,6 +141,8 @@ public class NetworkChannel
         registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage::new);
         registerMessage(++idx, OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage::new);
         registerMessage(++idx, UpdateClientWithRecipesMessage.class, UpdateClientWithRecipesMessage::new);
+        registerMessage(++idx, CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);
+        registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);

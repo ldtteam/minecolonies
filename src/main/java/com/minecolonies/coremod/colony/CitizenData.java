@@ -18,6 +18,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -1426,6 +1427,42 @@ public class CitizenData implements ICitizenData
     public void setJustAte(final boolean justAte)
     {
         this.justAte = justAte;
+    }
+
+    @Override
+    public double drainExperience(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getB());
+            final double newXp = entry.getB() - (xpDrain / MineColonies.getConfig().getCommon().enchanterExperienceMultiplier.get());
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+            return xpDrain;
+        }
+        return 0;
+    }
+
+    @Override
+    public void spendLevels(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getB());
+            final double newXp = entry.getB() - xpDrain;
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+        }
     }
 
     @Override
