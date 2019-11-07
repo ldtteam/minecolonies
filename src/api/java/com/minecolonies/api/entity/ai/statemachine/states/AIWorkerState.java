@@ -479,6 +479,20 @@ public enum AIWorkerState implements IAIState
      */
     FLORIST_COMPOST(true),
 
+            /*
+### Enchanter ###
+     */
+
+    /**
+     * Let the enchanter gather experience.
+     */
+    ENCHANTER_DRAIN(true),
+
+    /**
+     * Enchant ancient tome.
+     */
+    ENCHANT(false),
+
     /*
 ### Avoid-AI ###
      */

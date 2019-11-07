@@ -64,8 +64,7 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuildingView createViewFrom(
-      final IColonyView colony, final BlockPos position, final ByteBuf networkBuffer)
+    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final ByteBuf networkBuffer)
     {
         final ResourceLocation buildingName = new ResourceLocation(ByteBufUtils.readUTF8String(networkBuffer));
         final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);

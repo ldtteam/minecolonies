@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutenchanter"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutenchanter",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutenchanter",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutenchanter",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutenchanter",
+      "y": 270
+    }
+  }
+}
