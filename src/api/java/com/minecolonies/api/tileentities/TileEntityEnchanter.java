@@ -90,17 +90,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
         {
             this.tRot += 6.2831855F;
         }
-
-        float circleBasedRot;
-        for (circleBasedRot = this.tRot - this.bookRotation; circleBasedRot >= 3.1415927F; circleBasedRot -= 6.2831855F)
-        {
-        }
-
-        while (circleBasedRot < -3.1415927F)
-        {
-            circleBasedRot += 6.2831855F;
-        }
-
+        float circleBasedRot = (float) ((this.tRot + Math.PI % (2 * Math.PI)) - Math.PI);
         this.bookRotation += circleBasedRot * 0.4F;
         this.bookSpread = MathHelper.clamp(this.bookSpread, 0.0F, 1.0F);
         ++this.tickCount;
