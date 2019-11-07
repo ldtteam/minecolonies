@@ -98,7 +98,16 @@ public final class ColonyView implements IColonyView
     //  Buildings
     @Nullable
     private ITownHallView townHall;
-    private int           citizenCount = 0;
+
+    /**
+     * The max citizen count.
+     */
+    private int citizenCount = 0;
+
+    /**
+     * The max citizen count considering guard towers.
+     */
+    private int citizenCountWithEmptyGuardTowers = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -208,6 +217,7 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getCitizenManager().getMaxCitizens());
+        buf.writeInt(colony.getCitizenManager().getPotentialMaxCitizens());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -592,6 +602,12 @@ public final class ColonyView implements IColonyView
         return citizenCount;
     }
 
+    @Override
+    public int getCitizenCountLimit()
+    {
+        return citizenCountWithEmptyGuardTowers;
+    }
+
     /**
      * Getter for the citizens map.
      *
@@ -645,6 +661,7 @@ public final class ColonyView implements IColonyView
         manualHiring = buf.readBoolean();
         //  Citizenry
         citizenCount = buf.readInt();
+        citizenCountWithEmptyGuardTowers = buf.readInt();
 
         if (isNewSubscription)
         {

@@ -48,7 +48,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
-    public ForgeConfigSpec.BooleanValue disableCitizenVoices;
+    public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -131,6 +131,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> siftableBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
+    public final ForgeConfigSpec.DoubleValue enchanterExperienceMultiplier;
 
     public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize;
 
@@ -464,6 +466,121 @@ public class CommonConfiguration extends AbstractConfiguration
                      "small_flowers"
                    ),
           s -> s instanceof String);
+
+        enchantments = defineList(builder, "enchantments",
+          Arrays.asList
+                   (
+                     "1,minecraft:aqua_affinity,1,50",
+                     "1,minecraft:bane_of_arthropods,1,50",
+                     "1,minecraft:blast_protection,1,50",
+                     "1,minecraft:depth_strider,1,50",
+                     "1,minecraft:feather_falling,1,50",
+                     "1,minecraft:fire_aspect,1,50",
+                     "1,minecraft:fire_protection,1,50",
+                     "1,minecraft:flame,1,50",
+                     "1,minecraft:frost_walker,1,50",
+                     "1,minecraft:knockback,1,50",
+                     "1,minecraft:looting,1,50",
+                     "1,minecraft:power,1,50",
+                     "1,minecraft:projectile_protection,1,50",
+                     "1,minecraft:protection,1,50",
+                     "1,minecraft:punch,1,50",
+                     "1,minecraft:respiration,1,50",
+                     "1,minecraft:sharpness,1,50",
+                     "1,minecraft:smite,1,50",
+                     "1,minecraft:sweeping_edge,1,50",
+                     "1,minecraft:unbreaking,1,50",
+
+                     "2,minecraft:aqua_affinity,2,25",
+                     "2,minecraft:bane_of_arthropods,2,25",
+                     "2,minecraft:blast_protection,2,25",
+                     "2,minecraft:depth_strider,2,25",
+                     "2,minecraft:feather_falling,2,25",
+                     "2,minecraft:fire_aspect,2,25",
+                     "2,minecraft:fire_protection,2,25",
+                     "2,minecraft:flame,2,25",
+                     "2,minecraft:frost_walker,2,25",
+                     "2,minecraft:knockback,2,25",
+                     "2,minecraft:looting,2,25",
+                     "2,minecraft:power,2,25",
+                     "2,minecraft:projectile_protection,2,25",
+                     "2,minecraft:protection,2,25",
+                     "2,minecraft:punch,2,25",
+                     "2,minecraft:respiration,2,25",
+                     "2,minecraft:sharpness,2,25",
+                     "2,minecraft:smite,2,25",
+                     "2,minecraft:sweeping_edge,2,25",
+                     "2,minecraft:unbreaking,2,25",
+
+                     "3,minecraft:aqua_affinity,3,15",
+                     "3,minecraft:bane_of_arthropods,3,15",
+                     "3,minecraft:blast_protection,3,15",
+                     "3,minecraft:depth_strider,3,15",
+                     "3,minecraft:feather_falling,3,15",
+                     "3,minecraft:fire_aspect,3,15",
+                     "3,minecraft:fire_protection,3,15",
+                     "3,minecraft:flame,3,15",
+                     "3,minecraft:frost_walker,3,15",
+                     "3,minecraft:knockback,3,15",
+                     "3,minecraft:looting,3,15",
+                     "3,minecraft:power,3,15",
+                     "3,minecraft:projectile_protection,3,15",
+                     "3,minecraft:protection,3,15",
+                     "3,minecraft:punch,3,15",
+                     "3,minecraft:respiration,3,15",
+                     "3,minecraft:sharpness,3,15",
+                     "3,minecraft:smite,3,15",
+                     "3,minecraft:sweeping_edge,3,15",
+                     "3,minecraft:unbreaking,3,15",
+
+                     "4,minecraft:aqua_affinity,4,5",
+                     "4,minecraft:bane_of_arthropods,4,5",
+                     "4,minecraft:blast_protection,4,5",
+                     "4,minecraft:depth_strider,4,5",
+                     "4,minecraft:feather_falling,4,5",
+                     "4,minecraft:fire_aspect,4,5",
+                     "4,minecraft:fire_protection,4,5",
+                     "4,minecraft:flame,4,5",
+                     "4,minecraft:frost_walker,4,5",
+                     "4,minecraft:infinity,1,5",
+                     "4,minecraft:knockback,4,5",
+                     "4,minecraft:looting,4,5",
+                     "4,minecraft:power,4,5",
+                     "4,minecraft:projectile_protection,4,5",
+                     "4,minecraft:protection,4,5",
+                     "4,minecraft:punch,4,5",
+                     "4,minecraft:respiration,4,5",
+                     "4,minecraft:sharpness,4,5",
+                     "4,minecraft:smite,4,5",
+                     "4,minecraft:sweeping_edge,4,5",
+                     "4,minecraft:unbreaking,4,5",
+
+                     "5,minecraft:aqua_affinity,5,1",
+                     "5,minecraft:bane_of_arthropods,5,1",
+                     "5,minecraft:blast_protection,5,1",
+                     "5,minecraft:depth_strider,5,1",
+                     "5,minecraft:feather_falling,5,1",
+                     "5,minecraft:fire_aspect,5,1",
+                     "5,minecraft:fire_protection,5,1",
+                     "5,minecraft:flame,5,1",
+                     "5,minecraft:frost_walker,5,1",
+                     "5,minecraft:infinity,1,1",
+                     "5,minecraft:knockback,5,1",
+                     "5,minecraft:looting,5,1",
+                     "5,minecraft:mending,1,1",
+                     "5,minecraft:power,5,1",
+                     "5,minecraft:projectile_protection,5,1",
+                     "5,minecraft:protection,5,1",
+                     "5,minecraft:punch,5,1",
+                     "5,minecraft:respiration,5,1",
+                     "5,minecraft:sharpness,5,1",
+                     "5,minecraft:smite,5,1",
+                     "5,minecraft:sweeping_edge,5,1",
+                     "5,minecraft:unbreaking,5,1"
+                   ),
+          s -> s instanceof String);
+
+        enchanterExperienceMultiplier = defineDouble(builder,  "enchanterexperiencemultiplier", 2, 1, 10);
 
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
 

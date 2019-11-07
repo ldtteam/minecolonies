@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.*;
@@ -40,6 +41,10 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new,
           ModBlocks.blockCompostedDirt).build(null).setRegistryName(Constants.MOD_ID, "composteddirt");
 
+        MinecoloniesTileEntities.ENCHANTER = TileEntityType.Builder.create(TileEntityEnchanter::new,
+          ModBlocks.blockHutEnchanter).build(null).setRegistryName(Constants.MOD_ID, "enchanter");
+
+
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
           MinecoloniesTileEntities.BARREL,
@@ -47,6 +52,7 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.DECO_CONTROLLER,
           MinecoloniesTileEntities.RACK,
           MinecoloniesTileEntities.WAREHOUSE,
-          MinecoloniesTileEntities.COMPOSTED_DIRT);
+          MinecoloniesTileEntities.COMPOSTED_DIRT,
+          MinecoloniesTileEntities.ENCHANTER);
     }
 }
