@@ -482,7 +482,7 @@ public class Configurations
                                           "3,3,minecraft:skull:3,5",
                                         };
 
-        @Config.Comment("The blocks which can be sifted for items")
+        @Config.Comment("The possible enchantments the enchanter worker can generate")
         public String[] enchantments = new String[]
                                            {
                                              "1,minecraft:aqua_affinity,1,50",
