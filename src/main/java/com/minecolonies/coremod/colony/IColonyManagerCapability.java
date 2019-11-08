@@ -65,20 +65,6 @@ public interface IColonyManagerCapability
     void addColony(IColony colony);
 
     /**
-     * Set how many chunks are missing to load.
-     *
-     * @param amount the amount.
-     */
-    void setMissingChunksToLoad(int amount);
-
-    /**
-     * Get how many chunks are missing to load.
-     *
-     * @return the amount of chunks.
-     */
-    int getMissingChunksToLoad();
-
-    /**
      * Get the top most id of all colonies.
      *
      * @return the top most id.
@@ -95,11 +81,6 @@ public interface IColonyManagerCapability
          */
         @NotNull
         private final ColonyList<IColony> colonies = new ColonyList<>();
-
-        /**
-         * Removed elements of the list of chunks to load.
-         */
-        private int missingChunksToLoad = 0;
 
         @Override
         public IColony createColony(@NotNull final World w, @NotNull final BlockPos pos)
@@ -132,18 +113,6 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public void setMissingChunksToLoad(final int amount)
-        {
-            missingChunksToLoad = amount;
-        }
-
-        @Override
-        public int getMissingChunksToLoad()
-        {
-            return missingChunksToLoad;
-        }
-
-        @Override
         public int getTopID()
         {
             return colonies.getTopID();
@@ -160,7 +129,6 @@ public interface IColonyManagerCapability
         {
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toNBTTagList()));
-            compound.setInteger(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }
 
@@ -199,8 +167,6 @@ public interface IColonyManagerCapability
                         Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
                     }
                 }
-
-                instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }
     }

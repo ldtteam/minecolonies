@@ -154,6 +154,12 @@ public final class ModJobsInitializer
                            .setRegistryName(ModJobs.FLORIST_ID)
                            .createJobEntry();
 
+        ModJobs.enchanter = new JobEntry.Builder()
+                            .setJobProducer(JobEnchanter::new)
+                            .setRegistryName(ModJobs.ENCHANTER_ID)
+                            .createJobEntry();
+
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -181,5 +187,7 @@ public final class ModJobsInitializer
         reg.register(ModJobs.crusher);
         reg.register(ModJobs.sifter);
         reg.register(ModJobs.florist);
+        reg.register(ModJobs.enchanter);
+
     }
 }

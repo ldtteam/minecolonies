@@ -307,6 +307,7 @@ public class RaidManager implements IRaiderManager
     {
         if (compound.hasKey(TAG_RAID_MANAGER))
         {
+            schematicMap.clear();
             final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
             final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
             schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
