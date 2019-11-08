@@ -1,0 +1,25 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <switch id="pages" size="100% 100%">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
+        </view>
+        <view id="workerPage" size="100% 100%">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.enchanter.workers)" color="black" textalign="MIDDLE"/>
+            <list id="gatherWorkers" size="164 136" pos="13 40">
+                <box size="100% 17" linewidth="2">
+                    <label id="workerName" size="100 12" pos="5 1" color="black"/>
+                    <buttonimage label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)" id="switch" pos="125 1" size="29 15"
+                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
+                </box>
+            </list>
+            <label id="desc2" size="130 11" pos="30 180" label="$(com.minecolonies.gui.workerhuts.enchanter.daily)" color="black" textalign="MIDDLE"/>
+            <input id="qty" size="25 17" pos="80 195" maxlength="25"/>
+        </view>
+    </switch>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
+</window>

@@ -60,6 +60,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
         ModBlocks.blockHutSifter = new BlockHutSifter().registerBlock(registry);
         ModBlocks.blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
+        ModBlocks.blockHutEnchanter = new BlockHutEnchanter().registerBlock(registry);
 
         ModBlocks.blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
@@ -110,6 +111,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher.registerItemBlock(registry);
         ModBlocks.blockHutSifter.registerItemBlock(registry);
         ModBlocks.blockHutFlorist.registerItemBlock(registry);
+        ModBlocks.blockHutEnchanter.registerItemBlock(registry);
 
         ModBlocks.blockConstructionTape.registerItemBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution.registerItemBlock(registry);

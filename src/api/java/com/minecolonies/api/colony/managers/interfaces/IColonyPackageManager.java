@@ -26,7 +26,7 @@ public interface IColonyPackageManager
      * Get all subscribers.
      * @return a copy of the hashset.
      */
-    Set<EntityPlayerMP> getSubscribers();
+    Set<EntityPlayerMP> getCloseSubscribers();
 
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
@@ -34,36 +34,31 @@ public interface IColonyPackageManager
     void updateSubscribers();
 
     /**
-     * Update the colony view.
-     * @param oldSubscribers the old subs.
-     * @param hasNewSubscribers if there are new subs.
+     * Updates the time the players were away from the colony.
      */
-    void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void updateAwayTime();
+
+    /**
+     * Update the colony view.
+     */
+    void sendColonyViewPackets();
 
     /**
      * Sends packages to update the permissions.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendPermissionsPackets();
 
 
     /**
      * Sends packages to update the workOrders.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendWorkOrderPackets();
 
 
     /**
      * Sends packages to update the schematics.
-     *
-     * @param hasNewSubscribers the new subscribers.
      */
-    void sendSchematicsPackets(final boolean hasNewSubscribers);
+    void sendSchematicsPackets();
 
     /**
      * Mark the package manager dirty.
@@ -71,14 +66,35 @@ public interface IColonyPackageManager
     void setDirty();
 
     /**
-     * Add a new subsriber to the colony.
+     * Add a new subscriber to the colony.
      * @param subscriber the subscriber to add.
      */
-    void addSubscribers(@NotNull final EntityPlayerMP subscriber);
+    void addCloseSubscriber(@NotNull final EntityPlayerMP subscriber);
 
     /**
-     * Remove an old subsriber from the colony.
+     * Adds a new global subscriber to the colony.
+     *
+     * @param subscriber the subscriber to add.
+     */
+    void addImportantColonyPlayer(@NotNull EntityPlayerMP subscriber);
+
+    /**
+     * Removes an global subscriber from the colony.
+     *
+     * @param subscriber the subscriber to remove.
+     */
+    void removeImportantColonyPlayer(@NotNull EntityPlayerMP subscriber);
+
+    /**
+     * Remove a subscriber from the colony.
      * @param player the subscriber to remove.
      */
-    void removeSubscriber(@NotNull final EntityPlayerMP player);
+    void removeCloseSubscriber(@NotNull final EntityPlayerMP player);
+
+    /**
+     * Returns the global subscribers.
+     *
+     * @return global subscribers
+     */
+    Set<EntityPlayerMP> getImportantColonyPlayers();
 }
