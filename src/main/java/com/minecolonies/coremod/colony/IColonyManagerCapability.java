@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MISSING_CHUNKS;
 
 /**
  *
@@ -62,18 +61,6 @@ public interface IColonyManagerCapability
     void addColony(IColony colony);
 
     /**
-     * Set how many chunks are missing to load.
-     * @param amount the amount.
-     */
-    void setMissingChunksToLoad(int amount);
-
-    /**
-     * Get how many chunks are missing to load.
-     * @return the amount of chunks.
-     */
-    int getMissingChunksToLoad();
-
-    /**
      * Get the top most id of all colonies.
      * @return the top most id.
      */
@@ -89,11 +76,6 @@ public interface IColonyManagerCapability
          */
         @NotNull
         private final ColonyList<IColony> colonies = new ColonyList<>();
-
-        /**
-         * Removed elements of the list of chunks to load.
-         */
-        private int missingChunksToLoad = 0;
 
         @Override
         public IColony createColony(@NotNull final World w, @NotNull final BlockPos pos)
@@ -126,18 +108,6 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public void setMissingChunksToLoad(final int amount)
-        {
-            missingChunksToLoad = amount;
-        }
-
-        @Override
-        public int getMissingChunksToLoad()
-        {
-            return missingChunksToLoad;
-        }
-
-        @Override
         public int getTopID()
         {
             return colonies.getTopID();
@@ -154,7 +124,6 @@ public interface IColonyManagerCapability
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
-            compound.putInt(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }
 
@@ -197,8 +166,6 @@ public interface IColonyManagerCapability
                         Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
                     }
                 }
-
-                instance.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
             }
         }
     }
