@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
     private List<Integer> closeColonies;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public UpdateChunkCapabilityMessage()
     {
@@ -108,11 +107,11 @@ public class UpdateChunkCapabilityMessage implements IMessage
 
         if (cap != null && cap.getOwningColony() != owningColonyId)
         {
-            cap.reset();
-            cap.setOwningColony(owningColonyId);
+            cap.reset(chunk);
+            cap.setOwningColony(owningColonyId, chunk);
             for (final int id : closeColonies)
             {
-                cap.addColony(id);
+                cap.addColony(id, chunk);
             }
         }
     }
