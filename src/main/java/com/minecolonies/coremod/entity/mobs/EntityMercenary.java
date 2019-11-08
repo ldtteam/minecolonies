@@ -134,7 +134,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
         this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(4, new EntityAIOpenFenceGate(this, true));
-        this.goalSelector.addGoal(5, new NearestAttackableTargetGoal(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
 
         this.forceSpawn = true;
         setCustomNameVisible(true);
