@@ -238,6 +238,13 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(ModBuildings.FLORIST_ID))
                                  .createBuildingEntry();
 
+        ModBuildings.enchanter = new BuildingEntry.Builder()
+                                 .setBuildingBlock(ModBlocks.blockHutEnchanter)
+                                 .setBuildingProducer(BuildingEnchanter::new)
+                                 .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
+                                 .setRegistryName(new ResourceLocation(ModBuildings.ENCHANTER_ID))
+                                 .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -269,5 +276,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.wareHouse);
         reg.register(ModBuildings.postBox);
         reg.register(ModBuildings.florist);
+        reg.register(ModBuildings.enchanter);
     }
 }

@@ -537,7 +537,7 @@ public final class ItemStackUtils
                 }
             }
         }
-        return maxLevel;
+        return Math.max(maxLevel - 1, 0);
     }
 
     /**

@@ -482,6 +482,118 @@ public class Configurations
                                           "3,3,minecraft:skull:3,5",
                                         };
 
+        @Config.Comment("The possible enchantments the enchanter worker can generate")
+        public String[] enchantments = new String[]
+                                           {
+                                             "1,minecraft:aqua_affinity,1,50",
+                                             "1,minecraft:bane_of_arthropods,1,50",
+                                             "1,minecraft:blast_protection,1,50",
+                                             "1,minecraft:depth_strider,1,50",
+                                             "1,minecraft:feather_falling,1,50",
+                                             "1,minecraft:fire_aspect,1,50",
+                                             "1,minecraft:fire_protection,1,50",
+                                             "1,minecraft:flame,1,50",
+                                             "1,minecraft:frost_walker,1,50",
+                                             "1,minecraft:knockback,1,50",
+                                             "1,minecraft:looting,1,50",
+                                             "1,minecraft:power,1,50",
+                                             "1,minecraft:projectile_protection,1,50",
+                                             "1,minecraft:protection,1,50",
+                                             "1,minecraft:punch,1,50",
+                                             "1,minecraft:respiration,1,50",
+                                             "1,minecraft:sharpness,1,50",
+                                             "1,minecraft:smite,1,50",
+                                             "1,minecraft:sweeping_edge,1,50",
+                                             "1,minecraft:unbreaking,1,50",
+
+                                             "2,minecraft:aqua_affinity,2,25",
+                                             "2,minecraft:bane_of_arthropods,2,25",
+                                             "2,minecraft:blast_protection,2,25",
+                                             "2,minecraft:depth_strider,2,25",
+                                             "2,minecraft:feather_falling,2,25",
+                                             "2,minecraft:fire_aspect,2,25",
+                                             "2,minecraft:fire_protection,2,25",
+                                             "2,minecraft:flame,2,25",
+                                             "2,minecraft:frost_walker,2,25",
+                                             "2,minecraft:knockback,2,25",
+                                             "2,minecraft:looting,2,25",
+                                             "2,minecraft:power,2,25",
+                                             "2,minecraft:projectile_protection,2,25",
+                                             "2,minecraft:protection,2,25",
+                                             "2,minecraft:punch,2,25",
+                                             "2,minecraft:respiration,2,25",
+                                             "2,minecraft:sharpness,2,25",
+                                             "2,minecraft:smite,2,25",
+                                             "2,minecraft:sweeping_edge,2,25",
+                                             "2,minecraft:unbreaking,2,25",
+
+                                             "3,minecraft:aqua_affinity,3,15",
+                                             "3,minecraft:bane_of_arthropods,3,15",
+                                             "3,minecraft:blast_protection,3,15",
+                                             "3,minecraft:depth_strider,3,15",
+                                             "3,minecraft:feather_falling,3,15",
+                                             "3,minecraft:fire_aspect,3,15",
+                                             "3,minecraft:fire_protection,3,15",
+                                             "3,minecraft:flame,3,15",
+                                             "3,minecraft:frost_walker,3,15",
+                                             "3,minecraft:knockback,3,15",
+                                             "3,minecraft:looting,3,15",
+                                             "3,minecraft:power,3,15",
+                                             "3,minecraft:projectile_protection,3,15",
+                                             "3,minecraft:protection,3,15",
+                                             "3,minecraft:punch,3,15",
+                                             "3,minecraft:respiration,3,15",
+                                             "3,minecraft:sharpness,3,15",
+                                             "3,minecraft:smite,3,15",
+                                             "3,minecraft:sweeping_edge,3,15",
+                                             "3,minecraft:unbreaking,3,15",
+
+                                             "4,minecraft:aqua_affinity,4,5",
+                                             "4,minecraft:bane_of_arthropods,4,5",
+                                             "4,minecraft:blast_protection,4,5",
+                                             "4,minecraft:depth_strider,4,5",
+                                             "4,minecraft:feather_falling,4,5",
+                                             "4,minecraft:fire_aspect,4,5",
+                                             "4,minecraft:fire_protection,4,5",
+                                             "4,minecraft:flame,4,5",
+                                             "4,minecraft:frost_walker,4,5",
+                                             "4,minecraft:infinity,1,5",
+                                             "4,minecraft:knockback,4,5",
+                                             "4,minecraft:looting,4,5",
+                                             "4,minecraft:power,4,5",
+                                             "4,minecraft:projectile_protection,4,5",
+                                             "4,minecraft:protection,4,5",
+                                             "4,minecraft:punch,4,5",
+                                             "4,minecraft:respiration,4,5",
+                                             "4,minecraft:sharpness,4,5",
+                                             "4,minecraft:smite,4,5",
+                                             "4,minecraft:sweeping_edge,4,5",
+                                             "4,minecraft:unbreaking,4,5",
+
+                                             "5,minecraft:aqua_affinity,5,1",
+                                             "5,minecraft:bane_of_arthropods,5,1",
+                                             "5,minecraft:blast_protection,5,1",
+                                             "5,minecraft:depth_strider,5,1",
+                                             "5,minecraft:feather_falling,5,1",
+                                             "5,minecraft:fire_aspect,5,1",
+                                             "5,minecraft:fire_protection,5,1",
+                                             "5,minecraft:flame,5,1",
+                                             "5,minecraft:frost_walker,5,1",
+                                             "5,minecraft:infinity,1,1",
+                                             "5,minecraft:knockback,5,1",
+                                             "5,minecraft:looting,5,1",
+                                             "5,minecraft:mending,1,1",
+                                             "5,minecraft:power,5,1",
+                                             "5,minecraft:projectile_protection,5,1",
+                                             "5,minecraft:protection,5,1",
+                                             "5,minecraft:punch,5,1",
+                                             "5,minecraft:respiration,5,1",
+                                             "5,minecraft:sharpness,5,1",
+                                             "5,minecraft:smite,5,1",
+                                             "5,minecraft:sweeping_edge,5,1",
+                                             "5,minecraft:unbreaking,5,1"
+                                           };
+
         @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4. [Default: 0.1]")
         public double fisherSpongeChance = 0.1;
 
@@ -499,6 +611,9 @@ public class Configurations
 
         @Config.Comment("Disable citizen voices. [Default: false]")
         public boolean disableCitizenVoices = false;
+
+        @Config.Comment("Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]")
+        public double enchanterExperienceMultiplier = 2;
     }
 
     public static class Compatibility

@@ -72,4 +72,19 @@ public final class ExperienceUtils
                  * (currentLevel + 1)
                  * (currentLevel + 1);
     }
+
+    /**
+     * Calculate level depending on the experience.
+     * @param xp the experience to calculate it for.
+     * @return the correct level.
+     */
+    public static int calculateLevel(final double xp)
+    {
+        int startLevel = 0;
+        while (getXPNeededForNextLevel(startLevel) < xp)
+        {
+            startLevel++;
+        }
+        return startLevel;
+    }
 }

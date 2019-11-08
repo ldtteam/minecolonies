@@ -284,6 +284,8 @@ public class MineColonies
         getNetwork().registerMessage(DecorationBuildRequestMessage.class, DecorationBuildRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(DecorationControllUpdateMessage.class, DecorationControllUpdateMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(DirectPlaceMessage.class, DirectPlaceMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(EnchanterQtySetMessage.class, EnchanterQtySetMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
@@ -292,6 +294,8 @@ public class MineColonies
         getNetwork().registerMessage(LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(StreamParticleEffectMessage.class, StreamParticleEffectMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(CircleParticleEffectMessage.class, CircleParticleEffectMessage.class, ++id, Side.CLIENT);
 
         //JEI Messages
         getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, ++id, Side.SERVER);
