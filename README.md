@@ -30,21 +30,24 @@ IMPORTANT: Please report any issues you have, there might be some problems with 
 The Java JDK is used to compile MineColonies
 
 1. Download and install the Java JDK 8.
-    * [Windows/Mac download link](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  Scroll down, accept the `Oracle Binary Code License Agreement for Java SE`, and download it (if you have a 64-bit OS, please download the 64-bit version).
+    * [Windows](https://adoptopenjdk.net/). Choose OpenJDK 8 (LTS) version and HotSpot JVM, then click latest release button. After download is complete open file, accept licence agreement and in custom setup make sure that `Add to Path` and `Set JAVA_HOME` is set to `Entire feature will be installed on your local hard drive`. 
+    Then choose install and wait for instalation to finish.
 	* Linux: Installation methods for certain popular flavors of Linux are listed below.  If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 		* Gentoo: `emerge dev-java/oracle-jdk-bin`
 		* Archlinux: `pacman -S jdk8-openjdk`
 		* Ubuntu/Debian: `apt-get install openjdk-8-jdk`
 		* Fedora: `yum install java-1.8.0-openjdk`
-2. Windows: Set environment variables for the JDK.
-    * Go to `Control Panel\System and Security\System`, and click on `Advanced System Settings` on the left-hand side.
-    * Click on `Environment Variables`.
-    * Under `System Variables`, click `New`.
-    * For `Variable Name`, input `JAVA_HOME`.
-    * For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.8.0_45` exactly as shown (or wherever your Java JDK installation is), and click `OK`.
-    * Scroll down to a variable named `Path`, and double-click on it.
-    * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`.  Make sure the location is correct; double-check just to make sure.
-3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
+2. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
+
+##### Trouble shooting
+If `javac` command does not work on Windows:
+* Go to `Control Panel\System and Security\System`, and click on `Advanced System Settings` on the left-hand side.
+* Click on `Environment Variables`.
+* Under `System Variables`, click `New`.
+* For `Variable Name`, input `JAVA_HOME`.
+* For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.8.0_45` exactly as shown (or wherever your Java JDK installation is), and click `OK`.
+* Scroll down to a variable named `Path`, and double-click on it.
+* Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`.  Make sure the location is correct; double-check just to make sure.
 
 #### Setup Gradle (Optional)
 Gradle is used to execute the various build tasks when compiling MineColonies
@@ -132,6 +135,10 @@ If you decide to go with a GUI client like Gitkraken:
 11. If it doesn't start and throw a lot of errors try another setupDecompWorkspace which often does wonders.
 12. If you want to produce a running jar execute build in the build subfolder. Which will result in a runnable jar in basefolder\MineColonies\build\libs.
 
+##### Trouble shooting
+If gradle synchronization fails make sure:
+1. `File -> Project structure -> Project -> Project SDK` is set to your installed JDK version.
+2. `File -> Settings -> Build, Execution, Deployment -> Build Tools -> Gradle -> Gradle JVM` is set to your installed JDK version.
 
 #### Updating Your Repository
 In order to get the most up-to-date builds, you'll have to periodically update your local repository.
