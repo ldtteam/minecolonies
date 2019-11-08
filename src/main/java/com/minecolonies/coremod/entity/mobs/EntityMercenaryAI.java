@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.mobs;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -39,7 +39,7 @@ public class EntityMercenaryAI extends EntityAIBase
     /**
      * State machine for this AI
      */
-    private final TickRateStateMachine<IState> stateMachine;
+    private final ITickRateStateMachine<IState> stateMachine;
 
     /**
      * The entity for this AI.

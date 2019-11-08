@@ -3,10 +3,8 @@ package com.minecolonies.coremod.entity.mobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
-import com.minecolonies.api.entity.ai.statemachine.basestatemachine.IStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickingTransition;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
@@ -109,7 +107,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     /**
      * This entities state machine
      */
-    private TickRateStateMachine<IState> stateMachine;
+    private ITickRateStateMachine<IState> stateMachine;
 
     /**
      * The entities name.
