@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.LootTableConstants;
@@ -187,6 +188,8 @@ public abstract class CommonProxy implements IProxy
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
         GameRegistry.registerTileEntity(TileEntityBarrel.class, new ResourceLocation(Constants.MOD_ID, "barrel"));
         GameRegistry.registerTileEntity(TileEntityDecorationController.class, new ResourceLocation(Constants.MOD_ID, "decorationcontroller"));
+        GameRegistry.registerTileEntity(TileEntityCompostedDirt.class, new ResourceLocation(Constants.MOD_ID + ":CompostedDirt"));
+        GameRegistry.registerTileEntity(TileEntityEnchanter.class, new ResourceLocation(Constants.MOD_ID, "enchanter"));
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }

@@ -88,6 +88,12 @@ public interface ICompatibilityManager
     List<ItemStorage> getCopyOfCompostableItems();
 
     /**
+     * Get a copy of the list of plantables.
+     * @return the list of plantables.
+     */
+    List<ItemStorage> getCopyOfPlantables();
+
+    /**
      * Checks if a certain Block is an ore.
      * @param block the block to check.
      * @return boolean if so.
@@ -148,6 +154,13 @@ public interface ICompatibilityManager
     boolean isDiscoveredAlready();
 
     /**
+     * Test if an itemStack is plantable for the florist.
+     * @param itemStack the stack to check.
+     * @return true if so.
+     */
+    boolean isPlantable(ItemStack itemStack);
+
+    /**
      * If an itemStack is a lucky block which can result in an extra ore drop.
      * @param itemStack the stack to check.
      * @return true if so.
@@ -159,4 +172,11 @@ public interface ICompatibilityManager
      * @return the lucky ore.
      */
     ItemStack getRandomLuckyOre();
+
+    /**
+     * Get a random enchantment book for a certain building level.
+     * @param buildingLevel the building level.
+     * @return a tuple containing the stack and the level applied to it.
+     */
+    Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel);
 }

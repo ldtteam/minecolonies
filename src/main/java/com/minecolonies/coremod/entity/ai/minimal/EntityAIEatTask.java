@@ -145,11 +145,11 @@ public class EntityAIEatTask extends EntityAIBase
         if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
             waitingTicks++;
-            return waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
-                     || citizenData.getJob() == null;
+            return (waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS && citizenData.getSaturation() < CitizenConstants.LOW_SATURATION)
+                     || citizenData.getJob() == null || citizenData.getSaturation() == 0;
         }
 
-        return (citizenData.getSaturation() <= HIGH_SATURATION && citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat());
+        return (citizenData.getSaturation() <= HIGH_SATURATION && checkForFood(citizenData) == EAT && citizen.isOkayToEat());
     }
 
     @Override
@@ -440,7 +440,7 @@ public class EntityAIEatTask extends EntityAIBase
             {
                 chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
             }
-            return CHECK_FOR_FOOD;
+            return IDLE;
         }
         // Reset AI when going to the restaurant to eat
         if (citizen.getCitizenJobHandler().getColonyJob() != null)
@@ -469,6 +469,7 @@ public class EntityAIEatTask extends EntityAIBase
             }
 
             reset();
+            currentState = IDLE;
             return IDLE;
         }
         foodSlot = slot;

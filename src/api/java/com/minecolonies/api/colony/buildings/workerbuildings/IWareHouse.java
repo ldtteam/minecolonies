@@ -10,6 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IWareHouse extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding
 {
@@ -34,7 +35,7 @@ public interface IWareHouse extends ISchematicProvider, ICitizenAssignable, IBui
      *
      * @return the unmodifiable List of positions of them.
      */
-    List<Vec3d> getRegisteredDeliverymen();
+    Set<Vec3d> getRegisteredDeliverymen();
 
     /**
      * Upgrade all containers by 9 slots.

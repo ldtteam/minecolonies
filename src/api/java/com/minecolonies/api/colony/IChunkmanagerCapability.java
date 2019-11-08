@@ -2,6 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.NBTUtils;
+import gnu.trove.map.hash.THashMap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +13,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -55,7 +55,7 @@ public interface IChunkmanagerCapability
         /**
          * Map of chunkPos to chunkLoadStorage.
          */
-        private final Map<ChunkPos, ChunkLoadStorage> chunkStorages = new HashMap<>();
+        private final Map<ChunkPos, ChunkLoadStorage> chunkStorages = new THashMap<>();
 
         @Nullable
         @Override

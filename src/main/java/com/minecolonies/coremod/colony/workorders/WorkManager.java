@@ -13,14 +13,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Handles work orders for a colony.
@@ -87,8 +84,7 @@ public class WorkManager implements IWorkManager
      * @param id   the id of the work order.
      * @param type the class of the expected type of the work order.
      * @param <W>  the type of work order to return.
-     * @return the work order of the specified id, or null if it was not found
-     * or is of an incompatible type.
+     * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
     @Override
     @Nullable
@@ -120,8 +116,7 @@ public class WorkManager implements IWorkManager
      *
      * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return an unclaimed work order of the given type, or null if no
-     * unclaimed work order of the type was found.
+     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
     @Override
     @Nullable
@@ -164,8 +159,7 @@ public class WorkManager implements IWorkManager
     }
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by
-     * that citizen.
+     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
      *
      * @param citizen Citizen to unclaim work for.
      */
@@ -203,6 +197,7 @@ public class WorkManager implements IWorkManager
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        workOrders.clear();
         //  Work Orders
         final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); ++i)
@@ -244,7 +239,7 @@ public class WorkManager implements IWorkManager
                 if (or instanceof WorkOrderBuildDecoration)
                 {
                     if (((WorkOrderBuildDecoration) or).getBuildingLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
-                    && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
+                          && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
                     {
                         Log.getLogger().warn("Avoiding adding duplicate workOrder");
                         removeWorkOrder(or);
@@ -280,30 +275,26 @@ public class WorkManager implements IWorkManager
     }
 
     /**
-     * Process updates on the World Tick.
-     * Currently, does periodic Work Order cleanup.
+     * Process updates on the Colony Tick. Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
+     * @param colony the colony being ticked.
      */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        if (event.phase == TickEvent.Phase.END && Colony.shallUpdate(event.world, TICKS_SECOND))
+        @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
+        while (iter.hasNext())
         {
-            @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
-            while (iter.hasNext())
+            final IWorkOrder o = iter.next();
+            if (!o.isValid(this.colony))
             {
-                final IWorkOrder o = iter.next();
-                if (!o.isValid(colony))
-                {
-                    iter.remove();
-                    dirty = true;
-                }
-                else if (o.hasChanged())
-                {
-                    dirty = true;
-                    o.resetChange();
-                }
+                iter.remove();
+                dirty = true;
+            }
+            else if (o.hasChanged())
+            {
+                dirty = true;
+                o.resetChange();
             }
         }
     }
@@ -311,7 +302,7 @@ public class WorkManager implements IWorkManager
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param type the type of workOrder which is required.
+     * @param type    the type of workOrder which is required.
      * @param builder the builder wanting to claim it.
      * @return the list.
      */
@@ -319,8 +310,8 @@ public class WorkManager implements IWorkManager
     public <W extends IWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
     {
         return workOrders.values().stream().filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)) && type.isInstance(o)).map(o -> (W) o)
-                .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
-                .collect(Collectors.toList());
+                 .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+                 .collect(Collectors.toList());
     }
 
     /**
