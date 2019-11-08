@@ -120,7 +120,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
       @NotNull final IRequest<?> request,
       @NotNull final IRequest<? extends IDeliverable> target)
     {
-        return createsCraftingCycle(manager, request, target, 0, new ArrayList());
+        return createsCraftingCycle(manager, request, target, 0, new ArrayList<>());
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
       @NotNull final IRequest<?> request,
       @NotNull final IRequest<? extends IDeliverable> target,
       final int count,
-      final List reqs)
+      final List<IRequestable> reqs)
     {
         if (reqs.contains(request.getRequest()))
         {
