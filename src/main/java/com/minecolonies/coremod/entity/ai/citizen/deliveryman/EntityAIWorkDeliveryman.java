@@ -714,11 +714,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        if (getAndCheckWarehouse() != null && getAndCheckWarehouse().getTileEntity() != null)
+        if (getAndCheckWareHouse() != null && getAndCheckWareHouse().getTileEntity() != null)
         {
+            job.setActive(true);
             return false;
         }
 
+        job.setActive(false);
         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
         return true;
     }
