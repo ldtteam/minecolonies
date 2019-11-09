@@ -190,7 +190,7 @@ public class CitizenManager implements ICitizenManager
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntitys(),
-                  "tile.blockHutTownHall.messageMaxSize",
+                  "block.blockHutTownHall.messageMaxSize",
                   colony.getName());
             }
         }

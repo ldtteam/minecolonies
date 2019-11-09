@@ -689,7 +689,7 @@ public class EventHandler
                     Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                            + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                     //Placing in a colony which already has a town hall
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+                    LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
                 }
                 return false;
             }
@@ -699,7 +699,7 @@ public class EventHandler
                 if (!world.isRemote)
                 {
                     //  No permission to place hut in colony
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                    LanguageHandler.sendPlayerMessage(player, "block.blockHut.messageNoPermissionPlace", closestColony.getName());
                 }
                 return false;
             }
@@ -712,7 +712,7 @@ public class EventHandler
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+            LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
             return false;
         }
 
@@ -725,7 +725,7 @@ public class EventHandler
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,
-              "tile.blockHutTownHall.messageTooCloseToVillage");
+              "block.blockHutTownHall.messageTooCloseToVillage");
             return false;
         }
         return true;
