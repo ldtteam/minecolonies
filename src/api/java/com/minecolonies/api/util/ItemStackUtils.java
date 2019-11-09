@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -11,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -679,6 +677,11 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
     {
+        if (isEmpty(itemStack1) && isEmpty(itemStack2))
+        {
+            return true;
+        }
+
         if (!isEmpty(itemStack1) &&
               !isEmpty(itemStack2) &&
               itemStack1.getItem() == itemStack2.getItem() &&
