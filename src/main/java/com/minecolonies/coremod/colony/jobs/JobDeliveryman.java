@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJ
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.DeliverymanSounds;
@@ -296,14 +297,21 @@ public class JobDeliveryman extends AbstractJob
      */
     public void setActive(final boolean b)
     {
-        this.active = b;
-        if (!b)
+        if (!b && active)
         {
             for (final IToken<?> t : getTaskQueue())
             {
                 getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
             }
         }
+        else if (!active && b)
+        {
+            this.active = b;
+            final ImmutableList<IToken<?>> tokenList = getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
+            getColony().getRequestManager()
+              .onColonyUpdate(request -> tokenList.contains(request.getId()));
+        }
+        this.active = b;
     }
 
     /**
