@@ -23,7 +23,6 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -137,7 +136,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     if (citizen.isDirty() || !newSubscribers.isEmpty())
                     {
-                        ColonyUtils.sendToAll(players, new ColonyViewCitizenViewMessage(colony, citizen));
+                        players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
