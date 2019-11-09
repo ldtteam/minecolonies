@@ -63,6 +63,7 @@ public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOr
     protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
         IColonyManager.getInstance().handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.provider.getDimension());
+        message.workOrderBuffer.release();
     }
 }
 
