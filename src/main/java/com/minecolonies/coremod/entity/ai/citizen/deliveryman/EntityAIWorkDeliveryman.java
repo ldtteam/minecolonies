@@ -714,7 +714,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        if (getAndCheckWareHouse() != null && getAndCheckWareHouse().getTileEntity() != null)
+        if (getAndCheckWarehouse() != null && getAndCheckWarehouse().getTileEntity() != null)
         {
             job.setActive(true);
             return false;
