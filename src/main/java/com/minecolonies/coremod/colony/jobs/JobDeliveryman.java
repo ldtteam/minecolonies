@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
@@ -40,6 +41,11 @@ public class JobDeliveryman extends AbstractJob
      * Walking speed bonus per level
      */
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
+
+    /**
+     * If the dman is currently active.
+     */
+    private boolean active = false;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -102,6 +108,7 @@ public class JobDeliveryman extends AbstractJob
     {
         final NBTTagCompound compound = super.serializeNBT();
         compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.setBoolean(TAG_ACTIVE, this.active);
 
         return compound;
     }
@@ -119,6 +126,7 @@ public class JobDeliveryman extends AbstractJob
         {
             setupRsDataStore();
         }
+        this.active = compound.getBoolean(TAG_ACTIVE);
     }
 
     /**
@@ -280,5 +288,29 @@ public class JobDeliveryman extends AbstractJob
     public void setReturning(final boolean returning)
     {
         getDataStore().setReturning(returning);
+    }
+
+    /**
+     * Set if the dman can currently work.
+     * @param b true if so.
+     */
+    public void setActive(final boolean b)
+    {
+        this.active = b;
+        if (!b)
+        {
+            for (final IToken<?> t : getTaskQueue())
+            {
+                getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
+            }
+        }
+    }
+
+    /**
+     * Check if the dman can currently accept requests.
+     */
+    public boolean isActive()
+    {
+        return this.active;
     }
 }
