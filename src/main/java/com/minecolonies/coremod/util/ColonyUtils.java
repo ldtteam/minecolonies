@@ -1,16 +1,11 @@
 package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.helpers.Structure;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.Network;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.Set;
 
 /**
  * Contains colony specific utility.
@@ -53,19 +48,5 @@ public final class ColonyUtils
         final int z2 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
 
         return new Tuple<>(new Tuple<>(x1, x2), new Tuple<>(z1, z2));
-    }
-
-    /**
-     * Sends a message to all given players.
-     *
-     * @param players the list of players
-     * @param message the message to send
-     */
-    public static void sendToAll(Set<ServerPlayerEntity> players, IMessage message)
-    {
-        for (final ServerPlayerEntity player : players)
-        {
-            Network.getNetwork().sendToPlayer(message, player);
-        }
     }
 }
