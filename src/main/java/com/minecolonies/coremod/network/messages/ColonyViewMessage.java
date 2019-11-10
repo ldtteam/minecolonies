@@ -81,6 +81,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
         if (MineColonies.proxy.getWorldFromMessage(ctx) != null)
         {
             IColonyManager.getInstance().handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription, message.dim);
+            message.colonyBuffer.release();
         }
     }
 }
