@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,18 +112,25 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     else if (optionalEntityCitizen.get().getTicksExisted() == 0)
                     {
                         final AbstractEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final List<AbstractEntityCitizen> list = player.getServerWorld().getEntities(AbstractEntityCitizen.class, cit -> true).stream()
-                          .filter(e -> e.equals(oldCitizen))
-                          .collect(Collectors.toList());
+                        final ICitizenData oldCitizenData = oldCitizen.getCitizenData();
 
-                        if (list.isEmpty())
+                        if (oldCitizenData != null)
                         {
-                            citizenData.setCitizenEntity(null);
-                            citizenData.updateCitizenEntityIfNecessary();
-                        }
-                        else
-                        {
-                            citizenData.setCitizenEntity(list.get(0));
+
+                            final List<AbstractEntityCitizen> list = new ArrayList<>(player.getServerWorld()
+                                                                                       .getEntities(AbstractEntityCitizen.class,
+                                                                                         entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                                                            && entityCitizen.getCitizenData().getId() == oldCitizenData.getId()));
+
+                            if (list.isEmpty())
+                            {
+                                citizenData.setCitizenEntity(null);
+                                citizenData.updateCitizenEntityIfNecessary();
+                            }
+                            else
+                            {
+                                citizenData.setCitizenEntity(list.get(0));
+                            }
                         }
                     }
 
