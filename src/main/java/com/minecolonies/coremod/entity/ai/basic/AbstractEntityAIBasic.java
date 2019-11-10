@@ -1002,7 +1002,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
+            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         else if (dumpOneMoreSlot())
         {
@@ -1164,7 +1164,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required)
         {
-            chatSpamFilter.talkWithoutSpam(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.toString());
+            chatProxy.setCurrentChat(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.toString());
         }
         updateToolFlag(toolType, required);
     }

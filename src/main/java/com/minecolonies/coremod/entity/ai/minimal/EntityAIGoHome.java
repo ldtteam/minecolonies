@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -32,7 +32,7 @@ public class EntityAIGoHome extends Goal
      * Filter to allow citizen requesting without spam.
      */
     @NotNull
-    protected final ChatSpamFilter chatSpamFilter;
+    protected final ChatProxy chatProxy;
 
     /**
      * The citizen.
@@ -48,7 +48,7 @@ public class EntityAIGoHome extends Goal
     {
         super();
         this.citizen = citizen;
-        this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
+        this.chatProxy = new ChatProxy(citizen.getCitizenData());
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 

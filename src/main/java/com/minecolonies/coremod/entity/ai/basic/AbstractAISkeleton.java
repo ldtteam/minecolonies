@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -38,7 +38,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     protected final      AbstractEntityCitizen worker;
     protected final      World                 world;
     @NotNull
-    protected final      ChatSpamFilter        chatSpamFilter;
+    protected final      ChatProxy             chatProxy;
 
     /**
      * The statemachine this AI uses
@@ -69,7 +69,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
-        this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
+        this.chatProxy = new ChatProxy(job.getCitizen());
         stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
 
         // Start at a random tickcounter to spread AI updates over all ticks

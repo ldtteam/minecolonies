@@ -3,22 +3,18 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
+/**
+ * The citizen chat handler which handles all possible notifications (blocking or not).
+ */
 public class CitizenChatHandler implements ICitizenChatHandler
 {
     /**
@@ -27,10 +23,24 @@ public class CitizenChatHandler implements ICitizenChatHandler
     private final EntityCitizen citizen;
 
     /**
-     * The Status message of the citizen. (What he is up to currently).
+     * Delay for a message to be relevant again. (For remind me later).
      */
-    @NotNull
-    private final Map<String, Integer> statusMessages = new HashMap<>();
+    private static final int MAX_IGNORE_TICKS = TICKS_SECOND * 60 * 20;
+
+    /**
+     * Messages to be reminded about later.
+     */
+    private final Map<TranslationTextComponent, Tuple<Integer, Boolean>> remindMeLater = new HashMap<>();
+
+    /**
+     * All kind of blocking messages.
+     */
+    private final Set<TranslationTextComponent> blocking = new HashSet<>();
+
+    /**
+     * All kinds of general pending messages.
+     */
+    private final Set<TranslationTextComponent> pending = new HashSet<>();
 
     /**
      * Constructor for the experience handler.
@@ -42,70 +52,59 @@ public class CitizenChatHandler implements ICitizenChatHandler
         this.citizen = citizen;
     }
 
-    /**
-     * Sends a localized message from the citizen containing a language string
-     * with a key and arguments.
-     *
-     * @param key  the key to retrieve the string.
-     * @param args additional arguments.
-     */
     @Override
-    public void sendLocalizedChat(final String key, final Object... args)
+    public void solve(final TranslationTextComponent component)
     {
-        sendChat(key, args);
+        blocking.remove(component);
+        pending.remove(component);
+        remindMeLater.remove(component);
     }
 
-    /**
-     * Sends a chat string close to the citizen.
-     *
-     * @param msg the message string.
-     */
-    private void sendChat(final String keyIn, @Nullable final Object... msg)
+    @Override
+    public void remindMeLater(final TranslationTextComponent component, final int worldTick)
     {
-        final String key = keyIn.toLowerCase(Locale.US);
-        if (msg == null || statusMessages.containsKey(key))
+        if (blocking.contains(component))
         {
-            return;
+            blocking.remove(component);
+            remindMeLater.put(component, new Tuple<>(worldTick, true));
         }
 
-        final TranslationTextComponent requiredItem;
-
-        if (msg.length == 0)
+        if (pending.contains(component))
         {
-            requiredItem = new TranslationTextComponent(key);
+            pending.remove(component);
+            remindMeLater.put(component, new Tuple<>(worldTick, false));
+        }
+    }
+
+    @Override
+    public void sendLocalizedChat(final String keyIn, final boolean isBlocking, final int worldTick, final Object... args)
+    {
+        final String key = keyIn.toLowerCase(Locale.US);
+        final TranslationTextComponent message;
+        if (args.length == 0)
+        {
+            message = new TranslationTextComponent(key);
         }
         else
         {
-            statusMessages.put(key + msg[0], citizen.ticksExisted);
-            requiredItem = new TranslationTextComponent(key, msg);
+            message = new TranslationTextComponent(key, args);
         }
 
-        final ITextComponent citizenDescription = new StringTextComponent(citizen.getCustomName().getFormattedText());
-        if (citizen.getCitizenColonyHandler().getColony() != null)
+        if (remindMeLater.containsKey(message))
         {
-            final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
-            final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys());
-            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
-
-            if (owner != null)
+            final Tuple<Integer, Boolean> tuple = remindMeLater.get(message);
+            if (tuple.getA() + MAX_IGNORE_TICKS > worldTick)
             {
-                players.remove(owner);
-                LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, requiredItem);
+                if (tuple.getB())
+                {
+                    blocking.add(message);
+                }
+                else
+                {
+                    pending.add(message);
+                }
+                remindMeLater.remove(message);
             }
-
-            LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, colonyDescription, requiredItem);
-        }
-    }
-
-    @Override
-    public void cleanupChatMessages()
-    {
-        //Only check if there are messages and once a second
-        if (!statusMessages.isEmpty() && citizen.ticksExisted % TICKS_20 == 0)
-        {
-            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * MineColonies.getConfig().getCommon().chatFrequency.get());
         }
     }
 
@@ -121,9 +120,14 @@ public class CitizenChatHandler implements ICitizenChatHandler
             final IJob job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null)
             {
-                final ITextComponent component = new TranslationTextComponent("block.blockhuttownhall.messageworkerdead", new TranslationTextComponent(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
-                LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
+                final ITextComponent component = new TranslationTextComponent(
+                  "block.blockhuttownhall.messageworkerdead",
+                  new TranslationTextComponent(job.getName()),
+                  citizen.getCitizenData().getName(),
+                  (int) citizen.posX,
+                  (int) citizen.posY,
+                  (int) citizen.posZ, damageSource.damageType);
+                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
             }
             else
             {
@@ -135,3 +139,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
     }
 }
+
+
+//todo we need to be able to register a responseHandler, so every message gets here stored with a response handler.
+// The responseHandler is then called on solved which can invoke a quest, achievement or request or nothing special. You can have multiple or no response handler per message.
+// The responseHandler gets added within a list to the lists (pending and blocking).
+
+//todo we also need a way to sync over the blocking and pending messages and then we need to trigger a message back here too.

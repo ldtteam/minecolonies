@@ -24,7 +24,6 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -230,7 +229,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //If the miner hut has been placed too deep.
             if (buildingMiner.getNumberOfLevels() == 0)
             {
-                chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
+                chatProxy.setCurrentChat("entity.miner.messageRequiresBetterHut");
                 buildingMiner.setClearedShaft(false);
                 return IDLE;
             }

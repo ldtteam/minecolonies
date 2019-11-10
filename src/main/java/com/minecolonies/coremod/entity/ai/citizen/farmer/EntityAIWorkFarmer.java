@@ -4,9 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
-import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -39,9 +37,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -187,7 +183,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (building.hasNoFields())
         {
-            chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
+            chatProxy.setCurrentChat("entity.farmer.noFreeFields");
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm(); 
             return PREPARING;
         }
@@ -308,7 +304,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
+            chatProxy.setCurrentChat("entity.farmer.noSeedSet");
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;

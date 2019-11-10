@@ -187,7 +187,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
-            chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
+            chatProxy.setCurrentChat(HUNGRY_INV_FULL);
             removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();

@@ -134,13 +134,13 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         if(getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(FURNACE_USER_NO_FUEL);
+            chatProxy.setCurrentChat(FURNACE_USER_NO_FUEL);
             return getState();
         }
 
         if (getOwnBuilding(AbstractBuildingFurnaceUser.class).getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            chatProxy.setCurrentChat(BAKER_HAS_NO_FURNACES_MESSAGE);
             return getState();
         }
 
@@ -302,7 +302,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         if (((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }

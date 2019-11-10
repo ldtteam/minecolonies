@@ -217,7 +217,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
@@ -285,7 +285,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(FURNACE_USER_NO_FUEL);
+            chatProxy.setCurrentChat(FURNACE_USER_NO_FUEL);
             return getState();
         }
 

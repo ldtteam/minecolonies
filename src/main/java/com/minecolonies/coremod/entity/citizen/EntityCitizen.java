@@ -1354,7 +1354,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
-        citizenChatHandler.cleanupChatMessages();
         citizenColonyHandler.updateColonyServer();
 
         if (citizenData != null)

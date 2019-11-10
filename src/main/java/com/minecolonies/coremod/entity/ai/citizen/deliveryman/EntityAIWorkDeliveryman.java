@@ -535,12 +535,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     //same stack, we could not deliver ?
                     if (building instanceof AbstractBuildingWorker)
                     {
-                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
+                        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                           building.getMainCitizen().getName());
                     }
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
-                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
                           new StringTextComponent(" :" + building.getSchematicName()));
                     }
                 }
@@ -725,7 +725,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         job.setActive(false);
-        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
+        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
         return true;
     }
 }

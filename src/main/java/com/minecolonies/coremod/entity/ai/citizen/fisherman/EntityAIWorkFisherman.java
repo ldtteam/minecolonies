@@ -393,7 +393,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
             {
-                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+                chatProxy.setCurrentChat("entity.fisherman.messageWaterTooFar");
             }
 
             if (pathResult == null || !pathResult.isInProgress())

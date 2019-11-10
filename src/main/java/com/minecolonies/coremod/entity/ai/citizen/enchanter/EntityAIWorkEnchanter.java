@@ -21,11 +21,9 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -122,7 +120,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
-                chatSpamFilter.talkWithoutSpam(NO_WORKERS_TO_DRAIN_SET);
+                chatProxy.setCurrentChat(NO_WORKERS_TO_DRAIN_SET);
                 return IDLE;
             }
 

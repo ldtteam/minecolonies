@@ -131,7 +131,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(NO_PLANT_GROUND_FLORIST);
+            chatProxy.setCurrentChat(NO_PLANT_GROUND_FLORIST);
             return IDLE;
         }
 
@@ -167,7 +167,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         {
             if (!isThereCompostedLand())
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.florist.nocompost");
+                chatProxy.setCurrentChat("com.minecolonies.coremod.florist.nocompost");
                 return START_WORKING;
             }
             return DECIDE;
@@ -205,7 +205,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
             else
             {
-                chatSpamFilter.talkWithoutSpam(NO_FLOWERS_IN_CONFIG);
+                chatProxy.setCurrentChat(NO_FLOWERS_IN_CONFIG);
             }
         }
 

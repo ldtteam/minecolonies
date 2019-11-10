@@ -18,7 +18,6 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -154,13 +153,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         if (getOwnBuilding().getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            chatProxy.setCurrentChat(BAKER_HAS_NO_FURNACES_MESSAGE);
             return getState();
         }
 
         if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_RECIPES);
+            chatProxy.setCurrentChat(BAKER_HAS_NO_RECIPES);
             return getState();
         }
 

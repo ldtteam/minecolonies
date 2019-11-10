@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -33,7 +33,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
 
     @NotNull
-    protected final ChatSpamFilter chatSpamFilter;
+    protected final ChatProxy chatProxy;
 
     /**
      * constants for house modifier.
@@ -179,7 +179,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         farmerModifier = 0;
         hasNoFields = false;
         needsTool.clear();
-        chatSpamFilter = new ChatSpamFilter(citizen);
+        chatProxy = new ChatProxy(citizen);
 
     }
 
@@ -238,11 +238,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsHouse", citizen.getName());
+                chatProxy.setCurrentChat("entity.citizen.demandsHouse", citizen.getName());
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noHouse", citizen.getName());
+                chatProxy.setCurrentChat("entity.citizen.noHouse", citizen.getName());
             }
         }
         else
@@ -259,11 +259,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsJob", citizen.getName());
+                chatProxy.setCurrentChat("entity.citizen.demandsJob", citizen.getName());
             }
             else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noJob", citizen.getName());
+                chatProxy.setCurrentChat("entity.citizen.noJob", citizen.getName());
             }
         }
         else
@@ -314,11 +314,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             needsTool.put(toolType, numDays);
             if (numDays > NO_TOOLS_DEMANDS_DAYS)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noTool", citizen.getName(), toolType.getDisplayName());
+                chatProxy.setCurrentChat("entity.citizen.noTool", citizen.getName(), toolType.getDisplayName());
             }
             else if (numDays > NO_TOOLS_COMPLAINS_DAYS)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsTool", citizen.getName(), toolType.getDisplayName());
+                chatProxy.setCurrentChat("entity.citizen.demandsTool", citizen.getName(), toolType.getDisplayName());
             }
             noToolModifier += (((double) numDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
         }

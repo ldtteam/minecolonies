@@ -5,14 +5,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -24,7 +23,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.EnumSet;
 
@@ -70,7 +68,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Filter for message propagation.
      */
-    protected ChatSpamFilter chatSpamFilter;
+    protected ChatProxy chatProxy;
 
     /**
      * The different types of AIStates related to eating.
@@ -158,9 +156,9 @@ public class EntityAIEatTask extends Goal
     @Override
     public void tick()
     {
-        if (chatSpamFilter == null)
+        if (chatProxy == null)
         {
-            chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
+            chatProxy = new ChatProxy(citizen.getCitizenData());
         }
 
         final ICitizenData citizenData = citizen.getCitizenData();
@@ -428,14 +426,14 @@ public class EntityAIEatTask extends Goal
         if (uncookedFood != -1)
         {
             complained = true;
-            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.wrongFood");
+            chatProxy.setCurrentChat("com.minecolonies.coremod.ai.wrongFood");
         }
 
         if (placeToPath == null)
         {
             if (!complained)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
+                chatProxy.setCurrentChat("com.minecolonies.coremod.ai.noRestaurant");
             }
             return IDLE;
         }
