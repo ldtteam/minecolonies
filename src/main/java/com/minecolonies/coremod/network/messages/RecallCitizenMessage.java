@@ -111,10 +111,8 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     else if (optionalEntityCitizen.get().getTicksExisted() == 0)
                     {
                         final AbstractEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final List<AbstractEntityCitizen> list = player.getServerWorld().getLoadedEntityList().stream()
-                                                                   .filter(e -> e instanceof AbstractEntityCitizen)
+                        final List<AbstractEntityCitizen> list = player.getServerWorld().getEntities(AbstractEntityCitizen.class, cit -> true).stream()
                           .filter(e -> e.equals(oldCitizen))
-                                                                   .map(e -> (AbstractEntityCitizen) e)
                           .collect(Collectors.toList());
 
                         if (list.isEmpty())
