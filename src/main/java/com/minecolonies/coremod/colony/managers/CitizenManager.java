@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -22,7 +23,6 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -39,8 +39,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ColonyConstants.HAPPINESS_FACTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.WELL_SATURATED_LIMIT;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -66,6 +65,11 @@ public class CitizenManager implements ICitizenManager
     private int maxCitizens = 0;
 
     /**
+     * Max citizens considering the spot in the empty guard tower.
+     */
+    private int potentialMaxCitizens;
+
+    /**
      * The colony of the manager.
      */
     private final Colony colony;
@@ -89,6 +93,7 @@ public class CitizenManager implements ICitizenManager
     public void read(@NotNull final CompoundNBT compound)
     {
         maxCitizens = compound.getInt(TAG_MAX_CITIZENS);
+        potentialMaxCitizens = compound.getInt(TAG_POTENTIAL_MAX_CITIZENS);
 
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
@@ -111,6 +116,7 @@ public class CitizenManager implements ICitizenManager
     public void write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
+        compound.putInt(TAG_POTENTIAL_MAX_CITIZENS, potentialMaxCitizens);
 
         @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
         compound.put(TAG_CITIZENS, citizenTagList);
@@ -130,7 +136,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     if (citizen.isDirty() || !newSubscribers.isEmpty())
                     {
-                        ColonyUtils.sendToAll(players, new ColonyViewCitizenViewMessage(colony, citizen));
+                        players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
@@ -183,7 +189,7 @@ public class CitizenManager implements ICitizenManager
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntitys(),
-                  "tile.blockHutTownHall.messageMaxSize",
+                  "block.blockHutTownHall.messageMaxSize",
                   colony.getName());
             }
         }
@@ -273,6 +279,7 @@ public class CitizenManager implements ICitizenManager
     public void calculateMaxCitizens()
     {
         int newMaxCitizens = 0;
+        int potentialMax = 0;
 
         for (final IBuilding b : colony.getBuildingManager().getBuildings().values())
         {
@@ -284,13 +291,21 @@ public class CitizenManager implements ICitizenManager
                 }
                 else if (b instanceof AbstractBuildingGuards)
                 {
-                    newMaxCitizens += b.getAssignedCitizen().size();
+                    if (b.getAssignedCitizen().size() != 0)
+                    {
+                        newMaxCitizens += b.getAssignedCitizen().size();
+                    }
+                    else
+                    {
+                        potentialMax += 1;
+                    }
                 }
             }
         }
         if (getMaxCitizens() != newMaxCitizens)
         {
             setMaxCitizens(newMaxCitizens);
+            setPotentialMaxCitizens(potentialMax + newMaxCitizens);
             colony.markDirty();
         }
     }
@@ -342,6 +357,12 @@ public class CitizenManager implements ICitizenManager
         return Math.min(maxCitizens, MineColonies.getConfig().getCommon().maxCitizenPerColony.get());
     }
 
+    @Override
+    public int getPotentialMaxCitizens()
+    {
+        return Math.min(potentialMaxCitizens, MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxCitizenPerColony.get());
+    }
+
     /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
      *
@@ -357,6 +378,12 @@ public class CitizenManager implements ICitizenManager
     public void setMaxCitizens(final int newMaxCitizens)
     {
         this.maxCitizens = newMaxCitizens;
+    }
+
+    @Override
+    public void setPotentialMaxCitizens(final int newPotentialMax)
+    {
+        this.potentialMaxCitizens = newPotentialMax;
     }
 
     @Override

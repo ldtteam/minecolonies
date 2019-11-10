@@ -27,4 +27,7 @@ public class MinecoloniesTileEntities
 
     @ObjectHolder("composteddirt")
     public static TileEntityType<?> COMPOSTED_DIRT;
+
+    @ObjectHolder("enchanter")
+    public static TileEntityType<?> ENCHANTER;
 }

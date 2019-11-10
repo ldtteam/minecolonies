@@ -9,7 +9,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -107,8 +106,8 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
             if (cap != null)
             {
-                cap.setOwningColony(c.getB());
-                cap.addColony(c.getB());
+                cap.setOwningColony(c.getB(), chunk);
+                cap.addColony(c.getB(), chunk);
             }
         }
     }

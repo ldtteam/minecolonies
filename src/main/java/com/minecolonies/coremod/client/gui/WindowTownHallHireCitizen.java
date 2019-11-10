@@ -97,7 +97,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         }
 
         // Disable all if colony at max size
-        if (colony.getCitizens().size() >= colony.getCitizenCount())
+        if (colony.getCitizens().size() >= colony.getCitizenCountLimit())
         {
             findPaneOfTypeByID(BUTTON_HAY_BALE, ButtonImage.class).disable();
             findPaneOfTypeByID(BUTTON_BOOKS, ButtonImage.class).disable();
