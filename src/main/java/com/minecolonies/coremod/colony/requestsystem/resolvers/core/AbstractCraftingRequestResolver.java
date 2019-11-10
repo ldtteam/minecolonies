@@ -8,18 +8,20 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
@@ -107,33 +109,46 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Method to check if a crafting cycle can be created.
+     *
      * @param manager the manager.
      * @param request the request.
      * @param target the target.
      * @return true if so.
      */
-    protected boolean createsCraftingCycle(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final IRequest<? extends IDeliverable> target)
+    protected boolean createsCraftingCycle(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<?> request,
+      @NotNull final IRequest<? extends IDeliverable> target)
     {
-        return createsCraftingCycle(manager, request, target, 0);
+        return createsCraftingCycle(manager, request, target, 0, new ArrayList<>());
     }
 
     /**
      * Method to check if a crafting cycle can be created.
+     *
      * @param manager the manager.
      * @param request the request.
      * @param target the target to create.
      * @param count the itemCount.
+     * @param reqs the list of reqs.
      * @return true if possible.
      */
     protected boolean createsCraftingCycle(
-            @NotNull final IRequestManager manager,
-            @NotNull final IRequest<?> request,
-            @NotNull final IRequest<? extends IDeliverable> target,
-            final int count)
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<?> request,
+      @NotNull final IRequest<? extends IDeliverable> target,
+      final int count,
+      final List<IRequestable> reqs)
     {
+        if (reqs.contains(request.getRequest()))
+        {
+            return true;
+        }
+        reqs.add(request.getRequest());
+
         if (count > MAX_CRAFTING_CYCLE_DEPTH)
         {
-            return false;
+            return true;
         }
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
@@ -146,7 +161,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1);
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1, reqs);
     }
 
     /**
