@@ -145,7 +145,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return "CombatTraining";
+        return "melee";
     }
 
     @Override
