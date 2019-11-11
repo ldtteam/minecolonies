@@ -292,6 +292,14 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
      */
     public boolean shouldRestrict()
     {
+        if (restrict)
+        {
+            if (startRestriction == null || endRestriction == null)
+            {
+                restrict = false;
+                markDirty();
+            }
+        }
         return restrict;
     }
 
