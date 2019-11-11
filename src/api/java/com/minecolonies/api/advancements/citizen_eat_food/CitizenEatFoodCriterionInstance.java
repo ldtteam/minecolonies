@@ -33,6 +33,7 @@ public class CitizenEatFoodCriterionInstance extends AbstractCriterionInstance
                     return true;
                 }
             }
+            return false;
         }
 
         return true;

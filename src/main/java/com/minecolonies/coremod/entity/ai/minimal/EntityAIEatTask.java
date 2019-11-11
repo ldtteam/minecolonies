@@ -246,7 +246,7 @@ public class EntityAIEatTask extends EntityAIBase
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null )
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, new ItemStack(itemFood)));
         }
 
         citizenData.markDirty();

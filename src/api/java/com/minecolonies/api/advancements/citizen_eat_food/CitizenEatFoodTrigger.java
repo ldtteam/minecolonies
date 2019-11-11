@@ -20,10 +20,13 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
 
     public void trigger(final EntityPlayerMP player, final ItemStack foodItemStack)
     {
-        final CitizenEatFoodListeners listeners = this.getListeners(player.getAdvancements());
-        if (listeners != null)
+        if (player != null)
         {
-            listeners.trigger(foodItemStack);
+            final CitizenEatFoodListeners listeners = this.getListeners(player.getAdvancements());
+            if (listeners != null)
+            {
+                listeners.trigger(foodItemStack);
+            }
         }
     }
 
