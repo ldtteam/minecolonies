@@ -131,7 +131,7 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return "ArcherTraining";
+        return "archer";
     }
 
     @Override
