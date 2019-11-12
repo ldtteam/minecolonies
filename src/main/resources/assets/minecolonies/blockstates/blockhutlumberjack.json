@@ -3,9 +3,9 @@
   "defaults": {
     "model": "forge:block/multi-layer",
     "custom": {
-      "base": "minecolonies:../block/blockhutlumberjack",
-      "Solid": "minecolonies:../block/blockhutlumberjack",
-      "Cutout": "minecolonies:../block/blockhutlumberjacksapling"
+      "base": "minecolonies:block/blockhutlumberjack",
+      "Solid": "minecolonies:block/blockhutlumberjack",
+      "Cutout": "minecolonies:block/blockhutlumberjacksapling"
     },
     "transform": "forge:default-block"
   },
