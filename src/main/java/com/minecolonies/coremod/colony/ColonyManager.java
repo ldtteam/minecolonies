@@ -364,7 +364,7 @@ public final class ColonyManager implements IColonyManager
         final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().x, centralChunk.getPos().z);
         if (storage != null)
         {
-            storage.applyToCap(colonyCap);
+            storage.applyToCap(colonyCap, centralChunk);
         }
         return !colonyCap.getAllCloseColonies().isEmpty();
     }
@@ -785,7 +785,6 @@ public final class ColonyManager implements IColonyManager
                 }
 
                 final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
-                cap.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
                 Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
             else

@@ -229,12 +229,24 @@ public class RequestHandler implements IRequestHandler
             throw new IllegalArgumentException("Can not reassign a request that has children.");
         }
 
-        this.processDirectCancellationOf(request);
+        final IRequestResolver currentlyAssignedResolver = manager.getResolverForRequest(request.getId());
+        currentlyAssignedResolver.onAssignedRequestBeingCancelled(new WrappedStaticStateRequestManager(manager), request);
+
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(currentlyAssignedResolver.getId()))
+        {
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentlyAssignedResolver.getId()).remove(request.getId());
+            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentlyAssignedResolver.getId()).isEmpty())
+            {
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(currentlyAssignedResolver.getId());
+            }
+        }
+
+        currentlyAssignedResolver.onAssignedRequestCancelled(new WrappedStaticStateRequestManager(manager), request);
 
         manager.updateRequestState(request.getId(), RequestState.REPORTED);
-        IToken<?> resolver = assignRequest(request, resolverTokenBlackList);
+        IToken<?> newAssignedResolverId = assignRequest(request, resolverTokenBlackList);
 
-        return resolver;
+        return newAssignedResolverId;
     }
 
     /**

@@ -101,15 +101,14 @@ public class EventHandler
             }
             else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity))
             {
-                ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
-                ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
+                ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
+                ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
             }
         }
     }
 
     /**
-     * Event when the debug screen is opened. Event gets called by displayed
-     * text on the screen, we only need it when f3 is clicked.
+     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
@@ -187,7 +186,7 @@ public class EventHandler
      * Called when a chunk gets unloaded
      */
     @SubscribeEvent
-    public void onChunkUnLoad(final ChunkEvent.Unload event)
+    public static void onChunkUnLoad(final ChunkEvent.Unload event)
     {
         if (event.getWorld() instanceof ServerWorld)
         {
@@ -253,7 +252,7 @@ public class EventHandler
      * @param event player enter world event
      */
     @SubscribeEvent
-    public void onPlayerEnterWorld(final PlayerEvent.PlayerLoggedInEvent event)
+    public static void onPlayerEnterWorld(final PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.getEntity() instanceof ServerPlayerEntity)
         {
@@ -266,6 +265,19 @@ public class EventHandler
                     colony.getPackageManager().addImportantColonyPlayer(player);
                 }
             }
+
+            // Add visiting/subscriber to colony we're logging into
+            final Chunk chunk = (Chunk) player.world.getChunk(player.getPosition());
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+            if (cap != null && cap.getOwningColony() != 0)
+            {
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.dimension.getId());
+                if (colony != null)
+                {
+                    colony.addVisitingPlayer(player);
+                    colony.getPackageManager().addCloseSubscriber(player);
+                }
+            }
         }
     }
 
@@ -275,7 +287,7 @@ public class EventHandler
      * @param event player leaves world event
      */
     @SubscribeEvent
-    public void onPlayerLeaveWorld(final PlayerEvent.PlayerLoggedOutEvent event)
+    public static void onPlayerLeaveWorld(final PlayerEvent.PlayerLoggedOutEvent event)
     {
         if (event.getEntity() instanceof ServerPlayerEntity)
         {
@@ -326,9 +338,8 @@ public class EventHandler
     }
 
     /**
-     * Event when a player right clicks a block, or right clicks with an item.
-     * Event gets cancelled when player has no permission. Event gets cancelled
-     * when the player has no permission to place a hut, and tried it.
+     * Event when a player right clicks a block, or right clicks with an item. Event gets cancelled when player has no permission. Event gets cancelled when the player has no
+     * permission to place a hut, and tried it.
      *
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
@@ -494,8 +505,7 @@ public class EventHandler
     }
 
     /**
-     * Called when a player tries to place a AbstractBlockHut. Returns true if
-     * successful and false to cancel the block placement.
+     * Called when a player tries to place a AbstractBlockHut. Returns true if successful and false to cancel the block placement.
      *
      * @param world  The world the player is in
      * @param player The player
@@ -679,7 +689,7 @@ public class EventHandler
                     Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                            + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                     //Placing in a colony which already has a town hall
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+                    LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
                 }
                 return false;
             }
@@ -689,7 +699,7 @@ public class EventHandler
                 if (!world.isRemote)
                 {
                     //  No permission to place hut in colony
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                    LanguageHandler.sendPlayerMessage(player, "block.blockHut.messageNoPermissionPlace", closestColony.getName());
                 }
                 return false;
             }
@@ -702,7 +712,7 @@ public class EventHandler
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+            LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
             return false;
         }
 
@@ -715,15 +725,14 @@ public class EventHandler
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,
-              "tile.blockHutTownHall.messageTooCloseToVillage");
+              "block.blockHutTownHall.messageTooCloseToVillage");
             return false;
         }
         return true;
     }
 
     /**
-     * Gets called when world loads.
-     * Calls {@link ColonyManager#onWorldLoad(World)}
+     * Gets called when world loads. Calls {@link ColonyManager#onWorldLoad(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
@@ -748,8 +757,7 @@ public class EventHandler
     }
 
     /**
-     * Gets called when world unloads.
-     * Calls {@link ColonyManager#onWorldUnload(World)}
+     * Gets called when world unloads. Calls {@link ColonyManager#onWorldUnload(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
      */
