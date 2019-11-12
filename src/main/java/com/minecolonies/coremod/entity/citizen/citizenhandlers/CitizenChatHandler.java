@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.util.IInteractionResponseHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -41,6 +42,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
      * All kinds of general pending messages.
      */
     private final Set<TranslationTextComponent> pending = new HashSet<>();
+
+
+
+    private final Map<TranslationTextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * Constructor for the experience handler.
