@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers.ClientCitizenInteractionResponseHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -10,9 +10,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData. Views
@@ -99,6 +101,11 @@ public class CitizenDataView implements ICitizenDataView
     private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     private InventoryCitizen inventory;
+
+    /**
+     * The citizen chat options on the server side.
+     */
+    private final Map<ITextComponent, ClientCitizenInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * Set View id.
@@ -433,6 +440,15 @@ public class CitizenDataView implements ICitizenDataView
         this.inventory.setHeldItem(Hand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
         position = buf.readBlockPos();
+
+        final int dimension = buf.readInt();
+        final int size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            final CompoundNBT compoundNBT = buf.readCompoundTag();
+            final ClientCitizenInteractionResponseHandler handler = new ClientCitizenInteractionResponseHandler(colonyId, id, dimension, compoundNBT);
+            citizenChatOptions.put(handler.getInquiry(), handler);
+        }
     }
 
     /**

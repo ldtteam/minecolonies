@@ -18,6 +18,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -207,6 +208,11 @@ public class CitizenData implements ICitizenData
     private final CitizenHappinessHandler citizenHappinessHandler;
 
     /**
+     * The citizen chat options on the server side.
+     */
+    private final Map<ITextComponent, ServerCitizenInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+
+    /**
      * Create a CitizenData given an ID.
      * Used as a super-constructor or during loading.
      *
@@ -219,6 +225,15 @@ public class CitizenData implements ICitizenData
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
         this.citizenHappinessHandler = new CitizenHappinessHandler(this);
+    }
+
+    @Override
+    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response)
+    {
+        if (citizenChatOptions.containsKey(key))
+        {
+            citizenChatOptions.get(key).onResponseTriggered(response);
+        }
     }
 
     /**
@@ -821,6 +836,13 @@ public class CitizenData implements ICitizenData
         compound.put("inventory", inventory.write(new ListNBT()));
         buf.writeCompoundTag(compound);
         buf.writeBlockPos(lastPosition);
+
+        buf.writeInt(colony.getDimension());
+        buf.writeInt(citizenChatOptions.size());
+        for (final ServerCitizenInteractionResponseHandler interactionHandler : citizenChatOptions.values())
+        {
+            buf.writeCompoundTag(interactionHandler.serializeNBT());
+        }
     }
 
     /**
@@ -1519,6 +1541,14 @@ public class CitizenData implements ICitizenData
 
         citizenHappinessHandler.write(nbtTagCompound);
 
+        @NotNull final ListNBT chatTagList = new ListNBT();
+        for (@NotNull final ServerCitizenInteractionResponseHandler entry : citizenChatOptions.values())
+        {
+            @NotNull final CompoundNBT chatOptionCompound = new CompoundNBT();
+            chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
+            chatTagList.add(chatOptionCompound);
+        }
+        nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
         return nbtTagCompound;
     }
 
@@ -1587,6 +1617,16 @@ public class CitizenData implements ICitizenData
             justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
         }
 
+        //  Citizen chat options.
+        if (nbtTagCompound.keySet().contains(TAG_CHAT_OPTIONS))
+        {
+            final ListNBT levelTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < levelTagList.size(); ++i)
+            {
+                final ServerCitizenInteractionResponseHandler handler = new ServerCitizenInteractionResponseHandler(levelTagList.getCompound(i));
+                citizenChatOptions.put(handler.getInquiry(), handler);
+            }
+        }
         citizenHappinessHandler.read(nbtTagCompound);
     }
 }

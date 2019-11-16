@@ -368,6 +368,10 @@ public final class NbtTagConstants
     public static final String TAG_SKILL_DEXTERITY    = "dexterity";
     public static final String TAG_SATURATION         = "saturation";
     public static final String TAG_ASLEEP             = "asleep";
+    public static final String TAG_CHAT_OPTION        = "chatoption";
+    public static final String TAG_CHAT_OPTIONS       = "chatoptions";
+
+
 
     /**
      * Tag of the colony.
@@ -455,6 +459,33 @@ public final class NbtTagConstants
     public static final String TAG_GATHERED_ALREADY = "gatheredalready";
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
     public static final String TAG_WAITING_TICKS = "waitingticks";
+
+    // --------------------- Chat handling tags --------------------- //
+
+    /**
+     * Inquiry tag to store to NBT.
+     */
+    public static final String TAG_INQUIRY = "inquiry";
+
+    /**
+     * Response tag to store each response option.
+     */
+    public static final String TAG_RESPONSE  = "response";
+
+    /**
+     * Responses tag to store the entire list.
+     */
+    public static final String TAG_RESPONSES    = "responses";
+
+    /**
+     * The tag for the next inquiry to a response.
+     */
+    public static final String TAG_NEXT_INQUIRY = "nextinquiry";
+
+    /**
+     * The tag to store if this interaction is a primary interaction.
+     */
+    public static final String TAG_PRIMARY      = "primary";
 
     /**
      * Private constructor to hide the implicit one.

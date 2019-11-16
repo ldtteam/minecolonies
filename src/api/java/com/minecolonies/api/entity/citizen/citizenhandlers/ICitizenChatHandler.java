@@ -1,7 +1,9 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.jetbrains.annotations.NotNull;
 
 public interface ICitizenChatHandler
 {
@@ -20,14 +22,14 @@ public interface ICitizenChatHandler
      * Solve a certain notification and remove it from the buffer.
      * @param component the component.
      */
-    void solve(TranslationTextComponent component);
+    void solve(ITextComponent component);
 
     /**
      * Remind the player later again about the issue.
      * @param component the component.
      * @param worldTick the world tick.
      */
-    void remindMeLater(TranslationTextComponent component, int worldTick);
+    void remindMeLater(ITextComponent component, int worldTick);
 
     /**
      * Notify about death of citizen.

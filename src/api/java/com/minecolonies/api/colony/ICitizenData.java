@@ -12,6 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -493,4 +494,11 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * @param levels the levels to spend.
      */
     void spendLevels(int levels);
+
+    /**
+     * Trigger the response on the server side.
+     * @param key the key of the component.
+     * @param response the triggered response.
+     */
+    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response);
 }

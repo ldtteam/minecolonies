@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.ai.util.IInteractionResponseHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -31,21 +31,17 @@ public class CitizenChatHandler implements ICitizenChatHandler
     /**
      * Messages to be reminded about later.
      */
-    private final Map<TranslationTextComponent, Tuple<Integer, Boolean>> remindMeLater = new HashMap<>();
+    private final Map<ITextComponent, Tuple<Integer, Boolean>> remindMeLater = new HashMap<>();
 
     /**
      * All kind of blocking messages.
      */
-    private final Set<TranslationTextComponent> blocking = new HashSet<>();
+    private final Set<ITextComponent> blocking = new HashSet<>();
 
     /**
      * All kinds of general pending messages.
      */
-    private final Set<TranslationTextComponent> pending = new HashSet<>();
-
-
-
-    private final Map<TranslationTextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    private final Set<ITextComponent> pending = new HashSet<>();
 
     /**
      * Constructor for the experience handler.
@@ -58,7 +54,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
     }
 
     @Override
-    public void solve(final TranslationTextComponent component)
+    public void solve(final ITextComponent component)
     {
         blocking.remove(component);
         pending.remove(component);
@@ -66,7 +62,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
     }
 
     @Override
-    public void remindMeLater(final TranslationTextComponent component, final int worldTick)
+    public void remindMeLater(final ITextComponent component, final int worldTick)
     {
         if (blocking.contains(component))
         {
@@ -80,6 +76,13 @@ public class CitizenChatHandler implements ICitizenChatHandler
             remindMeLater.put(component, new Tuple<>(worldTick, false));
         }
     }
+
+    //todo for different chat types we'll create different handlers which we then add to the citizenData.
+
+    //todo we want one type for just general chitchat (happiness (food, housing, guards, jobs, etc)).
+    //todo we need to be able to differentiate between blocking and pending on the client side too! 
+
+    //todo, first, in the serverCitizenInteractionResponseHandler we need always the options of "remindMeLater" and "okay"
 
     @Override
     public void sendLocalizedChat(final String keyIn, final boolean isBlocking, final int worldTick, final Object... args)
@@ -144,10 +147,3 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
     }
 }
-
-
-//todo we need to be able to register a responseHandler, so every message gets here stored with a response handler.
-// The responseHandler is then called on solved which can invoke a quest, achievement or request or nothing special. You can have multiple or no response handler per message.
-// The responseHandler gets added within a list to the lists (pending and blocking).
-
-//todo we also need a way to sync over the blocking and pending messages and then we need to trigger a message back here too.
