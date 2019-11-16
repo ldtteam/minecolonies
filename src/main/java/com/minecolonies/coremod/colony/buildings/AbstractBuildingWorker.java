@@ -506,7 +506,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
-        ByteBufUtils.writeUTF8String(buf, this.getJobName());
+        buf.writeString(this.getJobName());
         buf.writeInt(getMaxInhabitants());
     }
 
@@ -653,7 +653,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
-            this.jobName = ByteBufUtils.readUTF8String(buf);
+            this.jobName = buf.readString(32767);
             this.maxInhabitants = buf.readInt();
         }
 
