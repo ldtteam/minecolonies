@@ -25,6 +25,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -646,14 +647,21 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final Map<String, Integer> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
         {
-            if (!building.isBuilding() && building instanceof AbstractBuildingWorker.View)
+            if (building.getBuildingLevel() > 0 && building instanceof AbstractBuildingWorker.View)
             {
-                final String buildingName = building.getSchematicName().toLowerCase();
-                if (jobCountMap.get(buildingName) == null)
+                String jobName = ((AbstractBuildingWorker.View) building).getJobName().toLowerCase(Locale.ENGLISH);
+                if (building instanceof AbstractBuildingGuards.View)
                 {
-                    jobCountMap.put(buildingName, 0);
+                    final String[] splitString = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey().split("\\.");
+                    final int length = splitString.length;
+                    jobName = splitString[length - 1].toLowerCase(Locale.ENGLISH);
                 }
-                jobMaxCountMap.put(buildingName, jobMaxCountMap.get(buildingName) == null ? 1 : (jobMaxCountMap.get(buildingName) + 1));
+                if (jobCountMap.get(jobName) == null)
+                {
+                    jobCountMap.put(jobName, 0);
+                }
+                final int maxInhabitants = ((AbstractBuildingWorker.View) building).getMaxInhabitants();
+                jobMaxCountMap.put(jobName, jobMaxCountMap.get(jobName) == null ? maxInhabitants : (jobMaxCountMap.get(jobName) + maxInhabitants));
             }
         }
 

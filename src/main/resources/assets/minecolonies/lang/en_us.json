@@ -494,6 +494,8 @@
   "com.minecolonies.coremod.gui.townhall.population.rangers": "Rangers: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.knights": "Knights: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.students": "Students: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.florists": "Florists: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.enchanters": "Enchanters: %d/%d",
 
   "com.minecolonies.coremod.gui.townhall.population.sifters": "Sifter: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.crushers": "Crusher: %d/%d",
