@@ -315,9 +315,9 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (Configurations.gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(Configurations.gameplay.workingRangeTownHall, 2))
+                if (Configurations.gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(Configurations.gameplay.workingRangeTownHall * BLOCKS_PER_CHUNK, 2))
                 {
-                    Log.getLogger().warn("Tried to claim chunk at pos X:"+i+" Z:"+j+" too far away from the colony:"+colony.getID()+" center:"+colony.getCenter()+ " max is config workingRangeTownHall ^2");
+                    Log.getLogger().warn("Tried to claim chunk at pos X:" + pos.getX() +" Z:" + pos.getZ() + " too far away from the colony:"+colony.getID()+" center:"+colony.getCenter()+ " max is config workingRangeTownHall ^2");
                     continue;
                 }
 
