@@ -123,12 +123,12 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 final ITextComponent component = new TranslationTextComponent("block.blockhuttownhall.messageworkerdead", new TranslationTextComponent(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(), component.getUnformattedComponentText());
+                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),
+                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
                   "block.blockhuttownhall.messagecolonistdead",
                   citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
             }

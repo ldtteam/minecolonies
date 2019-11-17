@@ -4,6 +4,7 @@ import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -72,12 +73,7 @@ public class BuildingManager implements IBuildingManager
     /**
      * Variable to check if the fields needs to be synched.
      */
-    private boolean isFieldsDirty    = false;
-
-    /**
-     * Counter for world ticks.
-     */
-    private int tickCounter = 0;
+    private boolean isFieldsDirty = false;
 
     /**
      * The colony of the manager.
@@ -86,6 +82,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Creates the BuildingManager for a colony.
+     *
      * @param colony the colony.
      */
     public BuildingManager(final Colony colony)
@@ -96,6 +93,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
+        buildings.clear();
         //  Buildings
         final ListNBT buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
@@ -159,36 +157,30 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void sendPackets(final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
+    public void sendPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {
-        sendBuildingPackets(oldSubscribers, hasNewSubscribers, subscribers);
-        sendFieldPackets(hasNewSubscribers, subscribers);
+        sendBuildingPackets(closeSubscribers, newSubscribers);
+        sendFieldPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
-        isFieldsDirty    = false;
+        isFieldsDirty = false;
     }
 
+    /**
+     * Ticks all buildings when this building manager receives a tick.
+     *
+     * @param colony the colony which is being ticked.
+     */
     @Override
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
+    public void onColonyTick(final IColony colony)
     {
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
-            if (event.world.isBlockLoaded(building.getPosition()))
+            if (colony.getWorld().isBlockLoaded(building.getPosition()))
             {
-                if (tickCounter == 20)
-                {
-                    building.secondsWorldTick(event);
-                }
-
-                building.onWorldTick(event);
+                building.onColonyTick(colony);
             }
         }
-
-        if (tickCounter == 20)
-        {
-            tickCounter = 0;
-        }
-        tickCounter++;
     }
 
     @Override
@@ -198,7 +190,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
+    public void cleanUpBuildings(@NotNull final IColony colony)
     {
         @Nullable final List<IBuilding> removedBuildings = new ArrayList<>();
 
@@ -208,7 +200,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final IBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getPosition();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
+            if (colony.getWorld().isBlockLoaded(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
                 removedBuildings.add(building);
@@ -219,11 +211,11 @@ public class BuildingManager implements IBuildingManager
 
         for (@NotNull final BlockPos pos : tempFields)
         {
-            if (event.world.isBlockLoaded(pos))
+            if (colony.getWorld().isBlockLoaded(pos))
             {
-                if (event.world.getTileEntity(pos) instanceof ScarecrowTileEntity)
+                if (colony.getWorld().getTileEntity(pos) instanceof ScarecrowTileEntity)
                 {
-                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
+                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) colony.getWorld().getTileEntity(pos);
                     if (scarecrow == null)
                     {
                         removeField(pos);
@@ -234,6 +226,13 @@ public class BuildingManager implements IBuildingManager
                     removeField(pos);
                 }
             }
+        }
+
+        if (!removedBuildings.isEmpty() && removedBuildings.size() >= buildings.values().size())
+        {
+            Log.getLogger()
+              .warn("Colony:" + colony.getID()
+                      + " is removing all buildings at once. Did you just load a backup? If not there is a chance that colony data got corrupted and you want to restore a backup.");
         }
 
         removedBuildings.forEach(IBuilding::destroy);
@@ -419,9 +418,9 @@ public class BuildingManager implements IBuildingManager
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
-                    colony.getID(),
-                    building.getID(),
-                    building.getSchematicName()));
+              colony.getID(),
+              building.getID(),
+              building.getSchematicName()));
         }
 
         if (building instanceof BuildingTownHall)
@@ -520,25 +519,19 @@ public class BuildingManager implements IBuildingManager
         }
     }
 
-
-
     /**
      * Sends packages to update the buildings.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
      */
-    private void sendBuildingPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
+    private void sendBuildingPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {
-        if (isBuildingsDirty || hasNewSubscribers)
+        if (isBuildingsDirty || !newSubscribers.isEmpty())
         {
+            final Set<ServerPlayerEntity> players = isBuildingsDirty ? closeSubscribers : newSubscribers;
             for (@NotNull final IBuilding building : buildings.values())
             {
-                if (building.isDirty() || hasNewSubscribers)
+                if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    subscribers.stream()
-                            .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -546,18 +539,17 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
-     *
-     * @param hasNewSubscribers the new subscribers.
      */
-    private void sendFieldPackets(final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
+    private void sendFieldPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {
-        if (isFieldsDirty || hasNewSubscribers)
+        if (isFieldsDirty || !newSubscribers.isEmpty())
         {
+            final Set<ServerPlayerEntity> players = isFieldsDirty ? closeSubscribers : newSubscribers;
             for (final IBuilding building : buildings.values())
             {
                 if (building instanceof BuildingFarmer)
                 {
-                    subscribers.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -570,7 +562,7 @@ public class BuildingManager implements IBuildingManager
      */
     private void addField(@NotNull final BlockPos pos)
     {
-        if(!fields.contains(pos))
+        if (!fields.contains(pos))
         {
             fields.add(pos);
         }

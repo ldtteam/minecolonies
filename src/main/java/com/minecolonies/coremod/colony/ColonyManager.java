@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -10,7 +11,6 @@ import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -18,11 +18,12 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.World;
@@ -106,6 +107,10 @@ public final class ColonyManager implements IColonyManager
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getFormattedText());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
+
+        colony.getPackageManager().addImportantColonyPlayer((ServerPlayerEntity) player);
+        colony.getPackageManager().addCloseSubscriber((ServerPlayerEntity) player);
+
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName().getFormattedText()));
 
         if (colony.getWorld() == null)
@@ -356,10 +361,10 @@ public final class ColonyManager implements IColonyManager
         {
             return true;
         }
-        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().getXStart(), centralChunk.getPos().getZStart());
+        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().x, centralChunk.getPos().z);
         if (storage != null)
         {
-            storage.applyToCap(colonyCap);
+            storage.applyToCap(colonyCap, centralChunk);
         }
         return !colonyCap.getAllCloseColonies().isEmpty();
     }
@@ -780,7 +785,6 @@ public final class ColonyManager implements IColonyManager
                 }
 
                 final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
-                cap.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
                 Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
             else
@@ -880,6 +884,7 @@ public final class ColonyManager implements IColonyManager
                     Log.getLogger().info(String.format("Server UUID %s", serverUUID));
                 }
                 loaded = true;
+                BackUpHelper.loadMissingColonies();
             }
 
             for (@NotNull final IColony c : getColonies(world))

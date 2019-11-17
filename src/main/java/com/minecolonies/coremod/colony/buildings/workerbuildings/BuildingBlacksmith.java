@@ -88,6 +88,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
 
         final int size = storage.getCleanedInput().size();
         int ingots = 0;
+        int nuggets = 0;
         for(final ItemStorage itemStorage : storage.getCleanedInput())
         {
             final ItemStack stack = itemStorage.getItemStack();
@@ -98,11 +99,22 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
                     ingots++;
                     break;
                 }
+                else if (stack.getItem().isIn(Tags.Items.NUGGETS))
+                {
+                    nuggets++;
+                    break;
+                }
             }
         }
 
         final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ToolItem || output.getItem() instanceof SwordItem || output.getItem() instanceof ArmorItem || output.getItem() instanceof HoeItem || Compatibility.isTinkersWeapon(output) || ingots == size;
+        return output.getItem() instanceof ToolItem ||
+                output.getItem() instanceof SwordItem ||
+                output.getItem() instanceof ArmorItem ||
+                output.getItem() instanceof HoeItem ||
+                Compatibility.isTinkersWeapon(output) ||
+                ingots == size ||
+                nuggets == size;
     }
 
     @Override
