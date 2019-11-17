@@ -316,10 +316,10 @@ public final class ChunkDataHelper
             {
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
                 if (getConfig().getCommon().workingRangeTownHallChunks.get() != 0
-                      && pos.distanceSq(colony.getCenter()) > Math.pow(getConfig().getCommon().workingRangeTownHallChunks.get(), 2))
+                      && pos.distanceSq(colony.getCenter()) > Math.pow(getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, 2))
                 {
                     Log.getLogger()
-                      .warn("Tried to claim chunk at pos X:" + i + " Z:" + j + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
+                      .warn("Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
                               + " max is config workingRangeTownHall ^2");
                     continue;
                 }
