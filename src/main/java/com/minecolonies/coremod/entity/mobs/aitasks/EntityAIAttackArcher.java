@@ -118,6 +118,7 @@ public class EntityAIAttackArcher extends Goal
             {
 
                 final ArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
                 final double xVector = target.posX - entity.posX;
                 final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
                 final double zVector = target.posZ - entity.posZ;
