@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.util;
+package com.minecolonies.api.colony.interactionhandling;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -20,7 +20,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The text the citizen is saying.
      */
-    private ITextComponent inquiry;
+    private ITextComponent     inquiry;
 
     /**
      * The map of response options of the player, to new inquires of the interacting entity.
@@ -33,15 +33,21 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     private boolean primary;
 
     /**
+     * The interaction priority.
+     */
+    private ChatPriority priority;
+
+    /**
      * The inquiry of the citizen.
      * @param inquiry the text the citizen is supposed to say.
      * @param responseTuples optional response options.
      */
     @SafeVarargs
-    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry, final boolean primary, final Tuple<ITextComponent, ITextComponent>...responseTuples)
+    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry, final boolean primary, final ChatPriority priority, final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         this.inquiry = inquiry;
-        this.primary = true;
+        this.primary = primary;
+        this.priority = priority;
         for (final Tuple<ITextComponent, ITextComponent> element : responseTuples)
         {
             this.responses.put(element.getA(), element.getB());
@@ -95,6 +101,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         }
         tag.put(TAG_RESPONSES, list);
         tag.putBoolean(TAG_PRIMARY, isPrimary());
+        tag.putInt(TAG_PRIORITY, priority.ordinal());
         return tag;
     }
 
@@ -110,11 +117,18 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
             this.responses.put(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
+        this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
     }
 
     @Override
     public boolean isPrimary()
     {
         return primary;
+    }
+
+    @Override
+    public ChatPriority getPriority()
+    {
+        return this.priority;
     }
 }

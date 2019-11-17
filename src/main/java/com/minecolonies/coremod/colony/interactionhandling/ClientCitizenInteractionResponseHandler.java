@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers;
+package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.minecolonies.api.entity.ai.util.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.TriggerServerResponseHandler;
 import net.minecraft.nbt.CompoundNBT;
@@ -32,13 +33,16 @@ public class ClientCitizenInteractionResponseHandler extends AbstractInteraction
      * @param colonyId the colony id of the citizen.
      * @param citizenId the citizens id itself.
      * @param dimension the dimension the colony is in.
+     * @param primary if primary interaction.
+     * @param priority the priority of this interaction.
      * @param inquiry the inquiry of the citizen.
      * @param responseTuples all possible responses of the player mapped to the next inquiry.
      */
     @SafeVarargs
-    public ClientCitizenInteractionResponseHandler(final int colonyId, final int citizenId, final int dimension, final boolean primary, final ITextComponent inquiry, final Tuple<ITextComponent, ITextComponent>...responseTuples)
+    public ClientCitizenInteractionResponseHandler(final int colonyId, final int citizenId, final int dimension, final boolean primary, final
+      ChatPriority priority, final ITextComponent inquiry, final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
-        super(inquiry, primary, responseTuples);
+        super(inquiry, primary, priority, responseTuples);
         this.colonyId = colonyId;
         this.citizenId = citizenId;
         this.dimension = dimension;

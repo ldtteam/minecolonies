@@ -470,12 +470,12 @@ public final class NbtTagConstants
     /**
      * Response tag to store each response option.
      */
-    public static final String TAG_RESPONSE  = "response";
+    public static final String TAG_RESPONSE = "response";
 
     /**
      * Responses tag to store the entire list.
      */
-    public static final String TAG_RESPONSES    = "responses";
+    public static final String TAG_RESPONSES = "responses";
 
     /**
      * The tag for the next inquiry to a response.
@@ -485,7 +485,17 @@ public final class NbtTagConstants
     /**
      * The tag to store if this interaction is a primary interaction.
      */
-    public static final String TAG_PRIMARY      = "primary";
+    public static final String TAG_PRIMARY = "primary";
+
+    /**
+     * The tag to store the priority of this interaction..
+     */
+    public static final String TAG_PRIORITY = "priority";
+
+    /**
+     * Handler type to identify when loading from nbt.
+     */
+    public static final String TAG_HANDLER_TYPE = "handlertype";
 
     /**
      * Private constructor to hide the implicit one.

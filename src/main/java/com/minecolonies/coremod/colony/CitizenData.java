@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -18,7 +19,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -1620,10 +1621,11 @@ public class CitizenData implements ICitizenData
         //  Citizen chat options.
         if (nbtTagCompound.keySet().contains(TAG_CHAT_OPTIONS))
         {
-            final ListNBT levelTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < levelTagList.size(); ++i)
+            final ListNBT handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < handlerTagList.size(); ++i)
             {
-                final ServerCitizenInteractionResponseHandler handler = new ServerCitizenInteractionResponseHandler(levelTagList.getCompound(i));
+                final ServerCitizenInteractionResponseHandler handler =
+                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, handlerTagList.getCompound(i));
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }

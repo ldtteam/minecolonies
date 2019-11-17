@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers;
+package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.minecolonies.api.entity.ai.util.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
@@ -9,17 +10,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The server side interaction response handler.
  */
-public class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
+public abstract class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
 {
     /**
      * The server interaction response handler.
      * @param inquiry the client inquiry.
+     * @param primary if primary interaction.
+     * @param priority the interaction priority.
      * @param responseTuples the tuples mapping player responses to further interactions.
      */
     @SafeVarargs
-    public ServerCitizenInteractionResponseHandler(final ITextComponent inquiry, final boolean primary, final Tuple<ITextComponent, ITextComponent>...responseTuples)
+    public ServerCitizenInteractionResponseHandler(final ITextComponent inquiry, final boolean primary, final ChatPriority priority, final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
-        super(inquiry, primary, responseTuples);
+        super(inquiry, primary, priority, responseTuples);
     }
 
     /**
@@ -29,11 +32,5 @@ public class ServerCitizenInteractionResponseHandler extends AbstractInteraction
     public ServerCitizenInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
     {
         super(compoundNBT);
-    }
-
-    @Override
-    public void onResponseTriggered(final ITextComponent response)
-    {
-        //todo server side action! very specific!
     }
 }

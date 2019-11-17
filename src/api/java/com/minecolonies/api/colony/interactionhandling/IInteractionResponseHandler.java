@@ -1,6 +1,8 @@
-package com.minecolonies.api.entity.ai.util;
+package com.minecolonies.api.colony.interactionhandling;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.List;
 /**
  * Response handler for all kind of GUI interactions.
  */
-public interface IInteractionResponseHandler
+public interface IInteractionResponseHandler extends INBTSerializable<CompoundNBT>
 {
     /**
      * The inquiry of the GUI to the player.
@@ -41,4 +43,10 @@ public interface IInteractionResponseHandler
      * @return true if primary.
      */
     boolean isPrimary();
+
+    /**
+     * Get the priority of this interaction response handler.
+     * @return the chat priority.
+     */
+    ChatPriority getPriority();
 }

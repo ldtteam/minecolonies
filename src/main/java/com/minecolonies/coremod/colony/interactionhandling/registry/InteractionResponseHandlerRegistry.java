@@ -1,0 +1,1 @@
+package com.minecolonies.coremod.colony.interactionhandling.registry;

@@ -77,10 +77,14 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
     }
 
-    //todo for different chat types we'll create different handlers which we then add to the citizenData.
+    //todo do we need a predicate with "does this still apply?" ?
 
-    //todo we want one type for just general chitchat (happiness (food, housing, guards, jobs, etc)).
-    //todo we need to be able to differentiate between blocking and pending on the client side too! 
+    //todo for different chat types we'll create different handlers which we then add to the citizenData.
+    //todo: ChitChat, Request (Blocking, Pending), Action Required
+
+    //todo we want one type for just general chitchat (happiness (food, housing, guards, jobs, etc), night, rain, mourning, etc, job related states).
+
+    //todo we need to be able to differentiate between blocking and pending on the client side too!
 
     //todo, first, in the serverCitizenInteractionResponseHandler we need always the options of "remindMeLater" and "okay"
 

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.responsehandlers.ClientCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ClientCitizenInteractionResponseHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -441,6 +441,7 @@ public class CitizenDataView implements ICitizenDataView
 
         position = buf.readBlockPos();
 
+        citizenChatOptions.clear();
         final int dimension = buf.readInt();
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
