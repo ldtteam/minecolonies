@@ -9,10 +9,8 @@ import com.minecolonies.api.util.BlockStateStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -23,6 +21,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -123,6 +122,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
 
     /**
+     * Map of building level to the list of possible enchantments.
+     */
+    private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
+
+    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
@@ -186,6 +190,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverSifting();
         discoverFood();
         discoverFuel();
+        discoverEnchantments();
 
         discoveredAlready = true;
     }
@@ -453,10 +458,26 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (random.nextInt(ONE_HUNDRED_PERCENT) <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get())
         {
-            Collections.shuffle(luckyOres);
-            return luckyOres.get(0).getItemStack().copy();
+            return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel)
+    {
+        final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
+        final Tuple<String, Integer> ench;
+
+        if (list.isEmpty())
+        {
+            ench = new Tuple<>("protection", 1);
+        }
+        else
+        {
+            ench = list.get(random.nextInt(list.size()));
+        }
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation(ench.getA())).get(), ench.getB())), ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -479,7 +500,7 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 final String[] split = oreString.split(":");
                 final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
-                if (!(block == null || oreBlocks.contains(block)))
+                if (block != null && !oreBlocks.contains(block) && block != Blocks.AIR)
                 {
                     oreBlocks.add(block);
                 }
@@ -761,6 +782,50 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished initiating sifter config");
+    }
+
+    /**
+     * Discover the possible enchantments from file.
+     */
+    private void discoverEnchantments()
+    {
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enchantments.get())
+        {
+            final String[] split = string.split(",");
+            if (split.length != 4)
+            {
+                Log.getLogger().warn("Invalid enchantment mode setting: " + string);
+                continue;
+            }
+
+            try
+            {
+                final String enchantment = split[1];
+                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation(enchantment)).isPresent())
+                {
+                    Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
+                    continue;
+                }
+
+                final int buildingLevel = Integer.parseInt(split[0]);
+                final int enchantmentLevel = Integer.parseInt(split[2]);
+                final int numberOfTickets = Integer.parseInt(split[3]);
+
+                for (int level = buildingLevel; level <= 5; level++)
+                {
+                    final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
+                    for (int i = 0; i < numberOfTickets; i++)
+                    {
+                        list.add(new Tuple<>(enchantment, enchantmentLevel));
+                    }
+                    enchantments.put(level, list);
+                }
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
+            }
+        }
     }
 
     /**

@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,14 +29,12 @@ public interface ICitizenManager
 
     /**
      * Sends packages to update the citizens.
-     *  @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     * @param subscribers all subscribers
+     *  @param closeSubscribers    the existing subscribers.
+     * @param newSubscribers new subscribers
      */
     void sendPackets(
-            @NotNull final Set<ServerPlayerEntity> oldSubscribers,
-            final boolean hasNewSubscribers,
-            @NotNull final Set<ServerPlayerEntity> subscribers);
+      @NotNull final Set<ServerPlayerEntity> closeSubscribers,
+      @NotNull final Set<ServerPlayerEntity> newSubscribers);
 
     /**
      * Spawn a brand new Citizen.
@@ -142,6 +140,13 @@ public interface ICitizenManager
     int getMaxCitizens();
 
     /**
+     * Get potential max citizens of the colony.
+     * The potential considers all available beds including not assigned guard towers.
+     * @return the amount.
+     */
+    int getPotentialMaxCitizens();
+
+    /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
      * @return The current amount of citizens in the colony.
      */
@@ -154,15 +159,22 @@ public interface ICitizenManager
     void setMaxCitizens(final int newMaxCitizens);
 
     /**
+     * Set the new potential max citizens.
+     * The potential considers all available beds including not assigned guard towers.
+     * @param newMaxCitizens the potential amount to set.
+     */
+    void setPotentialMaxCitizens(final int newMaxCitizens);
+
+    /**
      * Check for the citizen happiness and update the colony happiness with it.
      */
     void checkCitizensForHappiness();
 
     /**
-     * Actions to execute on a specific world tick event.
-     * @param event the event.
+     * Actions to execute on a colony tick.
+     * @param colony the event.
      */
-    void onWorldTick(final TickEvent.WorldTickEvent event);
+    void onColonyTick(final IColony colony);
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.
