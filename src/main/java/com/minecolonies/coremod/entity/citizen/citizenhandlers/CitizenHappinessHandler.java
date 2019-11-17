@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import net.minecraft.network.PacketBuffer;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Handler for the citizens happiness.
@@ -232,16 +234,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
+                Predicate<Colony> colonyPredicate = colony -> ((CitizenHappinessHandler) colony.getCitizenManager().getCitizen(citizen.getId()).getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE;
+                //todo add this to the citizenData and add the generated childs too.
                 addTrigger(new InteractionXXXTranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
                 addTrigger(new TranslationTextComponent("entity.citizen.noHouse", citizen.getName()));
-            }
-            else
-            {
-                solveTrigger(new TranslationTextComponent("entity.citizen.noHouse", citizen.getName()));
-                solveTrigger(new TranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
             }
         }
         else

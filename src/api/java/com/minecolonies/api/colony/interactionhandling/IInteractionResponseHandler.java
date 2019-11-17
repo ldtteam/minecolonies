@@ -1,7 +1,9 @@
 package com.minecolonies.api.colony.interactionhandling;
 
+import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,8 +37,9 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
     /**
      * Action triggered on a possible response.
      * @param response the clicked string response of the player.
+     * @param world the world it was triggered in.
      */
-    void onResponseTriggered(final ITextComponent response);
+    void onResponseTriggered(final ITextComponent response, final World world);
 
     /**
      * Check if this interaction is a primary interaction or secondary interaction.
@@ -49,4 +52,18 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @return the chat priority.
      */
     ChatPriority getPriority();
+
+    /**
+     * Check if this response handler is still visible for the player.
+     * @param world the world this citizen is in.
+     * @return true if so.
+     */
+    boolean isVisible(final World world);
+
+    /**
+     * Check if this response handler is still valid.
+     * @param colony the colony the citizen is in.
+     * @return true if still valid, else false.
+     */
+    boolean isValid(final IColony colony);
 }

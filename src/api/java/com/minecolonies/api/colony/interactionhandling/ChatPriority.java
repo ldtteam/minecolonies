@@ -6,6 +6,7 @@ package com.minecolonies.api.colony.interactionhandling;
 public enum ChatPriority
 {
     BLOCKING,
+    IMPORTANT,
     PENDING,
     CHITCHAT
 }

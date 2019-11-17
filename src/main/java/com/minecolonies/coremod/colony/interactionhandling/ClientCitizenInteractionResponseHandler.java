@@ -2,11 +2,12 @@ package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.TriggerServerResponseHandler;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 
 /**
  * The client side interaction response handler for citizens.
@@ -63,7 +64,7 @@ public class ClientCitizenInteractionResponseHandler extends AbstractInteraction
     }
 
     @Override
-    public void onResponseTriggered(final ITextComponent response)
+    public void onResponseTriggered(final ITextComponent response, final World world)
     {
         Network.getNetwork().sendToServer(new TriggerServerResponseHandler(this.colonyId, this.citizenId, this.dimension, this.getInquiry(), response));
     }

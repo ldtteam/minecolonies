@@ -31,6 +31,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -229,11 +230,11 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response)
+    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world)
     {
         if (citizenChatOptions.containsKey(key))
         {
-            citizenChatOptions.get(key).onResponseTriggered(response);
+            citizenChatOptions.get(key).onResponseTriggered(response, world);
         }
     }
 
@@ -1630,5 +1631,16 @@ public class CitizenData implements ICitizenData
             }
         }
         citizenHappinessHandler.read(nbtTagCompound);
+    }
+
+    @Override
+    public void tick()
+    {
+        if (!getCitizenEntity().isPresent() || !getCitizenEntity().get().isAlive())
+        {
+            return;
+        }
+
+        //todo verify if the events are still valid and remove if not.
     }
 }

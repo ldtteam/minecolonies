@@ -13,6 +13,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -499,6 +500,12 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * Trigger the response on the server side.
      * @param key the key of the component.
      * @param response the triggered response.
+     * @param world the world it was triggered in.
      */
-    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response);
+    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world);
+
+    /**
+     * Tick the citizen data to update values.
+     */
+    void tick();
 }

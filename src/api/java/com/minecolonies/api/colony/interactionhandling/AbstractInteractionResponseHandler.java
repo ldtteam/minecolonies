@@ -1,9 +1,11 @@
 package com.minecolonies.api.colony.interactionhandling;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +22,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The text the citizen is saying.
      */
-    private ITextComponent     inquiry;
+    private ITextComponent inquiry;
 
     /**
      * The map of response options of the player, to new inquires of the interacting entity.
@@ -39,11 +41,16 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
 
     /**
      * The inquiry of the citizen.
-     * @param inquiry the text the citizen is supposed to say.
+     * @param inquiry the inquiry.
+     * @param primary if primary inquiry.
+     * @param priority the priority.
      * @param responseTuples optional response options.
      */
     @SafeVarargs
-    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry, final boolean primary, final ChatPriority priority, final Tuple<ITextComponent, ITextComponent>...responseTuples)
+    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry,
+      final boolean primary,
+      final ChatPriority priority,
+      final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         this.inquiry = inquiry;
         this.primary = primary;
@@ -130,5 +137,17 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public ChatPriority getPriority()
     {
         return this.priority;
+    }
+
+    @Override
+    public boolean isVisible(final World world)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isValid(final IColony colony)
+    {
+        return true;
     }
 }

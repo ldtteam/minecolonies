@@ -77,16 +77,13 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
     }
 
-    //todo do we need a predicate with "does this still apply?" ?
-
     //todo for different chat types we'll create different handlers which we then add to the citizenData.
+    //todo, since those are oddly specific, they have a predefined tree and don't need many things.
+    //todo, so we don't need this class basically.
+
     //todo: ChitChat, Request (Blocking, Pending), Action Required
 
     //todo we want one type for just general chitchat (happiness (food, housing, guards, jobs, etc), night, rain, mourning, etc, job related states).
-
-    //todo we need to be able to differentiate between blocking and pending on the client side too!
-
-    //todo, first, in the serverCitizenInteractionResponseHandler we need always the options of "remindMeLater" and "okay"
 
     @Override
     public void sendLocalizedChat(final String keyIn, final boolean isBlocking, final int worldTick, final Object... args)
