@@ -39,8 +39,7 @@ public class ClientCitizenInteractionResponseHandler extends AbstractInteraction
      * @param responseTuples all possible responses of the player mapped to the next inquiry.
      */
     @SafeVarargs
-    public ClientCitizenInteractionResponseHandler(final int colonyId, final int citizenId, final int dimension, final boolean primary, final
-      ChatPriority priority, final ITextComponent inquiry, final Tuple<ITextComponent, ITextComponent>...responseTuples)
+    public ClientCitizenInteractionResponseHandler(final int colonyId, final int citizenId, final int dimension, final boolean primary, final ChatPriority priority, final ITextComponent inquiry, final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
         this.colonyId = colonyId;

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -15,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,10 +31,6 @@ import java.util.Optional;
  */
 public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
-
-    @NotNull
-    protected final ChatProxy chatProxy;
-
     /**
      * constants for house modifier.
      */
@@ -179,8 +175,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         farmerModifier = 0;
         hasNoFields = false;
         needsTool.clear();
-        chatProxy = new ChatProxy(citizen);
-
     }
 
     /**
@@ -238,11 +232,16 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                chatProxy.setCurrentChat("entity.citizen.demandsHouse", citizen.getName());
+                addTrigger(new InteractionXXXTranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                chatProxy.setCurrentChat("entity.citizen.noHouse", citizen.getName());
+                addTrigger(new TranslationTextComponent("entity.citizen.noHouse", citizen.getName()));
+            }
+            else
+            {
+                solveTrigger(new TranslationTextComponent("entity.citizen.noHouse", citizen.getName()));
+                solveTrigger(new TranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
             }
         }
         else
