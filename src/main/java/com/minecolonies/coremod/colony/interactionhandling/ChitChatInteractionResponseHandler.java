@@ -3,11 +3,11 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

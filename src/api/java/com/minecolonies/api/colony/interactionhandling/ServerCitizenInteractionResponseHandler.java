@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.interactionhandling;
+package com.minecolonies.api.colony.interactionhandling;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -19,7 +20,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -1642,5 +1643,15 @@ public class CitizenData implements ICitizenData
         }
 
         //todo verify if the events are still valid and remove if not.
+    }
+
+    @Override
+    public void triggerInteraction(@NotNull final ServerCitizenInteractionResponseHandler handler)
+    {
+        this.citizenChatOptions.put(handler.getInquiry(), handler);
+        for (final IInteractionResponseHandler childHandler: handler.genChildInteractions())
+        {
+            this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
+        }
     }
 }

@@ -235,6 +235,8 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
                 Predicate<Colony> colonyPredicate = colony -> ((CitizenHappinessHandler) colony.getCitizenManager().getCitizen(citizen.getId()).getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE;
+                citizen
+
                 //todo add this to the citizenData and add the generated childs too.
                 addTrigger(new InteractionXXXTranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
             }

@@ -2,6 +2,8 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -508,4 +510,10 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * Tick the citizen data to update values.
      */
     void tick();
+
+    /**
+     * Trigger a possible interaction.
+     * @param handler the new handler.
+     */
+    void triggerInteraction(@NotNull final ServerCitizenInteractionResponseHandler handler);
 }
