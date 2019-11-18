@@ -1,11 +1,11 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "forge:multi-layer",
+    "model": "forge:block/multi-layer",
     "custom": {
-      "base": "minecolonies:../block/blockhutfloristflowers",
-      "Solid": "minecolonies:../block/blockhutfloristflowers",
-      "Cutout": "minecolonies:../block/blockhutflorist"
+      "base": "minecolonies:models/block/blockhutfloristflowers",
+      "Solid": "minecolonies:models/block/blockhutfloristflowers",
+      "Cutout": "minecolonies:models/block/blockhutflorist"
     },
     "transform": "forge:default-block"
   },

@@ -1,6 +1,5 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
-  "parent": "model",
   "textures": {
     "1": "minecraft:item/iron_sword",
     "2": "minecraft:item/stick",
