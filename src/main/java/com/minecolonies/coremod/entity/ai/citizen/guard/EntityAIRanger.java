@@ -17,12 +17,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.TippedArrowItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
@@ -316,6 +314,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(Hand.MAIN_HAND);
 
                 final ArrowEntity arrow = EntityType.ARROW.create(world);
+                arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
                 final double xVector = target.posX - worker.getPosX();
                 final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
                 final double zVector = target.posZ - worker.getPosZ();
