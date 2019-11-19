@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.FieldDataModifier;
+import com.minecolonies.coremod.colony.interactionhandling.ChitChatInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * Handler for the citizens happiness.
@@ -158,6 +159,19 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     private double noToolModifier;
 
+    /*
+     * Setup all the interaction trigger predicates.
+     */
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.demandsHouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.noHouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.demandsJob"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.noJob"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.noHouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.noHouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
+    }
+
     /**
      * Constructor for the experience handler.
      *
@@ -234,15 +248,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                Predicate<Colony> colonyPredicate = colony -> ((CitizenHappinessHandler) colony.getCitizenManager().getCitizen(citizen.getId()).getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE;
-                citizen
-
-                //todo add this to the citizenData and add the generated childs too.
-                addTrigger(new InteractionXXXTranslationTextComponent("entity.citizen.demandsHouse", citizen.getName()));
+                citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandsHouse"), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                addTrigger(new TranslationTextComponent("entity.citizen.noHouse", citizen.getName()));
+                citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.noHouse"), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -259,11 +269,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
             {
-                chatProxy.setCurrentChat("entity.citizen.demandsJob", citizen.getName());
+                citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandsHouse"), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
             {
-                chatProxy.setCurrentChat("entity.citizen.noJob", citizen.getName());
+                citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandsHouse"), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -307,21 +317,32 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     private void processDailyHappinessForToolData()
     {
         noToolModifier = 0;
+        final int maxToolOpenDays = getMaxOpenToolDays();
+        if (maxToolOpenDays > NO_TOOLS_DEMANDS_DAYS)
+        {
+            citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.noTool"), ChatPriority.CHITCHAT));
+        }
+        else if (maxToolOpenDays > NO_TOOLS_COMPLAINS_DAYS)
+        {
+            citizen.triggerInteraction(new ChitChatInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandsTool"), ChatPriority.CHITCHAT));
+        }
+        noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
+    }
+
+    private int getMaxOpenToolDays()
+    {
+        int maxOpenDays = 0;
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
             final int numDays = entry.getValue() + 1;
+            if (numDays > maxOpenDays)
+            {
+                maxOpenDays = numDays;
+            }
             final IToolType toolType = entry.getKey();
             needsTool.put(toolType, numDays);
-            if (numDays > NO_TOOLS_DEMANDS_DAYS)
-            {
-                chatProxy.setCurrentChat("entity.citizen.noTool", citizen.getName(), toolType.getDisplayName());
-            }
-            else if (numDays > NO_TOOLS_COMPLAINS_DAYS)
-            {
-                chatProxy.setCurrentChat("entity.citizen.demandsTool", citizen.getName(), toolType.getDisplayName());
-            }
-            noToolModifier += (((double) numDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
         }
+        return maxOpenDays;
     }
 
     /**

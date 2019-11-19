@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,14 +30,12 @@ public class ChitChatInteractionResponseHandler extends ServerCitizenInteraction
      * The server interaction response handler.
      * @param inquiry the client inquiry.
      * @param priority the interaction priority.
-     * @param validator validation predicate to check if this interaction is still valid.
      */
     public ChitChatInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority,
-      final Predicate<IColony> validator)
+      final ChatPriority priority)
     {
-        super(inquiry, true, priority, validator, tuples);
+        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(inquiry, null), tuples);
         //todo add a way to create and query children from here to put them in the childs list.
     }
 

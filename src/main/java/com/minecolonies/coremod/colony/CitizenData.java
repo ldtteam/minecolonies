@@ -1642,7 +1642,26 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        //todo verify if the events are still valid and remove if not.
+        final List<ServerCitizenInteractionResponseHandler> toRemove = new ArrayList<>();
+        for (final ServerCitizenInteractionResponseHandler handler : citizenChatOptions.values())
+        {
+            if (!handler.isValid(this))
+            {
+                toRemove.add(handler);
+            }
+        }
+
+        for (final ServerCitizenInteractionResponseHandler handler : toRemove)
+        {
+            citizenChatOptions.remove(handler.getInquiry());
+            for (final ITextComponent comp : handler.getPossibleResponses())
+            {
+                if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
+                {
+                    citizenChatOptions.get(handler.getResponseResult(comp)).removeParent(handler.getInquiry());
+                }
+            }
+        }
     }
 
     @Override

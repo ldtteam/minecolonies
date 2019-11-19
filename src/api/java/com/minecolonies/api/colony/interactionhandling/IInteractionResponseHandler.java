@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -65,5 +65,5 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @param colony the colony the citizen is in.
      * @return true if still valid, else false.
      */
-    boolean isValid(final IColony colony);
+    boolean isValid(final ICitizenData colony);
 }

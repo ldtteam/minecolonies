@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -146,7 +146,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public boolean isValid(final IColony colony)
+    public boolean isValid(final ICitizenData colony)
     {
         return true;
     }

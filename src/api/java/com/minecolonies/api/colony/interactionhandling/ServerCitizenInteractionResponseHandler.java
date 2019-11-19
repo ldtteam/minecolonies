@@ -1,14 +1,13 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -23,15 +22,19 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
  */
 public abstract class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
 {
+    private static final String TAG_DELAY   = "delay";
+    private static final String TAG_PARENT  = "parent";
+    private static final String TAG_PARENTS = "parents";
+
     /**
      * At which world tick this should be displayed again.
      */
-    private int displayAtWorldTick = 0;
+    private int displayAtWorldTick     = 0;
 
     /**
-     * Validator
+     * Validator to test for this.
      */
-    private Predicate<IColony> validator;
+    private Predicate<ICitizenData> validator;
 
     /**
      * All registered parents of this response handler.
@@ -51,7 +54,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
       final ITextComponent inquiry,
       final boolean primary,
       final ChatPriority priority,
-      final Predicate<IColony> validator,
+      final Predicate<ICitizenData> validator,
       final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
@@ -74,9 +77,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
-    public boolean isValid(final IColony colony)
+    public boolean isValid(final ICitizenData colony)
     {
-        return validator == null || validator.test(colony);
+        return (validator == null && !this.parents.isEmpty()) || validator.test(colony);
     }
 
     /**
@@ -91,12 +94,10 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     /**
      * Remove an old parent and return true if no parent is left.
      * @param oldParent the parent to remove.
-     * @return true if now orphan.
      */
-    public boolean removeParent(final ITextComponent oldParent)
+    public void removeParent(final ITextComponent oldParent)
     {
         this.parents.remove(oldParent);
-        return this.parents.isEmpty();
     }
 
     @Override
@@ -120,4 +121,34 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      * @return all interactions depending on this.
      */
     public abstract List<IInteractionResponseHandler> genChildInteractions();
+
+    @Override
+    public CompoundNBT serializeNBT()
+    {
+        final CompoundNBT compoundNBT = super.serializeNBT();
+        compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
+        final ListNBT list = new ListNBT();
+        for (final ITextComponent element : parents)
+        {
+            final CompoundNBT elementTag = new CompoundNBT();
+            elementTag.putString(TAG_PARENT, ITextComponent.Serializer.toJson(element));
+            list.add(elementTag);
+        }
+        compoundNBT.put(TAG_PARENTS, list);
+        return compoundNBT;
+    }
+
+    @Override
+    public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
+    {
+        super.deserializeNBT(compoundNBT);
+        this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
+        this.parents.clear();
+        final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++)
+        {
+            this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
+        }
+        this.validator = InteractionValidatorPredicates.map.get(getInquiry());
+    }
 }
