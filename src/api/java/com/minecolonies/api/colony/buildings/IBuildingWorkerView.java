@@ -84,4 +84,10 @@ public interface IBuildingWorkerView extends IBuildingView
      * @param hiringMode the mode to set.
      */
     void setHiringMode(HiringMode hiringMode);
+
+    /**
+     * Get the name of the job.
+     * @return job name.
+     */
+    String getJobName();
 }
