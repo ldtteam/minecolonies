@@ -13,12 +13,14 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Skeleton class for worker ai.
@@ -43,12 +45,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
      * The statemachine this AI uses
      */
     @NotNull
-    private final ITickRateStateMachine stateMachine;
-
-    /**
-     * Counter for updateTask ticks received
-     */
-    private int tickCounter = 0;
+    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -69,10 +66,8 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
-        stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
-
-        // Start at a random tickcounter to spread AI updates over all ticks
-        tickCounter = new Random().nextInt(Configurations.gameplay.updateRate) + 1;
+        stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
+        stateMachine.setTickRate(Configurations.gameplay.updateRate);
     }
 
     /**
@@ -141,15 +136,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void updateTask()
     {
-        if (tickCounter < Configurations.gameplay.updateRate)
-        {
-            tickCounter++;
-        }
-        else
-        {
             stateMachine.tick();
-            tickCounter = 1;
-        }
     }
 
     protected void onException(final RuntimeException e)
@@ -177,6 +164,15 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     public final IAIState getState()
     {
         return stateMachine.getState();
+    }
+
+    /**
+     * Gets the update rate of the worker's statemachine
+     * @return update rate
+     */
+    public int getTickRate()
+    {
+        return stateMachine.getTickRate();
     }
 
     /**
