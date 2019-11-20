@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * Contains all needed functions for a basic statemachine
  * @param <T>
  */
-public interface IStateMachine<T extends IStateMachineTransition>
+public interface IStateMachine<T extends IStateMachineTransition, S extends IState>
 {
     /**
      * Adds a transitions to the machine's transition table
@@ -39,7 +39,7 @@ public interface IStateMachine<T extends IStateMachineTransition>
     /**
      * Return the current state of the Statemachine
      */
-    IAIState getState();
+    S getState();
 
     /**
      * Reset the statemachine to the start

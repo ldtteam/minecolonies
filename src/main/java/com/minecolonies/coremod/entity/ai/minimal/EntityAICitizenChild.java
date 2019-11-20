@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -52,7 +53,7 @@ public class EntityAICitizenChild extends Goal
     protected final EntityCitizen child;
     private final   Random        rand = new Random();
 
-    private final TickRateStateMachine stateMachine;
+    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * Timer for actions/between actions
@@ -109,7 +110,7 @@ public class EntityAICitizenChild extends Goal
         super();
         this.child = citizen;
         super.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
-        stateMachine = new TickRateStateMachine(State.IDLE, this::handleAIException);
+        stateMachine = new TickRateStateMachine<>(State.IDLE, this::handleAIException);
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
 

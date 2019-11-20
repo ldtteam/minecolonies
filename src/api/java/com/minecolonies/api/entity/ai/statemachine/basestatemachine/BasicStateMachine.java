@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IAIEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineOneTimeEvent;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
@@ -17,27 +17,27 @@ import java.util.function.Consumer;
  * Basic statemachine class, can be used for any Transition typed which extends the transition interface.
  * It contains the current state and a hashmap for events and transitions, which are the minimal requirements to have a working statemachine.
  */
-public class BasicStateMachine<T extends IStateMachineTransition> implements IStateMachine<T>
+public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends IState> implements IStateMachine<T, S>
 {
     /**
      * The lists of transitions and events
      */
     @NotNull
-    protected final Map<IAIState, ArrayList<T>>     transitionMap;
+    protected final Map<S, ArrayList<T>>               transitionMap;
     @NotNull
-    protected final Map<IAIEventType, ArrayList<T>> eventTransitionMap;
+    protected final Map<IStateEventType, ArrayList<T>> eventTransitionMap;
 
     /**
      * The current state we're in
      */
     @NotNull
-    private IAIState state;
+    private S state;
 
     /**
      * The state we started in
      */
     @NotNull
-    private final IAIState initState;
+    private final S initState;
 
     /**
      * The exception handler
@@ -48,7 +48,7 @@ public class BasicStateMachine<T extends IStateMachineTransition> implements ISt
     /**
      * Construct a new StateMachine
      */
-    protected BasicStateMachine(@NotNull final IAIState initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
+    protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
     {
         this.state = initialState;
         this.initState = initialState;
@@ -142,7 +142,7 @@ public class BasicStateMachine<T extends IStateMachineTransition> implements ISt
      */
     public boolean transitionToNext(@NotNull final T transition)
     {
-        final IAIState newState;
+        final S newState;
         try
         {
             newState = transition.getNextState();
@@ -181,7 +181,7 @@ public class BasicStateMachine<T extends IStateMachineTransition> implements ISt
      *
      * @return The current IAIState.
      */
-    public final IAIState getState()
+    public final S getState()
     {
         return state;
     }
