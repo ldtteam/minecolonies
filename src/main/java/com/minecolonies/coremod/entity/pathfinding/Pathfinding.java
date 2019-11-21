@@ -46,6 +46,11 @@ public final class Pathfinding
     {
         return executor.submit(job);
     }
+    
+    public static void shutdown()
+    {
+    	executor.shutdown();
+    }
 
     /**
      * Render debugging information for the pathfinding system.
