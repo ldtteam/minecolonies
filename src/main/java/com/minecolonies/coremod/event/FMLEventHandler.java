@@ -72,6 +72,7 @@ public class FMLEventHandler
     public static void onServerStarting(final FMLServerStartingEvent event)
     {
         EntryPoint.register(event.getCommandDispatcher());
+        Pathfinding.start();
     }
     
     @SubscribeEvent
