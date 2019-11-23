@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -36,31 +37,40 @@ public final class SortingUtils
      */
     public static void sort(final CombinedItemHandler inv)
     {
+        final CompoundNBT backup = inv.serializeNBT();
         final AtomicInteger runCount = new AtomicInteger(0);
 
-        final Map<ItemStorage, Integer> map = new HashMap<>();
-        if (inv != null)
+        try
         {
-            for (int i = 0; i < inv.getSlots(); i++)
+            final Map<ItemStorage, Integer> map = new HashMap<>();
+            if (inv != null)
             {
-                if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
+                for (int i = 0; i < inv.getSlots(); i++)
                 {
-                    continue;
+                    if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
+                    {
+                        continue;
+                    }
+                    final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
+                    int amount = storage.getAmount();
+                    if (map.containsKey(storage))
+                    {
+                        amount += map.remove(storage);
+                    }
+                    map.put(storage, amount);
                 }
-                final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
-                int amount = storage.getAmount();
-                if (map.containsKey(storage))
-                {
-                    amount += map.remove(storage);
-                }
-                map.put(storage, amount);
-            }
 
-            final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
-            final double totalSlots = inv.getSlots();
-            final int totalReq = tuple.getA().get();
-            map.entrySet().stream().sorted(SortingUtils::compare)
-              .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getA(), totalSlots, totalReq, tuple.getB()));
+                final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
+                final double totalSlots = inv.getSlots();
+                final int totalReq = tuple.getA().get();
+                map.entrySet().stream().sorted(SortingUtils::compare)
+                  .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getA(), totalSlots, totalReq, tuple.getB()));
+            }
+        }
+        catch (Exception e)
+        {
+            inv.deserializeNBT(backup);
+            Log.getLogger().warn("Minecolonies warehouse sorting had an error, report it to the mod author.", e);
         }
     }
 
@@ -81,7 +91,7 @@ public final class SortingUtils
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
-        final int creativeTabId = entry.getKey().getCreativeTabIndex().get(0);
+        final int creativeTabId = entry.getKey().getPrimaryCreativeTabIndex();
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
@@ -125,8 +135,8 @@ public final class SortingUtils
      */
     private static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
     {
-        final int creativeTabId1 = t1.getKey().getCreativeTabIndex().get(0);
-        final int creativeTabId2 = t2.getKey().getCreativeTabIndex().get(0);
+        final int creativeTabId1 = t1.getKey().getPrimaryCreativeTabIndex();
+        final int creativeTabId2 = t2.getKey().getPrimaryCreativeTabIndex();
 
         if (creativeTabId1 != creativeTabId2)
         {
@@ -166,7 +176,7 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            final int index = entry.getKey().getCreativeTabIndex().isEmpty() ? 0 : entry.getKey().getCreativeTabIndex().get(0);
+            final int index = entry.getKey().getPrimaryCreativeTabIndex();
             creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
