@@ -2,7 +2,6 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -168,6 +167,16 @@ public class ItemStorage
     public List<Integer> getCreativeTabIndex()
     {
         return creativeTabIndex;
+    }
+
+    /**
+     * Getter for the primary creativeTab index of the storage.
+     *
+     * @return the index.
+     */
+    public int getPrimaryCreativeTabIndex()
+    {
+        return creativeTabIndex.isEmpty() ? 0 : creativeTabIndex.get(0);
     }
 
     @Override
