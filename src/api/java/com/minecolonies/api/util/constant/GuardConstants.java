@@ -61,7 +61,7 @@ public final class GuardConstants
     /**
      * The base distance for an attack in Blocks
      */
-    public static final int BASE_DISTANCE_FOR_RANGED_ATTACK = 7;
+    public static final int BASE_DISTANCE_FOR_RANGED_ATTACK = 5;
 
     /**
      * Rangers maximum distance in blocks for an attack.(24 max arrow dist)

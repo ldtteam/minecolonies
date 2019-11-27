@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -954,6 +953,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             return;
         }
 
+        // Don't call for help when a guard gets woken up
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenJobHandler.getColonyJob(AbstractJobGuard.class).isAsleep())
+        {
+            return;
+        }
+
         callForHelpCooldown = CALL_HELP_CD;
 
         long guardDistance = guardHelpRange;
@@ -966,7 +971,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
 
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && tdist < guardDistance && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
+                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();

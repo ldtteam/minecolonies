@@ -23,6 +23,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
@@ -132,7 +133,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Hashmap of mobs we may or may not attack.
      */
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
+    private HashMap<Class<? extends Entity>, MobEntryView> mobsToAttack = new HashMap<>();
 
     /**
      * The player the guard has been set to follow.
@@ -288,7 +289,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
             {
-                mobsToAttack.add(mobEntry);
+                mobsToAttack.put(mobEntry.getEntityEntry().getEntityClass(), mobEntry);
             }
         }
 
@@ -318,7 +319,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         compound.setTag(NBT_PATROL_TARGETS, wayPointTagList);
 
         @NotNull final NBTTagList mobsTagList = new NBTTagList();
-        for (@NotNull final MobEntryView entry : mobsToAttack)
+        for (@NotNull final MobEntryView entry : mobsToAttack.values())
         {
             @NotNull final NBTTagCompound mobCompound = new NBTTagCompound();
             MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
@@ -371,11 +372,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         if (mobsToAttack.isEmpty())
         {
-            mobsToAttack.addAll(calculateMobs());
+            calculateMobs();
         }
 
         buf.writeInt(mobsToAttack.size());
-        for (final MobEntryView entry : mobsToAttack)
+        for (final MobEntryView entry : mobsToAttack.values())
         {
             MobEntryView.writeToByteBuf(buf, entry);
         }
@@ -892,10 +893,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the map.
      */
     @Override
-    public List<MobEntryView> getMobsToAttack()
+    public HashMap<Class<? extends Entity>, MobEntryView> getMobsToAttack()
     {
-        mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
-        return new ArrayList<>(mobsToAttack);
+        return mobsToAttack;
     }
 
     /**
@@ -906,8 +906,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void setMobsToAttack(final List<MobEntryView> list)
     {
-        this.mobsToAttack.clear();
-        this.mobsToAttack = new ArrayList<>(list);
+        this.mobsToAttack = new HashMap<>();
+        for (MobEntryView entry : list)
+        {
+            mobsToAttack.put(entry.getEntityEntry().getEntityClass(), entry);
+        }
     }
 
     /**
@@ -1008,9 +1011,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the list of MobEntrys to attack.
      */
     @Override
-    public List<MobEntryView> calculateMobs()
+    public void calculateMobs()
     {
-        final List<MobEntryView> mobs = new ArrayList<>();
+        mobsToAttack = new HashMap<>();
 
         int i = 0;
         for (final EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection())
@@ -1018,7 +1021,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
             {
                 i++;
-                mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                mobsToAttack.put(entry.getEntityClass(), new MobEntryView(entry.getRegistryName(), true, i));
             }
             else
             {
@@ -1027,7 +1030,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
                     {
                         i++;
-                        mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                        mobsToAttack.put(entry.getEntityClass(), new MobEntryView(entry.getRegistryName(), true, i));
                     }
                 }
             }
@@ -1037,10 +1040,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                                                                              .getNetwork()
                                                                              .sendTo(new GuardMobAttackListMessage(getColony().getID(),
                                                                                  getID(),
-                                                                                 mobsToAttack),
+                                                                                 new ArrayList<>(mobsToAttack.values())),
                                                                                player));
-
-        return mobs;
     }
 
     @Override

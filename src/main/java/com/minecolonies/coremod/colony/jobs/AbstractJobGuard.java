@@ -13,6 +13,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_SLEEP;
+
 /**
  * Abstract Class for Guard Jobs.
  */
@@ -84,5 +86,15 @@ public abstract class AbstractJobGuard extends AbstractJob
     public boolean allowsAvoidance()
     {
         return false;
+    }
+
+    /**
+     * Whether the guard is asleep.
+     *
+     * @return true if sleeping
+     */
+    public boolean isAsleep()
+    {
+        return getWorkerAI().getState() == GUARD_SLEEP;
     }
 }

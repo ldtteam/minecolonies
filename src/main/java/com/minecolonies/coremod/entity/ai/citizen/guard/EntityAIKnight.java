@@ -164,6 +164,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         final IAIState state = preAttackChecks();
         if (state != getState())
         {
+            worker.getNavigator().clearPath();
+            worker.getMoveHelper().strafe(0, 0);
             setDelay(STANDARD_DELAY);
             return state;
         }

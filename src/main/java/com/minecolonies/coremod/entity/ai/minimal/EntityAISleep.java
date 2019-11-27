@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.coremod.client.particles.SleepingParticle;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +34,11 @@ public class EntityAISleep extends EntityAIBase
      * Check if the citizen woke up already.
      */
     private boolean wokeUp = true;
+
+    /**
+     * Timer for emitting sleeping particle effect
+     */
+    private int particleTimer = 0;
 
     /**
      * Initiate the sleep task.
@@ -169,6 +176,23 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public void updateTask()
     {
+        if (!citizen.getCitizenSleepHandler().isAsleep())
+        {
+            return;
+        }
+
+        particleTimer++;
+        if (particleTimer % 30 == 0)
+        {
+            particleTimer = 0;
+            Minecraft.getMinecraft().effectRenderer.addEffect(new SleepingParticle(citizen.getEntityWorld(),
+              citizen.posX,
+              citizen.posY + 1,
+              citizen.posZ,
+              1.0f,
+              1.0f,
+              1.0f));
+        }
         //TODO make sleeping noises here.
     }
 }

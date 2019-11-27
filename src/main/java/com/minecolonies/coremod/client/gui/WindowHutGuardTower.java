@@ -192,7 +192,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH, Button.class);
 
-                if (mobsToAttack.get(index).hasAttack())
+                if (mobsToAttack.get(index).shouldAttack())
                 {
                     switchButton.setLabel(GUI_SWITCH_ON);
                 }
@@ -271,7 +271,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
         this.findPaneOfTypeByID(GUI_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
         this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
 
         if (task.equals(GuardTask.PATROL))
         {
@@ -344,7 +344,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 if (entry.getName().equals(idLabel.getLabelText()))
                 {
-                    entry.setAttack(!entry.hasAttack());
+                    entry.setAttack(!entry.shouldAttack());
                 }
             }
             MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));

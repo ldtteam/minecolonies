@@ -53,6 +53,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -76,6 +77,7 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.client.particles.SleepingParticle.SLEEPING_TEXTURE;
 import static com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand.DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED;
 
 /**
@@ -130,6 +132,12 @@ public class EventHandler
                   (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onTextureStitch(@NotNull final TextureStitchEvent.Pre event)
+    {
+        event.getMap().registerSprite(SLEEPING_TEXTURE);
     }
 
     /**

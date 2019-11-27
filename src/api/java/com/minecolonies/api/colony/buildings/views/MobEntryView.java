@@ -49,7 +49,7 @@ public class MobEntryView
     public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final MobEntryView entry)
     {
         ByteBufUtils.writeUTF8String(buf, entry.getLocation().toString());
-        buf.writeBoolean(entry.hasAttack());
+        buf.writeBoolean(entry.shouldAttack());
         buf.writeInt(entry.getPriority());
     }
 
@@ -80,7 +80,7 @@ public class MobEntryView
     {
         @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setString("location", entry.getLocation().toString());
-        coordsCompound.setBoolean("attack", entry.hasAttack());
+        coordsCompound.setBoolean("attack", entry.shouldAttack());
         coordsCompound.setInteger("priority", entry.getPriority());
         compound.setTag(name, coordsCompound);
     }
@@ -147,7 +147,7 @@ public class MobEntryView
      *
      * @return the attack.
      */
-    public boolean hasAttack()
+    public boolean shouldAttack()
     {
         return attack;
     }
