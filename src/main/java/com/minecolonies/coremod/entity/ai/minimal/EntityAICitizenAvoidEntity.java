@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -62,7 +64,7 @@ public class EntityAICitizenAvoidEntity extends Goal
     /**
      * This AI's state changer.
      */
-    private final TickRateStateMachine stateMachine;
+    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * The blockpos from where the citizen started fleeing.
@@ -96,7 +98,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         this.nearSpeed = nearSpeed;
         super.setMutexFlags(EnumSet.of(Flag.MOVE));
 
-        stateMachine = new TickRateStateMachine(SAFE, this::onException);
+        stateMachine = new TickRateStateMachine<>(SAFE, this::onException);
 
         stateMachine.addTransition(new AITarget(SAFE, this::isEntityClose, () -> RUNNING, 5));
         stateMachine.addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));

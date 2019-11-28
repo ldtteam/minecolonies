@@ -30,6 +30,7 @@ import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -490,12 +491,19 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
-        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
-
-        if (block != null)
+        try
         {
-            townHall.getColony().addFreeBlock(block);
-            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
+
+            if (block != null)
+            {
+                townHall.getColony().addFreeBlock(block);
+                Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            }
+        }
+        catch (final ResourceLocationException e)
+        {
+            // Do nothing.
         }
 
         final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
