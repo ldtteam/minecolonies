@@ -344,7 +344,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 if (entry.getName().equals(idLabel.getLabelText()))
                 {
-                    entry.setAttack(!entry.shouldAttack());
+                    entry.setShouldAttack(!entry.shouldAttack());
                 }
             }
             MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));

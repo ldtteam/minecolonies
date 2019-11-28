@@ -26,17 +26,17 @@ public class MobEntryView
     private ResourceLocation location;
 
     /**
-     * Whether to attack this mob.
+     * Whether the guards should attack this mob
      */
-    private boolean attack;
+    private boolean shouldAttack;
 
     /**
      * Public constructor of the WorkOrderView.
      */
-    public MobEntryView(final ResourceLocation location, final Boolean attack, final Integer priority)
+    public MobEntryView(final ResourceLocation location, final Boolean shouldAttack, final Integer priority)
     {
         this.location = location;
-        this.attack = attack;
+        this.shouldAttack = shouldAttack;
         this.priority = priority;
     }
 
@@ -143,23 +143,23 @@ public class MobEntryView
     }
 
     /**
-     * attack getter.
+     * Returns if the guard should attack this mob
      *
-     * @return the attack.
+     * @return true if guard should attack this.
      */
     public boolean shouldAttack()
     {
-        return attack;
+        return shouldAttack;
     }
 
     /**
-     * Setter for the attack.
+     * Setter for whether the guard should attack this mob.
      *
-     * @param attack the new attack attribute.
+     * @param shouldAttack the new attack attribute.
      */
-    public void setAttack(final boolean attack)
+    public void setShouldAttack(final boolean shouldAttack)
     {
-        this.attack = attack;
+        this.shouldAttack = shouldAttack;
     }
 
     /**

@@ -22,8 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -105,7 +104,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     }
 
     /**
-     * Blockdistance at which attackRanged() will get Control, intentionally set higher than actual attack range
+     * Getter for the attackrange
      */
     @Override
     protected int getAttackRange()
@@ -130,6 +129,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         if (worker.getCitizenData() != null)
         {
             attackDist += (worker.getCitizenData().getLevel() / 50.0f) * 15;
+        }
+
+        if (target != null)
+        {
+            attackDist += worker.posY - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -186,7 +190,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (worker.getCitizenData() == null)
         {
-            return GUARD_ATTACK_RANGED;
+            return START_WORKING;
         }
 
         final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());

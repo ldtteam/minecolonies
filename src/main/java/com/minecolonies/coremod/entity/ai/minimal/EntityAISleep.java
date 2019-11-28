@@ -4,12 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.coremod.client.particles.SleepingParticle;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -39,6 +39,11 @@ public class EntityAISleep extends EntityAIBase
      * Timer for emitting sleeping particle effect
      */
     private int particleTimer = 0;
+
+    /**
+     * Interval between sleeping particles
+     */
+    private static final int PARTICLE_INTERVAL = 30;
 
     /**
      * Initiate the sleep task.
@@ -182,16 +187,10 @@ public class EntityAISleep extends EntityAIBase
         }
 
         particleTimer++;
-        if (particleTimer % 30 == 0)
+        if (particleTimer % PARTICLE_INTERVAL == 0)
         {
             particleTimer = 0;
-            Minecraft.getMinecraft().effectRenderer.addEffect(new SleepingParticle(citizen.getEntityWorld(),
-              citizen.posX,
-              citizen.posY + 1,
-              citizen.posZ,
-              1.0f,
-              1.0f,
-              1.0f));
+            MineColonies.getNetwork().sendToAllTracking(new SleepingParticleMessage(citizen.posX, citizen.posY + 1.0d, citizen.posZ), citizen);
         }
         //TODO make sleeping noises here.
     }

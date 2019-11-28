@@ -51,7 +51,7 @@ public class SleepingParticleMessage extends AbstractMessage<SleepingParticleMes
     {
         Minecraft.getMinecraft().effectRenderer.addEffect(new SleepingParticle(Minecraft.getMinecraft().world,
           message.x,
-          message.y + 2.0d,
+          message.y,
           message.z,
           1.0f,
           1.0f,

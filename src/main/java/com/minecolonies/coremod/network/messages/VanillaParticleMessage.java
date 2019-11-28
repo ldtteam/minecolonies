@@ -63,6 +63,15 @@ public class VanillaParticleMessage extends AbstractMessage<VanillaParticleMessa
         spawnParticles(EnumParticleTypes.getParticleFromId(message.enumParticleID), Minecraft.getMinecraft().world, message.x, message.y, message.z);
     }
 
+    /**
+     * Spawns the given particle randomly around the position.
+     *
+     * @param particleType praticle to spawn
+     * @param world        world to use
+     * @param x            x pos
+     * @param y            y pos
+     * @param z            z pos
+     */
     private void spawnParticles(EnumParticleTypes particleType, World world, double x, double y, double z)
     {
         final Random rand = new Random();

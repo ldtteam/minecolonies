@@ -248,7 +248,7 @@ public abstract class CommonProxy implements IProxy
           MineColonies.instance,
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY,
-          true);
+          false);
         EntityRegistry.registerModEntity(ARCHER,
           EntityArcherBarbarian.class,
           "ArcherBarbarian",

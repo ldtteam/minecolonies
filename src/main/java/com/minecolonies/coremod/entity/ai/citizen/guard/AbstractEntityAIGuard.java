@@ -109,9 +109,29 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private static final int PARTICLE_INTERVAL = 30;
 
     /**
+     * Interval between sleep checks
+     */
+    private static final int SHOULD_SLEEP_INTERVAL = 200;
+
+    /**
+     * Interval between guard task updates
+     */
+    private static final int GUARD_TASK_INTERVAL = 20;
+
+    /**
+     * Interval between guard regen updates
+     */
+    private static final int GUARD_REGEN_INTERVAL = 40;
+
+    /**
      * The timer for sleeping.
      */
     private int sleepTimer = 0;
+
+    /**
+     * Timer for the wakeup AI.
+     */
+    private int wakeTimer = 0;
 
     /**
      * The sleeping guard we found
@@ -127,28 +147,25 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(DECIDE, this::decide, 20),
-          // This doesnt get checked, decide overrules it! Fix! Tomorrow!
-          new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, 200),
-          new AITarget(GUARD_PATROL, this::decide, 20),
+          new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
+          new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
-          new AITarget(GUARD_WAKE, this::wakeUpGuard, 20),
-          new AITarget(GUARD_FOLLOW, this::decide, 20),
-          new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, 200),
-          new AITarget(GUARD_GUARD, this::decide, 20),
-          new AITarget(GUARD_REGEN, this::regen, 40),
-          new AITarget(HELP_CITIZEN, this::helping, 20)
+          new AITarget(GUARD_WAKE, this::wakeUpGuard, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
+          new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
+          new AITarget(HELP_CITIZEN, this::helping, GUARD_TASK_INTERVAL)
         );
         buildingGuards = getOwnBuilding();
     }
 
-    int wakeTimer = 0;
-
     /**
      * Wake up a nearby sleeping guard
      *
-     * @return
+     * @return next state
      */
     private IAIState wakeUpGuard()
     {
@@ -186,7 +203,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Whether the guard should fall asleep.
      *
-     * @return
+     * @return true if so
      */
     private boolean shouldSleep()
     {
@@ -195,8 +212,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return false;
         }
 
-        if (worker.getRandom().nextInt(10) == 5)
+        // Chance to fall asleep every 10sec, Chance is 1 in (5 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
+        if (worker.getRandom().nextInt((int) (worker.getCitizenExperienceHandler().getLevel() * 0.5) + 5) == 1)
         {
+            // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
 
             final Entity entity = new SittingEntity(world, worker.posX, worker.posY - 1, worker.posZ, sleepTimer);
@@ -214,11 +233,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState sleepParticles()
     {
-        MineColonies.getNetwork().sendToAllTracking(new SleepingParticleMessage(worker.posX, worker.posY, worker.posZ), worker);
+        MineColonies.getNetwork().sendToAllTracking(new SleepingParticleMessage(worker.posX, worker.posY + 2.0d, worker.posZ), worker);
 
         if (worker.getHealth() < worker.getMaxHealth())
         {
-            worker.setHealth(worker.getHealth() + 1);
+            worker.setHealth(worker.getHealth() + 0.5f);
         }
 
         return null;
@@ -431,6 +450,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState helping()
     {
+        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
         if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
         {
             return DECIDE;
@@ -466,7 +486,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected IAIState decide()
     {
-        reduceAttackDelay(20 * getTickRate());
+        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
         switch (buildingGuards.getTask())
         {
             case PATROL:
@@ -484,21 +504,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Check if the current target is null or death and assign a new one if necessary.
+     * Checks if the current targets is still valid, if not searches a new target. Adds experience if the current target died.
+     *
+     * @return true if we found a target, false if no target.
      */
     protected boolean checkForTarget()
     {
-        // Targets to check:
-        // Current Target
-        // Revenge Target
-        // Close Targets
-
-        // Checks:
-        // persecution(chasing) Distance
-        // Cansee
-        // Dead
-        // null
-
         // Add experience for killed mob
         if (target != null && target.isDead)
         {
@@ -512,7 +523,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             // Check sight
             if (!worker.canEntityBeSeen(target))
             {
-                lastSeen += STANDARD_DELAY;
+                lastSeen += GUARD_TASK_INTERVAL;
             }
             else
             {
@@ -657,7 +668,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
         {
             resetTarget();
-            setDelay(STANDARD_DELAY);
             return GUARD_REGEN;
         }
 
@@ -697,7 +707,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         int closest = Integer.MAX_VALUE;
         EntityLivingBase targetEntity = null;
 
-        for (EntityLivingBase entity : entities)
+        for (final EntityLivingBase entity : entities)
         {
             if (!worker.canEntityBeSeen(entity) || entity.isDead)
             {
@@ -749,15 +759,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Reduces the attack delay by the given Tickrate
+     * Reduces the attack delay by the given value
      *
-     * @param tickRate rate at which the caller is ticking
+     * @param value amount to reduce by
      */
-    public void reduceAttackDelay(final int tickRate)
+    public void reduceAttackDelay(final int value)
     {
         if (currentAttackDelay > 0)
         {
-            currentAttackDelay -= tickRate;
+            currentAttackDelay -= value;
         }
     }
 
@@ -795,7 +805,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         switch (buildingGuards.getTask())
         {
             case PATROL:
-                return currentPatrolPoint != null ? currentPatrolPoint : worker.getCurrentPosition();
+                return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
             case FOLLOW:
                 return buildingGuards.getPlayerToFollow();
             default:

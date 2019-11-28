@@ -74,9 +74,9 @@ public final class GuardConstants
     public static final int RANGER_BASE_DMG = 2;
 
     /**
-     * Flee squaredistance from Target
+     * Flee distance from Target
      */
-    public static final int RANGED_FLEE_SQDIST = 5 * 5;
+    public static final int RANGED_FLEE_SQDIST = 5;
 
     /**
      * Ranged attack velocity
