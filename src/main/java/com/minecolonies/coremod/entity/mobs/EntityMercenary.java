@@ -3,9 +3,8 @@ package com.minecolonies.coremod.entity.mobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
-import com.minecolonies.api.entity.ai.statemachine.basestatemachine.IStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickingTransition;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
@@ -108,7 +107,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     /**
      * This entities state machine
      */
-    private IStateMachine<ITickingTransition> stateMachine;
+    private ITickRateStateMachine<IState> stateMachine;
 
     /**
      * The entities name.
@@ -158,11 +157,11 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
         this.setHealth(this.getMaxHealth());
 
-        stateMachine = new TickRateStateMachine(EntityMercenaryAI.State.INIT, this::handleStateException);
-        stateMachine.addTransition(new TickingTransition(EntityMercenaryAI.State.INIT, this::isInitialized, () -> EntityMercenaryAI.State.SPAWN_EVENT, 20));
-        stateMachine.addTransition(new TickingTransition(EntityMercenaryAI.State.SPAWN_EVENT, this::spawnEvent, () -> EntityMercenaryAI.State.ALIVE, 30));
-        stateMachine.addTransition(new TickingTransition(EntityMercenaryAI.State.ALIVE, this::shouldDespawn, () -> EntityMercenaryAI.State.DEAD, 100));
-        stateMachine.addTransition(new TickingTransition(EntityMercenaryAI.State.DEAD, () -> true, this::getState, 500));
+        stateMachine = new TickRateStateMachine<>(EntityMercenaryAI.State.INIT, this::handleStateException);
+        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.INIT, this::isInitialized, () -> EntityMercenaryAI.State.SPAWN_EVENT, 20));
+        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.SPAWN_EVENT, this::spawnEvent, () -> EntityMercenaryAI.State.ALIVE, 30));
+        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.ALIVE, this::shouldDespawn, () -> EntityMercenaryAI.State.DEAD, 100));
+        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.DEAD, () -> true, this::getState, 500));
     }
 
     /**
@@ -274,7 +273,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      *
      * @return state
      */
-    public IAIState getState()
+    public IState getState()
     {
         return stateMachine.getState();
     }
