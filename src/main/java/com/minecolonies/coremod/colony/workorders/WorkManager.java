@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.AdvancementUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
@@ -252,6 +255,21 @@ public class WorkManager implements IWorkManager
             order.setID(topWorkOrderId);
         }
 
+        if (order instanceof WorkOrderBuildDecoration)
+        {
+            final StructureName structureName = new StructureName(((WorkOrderBuildDecoration) order).getStructureName());
+            if (order instanceof WorkOrderBuildBuilding)
+            {
+                final int level = ((WorkOrderBuildBuilding) order).getUpgradeLevel();
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
+                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+            }
+            else
+            {
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
+                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+            }
+        }
         workOrders.put(order.getID(), order);
         order.onAdded(colony, readingFromNbt);
     }

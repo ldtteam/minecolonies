@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_library",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockHutEnchanter"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_enchanter.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_enchanter.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "enchanter": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "enchanter",
+        "level": 1
+      }
+    }
+  }
+}
