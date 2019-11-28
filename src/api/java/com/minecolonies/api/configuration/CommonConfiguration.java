@@ -488,7 +488,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "1,minecraft:respiration,1,50",
                      "1,minecraft:sharpness,1,50",
                      "1,minecraft:smite,1,50",
-                     "1,minecraft:sweeping_edge,1,50",
+                     "1,minecraft:sweeping,1,50",
                      "1,minecraft:unbreaking,1,50",
 
                      "2,minecraft:aqua_affinity,2,25",
@@ -509,7 +509,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "2,minecraft:respiration,2,25",
                      "2,minecraft:sharpness,2,25",
                      "2,minecraft:smite,2,25",
-                     "2,minecraft:sweeping_edge,2,25",
+                     "2,minecraft:sweeping,2,25",
                      "2,minecraft:unbreaking,2,25",
 
                      "3,minecraft:aqua_affinity,3,15",
@@ -530,7 +530,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "3,minecraft:respiration,3,15",
                      "3,minecraft:sharpness,3,15",
                      "3,minecraft:smite,3,15",
-                     "3,minecraft:sweeping_edge,3,15",
+                     "3,minecraft:sweeping,3,15",
                      "3,minecraft:unbreaking,3,15",
 
                      "4,minecraft:aqua_affinity,4,5",
@@ -552,7 +552,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "4,minecraft:respiration,4,5",
                      "4,minecraft:sharpness,4,5",
                      "4,minecraft:smite,4,5",
-                     "4,minecraft:sweeping_edge,4,5",
+                     "4,minecraft:sweeping,4,5",
                      "4,minecraft:unbreaking,4,5",
 
                      "5,minecraft:aqua_affinity,5,1",
@@ -575,7 +575,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "5,minecraft:respiration,5,1",
                      "5,minecraft:sharpness,5,1",
                      "5,minecraft:smite,5,1",
-                     "5,minecraft:sweeping_edge,5,1",
+                     "5,minecraft:sweeping,5,1",
                      "5,minecraft:unbreaking,5,1"
                    ),
           s -> s instanceof String);
