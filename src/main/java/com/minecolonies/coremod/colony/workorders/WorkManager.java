@@ -255,16 +255,16 @@ public class WorkManager implements IWorkManager
             order.setID(topWorkOrderId);
         }
 
-        if (order instanceof WorkOrderBuildDecoration)
+        if (order instanceof WorkOrderBuildDecoration && !readingFromNbt)
         {
             final StructureName structureName = new StructureName(((WorkOrderBuildDecoration) order).getStructureName());
-            if (order instanceof WorkOrderBuildBuilding && !readingFromNbt)
+            if (order instanceof WorkOrderBuildBuilding)
             {
                 final int level = ((WorkOrderBuildBuilding) order).getUpgradeLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                         AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
             }
-            else if (!readingFromNbt)
+            else
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                         AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
