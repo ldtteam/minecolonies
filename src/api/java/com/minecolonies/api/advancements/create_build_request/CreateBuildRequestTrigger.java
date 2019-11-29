@@ -20,10 +20,13 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
 
     public void trigger(final EntityPlayerMP player, final StructureName structureName, final int level)
     {
-        final CreateBuildRequestListeners listeners = this.getListeners(player.getAdvancements());
-        if (listeners != null)
+        if (player != null)
         {
-            listeners.trigger(structureName, level);
+            final CreateBuildRequestListeners listeners = this.getListeners(player.getAdvancements());
+            if (listeners != null)
+            {
+                listeners.trigger(structureName, level);
+            }
         }
     }
 
