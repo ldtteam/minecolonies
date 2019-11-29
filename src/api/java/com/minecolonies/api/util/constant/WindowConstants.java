@@ -1201,6 +1201,11 @@ public final class WindowConstants
     public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
 
     /**
+     * Interaction suffix.
+     */
+    public static final String INTERACTION_RESOURCE_SUFFIX   = ":gui/windowinteraction.xml";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

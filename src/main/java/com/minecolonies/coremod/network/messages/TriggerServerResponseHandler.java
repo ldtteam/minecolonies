@@ -124,7 +124,7 @@ public class TriggerServerResponseHandler implements IMessage
             final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
             if (citizenData != null)
             {
-                citizenData.onResponseTriggered(key, response);
+                citizenData.onResponseTriggered(key, response, ctxIn.getSender().world);
             }
         }
     }

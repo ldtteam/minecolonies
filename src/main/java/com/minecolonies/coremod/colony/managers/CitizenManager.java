@@ -476,7 +476,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void tickCitizenData()
     {
-        this.getCitizens().forEach(citizen -> citizen.tick(citizen));
+        this.getCitizens().forEach(ICitizenData::tick);
     }
 
     /**

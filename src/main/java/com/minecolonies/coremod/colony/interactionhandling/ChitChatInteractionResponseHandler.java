@@ -36,7 +36,7 @@ public class ChitChatInteractionResponseHandler extends ServerCitizenInteraction
       final ChatPriority priority)
     {
         super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(inquiry, null), tuples);
-        //todo add a way to create and query children from here to put them in the childs list.
+        //todo: Request (Blocking, Pending), Action Required
     }
 
     /**
