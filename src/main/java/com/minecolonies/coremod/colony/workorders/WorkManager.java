@@ -255,7 +255,7 @@ public class WorkManager implements IWorkManager
             order.setID(topWorkOrderId);
         }
 
-        if (order instanceof WorkOrderBuildDecoration)
+        if (order instanceof WorkOrderBuildDecoration && !readingFromNbt)
         {
             final StructureName structureName = new StructureName(((WorkOrderBuildDecoration) order).getStructureName());
             if (order instanceof WorkOrderBuildBuilding)
