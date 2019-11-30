@@ -21,6 +21,9 @@ public class Configurations
 
     public static class Gameplay
     {
+        @Config.Comment("Should colony officers also receive advancements?")
+        public boolean officersReceiveAdvancements = false;
+
         @Config.Comment("Should builder place construction tape? [Default: true]")
         public boolean builderPlaceConstructionTape = true;
 

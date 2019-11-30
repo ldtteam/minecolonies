@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_citizen",
+  "display": {
+    "icon": {
+      "item": "minecraft:bed"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.colony_population_5.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.colony_population_5.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "population_5": {
+      "trigger": "minecolonies:colony_population",
+      "conditions": {
+        "population_count": 5
+      }
+    }
+  }
+}
