@@ -32,9 +32,13 @@ public final class Pathfinding
     /**
      * Creates a new thread pool for pathfinding jobs
      */
-    public static void start()
+    public static ThreadPoolExecutor getExecutor()
     {
-        executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue);
+        if (executor == null)
+        {
+            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue);
+        }
+        return executor;
     }
     
     /**
@@ -43,7 +47,7 @@ public final class Pathfinding
      */
     public static void shutdown()
     {
-    	executor.shutdown();
+        getExecutor().shutdown();
     }
     
     private Pathfinding()
@@ -59,7 +63,7 @@ public final class Pathfinding
      */
     public static Future<Path> enqueue(@NotNull final AbstractPathJob job)
     {
-        return executor.submit(job);
+        return getExecutor().submit(job);
     }
 
     /**
