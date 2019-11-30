@@ -275,7 +275,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         if (walkToBuilding())
         {
-            return getState();
+            return GUARD_REGEN;
         }
 
         if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.75D) && buildingGuards.shallRetrieveOnLowHealth())
@@ -284,6 +284,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 worker.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200));
             }
+            return GUARD_REGEN;
         }
 
         return START_WORKING;

@@ -48,19 +48,6 @@ public abstract class AbstractJobGuard extends AbstractJob
         }
     }
 
-    /**
-     * Custom Action on Levelup, increases Guard HP
-     */
-    @Override
-    public void onLevelUp(final int newLevel)
-    {
-        // Bonus Health for guards(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
-        {
-            getCitizen().getCitizenEntity().get().increaseHPForGuards();
-        }
-    }
-
     @Nullable
     @Override
     public SoundEvent getBadWeatherSound()

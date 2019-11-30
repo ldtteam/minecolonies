@@ -105,12 +105,17 @@ public final class GuardConstants
     /**
      * Basic delay for the next Knight attack.
      */
-    public static final int KNIGHT_ATTACK_DELAY_BASE = 50;
+    public static final int KNIGHT_ATTACK_DELAY_BASE = 32;
+
+    /**
+     * Basic bonus hp for knights
+     */
+    public static final int KNIGHT_HP_BONUS = 5;
 
     /**
      * This knight's max distance for attacking.
      */
-    public static final double MAX_DISTANCE_FOR_ATTACK = 4;
+    public static final int MAX_DISTANCE_FOR_ATTACK = 2;
 
     // -- Knight Guard Stuff -- \\
 

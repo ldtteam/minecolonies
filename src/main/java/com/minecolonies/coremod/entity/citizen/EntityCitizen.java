@@ -43,7 +43,6 @@ import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -55,6 +54,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -226,10 +226,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Initiates citizen tasks
-     * Suppressing Sonar Rule Squid:S881
-     * The rule thinks we should extract ++priority in a proper statement.
-     * But in this case the rule does not apply because that would remove the readability.
+     * Initiates citizen tasks Suppressing Sonar Rule Squid:S881 The rule thinks we should extract ++priority in a proper statement. But in this case the rule does not apply
+     * because that would remove the readability.
      */
     @SuppressWarnings(INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION)
     private void initTasks()
@@ -292,8 +290,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
@@ -550,8 +547,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the citizendata.
-     * Tries to get it from the colony is the data is null.
+     * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
      */
@@ -799,12 +795,20 @@ public class EntityCitizen extends AbstractEntityCitizen
         super.onDeath(damageSource);
     }
 
+    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
     @Override
     protected void damageShield(final float damage)
     {
         if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
         {
-            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
+            if (getHealth() > damage * GUARD_BLOCK_DAMAGE)
+            {
+                final float blockDamage = CombatRules.getDamageAfterAbsorb(damage * GUARD_BLOCK_DAMAGE,
+                  (float) this.getTotalArmorValue(),
+                  (float) this.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+                setHealth(getHealth() - blockDamage);
+            }
+            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
         }
         super.damageShield(damage);
     }
@@ -863,61 +867,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             heal(healAmount);
             citizenData.markDirty();
-        }
-    }
-
-    /**
-     * Applies healthmodifiers for Guards based on level
-     */
-    @Override
-    public void increaseHPForGuards()
-    {
-        if (getCitizenData() != null)
-        {
-            // Remove old mod first
-            removeHealthModifier(GUARD_HEALTH_MOD_LEVEL_NAME);
-
-            // +1 Heart on levels 6,12,18,25,34,43,54 ...
-            final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, (int) (getCitizenData().getLevel() / (5.0 + getCitizenData().getLevel() / 20.0) * 2), 0);
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModLevel);
-        }
-    }
-
-    /**
-     * Remove all healthmodifiers from a citizen
-     */
-    @Override
-    public void removeAllHealthModifiers()
-    {
-        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
-        }
-        if (getHealth() > getMaxHealth())
-        {
-            setHealth(getMaxHealth());
-        }
-    }
-
-    /**
-     * Remove healthmodifier by name.
-     *
-     * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
-     */
-    @Override
-    public void removeHealthModifier(final String modifierName)
-    {
-        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
-        {
-            if (mod.getName().equals(modifierName))
-            {
-                getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
-            }
-        }
-        if (getHealth() > getMaxHealth())
-        {
-            setHealth(getMaxHealth());
         }
     }
 
@@ -1273,8 +1222,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the current position.
-     * Only approximated position, used for stuck checking.
+     * Getter for the current position. Only approximated position, used for stuck checking.
      *
      * @return the current position.
      */

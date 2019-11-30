@@ -22,9 +22,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,11 +79,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * The Bonus Health for each building level
      */
     private static final int BONUS_HEALTH_PER_LEVEL = 2;
-
-    /**
-     * The health modifier which changes the HP
-     */
-    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
 
     /**
      * Vision range per building level.
@@ -141,8 +136,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private EntityPlayer followPlayer;
 
     /**
-     * Indicates if in Follow mode what type of follow is use.
-     * True - tight grouping, false - lose grouping.
+     * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
      */
     private boolean tightGrouping;
 
@@ -191,10 +185,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 if (optCitizen.isPresent())
                 {
-                    optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
-
                     final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
-                    optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
+                    AttributeModifierUtils.addHealthModifier(optCitizen.get(), healthModBuildingHP);
                 }
             }
         }
@@ -220,20 +212,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
+                final AbstractEntityCitizen citizenEntity = optCitizen.get();
                 final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
-                optCitizen.get().increaseHPForGuards();
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModBuildingHP);
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModConfig);
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
-                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
+                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
+                final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
+                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
             colony.getCitizenManager().calculateMaxCitizens();
 
@@ -340,7 +323,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
-                optCitizen.get().removeAllHealthModifiers();
+                AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
                 optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
                 optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
                 optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
@@ -529,8 +512,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         private GuardType guardType = null;
 
         /**
-         * Indicates whether tight grouping is use or
-         * lose grouping.
+         * Indicates whether tight grouping is use or lose grouping.
          */
         private boolean tightGrouping = true;
 
@@ -1037,11 +1019,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         getColony().getPackageManager().getCloseSubscribers().forEach(player -> MineColonies
-                                                                             .getNetwork()
-                                                                             .sendTo(new GuardMobAttackListMessage(getColony().getID(),
-                                                                                 getID(),
-                                                                                 new ArrayList<>(mobsToAttack.values())),
-                                                                               player));
+                                                                                  .getNetwork()
+                                                                                  .sendTo(new GuardMobAttackListMessage(getColony().getID(),
+                                                                                      getID(),
+                                                                                      new ArrayList<>(mobsToAttack.values())),
+                                                                                    player));
     }
 
     @Override
@@ -1049,6 +1031,4 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         return true;
     }
-
-
 }
