@@ -128,7 +128,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Hashmap of mobs we may or may not attack.
      */
-    private HashMap<Class<? extends Entity>, MobEntryView> mobsToAttack = new HashMap<>();
+    private Map<Class<? extends Entity>, MobEntryView> mobsToAttack = new HashMap<>();
 
     /**
      * The player the guard has been set to follow.
@@ -875,7 +875,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the map.
      */
     @Override
-    public HashMap<Class<? extends Entity>, MobEntryView> getMobsToAttack()
+    public Map<Class<? extends Entity>, MobEntryView> getMobsToAttack()
     {
         return mobsToAttack;
     }

@@ -134,6 +134,11 @@ public class EventHandler
         }
     }
 
+    /**
+     * Event used to stitch custom textures.
+     *
+     * @param event the event
+     */
     @SubscribeEvent
     public void onTextureStitch(@NotNull final TextureStitchEvent.Pre event)
     {

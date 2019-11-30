@@ -197,6 +197,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private static final int CALL_HELP_CD = 100;
 
     /**
+     * The amount of damage a guard takes on blocking.
+     */
+    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+
+    /**
      * Citizen inv Wrapper.
      */
     private IItemHandler invWrapper;
@@ -795,7 +800,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         super.onDeath(damageSource);
     }
 
-    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
     @Override
     protected void damageShield(final float damage)
     {

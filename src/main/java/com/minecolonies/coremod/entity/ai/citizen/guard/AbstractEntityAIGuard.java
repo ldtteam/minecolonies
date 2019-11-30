@@ -193,7 +193,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             worker.swingArm(EnumHand.OFF_HAND);
             sleepingGuard.get().attackEntityFrom(new DamageSource("wakeywakey").setDamageBypassesArmor(), 1);
-            sleepingGuard.get().setRevengeTarget(worker);
             return DECIDE;
         }
 

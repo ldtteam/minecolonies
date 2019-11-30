@@ -9,8 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding, IBuildingWorker
 {
@@ -176,7 +176,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      *
      * @return the map.
      */
-    HashMap<Class<? extends Entity>, MobEntryView> getMobsToAttack();
+    Map<Class<? extends Entity>, MobEntryView> getMobsToAttack();
 
     /**
      * Set the Map of mobs to attack.
