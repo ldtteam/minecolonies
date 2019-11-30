@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
@@ -46,6 +47,15 @@ public class ChitChatInteractionResponseHandler extends ServerCitizenInteraction
     public ChitChatInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
     {
         super(compoundNBT);
+    }
+
+    /**
+     * Way to load the response handler for a citizen.
+     * @param data the citizen owning this handler.
+     */
+    public ChitChatInteractionResponseHandler(final ICitizenData data)
+    {
+        super(data);
     }
 
     @Override

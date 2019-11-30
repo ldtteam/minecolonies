@@ -1,11 +1,14 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface ICitizenDataView
 {
@@ -187,13 +190,6 @@ public interface ICitizenDataView
     void deserialize(@NotNull PacketBuffer buf);
 
     /**
-     * Get the array of the latest status.
-     *
-     * @return the array of ITextComponents.
-     */
-    ITextComponent[] getLatestStatus();
-
-    /**
      * Get the inventory of the citizen.
      * @return the inventory of the citizen.
      */
@@ -228,4 +224,30 @@ public interface ICitizenDataView
      * @return returns the current modifier related to tools.
      */
     double getToolsModifiers();
+
+    /**
+     * Get the list of ordered interactions.
+     * @return the list.
+     */
+    List<IInteractionResponseHandler> getOrderedInteractions();
+
+    /**
+     * Get a specific interaction by key.
+     * @param component the key.
+     * @return the interaction or null.
+     */
+    @Nullable
+    IInteractionResponseHandler getSpecificInteraction(@NotNull ITextComponent component);
+
+    /**
+     * Check if the citizen has important interactions.
+     * @return true if so.
+     */
+    boolean hasBlockingInteractions();
+
+    /**
+     * Check if the citizen has any interactions.
+     * @return true if so.
+     */
+    boolean hasPendingInteractions();
 }

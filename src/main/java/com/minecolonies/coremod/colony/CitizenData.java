@@ -831,8 +831,6 @@ public class CitizenData implements ICitizenData
 
         buf.writeString((job != null) ? job.getName() : "");
 
-        writeStatusToBuffer(buf);
-
         buf.writeInt(colony.getID());
 
         final CompoundNBT compound = new CompoundNBT();
@@ -846,25 +844,6 @@ public class CitizenData implements ICitizenData
         {
             buf.writeCompoundTag(interactionHandler.serializeNBT());
         }
-    }
-
-    /**
-     * Writes the citizen status to the byteBuffer.
-     *
-     * @param buf the buffer.
-     */
-    private void writeStatusToBuffer(@NotNull final PacketBuffer buf)
-    {
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
-
-        optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatusArray = entityCitizen.getCitizenStatusHandler().getLatestStatus();
-            for (final ITextComponent latestStatus : latestStatusArray)
-            {
-                buf.writeString(latestStatus == null ? "" : latestStatus.getFormattedText());
-            }
-        });
     }
 
     /**
@@ -1627,7 +1606,7 @@ public class CitizenData implements ICitizenData
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
                 final ServerCitizenInteractionResponseHandler handler =
-                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, handlerTagList.getCompound(i));
+                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }
@@ -1645,10 +1624,23 @@ public class CitizenData implements ICitizenData
         final List<ServerCitizenInteractionResponseHandler> toRemove = new ArrayList<>();
         for (final ServerCitizenInteractionResponseHandler handler : citizenChatOptions.values())
         {
-            if (!handler.isValid(this))
+            try
             {
+                if (!handler.isValid(this))
+                {
+                    toRemove.add(handler);
+                }
+            }
+            catch (final Exception e)
+            {
+                // If anything goes wrong in checking validity, remove handler.
                 toRemove.add(handler);
             }
+        }
+
+        if (!toRemove.isEmpty())
+        {
+            markDirty();
         }
 
         for (final ServerCitizenInteractionResponseHandler handler : toRemove)
@@ -1672,5 +1664,6 @@ public class CitizenData implements ICitizenData
         {
             this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
         }
+        markDirty();
     }
 }

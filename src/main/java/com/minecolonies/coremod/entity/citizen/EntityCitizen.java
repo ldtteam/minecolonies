@@ -205,6 +205,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private IItemHandler invWrapper;
 
     /**
+     * Citizen data view.
+     */
+    private ICitizenDataView citizenDataView;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type the entity type.
@@ -910,15 +915,23 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the view.
      */
-    private ICitizenDataView getCitizenDataView()
+    public ICitizenDataView getCitizenDataView()
     {
-        if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
+        if (this.citizenDataView == null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
-            if (colonyView != null)
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                return colonyView.getCitizen(citizenId);
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                    return this.citizenDataView;
+                }
             }
+        }
+        else
+        {
+            return this.citizenDataView;
         }
 
         return null;

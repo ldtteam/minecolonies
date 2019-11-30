@@ -322,12 +322,12 @@
   "entity.farmer.needseed": "I need %s to plant.",
   "entity.farmer.nofreefields": "Place more fields to get me working.",
 
-  "entity.citizen.nojob": "%s would like to have a job.",
-  "entity.citizen.demandsjob": "%s demands to have a job and is getting very upset standing around.",
-  "entity.citizen.nohouse": "%s would like to have a house to go to every night.",
-  "entity.citizen.demandshouse": "%s demands to have a house to live in and is getting very upset.",
-  "entity.citizen.notool": "%s would like to get %s.",
-  "entity.citizen.demandstool": "%s demand to get a %s.",
+  "entity.citizen.nojob": "Having a job would really be great.",
+  "entity.citizen.demandsjob": "I am waiting for more than two weeks to finally have a job! I am getting very upset!",
+  "entity.citizen.nohouse": "I'd really like a house to live in.",
+  "entity.citizen.demandshouse": "I don't have a house for more than 2 weeks, I'm getting really upset!",
+  "entity.citizen.notool": "I'm missing a tool for some days.",
+  "entity.citizen.demandstool": "I can't work for quite a while because of that missing tool!",
 
   "com.minecolonies.command.notop": "Must be OP to use the command",
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",

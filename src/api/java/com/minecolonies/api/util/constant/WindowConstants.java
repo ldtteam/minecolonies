@@ -1203,7 +1203,12 @@ public final class WindowConstants
     /**
      * Interaction suffix.
      */
-    public static final String INTERACTION_RESOURCE_SUFFIX   = ":gui/windowinteraction.xml";
+    public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
+
+    /**
+     * Id of the chat label.
+     */
+    public static final String CHAT_LABEL_ID = "chat";
 
     /**
      * public constructor to hide implicit public one.

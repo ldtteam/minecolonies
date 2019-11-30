@@ -70,6 +70,15 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         super(compoundNBT);
     }
 
+    /**
+     * Way to load the response handler for a citizen.
+     * @param data the citizen owning this handler.
+     */
+    public ServerCitizenInteractionResponseHandler(final ICitizenData data)
+    {
+        super(data);
+    }
+
     @Override
     public boolean isVisible(final World world)
     {

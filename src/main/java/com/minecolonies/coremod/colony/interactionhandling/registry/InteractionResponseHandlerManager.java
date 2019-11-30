@@ -23,7 +23,6 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
         final ResourceLocation handlerType =
           compound.keySet().contains(NbtTagConstants.TAG_HANDLER_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_HANDLER_TYPE)) : ModInteractionResponseHandlers.CHITCHAT;
         final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().getValue(handlerType).getProducer().apply(citizen);
-
         if (handler != null)
         {
             try

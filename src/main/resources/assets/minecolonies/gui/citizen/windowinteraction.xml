@@ -1,49 +1,19 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="380 244" pause="false"
-        lightbox="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="350 150" pause="false" lightbox="false" pos="200 200"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-
-	<image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="190 244" pos="95 0"/>
 
 	<switch id="head" size="100% 100%" pos="0 0">
 		<view>
-			<switch id="pages" size="190 100%" pos="95 0">
-				<view id="pageActions" size="100% 100%">
-					<layout source="minecolonies:gui/citizen/main.xml"/>
-				</view>
-				<view id="happinessModifierView" size="100% 100%">
-					<label id="happinessModifier" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
+            <gradient id="gradient" size="300 150" pos="0 0"/>
+            <label id="chat" size="30 11" color="white" pos="10 25"/>
+            <group id="responseOptions" size="120 11" pos="10 100"/>
 
-					<label id="modifier1" pos="45 54" size="136 11" color="black"/>
-					<image id="modifierImage1" size="11 11" pos="20 52" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier2"  pos="45 74" size="136 11" color="black"/>
-					<image id="modifierImage2" size="11 11" pos="20 72" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier3" pos="45 94" size="136 11" color="black"/>
-					<image id="modifierImage3" size="11 11" pos="20 92" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier4" pos="45 114" size="136 11" color="black"/>
-					<image id="modifierImage4" size="11 11" pos="20 112" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier5" pos="45 134" size="136 11" color="black"/>
-					<image id="modifierImage5" size="11 11" pos="20 132" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier6" pos="45 154" size="136 11" color="black"/>
-					<image id="modifierImage6" size="11 11" pos="20 152" source="minecolonies:textures/gui/red_icon.png"/>
-				</view>
-			</switch>
-
-			<buttonimage id="requestsTitle" size="80 48" pos="300 66" label="$(com.minecolonies.coremod.gui.citizen.requestTitle)"
+			<buttonimage id="requestsTitle" size="40 24" pos="50 300" label="$(com.minecolonies.coremod.gui.citizen.requestTitle)"
 						source="minecolonies:textures/gui/citizen/colonist_request_button.png" textcolor="black"/>
-			<buttonimage id="inventory" size="80 49" pos="300 131" label="$(container.inventory)"
+			<buttonimage id="inventory" size="40 24" pos="100 300" label="$(container.inventory)"
 						source="minecolonies:textures/gui/citizen/colonist_inventory_button.png" textcolor="black"/>
 		</view>
 		<view id="requestsView" size="190 100%" pos="95 0">
 			<layout source="minecolonies:gui/citizen/requests.xml"/>
 		</view>
     </switch>
-
-    <buttonimage id="prevPage" size="18 10" pos="108 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="254 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="254 222" textalign="MIDDLE" label="" color="black"/>
 </window>

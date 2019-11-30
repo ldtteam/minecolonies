@@ -70,6 +70,15 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         this.deserializeNBT(compoundNBT);
     }
 
+    /**
+     * Way to load the response handler for a citizen.
+     * @param data the citizen owning this handler.
+     */
+    public AbstractInteractionResponseHandler(final ICitizenData data)
+    {
+        // Do nothing, await loading from NBT.
+    }
+
     @Override
     public ITextComponent getInquiry()
     {
@@ -118,10 +127,11 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
     {
         this.inquiry = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
-        final ListNBT list = compoundNBT.getList(TAG_RESPONSE, Constants.NBT.TAG_COMPOUND);
+        final ListNBT list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.responses.put(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_NEXT_INQUIRY)));
+            final CompoundNBT nbt = list.getCompound(i);
+            this.responses.put(ITextComponent.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
