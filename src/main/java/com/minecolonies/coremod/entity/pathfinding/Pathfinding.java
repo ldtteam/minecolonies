@@ -48,6 +48,7 @@ public final class Pathfinding
     public static void shutdown()
     {
         getExecutor().shutdown();
+        jobQueue.clear();
         executor = null;
     }
     
