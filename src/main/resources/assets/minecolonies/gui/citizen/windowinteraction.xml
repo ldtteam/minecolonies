@@ -1,16 +1,11 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="350 150" pause="false" lightbox="false" pos="200 200"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="350 150" pause="false" lightbox="false" pos="600 600"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
 	<switch id="head" size="100% 100%" pos="0 0">
 		<view>
-            <gradient id="gradient" size="300 150" pos="0 0"/>
-            <label id="chat" size="30 11" color="white" pos="10 25"/>
-            <group id="responseOptions" size="120 11" pos="10 100"/>
-
-			<buttonimage id="requestsTitle" size="40 24" pos="50 300" label="$(com.minecolonies.coremod.gui.citizen.requestTitle)"
-						source="minecolonies:textures/gui/citizen/colonist_request_button.png" textcolor="black"/>
-			<buttonimage id="inventory" size="40 24" pos="100 300" label="$(container.inventory)"
-						source="minecolonies:textures/gui/citizen/colonist_inventory_button.png" textcolor="black"/>
+            <gradient id="gradient" size="300 150" pos="20 0"/>
+            <text id="chat" size="250 50" color="white" pos="30 25"/>
+            <box id="responseOptions" size="290 50" pos="30 100"/>
 		</view>
 		<view id="requestsView" size="190 100%" pos="95 0">
 			<layout source="minecolonies:gui/citizen/requests.xml"/>

@@ -22,9 +22,10 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
  */
 public abstract class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
 {
-    private static final String TAG_DELAY   = "delay";
-    private static final String TAG_PARENT  = "parent";
-    private static final String TAG_PARENTS = "parents";
+    private static final String TAG_DELAY     = "delay";
+    private static final String TAG_PARENT    = "parent";
+    private static final String TAG_PARENTS   = "parents";
+    private static final String TAG_VALIDATOR_ID = "validator";
 
     /**
      * At which world tick this should be displayed again.
@@ -37,9 +38,14 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     private Predicate<ICitizenData> validator;
 
     /**
+     * The id of the validator.
+     */
+    private ITextComponent validatorId;
+
+    /**
      * All registered parents of this response handler.
      */
-    private Set<ITextComponent> parents = new HashSet<>();
+    protected Set<ITextComponent> parents = new HashSet<>();
 
     /**
      * The server interaction response handler.
@@ -47,6 +53,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      * @param primary if primary interaction.
      * @param priority the interaction priority.
      * @param validator validation predicate to check if this interaction is still valid.
+     * @param validatorId the id of the validator.
      * @param responseTuples the tuples mapping player responses to further interactions.
      */
     @SafeVarargs
@@ -55,10 +62,12 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
       final boolean primary,
       final ChatPriority priority,
       final Predicate<ICitizenData> validator,
+      final ITextComponent validatorId,
       final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
+        this.validatorId = validatorId;
     }
 
     /**
@@ -82,13 +91,13 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     @Override
     public boolean isVisible(final World world)
     {
-        return displayAtWorldTick == 0 || displayAtWorldTick > world.getGameTime();
+        return displayAtWorldTick == 0 || displayAtWorldTick < world.getGameTime();
     }
 
     @Override
-    public boolean isValid(final ICitizenData colony)
+    public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || validator.test(colony);
+        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen) );
     }
 
     /**
@@ -116,7 +125,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         {
             if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
-                displayAtWorldTick = (int) (world.getGameTime() + TICKS_SECOND * 60 * 10);
+                displayAtWorldTick = (int) (world.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
             else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
@@ -144,6 +153,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
+        compoundNBT.putString(TAG_VALIDATOR_ID, ITextComponent.Serializer.toJson(validatorId));
         return compoundNBT;
     }
 
@@ -158,6 +168,15 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         {
             this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validator = InteractionValidatorPredicates.map.get(getInquiry());
+        this.validatorId = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        loadValidator();
+    }
+
+    /**
+     * Load the validator.
+     */
+    protected void loadValidator()
+    {
+        this.validator = InteractionValidatorPredicates.map.get(validatorId);
     }
 }

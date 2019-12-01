@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 /**
  * The server side interaction response handler.
  */
-public class ChitChatInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class StandardInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
 {
     private static final Tuple[] tuples = {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
@@ -28,23 +28,37 @@ public class ChitChatInteractionResponseHandler extends ServerCitizenInteraction
     };
 
     /**
+     * The server interaction response handler with custom validator.
+     * @param inquiry the client inquiry.
+     * @param validator the id of the validator.
+     * @param priority the interaction priority.
+     */
+    public StandardInteractionResponseHandler(
+      final ITextComponent inquiry,
+      final ITextComponent validator,
+      final ChatPriority priority)
+    {
+        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(validator, null), validator, tuples);
+    }
+
+    /**
      * The server interaction response handler.
      * @param inquiry the client inquiry.
      * @param priority the interaction priority.
      */
-    public ChitChatInteractionResponseHandler(
+    public StandardInteractionResponseHandler(
       final ITextComponent inquiry,
       final ChatPriority priority)
     {
-        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(inquiry, null), tuples);
-        //todo: Request (Blocking, Pending), Action Required
+        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(inquiry, null), inquiry, tuples);
     }
+
 
     /**
      * The inquiry of the citizen from NBT.
      * @param compoundNBT the compound to deserialize it from.
      */
-    public ChitChatInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
+    public StandardInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
     {
         super(compoundNBT);
     }
@@ -53,7 +67,7 @@ public class ChitChatInteractionResponseHandler extends ServerCitizenInteraction
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public ChitChatInteractionResponseHandler(final ICitizenData data)
+    public StandardInteractionResponseHandler(final ICitizenData data)
     {
         super(data);
     }

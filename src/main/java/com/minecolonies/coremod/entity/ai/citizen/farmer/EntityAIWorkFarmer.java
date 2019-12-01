@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -18,6 +20,8 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
@@ -35,6 +39,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -99,6 +104,33 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private int     totalDis;
     private int     dist;
     private boolean horizontal;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.farmer.nofreefields"),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
+        InteractionValidatorPredicates.posMap.put(new TranslationTextComponent("entity.farmer.noseedset"),
+          tuple ->
+          {
+              if (tuple.getA().getJob() instanceof JobFarmer)
+              {
+                  final IColony colony = tuple.getA().getColony();
+                  if (colony != null)
+                  {
+                      final World world = colony.getWorld();
+                      if (world != null)
+                      {
+                          final TileEntity tileEntity = world.getTileEntity(tuple.getB());
+                          if (tileEntity instanceof ScarecrowTileEntity)
+                          {
+                              return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
+                          }
+                      }
+                  }
+              }
+              return false;
+          });
+    }
 
     /**
      * Constructor for the Farmer.
@@ -183,8 +215,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (building.hasNoFields())
         {
-            chatProxy.setCurrentChat("entity.farmer.noFreeFields");
-            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm(); 
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.farmer.nofreefields"), ChatPriority.BLOCKING));
+            }
+            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm();
             return PREPARING;
         }
 
@@ -304,7 +339,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            chatProxy.setCurrentChat("entity.farmer.noSeedSet");
+            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent("entity.farmer.noseedset", currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent("entity.farmer.noseedset"), currentField.getPos()));
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;

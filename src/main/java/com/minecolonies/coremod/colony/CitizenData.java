@@ -236,6 +236,7 @@ public class CitizenData implements ICitizenData
         if (citizenChatOptions.containsKey(key))
         {
             citizenChatOptions.get(key).onResponseTriggered(response, world);
+            markDirty();
         }
     }
 
@@ -839,10 +840,20 @@ public class CitizenData implements ICitizenData
         buf.writeBlockPos(lastPosition);
 
         buf.writeInt(colony.getDimension());
-        buf.writeInt(citizenChatOptions.size());
-        for (final ServerCitizenInteractionResponseHandler interactionHandler : citizenChatOptions.values())
+
+        if (colony.getWorld() != null)
         {
-            buf.writeCompoundTag(interactionHandler.serializeNBT());
+            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).collect(Collectors.toList());
+
+            buf.writeInt(subInteractions.size());
+            for (final IInteractionResponseHandler interactionHandler : subInteractions)
+            {
+                buf.writeCompoundTag(interactionHandler.serializeNBT());
+            }
+        }
+        else
+        {
+            buf.writeInt(0);
         }
     }
 
@@ -1659,11 +1670,14 @@ public class CitizenData implements ICitizenData
     @Override
     public void triggerInteraction(@NotNull final ServerCitizenInteractionResponseHandler handler)
     {
-        this.citizenChatOptions.put(handler.getInquiry(), handler);
-        for (final IInteractionResponseHandler childHandler: handler.genChildInteractions())
+        if (!this.citizenChatOptions.containsKey(handler.getInquiry()))
         {
-            this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
+            this.citizenChatOptions.put(handler.getInquiry(), handler);
+            for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
+            {
+                this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
+            }
+            markDirty();
         }
-        markDirty();
     }
 }

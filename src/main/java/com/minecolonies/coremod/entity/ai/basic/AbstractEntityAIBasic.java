@@ -3,7 +3,10 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -24,6 +27,8 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
@@ -38,6 +43,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -134,6 +140,32 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Paused state handler
      */
     private EntityAIStatePausedHandler pausedHandler;
+
+    /*
+     * Setup all the interaction trigger predicates.
+     */
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
+        InteractionValidatorPredicates.posMap.put(
+          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), tuple ->
+          {
+              final IBuildingWorker workBuilding = tuple.getA().getWorkBuilding();
+              if (workBuilding != null)
+              {
+                    final IColony colony = tuple.getA().getColony();
+                    if ( colony != null )
+                    {
+                        final World world = colony.getWorld();
+                        if ( world != null )
+                        {
+                            return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(tuple.getB()).getBlock());
+                        }
+                    }
+              }
+              return false;
+          });
+    }
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -1002,7 +1034,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
-            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), ChatPriority.IMPORTANT));
+            }
+
         }
         else if (dumpOneMoreSlot())
         {
@@ -1162,9 +1198,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
-        if (getOwnBuilding().getMaxToolLevel() < required)
+        if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
-            chatProxy.setCurrentChat(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.toString());
+            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), ChatPriority.IMPORTANT, pos));
         }
         updateToolFlag(toolType, required);
     }

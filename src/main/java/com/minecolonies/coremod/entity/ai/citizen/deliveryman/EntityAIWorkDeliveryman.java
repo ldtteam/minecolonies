@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
@@ -21,11 +23,15 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -33,6 +39,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,6 +119,45 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * The last delivery of the dman.
      */
     private ILocation lastDelivery = null;
+
+    static
+    {
+        InteractionValidatorPredicates.posMap.put(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+          tuple ->
+          {
+              if (tuple.getA().getJob() instanceof JobDeliveryman)
+              {
+                  final IColony colony = tuple.getA().getColony();
+                  if (colony != null)
+                  {
+                      final IBuilding building = colony.getBuildingManager().getBuilding(tuple.getB());
+                      if (building != null)
+                      {
+                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
+                          if (inv != null)
+                          {
+                              return InventoryUtils.openSlotCount(inv) > 0;
+                          }
+                      }
+                  }
+              }
+              return false;
+          });
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+          cit -> {
+            if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
+            {
+                for (final IWareHouse wareHouse : cit.getJob().getColony().getBuildingManager().getWareHouses())
+                {
+                    if (wareHouse.registerWithWareHouse((IBuildingDeliveryman) cit.getWorkBuilding()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+          });
+    }
 
     /**
      * Initialize the deliveryman and add all his tasks.
@@ -497,8 +543,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final AbstractTileEntityColonyBuilding ITileEntityColonyBuilding = (AbstractTileEntityColonyBuilding) tileEntity;
-        final IBuildingContainer building = ITileEntityColonyBuilding.getBuilding();
+        final AbstractTileEntityColonyBuilding iTileEntityColonyBuilding = (AbstractTileEntityColonyBuilding) tileEntity;
+        final IBuildingContainer building = iTileEntityColonyBuilding.getBuilding();
 
         boolean success = true;
         boolean extracted = false;
@@ -514,15 +560,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             extracted = true;
             final ItemStack insertionResultStack;
 
-            if (ITileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
+            if (iTileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, ((IBuildingWorker) building)::isItemStackInRequest);
+                  iTileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, ((IBuildingWorker) building)::isItemStackInRequest);
             }
             else
             {
                 insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                  InventoryUtils.forceItemStackToItemHandler(iTileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                     stack,
                     itemStack -> false);
             }
@@ -530,18 +576,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (!ItemStackUtils.isEmpty(insertionResultStack))
             {
                 success = false;
-                if (ItemStack.areItemStacksEqual(insertionResultStack, stack))
+                if (ItemStack.areItemStacksEqual(insertionResultStack, stack) && worker.getCitizenData() != null)
                 {
                     //same stack, we could not deliver ?
                     if (building instanceof AbstractBuildingWorker)
                     {
-                        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
-                          building.getMainCitizen().getName());
+                        worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL, building.getMainCitizen().getName()), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), building.getID()));
                     }
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
-                        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                          new StringTextComponent(" :" + building.getSchematicName()));
+                        worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL, new StringTextComponent(" :" + building.getSchematicName())), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), ((TileEntityColonyBuilding) buildingToDeliver).getPos()));
                     }
                 }
 
@@ -718,14 +762,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        if (getAndCheckWareHouse() != null && getAndCheckWareHouse().getTileEntity() != null)
+        if ( getAndCheckWareHouse() != null && getAndCheckWareHouse().getTileEntity() != null )
         {
             job.setActive(true);
             return false;
         }
 
         job.setActive(false);
-        chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
+        if ( worker.getCitizenData() != null )
+        {
+            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE), ChatPriority.BLOCKING));
+        }
         return true;
     }
 }

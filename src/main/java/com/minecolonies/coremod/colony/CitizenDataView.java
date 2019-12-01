@@ -455,6 +455,11 @@ public class CitizenDataView implements ICitizenDataView
             hasAnyPrimaryInteraction = true;
             hasPrimaryBlockingInteractions = primaryInteractions.get(0).getPriority().ordinal() <= ChatPriority.IMPORTANT.ordinal();
         }
+        else
+        {
+            hasAnyPrimaryInteraction = false;
+            hasPrimaryBlockingInteractions = false;
+        }
     }
 
     @Override

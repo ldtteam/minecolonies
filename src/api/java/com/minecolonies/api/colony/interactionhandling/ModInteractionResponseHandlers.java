@@ -4,15 +4,22 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * List of mod interaction handlers.
+ */
 public final class ModInteractionResponseHandlers
 {
-    public static final ResourceLocation CHITCHAT       = new ResourceLocation(Constants.MOD_ID, "chitchat");
-    public static final ResourceLocation REQUEST        = new ResourceLocation(Constants.MOD_ID, "request");
-    public static final ResourceLocation ACTIONREQUIRED = new ResourceLocation(Constants.MOD_ID, "actionrequired");
+    /**
+     * List of IDs.
+     */
+    public static final ResourceLocation STANDARD = new ResourceLocation(Constants.MOD_ID, "standard");
+    public static final ResourceLocation POS = new ResourceLocation(Constants.MOD_ID, "pos");
 
-    public static InteractionResponseHandlerEntry chitchat;
-    public static InteractionResponseHandlerEntry request;
-    public static InteractionResponseHandlerEntry actionrequired;
+    /**
+     * List of entries.
+     */
+    public static InteractionResponseHandlerEntry standard;
+    public static InteractionResponseHandlerEntry pos;
 
     private ModInteractionResponseHandlers()
     {

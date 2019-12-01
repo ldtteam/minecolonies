@@ -2,15 +2,12 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.views.Group;
-import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -58,30 +55,43 @@ public class WindowInteraction extends AbstractWindowSkeleton
     public void onOpened()
     {
         super.onOpened();
-        if (!interactions.isEmpty())
+        setupInteraction();
+    }
+
+    /**
+     * Setup the current interaction.
+     */
+    private void setupInteraction()
+    {
+        if (interactions.size() <= currentInteraction)
         {
-            final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            final Group group = findPaneOfTypeByID("responseOptions", Group.class);
-            int y = 0;
-            findPaneOfTypeByID(CHAT_LABEL_ID, Label.class).setLabelText(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
-            for (final ITextComponent component : handler.getPossibleResponses())
-            {
-                final ButtonImage button = new ButtonImage();
-                button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-                button.setLabel(component.getFormattedText());
-                button.setSize(86,17);
-                button.setTextColor(100);
-                button.setPosition(0, y+= button.getHeight());
-                group.addChild(button);
-            }
+            final WindowCitizen citizen = new WindowCitizen(this.citizen);
+            citizen.open();
+            return;
         }
 
-        /*createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
-        createSaturationBar(citizen, this);
-        createHappinessBar(citizen, this);
-        createXpBar(citizen, this);
-        createSkillContent(citizen, this);
-        updateHappiness(citizen, this);*/
+        final IInteractionResponseHandler handler = interactions.get(currentInteraction);
+        final Box group = findPaneOfTypeByID("responseOptions", Box.class);
+        int y = 0;
+        int x = 0;
+        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
+        for (final ITextComponent component : handler.getPossibleResponses())
+        {
+            final ButtonImage button = new ButtonImage();
+            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large.png"));
+            button.setLabel(component.getFormattedText());
+            button.setSize(129,17);
+            button.setTextColor(100);
+            button.setPosition(x, y);
+            group.addChild(button);
+
+            y += button.getHeight();
+            if (y + button.getHeight() >= group.getHeight())
+            {
+                y = 0;
+                x += 20 + button.getWidth();
+            }
+        }
     }
 
     /**
@@ -92,24 +102,19 @@ public class WindowInteraction extends AbstractWindowSkeleton
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        switch (button.getID())
+        if (!interactions.isEmpty())
         {
-            case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
-                buttonPrevPage.off();
-                buttonNextPage.off();
-                pageNum.off();
-                break;
-            case BUTTON_BACK:
-                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
-                setPage("");
-                break;
-            case INVENTORY_BUTTON_ID:
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
+            final IInteractionResponseHandler handler = interactions.get(currentInteraction);
+            for (final ITextComponent component : handler.getPossibleResponses())
+            {
+                if (component.getFormattedText().equals(button.getLabel()))
+                {
+                    handler.onResponseTriggered(component, Minecraft.getInstance().world);
+                    currentInteraction++;
+                    setupInteraction();
+                    return;
+                }
+            }
         }
     }
 }

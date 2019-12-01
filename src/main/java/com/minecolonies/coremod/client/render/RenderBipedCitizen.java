@@ -137,13 +137,14 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
                 double f2 = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = yIn + f2 + 0.3 + yOffset;
 
-                Minecraft.getInstance().textureManager.bindTexture(((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions() ? BLOCKING_RESOURCE : PENDING_RESOURCE);
+                Minecraft.getInstance().textureManager.bindTexture(((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions()  ? BLOCKING_RESOURCE : PENDING_RESOURCE);
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translated(x, y, z);
                 GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
                 GlStateManager.rotated(-viewerYaw, 0.0F, 1.0F, 0.0F);
                 GlStateManager.rotated(viewerPitch, 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotated(90.0F, 0.0F, 0.0F, 1.0F);
                 GlStateManager.scalef(-0.025F, -0.025F, 0.025F);
                 GlStateManager.disableLighting();
                 GlStateManager.depthMask(false);

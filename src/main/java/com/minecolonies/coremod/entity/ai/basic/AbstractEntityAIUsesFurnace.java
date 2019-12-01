@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -8,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -43,6 +46,14 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Wait this amount of ticks after requesting a burnable material.
      */
     protected static final int WAIT_AFTER_REQUEST = 50;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+    }
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -134,13 +145,19 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         if(getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatProxy.setCurrentChat(FURNACE_USER_NO_FUEL);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+            }
             return getState();
         }
 
         if (getOwnBuilding(AbstractBuildingFurnaceUser.class).getFurnaces().isEmpty())
         {
-            chatProxy.setCurrentChat(BAKER_HAS_NO_FURNACES_MESSAGE);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
             return getState();
         }
 
@@ -302,7 +319,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         if (((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
