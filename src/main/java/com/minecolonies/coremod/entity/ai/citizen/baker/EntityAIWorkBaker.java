@@ -109,7 +109,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         InteractionValidatorPredicates.map.put(new TranslationTextComponent(BAKER_HAS_NO_RECIPES),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-
         InteractionValidatorPredicates.map.put(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
     }

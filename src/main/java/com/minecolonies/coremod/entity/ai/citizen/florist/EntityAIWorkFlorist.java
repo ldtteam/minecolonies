@@ -1,11 +1,17 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
@@ -14,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,8 +102,30 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private BlockPos compostPosition;
 
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
+
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
+
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.florist.nocompost"),
+          citizen ->
+          {
+              final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
+              if (buildingFlorist instanceof BuildingFlorist && buildingFlorist.getColony() != null && buildingFlorist.getColony().getWorld() != null)
+              {
+                  return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist, buildingFlorist.getColony().getWorld());
+              }
+              return false;
+          });
+    }
+
+
     /*
-       Florst uses compost on them if not composted yet
+       Florist uses compost on them if not composted yet
        Block which is composted produces flowers in an interval for a certain time (For 1 minute it produces 1 flower randomly between 1-60s),
         so it might make 10 flowers but average it's 2 flowers per minute.                                                                                                                                                                       - Flourist checks if on top of block is flower and harvests it.
        Depending on the florists level he has smaller delays so he harvests faster
@@ -131,7 +161,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
         {
-            chatProxy.setCurrentChat(NO_PLANT_GROUND_FLORIST);
+            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -165,9 +195,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
         if (amountOfCompostInInv <= 0)
         {
-            if (!isThereCompostedLand())
+            if (!isThereCompostedLand(getOwnBuilding(BuildingFlorist.class), world))
             {
-                chatProxy.setCurrentChat("com.minecolonies.coremod.florist.nocompost");
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.florist.nocompost"), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;
@@ -205,7 +235,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
             else
             {
-                chatProxy.setCurrentChat(NO_FLOWERS_IN_CONFIG);
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
             }
         }
 
@@ -287,9 +317,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      * Check if there is any already composted land.
      * @return true if there is any.
      */
-    private boolean isThereCompostedLand()
+    private static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
     {
-        for (final BlockPos pos : getOwnBuilding(BuildingFlorist.class).getPlantGround())
+        for (final BlockPos pos : buildingFlorist.getPlantGround())
         {
             if (world.isBlockLoaded(pos))
             {
@@ -303,7 +333,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
                 }
                 else
                 {
-                    getOwnBuilding(BuildingFlorist.class).removePlantableGround(pos);
+                    buildingFlorist.removePlantableGround(pos);
                 }
             }
         }

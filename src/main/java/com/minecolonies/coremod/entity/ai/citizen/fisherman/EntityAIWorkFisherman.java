@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -13,6 +15,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -162,6 +165,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     @Nullable
     private NewBobberEntity entityFishHook;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.fisherman.messagewatertoofar"),
+          citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
+    }
 
     /**
      * Constructor for the Fisherman.
@@ -393,7 +402,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
             {
-                chatProxy.setCurrentChat("entity.fisherman.messageWaterTooFar");
+                if (worker.getCitizenData() != null)
+                {
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.fisherman.messagewatertoofar"), ChatPriority.IMPORTANT));
+                }
             }
 
             if (pathResult == null || !pathResult.isInProgress())

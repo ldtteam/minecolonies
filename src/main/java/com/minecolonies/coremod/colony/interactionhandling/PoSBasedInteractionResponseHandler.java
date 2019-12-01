@@ -26,6 +26,7 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     private static final Tuple[] tuples  = {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 

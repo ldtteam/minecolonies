@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -9,6 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -37,6 +40,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      * Base xp gain for the smelter.
      */
     private static final double BASE_XP_GAIN = 5;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+    }
 
     /**
      * Initialize the stone smeltery and add all his tasks.
@@ -217,7 +228,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatProxy.setCurrentChat(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COOKING), ChatPriority.BLOCKING));
+            }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
@@ -285,7 +299,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatProxy.setCurrentChat(FURNACE_USER_NO_FUEL);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+            }
             return getState();
         }
 

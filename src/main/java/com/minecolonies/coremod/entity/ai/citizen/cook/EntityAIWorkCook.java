@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 
 /**
  * Cook AI class.
@@ -187,7 +186,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
-            chatProxy.setCurrentChat(HUNGRY_INV_FULL);
             removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();

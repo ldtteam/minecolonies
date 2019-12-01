@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.EnumSet;
 
 /**
@@ -29,12 +26,6 @@ public class EntityAIGoHome extends Goal
     private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
 
     /**
-     * Filter to allow citizen requesting without spam.
-     */
-    @NotNull
-    protected final ChatProxy chatProxy;
-
-    /**
      * The citizen.
      */
     private final EntityCitizen citizen;
@@ -48,7 +39,6 @@ public class EntityAIGoHome extends Goal
     {
         super();
         this.citizen = citizen;
-        this.chatProxy = new ChatProxy(citizen.getCitizenData());
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 

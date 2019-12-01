@@ -4,14 +4,16 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.util.ChatProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -22,12 +24,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.EnumSet;
 
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
-import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -64,11 +66,6 @@ public class EntityAIEatTask extends Goal
      * Time required to eat in seconds.
      */
     private static final int REQUIRED_TIME_TO_EAT = 5;
-
-    /**
-     * Filter for message propagation.
-     */
-    protected ChatProxy chatProxy;
 
     /**
      * The different types of AIStates related to eating.
@@ -110,6 +107,15 @@ public class EntityAIEatTask extends Goal
      * Restaurant to which the citizen should path.
      */
     private BlockPos placeToPath;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.wrongfood"),
+          citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.norestaurant"),
+          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null);
+    }
+
 
     /**
      * Instantiates this task.
@@ -156,11 +162,6 @@ public class EntityAIEatTask extends Goal
     @Override
     public void tick()
     {
-        if (chatProxy == null)
-        {
-            chatProxy = new ChatProxy(citizen.getCitizenData());
-        }
-
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {
@@ -426,14 +427,14 @@ public class EntityAIEatTask extends Goal
         if (uncookedFood != -1)
         {
             complained = true;
-            chatProxy.setCurrentChat("com.minecolonies.coremod.ai.wrongFood");
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.ai.wrongfood"), ChatPriority.PENDING));
         }
 
         if (placeToPath == null)
         {
             if (!complained)
             {
-                chatProxy.setCurrentChat("com.minecolonies.coremod.ai.noRestaurant");
+                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.ai.norestaurant"), ChatPriority.BLOCKING));
             }
             return IDLE;
         }
