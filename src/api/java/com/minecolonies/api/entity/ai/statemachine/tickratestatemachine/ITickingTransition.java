@@ -1,9 +1,10 @@
 package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
 import org.jetbrains.annotations.NotNull;
 
-public interface ITickingTransition extends IStateMachineTransition
+public interface ITickingTransition<S extends IState> extends IStateMachineTransition<S>
 {
     /**
      * Returns the intended tickRate of the AITarget

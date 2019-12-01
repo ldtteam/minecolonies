@@ -26,11 +26,30 @@ import java.util.concurrent.*;
 public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-    private static final ThreadPoolExecutor executor;
-    static
+    private static ThreadPoolExecutor executor;
+    
+    
+    /**
+     * Creates a new thread pool for pathfinding jobs
+     */
+    public static ThreadPoolExecutor getExecutor()
     {
-        executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue);
+        if (executor == null)
+        {
+            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue);
+        }
+        return executor;
     }
+    
+    /**
+     * Waits until all running pathfinding requests are finished
+     * Then stops all running threads in this thread pool
+     */
+    public static void shutdown()
+    {
+        getExecutor().shutdown();
+    }
+    
     private Pathfinding()
     {
         //Hides default constructor.
@@ -44,7 +63,7 @@ public final class Pathfinding
      */
     public static Future<Path> enqueue(@NotNull final AbstractPathJob job)
     {
-        return executor.submit(job);
+        return getExecutor().submit(job);
     }
 
     /**

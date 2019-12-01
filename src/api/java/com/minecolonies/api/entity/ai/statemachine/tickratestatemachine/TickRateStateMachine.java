@@ -2,10 +2,11 @@ package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -14,7 +15,7 @@ import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.T
  * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate.
  * Default tickrate is 20 tps (Minecraft default).
  */
-public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> implements ITickRateStateMachine
+public class TickRateStateMachine<S extends IState> extends BasicStateMachine<ITickingTransition<S>, S> implements ITickRateStateMachine<S>
 {
     /**
      * Counter keeping track of ticks
@@ -22,9 +23,19 @@ public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> 
     private int tickCounter = 0;
 
     /**
+     * The rate the statemachine currently ticks at. Sets the amount of ticks - 1 which are skipped.
+     */
+    private int tickRate = 1;
+
+    /**
+     * The counter for the statemachine's tickrate.
+     */
+    private int tickRateCounter = 0;
+
+    /**
      * Construct a new StateMachine
      */
-    public TickRateStateMachine(@NotNull final IAIState initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
+    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
     {
         super(initialState, exceptionHandler);
 
@@ -40,24 +51,59 @@ public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> 
     @Override
     public void tick()
     {
+        // Update the tickrate counter, skip tick if we're lower
+        tickRateCounter++;
+        if (tickRateCounter < tickRate)
+        {
+            return;
+        }
+        tickRateCounter = 0;
+
+        // Update the tick counter for transitions
         tickCounter++;
         if (tickCounter > MAX_TICKRATE)
         {
             tickCounter = 1;
         }
 
-        if (!eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkTransition)
-              && !eventTransitionMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkTransition)
-              && !eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkTransition))
+        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING))
         {
-            if (!transitionMap.containsKey(getState()))
+            if (checkTransition(transition))
             {
+                return;
+            }
+        }
+
+        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.EVENT))
+        {
+            if (checkTransition(transition))
+            {
+                return;
+            }
+        }
+
+        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING))
+        {
+            if (checkTransition(transition))
+            {
+                return;
+            }
+        }
+
+        if (!transitionMap.containsKey(getState()))
+        {
                 // Reached Trap/Sink state we cannot leave.
                 onException(new RuntimeException("Missing AI transition for state: " + getState()));
                 reset();
                 return;
+        }
+
+        for (final ITickingTransition<S> transition : transitionMap.get(getState()))
+        {
+            if (checkTransition(transition))
+            {
+                return;
             }
-            transitionMap.get(getState()).stream().anyMatch(this::checkTransition);
         }
     }
 
@@ -68,7 +114,7 @@ public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> 
      * @return true if this target worked and we should stop executing this tick
      */
     @Override
-    public boolean checkTransition(@NotNull final ITickingTransition transition)
+    public boolean checkTransition(@NotNull final ITickingTransition<S> transition)
     {
         // Check if the target should be run this Tick
         if ((tickCounter % transition.getTickRate()) != transition.getTickOffset())
@@ -76,5 +122,18 @@ public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> 
             return false;
         }
         return super.checkTransition(transition);
+    }
+
+    @Override
+    public int getTickRate()
+    {
+        return tickRate;
+    }
+
+    @Override
+    public void setTickRate(final int tickRate)
+    {
+        this.tickRate = tickRate;
+        tickRateCounter = new Random().nextInt(tickRate);
     }
 }

@@ -501,7 +501,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
             }
-            delay--;
+            delay -= getTickRate();
             return true;
         }
         clearWorkTarget();
