@@ -139,6 +139,7 @@ public class EventHandler
      *
      * @param event the event
      */
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onTextureStitch(@NotNull final TextureStitchEvent.Pre event)
     {

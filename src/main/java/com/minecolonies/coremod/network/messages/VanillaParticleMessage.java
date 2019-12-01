@@ -6,6 +6,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
@@ -58,6 +60,7 @@ public class VanillaParticleMessage extends AbstractMessage<VanillaParticleMessa
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void messageOnClientThread(final VanillaParticleMessage message, final MessageContext ctx)
     {
         spawnParticles(EnumParticleTypes.getParticleFromId(message.enumParticleID), Minecraft.getMinecraft().world, message.x, message.y, message.z);

@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Message for sleeping particles
@@ -47,6 +49,7 @@ public class SleepingParticleMessage extends AbstractMessage<SleepingParticleMes
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected void messageOnClientThread(final SleepingParticleMessage message, final MessageContext ctx)
     {
         Minecraft.getMinecraft().effectRenderer.addEffect(new SleepingParticle(Minecraft.getMinecraft().world,
