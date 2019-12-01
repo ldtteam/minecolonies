@@ -31,6 +31,7 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
@@ -113,7 +114,7 @@ public class EntityAIEatTask extends Goal
         InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.wrongfood"),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.norestaurant"),
-          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null);
+          citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null);
     }
 
 
