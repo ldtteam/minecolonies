@@ -659,7 +659,7 @@ public class EventHandler
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                                             colony.getID(), true
                                                           ))));
-                if (Configurations.gameplay.allowColoniesInFDifferentWorlds)
+                if (Configurations.gameplay.allowColoniesInDifferentWorlds)
                 {
                     return true;
                 }
