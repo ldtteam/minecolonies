@@ -27,6 +27,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -1092,6 +1093,23 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         this.width = width;
         this.height = height;
+    }
+
+    /**
+     * Prevent riding entities except ours.
+     *
+     * @param entity entity to ride on
+     * @param force  force flag
+     * @return
+     */
+    @Override
+    public boolean startRiding(final Entity entity, final boolean force)
+    {
+        if (entity instanceof SittingEntity)
+        {
+            return super.startRiding(entity, force);
+        }
+        return false;
     }
 
     private void decrementCallForHelpCooldown()
