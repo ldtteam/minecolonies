@@ -659,7 +659,11 @@ public class EventHandler
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                                             colony.getID(), true
                                                           ))));
-                if (Configurations.gameplay.allowInfiniteColonies)
+                if (Configurations.gameplay.allowColoniesInFDifferentWorlds)
+                {
+                    return true;
+                }
+                else if (Configurations.gameplay.allowInfiniteColonies)
                 {
                     final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
@@ -676,7 +680,6 @@ public class EventHandler
                 player.sendMessage(deleteButton);
             }
 
-            //  Players are currently only allowed a single colony
             return false;
         }
         else if (colony.hasTownHall())
