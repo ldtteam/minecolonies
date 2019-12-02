@@ -1,0 +1,29 @@
+{
+  "parent": "minecolonies:minecolonies/citizen_eat_food_first",
+  "display": {
+    "icon": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.citizen_eat_food_rotten_flesh.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.citizen_eat_food_rotten_flesh.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "citizen_eat_rotten_flesh": {
+      "trigger": "minecolonies:citizen_eat_food",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:rotten_flesh"
+          }
+        ]
+      }
+    }
+  }
+}

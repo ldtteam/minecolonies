@@ -83,6 +83,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
     public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
     public final ForgeConfigSpec.BooleanValue protectVillages;
+    public final ForgeConfigSpec.BooleanValue officersReceiveAdvancements;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
@@ -231,6 +232,7 @@ public class CommonConfiguration extends AbstractConfiguration
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
         protectVillages = defineBoolean(builder, "protectvillages", false);
+        officersReceiveAdvancements = defineBoolean(builder, "officersreceiveadvancements", true);
 
         swapToCategory(builder, "combat");
 

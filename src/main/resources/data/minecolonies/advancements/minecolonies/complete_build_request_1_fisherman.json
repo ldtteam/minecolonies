@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_farmer",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutfisherman"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_fisherman.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_fisherman.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "sawmill": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "fisherman",
+        "level": 1
+      }
+    }
+  }
+}
