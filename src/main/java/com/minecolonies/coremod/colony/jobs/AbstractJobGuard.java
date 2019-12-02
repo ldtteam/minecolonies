@@ -82,6 +82,6 @@ public abstract class AbstractJobGuard extends AbstractJob
      */
     public boolean isAsleep()
     {
-        return getWorkerAI().getState() == GUARD_SLEEP;
+        return getWorkerAI() != null && getWorkerAI().getState() == GUARD_SLEEP;
     }
 }
