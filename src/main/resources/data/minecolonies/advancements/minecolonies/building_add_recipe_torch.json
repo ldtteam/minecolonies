@@ -1,0 +1,29 @@
+{
+  "parent": "minecolonies:minecolonies/create_build_request_1_builder",
+  "display": {
+    "icon": {
+      "item": "minecraft:torch"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.building_add_recipe_torch.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.building_add_recipe_torch.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "add_recipe_torch": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:torch"
+          }
+        ],
+        "crafting_size": 2
+      }
+    }
+  }
+}

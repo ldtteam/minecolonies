@@ -6,6 +6,7 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -233,6 +234,7 @@ public class BuildToolPasteMessage implements IMessage
 
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
             player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+            AdvancementTriggers.PLACE_SUPPLY.trigger(player);
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
