@@ -314,7 +314,9 @@ public final class TranslationConstants
     @NonNls
     public static final     String FERTLIZER                                 = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
-    public static final     String FURNACE_USER_NO_FUEL                      = "com.minecolonies.coremod.furnaceUser.nofuel";
+    public static final     String FURNACE_USER_NO_FUEL                      = "com.minecolonies.coremod.furnaceuser.nofuel";
+    @NonNls
+    public static final     String FURNACE_USER_NO_ORE                      = "com.minecolonies.coremod.furnaceuser.noore";
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG    = "com.minecolonies.coremod.general.onbig";
     @NonNls

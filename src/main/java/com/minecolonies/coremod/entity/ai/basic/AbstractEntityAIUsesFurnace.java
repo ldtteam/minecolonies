@@ -9,10 +9,12 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
@@ -226,15 +228,25 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if(entity instanceof FurnaceTileEntity && !((FurnaceTileEntity) entity).isBurning())
+            if(entity instanceof FurnaceTileEntity)
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                        || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
-                        || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                if ( !((FurnaceTileEntity) entity).isBurning() )
                 {
-                    walkTo = pos;
-                    return START_USING_FURNACE;
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
+                          || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
+                          || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                    {
+                        walkTo = pos;
+                        return START_USING_FURNACE;
+                    }
+                }
+            }
+            else
+            {
+                if ( !(world.getBlockState(pos).getBlock() instanceof FurnaceBlock) )
+                {
+                    ((AbstractBuildingFurnaceUser) getOwnBuilding()).removeFromFurnaces(pos);
                 }
             }
         }

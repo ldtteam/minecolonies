@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.citizen.smelter;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -12,6 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -28,6 +31,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -106,6 +110,15 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      * Max looting chance
      */
     private static final int MAX_ENCHANTED_BOOK_CHANCE = 100;
+
+    static
+    {
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(FURNACE_USER_NO_ORE),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingSmeltery && IColonyManager.getInstance().getCompatibilityManager()
+                                                                                .getSmeltableOres()
+                                                                                .stream()
+                                                                                .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems().getOrDefault(ORE_LIST, new ArrayList<>()).contains(storage)));
+    }
 
     /**
      * Constructor for the Smelter.
@@ -346,13 +359,24 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 req -> req.getShortDisplayString().getString().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
             final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems();
-            if (allowedItems.containsKey(ORE_LIST) && allowedItems.get(ORE_LIST).size() > 0)
+            if (allowedItems.containsKey(ORE_LIST))
             {
-                worker.getCitizenData().createRequestAsync(
-                  new StackList(IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream()
-                                  .filter(storage -> !allowedItems.get(ORE_LIST).contains(storage))
-                                  .map(ItemStorage::getItemStack)
-                                  .collect(Collectors.toList()), COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE));
+                final List<ItemStack> requests = IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream()
+                                                   .filter(storage -> !allowedItems.get(ORE_LIST).contains(storage))
+                                                   .map(ItemStorage::getItemStack)
+                                                   .collect(Collectors.toList());
+
+                if ( requests.isEmpty() )
+                {
+                    if (worker.getCitizenData() != null)
+                    {
+                        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
+                    }
+                }
+                else
+                {
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE));
+                }
             }
             else
             {

@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
@@ -22,6 +23,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -352,6 +354,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @NotNull
     private IAIState tryDifferentAngles()
     {
+        if (world.getBlockState(worker.getPosition()).getMaterial().isLiquid())
+        {
+            return START_WORKING;
+        }
+
         if (job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;
@@ -400,7 +407,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (job.getPonds().isEmpty())
         {
-            if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
+            if ( ( pathResult != null && pathResult.failedToReachDestination() && lastPathResult == null )  || ( lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled()))
             {
                 if (worker.getCitizenData() != null)
                 {
@@ -593,7 +600,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private IAIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD))
+        if (getRodSlot() == -1)
         {
             return PREPARING;
         }

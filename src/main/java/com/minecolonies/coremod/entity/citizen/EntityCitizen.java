@@ -1091,6 +1091,14 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                }
+            }
         }
         else
         {

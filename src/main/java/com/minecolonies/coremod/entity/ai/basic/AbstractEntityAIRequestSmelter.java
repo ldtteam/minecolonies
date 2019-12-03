@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
@@ -204,15 +205,25 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if(entity instanceof FurnaceTileEntity && !((FurnaceTileEntity) entity).isBurning())
+            if( entity instanceof FurnaceTileEntity )
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                      || (hasFuelInFurnaceAndNoSmeltable(furnace))
-                      || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                if ( !((FurnaceTileEntity) entity).isBurning() )
                 {
-                    walkTo = pos;
-                    return START_USING_FURNACE;
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
+                          || (hasFuelInFurnaceAndNoSmeltable(furnace))
+                          || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                    {
+                        walkTo = pos;
+                        return START_USING_FURNACE;
+                    }
+                }
+            }
+            else
+            {
+                if ( !(world.getBlockState(pos).getBlock() instanceof FurnaceBlock) )
+                {
+                    ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(pos);
                 }
             }
         }
@@ -230,7 +241,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COOKING), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -271,6 +282,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                   new InvWrapper(furnace), FUEL_SLOT);
             }
         }
+        else
+        {
+            if ( !(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock) )
+            {
+                ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(walkTo);
+            }
+        }
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return START_WORKING;
@@ -304,6 +322,16 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
             }
             return getState();
+        }
+
+        if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
+        {
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
+            setDelay(STANDARD_DELAY);
+            return START_WORKING;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();

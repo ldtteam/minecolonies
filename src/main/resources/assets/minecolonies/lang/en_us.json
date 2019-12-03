@@ -303,9 +303,6 @@
   "entity.miner.messageneedbettertools": "I need better tools!",
   "entity.miner.messagemoreblocks": "I need more %s!",
   "entity.miner.messagerequiresbetterhut": "Please upgrade my hut to dig deeper!",
-
-  "entity.fisherman.messagewatertoofar": "Fisherman's hut is too far from water!",
-
   "entity.barbarian": "Barbarian",
   "entity.minecolonies.barbarian": "Barbarian",
   "entity.minecolonies.archerbarbarian": "Archer Barbarian",
@@ -1062,7 +1059,6 @@
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter Hut",
-  "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
   "block.minecolonies.blockpostbox": "Postbox",
   "block.minecolonies.blockpostbox.name": "Postbox",
 
@@ -1159,5 +1155,8 @@
 
   "com.minecolonies.coremod.gui.chat.okay": "I will work on it!",
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
-  "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!"
+  "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!",
+  "entity.fisherman.messagewatertoofar": "My hut seems too far away from the water, I can't find any water around to fish! It should be at least 7x7 big and on the same height as my hut.",
+  "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
+  "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I shall smelt in my furnace!"
 }
