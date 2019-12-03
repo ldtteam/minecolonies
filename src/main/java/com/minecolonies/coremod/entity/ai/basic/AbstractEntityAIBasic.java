@@ -1200,7 +1200,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
-            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), ChatPriority.IMPORTANT, pos));
+            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(
+              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()), ChatPriority.IMPORTANT, new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), pos));
         }
         updateToolFlag(toolType, required);
     }

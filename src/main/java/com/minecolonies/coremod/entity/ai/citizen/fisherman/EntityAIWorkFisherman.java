@@ -354,10 +354,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @NotNull
     private IAIState tryDifferentAngles()
     {
-        if (world.getBlockState(worker.getPosition()).getMaterial().isLiquid())
-        {
-            return START_WORKING;
-        }
+
 
         if (job.getWater() == null)
         {
@@ -370,6 +367,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             executedRotations = 0;
             return FISHERMAN_SEARCHING_WATER;
         }
+
+        if (world.getBlockState(worker.getPosition()).getMaterial().isLiquid())
+        {
+            return START_WORKING;
+        }
+
         //Try a different angle to throw the hook not that far
         WorkerUtil.faceBlock(job.getWater(), worker);
         executedRotations++;

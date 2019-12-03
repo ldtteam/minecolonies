@@ -52,7 +52,8 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
       final ITextComponent validator,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(validator, null), validator, tuples);
+        super(inquiry, true, priority, null, validator, tuples);
+        this.validator = InteractionValidatorPredicates.posMap.getOrDefault(validator, null);
         this.pos = pos;
     }
 
@@ -67,7 +68,8 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
       final ChatPriority priority,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, InteractionValidatorPredicates.map.getOrDefault(inquiry, null), inquiry, tuples);
+        super(inquiry, true, priority, null, inquiry, tuples);
+        this.validator = InteractionValidatorPredicates.posMap.getOrDefault(inquiry, null);
         this.pos = pos;
     }
 

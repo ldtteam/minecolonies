@@ -907,7 +907,6 @@
   "item.minecolonies.cactusdoor": "Cactus Door",
   "block.minecolonies.blockcactusslab_half": "Cactus Slab",
 
-  "com.minecolonies.coremod.request.toolow": "Can't mine block %s at %s. Need to upgrade the building to use a tool with higher mining level.",
   "com.minecolonies.coremod.dimension.no": "You are not allowed to place colonies in other dimensions. (Triggered by config value)",
   "com.minecolonies.coremod.max.schematic.reached": "Max schematic size of %d blocks reached.",
 
@@ -1132,9 +1131,6 @@
   "com.minecolonies.gui.workerhuts.florist.flowers": "Plantables",
   "com.minecolonies.gui.workerhuts.florist.toolow": "The florist currently randomly generates the flowers in the list, upgrade to level 4 or above to select them manually!",
   "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",
-  "com.minecolonies.coremod.florist.noplantground": "I am missing any composted dirt to plant on, please repair or upgrade my building!",
-  "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
-  "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
   "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
   "block.minecolonies.blockhutflorist": "Flower Shop",
@@ -1158,5 +1154,9 @@
   "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!",
   "entity.fisherman.messagewatertoofar": "My hut seems too far away from the water, I can't find any water around to fish! It should be at least 7x7 big and on the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
-  "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I shall smelt in my furnace!"
+  "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I shall smelt in my furnace!",
+  "com.minecolonies.coremod.florist.noplantground": "I am missing any composted dirt to plant on, please repair or upgrade my building!",
+  "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
+  "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
+  "com.minecolonies.coremod.request.toolow": "I can't mine block %s at %d %d %d. Need to upgrade the building to use a tool with higher mining level."
 }
