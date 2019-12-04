@@ -37,9 +37,9 @@ public class Tuple<A, B>
     @Override
     public boolean equals(final Object o)
     {
-        if (o instanceof net.minecraft.util.Tuple)
+        if (o instanceof Tuple)
         {
-            return ((net.minecraft.util.Tuple) o).getA().equals(this.getA()) && ((net.minecraft.util.Tuple) o).getB().equals(this.getB());
+            return ((Tuple) o).getA().equals(this.getA()) && ((Tuple) o).getB().equals(this.getB());
         }
         return false;
     }
