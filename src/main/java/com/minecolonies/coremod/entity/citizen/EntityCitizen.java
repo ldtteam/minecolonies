@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -213,6 +214,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     public EntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
         super(type, world);
+        this.goalSelector = new CustomGoalSelector(this.goalSelector);
+        this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
         this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenStatusHandler = new CitizenStatusHandler(this);

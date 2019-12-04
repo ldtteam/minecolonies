@@ -649,7 +649,7 @@ public class CitizenData implements ICitizenData
             {
                 getCitizenEntity().ifPresent(entityCitizen -> {
                     entityCitizen.getTasks()
-                      .getRunningGoals()
+                      .goals.stream()
                       .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
                       .findFirst()
                       .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));

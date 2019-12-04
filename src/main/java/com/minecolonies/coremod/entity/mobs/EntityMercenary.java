@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
+import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -129,6 +130,8 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     {
         super(type, world);
 
+        this.goalSelector = new CustomGoalSelector(this.goalSelector);
+        this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
         this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
