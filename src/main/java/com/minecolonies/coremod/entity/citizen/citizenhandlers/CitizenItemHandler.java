@@ -315,7 +315,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             {
                 continue;
             }
-            stack.damageItem((int) (damage / 2), citizen);
+            stack.damageItem(Math.max(1, (int) (damage / 4)), citizen);
 
             if (ItemStackUtils.isEmpty(stack))
             {

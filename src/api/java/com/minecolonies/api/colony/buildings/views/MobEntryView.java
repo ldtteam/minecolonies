@@ -26,17 +26,17 @@ public class MobEntryView
     private ResourceLocation location;
 
     /**
-     * Whether to attack this mob.
+     * Whether the guards should attack this mob
      */
-    private boolean attack;
+    private boolean shouldAttack;
 
     /**
      * Public constructor of the WorkOrderView.
      */
-    public MobEntryView(final ResourceLocation location, final Boolean attack, final Integer priority)
+    public MobEntryView(final ResourceLocation location, final Boolean shouldAttack, final Integer priority)
     {
         this.location = location;
-        this.attack = attack;
+        this.shouldAttack = shouldAttack;
         this.priority = priority;
     }
 
@@ -49,7 +49,7 @@ public class MobEntryView
     public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final MobEntryView entry)
     {
         ByteBufUtils.writeUTF8String(buf, entry.getLocation().toString());
-        buf.writeBoolean(entry.hasAttack());
+        buf.writeBoolean(entry.shouldAttack());
         buf.writeInt(entry.getPriority());
     }
 
@@ -80,7 +80,7 @@ public class MobEntryView
     {
         @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setString("location", entry.getLocation().toString());
-        coordsCompound.setBoolean("attack", entry.hasAttack());
+        coordsCompound.setBoolean("attack", entry.shouldAttack());
         coordsCompound.setInteger("priority", entry.getPriority());
         compound.setTag(name, coordsCompound);
     }
@@ -143,23 +143,23 @@ public class MobEntryView
     }
 
     /**
-     * attack getter.
+     * Returns if the guard should attack this mob
      *
-     * @return the attack.
+     * @return true if guard should attack this.
      */
-    public boolean hasAttack()
+    public boolean shouldAttack()
     {
-        return attack;
+        return shouldAttack;
     }
 
     /**
-     * Setter for the attack.
+     * Setter for whether the guard should attack this mob.
      *
-     * @param attack the new attack attribute.
+     * @param shouldAttack the new attack attribute.
      */
-    public void setAttack(final boolean attack)
+    public void setShouldAttack(final boolean shouldAttack)
     {
-        this.attack = attack;
+        this.shouldAttack = shouldAttack;
     }
 
     /**
