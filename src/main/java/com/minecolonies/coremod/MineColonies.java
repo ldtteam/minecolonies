@@ -2,6 +2,7 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -105,6 +106,8 @@ public class MineColonies
         proxy.setupApi();
 
         Network.getNetwork().registerCommonMessages();
+
+        AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
     }

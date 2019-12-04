@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -16,6 +17,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Food;
@@ -246,6 +248,13 @@ public class EntityAIEatTask extends Goal
         final Food itemFood = stack.getItem().getFood();
         citizenData.increaseSaturation(itemFood.getHealing() / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (citizenColony != null )
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
+        }
+
         citizenData.markDirty();
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
