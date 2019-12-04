@@ -38,7 +38,7 @@ public class OpenGuiWindowTriggerMessage implements IMessage
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
-        this.resource = buf.readString();
+        this.resource = buf.readString(32767);
     }
 
     @Nullable
