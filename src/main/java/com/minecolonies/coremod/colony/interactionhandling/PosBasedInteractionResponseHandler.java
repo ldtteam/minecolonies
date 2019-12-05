@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 /**
  * The position based interaction response handler.
  */
-public class PoSBasedInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class PosBasedInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
 {
     private static final String POS_TAG = "pos";
 
@@ -46,7 +46,7 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param priority the interaction priority.
      * @param pos the pos this is related to.
      */
-    public PoSBasedInteractionResponseHandler(
+    public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,
       final ChatPriority priority,
       final ITextComponent validator,
@@ -63,7 +63,7 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param priority the interaction priority.
      * @param pos the pos this is related to.
      */
-    public PoSBasedInteractionResponseHandler(
+    public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,
       final ChatPriority priority,
       final BlockPos pos)
@@ -77,7 +77,7 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
      * The inquiry of the citizen from NBT.
      * @param compoundNBT the compound to deserialize it from.
      */
-    public PoSBasedInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
+    public PosBasedInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
     {
         super(compoundNBT);
     }
@@ -86,7 +86,7 @@ public class PoSBasedInteractionResponseHandler extends ServerCitizenInteraction
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public PoSBasedInteractionResponseHandler(final ICitizenData data)
+    public PosBasedInteractionResponseHandler(final ICitizenData data)
     {
         super(data);
     }

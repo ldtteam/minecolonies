@@ -27,7 +27,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -1200,7 +1200,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
-            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(
+            worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(
               new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()), ChatPriority.IMPORTANT, new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), pos));
         }
         updateToolFlag(toolType, required);

@@ -2,7 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
-import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -25,7 +25,7 @@ public final class ModInteractionsInitializer
                             .createJobEntry();
 
         ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
-                                                    .setJobProducer(PoSBasedInteractionResponseHandler::new)
+                                                    .setJobProducer(PosBasedInteractionResponseHandler::new)
                                                     .setRegistryName(ModInteractionResponseHandlers.POS)
                                                     .createJobEntry();
 

@@ -20,7 +20,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -341,7 +341,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent(NO_SEED_SET), currentField.getPos()));
+            worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent(NO_SEED_SET), currentField.getPos()));
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;

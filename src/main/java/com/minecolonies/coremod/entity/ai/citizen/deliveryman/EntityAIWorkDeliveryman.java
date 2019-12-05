@@ -23,15 +23,13 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.interactionhandling.PoSBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +37,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -581,11 +578,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     //same stack, we could not deliver ?
                     if (building instanceof AbstractBuildingWorker)
                     {
-                        worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL, building.getMainCitizen().getName()), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), building.getID()));
+                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL, building.getMainCitizen().getName()), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), building.getID()));
                     }
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
-                        worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL, new StringTextComponent(" :" + building.getSchematicName())), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), ((TileEntityColonyBuilding) buildingToDeliver).getPos()));
+                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL, new StringTextComponent(" :" + building.getSchematicName())), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), ((TileEntityColonyBuilding) buildingToDeliver).getPos()));
                     }
                 }
 
