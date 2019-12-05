@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 
 /**
  * Class which handles the miner behaviour.
@@ -113,7 +114,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.miner.messagerequiresbetterhut"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NEEDS_BETTER_HUT),
           citizen -> {
 
             final AbstractBuilding buildingMiner = (AbstractBuilding) citizen.getWorkBuilding();
@@ -249,7 +250,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //If the miner hut has been placed too deep.
             if (buildingMiner.getNumberOfLevels() == 0)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.miner.messagerequiresbetterhut"), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
                 buildingMiner.setClearedShaft(false);
                 return IDLE;
             }

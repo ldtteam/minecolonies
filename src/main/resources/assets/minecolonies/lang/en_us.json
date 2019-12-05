@@ -314,10 +314,7 @@
   "entity.archerbarbarian": "Barbarian Archer",
 
   "entity.builder.messagenobuilder": "You need a builder in order to build or upgrade this building.",
-
-  "entity.farmer.noseedset": "Please define a seed to grow in the scarecrow.",
   "entity.farmer.needseed": "I need %s to plant.",
-  "entity.farmer.nofreefields": "Place more fields to get me working.",
 
   "entity.citizen.nojob": "Having a job would really be great.",
   "entity.citizen.demandsjob": "I am waiting for more than two weeks to finally have a job! I am getting very upset!",
@@ -599,9 +596,6 @@
   "entity.worker.toolatleastrequest": "I need a %s of at least grade of %s.",
   "entity.worker.enchantedtoolrequest": "I need a %s with maximum enchantment level of %d.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade or make space.",
-  "com.minecolonies.coremod.job.deliveryman.nowarehouse": "Please upgrade or build a Warehouse for me to work at.",
-  "com.minecolonies.coremod.job.deliveryman.workerchestfull": "Can't deliver because of a full worker chest.",
-  "com.minecolonies.coremod.job.deliveryman.namedworkerchestfull": "Can't deliver because of a full %s's chest.",
   "block.minecolonies.blockhutwarehouse": "Warehouse",
   "block.minecolonies.blockhutwarehouse.name": "Warehouse",
 
@@ -1243,14 +1237,23 @@
   "advancements.minecolonies.complete_build_request_1_florist.description": "The floral hut will use compost, or other types of \"bonemeal\" to grow you all those pesky flowers your buildings tend to want!",
   "advancements.minecolonies.complete_build_request_1_enchanter.title": "Enchanting Experience",
   "advancements.minecolonies.complete_build_request_1_enchanter.description": "The enchanter hut will consume Ancient tomes and Other workers experience to produce enchanted books for your personal usage!",
+
+  "block.minecolonies.blockhutflorist.name": "Flowershop",
+
   "com.minecolonies.coremod.gui.chat.okay": "I will work on it!",
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
   "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!",
-  "entity.fisherman.messagewatertoofar": "My hut seems too far away from the water, I can't find any water around to fish! It should be at least 7x7 big and on the same height as my hut.",
-  "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
-  "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I shall smelt in my furnace!",
-  "com.minecolonies.coremod.florist.noplantground": "I am missing any composted dirt to plant on, please repair or upgrade my building!",
+
+  "entity.fisherman.messagewatertoofar": "y hut seems to be too far away from the water, and I can't find any water to fish in! It should be an area of at least 7 x 7, and on the same height as my hut.",
+  "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
+  "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
+  "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair or upgrade my building!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
-  "com.minecolonies.coremod.request.toolow": "I can't mine block %s at %d %d %d. Need to upgrade the building to use a tool with higher mining level."
+  "com.minecolonies.coremod.request.toolow": "I can't mine the %s at %d %d %d. You need to upgrade the building, so I can use a tool with higher mining level.",
+  "entity.farmer.noseedset": "Please define the seed you want me to grow by placing it in the scarecrow!",
+  "entity.farmer.nofreefields": "Place more fields to get me working.",
+  "com.minecolonies.coremod.job.deliveryman.nowarehouse": "Please upgrade or build a Warehouse for me to work at.",
+  "com.minecolonies.coremod.job.deliveryman.workerchestfull": "I can't deliver because of a full worker chest.",
+  "com.minecolonies.coremod.job.deliveryman.namedworkerchestfull": "I can't deliver because of a full %s's chest."
 }

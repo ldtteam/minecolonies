@@ -151,11 +151,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     if (wareHouse.registerWithWareHouse((IBuildingDeliveryman) cit.getWorkBuilding()))
                     {
-                        return true;
+                        return false;
                     }
                 }
             }
-            return false;
+            return true;
           });
     }
 

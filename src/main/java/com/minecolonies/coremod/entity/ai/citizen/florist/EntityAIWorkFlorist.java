@@ -29,8 +29,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_FLOWERS_IN_CONFIG;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_PLANT_GROUND_FLORIST;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Florist AI class.
@@ -102,7 +101,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private BlockPos compostPosition;
 
-
     static
     {
         InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
@@ -111,7 +109,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
 
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.florist.nocompost"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_COMPOST),
           citizen ->
           {
               final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
@@ -197,7 +195,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         {
             if (!isThereCompostedLand(getOwnBuilding(BuildingFlorist.class), world))
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.florist.nocompost"), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;

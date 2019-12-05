@@ -37,6 +37,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
 import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.AMOUNT_OF_FOOD_TO_SERVE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
@@ -111,11 +113,12 @@ public class EntityAIEatTask extends Goal
      */
     private BlockPos placeToPath;
 
+
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.wrongfood"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("com.minecolonies.coremod.ai.norestaurant"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
     }
 
@@ -437,14 +440,14 @@ public class EntityAIEatTask extends Goal
         if (uncookedFood != -1)
         {
             complained = true;
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.ai.wrongfood"), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
         if (placeToPath == null)
         {
             if (!complained)
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("com.minecolonies.coremod.ai.norestaurant"), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
             }
             return IDLE;
         }

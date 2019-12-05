@@ -339,7 +339,32 @@ public final class TranslationConstants
     public static final String NO_FLOWERS_IN_CONFIG = "com.minecolonies.coremod.florist.noflowers";
     @NonNls
     public static final String NO_WORKERS_TO_DRAIN_SET = "com.minecolonies.coremod.enchanter.nodrainingsset";
-
+    @NonNls
+    public static final String NO_FREE_FIELDS = "entity.farmer.nofreefields";
+    @NonNls
+    public static final String NO_SEED_SET    = "entity.farmer.noseedset";
+    @NonNls
+    public static final String WATER_TOO_FAR = "entity.fisherman.messagewatertoofar";
+    @NonNls
+    public static final String NO_COMPOST = "com.minecolonies.coremod.florist.nocompost";
+    @NonNls
+    public static final String NEEDS_BETTER_HUT = "entity.miner.messagerequiresbetterhut";
+    @NonNls
+    public static final String RAW_FOOD      = "com.minecolonies.coremod.ai.wrongfood";
+    @NonNls
+    public static final String NO_RESTAURANT = "com.minecolonies.coremod.ai.norestaurant";
+    @NonNls
+    public static final String DEMANDS_HOUSE = "entity.citizen.demandshouse";
+    @NonNls
+    public static final String NO_HOUSE      = "entity.citizen.nohouse";
+    @NonNls
+    public static final String DEMANDS_JOB   = "entity.citizen.demandsjob";
+    @NonNls
+    public static final String NO_JOB        = "entity.citizen.nojob";
+    @NonNls
+    public static final String DEMANDS_TOOL  = "entity.citizen.demandstool";
+    @NonNls
+    public static final String NO_TOOL       = "entity.citizen.notool";
 
     private TranslationConstants()
     {

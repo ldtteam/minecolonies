@@ -41,6 +41,7 @@ import java.util.Random;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
 
 /**
  * Fisherman AI class.
@@ -170,7 +171,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.fisherman.messagewatertoofar"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
     }
 
@@ -414,7 +415,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.fisherman.messagewatertoofar"), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WATER_TOO_FAR), ChatPriority.IMPORTANT));
                 }
             }
 

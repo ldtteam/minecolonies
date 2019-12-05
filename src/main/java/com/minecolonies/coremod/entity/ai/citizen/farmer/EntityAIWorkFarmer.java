@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.FERTLIZER;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Farmer AI class.
@@ -105,11 +105,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private int     dist;
     private boolean horizontal;
 
+
+
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.farmer.nofreefields"),
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_FREE_FIELDS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
-        InteractionValidatorPredicates.posMap.put(new TranslationTextComponent("entity.farmer.noseedset"),
+        InteractionValidatorPredicates.posMap.put(new TranslationTextComponent(NO_SEED_SET),
           tuple ->
           {
               if (tuple.getA().getJob() instanceof JobFarmer)
@@ -217,7 +219,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.farmer.nofreefields"), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm();
             return PREPARING;
@@ -339,7 +341,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent("entity.farmer.noseedset", currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent("entity.farmer.noseedset"), currentField.getPos()));
+            worker.getCitizenData().triggerInteraction(new PoSBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent(NO_SEED_SET), currentField.getPos()));
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;

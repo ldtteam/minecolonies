@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Handler for the citizens happiness.
  * This keeps all the modifiers related to the citizen.
@@ -159,17 +161,20 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     private double noToolModifier;
 
+
     /*
      * Setup all the interaction trigger predicates.
      */
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.demandshouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.nohouse"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.demandsjob"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.nojob"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.demandstool"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent("entity.citizen.notool"), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_HOUSE),
+          citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse <= DEMANDS_DAYS_WITHOUT_HOUSE );
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(DEMANDS_JOB), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_JOB),
+          citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob <= DEMANDS_DAYS_WITHOUT_JOB);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
+        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
     }
 
     /**
@@ -248,11 +253,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandshouse"), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_HOUSE), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.nohouse"), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOUSE), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -269,11 +274,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandsjob"), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_JOB), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.nojob"), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_JOB), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -320,11 +325,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         final int maxToolOpenDays = getMaxOpenToolDays();
         if (maxToolOpenDays > NO_TOOLS_DEMANDS_DAYS)
         {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.notool"), ChatPriority.CHITCHAT));
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_TOOL), ChatPriority.CHITCHAT));
         }
         else if (maxToolOpenDays > NO_TOOLS_COMPLAINS_DAYS)
         {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent("entity.citizen.demandstool"), ChatPriority.CHITCHAT));
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_TOOL), ChatPriority.CHITCHAT));
         }
         noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
     }

@@ -5,9 +5,12 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.items.*;
+import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +31,7 @@ public final class ModItemsInitializer
     private static final int PRIMARY_COLOR_MERC   = 8;
     private static final int SECONDARY_COLOR_MERC = 300;
 
+    ParticleTypes.ANGRY_VILLAGER
     private ModItemsInitializer()
     {
         throw new IllegalStateException("Tried to initialize: ModItemsInitializer but this is a Utility class.");

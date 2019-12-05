@@ -71,17 +71,17 @@ public class WindowInteraction extends AbstractWindowSkeleton
         }
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-        final Box group = findPaneOfTypeByID("responseOptions", Box.class);
+        final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         int y = 0;
         int x = 0;
         findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
         for (final ITextComponent component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
-            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large.png"));
+            button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
             button.setLabel(component.getFormattedText());
-            button.setSize(129,17);
-            button.setTextColor(100);
+            button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+            button.setTextColor(SLIGHTLY_BLUE);
             button.setPosition(x, y);
             group.addChild(button);
 
@@ -89,7 +89,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             if (y + button.getHeight() >= group.getHeight())
             {
                 y = 0;
-                x += 20 + button.getWidth();
+                x += BUTTON_HEIGHT + BUTTON_BUFFER + button.getWidth();
             }
         }
     }

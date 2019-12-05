@@ -31,14 +31,14 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
             }
             catch (final RuntimeException ex)
             {
-                Log.getLogger().error(String.format("A Job %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                Log.getLogger().error(String.format("An Interaction %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                   handlerType), ex);
                 return null;
             }
         }
         else
         {
-            Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", handlerType));
+            Log.getLogger().warn(String.format("Unknown Interaction type '%s' or missing constructor of proper format.", handlerType));
         }
 
         return handler;

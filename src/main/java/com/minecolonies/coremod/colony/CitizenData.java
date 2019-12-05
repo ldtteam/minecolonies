@@ -1644,6 +1644,7 @@ public class CitizenData implements ICitizenData
             }
             catch (final Exception e)
             {
+                Log.getLogger().warn("Error during validation of handler: " + handler.getInquiry());
                 // If anything goes wrong in checking validity, remove handler.
                 toRemove.add(handler);
             }
