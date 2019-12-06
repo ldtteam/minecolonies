@@ -320,8 +320,6 @@ public final class TranslationConstants
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG   = "com.minecolonies.coremod.general.offBig";
     @NonNls
-    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                 = "com.minecolonies.coremod.general.cantTakeEquipped";
-    @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX = "com.minecolonies.coremod.info.";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED  = "com.minecolonies.coremod.general.cantTakeEquipped";
