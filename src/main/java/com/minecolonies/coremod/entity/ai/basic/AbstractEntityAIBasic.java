@@ -146,8 +146,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
-        InteractionValidatorPredicates.posMap.put(
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
+        InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(
           new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), tuple ->
           {
               final IBuildingWorker workBuilding = tuple.getA().getWorkBuilding();

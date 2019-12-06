@@ -113,7 +113,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(FURNACE_USER_NO_ORE),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(FURNACE_USER_NO_ORE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingSmeltery && IColonyManager.getInstance().getCompatibilityManager()
                                                                                 .getSmeltableOres()
                                                                                 .stream()

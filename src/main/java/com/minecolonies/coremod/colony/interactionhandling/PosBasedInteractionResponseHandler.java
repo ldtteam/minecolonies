@@ -53,7 +53,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, validator, tuples);
-        this.validator = InteractionValidatorPredicates.posMap.getOrDefault(validator, null);
+        this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(validator);
         this.pos = pos;
     }
 
@@ -69,7 +69,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, inquiry, tuples);
-        this.validator = InteractionValidatorPredicates.posMap.getOrDefault(inquiry, null);
+        this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(inquiry);
         this.pos = pos;
     }
 
@@ -121,6 +121,6 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     @Override
     protected void loadValidator()
     {
-        this.validator = InteractionValidatorPredicates.posMap.get(getInquiry());
+        this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(getInquiry());
     }
 }

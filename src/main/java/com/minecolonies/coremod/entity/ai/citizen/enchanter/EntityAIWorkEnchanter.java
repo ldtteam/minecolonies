@@ -87,7 +87,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
           citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());
     }
 

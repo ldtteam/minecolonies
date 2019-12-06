@@ -17,12 +17,52 @@ public final class InteractionValidatorPredicates
     /**
      * Map of all validator predicates.
      */
-    public static Map<ITextComponent, Predicate<ICitizenData>> map = new HashMap<>();
+    private static Map<ITextComponent, Predicate<ICitizenData>> map = new HashMap<>();
 
     /**
      * Map of all validator predicates.
      */
-    public static Map<ITextComponent, Predicate<Tuple<ICitizenData, BlockPos>>> posMap = new HashMap<>();
+    private static Map<ITextComponent, Predicate<Tuple<ICitizenData, BlockPos>>> posMap = new HashMap<>();
+
+    /**
+     * Get the StandardInteractionValidatorPredicate.
+     * @param key the key of it.
+     * @return the predicate.
+     */
+    public static Predicate<ICitizenData> getStandardInteractionValidatorPredicate(final ITextComponent key)
+    {
+        return map.getOrDefault(key, null);
+    }
+
+    /**
+     * Get the PosBasedInteractionValidatorPredicate.
+     * @param key the key of it.
+     * @return the predicate.
+     */
+    public static Predicate<Tuple<ICitizenData, BlockPos>> getPosBasedInteractionValidatorPredicate(final ITextComponent key)
+    {
+        return posMap.getOrDefault(key, null);
+    }
+
+    /**
+     * Add a new StandardInteractionValidatorPredicate.
+     * @param key it's key.
+     * @param predicate it's predicate.
+     */
+    public static void addStandardInteractionValidatorPredicate(final ITextComponent key, final Predicate<ICitizenData> predicate)
+    {
+        map.put(key, predicate);
+    }
+
+    /**
+     * Add a new PosBasedInteractionValidatorPredicate.
+     * @param key it's key.
+     * @param predicate it's predicate.
+     */
+    public static void addPosBasedInteractionValidatorPredicate(final ITextComponent key, final Predicate<Tuple<ICitizenData, BlockPos>> predicate)
+    {
+        posMap.put(key, predicate);
+    }
 
     /**
      * Private constructor to hide public one.
@@ -33,5 +73,4 @@ public final class InteractionValidatorPredicates
          * Intentionally left empty.
          */
     }
-
 }

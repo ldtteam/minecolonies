@@ -114,7 +114,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NEEDS_BETTER_HUT),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NEEDS_BETTER_HUT),
           citizen -> {
 
             final AbstractBuilding buildingMiner = (AbstractBuilding) citizen.getWorkBuilding();

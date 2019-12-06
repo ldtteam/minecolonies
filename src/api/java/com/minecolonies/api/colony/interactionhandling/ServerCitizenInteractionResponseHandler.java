@@ -177,6 +177,6 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      */
     protected void loadValidator()
     {
-        this.validator = InteractionValidatorPredicates.map.get(validatorId);
+        this.validator = InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(validatorId);
     }
 }

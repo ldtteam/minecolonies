@@ -171,7 +171,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(WATER_TOO_FAR),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
     }
 

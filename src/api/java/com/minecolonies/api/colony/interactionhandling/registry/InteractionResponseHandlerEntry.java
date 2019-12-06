@@ -16,25 +16,25 @@ import java.util.function.Function;
 public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<InteractionResponseHandlerEntry> implements IForgeRegistryEntry<InteractionResponseHandlerEntry>
 {
 
-    private final Function<ICitizenData, IInteractionResponseHandler> jobProducer;
+    private final Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
      */
     public static final class Builder
     {
-        private Function<ICitizenData, IInteractionResponseHandler> jobProducer;
-        private ResourceLocation                                       registryName;
+        private Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer;
+        private ResourceLocation                                    registryName;
 
         /**
          * Setter the for the producer.
          *
-         * @param jobProducer The producer for {@link IInteractionResponseHandler}.
+         * @param responseHandlerProducer The producer for {@link IInteractionResponseHandler}.
          * @return The builder.
          */
-        public Builder setJobProducer(final Function<ICitizenData, IInteractionResponseHandler> jobProducer)
+        public Builder setResponseHandlerProducer(final Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer)
         {
-            this.jobProducer = jobProducer;
+            this.responseHandlerProducer = responseHandlerProducer;
             return this;
         }
 
@@ -58,10 +58,10 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
         public InteractionResponseHandlerEntry createJobEntry()
         {
-            Validate.notNull(jobProducer);
+            Validate.notNull(responseHandlerProducer);
             Validate.notNull(registryName);
 
-            return new InteractionResponseHandlerEntry(jobProducer).setRegistryName(registryName);
+            return new InteractionResponseHandlerEntry(responseHandlerProducer).setRegistryName(registryName);
         }
     }
 
@@ -72,12 +72,12 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
      */
     public Function<ICitizenData, IInteractionResponseHandler> getProducer()
     {
-        return jobProducer;
+        return responseHandlerProducer;
     }
 
     private InteractionResponseHandlerEntry(final Function<ICitizenData, IInteractionResponseHandler> jobProducer)
     {
         super();
-        this.jobProducer = jobProducer;
+        this.responseHandlerProducer = jobProducer;
     }
 }

@@ -20,12 +20,12 @@ public final class ModInteractionsInitializer
         final IForgeRegistry<InteractionResponseHandlerEntry> reg = event.getRegistry();
 
         ModInteractionResponseHandlers.standard = new InteractionResponseHandlerEntry.Builder()
-                            .setJobProducer(StandardInteractionResponseHandler::new)
+                            .setResponseHandlerProducer(StandardInteractionResponseHandler::new)
                             .setRegistryName(ModInteractionResponseHandlers.STANDARD)
                             .createJobEntry();
 
         ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
-                                                    .setJobProducer(PosBasedInteractionResponseHandler::new)
+                                                    .setResponseHandlerProducer(PosBasedInteractionResponseHandler::new)
                                                     .setRegistryName(ModInteractionResponseHandlers.POS)
                                                     .createJobEntry();
 

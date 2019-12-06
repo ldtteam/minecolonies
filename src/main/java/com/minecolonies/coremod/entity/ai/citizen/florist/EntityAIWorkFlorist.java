@@ -103,13 +103,13 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     static
     {
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
 
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
 
-        InteractionValidatorPredicates.map.put(new TranslationTextComponent(NO_COMPOST),
+        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_COMPOST),
           citizen ->
           {
               final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
