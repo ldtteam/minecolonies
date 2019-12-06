@@ -22,12 +22,12 @@ public final class ModInteractionsInitializer
         ModInteractionResponseHandlers.standard = new InteractionResponseHandlerEntry.Builder()
                             .setResponseHandlerProducer(StandardInteractionResponseHandler::new)
                             .setRegistryName(ModInteractionResponseHandlers.STANDARD)
-                            .createJobEntry();
+                            .createEntry();
 
         ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
                                                     .setResponseHandlerProducer(PosBasedInteractionResponseHandler::new)
                                                     .setRegistryName(ModInteractionResponseHandlers.POS)
-                                                    .createJobEntry();
+                                                    .createEntry();
 
 
         reg.register(ModInteractionResponseHandlers.standard);

@@ -56,7 +56,7 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
          * @return The created {@link InteractionResponseHandlerEntry}.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
-        public InteractionResponseHandlerEntry createJobEntry()
+        public InteractionResponseHandlerEntry createEntry()
         {
             Validate.notNull(responseHandlerProducer);
             Validate.notNull(registryName);
