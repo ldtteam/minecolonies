@@ -15,9 +15,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -25,6 +27,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -896,6 +900,15 @@ public class CitizenData implements ICitizenData
     public void levelUp()
     {
         increaseLevel();
+
+        // Show levelup particles
+        if (getCitizenEntity().isPresent())
+        {
+            final AbstractEntityCitizen citizen = getCitizenEntity().get();
+            Network.getNetwork()
+              .sendToTrackingEntity(new VanillaParticleMessage(citizen.posX, citizen.posY, citizen.posZ, ParticleTypes.HAPPY_VILLAGER), getCitizenEntity().get());
+        }
+
         if (job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();

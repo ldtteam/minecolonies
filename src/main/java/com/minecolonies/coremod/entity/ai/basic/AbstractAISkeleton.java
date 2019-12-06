@@ -73,7 +73,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
      *
      * @param target the target to register.
      */
-    protected void registerTarget(final TickingTransition<IAIState> target)
+    public void registerTarget(final TickingTransition<IAIState> target)
     {
         stateMachine.addTransition(target);
     }
@@ -134,7 +134,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     @Override
     public final void tick()
     {
-            stateMachine.tick();
+        stateMachine.tick();
     }
 
     protected void onException(final RuntimeException e)
