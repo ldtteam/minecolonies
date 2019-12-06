@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.NewBobberEntity;
+import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
@@ -94,11 +95,27 @@ public class EntityInitializer
                                     .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                     .build(Constants.MOD_ID + ":chiefpirate")
                                     .setRegistryName("chiefpirate");
+        ModEntities.SITTINGENTITY = EntityType.Builder.create(SittingEntity::new, EntityClassification.AMBIENT)
+                                      .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                      .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                      .size(0F, 0.5F)
+                                      .build(Constants.MOD_ID + ":sittingentity")
+                                      .setRegistryName("sittingentity");
     }
 
     @SubscribeEvent
     public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
     {
-        event.getRegistry().registerAll(ModEntities.CITIZEN, ModEntities.PIRATE, ModEntities.ARCHERPIRATE, ModEntities.CHIEFPIRATE, ModEntities.MERCENARY, ModEntities.ARCHERBARBARIAN, ModEntities.BARBARIAN, ModEntities.CHIEFBARBARIAN, ModEntities.FISHHOOK);
+        event.getRegistry()
+          .registerAll(ModEntities.CITIZEN,
+            ModEntities.PIRATE,
+            ModEntities.ARCHERPIRATE,
+            ModEntities.CHIEFPIRATE,
+            ModEntities.MERCENARY,
+            ModEntities.ARCHERBARBARIAN,
+            ModEntities.BARBARIAN,
+            ModEntities.CHIEFBARBARIAN,
+            ModEntities.FISHHOOK,
+            ModEntities.SITTINGENTITY);
     }
 }

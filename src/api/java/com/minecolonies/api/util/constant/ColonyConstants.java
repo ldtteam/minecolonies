@@ -2,6 +2,7 @@ package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.util.MathUtils;
+import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -91,6 +92,7 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
+    public static final ResourceLocation SITTING_ENTITY               = new ResourceLocation(Constants.MOD_ID, "SITTING_ENTITY");
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;

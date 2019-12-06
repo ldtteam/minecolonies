@@ -5,10 +5,12 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding, IBuildingWorker
 {
@@ -174,7 +176,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      *
      * @return the map.
      */
-    List<MobEntryView> getMobsToAttack();
+    Map<ResourceLocation, MobEntryView> getMobsToAttack();
 
     /**
      * Set the Map of mobs to attack.
@@ -218,8 +220,6 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
 
     /**
      * Populates the mobs list from the ForgeRegistries.
-     *
-     * @return the list of MobEntrys to attack.
      */
-    List<MobEntryView> calculateMobs();
+    void calculateMobs();
 }

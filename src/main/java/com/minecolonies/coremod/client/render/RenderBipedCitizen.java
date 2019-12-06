@@ -117,6 +117,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         }
 
         entityModel.isChild = citizen.isChild();
+        entityModel.isSitting = citizen.getRidingEntity() != null;
         entityModel.swingProgress = citizen.swingProgress;
     }
 

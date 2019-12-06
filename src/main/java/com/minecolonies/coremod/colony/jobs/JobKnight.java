@@ -4,8 +4,14 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
+import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
 
 /**
  * The Knight's job class
@@ -38,6 +44,26 @@ public class JobKnight extends AbstractJobGuard
     public AbstractEntityAIGuard generateGuardAI()
     {
         return new EntityAIKnight(this);
+    }
+
+    /**
+     * Custom Action on Levelup, increases Knight HP
+     */
+    @Override
+    public void onLevelUp(final int newLevel)
+    {
+        // Bonus Health for knights(gets reset upon Firing)
+        if (getCitizen().getCitizenEntity().isPresent())
+        {
+            final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
+
+            // +1 Heart on levels 6,12,18,25,34,43,54 ...
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                (int) (getCitizen().getLevel() / (5.0 + getCitizen().getLevel() / 20.0) * 3) + KNIGHT_HP_BONUS,
+                AttributeModifier.Operation.ADDITION);
+            AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
+        }
     }
 
     @Override
