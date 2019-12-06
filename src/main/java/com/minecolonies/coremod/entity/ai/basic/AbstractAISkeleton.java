@@ -13,14 +13,11 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Skeleton class for worker ai.
@@ -75,7 +72,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
      *
      * @param target the target to register.
      */
-    protected void registerTarget(final TickingTransition target)
+    public void registerTarget(final TickingTransition target)
     {
         stateMachine.addTransition(target);
     }
@@ -136,7 +133,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void updateTask()
     {
-            stateMachine.tick();
+        stateMachine.tick();
     }
 
     protected void onException(final RuntimeException e)
