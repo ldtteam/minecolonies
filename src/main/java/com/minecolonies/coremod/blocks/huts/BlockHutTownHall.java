@@ -68,7 +68,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             return;
         }
 
-        if (placer.getActiveHand().equals(Hand.MAIN_HAND) && placer instanceof PlayerEntity)
+        if (placer instanceof PlayerEntity)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
