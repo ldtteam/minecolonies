@@ -143,6 +143,8 @@ public class NetworkChannel
         registerMessage(++idx, UpdateClientWithRecipesMessage.class, UpdateClientWithRecipesMessage::new);
         registerMessage(++idx, CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);
         registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
+        registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
+        registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);
