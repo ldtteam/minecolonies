@@ -149,6 +149,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         return false;
     }
 
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        return false;
+    }
+
     /**
      * The the current crusher mode with a certain quantity.
      *

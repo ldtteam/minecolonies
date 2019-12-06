@@ -16,9 +16,12 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,6 +87,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
+     * List of all the items that can be composted
+     */
+    private final Set<ItemStorage> plantables = new HashSet<>();
+
+    /**
      * List of all the items that can be used as fuel
      */
     private final Set<ItemStorage> fuel = new HashSet<>();
@@ -117,6 +125,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * Map of mash -> block -> sieveResult
      */
     private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
+
+    /**
+     * Map of building level to the list of possible enchantments.
+     */
+    private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
 
     /**
      * If discovery is finished already.
@@ -176,11 +189,13 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverOres();
         Log.getLogger().info("Finished discovering oreBlocks");
         discoverCompostableItems();
+        discoverPlantables();
         discoverLuckyOres();
         discoverCrusherModes();
         discoverSifting();
         discoverFood();
         discoverFuel();
+        discoverEnchantments();
 
         discoveredAlready = true;
     }
@@ -225,6 +240,31 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         for (final String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if (itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            for (final int id : OreDictionary.getOreIDs(itemStack))
+            {
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPlantable(final ItemStack itemStack)
+    {
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for (final String string : Configurations.gameplay.listOfPlantables)
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -306,6 +346,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfCompostableItems()
     {
         return ImmutableList.copyOf(compostableItems);
+    }
+
+    @Override
+    public List<ItemStorage> getCopyOfPlantables()
+    {
+        return ImmutableList.copyOf(plantables);
     }
 
     @Override
@@ -410,10 +456,26 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (random.nextInt(ONE_HUNDRED_PERCENT) <= Configurations.gameplay.luckyBlockChance)
         {
-            Collections.shuffle(luckyOres);
-            return luckyOres.get(0).getItemStack().copy();
+            return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel)
+    {
+        final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
+        final Tuple<String, Integer> ench;
+
+        if (list.isEmpty())
+        {
+            ench = new Tuple<>("protection", 1);
+        }
+        else
+        {
+            ench = list.get(random.nextInt(list.size()));
+        }
+        return new Tuple<>(ItemEnchantedBook.getEnchantedItemStack(new EnchantmentData(Enchantment.getEnchantmentByLocation(ench.getFirst()), ench.getSecond())), ench.getSecond());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -480,6 +542,18 @@ public class CompatibilityManager implements ICompatibilityManager
         if (compostableItems.isEmpty())
         {
             compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering compostables");
+    }
+
+    /**
+     * Create complete list of compostable items.
+     */
+    private void discoverPlantables()
+    {
+        if (plantables.isEmpty())
+        {
+            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -737,6 +811,51 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished initiating sifter config");
+    }
+
+    /**
+     * Discover the possible enchantments from file.
+     */
+    private void discoverEnchantments()
+    {
+        for (final String string : Configurations.gameplay.enchantments)
+        {
+            final String[] split = string.split(",");
+            if (split.length != 4)
+            {
+                Log.getLogger().warn("Invalid enchantment mode setting: " + string);
+                continue;
+            }
+
+            try
+            {
+                final String enchantment = split[1];
+                if (Enchantment.getEnchantmentByLocation(enchantment) == null)
+                {
+                    Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
+                    continue;
+                }
+
+                final int buildingLevel = Integer.parseInt(split[0]);
+                final int enchantmentLevel = Integer.parseInt(split[2]);
+                final int numberOfTickets = Integer.parseInt(split[3]);
+
+                for (int level = buildingLevel; level <= 5; level++)
+                {
+                    final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
+                    for (int i = 0; i < numberOfTickets; i++)
+                    {
+                        list.add(new Tuple<>(enchantment, enchantmentLevel));
+                    }
+                    enchantments.put(level, list);
+                }
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
+            }
+        }
+        Log.getLogger().warn("Done with enchantments");
     }
 
     /**

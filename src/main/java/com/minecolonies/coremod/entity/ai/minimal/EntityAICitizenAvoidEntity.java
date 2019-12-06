@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -61,7 +64,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * This AI's state changer.
      */
-    private final TickRateStateMachine stateMachine;
+    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * The blockpos from where the citizen started fleeing.
@@ -95,7 +98,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         this.nearSpeed = nearSpeed;
         super.setMutexBits(1);
 
-        stateMachine = new TickRateStateMachine(SAFE, this::onException);
+        stateMachine = new TickRateStateMachine<>(SAFE, this::onException);
 
         stateMachine.addTransition(new AITarget(SAFE, this::isEntityClose, () -> RUNNING, 5));
         stateMachine.addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
@@ -225,7 +228,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (citizen.isCurrentlyFleeing())
+        if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance())
         {
             startingPos = citizen.getPosition();
             fleeingCounter = 0;
@@ -241,7 +244,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldContinueExecuting()
     {
         stateMachine.tick();
-        return citizen.isCurrentlyFleeing();
+        return citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance();
     }
 
     /**

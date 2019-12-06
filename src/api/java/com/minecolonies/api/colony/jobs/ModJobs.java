@@ -32,6 +32,9 @@ public final class ModJobs
     public static final ResourceLocation STONE_SMELTERY_ID = new ResourceLocation("StoneSmeltery");
     public static final ResourceLocation CRUSHER_ID        = new ResourceLocation("Crusher");
     public static final ResourceLocation SIFTER_ID         = new ResourceLocation("Sifter");
+    public static final ResourceLocation FLORIST_ID        = new ResourceLocation("Florist");
+    public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation("enchanter");
+
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
     public static       JobEntry         delivery;
@@ -58,6 +61,8 @@ public final class ModJobs
     public static       JobEntry         stoneSmeltery;
     public static       JobEntry         crusher;
     public static       JobEntry         sifter;
+    public static       JobEntry         florist;
+    public static       JobEntry         enchanter;
 
     private ModJobs()
     {

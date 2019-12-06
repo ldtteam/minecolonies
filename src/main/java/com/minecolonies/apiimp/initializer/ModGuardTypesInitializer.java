@@ -34,7 +34,7 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.ranger = new GuardType.Builder()
                                  .setJobTranslationKey("com.minecolonies.coremod.job.Ranger")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerHuts.ranger")
-                                 .setPrimarySkill(IBuildingWorker.Skill.INTELLIGENCE)
+                                 .setPrimarySkill(IBuildingWorker.Skill.DEXTERITY)
                                  .setSecondarySkill(IBuildingWorker.Skill.STRENGTH)
                                  .setWorkerSoundName("archer")
                                  .setGuardJobProducer(JobRanger::new)

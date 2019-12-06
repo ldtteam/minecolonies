@@ -461,7 +461,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (delay > 0)
         {
             if (currentStandingLocation != null
-                  && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+                  && (!worker.getNavigator().noPath() || !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY)))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
@@ -470,7 +470,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
             }
-            delay--;
+            delay-= getTickRate();
             return true;
         }
         clearWorkTarget();

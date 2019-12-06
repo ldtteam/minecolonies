@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -36,31 +37,40 @@ public final class SortingUtils
      */
     public static void sort(final CombinedItemHandler inv)
     {
+        final NBTTagCompound backup = inv.serializeNBT();
         final AtomicInteger runCount = new AtomicInteger(0);
 
-        final Map<ItemStorage, Integer> map = new HashMap<>();
-        if (inv != null)
+        try
         {
-            for (int i = 0; i < inv.getSlots(); i++)
+            final Map<ItemStorage, Integer> map = new HashMap<>();
+            if (inv != null)
             {
-                if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
+                for (int i = 0; i < inv.getSlots(); i++)
                 {
-                    continue;
+                    if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
+                    {
+                        continue;
+                    }
+                    final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
+                    int amount = storage.getAmount();
+                    if (map.containsKey(storage))
+                    {
+                        amount += map.remove(storage);
+                    }
+                    map.put(storage, amount);
                 }
-                final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
-                int amount = storage.getAmount();
-                if (map.containsKey(storage))
-                {
-                    amount += map.remove(storage);
-                }
-                map.put(storage, amount);
-            }
 
-            final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
-            final double totalSlots = inv.getSlots();
-            final int totalReq = tuple.getFirst().get();
-            map.entrySet().stream().sorted(SortingUtils::compare)
-              .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getFirst(), totalSlots, totalReq, tuple.getSecond()));
+                final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
+                final double totalSlots = inv.getSlots();
+                final int totalReq = tuple.getFirst().get();
+                map.entrySet().stream().sorted(SortingUtils::compare)
+                  .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getFirst(), totalSlots, totalReq, tuple.getSecond()));
+            }
+        }
+        catch (Exception e)
+        {
+            inv.deserializeNBT(backup);
+            Log.getLogger().warn("Minecolonies warehouse sorting had an error, report it to the mod author.", e);
         }
     }
 
@@ -166,8 +176,7 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            creativeTabs.put(entry.getKey().getCreativeTabIndex(),
-              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
+            creativeTabs.put(entry.getKey().getCreativeTabIndex(), creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
         return new Tuple<>(new AtomicInteger(sum), creativeTabs);

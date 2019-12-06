@@ -423,6 +423,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
 
+
         if (job.isReturning())
         {
             job.setReturning(false);
@@ -715,9 +716,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         if (getAndCheckWarehouse() != null && getAndCheckWarehouse().getTileEntity() != null)
         {
+            job.setActive(true);
             return false;
         }
 
+        job.setActive(false);
         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
         return true;
     }

@@ -16,9 +16,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
+import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,6 +29,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -818,7 +822,7 @@ public class CitizenData implements ICitizenData
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
 
-        BlockPosUtil.writeToByteBuf(buf, lastPosition);
+        BlockPosUtil.writeToByteBuf(buf, lastPosition == null ? BlockPos.ORIGIN : lastPosition);
     }
 
     /**
@@ -894,6 +898,15 @@ public class CitizenData implements ICitizenData
     public void levelUp()
     {
         increaseLevel();
+
+        // Show levelup particles
+        if (getCitizenEntity().isPresent())
+        {
+            final AbstractEntityCitizen citizen = getCitizenEntity().get();
+            MineColonies.getNetwork()
+              .sendToAllTracking(new VanillaParticleMessage(citizen.posX, citizen.posY, citizen.posZ, EnumParticleTypes.VILLAGER_HAPPY.getParticleID()), getCitizenEntity().get());
+        }
+
         if (job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
@@ -1425,6 +1438,42 @@ public class CitizenData implements ICitizenData
     public void setJustAte(final boolean justAte)
     {
         this.justAte = justAte;
+    }
+
+    @Override
+    public double drainExperience(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
+            final double newXp = entry.getSecond() - (xpDrain / Configurations.gameplay.enchanterExperienceMultiplier);
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+            return xpDrain;
+        }
+        return 0;
+    }
+
+    @Override
+    public void spendLevels(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
+            final double newXp = entry.getSecond() - xpDrain;
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+        }
     }
 
     @Override

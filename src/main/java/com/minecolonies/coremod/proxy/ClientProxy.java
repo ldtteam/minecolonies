@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
@@ -110,6 +111,7 @@ public class ClientProxy extends CommonProxy
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScarecrow.class, new TileEntityScarecrowRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
     }
 
     @Override
@@ -225,6 +227,8 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutStoneSmeltery);
         createCustomModel(ModBlocks.blockHutCrusher);
         createCustomModel(ModBlocks.blockHutSifter);
+        createCustomModel(ModBlocks.blockHutFlorist);
+        createCustomModel(ModBlocks.blockHutEnchanter);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
@@ -263,6 +267,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);
+        createCustomModel(ModBlocks.blockCompostedDirt);
     }
 
     @Override

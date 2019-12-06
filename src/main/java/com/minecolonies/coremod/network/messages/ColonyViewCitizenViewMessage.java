@@ -69,5 +69,6 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     protected void messageOnClientThread(final ColonyViewCitizenViewMessage message, final MessageContext ctx)
     {
         IColonyManager.getInstance().handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
+        message.citizenBuffer.release();
     }
 }

@@ -38,6 +38,14 @@ public class CitizenJobHandler implements ICitizenJobHandler
     @Override
     public void setModelDependingOnJob(@Nullable final IJob job)
     {
+        if (citizen.isChild())
+        {
+            citizen.setModelId(BipedModelType.CHILD);
+            citizen.getDataManager().set(DATA_MODEL, citizen.getModelType().getName());
+            citizen.setRenderMetadata("");
+            return;
+        }
+
         if (job == null)
         {
             if (citizen.getCitizenColonyHandler().getHomeBuilding() != null)
@@ -126,5 +134,11 @@ public class CitizenJobHandler implements ICitizenJobHandler
     public IJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
+    }
+
+    @Override
+    public boolean shouldRunAvoidance()
+    {
+        return getColonyJob() == null || getColonyJob().allowsAvoidance();
     }
 }

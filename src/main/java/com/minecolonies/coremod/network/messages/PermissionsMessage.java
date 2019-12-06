@@ -89,6 +89,7 @@ public class PermissionsMessage
         protected void messageOnClientThread(final View message, final MessageContext ctx)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(message.colonyID, message.data, message.dimension);
+            message.data.release();
         }
 
         @Override

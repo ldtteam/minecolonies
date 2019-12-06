@@ -43,6 +43,8 @@ public final class ModBlocks
     public static AbstractBlockHut blockHutCrusher;
     public static AbstractBlockHut blockHutSifter;
     public static AbstractBlockHut blockPostBox;
+    public static AbstractBlockHut blockHutFlorist;
+    public static AbstractBlockHut blockHutEnchanter;
 
     /**
      * Utility blocks.
@@ -55,6 +57,7 @@ public final class ModBlocks
     public static AbstractBlockMinecoloniesHorizontal blockDecorationPlaceholder;
     public static AbstractBlockMinecolonies           blockScarecrow;
     public static AbstractBlockMinecolonies           blockBarracksTowerSubstitution;
+    public static AbstractBlockMinecolonies           blockCompostedDirt;
 
     /**
      * Private constructor to hide the implicit public one.
