@@ -1,12 +1,12 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -22,7 +22,7 @@ public final class InteractionValidatorPredicates
     /**
      * Map of all validator predicates.
      */
-    private static Map<ITextComponent, Predicate<Tuple<ICitizenData, BlockPos>>> posMap = new HashMap<>();
+    private static Map<ITextComponent, BiPredicate<ICitizenData, BlockPos>> posMap = new HashMap<>();
 
     /**
      * Get the StandardInteractionValidatorPredicate.
@@ -39,7 +39,7 @@ public final class InteractionValidatorPredicates
      * @param key the key of it.
      * @return the predicate.
      */
-    public static Predicate<Tuple<ICitizenData, BlockPos>> getPosBasedInteractionValidatorPredicate(final ITextComponent key)
+    public static BiPredicate<ICitizenData, BlockPos> getPosBasedInteractionValidatorPredicate(final ITextComponent key)
     {
         return posMap.getOrDefault(key, null);
     }
@@ -59,7 +59,7 @@ public final class InteractionValidatorPredicates
      * @param key it's key.
      * @param predicate it's predicate.
      */
-    public static void addPosBasedInteractionValidatorPredicate(final ITextComponent key, final Predicate<Tuple<ICitizenData, BlockPos>> predicate)
+    public static void addPosBasedInteractionValidatorPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
     {
         posMap.put(key, predicate);
     }

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 /**
  * The position based interaction response handler.
@@ -38,7 +38,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     /**
      * Specific validator for this one.
      */
-    private Predicate<Tuple<ICitizenData, BlockPos>> validator;
+    private BiPredicate<ICitizenData, BlockPos> validator;
 
     /**
      * The server interaction response handler.
@@ -100,7 +100,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(new Tuple<>(citizen, pos)) );
+        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen, pos) );
     }
 
     @Override

@@ -120,14 +120,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     static
     {
         InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
-          tuple ->
+          (citizen, pos) ->
           {
-              if (tuple.getA().getJob() instanceof JobDeliveryman)
+              if (citizen.getJob() instanceof JobDeliveryman)
               {
-                  final IColony colony = tuple.getA().getColony();
+                  final IColony colony = citizen.getColony();
                   if (colony != null)
                   {
-                      final IBuilding building = colony.getBuildingManager().getBuilding(tuple.getB());
+                      final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
                           final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);

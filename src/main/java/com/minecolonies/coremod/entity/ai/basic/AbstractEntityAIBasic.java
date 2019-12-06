@@ -148,18 +148,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(
-          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), tuple ->
+          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
-              final IBuildingWorker workBuilding = tuple.getA().getWorkBuilding();
+              final IBuildingWorker workBuilding = citizen.getWorkBuilding();
               if (workBuilding != null)
               {
-                    final IColony colony = tuple.getA().getColony();
+                    final IColony colony = citizen.getColony();
                     if ( colony != null )
                     {
                         final World world = colony.getWorld();
                         if ( world != null )
                         {
-                            return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(tuple.getB()).getBlock());
+                            return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(pos).getBlock());
                         }
                     }
               }

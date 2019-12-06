@@ -112,17 +112,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
         InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(new TranslationTextComponent(NO_SEED_SET),
-          tuple ->
+          (citizen, pos) ->
           {
-              if (tuple.getA().getJob() instanceof JobFarmer)
+              if (citizen.getJob() instanceof JobFarmer)
               {
-                  final IColony colony = tuple.getA().getColony();
+                  final IColony colony = citizen.getColony();
                   if (colony != null)
                   {
                       final World world = colony.getWorld();
                       if (world != null)
                       {
-                          final TileEntity tileEntity = world.getTileEntity(tuple.getB());
+                          final TileEntity tileEntity = world.getTileEntity(pos);
                           if (tileEntity instanceof ScarecrowTileEntity)
                           {
                               return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
