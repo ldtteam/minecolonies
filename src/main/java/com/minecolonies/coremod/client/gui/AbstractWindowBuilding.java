@@ -8,10 +8,12 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -46,6 +48,9 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
+
+        buttonInfo.setVisible(I18n.hasKey(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
     }
 
     /**
