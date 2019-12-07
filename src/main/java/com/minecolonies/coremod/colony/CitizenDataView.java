@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.coremod.colony.interactionhandling.ClientCitizenInteractionResponseHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData. Views
@@ -96,7 +98,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, ClientCitizenInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * If the citizen has any primary blocking interactions.
@@ -445,11 +447,12 @@ public class CitizenDataView implements ICitizenDataView
         for (int i = 0; i < size; i++)
         {
             final CompoundNBT compoundNBT = buf.readCompoundTag();
-            final ClientCitizenInteractionResponseHandler handler = new ClientCitizenInteractionResponseHandler(colonyId, id, dimension, compoundNBT);
+            final ServerCitizenInteractionResponseHandler handler =
+              (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
-        primaryInteractions = citizenChatOptions.values().stream().filter(AbstractInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().ordinal())).collect(Collectors.toList());
+        primaryInteractions = citizenChatOptions.values().stream().filter(IInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().ordinal())).collect(Collectors.toList());
         if (!primaryInteractions.isEmpty())
         {
             hasAnyPrimaryInteraction = true;

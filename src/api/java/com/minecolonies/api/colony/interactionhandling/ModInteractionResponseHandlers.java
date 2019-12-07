@@ -14,12 +14,14 @@ public final class ModInteractionResponseHandlers
      */
     public static final ResourceLocation STANDARD = new ResourceLocation(Constants.MOD_ID, "standard");
     public static final ResourceLocation POS = new ResourceLocation(Constants.MOD_ID, "pos");
+    public static final ResourceLocation REQUEST = new ResourceLocation(Constants.MOD_ID, "request");
 
     /**
      * List of entries.
      */
     public static InteractionResponseHandlerEntry standard;
     public static InteractionResponseHandlerEntry pos;
+    public static InteractionResponseHandlerEntry request;
 
     private ModInteractionResponseHandlers()
     {

@@ -132,7 +132,7 @@ public class NetworkChannel
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterQtySetMessage.class, EnchanterQtySetMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
-        registerMessage(++idx, TriggerServerResponseHandler.class, TriggerServerResponseHandler::new);
+        registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

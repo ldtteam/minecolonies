@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.ldtteam.structurize.api.util.BlockPosUtil;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -74,19 +74,10 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     }
 
     /**
-     * The inquiry of the citizen from NBT.
-     * @param compoundNBT the compound to deserialize it from.
-     */
-    public PosBasedInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
-    {
-        super(compoundNBT);
-    }
-
-    /**
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public PosBasedInteractionResponseHandler(final ICitizenData data)
+    public PosBasedInteractionResponseHandler(final ICitizen data)
     {
         super(data);
     }
@@ -121,6 +112,6 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     @Override
     protected void loadValidator()
     {
-        this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(getInquiry());
+        this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(validatorId);
     }
 }

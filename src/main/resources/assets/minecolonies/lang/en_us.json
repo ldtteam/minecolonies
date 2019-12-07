@@ -782,7 +782,6 @@
 
   "com.minecolonies.coremod.item.clipboard.needcolony": "Please shift-right click the colony to register your clipboard to it.",
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
-  "com.minecolonies.requestsystem.playerresolver": "%s is in need of %s at %s.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
@@ -1255,5 +1254,10 @@
   "entity.farmer.nofreefields": "Place more fields to get me working.",
   "com.minecolonies.coremod.job.deliveryman.nowarehouse": "Please upgrade or build a Warehouse for me to work at.",
   "com.minecolonies.coremod.job.deliveryman.workerchestfull": "I can't deliver because of a full worker chest.",
-  "com.minecolonies.coremod.job.deliveryman.namedworkerchestfull": "I can't deliver because of a full %s's chest."
+  "com.minecolonies.coremod.job.deliveryman.namedworkerchestfull": "I can't deliver because of a full %s's chest.",
+  "com.minecolonies.requestsystem.playerresolver.normal": "I need %s to continue working.",
+  "com.minecolonies.requestsystem.playerresolver.async": "It would make my job much easier if I had %s.",
+  "com.minecolonies.coremod.gui.chat.cancel": "Try cancel that request!",
+  "com.minecolonies.coremod.gui.chat.fulfill": "Can you give me more detail?"
+
 }

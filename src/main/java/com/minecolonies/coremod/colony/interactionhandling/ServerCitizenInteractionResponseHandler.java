@@ -1,7 +1,16 @@
-package com.minecolonies.api.colony.interactionhandling;
+package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -40,7 +49,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     /**
      * The id of the validator.
      */
-    private ITextComponent validatorId;
+    protected ITextComponent validatorId;
 
     /**
      * All registered parents of this response handler.
@@ -71,19 +80,10 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     /**
-     * The inquiry of the citizen from NBT.
-     * @param compoundNBT the compound to deserialize it from.
-     */
-    public ServerCitizenInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
-    {
-        super(compoundNBT);
-    }
-
-    /**
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public ServerCitizenInteractionResponseHandler(final ICitizenData data)
+    public ServerCitizenInteractionResponseHandler(final ICitizen data)
     {
         super(data);
     }
@@ -119,7 +119,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
-    public void onResponseTriggered(final ITextComponent response, final World world)
+    public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
     {
         if (response instanceof TranslationTextComponent)
         {
@@ -134,11 +134,11 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         }
     }
 
-    /**
-     * Build the child interaction list.
-     * @return all interactions depending on this.
-     */
-    public abstract List<IInteractionResponseHandler> genChildInteractions();
+    @Override
+    public void onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
+    {
+        Network.getNetwork().sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.getDimension().getType().getId(), this.getInquiry(), response));
+    }
 
     @Override
     public CompoundNBT serializeNBT()

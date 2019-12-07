@@ -21,7 +21,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -30,7 +30,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
@@ -217,7 +216,7 @@ public class CitizenData implements ICitizenData
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, ServerCitizenInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * Create a CitizenData given an ID.
@@ -239,7 +238,7 @@ public class CitizenData implements ICitizenData
     {
         if (citizenChatOptions.containsKey(key))
         {
-            citizenChatOptions.get(key).onResponseTriggered(response, world);
+            citizenChatOptions.get(key).onServerResponseTriggered(response, world, this);
             markDirty();
         }
     }
@@ -1548,7 +1547,7 @@ public class CitizenData implements ICitizenData
         citizenHappinessHandler.write(nbtTagCompound);
 
         @NotNull final ListNBT chatTagList = new ListNBT();
-        for (@NotNull final ServerCitizenInteractionResponseHandler entry : citizenChatOptions.values())
+        for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
             @NotNull final CompoundNBT chatOptionCompound = new CompoundNBT();
             chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
@@ -1645,8 +1644,8 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        final List<ServerCitizenInteractionResponseHandler> toRemove = new ArrayList<>();
-        for (final ServerCitizenInteractionResponseHandler handler : citizenChatOptions.values())
+        final List<IInteractionResponseHandler> toRemove = new ArrayList<>();
+        for (final IInteractionResponseHandler handler : citizenChatOptions.values())
         {
             try
             {
@@ -1668,7 +1667,7 @@ public class CitizenData implements ICitizenData
             markDirty();
         }
 
-        for (final ServerCitizenInteractionResponseHandler handler : toRemove)
+        for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getInquiry());
             for (final ITextComponent comp : handler.getPossibleResponses())
@@ -1682,7 +1681,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void triggerInteraction(@NotNull final ServerCitizenInteractionResponseHandler handler)
+    public void triggerInteraction(@NotNull final IInteractionResponseHandler handler)
     {
         if (!this.citizenChatOptions.containsKey(handler.getInquiry()))
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling.registry;
 
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import net.minecraft.util.ResourceLocation;
@@ -16,14 +17,14 @@ import java.util.function.Function;
 public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<InteractionResponseHandlerEntry> implements IForgeRegistryEntry<InteractionResponseHandlerEntry>
 {
 
-    private final Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer;
+    private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
      */
     public static final class Builder
     {
-        private Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer;
+        private Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
         private ResourceLocation                                    registryName;
 
         /**
@@ -32,7 +33,7 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
          * @param responseHandlerProducer The producer for {@link IInteractionResponseHandler}.
          * @return The builder.
          */
-        public Builder setResponseHandlerProducer(final Function<ICitizenData, IInteractionResponseHandler> responseHandlerProducer)
+        public Builder setResponseHandlerProducer(final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer)
         {
             this.responseHandlerProducer = responseHandlerProducer;
             return this;
@@ -70,12 +71,12 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
      *
      * @return The created {@link IInteractionResponseHandler}.
      */
-    public Function<ICitizenData, IInteractionResponseHandler> getProducer()
+    public Function<ICitizen, IInteractionResponseHandler> getProducer()
     {
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizenData, IInteractionResponseHandler> jobProducer)
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> jobProducer)
     {
         super();
         this.responseHandlerProducer = jobProducer;

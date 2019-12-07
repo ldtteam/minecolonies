@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.interactionhandling;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -35,13 +37,6 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
     ITextComponent getResponseResult(final ITextComponent response);
 
     /**
-     * Action triggered on a possible response.
-     * @param response the clicked string response of the player.
-     * @param world the world it was triggered in.
-     */
-    void onResponseTriggered(final ITextComponent response, final World world);
-
-    /**
      * Check if this interaction is a primary interaction or secondary interaction.
      * @return true if primary.
      */
@@ -66,4 +61,33 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @return true if still valid, else false.
      */
     boolean isValid(final ICitizenData colony);
+
+    /**
+     * Server side action triggered on a possible response.
+     * @param response the clicked string response of the player.
+     * @param world the world it was triggered in.
+     * @param data the citizen related to it.
+     */
+    void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data);
+
+    /**
+     * Client side action triggered on a possible response.
+     * @param response the clicked string response of the player.
+     * @param world the client side world.
+     * @param data the citizen data assigned to it.
+     * @param window the window it was triggered in.
+     */
+    void onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
+
+    /**
+     * Remove a certain parent.
+     * @param inquiry the parent inquiry.
+     */
+    void removeParent(ITextComponent inquiry);
+
+    /**
+     * Gen all child interactions related to this.
+     * @return all child interactions.
+     */
+    List<IInteractionResponseHandler> genChildInteractions();
 }

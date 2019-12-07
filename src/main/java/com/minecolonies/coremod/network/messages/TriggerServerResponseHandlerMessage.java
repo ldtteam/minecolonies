@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to trigger a response handler on the server side.
  */
-public class TriggerServerResponseHandler implements IMessage
+public class TriggerServerResponseHandlerMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -46,7 +46,7 @@ public class TriggerServerResponseHandler implements IMessage
     /**
      * Empty public constructor.
      */
-    public TriggerServerResponseHandler()
+    public TriggerServerResponseHandlerMessage()
     {
         super();
     }
@@ -59,7 +59,7 @@ public class TriggerServerResponseHandler implements IMessage
      * @param key the key of the handler.
      * @param response the response to trigger.
      */
-    public TriggerServerResponseHandler(final int colonyId, final int citizenId, final int dimension, @NotNull final ITextComponent key, @NotNull final ITextComponent response)
+    public TriggerServerResponseHandlerMessage(final int colonyId, final int citizenId, final int dimension, @NotNull final ITextComponent key, @NotNull final ITextComponent response)
     {
         super();
         this.colonyId = colonyId;

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling.registry;
 
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
@@ -18,7 +19,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
 {
     @Nullable
     @Override
-    public IInteractionResponseHandler createFrom(@NotNull final ICitizenData citizen, @NotNull final CompoundNBT compound)
+    public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundNBT compound)
     {
         final ResourceLocation handlerType =
           compound.keySet().contains(NbtTagConstants.TAG_HANDLER_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_HANDLER_TYPE)) : ModInteractionResponseHandlers.STANDARD;

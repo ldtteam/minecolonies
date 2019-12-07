@@ -3,11 +3,12 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -21,15 +22,14 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +37,8 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
+import static com.minecolonies.api.util.constant.TranslationConstants.ASYNC_REQUEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQUEST;
 
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
@@ -52,6 +54,14 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     private final Set<IToken<?>> assignedRequests = new HashSet<>();
+
+    static
+    {
+        InteractionValidatorPredicates.addTokenBasedInteractionValidatorPredicate(new TranslationTextComponent(NORMAL_REQUEST),
+          (citizen, token) -> citizen.getColony() != null && ((StandardPlayerRequestResolver) citizen.getColony()
+                                                                     .getRequestManager()
+                                                                     .getPlayerResolver()).assignedRequests.contains(token));
+    }
 
     public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
@@ -137,33 +147,21 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 }
             }
 
-            final List<PlayerEntity> players = new ArrayList<>(colony.getMessagePlayerEntitys());
-            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
-            final StringTextComponent colonyDescription = new StringTextComponent(colony.getName() + ":");
-
             final ILocation requester = request.getRequester().getLocation();
             final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
 
-            if (building == null || (building.getCitizenForRequest(request.getId()).isPresent() && !building.getCitizenForRequest(request.getId())
-                                                                                                      .get()
-                                                                                                      .isRequestAsync(request.getId())))
+            if (building != null && building.getCitizenForRequest(request.getId()).isPresent())
             {
-                if (manager.getColony().getWorld().isDaytime())
+                final ICitizenData citizen = building.getCitizenForRequest(request.getId()).get();
+                if ( citizen.isRequestAsync(request.getId()) )
                 {
-                    if (owner != null)
-                    {
-                        players.remove(owner);
-
-                        LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                          request.getRequester().getRequesterDisplayName(manager, request).getFormattedText(),
-                          getRequestMessage(request).getFormattedText(),
-                          request.getRequester().getLocation().toString()
-                        );
-                    }
-                    LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                      colonyDescription.getFormattedText() + " " + request.getRequester().getRequesterDisplayName(manager, request).getFormattedText(),
-                      getRequestMessage(request).getFormattedText(),
-                      request.getRequester().getLocation().toString());
+                    citizen.triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
+                      getRequestMessage(request).getFormattedText()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                }
+                else
+                {
+                    citizen.triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
+                      getRequestMessage(request).getFormattedText()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
                 }
             }
 

@@ -1,20 +1,15 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * The server side interaction response handler.
@@ -53,21 +48,11 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
         super(inquiry, true, priority, InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(inquiry), inquiry, tuples);
     }
 
-
-    /**
-     * The inquiry of the citizen from NBT.
-     * @param compoundNBT the compound to deserialize it from.
-     */
-    public StandardInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
-    {
-        super(compoundNBT);
-    }
-
     /**
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public StandardInteractionResponseHandler(final ICitizenData data)
+    public StandardInteractionResponseHandler(final ICitizen data)
     {
         super(data);
     }

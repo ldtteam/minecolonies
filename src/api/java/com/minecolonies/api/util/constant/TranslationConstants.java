@@ -365,6 +365,11 @@ public final class TranslationConstants
     public static final String DEMANDS_TOOL  = "entity.citizen.demandstool";
     @NonNls
     public static final String NO_TOOL       = "entity.citizen.notool";
+    @NonNls
+    public static final String ASYNC_REQUEST = "com.minecolonies.requestsystem.playerresolver.async";
+    @NonNls
+    public static final String NORMAL_REQUEST  = "com.minecolonies.requestsystem.playerresolver.normal";
+
 
     private TranslationConstants()
     {

@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
@@ -62,19 +63,10 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     /**
-     * The inquiry of the citizen from NBT.
-     * @param compoundNBT the compound to deserialize it from.
-     */
-    public AbstractInteractionResponseHandler(@NotNull final CompoundNBT compoundNBT)
-    {
-        this.deserializeNBT(compoundNBT);
-    }
-
-    /**
      * Way to load the response handler for a citizen.
      * @param data the citizen owning this handler.
      */
-    public AbstractInteractionResponseHandler(final ICitizenData data)
+    public AbstractInteractionResponseHandler(final ICitizen data)
     {
         // Do nothing, await loading from NBT.
     }

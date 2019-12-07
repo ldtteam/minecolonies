@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 
@@ -20,9 +21,14 @@ public final class InteractionValidatorPredicates
     private static Map<ITextComponent, Predicate<ICitizenData>> map = new HashMap<>();
 
     /**
-     * Map of all validator predicates.
+     * Map of all pos based validator predicates.
      */
     private static Map<ITextComponent, BiPredicate<ICitizenData, BlockPos>> posMap = new HashMap<>();
+
+    /**
+     * Map of all IToken based validator predicates.
+     */
+    private static Map<ITextComponent, BiPredicate<ICitizenData, IToken>> tokenMap = new HashMap<>();
 
     /**
      * Get the StandardInteractionValidatorPredicate.
@@ -45,6 +51,16 @@ public final class InteractionValidatorPredicates
     }
 
     /**
+     * Get the PosBasedInteractionValidatorPredicate.
+     * @param key the key of it.
+     * @return the predicate.
+     */
+    public static BiPredicate<ICitizenData, IToken> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
+    {
+        return tokenMap.getOrDefault(key, null);
+    }
+
+    /**
      * Add a new StandardInteractionValidatorPredicate.
      * @param key it's key.
      * @param predicate it's predicate.
@@ -62,6 +78,16 @@ public final class InteractionValidatorPredicates
     public static void addPosBasedInteractionValidatorPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
     {
         posMap.put(key, predicate);
+    }
+
+    /**
+     * Add a new TokenBasedInteractionValidatorPredicate.
+     * @param key it's key.
+     * @param predicate it's predicate.
+     */
+    public static void addTokenBasedInteractionValidatorPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
+    {
+        tokenMap.put(key, predicate);
     }
 
     /**
