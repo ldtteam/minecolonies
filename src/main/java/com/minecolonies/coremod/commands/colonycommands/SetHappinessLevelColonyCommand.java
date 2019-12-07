@@ -83,6 +83,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
+        final int dimensionId;
         Optional<Double> level = Optional.empty();
         if (args.length == 0)
         {
@@ -98,17 +99,20 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
                 return;
             }
             colonyId = colony.getID();
+            dimensionId = colony.getDimension();
         }
         else
         {
-            colonyId = getIthArgument(args, 0, -1);
+            colonyId = getColonyIdFromArg(args, 0, -1);
+            dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
+            
             if (args.length > 1)
             {
                 level = Optional.of(Double.parseDouble(args[1]));
             }
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
