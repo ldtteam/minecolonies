@@ -591,7 +591,7 @@ public class Tree
         }
 
         // Check if the new log fits the Tree's base log type
-        if (!BlockStateUtils.stateEqualsStateByBlockAndProp(world.getBlockState(log), world.getBlockState(location), "variant"))
+        if (!world.getBlockState(log).getBlock().equals(world.getBlockState(location).getBlock()))
         {
             return;
         }
