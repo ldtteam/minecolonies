@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandl
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -22,7 +23,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
     public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundNBT compound)
     {
         final ResourceLocation handlerType =
-          compound.keySet().contains(NbtTagConstants.TAG_HANDLER_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_HANDLER_TYPE)) : ModInteractionResponseHandlers.STANDARD;
+          compound.keySet().contains(NbtTagConstants.TAG_HANDLER_TYPE) ? new ResourceLocation(Constants.MOD_ID, compound.getString(NbtTagConstants.TAG_HANDLER_TYPE)) : ModInteractionResponseHandlers.STANDARD;
         final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().getValue(handlerType).getProducer().apply(citizen);
         if (handler != null)
         {

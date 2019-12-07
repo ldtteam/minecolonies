@@ -90,4 +90,10 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @return all child interactions.
      */
     List<IInteractionResponseHandler> genChildInteractions();
+
+    /**
+     * Type id used to deserialize.
+     * @return the string type.
+     */
+    String getType();
 }

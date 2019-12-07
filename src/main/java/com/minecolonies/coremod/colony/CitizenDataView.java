@@ -442,7 +442,6 @@ public class CitizenDataView implements ICitizenDataView
         position = buf.readBlockPos();
 
         citizenChatOptions.clear();
-        final int dimension = buf.readInt();
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {

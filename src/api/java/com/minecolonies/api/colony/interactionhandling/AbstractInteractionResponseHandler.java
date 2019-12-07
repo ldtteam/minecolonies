@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.interactionhandling;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -110,6 +111,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         tag.put(TAG_RESPONSES, list);
         tag.putBoolean(TAG_PRIMARY, isPrimary());
         tag.putInt(TAG_PRIORITY, priority.ordinal());
+        tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
 

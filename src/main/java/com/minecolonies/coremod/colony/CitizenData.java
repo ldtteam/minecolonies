@@ -842,8 +842,6 @@ public class CitizenData implements ICitizenData
         buf.writeCompoundTag(compound);
         buf.writeBlockPos(lastPosition);
 
-        buf.writeInt(colony.getDimension());
-
         if (colony.getWorld() != null)
         {
             final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).collect(Collectors.toList());

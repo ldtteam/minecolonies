@@ -6,9 +6,6 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -22,14 +19,10 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
-import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +30,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
-import static com.minecolonies.api.util.constant.TranslationConstants.ASYNC_REQUEST;
-import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQUEST;
 
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
@@ -54,14 +45,6 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     private final Set<IToken<?>> assignedRequests = new HashSet<>();
-
-    static
-    {
-        InteractionValidatorPredicates.addTokenBasedInteractionValidatorPredicate(new TranslationTextComponent(NORMAL_REQUEST),
-          (citizen, token) -> citizen.getColony() != null && ((StandardPlayerRequestResolver) citizen.getColony()
-                                                                     .getRequestManager()
-                                                                     .getPlayerResolver()).assignedRequests.contains(token));
-    }
 
     public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
@@ -146,48 +129,18 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     }
                 }
             }
-
-            final ILocation requester = request.getRequester().getLocation();
-            final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
-
-            if (building != null && building.getCitizenForRequest(request.getId()).isPresent())
-            {
-                final ICitizenData citizen = building.getCitizenForRequest(request.getId()).get();
-                if ( citizen.isRequestAsync(request.getId()) )
-                {
-                    citizen.triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
-                      getRequestMessage(request).getFormattedText()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
-                }
-                else
-                {
-                    citizen.triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
-                      getRequestMessage(request).getFormattedText()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
-                }
-            }
-
         }
         assignedRequests.add(request.getId());
     }
 
-    private ITextComponent getRequestMessage(@NotNull final IRequest request)
-    {
-        final ITextComponent component = new NonSiblingFormattingTextComponent();
-        component.appendSibling(request.getShortDisplayString());
-        component.getStyle().setColor(TextFormatting.WHITE);
-        return component;
-    }
-
-    @Nullable
     @Override
-    public void onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
         assignedRequests.remove(request.getId());
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
 
     }
@@ -221,6 +174,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public void onSystemReset()
     {
         assignedRequests.clear();
+    }
+
+    @Override
+    public boolean holdsRequest(final IToken request)
+    {
+        return assignedRequests.contains(request);
     }
 
     @Override

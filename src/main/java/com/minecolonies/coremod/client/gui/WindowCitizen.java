@@ -403,8 +403,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
         }
     }
 
-
-
     @Override
     public void fulfill(@NotNull final Button button)
     {

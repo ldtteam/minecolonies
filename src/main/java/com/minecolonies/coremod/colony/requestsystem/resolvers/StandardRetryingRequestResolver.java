@@ -263,6 +263,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
+    public boolean holdsRequest(final IToken request)
+    {
+        return assignedRequests.containsKey(request);
+    }
+
+    @Override
     public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests.keySet()).stream()

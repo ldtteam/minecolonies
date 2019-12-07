@@ -13,6 +13,8 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -28,6 +30,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -165,6 +168,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               }
               return false;
           });
+        InteractionValidatorPredicates.addTokenBasedInteractionValidatorPredicate(new TranslationTextComponent(NORMAL_REQUEST),
+          (citizen, token) -> citizen.getColony() != null && ( citizen.getColony().getRequestManager().getPlayerResolver().holdsRequest(token) || citizen.getColony().getRequestManager().getRetryingRequestResolver().holdsRequest(token)));
     }
 
     /**
@@ -538,6 +543,29 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             worker.getCitizenStatusHandler().setLatestStatus();
             return;
+        }
+
+        if ( getOwnBuilding().hasWorkerOpenRequests( worker.getCitizenData() ) )
+        {
+            for ( final IRequest request : getOwnBuilding().getOpenRequests( worker.getCitizenData() ) )
+            {
+                final IPlayerRequestResolver playerResolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getPlayerResolver();
+                final IRetryingRequestResolver retryingRequestResolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getRetryingRequestResolver();
+
+                if (playerResolver.holdsRequest(request.getId()) || retryingRequestResolver.holdsRequest(request.getId()))
+                {
+                    if ( worker.getCitizenData().isRequestAsync(request.getId()) )
+                    {
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
+                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                    }
+                    else
+                    {
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
+                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                    }
+                }
+            }
         }
 
         IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);

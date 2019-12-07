@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -113,5 +114,11 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     protected void loadValidator()
     {
         this.validator = InteractionValidatorPredicates.getPosBasedInteractionValidatorPredicate(validatorId);
+    }
+
+    @Override
+    public String getType()
+    {
+        return ModInteractionResponseHandlers.POS.getPath();
     }
 }

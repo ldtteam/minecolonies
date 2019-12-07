@@ -5,4 +5,5 @@ import com.minecolonies.api.colony.requestsystem.resolver.IQueuedRequestResolver
 
 public interface IPlayerRequestResolver extends IQueuedRequestResolver<IRequestable>
 {
+
 }

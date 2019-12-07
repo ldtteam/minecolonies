@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -61,5 +62,11 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
     public List<IInteractionResponseHandler> genChildInteractions()
     {
         return Collections.emptyList();
+    }
+
+    @Override
+    public String getType()
+    {
+        return ModInteractionResponseHandlers.STANDARD.getPath();
     }
 }
