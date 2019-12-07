@@ -83,7 +83,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      */
     public ServerCitizenInteractionResponseHandler(final ICitizen data)
     {
-        super(data);
+        super();
     }
 
     @Override

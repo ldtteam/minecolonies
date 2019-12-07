@@ -53,7 +53,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Enum for the available hearts
      */
-    public enum HeartsEnum
+    private enum HeartsEnum
     {
         EMPTY(Screen.GUI_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
         HALF_RED(Screen.GUI_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),

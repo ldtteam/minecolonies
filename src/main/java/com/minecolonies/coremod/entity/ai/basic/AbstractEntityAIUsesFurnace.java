@@ -50,9 +50,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
     }
 

@@ -44,9 +44,9 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
     }
 

@@ -167,14 +167,14 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_HOUSE),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
           citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse <= DEMANDS_DAYS_WITHOUT_HOUSE );
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_JOB),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_JOB),
           citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob <= DEMANDS_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
     }
 
     /**

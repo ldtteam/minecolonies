@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredi
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -114,7 +113,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NEEDS_BETTER_HUT),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NEEDS_BETTER_HUT),
           citizen -> {
 
             final AbstractBuilding buildingMiner = (AbstractBuilding) citizen.getWorkBuilding();

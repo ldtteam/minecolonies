@@ -12,7 +12,7 @@ public final class ModInteractionsInitializer
 {
     private ModInteractionsInitializer()
     {
-        throw new IllegalStateException("Tried to initialize: ModJobsInitializer but this is a Utility class.");
+        throw new IllegalStateException("Tried to initialize: ModInteractionsInitializer but this is a Utility class.");
     }
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")

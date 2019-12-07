@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -149,8 +150,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
-        InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
+        InteractionValidatorPredicates.registerPosBasedPredicate(
           new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
               final IBuildingWorker workBuilding = citizen.getWorkBuilding();
@@ -168,8 +169,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               }
               return false;
           });
-        InteractionValidatorPredicates.addTokenBasedInteractionValidatorPredicate(new TranslationTextComponent(NORMAL_REQUEST),
-          (citizen, token) -> citizen.getColony() != null && ( citizen.getColony().getRequestManager().getPlayerResolver().holdsRequest(token) || citizen.getColony().getRequestManager().getRetryingRequestResolver().holdsRequest(token)));
+        InteractionValidatorPredicates.registerTokenBasedPredicate(new TranslationTextComponent(NORMAL_REQUEST),
+          (citizen, token) -> {
+
+            final IColony colony = citizen.getColony();
+            if (colony != null)
+            {
+                final IRequestResolver<?> resolver = citizen.getColony().getRequestManager().getResolverForRequest(token);
+                return resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver;
+            }
+            return false;
+        });
     }
 
     /**
@@ -549,10 +559,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             for ( final IRequest request : getOwnBuilding().getOpenRequests( worker.getCitizenData() ) )
             {
-                final IPlayerRequestResolver playerResolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getPlayerResolver();
-                final IRetryingRequestResolver retryingRequestResolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getRetryingRequestResolver();
-
-                if (playerResolver.holdsRequest(request.getId()) || retryingRequestResolver.holdsRequest(request.getId()))
+                final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
+                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                 {
                     if ( worker.getCitizenData().isRequestAsync(request.getId()) )
                     {

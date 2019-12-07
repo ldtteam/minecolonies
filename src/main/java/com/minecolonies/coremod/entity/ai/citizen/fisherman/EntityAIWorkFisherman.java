@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
@@ -23,7 +22,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -171,7 +169,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(WATER_TOO_FAR),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
     }
 

@@ -109,9 +109,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
-        InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(new TranslationTextComponent(NO_SEED_SET),
+        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(NO_SEED_SET),
           (citizen, pos) ->
           {
               if (citizen.getJob() instanceof JobFarmer)

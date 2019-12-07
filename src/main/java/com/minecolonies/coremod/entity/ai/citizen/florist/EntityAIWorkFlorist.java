@@ -9,7 +9,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
@@ -103,13 +102,13 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     static
     {
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
 
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
 
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(NO_COMPOST),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_COMPOST),
           citizen ->
           {
               final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();

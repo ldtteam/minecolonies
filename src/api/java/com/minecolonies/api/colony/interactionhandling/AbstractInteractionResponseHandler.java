@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
@@ -64,10 +65,9 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     /**
-     * Way to load the response handler for a citizen.
-     * @param data the citizen owning this handler.
+     * Way to load the response handler.
      */
-    public AbstractInteractionResponseHandler(final ICitizen data)
+    public AbstractInteractionResponseHandler()
     {
         // Do nothing, await loading from NBT.
     }
@@ -88,7 +88,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     @Override
     public List<ITextComponent> getPossibleResponses()
     {
-        return new ArrayList<>(responses.keySet());
+        return ImmutableList.copyOf(responses.keySet());
     }
 
     /**

@@ -18,6 +18,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
 {
     /**
      * The inquiry of the GUI to the player.
+     * This is the key for the interaction, functions as id.
      * @return the text inquiry.
      */
     ITextComponent getInquiry();

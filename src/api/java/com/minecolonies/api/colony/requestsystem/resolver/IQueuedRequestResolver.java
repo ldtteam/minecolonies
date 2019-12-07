@@ -17,11 +17,4 @@ public interface IQueuedRequestResolver<R extends IRequestable> extends IRequest
      * Called when the request system this is part of gets reset.
      */
     void onSystemReset();
-
-    /**
-     * Check if the resolver holds a certain request.
-     * @param request the request to check.
-     * @return true if so.
-     */
-    boolean holdsRequest(IToken request);
 }

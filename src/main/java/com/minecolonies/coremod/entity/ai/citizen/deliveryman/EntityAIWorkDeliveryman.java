@@ -119,7 +119,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
     static
     {
-        InteractionValidatorPredicates.addPosBasedInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
           {
               if (citizen.getJob() instanceof JobDeliveryman)
@@ -140,7 +140,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
               }
               return false;
           });
-        InteractionValidatorPredicates.addStandardInteractionValidatorPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
           cit -> {
             if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
             {

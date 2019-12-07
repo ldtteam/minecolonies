@@ -37,7 +37,7 @@ public final class InteractionValidatorPredicates
      */
     public static Predicate<ICitizenData> getStandardInteractionValidatorPredicate(final ITextComponent key)
     {
-        return map.getOrDefault(key, null);
+        return map.get(key);
     }
 
     /**
@@ -47,7 +47,7 @@ public final class InteractionValidatorPredicates
      */
     public static BiPredicate<ICitizenData, BlockPos> getPosBasedInteractionValidatorPredicate(final ITextComponent key)
     {
-        return posMap.getOrDefault(key, null);
+        return posMap.get(key);
     }
 
     /**
@@ -57,7 +57,7 @@ public final class InteractionValidatorPredicates
      */
     public static BiPredicate<ICitizenData, IToken> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
     {
-        return tokenMap.getOrDefault(key, null);
+        return tokenMap.get(key);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class InteractionValidatorPredicates
      * @param key it's key.
      * @param predicate it's predicate.
      */
-    public static void addStandardInteractionValidatorPredicate(final ITextComponent key, final Predicate<ICitizenData> predicate)
+    public static void registerStandardPredicate(final ITextComponent key, final Predicate<ICitizenData> predicate)
     {
         map.put(key, predicate);
     }
@@ -75,7 +75,7 @@ public final class InteractionValidatorPredicates
      * @param key it's key.
      * @param predicate it's predicate.
      */
-    public static void addPosBasedInteractionValidatorPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
+    public static void registerPosBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
     {
         posMap.put(key, predicate);
     }
@@ -85,7 +85,7 @@ public final class InteractionValidatorPredicates
      * @param key it's key.
      * @param predicate it's predicate.
      */
-    public static void addTokenBasedInteractionValidatorPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
+    public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
     {
         tokenMap.put(key, predicate);
     }

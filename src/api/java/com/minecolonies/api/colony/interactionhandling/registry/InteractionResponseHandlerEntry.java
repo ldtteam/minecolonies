@@ -67,7 +67,7 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
     }
 
     /**
-     * The producer for the {@link IInteractionResponseHandler}. Creates the job from a {@link ICitizenData} instance.
+     * The producer for the {@link IInteractionResponseHandler}. Creates the interaction from a {@link ICitizenData} instance.
      *
      * @return The created {@link IInteractionResponseHandler}.
      */
@@ -76,9 +76,9 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> jobProducer)
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer)
     {
         super();
-        this.responseHandlerProducer = jobProducer;
+        this.responseHandlerProducer = producer;
     }
 }
