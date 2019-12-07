@@ -126,7 +126,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     }
 
     @Override
-    public void onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
@@ -137,16 +137,21 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
                 final IRequest request = colony.getRequestManager().getRequestForToken(token);
                 if (request != null)
                 {
+                    //final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(new WindowCitizen(data), request, data.getColonyId() );
+                    //windowRequestDetail.open();
+
                     final WindowCitizen windowCitizen = new WindowCitizen(data);
                     windowCitizen.open();
-                    windowCitizen.findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+                    windowCitizen.goToRequestList();
+                    return false;
                 }
             }
         }
         else
         {
-            super.onClientResponseTriggered(response, world, data, window);
+            return super.onClientResponseTriggered(response, world, data, window);
         }
+        return true;
     }
 
     @Override

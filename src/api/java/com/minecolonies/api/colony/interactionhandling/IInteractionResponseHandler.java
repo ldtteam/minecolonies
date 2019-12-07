@@ -76,8 +76,9 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @param world the client side world.
      * @param data the citizen data assigned to it.
      * @param window the window it was triggered in.
+     * @return if wishing to continue interacting.
      */
-    void onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
+    boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
 
     /**
      * Remove a certain parent.

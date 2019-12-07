@@ -375,6 +375,17 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
+     * Go to the request list.
+     */
+    public void goToRequestList()
+    {
+        findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+        buttonPrevPage.off();
+        buttonNextPage.off();
+        pageNum.off();
+    }
+
+    /**
      * Called when a button in the citizen has been clicked.
      *
      * @param button the clicked button.
@@ -385,10 +396,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
-                buttonPrevPage.off();
-                buttonNextPage.off();
-                pageNum.off();
+                goToRequestList();
                 break;
             case BUTTON_BACK:
                 findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
