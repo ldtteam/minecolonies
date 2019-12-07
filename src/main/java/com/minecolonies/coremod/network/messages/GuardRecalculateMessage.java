@@ -81,7 +81,7 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setMobsToAttack(building.calculateMobs());
+                building.calculateMobs();
             }
         }
     }

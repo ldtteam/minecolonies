@@ -13,6 +13,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_SLEEP;
+
 /**
  * Abstract Class for Guard Jobs.
  */
@@ -46,19 +48,6 @@ public abstract class AbstractJobGuard extends AbstractJob
         }
     }
 
-    /**
-     * Custom Action on Levelup, increases Guard HP
-     */
-    @Override
-    public void onLevelUp(final int newLevel)
-    {
-        // Bonus Health for guards(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
-        {
-            getCitizen().getCitizenEntity().get().increaseHPForGuards();
-        }
-    }
-
     @Nullable
     @Override
     public SoundEvent getBadWeatherSound()
@@ -84,5 +73,15 @@ public abstract class AbstractJobGuard extends AbstractJob
     public boolean allowsAvoidance()
     {
         return false;
+    }
+
+    /**
+     * Whether the guard is asleep.
+     *
+     * @return true if sleeping
+     */
+    public boolean isAsleep()
+    {
+        return getWorkerAI() != null && getWorkerAI().getState() == GUARD_SLEEP;
     }
 }
