@@ -451,11 +451,11 @@ public class CitizenDataView implements ICitizenDataView
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
-        primaryInteractions = citizenChatOptions.values().stream().filter(IInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().ordinal())).collect(Collectors.toList());
+        primaryInteractions = citizenChatOptions.values().stream().filter(IInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
         if (!primaryInteractions.isEmpty())
         {
             hasAnyPrimaryInteraction = true;
-            hasPrimaryBlockingInteractions = primaryInteractions.get(0).getPriority().ordinal() <= ChatPriority.IMPORTANT.ordinal();
+            hasPrimaryBlockingInteractions = primaryInteractions.get(0).getPriority().getPriority() >= ChatPriority.IMPORTANT.ordinal();
         }
         else
         {

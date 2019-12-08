@@ -3,10 +3,16 @@ package com.minecolonies.api.colony.interactionhandling;
 /**
  * Different priority types of the interactions.
  */
-public enum ChatPriority
+public enum ChatPriority implements IChatPriority
 {
-    BLOCKING,
-    IMPORTANT,
+    CHITCHAT,
     PENDING,
-    CHITCHAT
+    IMPORTANT,
+    BLOCKING;
+
+    @Override
+    public int getPriority()
+    {
+        return this.ordinal();
+    }
 }
