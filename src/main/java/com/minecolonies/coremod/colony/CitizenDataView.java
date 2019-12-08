@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionIdentifier;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -98,7 +99,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    private final Map<IInteractionIdentifier, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * If the citizen has any primary blocking interactions.

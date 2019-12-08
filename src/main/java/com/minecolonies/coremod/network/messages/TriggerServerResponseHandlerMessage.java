@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -124,7 +125,7 @@ public class TriggerServerResponseHandlerMessage implements IMessage
             final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
             if (citizenData != null)
             {
-                citizenData.onResponseTriggered(key, response, ctxIn.getSender().world);
+                citizenData.onResponseTriggered(new TextInteractionId(key), new TextInteractionId(response), ctxIn.getSender().world);
             }
         }
     }

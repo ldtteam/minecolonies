@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -50,9 +51,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
+        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(FURNACE_USER_NO_FUEL)),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
+        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE)),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
     }
 
@@ -148,7 +149,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(FURNACE_USER_NO_FUEL)), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -157,7 +158,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE)), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -332,7 +333,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE)), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;

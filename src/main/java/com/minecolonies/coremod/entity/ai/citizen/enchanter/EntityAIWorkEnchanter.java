@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -87,7 +88,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
+        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET)),
           citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());
     }
 
@@ -132,7 +133,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             {
                 if ( worker.getCitizenData() != null )
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET)), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }

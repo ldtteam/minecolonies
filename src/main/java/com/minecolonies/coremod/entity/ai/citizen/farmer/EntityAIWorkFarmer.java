@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -109,9 +110,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
+        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(NO_FREE_FIELDS)),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
-        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(NO_SEED_SET),
+        InteractionValidatorPredicates.registerPosBasedPredicate(new TextInteractionId(new TranslationTextComponent(NO_SEED_SET)),
           (citizen, pos) ->
           {
               if (citizen.getJob() instanceof JobFarmer)
@@ -219,7 +220,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_FREE_FIELDS)), ChatPriority.BLOCKING));
             }
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm();
             return PREPARING;
@@ -341,7 +342,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent(NO_SEED_SET), currentField.getPos()));
+            worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_SEED_SET, currentField.getPos())), ChatPriority.BLOCKING, new TextInteractionId(new TranslationTextComponent(NO_SEED_SET)), currentField.getPos()));
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;

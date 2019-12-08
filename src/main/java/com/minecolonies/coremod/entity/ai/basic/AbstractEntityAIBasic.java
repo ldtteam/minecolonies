@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -150,9 +151,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
+        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST)), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorPredicates.registerPosBasedPredicate(
-          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
+          new TextInteractionId(new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW)), (citizen, pos) ->
           {
               final IBuildingWorker workBuilding = citizen.getWorkBuilding();
               if (workBuilding != null)
@@ -169,7 +170,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               }
               return false;
           });
-        InteractionValidatorPredicates.registerTokenBasedPredicate(new TranslationTextComponent(NORMAL_REQUEST),
+        InteractionValidatorPredicates.registerTokenBasedPredicate(new TextInteractionId(new TranslationTextComponent(NORMAL_REQUEST)),
           (citizen, token) -> {
 
             final IColony colony = citizen.getColony();
@@ -564,13 +565,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     if ( worker.getCitizenData().isRequestAsync(request.getId()) )
                     {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(ASYNC_REQUEST,
+                          request.getShortDisplayString())), ChatPriority.PENDING, new TextInteractionId(new TranslationTextComponent(NORMAL_REQUEST)), request.getId()));
                     }
                     else
                     {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NORMAL_REQUEST,
+                          request.getShortDisplayString())), ChatPriority.BLOCKING, new TextInteractionId(new TranslationTextComponent(NORMAL_REQUEST)), request.getId()));
                     }
                 }
             }
@@ -1072,7 +1073,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), ChatPriority.IMPORTANT));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST)), ChatPriority.IMPORTANT));
             }
 
         }
@@ -1237,7 +1238,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(
-              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()), ChatPriority.IMPORTANT, new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), pos));
+              new TextInteractionId(new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ())), ChatPriority.IMPORTANT, new TextInteractionId(new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW)), pos));
         }
         updateToolFlag(toolType, required);
     }
