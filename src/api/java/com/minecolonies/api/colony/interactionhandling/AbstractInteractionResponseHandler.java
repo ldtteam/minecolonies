@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -24,12 +25,12 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The text the citizen is saying.
      */
-    private IInteractionIdentifier inquiry;
+    private ITextComponent inquiry;
 
     /**
      * The map of response options of the player, to new inquires of the interacting entity.
      */
-    private Map<IInteractionIdentifier, IInteractionIdentifier> responses = new HashMap<>();
+    private Map<ITextComponent, ITextComponent> responses = new HashMap<>();
 
     /**
      * If the interaction is a primary (true) or secondary (false) interaction.
@@ -39,7 +40,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The interaction priority.
      */
-    private IChatPriority priority;
+    private ChatPriority priority;
 
     /**
      * The inquiry of the citizen.
@@ -49,15 +50,15 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      * @param responseTuples optional response options.
      */
     @SafeVarargs
-    public AbstractInteractionResponseHandler(@NotNull final IInteractionIdentifier inquiry,
+    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry,
       final boolean primary,
-      final IChatPriority priority,
-      final Tuple<IInteractionIdentifier, IInteractionIdentifier>...responseTuples)
+      final ChatPriority priority,
+      final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         this.inquiry = inquiry;
         this.primary = primary;
         this.priority = priority;
-        for (final Tuple<IInteractionIdentifier, IInteractionIdentifier> element : responseTuples)
+        for (final Tuple<ITextComponent, ITextComponent> element : responseTuples)
         {
             this.responses.put(element.getA(), element.getB());
         }
@@ -72,20 +73,20 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public IInteractionIdentifier getInquiry()
+    public ITextComponent getInquiry()
     {
         return inquiry;
     }
 
     @Nullable
     @Override
-    public IInteractionIdentifier getResponseResult(final IInteractionIdentifier response)
+    public ITextComponent getResponseResult(final ITextComponent response)
     {
         return responses.getOrDefault(response, null);
     }
 
     @Override
-    public List<IInteractionIdentifier> getPossibleResponses()
+    public List<ITextComponent> getPossibleResponses()
     {
         return ImmutableList.copyOf(responses.keySet());
     }
@@ -97,19 +98,19 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT tag = new CompoundNBT();
-        tag.putString(TAG_INQUIRY, ITextComponent.Serializer.toJson(this.inquiry.getDisplayName()));
+        tag.putString(TAG_INQUIRY, ITextComponent.Serializer.toJson(this.inquiry));
         final ListNBT list = new ListNBT();
-        for (final Map.Entry<IInteractionIdentifier, IInteractionIdentifier> element : responses.entrySet())
+        for (final Map.Entry<ITextComponent, ITextComponent> element : responses.entrySet())
         {
             final CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString(TAG_RESPONSE, ITextComponent.Serializer.toJson(element.getKey().getDisplayName()));
-            elementTag.putString(TAG_NEXT_INQUIRY, ITextComponent.Serializer.toJson(element.getValue() == null ? null : element.getValue().getDisplayName()));
+            elementTag.putString(TAG_RESPONSE, ITextComponent.Serializer.toJson(element.getKey()));
+            elementTag.putString(TAG_NEXT_INQUIRY, ITextComponent.Serializer.toJson(element.getValue()));
 
             list.add(elementTag);
         }
         tag.put(TAG_RESPONSES, list);
         tag.putBoolean(TAG_PRIMARY, isPrimary());
-        tag.putInt(TAG_PRIORITY, priority.getPriority());
+        tag.putInt(TAG_PRIORITY, priority.ordinal());
         tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
@@ -119,13 +120,12 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      */
     public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
     {
-        this.inquiry = new TextInteractionId(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY)));
+        this.inquiry = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
         final ListNBT list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundNBT nbt = list.getCompound(i);
-            this.responses.put(new TextInteractionId(ITextComponent.Serializer.fromJson(nbt.getString(TAG_RESPONSE)))
-              , new TextInteractionId(ITextComponent.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY))));
+            this.responses.put(ITextComponent.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
@@ -138,7 +138,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public IChatPriority getPriority()
+    public ChatPriority getPriority()
     {
         return this.priority;
     }

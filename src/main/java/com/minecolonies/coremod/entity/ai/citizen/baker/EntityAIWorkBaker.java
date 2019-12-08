@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -108,9 +107,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_RECIPES)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_RECIPES),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
     }
 
@@ -169,7 +168,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE)), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -178,7 +177,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             if ( worker.getCitizenData() != null )
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(BAKER_HAS_NO_RECIPES)), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_RECIPES), ChatPriority.BLOCKING));
             }
             return getState();
         }

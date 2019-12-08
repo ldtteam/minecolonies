@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.colony.interactionhandling.IInteractionIdentifier;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
@@ -35,6 +34,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -216,7 +216,7 @@ public class CitizenData implements ICitizenData
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<IInteractionIdentifier, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * Create a CitizenData given an ID.
@@ -234,7 +234,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onResponseTriggered(@NotNull final IInteractionIdentifier key, @NotNull final IInteractionIdentifier response, final World world)
+    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world)
     {
         if (citizenChatOptions.containsKey(key))
         {
@@ -1668,7 +1668,7 @@ public class CitizenData implements ICitizenData
         for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getInquiry());
-            for (final IInteractionIdentifier comp : handler.getPossibleResponses())
+            for (final ITextComponent comp : handler.getPossibleResponses())
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
@@ -1686,7 +1686,7 @@ public class CitizenData implements ICitizenData
             this.citizenChatOptions.put(handler.getInquiry(), handler);
             for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
             {
-                this.citizenChatOptions.put(childHandler.getInquiry(), childHandler);
+                this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
             }
             markDirty();
         }

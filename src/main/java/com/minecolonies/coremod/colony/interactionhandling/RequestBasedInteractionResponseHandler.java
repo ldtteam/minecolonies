@@ -1,8 +1,12 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.interactionhandling.*;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -11,6 +15,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
+
+import static com.minecolonies.api.util.constant.WindowConstants.VIEW_HEAD;
 
 /**
  * The request based interaction response handler.
@@ -27,16 +34,16 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     private static final String TOKEN_TAG = "token";
 
     private static final Tuple[] tuples  = {
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)
     };
 
     private static final Tuple[] tuplesAsync  = {
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater")), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 
     /**
@@ -56,9 +63,9 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      * @param token the token this is related to.
      */
     public RequestBasedInteractionResponseHandler(
-      final IInteractionIdentifier inquiry,
-      final IChatPriority priority,
-      final IInteractionIdentifier validator,
+      final ITextComponent inquiry,
+      final ChatPriority priority,
+      final ITextComponent validator,
       final IToken token)
     {
         super(inquiry, true, priority, null, validator, priority == ChatPriority.BLOCKING ? tuples : tuplesAsync);
@@ -73,8 +80,8 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      * @param token the token this is related to.
      */
     public RequestBasedInteractionResponseHandler(
-      final IInteractionIdentifier inquiry,
-      final IChatPriority priority,
+      final ITextComponent inquiry,
+      final ChatPriority priority,
       final IToken token)
     {
         super(inquiry, true, priority, null, inquiry, tuples);
@@ -119,9 +126,9 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     }
 
     @Override
-    public boolean onClientResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
-        if (response.getDisplayName().equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
+        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
             final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), world.getDimension().getType().getId());
 
@@ -137,6 +144,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
                     final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(windowCitizen, request, data.getColonyId() );
                     windowRequestDetail.open();
 
+
                     return false;
                 }
             }
@@ -149,10 +157,10 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     }
 
     @Override
-    public void onServerResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenData data)
+    public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
     {
         super.onServerResponseTriggered(response, world, data);
-        if (response.getDisplayName().equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

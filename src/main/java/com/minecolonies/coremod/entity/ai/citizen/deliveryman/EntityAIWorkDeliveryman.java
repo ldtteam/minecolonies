@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryma
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
@@ -120,7 +119,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
     static
     {
-        InteractionValidatorPredicates.registerPosBasedPredicate(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL)),
+        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
           {
               if (citizen.getJob() instanceof JobDeliveryman)
@@ -141,7 +140,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
               }
               return false;
           });
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
           cit -> {
             if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
             {
@@ -579,11 +578,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     //same stack, we could not deliver ?
                     if (building instanceof AbstractBuildingWorker)
                     {
-                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL, building.getMainCitizen().getName())), ChatPriority.IMPORTANT, new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL)), building.getID()));
+                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL, building.getMainCitizen().getName()), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), building.getID()));
                     }
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
-                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL, new StringTextComponent(" :" + building.getSchematicName()))), ChatPriority.IMPORTANT, new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL)), ((TileEntityColonyBuilding) buildingToDeliver).getPos()));
+                        worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL, new StringTextComponent(" :" + building.getSchematicName())), ChatPriority.IMPORTANT, new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL), ((TileEntityColonyBuilding) buildingToDeliver).getPos()));
                     }
                 }
 
@@ -769,7 +768,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         job.setActive(false);
         if ( worker.getCitizenData() != null )
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE)), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE), ChatPriority.BLOCKING));
         }
         return true;
     }

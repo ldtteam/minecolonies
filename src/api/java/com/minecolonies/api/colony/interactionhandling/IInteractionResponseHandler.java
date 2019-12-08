@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
@@ -20,13 +21,13 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * This is the key for the interaction, functions as id.
      * @return the text inquiry.
      */
-    IInteractionIdentifier getInquiry();
+    ITextComponent getInquiry();
 
     /**
      * Get a list of all possible responses.
      * @return a list of the possible responses the player can give..
      */
-    List<IInteractionIdentifier> getPossibleResponses();
+    List<ITextComponent> getPossibleResponses();
 
     /**
      * Get possible further interaction from the GUI on response.
@@ -34,7 +35,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @return an instance of ICitizenInquiry if existent, else null.
      */
     @Nullable
-    IInteractionIdentifier getResponseResult(final IInteractionIdentifier response);
+    ITextComponent getResponseResult(final ITextComponent response);
 
     /**
      * Check if this interaction is a primary interaction or secondary interaction.
@@ -46,7 +47,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * Get the priority of this interaction response handler.
      * @return the chat priority.
      */
-    IChatPriority getPriority();
+    ChatPriority getPriority();
 
     /**
      * Check if this response handler is still visible for the player.
@@ -68,7 +69,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @param world the world it was triggered in.
      * @param data the citizen related to it.
      */
-    void onServerResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenData data);
+    void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data);
 
     /**
      * Client side action triggered on a possible response.
@@ -78,13 +79,13 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @param window the window it was triggered in.
      * @return if wishing to continue interacting.
      */
-    boolean onClientResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenDataView data, final Window window);
+    boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
 
     /**
      * Remove a certain parent.
      * @param inquiry the parent inquiry.
      */
-    void removeParent(IInteractionIdentifier inquiry);
+    void removeParent(ITextComponent inquiry);
 
     /**
      * Gen all child interactions related to this.

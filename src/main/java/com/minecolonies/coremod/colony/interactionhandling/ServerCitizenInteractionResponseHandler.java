@@ -4,7 +4,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.interactionhandling.*;
+import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMessage;
@@ -45,12 +47,12 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     /**
      * The id of the validator.
      */
-    protected IInteractionIdentifier validatorId;
+    protected ITextComponent validatorId;
 
     /**
      * All registered parents of this response handler.
      */
-    protected Set<IInteractionIdentifier> parents = new HashSet<>();
+    protected Set<ITextComponent> parents = new HashSet<>();
 
     /**
      * The server interaction response handler.
@@ -63,12 +65,12 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      */
     @SafeVarargs
     public ServerCitizenInteractionResponseHandler(
-      final IInteractionIdentifier inquiry,
+      final ITextComponent inquiry,
       final boolean primary,
-      final IChatPriority priority,
+      final ChatPriority priority,
       final Predicate<ICitizenData> validator,
-      final IInteractionIdentifier validatorId,
-      final Tuple<IInteractionIdentifier, IInteractionIdentifier>...responseTuples)
+      final ITextComponent validatorId,
+      final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
@@ -100,7 +102,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      * Add a parent to the list.
      * @param parent the parent to add.
      */
-    public void addParent(final IInteractionIdentifier parent)
+    public void addParent(final ITextComponent parent)
     {
         this.parents.add(parent);
     }
@@ -109,21 +111,21 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      * Remove an old parent and return true if no parent is left.
      * @param oldParent the parent to remove.
      */
-    public void removeParent(final IInteractionIdentifier oldParent)
+    public void removeParent(final ITextComponent oldParent)
     {
         this.parents.remove(oldParent);
     }
 
     @Override
-    public void onServerResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenData data)
+    public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
     {
-        if (response.getDisplayName() instanceof TranslationTextComponent)
+        if (response instanceof TranslationTextComponent)
         {
-            if (((TranslationTextComponent) response.getDisplayName()).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (world.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TranslationTextComponent) response.getDisplayName()).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = Integer.MAX_VALUE;
             }
@@ -131,9 +133,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
-    public boolean onClientResponseTriggered(final IInteractionIdentifier response, final World world, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
-        Network.getNetwork().sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.getDimension().getType().getId(), this.getInquiry().getDisplayName(), response.getDisplayName()));
+        Network.getNetwork().sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.getDimension().getType().getId(), this.getInquiry(), response));
         return true;
     }
 
@@ -143,14 +145,14 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         final CompoundNBT compoundNBT = super.serializeNBT();
         compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
         final ListNBT list = new ListNBT();
-        for (final IInteractionIdentifier element : parents)
+        for (final ITextComponent element : parents)
         {
             final CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString(TAG_PARENT, ITextComponent.Serializer.toJson(element.getDisplayName()));
+            elementTag.putString(TAG_PARENT, ITextComponent.Serializer.toJson(element));
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
-        compoundNBT.putString(TAG_VALIDATOR_ID, ITextComponent.Serializer.toJson(validatorId.getDisplayName()));
+        compoundNBT.putString(TAG_VALIDATOR_ID, ITextComponent.Serializer.toJson(validatorId));
         return compoundNBT;
     }
 
@@ -163,9 +165,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(new TextInteractionId(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT))));
+            this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = new TextInteractionId(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID)));
+        this.validatorId = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

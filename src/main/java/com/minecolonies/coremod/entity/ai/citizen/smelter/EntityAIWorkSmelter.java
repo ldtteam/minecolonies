@@ -5,7 +5,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -114,7 +113,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(FURNACE_USER_NO_ORE)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_ORE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingSmeltery && IColonyManager.getInstance().getCompatibilityManager()
                                                                                 .getSmeltableOres()
                                                                                 .stream()
@@ -371,7 +370,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 {
                     if (worker.getCitizenData() != null)
                     {
-                        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(FURNACE_USER_NO_ORE)), ChatPriority.BLOCKING));
+                        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
                     }
                 }
                 else

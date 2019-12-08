@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.florist;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
@@ -103,13 +102,13 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
 
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
 
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(NO_COMPOST)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_COMPOST),
           citizen ->
           {
               final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
@@ -159,7 +158,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST)), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -195,7 +194,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         {
             if (!isThereCompostedLand(getOwnBuilding(BuildingFlorist.class), world))
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_COMPOST)), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;
@@ -233,7 +232,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
             else
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG)), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
             }
         }
 

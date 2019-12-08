@@ -3,10 +3,14 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.interactionhandling.*;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,9 +26,9 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     private static final String POS_TAG = "pos";
 
     private static final Tuple[] tuples  = {
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore")), null),
-      new Tuple<>(new TextInteractionId(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater")), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 
     /**
@@ -44,9 +48,9 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param pos the pos this is related to.
      */
     public PosBasedInteractionResponseHandler(
-      final IInteractionIdentifier inquiry,
-      final IChatPriority priority,
-      final IInteractionIdentifier validator,
+      final ITextComponent inquiry,
+      final ChatPriority priority,
+      final ITextComponent validator,
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, validator, tuples);
@@ -61,8 +65,8 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param pos the pos this is related to.
      */
     public PosBasedInteractionResponseHandler(
-      final IInteractionIdentifier inquiry,
-      final IChatPriority priority,
+      final ITextComponent inquiry,
+      final ChatPriority priority,
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, inquiry, tuples);

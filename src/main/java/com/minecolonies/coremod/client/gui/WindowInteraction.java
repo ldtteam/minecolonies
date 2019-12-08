@@ -5,11 +5,11 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.interactionhandling.IInteractionIdentifier;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -74,12 +74,12 @@ public class WindowInteraction extends AbstractWindowSkeleton
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         int y = 0;
         int x = 0;
-        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getDisplayName().getFormattedText());
-        for (final IInteractionIdentifier component : handler.getPossibleResponses())
+        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
+        for (final ITextComponent component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel(component.getDisplayName().getFormattedText());
+            button.setLabel(component.getFormattedText());
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
             button.setTextColor(SLIGHTLY_BLUE);
             button.setPosition(x, y);
@@ -105,9 +105,9 @@ public class WindowInteraction extends AbstractWindowSkeleton
         if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            for (final IInteractionIdentifier component : handler.getPossibleResponses())
+            for (final ITextComponent component : handler.getPossibleResponses())
             {
-                if (component.getDisplayName().getFormattedText().equals(button.getLabel()))
+                if (component.getFormattedText().equals(button.getLabel()))
                 {
                     if ( handler.onClientResponseTriggered(component, Minecraft.getInstance().world, citizen, this) )
                     {

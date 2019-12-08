@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.TextInteractionId;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -170,7 +169,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
     static
     {
-        InteractionValidatorPredicates.registerStandardPredicate(new TextInteractionId(new TranslationTextComponent(WATER_TOO_FAR)),
+        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
     }
 
@@ -414,7 +413,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextInteractionId(new TranslationTextComponent(WATER_TOO_FAR)), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WATER_TOO_FAR), ChatPriority.IMPORTANT));
                 }
             }
 
