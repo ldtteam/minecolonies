@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.minecolonies.api.colony.ICitizen;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
+import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -32,7 +29,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
     public StandardInteractionResponseHandler(
       final ITextComponent inquiry,
       final ITextComponent validator,
-      final ChatPriority priority)
+      final IChatPriority priority)
     {
         super(inquiry, true, priority, InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(validator), validator, tuples);
     }
@@ -44,7 +41,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
      */
     public StandardInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority)
+      final IChatPriority priority)
     {
         super(inquiry, true, priority, InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(inquiry), inquiry, tuples);
     }

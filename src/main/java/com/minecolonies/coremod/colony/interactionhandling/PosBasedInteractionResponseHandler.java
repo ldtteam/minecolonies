@@ -3,10 +3,7 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
+import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -49,7 +46,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      */
     public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final ITextComponent validator,
       final BlockPos pos)
     {
@@ -66,7 +63,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      */
     public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, inquiry, tuples);

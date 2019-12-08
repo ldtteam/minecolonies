@@ -47,7 +47,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * Get the priority of this interaction response handler.
      * @return the chat priority.
      */
-    ChatPriority getPriority();
+    IChatPriority getPriority();
 
     /**
      * Check if this response handler is still visible for the player.

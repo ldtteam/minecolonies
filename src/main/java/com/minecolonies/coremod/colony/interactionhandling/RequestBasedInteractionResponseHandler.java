@@ -1,12 +1,8 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
-import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
+import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -23,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
-
-import static com.minecolonies.api.util.constant.WindowConstants.VIEW_HEAD;
 
 /**
  * The request based interaction response handler.
@@ -64,7 +58,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      */
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final ITextComponent validator,
       final IToken token)
     {
@@ -81,7 +75,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      */
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final IToken token)
     {
         super(inquiry, true, priority, null, inquiry, tuples);

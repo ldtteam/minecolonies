@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
@@ -67,7 +67,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     public ServerCitizenInteractionResponseHandler(
       final ITextComponent inquiry,
       final boolean primary,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final Predicate<ICitizenData> validator,
       final ITextComponent validatorId,
       final Tuple<ITextComponent, ITextComponent>...responseTuples)

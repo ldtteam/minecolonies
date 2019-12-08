@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -40,7 +39,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The interaction priority.
      */
-    private ChatPriority priority;
+    private IChatPriority priority;
 
     /**
      * The inquiry of the citizen.
@@ -52,7 +51,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     @SafeVarargs
     public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry,
       final boolean primary,
-      final ChatPriority priority,
+      final IChatPriority priority,
       final Tuple<ITextComponent, ITextComponent>...responseTuples)
     {
         this.inquiry = inquiry;
@@ -110,7 +109,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         }
         tag.put(TAG_RESPONSES, list);
         tag.putBoolean(TAG_PRIMARY, isPrimary());
-        tag.putInt(TAG_PRIORITY, priority.ordinal());
+        tag.putInt(TAG_PRIORITY, priority.getPriority());
         tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
@@ -138,7 +137,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public ChatPriority getPriority()
+    public IChatPriority getPriority()
     {
         return this.priority;
     }
