@@ -22,7 +22,11 @@ public class AdvancementUtils
 
             for (Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
             {
-                playerConsumer.accept(minecraftServer.getPlayerList().getPlayerByUUID(player.getID()));
+                final EntityPlayerMP playerEntity = minecraftServer.getPlayerList().getPlayerByUUID(player.getID());
+                if (playerEntity != null)
+                {
+                    playerConsumer.accept(playerEntity);
+                }
             }
         }
     }
