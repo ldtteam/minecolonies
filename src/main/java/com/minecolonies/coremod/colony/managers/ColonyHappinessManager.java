@@ -35,7 +35,7 @@ public class ColonyHappinessManager implements IColonyHappinessManager
         if (this.modifier.isPresent())
         {
             double modifierValue = this.modifier.get();
-            modifierValue = Math.max(CitizenHappinessHandler.MIN_HAPPINESS, Math.min(modifierValue, CitizenHappinessHandler.MAX_HAPPINESS));
+            modifierValue = Math.max(CitizenHappinessHandlerPut h.MIN_HAPPINESS, Math.min(modifierValue, CitizenHappinessHandler.MAX_HAPPINESS));
             this.modifier = Optional.of(modifierValue);
         }
     }

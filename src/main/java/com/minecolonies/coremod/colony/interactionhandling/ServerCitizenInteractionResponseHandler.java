@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMessage;
@@ -176,6 +176,6 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      */
     protected void loadValidator()
     {
-        this.validator = InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(validatorId);
+        this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
     }
 }

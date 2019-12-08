@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -166,12 +165,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     @Nullable
     private NewBobberEntity entityFishHook;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
-          citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
-    }
 
     /**
      * Constructor for the Fisherman.

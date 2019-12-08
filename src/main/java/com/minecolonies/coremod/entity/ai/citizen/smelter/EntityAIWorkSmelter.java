@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -94,7 +93,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     /**
      * Value to identify the list of filterable ores.
      */
-    private static final String ORE_LIST = "ores";
+    public static final String ORE_LIST = "ores";
 
     /**
      * Progress in hitting the product.
@@ -110,15 +109,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      * Max looting chance
      */
     private static final int MAX_ENCHANTED_BOOK_CHANCE = 100;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_ORE),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingSmeltery && IColonyManager.getInstance().getCompatibilityManager()
-                                                                                .getSmeltableOres()
-                                                                                .stream()
-                                                                                .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems().getOrDefault(ORE_LIST, new ArrayList<>()).contains(storage)));
-    }
 
     /**
      * Constructor for the Smelter.

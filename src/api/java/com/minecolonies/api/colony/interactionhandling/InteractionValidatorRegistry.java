@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * Utility class to store all validator predicates for the chat handling.
  */
-public final class InteractionValidatorPredicates
+public final class InteractionValidatorRegistry
 {
     /**
      * Map of all validator predicates.
@@ -93,7 +93,7 @@ public final class InteractionValidatorPredicates
     /**
      * Private constructor to hide public one.
      */
-    private InteractionValidatorPredicates()
+    private InteractionValidatorRegistry()
     {
         /*
          * Intentionally left empty.

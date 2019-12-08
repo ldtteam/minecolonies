@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -41,14 +40,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      * Base xp gain for the smelter.
      */
     private static final double BASE_XP_GAIN = 5;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
-    }
 
     /**
      * Initialize the stone smeltery and add all his tasks.

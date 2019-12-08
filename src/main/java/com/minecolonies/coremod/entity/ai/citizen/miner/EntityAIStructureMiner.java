@@ -6,13 +6,11 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -36,6 +34,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
+import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
 /**
  * Class which handles the miner behaviour.
@@ -110,20 +109,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     @Nullable
     private Node workingNode = null;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NEEDS_BETTER_HUT),
-          citizen -> {
-
-            final AbstractBuilding buildingMiner = (AbstractBuilding) citizen.getWorkBuilding();
-            if (buildingMiner instanceof BuildingMiner && citizen.getColony() != null && citizen.getColony().getWorld() != null)
-            {
-                return getLastLadder(((BuildingMiner) buildingMiner).getLadderLocation(), citizen.getColony().getWorld()) < ((BuildingMiner) buildingMiner).getDepthLimit() && ((BuildingMiner) buildingMiner).getNumberOfLevels() == 0;
-            }
-            return false;
-          });
-    }
 
     /**
      * Constructor for the Miner.
@@ -803,18 +788,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private Block getBlock(@NotNull final BlockPos loc)
     {
         return world.getBlockState(loc).getBlock();
-    }
-
-    private static int getLastLadder(@NotNull final BlockPos pos, final World world)
-    {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
-        {
-            return getLastLadder(pos.down(), world);
-        }
-        else
-        {
-            return pos.getY() + 1;
-        }
     }
 
     private int getFirstLadder(@NotNull final BlockPos pos)

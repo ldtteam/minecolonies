@@ -3,10 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -144,43 +142,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Paused state handler
      */
     private EntityAIStatePausedHandler pausedHandler;
-
-    /*
-     * Setup all the interaction trigger predicates.
-     */
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
-        InteractionValidatorPredicates.registerPosBasedPredicate(
-          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
-          {
-              final IBuildingWorker workBuilding = citizen.getWorkBuilding();
-              if (workBuilding != null)
-              {
-                    final IColony colony = citizen.getColony();
-                    if ( colony != null )
-                    {
-                        final World world = colony.getWorld();
-                        if ( world != null )
-                        {
-                            return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(pos).getBlock());
-                        }
-                    }
-              }
-              return false;
-          });
-        InteractionValidatorPredicates.registerTokenBasedPredicate(new TranslationTextComponent(NORMAL_REQUEST),
-          (citizen, token) -> {
-
-            final IColony colony = citizen.getColony();
-            if (colony != null)
-            {
-                final IRequestResolver<?> resolver = citizen.getColony().getRequestManager().getResolverForRequest(token);
-                return resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver;
-            }
-            return false;
-        });
-    }
 
     /**
      * Sets up some important skeleton stuff for every ai.

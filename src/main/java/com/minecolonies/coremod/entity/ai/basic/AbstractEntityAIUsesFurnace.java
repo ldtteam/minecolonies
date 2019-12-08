@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -47,14 +46,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Wait this amount of ticks after requesting a burnable material.
      */
     protected static final int WAIT_AFTER_REQUEST = 50;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
-    }
 
     /**
      * Sets up some important skeleton stuff for every ai.

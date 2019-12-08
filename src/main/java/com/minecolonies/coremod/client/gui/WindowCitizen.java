@@ -15,8 +15,8 @@ import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
+import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -256,7 +256,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     private static void createHappinessBar(final ICitizenDataView citizen, final View view)
     {
-        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
         view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
@@ -324,7 +324,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public static void createHappinessBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         //Calculates how much percent of the next level has been completed. 
-        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 

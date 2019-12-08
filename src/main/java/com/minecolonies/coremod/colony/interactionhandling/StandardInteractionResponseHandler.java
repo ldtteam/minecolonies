@@ -31,7 +31,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
       final ITextComponent validator,
       final IChatPriority priority)
     {
-        super(inquiry, true, priority, InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(validator), validator, tuples);
+        super(inquiry, true, priority, InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validator), validator, tuples);
     }
 
     /**
@@ -43,7 +43,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
       final ITextComponent inquiry,
       final IChatPriority priority)
     {
-        super(inquiry, true, priority, InteractionValidatorPredicates.getStandardInteractionValidatorPredicate(inquiry), inquiry, tuples);
+        super(inquiry, true, priority, InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(inquiry), inquiry, tuples);
     }
 
     /**

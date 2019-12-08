@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -25,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -36,66 +36,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
-    /**
-     * constants for house modifier.
-     */
-    public static final int MAX_DAYS_WITHOUT_HOUSE = 30;
-    public static final int MAX_HOUSE_PENALTY = 5;
-    public static final double HOUSE_MODIFIER_POSITIVE = 0.5;
-    public static final int COMPLAIN_DAYS_WITHOUT_HOUSE = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_HOUSE = 14;
-
-    /**
-     * constants for job modifier.
-     */
-    public static final int MAX_DAYS_WITHOUT_JOB = 30;
-    public static final int COMPLAIN_DAYS_WITHOUT_JOB = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_JOB = 14;
-    public static final int MAX_JOB_PENALTY = 5;
-    public static final double JOB_MODIFIER_POSITIVE = 0.5;
-
-    /**
-     * constants for food modifier.
-     */
-    public static final int FOOD_MODIFIER_MAX = -2;
-    public static final int FOOD_MODIFIER_MIN = -1;
-    public static final double FOOD_MODIFIER_POSITIVE = 0.5;
-
-    /**
-     * constants for field modifiers
-     */
-    public static final int FIELD_MAX_DAYS_MODIFIER = 30;
-    public static final double FIELD_MODIFIER_MAX = -0.75;
-    public static final double FIELD_MODIFIER_MIN = -0.15;
-    public static final double FIELD_MODIFIER_POSITIVE = 0.2;
-    public static final double NO_FIELD_MODIFIER = -3.0;
-    public static final int NO_FIELDS_COMPLAINS_DAYS = 7;
-
-    /**
-     * constants for damage modifiers
-     */
-    public static final int DAMAGE_MODIFIER_MAX = -2;
-    public static final int DAMAGE_MODIFIER_MID = -1;
-    public static final double DAMAGE_MODIFIER_MIN = -0.5;
-    public static final double DAMAGE_LOWEST_POINT = 0.25d;
-    public static final double DAMAGE_MEDIUM_POINT = 0.50d;
-    public static final double DAMAGE_HIGHEST_POINT = 0.75d;
-    
-    /**
-     * constants for happiness min/max and start happines values.
-     */
-    public static final int MAX_HAPPINESS = 10;
-    public static final int MIN_HAPPINESS = 1;
-    public static final int BASE_HAPPINESS = 8;
-
-    /**
-     * constants for no tools.
-     */
-    public static final int NO_TOOLS_MODIFIER = 3;
-    public static final int NO_TOOLS_COMPLAINS_DAYS = 7;
-    public static final int NO_TOOLS_DEMANDS_DAYS = 14;
-    public static final int NO_TOOLS_MAX_DAYS_MODIFIER = 30;
-
     /**
      * The citizen assigned to this manager.
      */
@@ -160,22 +100,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * holds the modifier for citizen not having a tool.
      */
     private double noToolModifier;
-
-
-    /*
-     * Setup all the interaction trigger predicates.
-     */
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE);
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
-          citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutHouse <= DEMANDS_DAYS_WITHOUT_HOUSE );
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_JOB),
-          citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB && ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).numberOfDaysWithoutJob <= DEMANDS_DAYS_WITHOUT_JOB);
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ((CitizenHappinessHandler) citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
-    }
 
     /**
      * Constructor for the experience handler.
@@ -334,7 +258,8 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
     }
 
-    private int getMaxOpenToolDays()
+    @Override
+    public int getMaxOpenToolDays()
     {
         int maxOpenDays = 0;
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
@@ -646,5 +571,17 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         buf.writeDouble(jobModifier);
         buf.writeDouble(farmerModifier);
         buf.writeDouble(noToolModifier);
+    }
+
+    @Override
+    public int getNumberOfDaysWithoutHouse()
+    {
+        return numberOfDaysWithoutHouse;
+    }
+
+    @Override
+    public int getNumberOfDaysWithoutJob()
+    {
+        return numberOfDaysWithoutJob;
     }
 }

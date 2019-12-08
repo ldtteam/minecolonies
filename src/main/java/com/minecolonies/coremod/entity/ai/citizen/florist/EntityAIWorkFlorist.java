@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
@@ -27,8 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
 
 /**
  * Florist AI class.
@@ -44,11 +43,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      * How often should intelligence factor into the composter's skill modifier.
      */
     private static final int CHARISMA_MULTIPLIER = 2;
-
-    /**
-     * Predicate to check for compost items.
-     */
-    private static final Predicate<ItemStack> IS_COMPOST = stack -> !stack.isEmpty() && stack.getItem() == ModItems.compost;
 
     /**
      * Max 2d distance the florist should be from the hut.
@@ -99,27 +93,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      * Position the florist should compost the tileEntity at.
      */
     private BlockPos compostPosition;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
-
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
-
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_COMPOST),
-          citizen ->
-          {
-              final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
-              if (buildingFlorist instanceof BuildingFlorist && buildingFlorist.getColony() != null && buildingFlorist.getColony().getWorld() != null)
-              {
-                  return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist, buildingFlorist.getColony().getWorld());
-              }
-              return false;
-          });
-    }
-
 
     /*
        Florist uses compost on them if not composted yet
@@ -308,33 +281,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             }
         }
         return null;
-    }
-
-    /**
-     * Check if there is any already composted land.
-     * @return true if there is any.
-     */
-    private static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
-    {
-        for (final BlockPos pos : buildingFlorist.getPlantGround())
-        {
-            if (world.isBlockLoaded(pos))
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityCompostedDirt)
-                {
-                    if (((TileEntityCompostedDirt) entity).isComposted())
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    buildingFlorist.removePlantableGround(pos);
-                }
-            }
-        }
-        return false;
     }
 
     /**

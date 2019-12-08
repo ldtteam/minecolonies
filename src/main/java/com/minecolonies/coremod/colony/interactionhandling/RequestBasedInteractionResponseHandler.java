@@ -63,7 +63,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
       final IToken token)
     {
         super(inquiry, true, priority, null, validator, priority == ChatPriority.BLOCKING ? tuples : tuplesAsync);
-        this.validator = InteractionValidatorPredicates.getTokenBasedInteractionValidatorPredicate(validator);
+        this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(validator);
         this.token = token;
     }
 
@@ -79,7 +79,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
       final IToken token)
     {
         super(inquiry, true, priority, null, inquiry, tuples);
-        this.validator = InteractionValidatorPredicates.getTokenBasedInteractionValidatorPredicate(inquiry);
+        this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(inquiry);
         this.token = token;
     }
 
@@ -163,7 +163,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     @Override
     protected void loadValidator()
     {
-        this.validator = InteractionValidatorPredicates.getTokenBasedInteractionValidatorPredicate(validatorId);
+        this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(validatorId);
     }
 
     @Override

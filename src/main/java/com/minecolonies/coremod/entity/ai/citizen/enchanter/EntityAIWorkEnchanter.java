@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -84,12 +83,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      * And at which tick it is.
      */
     private int progressTicks = 0;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());
-    }
 
     /**
      * Creates the abstract part of the AI.

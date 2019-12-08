@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -104,14 +103,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * So the bakery can rotate between recipes.
      */
     private int currentRecipe = -1;
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_RECIPES),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
-    }
 
     /**
      * Constructor for the Baker.

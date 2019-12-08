@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -104,35 +103,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private int     totalDis;
     private int     dist;
     private boolean horizontal;
-
-
-
-    static
-    {
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
-        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(NO_SEED_SET),
-          (citizen, pos) ->
-          {
-              if (citizen.getJob() instanceof JobFarmer)
-              {
-                  final IColony colony = citizen.getColony();
-                  if (colony != null)
-                  {
-                      final World world = colony.getWorld();
-                      if (world != null)
-                      {
-                          final TileEntity tileEntity = world.getTileEntity(pos);
-                          if (tileEntity instanceof ScarecrowTileEntity)
-                          {
-                              return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
-                          }
-                      }
-                  }
-              }
-              return false;
-          });
-    }
 
     /**
      * Constructor for the Farmer.

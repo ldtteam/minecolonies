@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorPredicates;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
@@ -116,45 +115,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * The last delivery of the dman.
      */
     private ILocation lastDelivery = null;
-
-    static
-    {
-        InteractionValidatorPredicates.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
-          (citizen, pos) ->
-          {
-              if (citizen.getJob() instanceof JobDeliveryman)
-              {
-                  final IColony colony = citizen.getColony();
-                  if (colony != null)
-                  {
-                      final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-                      if (building != null)
-                      {
-                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
-                          if (inv != null)
-                          {
-                              return InventoryUtils.openSlotCount(inv) > 0;
-                          }
-                      }
-                  }
-              }
-              return false;
-          });
-        InteractionValidatorPredicates.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
-          cit -> {
-            if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
-            {
-                for (final IWareHouse wareHouse : cit.getJob().getColony().getBuildingManager().getWareHouses())
-                {
-                    if (wareHouse.registerWithWareHouse((IBuildingDeliveryman) cit.getWorkBuilding()))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-          });
-    }
 
     /**
      * Initialize the deliveryman and add all his tasks.
