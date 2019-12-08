@@ -150,7 +150,7 @@ public class InteractionValidatorInitializer
               final IColony colony = citizen.getColony();
               if (colony != null)
               {
-                  final IRequestResolver<?> resolver = citizen.getColony().getRequestManager().getResolverForRequest(token);
+                  final IRequestResolver<?> resolver = citizen.getColony().getRequestManager().getRequestForToken(token) == null ? null : citizen.getColony().getRequestManager().getResolverForRequest(token);
                   return resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver;
               }
               return false;
