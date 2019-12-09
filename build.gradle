@@ -43,9 +43,6 @@ sourceSets {
         java {
             srcDir 'src/api/java'
         }
-        resources {
-            srcDir 'src/api/resources'
-        }
         compileClasspath += configurations.getByName("minecraft")
     }
     main {

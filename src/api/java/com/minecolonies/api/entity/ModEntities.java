@@ -36,4 +36,7 @@ public class ModEntities
 
     @ObjectHolder("archerpirate")
     public static EntityType<?> ARCHERPIRATE;
+
+    @ObjectHolder("sittingentity")
+    public static EntityType<?> SITTINGENTITY;
 }

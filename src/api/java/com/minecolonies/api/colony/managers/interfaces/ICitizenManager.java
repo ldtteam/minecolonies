@@ -171,6 +171,11 @@ public interface ICitizenManager
     void checkCitizensForHappiness();
 
     /**
+     * Tick the citizen data of all active citizens.
+     */
+    void tickCitizenData();
+
+    /**
      * Actions to execute on a colony tick.
      * @param colony the event.
      */

@@ -477,23 +477,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public abstract void setCitizenData(@Nullable ICitizenData data);
 
     /**
-     * Applies healthmodifiers for Guards based on level
-     */
-    public abstract void increaseHPForGuards();
-
-    /**
-     * Remove all healthmodifiers from a citizen
-     */
-    public abstract void removeAllHealthModifiers();
-
-    /**
-     * Remove healthmodifier by name.
-     *
-     * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
-     */
-    public abstract void removeHealthModifier(String modifierName);
-
-    /**
      * Return this citizens inventory.
      *
      * @return the inventory this citizen has.

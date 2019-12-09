@@ -23,9 +23,13 @@ public class AdvancementUtils
         {
             final List<Rank> ranks = MineColonies.getConfig().getCommon().officersReceiveAdvancements.get() ? Arrays.asList(Rank.OWNER, Rank.OFFICER) : Collections.singletonList(Rank.OWNER);
 
-            for (Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
+            for (final Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
             {
-                playerConsumer.accept(minecraftServer.getPlayerList().getPlayerByUUID(player.getID()));
+                final ServerPlayerEntity playerEntity = minecraftServer.getPlayerList().getPlayerByUUID(player.getID());
+                if (playerEntity != null)
+                {
+                    playerConsumer.accept(playerEntity);
+                }
             }
         }
     }
