@@ -117,7 +117,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(final ICitizenDataView citizen)
     {
-        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
+        @NotNull final WindowInteraction window = new WindowInteraction(citizen);
         window.open();
     }
 

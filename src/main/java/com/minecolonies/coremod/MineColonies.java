@@ -1,13 +1,13 @@
 package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.StructureLoadingUtils;
-import com.minecolonies.api.advancements.open_gui_window.OpenGuiWindowTrigger;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -166,6 +166,8 @@ public class MineColonies
 
         MinecoloniesPlacementHandlers.initHandlers();
 
+        InteractionValidatorInitializer.init();
+
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
 
         //Register Vanilla items with tags
@@ -290,6 +292,7 @@ public class MineColonies
         getNetwork().registerMessage(DirectPlaceMessage.class, DirectPlaceMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(EnchanterQtySetMessage.class, EnchanterQtySetMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
