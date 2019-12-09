@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.block.Block;
@@ -94,6 +95,11 @@ public final class ItemStackUtils
      * Predicate describing cookables.
      */
     public static Predicate<ItemStack> ISCOOKABLE;
+
+    /**
+     * Predicate to check for compost items.
+     */
+    public static final Predicate<ItemStack> IS_COMPOST = stack -> !stack.isEmpty() && stack.getItem() == ModItems.compost;
 
     /**
      * Private constructor to hide the implicit one.

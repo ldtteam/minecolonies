@@ -4,7 +4,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,26 +11,20 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-
+/**
+ * The citizen chat handler which handles all possible notifications (blocking or not).
+ */
 public class CitizenChatHandler implements ICitizenChatHandler
 {
     /**
      * The citizen assigned to this manager.
      */
     private final EntityCitizen citizen;
-
-    /**
-     * The Status message of the citizen. (What he is up to currently).
-     */
-    @NotNull
-    private final Map<String, Integer> statusMessages = new HashMap<>();
-
     /**
      * Constructor for the experience handler.
      *
@@ -43,27 +36,41 @@ public class CitizenChatHandler implements ICitizenChatHandler
     }
 
     /**
-     * Sends a localized message from the citizen containing a language string
-     * with a key and arguments.
-     *
-     * @param key  the key to retrieve the string.
-     * @param args additional arguments.
+     * Notify about death of citizen.
+     * @param damageSource the damage source.
      */
     @Override
-    public void sendLocalizedChat(final String key, final Object... args)
+    public void notifyDeath(final DamageSource damageSource)
     {
-        sendChat(key, args);
+        if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
+        {
+            final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+            if (job != null)
+            {
+                final ITextComponent component = new TranslationTextComponent(
+                  "block.blockhuttownhall.messageworkerdead",
+                  new TranslationTextComponent(job.getName()),
+                  citizen.getCitizenData().getName(),
+                  (int) citizen.posX,
+                  (int) citizen.posY,
+                  (int) citizen.posZ, damageSource.damageType);
+                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(
+                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
+                  "block.blockhuttownhall.messagecolonistdead",
+                  citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
+            }
+        }
     }
 
-    /**
-     * Sends a chat string close to the citizen.
-     *
-     * @param msg the message string.
-     */
-    private void sendChat(final String keyIn, @Nullable final Object... msg)
+    @Override
+    public void sendLocalizedChat(final String keyIn, final Object... msg)
     {
         final String key = keyIn.toLowerCase(Locale.US);
-        if (msg == null || statusMessages.containsKey(key))
+        if (msg == null)
         {
             return;
         }
@@ -76,7 +83,6 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
         else
         {
-            statusMessages.put(key + msg[0], citizen.ticksExisted);
             requiredItem = new TranslationTextComponent(key, msg);
         }
 
@@ -96,42 +102,6 @@ public class CitizenChatHandler implements ICitizenChatHandler
 
             LanguageHandler.sendPlayersMessage(players,
               citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, colonyDescription, requiredItem);
-        }
-    }
-
-    @Override
-    public void cleanupChatMessages()
-    {
-        //Only check if there are messages and once a second
-        if (!statusMessages.isEmpty() && citizen.ticksExisted % TICKS_20 == 0)
-        {
-            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * MineColonies.getConfig().getCommon().chatFrequency.get());
-        }
-    }
-
-    /**
-     * Notify about death of citizen.
-     * @param damageSource the damage source.
-     */
-    @Override
-    public void notifyDeath(final DamageSource damageSource)
-    {
-        if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
-        {
-            final IJob job = citizen.getCitizenJobHandler().getColonyJob();
-            if (job != null)
-            {
-                final ITextComponent component = new TranslationTextComponent("block.blockhuttownhall.messageworkerdead", new TranslationTextComponent(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
-                LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
-            }
-            else
-            {
-                LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
-                  "block.blockhuttownhall.messagecolonistdead",
-                  citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
-            }
         }
     }
 }

@@ -98,7 +98,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE      = 1;
+    private static final int    MIN_WORKING_RANGE      = 2;
     /**
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
