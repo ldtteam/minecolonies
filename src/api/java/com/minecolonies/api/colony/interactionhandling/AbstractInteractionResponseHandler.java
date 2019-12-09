@@ -59,7 +59,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         this.priority = priority;
         for (final Tuple<ITextComponent, ITextComponent> element : responseTuples)
         {
-            this.responses.put(element.getA(), element.getB());
+            this.responses.put(element.getFirst(), element.getSecond());
         }
     }
 

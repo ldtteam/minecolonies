@@ -195,6 +195,15 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     /**
+     * Remove the furnace from the list.
+     * @param pos the pos of the furnace.
+     */
+    public void removeFromFurnaces(final BlockPos pos)
+    {
+        this.furnaces.remove(pos);
+    }
+
+    /**
      * Crafter building View.
      */
     public static class View extends AbstractFilterableListsView

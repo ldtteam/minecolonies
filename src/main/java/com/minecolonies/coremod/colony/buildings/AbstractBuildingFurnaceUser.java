@@ -106,6 +106,16 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     }
 
     /**
+     * Remove a furnace from the building.
+     *
+     * @param pos the position of it.
+     */
+    public void removeFromFurnaces(final BlockPos pos)
+    {
+        furnaces.remove(pos);
+    }
+
+    /**
      * Getter for all allowed fuel from the building.
      * @return the list of itemStacks.
      */
