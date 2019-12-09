@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenJobHandler;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,12 +93,11 @@ public class CitizenJobHandler implements ICitizenJobHandler
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        @NotNull final Object[] currentTasks = citizen.getTasks().getRunningGoals().toArray();
-        for (@NotNull final Object task : currentTasks)
+        for (@NotNull final PrioritizedGoal task : citizen.getTasks().goals)
         {
-            if (task instanceof AbstractEntityAIInteract)
+            if (task.getGoal() instanceof AbstractEntityAIInteract)
             {
-                citizen.getTasks().removeGoal((Goal) task);
+                citizen.getTasks().removeGoal(task.getGoal());
             }
         }
 
