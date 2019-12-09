@@ -1,0 +1,14 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="350 150" pause="false" lightbox="false" pos="600 600"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+	<switch id="head" size="100% 100%" pos="0 0">
+		<view>
+            <gradient id="gradient" size="300 150" pos="20 0"/>
+            <text id="chat" size="250 50" color="white" pos="30 25"/>
+            <box id="responseOptions" size="290 50" pos="30 100"/>
+		</view>
+		<view id="requestsView" size="190 100%" pos="95 0">
+			<layout source="minecolonies:gui/citizen/requests.xml"/>
+		</view>
+    </switch>
+</window>

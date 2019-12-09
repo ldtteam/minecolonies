@@ -13,7 +13,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityEnchanter>
 {
-    private final        BookModel        modelBook    = new BookModel();
+    /**
+     * The book model to be rendered.
+     */
+    private final BookModel modelBook = new BookModel();
+
+    /**
+     * The resource location of the texture.
+     */
+    private static final ResourceLocation LOC = new ResourceLocation(Constants.MOD_ID, "textures/blocks/enchanting_table_book.png");
 
     public TileEntityEnchanterRenderer()
     {
@@ -34,7 +42,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityEn
         float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
         GlStateManager.rotated(-tickBasedRot * 57.295776F, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotated(80.0F, 0.0F, 0.0F, 1.0F);
-        this.bindTexture(new ResourceLocation(Constants.MOD_ID, "textures/blocks/enchanting_table_book.png"));
+        this.bindTexture(LOC);
         float page1 = entity.pageFlipPrev + (entity.pageFlip - entity.pageFlipPrev) * partialTicks + 0.25F;
         float page2 = entity.pageFlipPrev + (entity.pageFlip - entity.pageFlipPrev) * partialTicks + 0.75F;
         page1 = (page1 - (float) MathHelper.fastFloor((double) page1)) * 1.6F - 0.3F;

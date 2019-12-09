@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.resolver.retrying;
 
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.resolver.IQueuedRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;

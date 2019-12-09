@@ -18,7 +18,6 @@ import net.minecraftforge.registries.ObjectHolder;
 /**
  * This class deals with the initialization of blocks and their items.
  */
-@ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModBlocksInitializer
 {
