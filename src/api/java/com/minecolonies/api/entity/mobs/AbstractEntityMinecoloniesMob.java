@@ -3,6 +3,7 @@ package com.minecolonies.api.entity.mobs;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -86,6 +87,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
         this.enablePersistence();
+        this.goalSelector = new CustomGoalSelector(this.goalSelector);
+        this.targetSelector = new CustomGoalSelector(this.targetSelector);
         MobSpawnUtils.setupMobAi(this);
     }
 
