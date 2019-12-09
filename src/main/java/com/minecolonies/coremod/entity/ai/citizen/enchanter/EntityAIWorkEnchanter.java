@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -11,6 +12,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
@@ -19,12 +21,13 @@ import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -121,7 +124,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
-                chatSpamFilter.talkWithoutSpam(NO_WORKERS_TO_DRAIN_SET);
+                if ( worker.getCitizenData() != null )
+                {
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                }
                 return IDLE;
             }
 
