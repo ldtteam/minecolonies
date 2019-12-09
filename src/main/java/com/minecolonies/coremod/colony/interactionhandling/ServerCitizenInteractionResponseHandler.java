@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -8,6 +7,7 @@ import com.minecolonies.api.colony.interactionhandling.AbstractInteractionRespon
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMessage;
 import net.minecraft.nbt.NBTTagCompound;

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Image;

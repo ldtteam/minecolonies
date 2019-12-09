@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonImage;
+import com.minecolonies.blockout.controls.Text;
+import com.minecolonies.blockout.views.Box;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -71,7 +71,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         }
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-        final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
+        final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, com.minecolonies.blockout.views.Box.class);
         int y = 0;
         int x = 0;
         findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
@@ -109,7 +109,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             {
                 if (component.getFormattedText().equals(button.getLabel()))
                 {
-                    if ( handler.onClientResponseTriggered(component, Minecraft.getInstance().world, citizen, this) )
+                    if ( handler.onClientResponseTriggered(component, Minecraft.getMinecraft().world, citizen, this) )
                     {
                         currentInteraction++;
                         setupInteraction();

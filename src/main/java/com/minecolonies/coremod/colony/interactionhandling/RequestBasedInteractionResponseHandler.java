@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -8,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import net.minecraft.nbt.NBTTagCompound;
@@ -137,7 +137,6 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
                     final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(windowCitizen, request, data.getColonyId() );
                     windowRequestDetail.open();
-
 
                     return false;
                 }

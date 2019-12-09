@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.blockout.views.Window;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
