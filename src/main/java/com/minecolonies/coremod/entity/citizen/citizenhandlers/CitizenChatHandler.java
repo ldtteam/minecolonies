@@ -66,9 +66,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
     }
 
     @Override
-    public void sendLocalizedChat(final String keyIn, final Object... msg)
+    public void sendLocalizedChat(final String key, final Object... msg)
     {
-        final String key = keyIn.toLowerCase(Locale.US);
         if (msg == null)
         {
             return;

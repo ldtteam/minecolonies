@@ -526,12 +526,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     if ( worker.getCitizenData().isRequestAsync(request.getId()) )
                     {
                         worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                          request.getShortDisplayString().getFormattedText()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
                     }
                     else
                     {
                         worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                          request.getShortDisplayString().getFormattedText()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
                     }
                 }
             }

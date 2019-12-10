@@ -507,7 +507,7 @@ com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed l
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
 
 com.minecolonies.coremod.gui.workerHuts.bakery=Baker
-com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, please repair it.
+com.minecolonies.coremod.bakery.noFurnace=My building doesn't have any furnaces, please repair it.
 com.minecolonies.coremod.job.bakery=Baker
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
@@ -841,7 +841,7 @@ com.minecolonies.coremod.gui.hiring.buttonUnpaused=Unpause
 com.minecolonies.coremod.gui.hiring.restart=Restart
 com.minecolonies.coremod.gui.hiring.restartMessage=Restart for citizen %s scheduled.
 com.minecolonies.coremod.gui.hiring.restartMessageDone=Citizen %s succesfully restarted.
-com.minecolonies.coremod.gui.townhall.buildingLevel=Building level
+com.minecolonies.coremod.gui.townHall.buildingLevel=Building level
 com.minecolonies.coremod.job.composter=Composter
 com.minecolonies.coremod.gui.warehouse.sort=Sort
 com.minecolonies.coremod.gui.auto.hire.warning=Turn the hiring mode of the building or colony to manual to fire this worker or hire another one.
