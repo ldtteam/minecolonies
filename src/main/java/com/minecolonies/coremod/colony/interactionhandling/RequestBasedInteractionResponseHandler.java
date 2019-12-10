@@ -14,6 +14,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -120,6 +122,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
