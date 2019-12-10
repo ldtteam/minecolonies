@@ -8,7 +8,6 @@ import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -23,9 +22,9 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     private static final String POS_TAG = "pos";
 
     private static final Tuple[] tuples  = {
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.remindmelater"), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 
     /**

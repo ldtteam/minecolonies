@@ -10,13 +10,13 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -177,11 +177,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(DEMANDS_HOUSE), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_HOUSE), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(NO_HOUSE), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOUSE), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -198,11 +198,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(DEMANDS_JOB), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_JOB), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
             {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(NO_JOB), ChatPriority.CHITCHAT));
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_JOB), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -249,11 +249,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         final int maxToolOpenDays = getMaxOpenToolDays();
         if (maxToolOpenDays > NO_TOOLS_DEMANDS_DAYS)
         {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(DEMANDS_TOOL), ChatPriority.CHITCHAT));
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_TOOL), ChatPriority.CHITCHAT));
         }
         else if (maxToolOpenDays > NO_TOOLS_COMPLAINS_DAYS)
         {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(NO_TOOL), ChatPriority.CHITCHAT));
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_TOOL), ChatPriority.CHITCHAT));
         }
         noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
     }

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.interactionhandling.CustomITextComponentSerializer;
 import com.minecolonies.api.colony.permissions.Action;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -79,8 +80,8 @@ public class TriggerServerResponseHandlerMessage extends AbstractMessage<Trigger
         this.citizenId = buf.readInt();
         this.dimension = buf.readInt();
 
-        this.key = ITextComponent.Serializer.jsonToComponent(ByteBufUtils.readUTF8String(buf));
-        this.response = ITextComponent.Serializer.jsonToComponent(ByteBufUtils.readUTF8String(buf));
+        this.key = CustomITextComponentSerializer.fromJsonLenient(ByteBufUtils.readUTF8String(buf));
+        this.response = CustomITextComponentSerializer.fromJsonLenient(ByteBufUtils.readUTF8String(buf));
     }
 
     /**
@@ -95,8 +96,8 @@ public class TriggerServerResponseHandlerMessage extends AbstractMessage<Trigger
         buf.writeInt(this.citizenId);
         buf.writeInt(this.dimension);
 
-        ByteBufUtils.writeUTF8String(buf, ITextComponent.Serializer.componentToJson(key));
-        ByteBufUtils.writeUTF8String(buf, ITextComponent.Serializer.componentToJson(key));
+        ByteBufUtils.writeUTF8String(buf, CustomITextComponentSerializer.componentToJson(key));
+        ByteBufUtils.writeUTF8String(buf, CustomITextComponentSerializer.componentToJson(key));
     }
 
     @Override

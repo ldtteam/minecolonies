@@ -12,7 +12,6 @@ import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,16 +27,16 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     private static final String TOKEN_TAG = "token";
 
     private static final Tuple[] tuples  = {
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.fulfill"), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)
     };
 
     private static final Tuple[] tuplesAsync  = {
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.remindmelater"), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 
     /**
@@ -122,7 +121,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     @Override
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
-        if (response.equals(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.fulfill")))
+        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
             final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), world.provider.getDimension());
 
@@ -153,7 +152,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
     {
         super.onServerResponseTriggered(response, world, data);
-        if (response.equals(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

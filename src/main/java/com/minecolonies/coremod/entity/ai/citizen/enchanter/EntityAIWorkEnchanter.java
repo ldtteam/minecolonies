@@ -27,7 +27,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraft.util.text.TextComponentTranslation;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -126,7 +126,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             {
                 if ( worker.getCitizenData() != null )
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TextComponentTranslation(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }

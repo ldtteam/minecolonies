@@ -97,13 +97,13 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound tag = new NBTTagCompound();
-        tag.setString(TAG_INQUIRY, ITextComponent.Serializer.componentToJson(this.inquiry));
+        tag.setString(TAG_INQUIRY, CustomITextComponentSerializer.componentToJson(this.inquiry));
         final NBTTagList list = new NBTTagList();
         for (final Map.Entry<ITextComponent, ITextComponent> element : responses.entrySet())
         {
             final NBTTagCompound elementTag = new NBTTagCompound();
-            elementTag.setString(TAG_RESPONSE, ITextComponent.Serializer.componentToJson(element.getKey()));
-            elementTag.setString(TAG_NEXT_INQUIRY, ITextComponent.Serializer.componentToJson(element.getValue()));
+            elementTag.setString(TAG_RESPONSE, CustomITextComponentSerializer.componentToJson(element.getKey()));
+            elementTag.setString(TAG_NEXT_INQUIRY, CustomITextComponentSerializer.componentToJson(element.getValue()));
 
             list.appendTag(elementTag);
         }
@@ -119,12 +119,12 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      */
     public void deserializeNBT(@NotNull final NBTTagCompound compoundNBT)
     {
-        this.inquiry = ITextComponent.Serializer.jsonToComponent(compoundNBT.getString(TAG_INQUIRY));
+        this.inquiry = CustomITextComponentSerializer.fromJsonLenient(compoundNBT.getString(TAG_INQUIRY));
         final NBTTagList list = compoundNBT.getTagList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
             final NBTTagCompound nbt = list.getCompoundTagAt(i);
-            this.responses.put(ITextComponent.Serializer.jsonToComponent(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.jsonToComponent(nbt.getString(TAG_NEXT_INQUIRY)));
+            this.responses.put(CustomITextComponentSerializer.fromJsonLenient(nbt.getString(TAG_RESPONSE)), CustomITextComponentSerializer.fromJsonLenient(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInteger(TAG_PRIORITY)];

@@ -3,9 +3,7 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.IChatPriority;
-import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -13,7 +11,6 @@ import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMes
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -119,13 +116,13 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     @Override
     public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
     {
-        if (response instanceof TextComponentTranslation)
+        if (response instanceof TranslationTextComponent)
         {
-            if (((TextComponentTranslation) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (world.getTotalWorldTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TextComponentTranslation) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = Integer.MAX_VALUE;
             }
@@ -148,11 +145,11 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         for (final ITextComponent element : parents)
         {
             final NBTTagCompound elementTag = new NBTTagCompound();
-            elementTag.setString(TAG_PARENT, ITextComponent.Serializer.componentToJson(element));
+            elementTag.setString(TAG_PARENT, CustomITextComponentSerializer.componentToJson(element));
             list.appendTag(elementTag);
         }
         compoundNBT.setTag(TAG_PARENTS, list);
-        compoundNBT.setString(TAG_VALIDATOR_ID, ITextComponent.Serializer.componentToJson(validatorId));
+        compoundNBT.setString(TAG_VALIDATOR_ID, CustomITextComponentSerializer.componentToJson(validatorId));
         return compoundNBT;
     }
 
@@ -165,9 +162,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         final NBTTagList list = compoundNBT.getTagList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.jsonToComponent(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(CustomITextComponentSerializer.fromJsonLenient(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.jsonToComponent(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = CustomITextComponentSerializer.fromJsonLenient(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

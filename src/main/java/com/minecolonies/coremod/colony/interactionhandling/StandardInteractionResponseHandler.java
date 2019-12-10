@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,9 +14,9 @@ import java.util.List;
 public class StandardInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
 {
     private static final Tuple[] tuples = {
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TextComponentTranslation("com.minecolonies.coremod.gui.chat.remindmelater"), null)
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
     };
 
     /**

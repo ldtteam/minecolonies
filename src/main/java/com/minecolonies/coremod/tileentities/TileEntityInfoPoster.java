@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.interactionhandling.CustomITextComponentSerializer;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -25,7 +26,7 @@ public class TileEntityInfoPoster extends TileEntity
         for (int i = 0; i < signText.length; ++i)
         {
             final String s = compound.getString("Text" + (i + 1));
-            final ITextComponent itextcomponent = ITextComponent.Serializer.jsonToComponent(s);
+            final ITextComponent itextcomponent = CustomITextComponentSerializer.fromJsonLenient(s);
             this.signText[i] = itextcomponent;
         }
 
@@ -39,7 +40,7 @@ public class TileEntityInfoPoster extends TileEntity
 
         for (int i = 0; i < signText.length; ++i)
         {
-            final String s = ITextComponent.Serializer.componentToJson(this.signText[i]);
+            final String s = CustomITextComponentSerializer.componentToJson(this.signText[i]);
             compound.setString("Text" + (i + 1), s);
         }
 
