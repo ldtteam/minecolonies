@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -130,6 +132,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         MineColonies.getNetwork().sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.provider.getDimension(), this.getInquiry(), response));

@@ -7,6 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -79,6 +81,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<NBTTagComp
      * @param window the window it was triggered in.
      * @return if wishing to continue interacting.
      */
+    @SideOnly(Side.CLIENT)
     boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
 
     /**

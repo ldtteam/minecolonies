@@ -13,6 +13,8 @@ import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -119,6 +121,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
