@@ -15,6 +15,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,6 +135,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         Network.getNetwork().sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.getDimension().getType().getId(), this.getInquiry(), response));
