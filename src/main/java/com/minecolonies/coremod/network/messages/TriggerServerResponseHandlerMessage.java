@@ -97,7 +97,7 @@ public class TriggerServerResponseHandlerMessage extends AbstractMessage<Trigger
         buf.writeInt(this.dimension);
 
         ByteBufUtils.writeUTF8String(buf, CustomITextComponentSerializer.componentToJson(key));
-        ByteBufUtils.writeUTF8String(buf, CustomITextComponentSerializer.componentToJson(key));
+        ByteBufUtils.writeUTF8String(buf, CustomITextComponentSerializer.componentToJson(response));
     }
 
     @Override
