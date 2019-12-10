@@ -45,7 +45,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -161,7 +160,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Will be executed every time
             and does not stop execution
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::updateVisualState),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> true, this::updateVisualState, 20),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
@@ -440,6 +439,28 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         job.setNameTag(this.getState().toString());
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
+
+        if ( getOwnBuilding().hasWorkerOpenRequests( worker.getCitizenData() ) )
+        {
+            for ( final IRequest request : getOwnBuilding().getOpenRequests( worker.getCitizenData() ) )
+            {
+                final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
+                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                {
+                    if ( worker.getCitizenData().isRequestAsync(request.getId()) )
+                    {
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
+                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                    }
+                    else
+                    {
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
+                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                    }
+                }
+            }
+        }
+
         return null;
     }
 
@@ -514,27 +535,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             worker.getCitizenStatusHandler().setLatestStatus();
             return;
-        }
-
-        if ( getOwnBuilding().hasWorkerOpenRequests( worker.getCitizenData() ) )
-        {
-            for ( final IRequest request : getOwnBuilding().getOpenRequests( worker.getCitizenData() ) )
-            {
-                final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
-                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
-                {
-                    if ( worker.getCitizenData().isRequestAsync(request.getId()) )
-                    {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
-                    }
-                    else
-                    {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
-                    }
-                }
-            }
         }
 
         IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
