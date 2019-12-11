@@ -275,7 +275,7 @@ public final class MinecoloniesPlacementHandlers
                 return ActionProcessingResult.ACCEPT;
             }
 
-            if (!world.setBlockState(pos, Block.getValidBlockForPosition(blockState, world, pos), com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+            if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
                 return ActionProcessingResult.ACCEPT;
             }

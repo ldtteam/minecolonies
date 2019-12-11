@@ -1,0 +1,24 @@
+{
+  "parent": "minecolonies:minecolonies/root",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhuttownhall"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.place_townhall.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.place_townhall.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "build_tool_place_town_hall": {
+      "trigger": "minecolonies:structure_placed",
+      "conditions": {
+        "hut_name": "townhall"
+      }
+    }
+  }
+}

@@ -62,7 +62,6 @@ public final class StandardRequests
             final ITextComponent combined = new NonSiblingFormattingTextComponent();
             combined.appendSibling(new StringTextComponent(getRequest().getCount() + " "));
             combined.appendSibling(getRequest().getStack().getTextComponent());
-            combined.getStyle().setColor(TextFormatting.BLACK);
             return combined;
         }
     }

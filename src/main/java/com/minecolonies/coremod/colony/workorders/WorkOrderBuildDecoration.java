@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.workorders;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -11,6 +12,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -240,6 +242,19 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public void onCompleted(final IColony colony)
     {
         super.onCompleted(colony);
+
+        final StructureName structureName = new StructureName(getStructureName());
+        if (this instanceof WorkOrderBuildBuilding)
+        {
+            final int level = ((WorkOrderBuildBuilding) this).getUpgradeLevel();
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
+                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
+        }
+        else
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
+                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+        }
 
         if (this.levelUp)
         {

@@ -78,9 +78,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockState state = getBedLocation() == null ? null : citizen.world.getBlockState(getBedLocation());
         if (state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen))
         {
-            final Direction dir = state.getBlock().getBedDirection(state, citizen.world, getBedLocation());
-
-            switch (dir)
+            switch (state.getBlock().getBedDirection(state, citizen.world, getBedLocation()))
             {
                 case SOUTH:
                     return NINETY_DEGREE;

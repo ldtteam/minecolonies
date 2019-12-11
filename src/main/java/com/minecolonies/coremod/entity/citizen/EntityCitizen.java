@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -29,6 +30,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -57,6 +59,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -200,9 +203,19 @@ public class EntityCitizen extends AbstractEntityCitizen
     private static final int CALL_HELP_CD = 100;
 
     /**
+     * The amount of damage a guard takes on blocking.
+     */
+    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+
+    /**
      * Citizen inv Wrapper.
      */
     private IItemHandler invWrapper;
+
+    /**
+     * Citizen data view.
+     */
+    private ICitizenDataView citizenDataView;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -213,6 +226,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     public EntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
         super(type, world);
+        this.goalSelector = new CustomGoalSelector(this.goalSelector);
+        this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
         this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenStatusHandler = new CitizenStatusHandler(this);
@@ -294,8 +309,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
@@ -531,8 +545,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the citizendata.
-     * Tries to get it from the colony is the data is null.
+     * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
      */
@@ -596,7 +609,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
         dataManager.register(DATA_CITIZEN_ID, citizenId);
     }
-    
+
     /**
      * The Handler for all item related methods.
      *
@@ -785,7 +798,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (getHeldItem(getActiveHand()).getItem() instanceof ShieldItem)
         {
-            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
+            if (getHealth() > damage * GUARD_BLOCK_DAMAGE)
+            {
+                final float blockDamage = CombatRules.getDamageAfterAbsorb(damage * GUARD_BLOCK_DAMAGE,
+                  (float) this.getTotalArmorValue(),
+                  (float) this.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
+                setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
+            }
+            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
         }
         super.damageShield(damage);
     }
@@ -826,7 +846,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             super.setCustomName(name);
         }
     }
-    
+
 
     /**
      * Checks the citizens health status and heals the citizen if necessary.
@@ -851,74 +871,27 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Applies healthmodifiers for Guards based on level
-     */
-    @Override
-    public void increaseHPForGuards()
-    {
-        if (getCitizenData() != null)
-        {
-            // Remove old mod first
-            removeHealthModifier(GUARD_HEALTH_MOD_LEVEL_NAME);
-
-            // +1 Heart on levels 6,12,18,25,34,43,54 ...
-            final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, (int) (getCitizenData().getLevel() / (5.0 + getCitizenData().getLevel() / 20.0) * 2), AttributeModifier.Operation.ADDITION);
-            getAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModLevel);
-        }
-    }
-
-    /**
-     * Remove all healthmodifiers from a citizen
-     */
-    @Override
-    public void removeAllHealthModifiers()
-    {
-        for (final AttributeModifier mod : getAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
-        {
-            getAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
-        }
-        if (getHealth() > getMaxHealth())
-        {
-            setHealth(getMaxHealth());
-        }
-    }
-
-    /**
-     * Remove healthmodifier by name.
-     *
-     * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
-     */
-    @Override
-    public void removeHealthModifier(final String modifierName)
-    {
-        for (final AttributeModifier mod : getAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
-        {
-            if (mod.getName().equals(modifierName))
-            {
-                getAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
-            }
-        }
-        if (getHealth() > getMaxHealth())
-        {
-            setHealth(getMaxHealth());
-        }
-    }
-
-    /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
      * @return the view.
      */
-    private ICitizenDataView getCitizenDataView()
+    public ICitizenDataView getCitizenDataView()
     {
-        if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
+        if (this.citizenDataView == null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
-            if (colonyView != null)
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                return colonyView.getCitizen(citizenId);
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                    return this.citizenDataView;
+                }
             }
+        }
+        else
+        {
+            return this.citizenDataView;
         }
 
         return null;
@@ -937,6 +910,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             return;
         }
 
+        // Don't call for help when a guard gets woken up
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenJobHandler.getColonyJob(AbstractJobGuard.class).isAsleep())
+        {
+            return;
+        }
+
         callForHelpCooldown = CALL_HELP_CD;
 
         long guardDistance = guardHelpRange;
@@ -949,7 +928,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
 
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && tdist < guardDistance && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
+                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1078,6 +1058,14 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                }
+            }
         }
         else
         {
@@ -1115,6 +1103,23 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void setCitizensize(final @NotNull float width, final @NotNull float height)
     {
         this.size = new EntitySize(width, height, false);
+    }
+
+    /**
+     * Prevent riding entities except ours.
+     *
+     * @param entity entity to ride on
+     * @param force  force flag
+     * @return
+     */
+    @Override
+    public boolean startRiding(final Entity entity, final boolean force)
+    {
+        if (entity instanceof SittingEntity)
+        {
+            return super.startRiding(entity, force);
+        }
+        return false;
     }
 
     private void decrementCallForHelpCooldown()
@@ -1249,8 +1254,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the current position.
-     * Only approximated position, used for stuck checking.
+     * Getter for the current position. Only approximated position, used for stuck checking.
      *
      * @return the current position.
      */
@@ -1354,7 +1358,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
-        citizenChatHandler.cleanupChatMessages();
         citizenColonyHandler.updateColonyServer();
 
         if (citizenData != null)

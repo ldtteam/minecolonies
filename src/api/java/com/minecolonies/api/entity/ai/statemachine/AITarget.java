@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * to tell if execution is wanted.
  * And it can change state.
  */
-public class AITarget extends TickingTransition
+public class AITarget extends TickingTransition<IAIState>
 {
     /**
      * Construct a target.

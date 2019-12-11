@@ -15,8 +15,8 @@ import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
+import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -65,13 +65,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
         HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
         BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
 
-        private final int              X;
-        private final int              Y;
-        private final int              hpValue;
-        private final HeartsEnum       prevHeart;
-        private final HeartsEnum       halfHeart;
-        private       boolean          isHalfHeart = false;
-        private final ResourceLocation Image;
+        public final int              X;
+        public final int              Y;
+        public final int              hpValue;
+        public final HeartsEnum       prevHeart;
+        public final HeartsEnum       halfHeart;
+        public       boolean          isHalfHeart = false;
+        public final ResourceLocation Image;
 
         HeartsEnum(
           final ResourceLocation heartImage, final int x, final int y, final int hpValue,
@@ -127,11 +127,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
-        createSaturationBar();
-        createHappinessBar();
+        createSaturationBar(citizen, this);
+        createHappinessBar(citizen, this);
         createXpBar(citizen, this);
         createSkillContent(citizen, this);
-        updateHappiness();
+        updateHappiness(citizen, this);
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
@@ -216,9 +216,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
      */
-    private void createSaturationBar()
+    public static void createSaturationBar(final ICitizenDataView citizen, final View view)
     {
-        findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
 
         //Max saturation (Black food items).
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
@@ -227,7 +227,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             saturation.setImage(Screen.GUI_ICONS_LOCATION, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
 
             saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
+            view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
         //Current saturation (Full food hearts).
@@ -237,7 +237,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
+            view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
         //Half food items.
@@ -246,7 +246,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
+            view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
     }
 
@@ -254,11 +254,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * +
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      */
-    private void createHappinessBar()
+    private static void createHappinessBar(final ICitizenDataView citizen, final View view)
     {
-        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
-        findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
+        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
 
         @NotNull final Image xpBar = new Image();
@@ -269,15 +269,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
         xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
+        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
+        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
 
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
             xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
+            view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
     }
 
@@ -324,7 +324,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public static void createHappinessBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         //Calculates how much percent of the next level has been completed. 
-        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
@@ -375,6 +375,17 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
+     * Go to the request list.
+     */
+    public void goToRequestList()
+    {
+        findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+        buttonPrevPage.off();
+        buttonNextPage.off();
+        pageNum.off();
+    }
+
+    /**
      * Called when a button in the citizen has been clicked.
      *
      * @param button the clicked button.
@@ -385,10 +396,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
-                buttonPrevPage.off();
-                buttonNextPage.off();
-                pageNum.off();
+                goToRequestList();
                 break;
             case BUTTON_BACK:
                 findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
@@ -402,8 +410,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 break;
         }
     }
-
-
 
     @Override
     public void fulfill(@NotNull final Button button)
@@ -481,7 +487,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Update the display for the happiness
      */
-    private void updateHappiness()
+    public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         int row = 1;
         final double[] levels =
@@ -489,23 +495,23 @@ public class WindowCitizen extends AbstractWindowRequestTree
             citizen.getToolsModifiers()};
         final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
 
-        findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        if (findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
+        window.findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        if (window.findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
         {
-            findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
+            window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
 
             for (int i = 0; i < levels.length; i++)
             {
-                final Image image = findPaneOfTypeByID("modifierImage" + row, Image.class);
+                final Image image = window.findPaneOfTypeByID("modifierImage" + row, Image.class);
                 if (levels[i] < 0)
                 {
-                    findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    window.findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(RED_ICON);
                     row++;
                 }
                 else if (levels[i] > 0)
                 {
-                    findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    window.findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(GREEN_ICON);
                     row++;
                 }
@@ -513,7 +519,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
             for (int i = row; i <= levels.length; i++)
             {
-                final Image image = findPaneOfTypeByID("modifierImage" + i, Image.class);
+                final Image image = window.findPaneOfTypeByID("modifierImage" + i, Image.class);
                 image.hide();
             }
         }

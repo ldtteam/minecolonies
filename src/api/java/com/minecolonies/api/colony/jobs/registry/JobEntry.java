@@ -70,7 +70,7 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IFor
      *
      * @return The created {@link IJob}.
      */
-    public Function<ICitizenData, IJob<?>> getJobProducer()
+    public Function<ICitizenData, IJob<?>> getHandlerProducer()
     {
         return jobProducer;
     }
