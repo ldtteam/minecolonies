@@ -1,0 +1,21 @@
+{
+  "parent": "minecolonies:minecolonies/create_build_request_1_builder",
+  "display": {
+    "icon": {
+      "item": "minecraft:cooked_beef"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.citizen_eat_food_first.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.citizen_eat_food_first.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "citizen_eat_anything": {
+      "trigger": "minecolonies:citizen_eat_food"
+    }
+  }
+}

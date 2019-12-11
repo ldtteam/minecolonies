@@ -5,6 +5,7 @@ import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -100,5 +102,11 @@ public class FMLEventHandler
     public void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
     {
         ModSoundEvents.registerSounds(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(final FMLServerStoppedEvent event)
+    {
+        Pathfinding.shutdown();
     }
 }

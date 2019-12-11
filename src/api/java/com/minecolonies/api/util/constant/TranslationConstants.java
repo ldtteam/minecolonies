@@ -316,9 +316,13 @@ public final class TranslationConstants
     @NonNls
     public static final     String FURNACE_USER_NO_FUEL                      = "com.minecolonies.coremod.furnaceUser.noFuel";
     @NonNls
+    public static final     String FURNACE_USER_NO_ORE                      = "com.minecolonies.coremod.furnaceUser.noOre";
+    @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG    = "com.minecolonies.coremod.general.onBig";
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG   = "com.minecolonies.coremod.general.offBig";
+    @NonNls
+    public static final String COM_MINECOLONIES_INFO_PREFIX = "com.minecolonies.coremod.info.";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED  = "com.minecolonies.coremod.general.cantTakeEquipped";
     @NonNls
@@ -337,6 +341,36 @@ public final class TranslationConstants
     public static final String NO_FLOWERS_IN_CONFIG = "com.minecolonies.coremod.florist.noflowers";
     @NonNls
     public static final String NO_WORKERS_TO_DRAIN_SET = "com.minecolonies.coremod.enchanter.nodrainingsset";
+    @NonNls
+    public static final String NO_FREE_FIELDS = "entity.farmer.noFreeFields";
+    @NonNls
+    public static final String NO_SEED_SET    = "entity.farmer.noSeedSet";
+    @NonNls
+    public static final String WATER_TOO_FAR = "entity.fisherman.messageWaterTooFar";
+    @NonNls
+    public static final String NO_COMPOST = "com.minecolonies.coremod.florist.nocompost";
+    @NonNls
+    public static final String NEEDS_BETTER_HUT = "entity.miner.messagerequiresbetterhut";
+    @NonNls
+    public static final String RAW_FOOD      = "com.minecolonies.coremod.ai.wrongFood";
+    @NonNls
+    public static final String NO_RESTAURANT = "com.minecolonies.coremod.ai.noRestaurant";
+    @NonNls
+    public static final String DEMANDS_HOUSE = "entity.citizen.demandsHouse";
+    @NonNls
+    public static final String NO_HOUSE      = "entity.citizen.noHouse";
+    @NonNls
+    public static final String DEMANDS_JOB   = "entity.citizen.demandsJob";
+    @NonNls
+    public static final String NO_JOB        = "entity.citizen.noJob";
+    @NonNls
+    public static final String DEMANDS_TOOL  = "entity.citizen.demandsTool";
+    @NonNls
+    public static final String NO_TOOL       = "entity.citizen.noTool";
+    @NonNls
+    public static final String ASYNC_REQUEST = "com.minecolonies.requestsystem.playerresolver.async";
+    @NonNls
+    public static final String NORMAL_REQUEST  = "com.minecolonies.requestsystem.playerresolver.normal";
 
 
     private TranslationConstants()

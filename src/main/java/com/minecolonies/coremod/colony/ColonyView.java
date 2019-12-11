@@ -772,7 +772,7 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewCitizensMessage(final int id, final ByteBuf buf)
     {
-        final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf);
+        final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf, this);
         if (citizen != null)
         {
             citizens.put(citizen.getId(), citizen);

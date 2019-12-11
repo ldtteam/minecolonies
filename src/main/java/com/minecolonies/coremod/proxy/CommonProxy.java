@@ -5,6 +5,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityEnchanter;
@@ -15,6 +16,7 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
@@ -178,6 +180,12 @@ public abstract class CommonProxy implements IProxy
         return false;
     }
 
+    @SubscribeEvent
+    public static void registerInteractionTypes(@NotNull final RegistryEvent.Register<InteractionResponseHandlerEntry> event)
+    {
+        ModInteractionsInitializer.init(event);
+    }
+
     @Override
     public void registerTileEntities()
     {
@@ -240,6 +248,14 @@ public abstract class CommonProxy implements IProxy
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY,
           true);
+        EntityRegistry.registerModEntity(SITTING_ENTITY,
+          SittingEntity.class,
+          "SITTING_ENTITY",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          false);
         EntityRegistry.registerModEntity(ARCHER,
           EntityArcherBarbarian.class,
           "ArcherBarbarian",

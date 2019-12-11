@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_guard_tower",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockHutArchery"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_archery.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_archery.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "guard_tower": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "archery",
+        "level": 1
+      }
+    }
+  }
+}

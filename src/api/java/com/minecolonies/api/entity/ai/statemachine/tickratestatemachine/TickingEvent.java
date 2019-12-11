@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IAIEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +12,12 @@ import java.util.function.Supplier;
 /**
  * Event with a tickrate for a statemachine using a tickrate.
  */
-public class TickingEvent extends TickingTransition implements IStateMachineEvent
+public class TickingEvent<S extends IState> extends TickingTransition<S> implements IStateMachineEvent<S>
 {
     /**
      * The type of this Event
      */
-    private final IAIEventType eventType;
+    private final IStateEventType eventType;
 
     /**
      * Creates a new TickingEvent
@@ -27,9 +28,9 @@ public class TickingEvent extends TickingTransition implements IStateMachineEven
      * @param tickRate  tickrate at which the event is checked
      */
     protected TickingEvent(
-      @NotNull final IAIEventType eventType,
+      @NotNull final IStateEventType eventType,
       @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<IAIState> nextState,
+      @NotNull final Supplier<S> nextState,
       @NotNull final int tickRate)
     {
         super(condition, nextState, tickRate);
@@ -40,7 +41,7 @@ public class TickingEvent extends TickingTransition implements IStateMachineEven
      * Get the type of this event
      */
     @Override
-    public IAIEventType getEventType()
+    public IStateEventType getEventType()
     {
         return eventType;
     }

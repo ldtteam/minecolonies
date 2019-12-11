@@ -14,7 +14,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +61,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             return;
         }
 
-        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND) && placer instanceof EntityPlayer)
+        if (placer instanceof EntityPlayer)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
