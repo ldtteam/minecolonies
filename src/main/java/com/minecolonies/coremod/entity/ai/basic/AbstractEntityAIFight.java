@@ -292,10 +292,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
 
         if (getOwnBuilding() != null)
         {
-            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * 5 * SPEED_LEVEL_BONUS;
+            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
         }
 
-        levelAdjustment = levelAdjustment > 0.5 ? 0.5 : levelAdjustment;
+        levelAdjustment = levelAdjustment > 0.3 ? 0.3 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;
     }
 

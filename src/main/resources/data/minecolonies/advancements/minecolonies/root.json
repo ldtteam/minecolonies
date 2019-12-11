@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecolonies:supplychestdeployer"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.root.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.root.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "supply_ship_placed": {
+      "trigger": "minecolonies:supply_placed"
+    }
+  }
+}

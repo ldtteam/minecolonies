@@ -115,4 +115,22 @@ public interface ICitizenHappinessHandler
      * @param buf  buffer to witch values of the modifiers will be written to.
      */
     void serializeViewNetworkData(@NotNull PacketBuffer buf);
+
+    /**
+     * Get the current number of days without a house.
+     * @return the number.
+     */
+    int getNumberOfDaysWithoutHouse();
+
+    /**
+     * Get the number of days without a job.
+     * @return the number.
+     */
+    int getNumberOfDaysWithoutJob();
+
+    /**
+     * get the max open tool days.
+     * @return the max open days.
+     */
+    int getMaxOpenToolDays();
 }

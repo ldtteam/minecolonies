@@ -473,6 +473,12 @@ public class CitizenManager implements ICitizenManager
         }
     }
 
+    @Override
+    public void tickCitizenData()
+    {
+        this.getCitizens().forEach(ICitizenData::tick);
+    }
+
     /**
      * Updates the citizen entities when needed and spawn the initial citizens on colony tick.
      *

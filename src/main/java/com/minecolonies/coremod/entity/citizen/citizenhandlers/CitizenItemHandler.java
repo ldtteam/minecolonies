@@ -316,7 +316,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             {
                 continue;
             }
-            stack.damageItem((int)(damage/2), citizen, (i) -> {
+            stack.damageItem(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
                 i.sendBreakAnimation(Hand.MAIN_HAND);
             });
         }

@@ -1,4 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" lightbox="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 20" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>

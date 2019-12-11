@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICitizenDataManager;
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.util.Log;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,9 +20,9 @@ public class CitizenDataManager implements ICitizenDataManager
     }
 
     @Override
-    public ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer)
+    public ICitizenDataView createFromNetworkData(final int id, @NotNull final PacketBuffer networkBuffer, final IColonyView colonyView)
     {
-        CitizenDataView citizenDataView = new CitizenDataView(id);
+        ICitizenDataView citizenDataView = colonyView.getCitizen(id) == null ? new CitizenDataView(id) : colonyView.getCitizen(id);
 
         try
         {

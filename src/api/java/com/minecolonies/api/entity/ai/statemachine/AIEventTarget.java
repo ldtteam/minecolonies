@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * Special AI Targets which are used for preState cecks and limits.
  * They are checked before normal AITargets always
  */
-public class AIEventTarget extends TickingEvent
+public class AIEventTarget extends TickingEvent<IAIState>
 {
     /**
      * Construct a special target.
