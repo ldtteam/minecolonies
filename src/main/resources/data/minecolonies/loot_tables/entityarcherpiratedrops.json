@@ -16,7 +16,7 @@
         },
         {
           "type": "item",
-          "weight": 1,
+          "weight": 10,
           "name": "minecolonies:ancienttome"
         }
       ]
