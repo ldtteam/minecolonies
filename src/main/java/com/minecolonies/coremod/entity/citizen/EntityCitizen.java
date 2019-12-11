@@ -208,7 +208,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     private IItemHandler invWrapper;
 
     /**
-     * Citizen constructor.
+     * Citizen data view.
+     */
+    private ICitizenDataView citizenDataView;
+
+    /**
+     * Constructor for a new citizen typed entity.
      *
      * @param world the world the citizen lives in.
      */
@@ -880,15 +885,23 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the view.
      */
-    private ICitizenDataView getCitizenDataView()
+    public ICitizenDataView getCitizenDataView()
     {
-        if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
+        if (this.citizenDataView == null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
-            if (colonyView != null)
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                return colonyView.getCitizen(citizenId);
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                    return this.citizenDataView;
+                }
             }
+        }
+        else
+        {
+            return this.citizenDataView;
         }
 
         return null;
@@ -1055,6 +1068,14 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getCitizen(citizenId);
+                }
+            }
         }
         else
         {
@@ -1348,7 +1369,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
         citizenItemHandler.pickupItems();
-        citizenChatHandler.cleanupChatMessages();
         citizenColonyHandler.updateColonyServer();
 
         if (citizenData != null)

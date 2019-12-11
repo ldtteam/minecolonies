@@ -1221,6 +1221,26 @@ public final class WindowConstants
     public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
 
     /**
+     * Interaction suffix.
+     */
+    public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
+
+    /**
+     * Id of the chat label.
+     */
+    public static final String CHAT_LABEL_ID = "chat";
+
+    /**
+     * WindowInteraction constants.
+     */
+    public static final int SLIGHTLY_BLUE           = 100;
+    public static final int BUTTON_HEIGHT           = 17;
+    public static final int BUTTON_LENGTH           = 129;
+    public static final int BUTTON_BUFFER           = 3;
+    public static final String RESPONSE_BOX_ID      = "responseOptions";
+    public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

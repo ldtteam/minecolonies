@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,12 +107,22 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     }
 
     /**
+     * Remove a furnace from the building.
+     *
+     * @param pos the position of it.
+     */
+    public void removeFromFurnaces(final BlockPos pos)
+    {
+        furnaces.remove(pos);
+    }
+
+    /**
      * Getter for all allowed fuel from the building.
      * @return the list of itemStacks.
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+        return getCopyOfAllowedItems().get(FUEL_LIST) == null ? Collections.emptyList() : getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
 
     /**
