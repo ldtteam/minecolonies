@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -22,7 +23,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -190,13 +190,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForWoodcutting),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
-          new AITarget(LUMBERJACK_GATHERING, this::gathering),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(PREPARING, this::prepareForWoodcutting, 20),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, 20),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, 20),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering, 20),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, 20)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());

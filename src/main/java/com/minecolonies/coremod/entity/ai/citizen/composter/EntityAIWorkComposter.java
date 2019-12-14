@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,11 +84,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(GET_MATERIALS, this::getMaterials),
-          new AITarget(START_WORKING, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(GET_MATERIALS, this::getMaterials, 20),
+          new AITarget(START_WORKING, this::decideWhatToDo, 1),
+          new AITarget(COMPOSTER_FILL, this::fillBarrels, 10),
+          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels, 10)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

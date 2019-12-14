@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
-import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     /**
      * Delay for each of the craftings.
      */
-    private static final int TICK_DELAY = 5;
+    private static final int TICK_DELAY = 20;
 
     /**
      * Constructor for the crusher.
@@ -50,8 +49,8 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(CRUSH, this::crush)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(CRUSH, this::crush, TICK_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance());
@@ -86,9 +85,6 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         {
             return getState();
         }
-        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
-
-        setDelay(TICK_DELAY);
         job.setProgress(job.getProgress()+1);
 
         final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);

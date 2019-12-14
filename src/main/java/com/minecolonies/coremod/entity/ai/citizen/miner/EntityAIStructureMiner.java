@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -25,7 +26,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -123,15 +123,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           /*
            * If IDLE - switch to start working.
            */
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForMining),
-          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
-          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder),
-          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft),
-          new AITarget(MINER_MINING_SHAFT, this::doShaftMining),
-          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
-          new AITarget(MINER_MINING_NODE, this::executeNodeMining)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(PREPARING, this::prepareForMining, 1),
+          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, 20),
+          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, 20),
+          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, 20),
+          new AITarget(MINER_MINING_SHAFT, this::doShaftMining, STANDARD_DELAY),
+          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
+          new AITarget(MINER_MINING_NODE, this::executeNodeMining, STANDARD_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           2 * worker.getCitizenData().getStrength()

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -26,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,13 +174,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForFishing),
-          new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-          new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-          new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-          new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(PREPARING, this::prepareForFishing, 20),
+          new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles, 1),
+          new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater, 20),
+          new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater, 20),
+          new AITarget(FISHERMAN_START_FISHING, this::doFishing, 20)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()

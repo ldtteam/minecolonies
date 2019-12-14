@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
@@ -16,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
+          new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
           new AITarget(DECIDE, this::decide, TICKS_SECOND),
           new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),

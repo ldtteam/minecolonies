@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -14,7 +15,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -119,7 +119,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
+          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff, HIT_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -214,7 +214,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         }
 
         progress++;
-        setDelay(HIT_DELAY);
         return getState();
     }
 

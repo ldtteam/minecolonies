@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -12,7 +13,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +54,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
 
         super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, this::shearSheep)
+          new AITarget(SHEPHERD_SHEAR, this::shearSheep, 20)
         );
     }
 

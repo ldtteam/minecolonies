@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -19,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +86,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         super(job);
         super.registerTargets(
-          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
+          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
