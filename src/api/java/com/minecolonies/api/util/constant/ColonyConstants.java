@@ -56,6 +56,24 @@ public final class ColonyConstants
     public static final int    CHECK_WAYPOINT_EVERY              = 100;
 
     /**
+     * How often the subscribers get updated in ticks.
+     */
+    public static final int UPDATE_SUBSCRIBERS_INTERVAL = 20;
+
+    /**
+     * How often the colony state gets updated in ticks.
+     */
+    public static final int UPDATE_STATE_INTERVAL   = 100;
+    /**
+     * How often the colony request system gets updated in ticks.
+     */
+    public static final int UPDATE_RS_INTERVAL      = 11;
+    /**
+     * How often the colony updates day/nighttime in ticks.
+     */
+    public static final int UPDATE_DAYTIME_INTERVAL = 20;
+
+    /**
      * Distance of when to add new subscribers.
      */
     public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
@@ -80,6 +98,7 @@ public final class ColonyConstants
      */
     public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
     public static final ResourceLocation MERCENARY                    = new ResourceLocation(Constants.MOD_ID, "Mercenary");
+    public static final ResourceLocation SITTING_ENTITY               = new ResourceLocation(Constants.MOD_ID, "SITTING_ENTITY");
     public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;

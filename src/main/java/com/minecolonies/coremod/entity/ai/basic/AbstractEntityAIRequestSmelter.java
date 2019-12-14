@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -9,13 +10,15 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +82,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 final int countInResultSlot = isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
                 if ((!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -134,7 +137,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState retrieveSmeltableFromFurnace()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
 
         if (walkTo == null || currentRequest == null)
         {
@@ -193,15 +196,25 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if(entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
+            if( entity instanceof TileEntityFurnace )
             {
-                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
-                if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                      || (hasFuelInFurnaceAndNoSmeltable(furnace))
-                      || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                if ( !((TileEntityFurnace) entity).isBurning() )
                 {
-                    walkTo = pos;
-                    return START_USING_FURNACE;
+                    final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
+                          || (hasFuelInFurnaceAndNoSmeltable(furnace))
+                          || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                    {
+                        walkTo = pos;
+                        return START_USING_FURNACE;
+                    }
+                }
+            }
+            else
+            {
+                if ( !(world.getBlockState(pos).getBlock() instanceof BlockFurnace) )
+                {
+                    ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(pos);
                 }
             }
         }
@@ -217,7 +230,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
@@ -257,6 +273,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                   new InvWrapper(furnace), FUEL_SLOT);
             }
         }
+        else
+        {
+            if ( !(world.getBlockState(walkTo).getBlock() instanceof BlockFurnace) )
+            {
+                ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(walkTo);
+            }
+        }
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return START_WORKING;
@@ -285,15 +308,28 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(FURNACE_USER_NO_FUEL);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+            }
             return getState();
+        }
+
+        if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
+        {
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
+            setDelay(STANDARD_DELAY);
+            return START_WORKING;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 

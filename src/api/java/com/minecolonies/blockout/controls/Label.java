@@ -3,6 +3,8 @@ package com.minecolonies.blockout.controls;
 import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
 
+import java.util.List;
+
 /**
  * BlockOut label pane. Used to render a piece of text.
  */
@@ -17,6 +19,16 @@ public class Label extends AbstractTextElement
      * The color the label has when hovering it with the mouse.
      */
     protected int hoverColor = 0xffffff;
+
+    /**
+     * Whether to wrap text around or not
+     */
+    protected boolean wrap = false;
+
+    /**
+     * Font height according to FontRenderer class
+     */
+    private static final int FONT_HEIGHT = 9;
 
     /**
      * Standard constructor which instantiates a new label.
@@ -39,6 +51,8 @@ public class Label extends AbstractTextElement
 
         //  match textColor by default
         hoverColor = params.getColorAttribute("hovercolor", textColor);
+
+        wrap = params.getBooleanAttribute("wrap", wrap);
 
         if (width == 0)
         {
@@ -103,7 +117,14 @@ public class Label extends AbstractTextElement
         GlStateManager.translate((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
         GlStateManager.scale((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
-        mc.fontRenderer.drawString(labelText, 0, 0, color, shadow);
+        if (labelText != null && wrap)
+        {
+            mc.fontRenderer.drawSplitString(labelText, 0, 0, width, color);
+        }
+        else
+        {
+            mc.fontRenderer.drawString(labelText, 0, 0, color, shadow);
+        }
         GlStateManager.popMatrix();
     }
 

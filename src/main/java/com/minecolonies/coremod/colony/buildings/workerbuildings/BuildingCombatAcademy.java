@@ -310,7 +310,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         @Override
         public Skill getSecondarySkill()
         {
-            return Skill.DEXTERITY;
+            return Skill.ENDURANCE;
         }
     }
 }

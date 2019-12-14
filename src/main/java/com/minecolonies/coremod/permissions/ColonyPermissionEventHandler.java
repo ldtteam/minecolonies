@@ -439,7 +439,9 @@ public class ColonyPermissionEventHandler
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.break.start", event.getEntityPlayer().getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.pvp.townhall.break.start",
+                  event.getEntityPlayer().getName());
                 breakProgressOnTownHall = 0;
                 validTownHallBreak = false;
             }

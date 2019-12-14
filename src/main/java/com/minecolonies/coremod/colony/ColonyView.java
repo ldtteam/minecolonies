@@ -97,7 +97,16 @@ public final class ColonyView implements IColonyView
     //  Buildings
     @Nullable
     private ITownHallView townHall;
-    private int           citizenCount = 0;
+
+    /**
+     * The max citizen count.
+     */
+    private int citizenCount = 0;
+
+    /**
+     * The max citizen count considering guard towers.
+     */
+    private int citizenCountWithEmptyGuardTowers = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -207,6 +216,7 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getCitizenManager().getMaxCitizens());
+        buf.writeInt(colony.getCitizenManager().getPotentialMaxCitizens());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -454,6 +464,24 @@ public final class ColonyView implements IColonyView
     {
     }
 
+    @Override
+    public void addLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public void removeLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public int getLoadedChunkCount()
+    {
+        return 0;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -573,6 +601,12 @@ public final class ColonyView implements IColonyView
         return citizenCount;
     }
 
+    @Override
+    public int getCitizenCountLimit()
+    {
+        return citizenCountWithEmptyGuardTowers;
+    }
+
     /**
      * Getter for the citizens map.
      *
@@ -626,6 +660,7 @@ public final class ColonyView implements IColonyView
         manualHiring = buf.readBoolean();
         //  Citizenry
         citizenCount = buf.readInt();
+        citizenCountWithEmptyGuardTowers = buf.readInt();
 
         if (isNewSubscription)
         {
@@ -737,7 +772,7 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewCitizensMessage(final int id, final ByteBuf buf)
     {
-        final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf);
+        final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf, this);
         if (citizen != null)
         {
             citizens.put(citizen.getId(), citizen);
@@ -1013,9 +1048,9 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public Set<EntityPlayer> getMessageEntityPlayers()
     {
-        return null;
+        return new HashSet<>();
     }
 
     @Override
@@ -1072,6 +1107,12 @@ public final class ColonyView implements IColonyView
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
 
+    }
+
+    @Override
+    public boolean areAllColonyChunksLoaded()
+    {
+        return false;
     }
 
     @Override
@@ -1191,6 +1232,12 @@ public final class ColonyView implements IColonyView
     public void increaseBoughtCitizenCost()
     {
 
+    }
+
+    @Override
+    public Set<EntityPlayer> getImportantMessageEntityPlayers()
+    {
+        return new HashSet<>();
     }
 
     /**

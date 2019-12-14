@@ -3,10 +3,12 @@ package com.minecolonies.coremod.util;
 import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -25,10 +27,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
+    /**
+     * The maximum amount of colonies we're trying to load from a backup
+     */
+    private final static int MAX_COLONY_LOAD = 5000;
+
     /**
      * Private constructor to hide implicit one.
      */
@@ -61,9 +69,9 @@ public final class BackUpHelper
                     if (file.exists())
                     {
                         // mark existing files
-                        if (IColonyManager.getInstance().getColonyByDimension(i,dim) == null)
+                        if (IColonyManager.getInstance().getColonyByDimension(i, dim) == null)
                         {
-                            markColonyDeleted(i,dim);
+                            markColonyDeleted(i, dim);
                             addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dim), zos, saveDir);
                         }
                         else
@@ -93,8 +101,38 @@ public final class BackUpHelper
     }
 
     /**
-     * Get save location for Minecolonies backup data, from the world/save
-     * directory.
+     * Loads all colonies from backup files which the world cap is missing.
+     */
+    public static void loadMissingColonies()
+    {
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+
+        for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
+        {
+            int missingFilesInRow = 0;
+            for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
+            {
+                // Check non-deleted files for colony id + dim
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
+                if (file.exists())
+                {
+                    missingFilesInRow = 0;
+                    // Load colony if null
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dim) == null)
+                    {
+                        loadColonyBackup(i, dim, false);
+                    }
+                }
+                else
+                {
+                    missingFilesInRow++;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get save location for Minecolonies backup data, from the world/save directory.
      *
      * @return Save file for minecolonies.
      */
@@ -142,8 +180,7 @@ public final class BackUpHelper
     }
 
     /**
-     * Save an NBTTagCompound to a file.  Does so in a safe manner using an
-     * intermediate tmp file.
+     * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file.
      *
      * @param file     The destination file to write the data to.
      * @param compound The NBTTagCompound to write to the file.
@@ -228,7 +265,7 @@ public final class BackUpHelper
      * @param colonyId  of the colony.
      * @param dimension the colony dimension.
      */
-    public static void loadColonyBackup(final int colonyId, final int dimension)
+    public static void loadColonyBackup(final int colonyId, final int dimension, final boolean claimChunks)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
@@ -249,29 +286,42 @@ public final class BackUpHelper
         }
         else
         {
-            Log.getLogger().warn("Colony is null, creating new colony!");
+            Log.getLogger().warn("Colony:"+colonyId+" is missing, loading backup!");
             final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
+            if (colony == null)
+            {
+                Log.getLogger().warn("Colony:"+colonyId+" loadBackup failed!");
+                return;
+            }
+
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
 
-            if (Configurations.gameplay.enableDynamicColonySizes)
+            if (claimChunks)
             {
-                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+                IColonyTagCapability cap = colonyWorld.getChunk(colony.getCenter()).getCapability(CLOSE_COLONY_CAP,null);
+                if (cap != null && cap.getOwningColony() != colonyId)
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld,
-                      true,
-                      colony.getID(),
-                      building.getPosition(),
-                      colony.getDimension(),
-                      building.getClaimRadius(building.getBuildingLevel()));
+                    if (Configurations.gameplay.enableDynamicColonySizes)
+                    {
+                        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+                        {
+                            ChunkDataHelper.claimColonyChunks(colonyWorld,
+                              true,
+                              colony.getID(),
+                              building.getPosition(),
+                              colony.getDimension(),
+                              building.getClaimRadius(building.getBuildingLevel()));
+                        }
+                    }
+                    else
+                    {
+                        ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+                    }
                 }
-            }
-            else
-            {
-                ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
             }
         }
 
-        Log.getLogger().warn("Successfully restored colony!");
+        Log.getLogger().warn("Successfully restored colony:"+colonyId);
     }
 }

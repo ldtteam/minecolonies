@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -16,9 +18,13 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
+import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,9 +32,11 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
@@ -207,6 +216,11 @@ public class CitizenData implements ICitizenData
     private final CitizenHappinessHandler citizenHappinessHandler;
 
     /**
+     * The citizen chat options on the server side.
+     */
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+
+    /**
      * Create a CitizenData given an ID.
      * Used as a super-constructor or during loading.
      *
@@ -219,6 +233,16 @@ public class CitizenData implements ICitizenData
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
         this.citizenHappinessHandler = new CitizenHappinessHandler(this);
+    }
+
+    @Override
+    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world)
+    {
+        if (citizenChatOptions.containsKey(key))
+        {
+            citizenChatOptions.get(key).onServerResponseTriggered(response, world, this);
+            markDirty();
+        }
     }
 
     /**
@@ -810,34 +834,27 @@ public class CitizenData implements ICitizenData
 
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
-        writeStatusToBuffer(buf);
-
         buf.writeInt(colony.getID());
 
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
-
         BlockPosUtil.writeToByteBuf(buf, lastPosition == null ? BlockPos.ORIGIN : lastPosition);
-    }
 
-    /**
-     * Writes the citizen status to the byteBuffer.
-     *
-     * @param buf the buffer.
-     */
-    private void writeStatusToBuffer(@NotNull final ByteBuf buf)
-    {
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
+        if (colony.getWorld() != null)
+        {
+            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).collect(Collectors.toList());
 
-        optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatusArray = entityCitizen.getCitizenStatusHandler().getLatestStatus();
-            for (final ITextComponent latestStatus : latestStatusArray)
+            buf.writeInt(subInteractions.size());
+            for (final IInteractionResponseHandler interactionHandler : subInteractions)
             {
-                ByteBufUtils.writeUTF8String(buf, latestStatus == null ? "" : latestStatus.getUnformattedText());
+                ByteBufUtils.writeTag(buf, interactionHandler.serializeNBT());
             }
-        });
+        }
+        else
+        {
+            buf.writeInt(0);
+        }
     }
 
     /**
@@ -894,6 +911,15 @@ public class CitizenData implements ICitizenData
     public void levelUp()
     {
         increaseLevel();
+
+        // Show levelup particles
+        if (getCitizenEntity().isPresent())
+        {
+            final AbstractEntityCitizen citizen = getCitizenEntity().get();
+            MineColonies.getNetwork()
+              .sendToAllTracking(new VanillaParticleMessage(citizen.posX, citizen.posY, citizen.posZ, EnumParticleTypes.VILLAGER_HAPPY.getParticleID()), getCitizenEntity().get());
+        }
+
         if (job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
@@ -1428,6 +1454,42 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public double drainExperience(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
+            final double newXp = entry.getSecond() - (xpDrain / Configurations.gameplay.enchanterExperienceMultiplier);
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+            return xpDrain;
+        }
+        return 0;
+    }
+
+    @Override
+    public void spendLevels(final int levelDrain)
+    {
+        if (job != null)
+        {
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
+            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
+
+            final double xpDrain = Math.min(drain, entry.getSecond());
+            final double newXp = entry.getSecond() - xpDrain;
+            final int newLevel = ExperienceUtils.calculateLevel(newXp);
+
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
+            this.markDirty();
+        }
+    }
+
+    @Override
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound nbtTagCompound = new NBTTagCompound();
@@ -1481,6 +1543,14 @@ public class CitizenData implements ICitizenData
 
         citizenHappinessHandler.writeToNBT(nbtTagCompound);
 
+        @NotNull final NBTTagList chatTagList = new NBTTagList();
+        for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
+        {
+            @NotNull final NBTTagCompound chatOptionCompound = new NBTTagCompound();
+            chatOptionCompound.setTag(TAG_CHAT_OPTION, entry.serializeNBT());
+            chatTagList.appendTag(chatOptionCompound);
+        }
+        nbtTagCompound.setTag(TAG_CHAT_OPTIONS, chatTagList);
         return nbtTagCompound;
     }
 
@@ -1549,6 +1619,75 @@ public class CitizenData implements ICitizenData
             justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
         }
 
+        //  Citizen chat options.
+        if (nbtTagCompound.hasKey(TAG_CHAT_OPTIONS))
+        {
+            final NBTTagList handlerTagList = nbtTagCompound.getTagList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < handlerTagList.tagCount(); ++i)
+            {
+                final ServerCitizenInteractionResponseHandler handler =
+                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, handlerTagList.getCompoundTagAt(i).getCompoundTag(TAG_CHAT_OPTION));
+                citizenChatOptions.put(handler.getInquiry(), handler);
+            }
+        }
         citizenHappinessHandler.readFromNBT(nbtTagCompound);
+    }
+
+    @Override
+    public void tick()
+    {
+        if (!getCitizenEntity().isPresent() || getCitizenEntity().get().isDead())
+        {
+            return;
+        }
+
+        final List<IInteractionResponseHandler> toRemove = new ArrayList<>();
+        for (final IInteractionResponseHandler handler : citizenChatOptions.values())
+        {
+            try
+            {
+                if (!handler.isValid(this))
+                {
+                    toRemove.add(handler);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().warn("Error during validation of handler: " + handler.getInquiry(), e);
+                // If anything goes wrong in checking validity, remove handler.
+                toRemove.add(handler);
+            }
+        }
+
+        if (!toRemove.isEmpty())
+        {
+            markDirty();
+        }
+
+        for (final IInteractionResponseHandler handler : toRemove)
+        {
+            citizenChatOptions.remove(handler.getInquiry());
+            for (final ITextComponent comp : handler.getPossibleResponses())
+            {
+                if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
+                {
+                    citizenChatOptions.get(handler.getResponseResult(comp)).removeParent(handler.getInquiry());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void triggerInteraction(@NotNull final IInteractionResponseHandler handler)
+    {
+        if (!this.citizenChatOptions.containsKey(handler.getInquiry()))
+        {
+            this.citizenChatOptions.put(handler.getInquiry(), handler);
+            for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
+            {
+                this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteractionResponseHandler) childHandler);
+            }
+            markDirty();
+        }
     }
 }

@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/colony_population_10",
+  "display": {
+    "icon": {
+      "item": "minecraft:gold_ingot"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.colony_population_25.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.colony_population_25.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "population_5": {
+      "trigger": "minecolonies:colony_population",
+      "conditions": {
+        "population_count": 25
+      }
+    }
+  }
+}

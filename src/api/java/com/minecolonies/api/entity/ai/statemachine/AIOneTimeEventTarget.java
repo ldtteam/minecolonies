@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * One time usage AITarget, unregisters itself after usage
  */
-public class AIOneTimeEventTarget extends TickingOneTimeEvent
+public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
 {
     /**
      * Event to trigger a one time transition.

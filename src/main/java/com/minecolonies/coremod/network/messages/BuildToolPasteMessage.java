@@ -14,6 +14,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -236,6 +237,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
 
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
+            AdvancementTriggers.PLACE_SUPPLY.trigger(player);
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
