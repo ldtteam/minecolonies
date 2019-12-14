@@ -18,7 +18,6 @@ import net.minecraftforge.registries.ObjectHolder;
 /**
  * This class deals with the initialization of blocks and their items.
  */
-@ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModBlocksInitializer
 {
@@ -73,6 +72,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
         ModBlocks.blockHutSifter = new BlockHutSifter().registerBlock(registry);
         ModBlocks.blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
+        ModBlocks.blockHutEnchanter = new BlockHutEnchanter().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
@@ -130,6 +130,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher.registerBlockItem(registry, properties);
         ModBlocks.blockHutSifter.registerBlockItem(registry, properties);
         ModBlocks.blockHutFlorist.registerBlockItem(registry, properties);
+        ModBlocks.blockHutEnchanter.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);

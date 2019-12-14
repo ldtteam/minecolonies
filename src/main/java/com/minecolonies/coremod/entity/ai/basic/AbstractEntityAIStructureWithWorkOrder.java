@@ -271,7 +271,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
-              && !blockState.getBlock().isIn(BlockTags.BEDS)
+              && !(blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART) == BedPart.FOOT)
               && !blockState.getBlock().isIn(BlockTags.BANNERS))
         {
             building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);

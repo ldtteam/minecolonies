@@ -742,12 +742,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         BlockPos pos = parent.pos.add(dPos);
 
-        final Block block = world.getBlockState(parent.pos).getBlock();
-        if (block == Blocks.FARMLAND || block == Blocks.GRASS_PATH)
-        {
-            pos = pos.up();
-        }
-
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
         int nodeKey = computeNodeKey(pos);
@@ -996,6 +990,13 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private boolean checkHeadBlock(@Nullable final Node parent, @NotNull final BlockPos pos)
     {
+        BlockPos localPos = pos;
+        final VoxelShape bb = world.getBlockState(localPos).getCollisionShape(world, localPos);
+        if (bb != null && bb.getEnd(Direction.Axis.Y) < 1)
+        {
+            localPos = pos.up();
+        }
+
         if (!isPassable(pos.up()))
         {
             return true;
@@ -1003,7 +1004,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (parent != null)
         {
-            final BlockState hereState = world.getBlockState(parent.pos.down());
+            final BlockState hereState = world.getBlockState(localPos.down());
             return hereState.getMaterial().isLiquid() && !isPassable(pos);
         }
         return false;

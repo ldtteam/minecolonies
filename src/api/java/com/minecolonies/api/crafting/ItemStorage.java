@@ -2,7 +2,6 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +54,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
     /**
@@ -70,7 +69,7 @@ public class ItemStorage
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
-        this.creativeTabIndex = stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
     /**
@@ -85,7 +84,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
     /**
@@ -168,6 +167,16 @@ public class ItemStorage
     public List<Integer> getCreativeTabIndex()
     {
         return creativeTabIndex;
+    }
+
+    /**
+     * Getter for the primary creativeTab index of the storage.
+     *
+     * @return the index.
+     */
+    public int getPrimaryCreativeTabIndex()
+    {
+        return creativeTabIndex.isEmpty() ? 0 : creativeTabIndex.get(0);
     }
 
     @Override

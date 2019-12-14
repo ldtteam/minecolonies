@@ -22,7 +22,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 
 /**
@@ -45,7 +44,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(final ICitizenDataView citizen)
     {
-        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
+        @NotNull final WindowInteraction window = new WindowInteraction(citizen);
         window.open();
     }
 

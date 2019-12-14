@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -10,6 +11,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -26,10 +28,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
+    /**
+     * The maximum amount of colonies we're trying to load from a backup
+     */
+    private final static int MAX_COLONY_LOAD = 5000;
+
     /**
      * Private constructor to hide implicit one.
      */
@@ -91,6 +99,38 @@ public final class BackUpHelper
         }
 
         return true;
+    }
+
+    /**
+     * Loads all colonies from backup files which the world cap is missing.
+     */
+    public static void loadMissingColonies()
+    {
+        @NotNull final File saveDir =
+          new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+
+        DimensionType.getAll().forEach(dimensionType ->
+        {
+            int missingFilesInRow = 0;
+            for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
+            {
+                // Check non-deleted files for colony id + dim
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getId()));
+                if (file.exists())
+                {
+                    missingFilesInRow = 0;
+                    // Load colony if null
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getId()) == null)
+                    {
+                        loadColonyBackup(i, dimensionType.getId(), false, false);
+                    }
+                }
+                else
+                {
+                    missingFilesInRow++;
+                }
+            }
+        });
     }
 
     /**
@@ -254,7 +294,7 @@ public final class BackUpHelper
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getId()));
                 if (file.exists())
                 {
-                    loadColonyBackup(i, dimensionType.getId(), false);
+                    loadColonyBackup(i, dimensionType.getId(), false, false);
                 }
             }
         });
@@ -267,7 +307,7 @@ public final class BackUpHelper
      * @param dimension the colony dimension.
      * @param loadDeleted whether to load deleted colonies aswell.
      */
-    public static void loadColonyBackup(final int colonyId, final int dimension, boolean loadDeleted)
+    public static void loadColonyBackup(final int colonyId, final int dimension, boolean loadDeleted, boolean claimChunks)
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
@@ -292,29 +332,42 @@ public final class BackUpHelper
         }
         else
         {
-            Log.getLogger().warn("Colony is null, creating new colony!");
+            Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
             final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
             colony = Colony.loadColony(compound, colonyWorld);
-            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null).addColony(colony);
-
-            if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
+            if (colony == null)
             {
-                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-                {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld,
-                      true,
-                      colony.getID(),
-                      building.getPosition(),
-                      colony.getDimension(),
-                      building.getClaimRadius(building.getBuildingLevel()));
-                }
+                Log.getLogger().warn("Colony:" + colonyId + " loadBackup failed!");
+                return;
             }
-            else
+
+            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElse(null).addColony(colony);
+
+            if (claimChunks)
             {
-                ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+                IColonyTagCapability cap = ((Chunk) colonyWorld.getChunk(colony.getCenter())).getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+                if (cap != null && cap.getOwningColony() != colonyId)
+                {
+                    if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
+                    {
+                        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+                        {
+                            ChunkDataHelper.claimColonyChunks(colonyWorld,
+                              true,
+                              colony.getID(),
+                              building.getPosition(),
+                              colony.getDimension(),
+                              building.getClaimRadius(building.getBuildingLevel()));
+                        }
+                    }
+                    else
+                    {
+                        ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+                    }
+                }
             }
         }
 
-        Log.getLogger().warn("Successfully restored colony!");
+        Log.getLogger().warn("Successfully restored colony:" + colonyId);
     }
 }

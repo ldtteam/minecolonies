@@ -219,7 +219,7 @@ public class BuildingArchery extends AbstractBuildingWorker
         @Override
         public Skill getPrimarySkill()
         {
-            return Skill.INTELLIGENCE;
+            return Skill.DEXTERITY;
         }
 
         @NotNull

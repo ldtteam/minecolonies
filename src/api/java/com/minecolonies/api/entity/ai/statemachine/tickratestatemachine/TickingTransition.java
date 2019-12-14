@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.basestatemachine.BasicTransition;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -13,7 +13,7 @@ import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.T
 /**
  * Transition with tickrate logic, allows to define an intended tickrate at which this transition will be checked.
  */
-public class TickingTransition extends BasicTransition implements ITickingTransition
+public class TickingTransition<S extends IState> extends BasicTransition<S> implements ITickingTransition<S>
 {
     /**
      * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
@@ -43,9 +43,9 @@ public class TickingTransition extends BasicTransition implements ITickingTransi
      * @param tickRate  The expected tickrate at which this transition should be checked.
      */
     public TickingTransition(
-      @NotNull final IAIState state,
+      @NotNull final S state,
       @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<IAIState> nextState,
+      @NotNull final Supplier<S> nextState,
       @NotNull final int tickRate)
     {
         super(state, condition, nextState);
@@ -73,7 +73,7 @@ public class TickingTransition extends BasicTransition implements ITickingTransi
      */
     protected TickingTransition(
       @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<IAIState> nextState,
+      @NotNull final Supplier<S> nextState,
       @NotNull final int tickRate)
     {
         super(condition, nextState);

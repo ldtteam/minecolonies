@@ -31,7 +31,6 @@ public class Permissions implements IPermissions
     /**
      * All tags to store and retrieve data from nbt.
      */
-    private static final String TAG_UPDATE      = "update";
     private static final String TAG_OWNERS      = "owners";
     private static final String TAG_ID          = "id";
     private static final String TAG_RANK        = "rank";
@@ -39,6 +38,11 @@ public class Permissions implements IPermissions
     private static final String TAG_FLAGS       = "flags";
     private static final String TAG_OWNER       = "owner";
     private static final String TAG_OWNER_ID    = "ownerid";
+
+    /**
+     * NBTTarget for the permission version, used for updating.
+     */
+    private static final String TAG_VERSION = "permissionVersion";
 
     /**
      * All promotion rank possibilities.
@@ -89,9 +93,9 @@ public class Permissions implements IPermissions
     private UUID   ownerUUID = null;
 
     /**
-     * Is it an old colony and has the permission been already updated?
+     * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private boolean updatedPermissionAlready = false;
+    private static final int permissionsVersion = 1;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -126,6 +130,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
+        this.setPermission(Rank.OWNER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Officer
@@ -153,6 +159,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
         this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
+        this.setPermission(Rank.OFFICER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
 
 
         //Friend
@@ -180,8 +188,6 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
         this.colony = colony;
-
-        updatedPermissionAlready = true;
     }
 
     /**
@@ -284,6 +290,7 @@ public class Permissions implements IPermissions
      */
     public void loadPermissions(@NotNull final CompoundNBT compound)
     {
+        players.clear();
         //  Owners
         final ListNBT ownerTagList = compound.getList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < ownerTagList.size(); ++i)
@@ -311,109 +318,47 @@ public class Permissions implements IPermissions
         }
 
         //Permissions
-        final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < permissionsTagList.size(); ++i)
+        if (compound.getInt(TAG_VERSION) == permissionsVersion)
         {
-            final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
-            final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
-
-            final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-
-            int flags = 0;
-
-            for (int j = 0; j < flagsTagList.size(); ++j)
+            permissionMap.clear();
+            final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < permissionsTagList.size(); ++i)
             {
-                final String flag = flagsTagList.getString(j);
-                flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
-            }
-            permissionMap.put(rank, flags);
-        }
+                final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
+                final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
 
-        if (compound.keySet().contains(TAG_OWNER))
-        {
-            ownerName = compound.getString(TAG_OWNER);
-        }
-        if (compound.keySet().contains(TAG_OWNER_ID))
-        {
-            try
+                final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+
+                int flags = 0;
+
+                for (int j = 0; j < flagsTagList.size(); ++j)
+                {
+                    final String flag = flagsTagList.getString(j);
+                    flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                }
+                permissionMap.put(rank, flags);
+            }
+
+            if (compound.keySet().contains(TAG_OWNER))
             {
-                ownerUUID = UUID.fromString(compound.getString(TAG_OWNER_ID));
+                ownerName = compound.getString(TAG_OWNER);
             }
-            catch (final IllegalArgumentException e)
+            if (compound.keySet().contains(TAG_OWNER_ID))
             {
-                /*
-                 * Intentionally left empty. Happens when the UUID hasn't been saved yet.
-                 */
+                try
+                {
+                    ownerUUID = UUID.fromString(compound.getString(TAG_OWNER_ID));
+                }
+                catch (final IllegalArgumentException e)
+                {
+                    /*
+                     * Intentionally left empty. Happens when the UUID hasn't been saved yet.
+                     */
+                }
             }
-        }
-
-        this.updatedPermissionAlready = compound.getBoolean(TAG_UPDATE);
-
-        if (!updatedPermissionAlready)
-        {
-            updateNewPermissions();
         }
 
         restoreOwnerIfNull();
-    }
-
-    /**
-     * This method should be used to update new permissionMap added to the game which old colonies probably don't have yet.
-     */
-    private void updateNewPermissions()
-    {
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.THROW_POTION);
-        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
-        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
-        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
-        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
-
-        updatedPermissionAlready = true;
     }
 
     /**
@@ -563,21 +508,10 @@ public class Permissions implements IPermissions
             compound.putString(TAG_OWNER_ID, ownerUUID.toString());
         }
 
-        compound.putBoolean(TAG_UPDATE, updatedPermissionAlready);
+        compound.putInt(TAG_VERSION, permissionsVersion);
     }
 
-    /**
-     * Returns a set of UUID's that have permission to send (and receive) messages.
-     *
-     * @return Set of UUID's allowed to send and receive messages.
-     */
-    public Set<UUID> getMessagePlayers()
-    {
-        return players.values().stream()
-                 .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
-                 .map(Player::getID)
-                 .collect(Collectors.toSet());
-    }    @Override
+    @Override
     @NotNull
     public Map<UUID, Player> getPlayers()
     {
@@ -829,6 +763,7 @@ public class Permissions implements IPermissions
      * @param player {@link PlayerEntity} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
+    @Override
     public boolean isSubscriber(@NotNull final PlayerEntity player)
     {
         return isSubscriber(player.getGameProfile().getId());

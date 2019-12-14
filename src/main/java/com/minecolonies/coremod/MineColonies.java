@@ -2,16 +2,16 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.client.render.RenderFishHook;
-import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
+import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -90,6 +90,8 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
+
+        InteractionValidatorInitializer.init();
     }
 
     /**
@@ -107,6 +109,8 @@ public class MineColonies
         proxy.setupApi();
 
         Network.getNetwork().registerCommonMessages();
+
+        AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
     }
@@ -141,6 +145,7 @@ public class MineColonies
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
     }
 
     /**

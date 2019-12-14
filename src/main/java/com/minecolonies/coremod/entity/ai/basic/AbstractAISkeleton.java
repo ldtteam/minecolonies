@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Random;
 
 /**
  * Skeleton class for worker ai.
@@ -37,19 +35,12 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     @NotNull
     protected final      AbstractEntityCitizen worker;
     protected final      World                 world;
-    @NotNull
-    protected final      ChatSpamFilter        chatSpamFilter;
 
     /**
      * The statemachine this AI uses
      */
     @NotNull
-    private final ITickRateStateMachine stateMachine;
-
-    /**
-     * Counter for updateTask ticks received
-     */
-    private int tickCounter = 0;
+    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -69,11 +60,8 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
-        this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
-        stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
-
-        // Start at a random tickcounter to spread AI updates over all ticks
-        tickCounter = new Random().nextInt(MineColonies.getConfig().getCommon().updateRate.get()) + 1;
+        stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
+        stateMachine.setTickRate(MineColonies.getConfig().getCommon().updateRate.get());
     }
 
     /**
@@ -81,7 +69,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
      *
      * @param target the target to register.
      */
-    protected void registerTarget(final TickingTransition target)
+    public void registerTarget(final TickingTransition<IAIState> target)
     {
         stateMachine.addTransition(target);
     }
@@ -142,15 +130,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     @Override
     public final void tick()
     {
-        if (tickCounter < MineColonies.getConfig().getCommon().updateRate.get())
-        {
-            tickCounter++;
-        }
-        else
-        {
-            stateMachine.tick();
-            tickCounter = 1;
-        }
+        stateMachine.tick();
     }
 
     protected void onException(final RuntimeException e)
@@ -178,6 +158,16 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     public final IAIState getState()
     {
         return stateMachine.getState();
+    }
+
+    /**
+     * Gets the update rate of the worker's statemachine
+     *
+     * @return update rate
+     */
+    public int getTickRate()
+    {
+        return stateMachine.getTickRate();
     }
 
     /**

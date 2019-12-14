@@ -20,7 +20,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -35,7 +34,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +43,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -331,6 +328,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         if (citizen != null)
         {
             citizen.setWorkBuilding(this);
+            citizen.getJob().onLevelUp(citizen.getLevel());
             colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;
@@ -446,20 +444,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
+     * Auto assigns workers on a tick from the colony.
+     * @param colony the colony being ticked
      */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onWorldTick(event);
-
-        //
-        // Code below this check won't lag each tick anymore
-        //
-        if (!Colony.shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
-        {
-            return;
-        }
+        super.onColonyTick(colony);
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
@@ -516,6 +507,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
+        buf.writeString(this.getJobName());
+        buf.writeInt(getMaxInhabitants());
     }
 
     /**
@@ -595,6 +588,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private HiringMode hiringMode;
 
         /**
+         * The name of the job.
+         */
+        private String jobName;
+
+        /**
+         * The max amount of inhabitants
+         */
+        private int maxInhabitants = 1;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -651,6 +654,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
+            this.jobName = buf.readString(32767);
+            this.maxInhabitants = buf.readInt();
         }
 
         /**
@@ -774,6 +779,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             this.hiringMode = hiringMode;
             Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
+        }
+
+        /**
+         * Get the name of the job.
+         * @return job name.
+         */
+        @Override
+        public String getJobName()
+        {
+            return this.jobName;
+        }
+
+        /**
+         * Get the max number of inhabitants
+         * @return max inhabitants
+         */
+        public int getMaxInhabitants()
+        {
+            return this.maxInhabitants;
         }
     }
 }

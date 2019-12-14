@@ -2,16 +2,18 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
-import com.minecolonies.api.inventory.InventoryCitizen;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-public interface ICitizenData extends INBTSerializable<CompoundNBT>
+public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 {
     /**
      * Maximum saturation of a citizen.
@@ -55,30 +57,9 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     IColony getColony();
 
     /**
-     * Returns the id of the citizen.
-     *
-     * @return id of the citizen.
-     */
-    int getId();
-
-    /**
      * Initializes a new citizen, when not read from nbt
      */
     void initForNewCitizen();
-
-    /**
-     * Returns the name of the citizen.
-     *
-     * @return name of the citizen.
-     */
-    String getName();
-
-    /**
-     * Returns true if citizen is female, false for male.
-     *
-     * @return true for female, false for male.
-     */
-    boolean isFemale();
 
     /**
      * Sets wether this citizen is female.
@@ -86,18 +67,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * @param isFemale true if female
      */
     void setIsFemale(@NotNull boolean isFemale);
-
-    /**
-     * Check if the citizen is paused.
-     */
-    void setPaused(boolean p);
-
-    /**
-     * Check if the citizen is paused.
-     *
-     * @return true for paused, false for working.
-     */
-    boolean isPaused();
 
     /**
      * Returns the texture id for the citizen.
@@ -194,13 +163,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     void serializeViewNetworkData(@NotNull PacketBuffer buf);
 
     /**
-     * Returns the levels of the citizen.
-     *
-     * @return levels of the citizen.
-     */
-    int getLevel();
-
-    /**
      * Sets the levels of the citizen.
      *
      * @param lvl the new levels for the citizen.
@@ -246,48 +208,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     void setName(String name);
 
     /**
-     * Returns the experiences of the citizen.
-     *
-     * @return experiences of the citizen.
-     */
-    double getExperience();
-
-    /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    int getStrength();
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    int getEndurance();
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    int getCharisma();
-
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen Intelligence value.
-     */
-    int getIntelligence();
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    int getDexterity();
-
-    /**
      * Set the last position of the citizen.
      *
      * @param lastPosition the last position.
@@ -300,20 +220,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * @return the last position.
      */
     BlockPos getLastPosition();
-
-    /**
-     * Getter for the saturation.
-     *
-     * @return the saturation.
-     */
-    double getSaturation();
-
-    /**
-     * Getter for the inventory.
-     *
-     * @return the direct reference to the citizen inventory.
-     */
-    InventoryCitizen getInventory();
 
     /**
      * Check if citizen is asleep.
@@ -418,56 +324,39 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     void setIsChild(boolean isChild);
 
     /**
-     * Is this citizen a child?
-     *
-     * @return boolean
-     */
-    boolean isChild();
-
-    /**
      * Set the strength of the citizen
      *
      * @param strength value to set
      */
-    void setStrength(@NotNull int strength);
+    void setStrength(int strength);
 
     /**
      * Set the endurance of the citizen
      *
      * @param endurance value to set
      */
-    void setEndurance(@NotNull int endurance);
+    void setEndurance(int endurance);
 
     /**
      * Set the charisma of the citizen
      *
      * @param charisma value to set
      */
-    void setCharisma(@NotNull int charisma);
+    void setCharisma(int charisma);
 
     /**
      * Set the intelligence of the citizen
      *
      * @param intelligence value to set
      */
-    void setIntelligence(@NotNull int intelligence);
+    void setIntelligence(int intelligence);
 
     /**
      * Set the dexterity of the citizen
      *
      * @param dexterity value to set
      */
-    void setDexterity(@NotNull int dexterity);
-
-    /**
-     * Get the max health
-     */
-    double getMaxHealth();
-
-    /**
-     * Get the current healh
-     */
-    double getHealth();
+    void setDexterity(int dexterity);
 
     /**
      * Check if the citizen just ate.
@@ -480,4 +369,36 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
+
+    /**
+     * Drain experience from the worker.
+     * @param maxDrain the max to drain.
+     * @return the drained amount including a configured draining bonus.
+     */
+    double drainExperience(int maxDrain);
+
+    /**
+     * Directly spend a cetain number of experiment levels.
+     * @param levels the levels to spend.
+     */
+    void spendLevels(int levels);
+
+    /**
+     * Trigger the response on the server side.
+     * @param key the key of the component.
+     * @param response the triggered response.
+     * @param world the world it was triggered in.
+     */
+    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world);
+
+    /**
+     * Tick the citizen data to update values.
+     */
+    void tick();
+
+    /**
+     * Trigger a possible interaction.
+     * @param handler the new handler.
+     */
+    void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
 }

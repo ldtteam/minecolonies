@@ -3,7 +3,7 @@ package com.minecolonies.api.entity.ai.statemachine.states;
 /**
  * Event types used in statemachine events.
  */
-public enum AIBlockingEventType implements IAIEventType
+public enum AIBlockingEventType implements IStateEventType
 {
     /*###Priority NonStates###*/
     /**

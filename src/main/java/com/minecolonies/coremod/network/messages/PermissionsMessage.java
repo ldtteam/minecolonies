@@ -11,10 +11,9 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import io.netty.buffer.Unpooled;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -101,6 +100,7 @@ public class PermissionsMessage
         public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
+            data.release();
         }
 
         @Override

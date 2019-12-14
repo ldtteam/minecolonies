@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
+import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;
+import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
@@ -84,6 +86,12 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
+    public IForgeRegistry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
+    {
+        return apiInstance.getInteractionResponseHandlerRegistry();
+    }
+
+    @Override
     public IGuardTypeDataManager getGuardTypeDataManager()
     {
         return apiInstance.getGuardTypeDataManager();
@@ -111,5 +119,11 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IFurnaceRecipes getFurnaceRecipes()
     {
         return apiInstance.getFurnaceRecipes();
+    }
+
+    @Override
+    public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager()
+    {
+        return apiInstance.getInteractionResponseHandlerDataManager();
     }
 }

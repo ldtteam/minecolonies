@@ -10,6 +10,7 @@ public final class NbtTagConstants
     public static final String TAG_DIMENSION              = "dimension";
     public static final String TAG_CENTER                 = "center";
     public static final String TAG_MAX_CITIZENS           = "maxCitizens";
+    public static final String TAG_POTENTIAL_MAX_CITIZENS = "potentialMaxCitizens";
     public static final String TAG_BUILDINGS              = "buildings";
     public static final String TAG_BUILDING               = "building";
     public static final String TAG_BUILDINGS_CLAIM        = "buildingsClaim";
@@ -367,6 +368,10 @@ public final class NbtTagConstants
     public static final String TAG_SKILL_DEXTERITY    = "dexterity";
     public static final String TAG_SATURATION         = "saturation";
     public static final String TAG_ASLEEP             = "asleep";
+    public static final String TAG_CHAT_OPTION        = "chatoption";
+    public static final String TAG_CHAT_OPTIONS       = "chatoptions";
+
+
 
     /**
      * Tag of the colony.
@@ -445,6 +450,52 @@ public final class NbtTagConstants
     public static final String TAG_PROGRESS    = "progress";
     public static final String TAG_MAX_COUNTER = "maxCounter";
     public static final String TAG_CRAFT_COUNTER  = "craftCounter";
+
+    /**
+     * Enchanter tags
+     */
+    public static final String TAG_GATHER_LIST = "buildingstogather";
+    public static final String TAG_QUANTITY      = "quantity";
+    public static final String TAG_GATHERED_ALREADY = "gatheredalready";
+    public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
+    public static final String TAG_WAITING_TICKS = "waitingticks";
+
+    // --------------------- Chat handling tags --------------------- //
+
+    /**
+     * Inquiry tag to store to NBT.
+     */
+    public static final String TAG_INQUIRY = "inquiry";
+
+    /**
+     * Response tag to store each response option.
+     */
+    public static final String TAG_RESPONSE = "response";
+
+    /**
+     * Responses tag to store the entire list.
+     */
+    public static final String TAG_RESPONSES = "responses";
+
+    /**
+     * The tag for the next inquiry to a response.
+     */
+    public static final String TAG_NEXT_INQUIRY = "nextinquiry";
+
+    /**
+     * The tag to store if this interaction is a primary interaction.
+     */
+    public static final String TAG_PRIMARY = "primary";
+
+    /**
+     * The tag to store the priority of this interaction..
+     */
+    public static final String TAG_PRIORITY = "priority";
+
+    /**
+     * Handler type to identify when loading from nbt.
+     */
+    public static final String TAG_HANDLER_TYPE = "handlertype";
 
     /**
      * Private constructor to hide the implicit one.

@@ -3,14 +3,20 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -32,6 +38,16 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     private static final double  SHADOW_SIZE    = 0.5F;
     private static final int     THREE_QUARTERS = 270;
     public static        boolean isItGhostTime  = false;
+
+    /**
+     * The resource location for the blocking overlay.
+     */
+    private static final ResourceLocation BLOCKING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/blocking.png");
+
+    /**
+     * The resource location for the pending overlay.
+     */
+    private static final ResourceLocation PENDING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/warning.png");
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -101,8 +117,71 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         }
 
         entityModel.isChild = citizen.isChild();
+        entityModel.isSitting = citizen.getRidingEntity() != null;
         entityModel.swingProgress = citizen.swingProgress;
+    }
 
+    @Override
+    protected void renderLivingLabel(final Entity entityIn, @NotNull final String str, final double x, final double yIn, final double z, final int maxDistance)
+    {
+        double yOffset = entityModel.isChild ? -0.8 : 0;
+        super.renderLivingLabel(entityIn, str, x, yIn + yOffset, z, maxDistance);
+
+        if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView().hasPendingInteractions())
+        {
+            double distance = entityIn.getDistanceSq(this.renderManager.info.getProjectedView());
+            if (!(distance > (double) (maxDistance * maxDistance)))
+            {
+                boolean isSneaking = entityIn.shouldRenderSneaking();
+                double viewerYaw = this.renderManager.playerViewY;
+                double viewerPitch = this.renderManager.playerViewX;
+                double f2 = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
+                double y = yIn + f2 + 0.3 + yOffset;
+
+                Minecraft.getInstance().textureManager.bindTexture(((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions()  ? BLOCKING_RESOURCE : PENDING_RESOURCE);
+
+                GlStateManager.pushMatrix();
+                GlStateManager.translated(x, y, z);
+                GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
+                GlStateManager.rotated(-viewerYaw, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotated(viewerPitch, 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotated(90.0F, 0.0F, 0.0F, 1.0F);
+                GlStateManager.scalef(-0.025F, -0.025F, 0.025F);
+                GlStateManager.disableLighting();
+                GlStateManager.depthMask(false);
+                if (!isSneaking)
+                {
+                    GlStateManager.disableDepthTest();
+                }
+
+                GlStateManager.enableBlend();
+                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                  GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                  GlStateManager.SourceFactor.ONE,
+                  GlStateManager.DestFactor.ZERO);
+
+                Tessellator tess = Tessellator.getInstance();
+                BufferBuilder r = tess.getBuffer();
+                r.begin(7, DefaultVertexFormats.POSITION_TEX);
+                r.pos(0, 0, 0).tex(0, 0).endVertex();
+                r.pos(0, 10, 0).tex(1, 0).endVertex();
+                r.pos(10, 10, 0).tex(1, 1).endVertex();
+                r.pos(10, 0, 0).tex(0, 1).endVertex();
+                tess.draw();
+
+                GlStateManager.enableTexture();
+                if (!isSneaking)
+                {
+                    GlStateManager.enableDepthTest();
+                }
+
+                GlStateManager.depthMask(true);
+                GlStateManager.enableLighting();
+                GlStateManager.disableBlend();
+                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.popMatrix();
+            }
+        }
     }
 
     private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
