@@ -444,19 +444,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             for ( final IRequest request : getOwnBuilding().getOpenRequests( worker.getCitizenData() ) )
             {
-                final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
-                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                try
                 {
-                    if ( worker.getCitizenData().isRequestAsync(request.getId()) )
+                    final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
+                    if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                     {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                        if (worker.getCitizenData().isRequestAsync(request.getId()))
+                        {
+                            worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
+                              request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                        }
+                        else
+                        {
+                            worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
+                              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+                        }
                     }
-                    else
-                    {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
-                          request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
-                    }
+                }
+                catch (final IllegalArgumentException ex)
+                {
+                    // Silently ignore this one.
                 }
             }
         }

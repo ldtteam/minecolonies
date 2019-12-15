@@ -147,13 +147,15 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD);
+            return stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE)
+                     || stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD)
+                     || stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ToolType.FLINTANDSTEEL);
         }
 
         return toolTypeResult;
     }
 
-    private Set<String> getToolClasses(final ItemStack stack)
+    public static Set<String> getToolClasses(final ItemStack stack)
     {
         final Set<String> set = new HashSet<>();
 
@@ -167,6 +169,10 @@ public class Tool implements IDeliverable
         if(stack.getItem() instanceof BowItem)
         {
             set.add("bow");
+        }
+        if(stack.getItem() instanceof FlintAndSteelItem)
+        {
+            set.add("flintandsteel");
         }
         else if(stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
         {

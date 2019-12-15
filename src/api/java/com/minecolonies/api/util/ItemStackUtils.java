@@ -364,6 +364,10 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof FishingRodItem;
         }
+        else if (ToolType.FLINTANDSTEEL.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof FlintAndSteelItem;
+        }
         else if (ToolType.SHEARS.equals(toolType))
         {
             isATool = itemStack.getItem() instanceof ShearsItem;

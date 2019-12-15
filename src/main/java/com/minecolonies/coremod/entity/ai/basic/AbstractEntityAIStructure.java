@@ -8,7 +8,9 @@ import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
@@ -19,6 +21,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -33,6 +36,7 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -44,7 +48,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -463,6 +466,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
                     {
+                        if (world.getBlockState(coords).getBlock() == Blocks.FIRE)
+                        {
+                            worker.swingArm(worker.getActiveHand());
+                            final int flintNSteel = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> stack.getItem() instanceof FlintAndSteelItem);
+                            if (flintNSteel >= 0)
+                            {
+                                worker.getInventoryCitizen().getStackInSlot(flintNSteel).damageItem(1, worker, (i) -> {
+                                    i.sendBreakAnimation(Hand.MAIN_HAND);
+                                });
+                            }
+                        }
                         return true;
                     }
 
@@ -519,7 +533,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             for (final ItemStack foundStack : new ArrayList<>(foundStacks))
             {
-                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.isItemEqual(foundStack)).findFirst();
+                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.isItemEqualIgnoreDurability(foundStack)).findFirst();
                 if (opt.isPresent())
                 {
                     final ItemStack stack = opt.get();
@@ -534,7 +548,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
         else
         {
-            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
+            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqualIgnoreDurability(itemStack)));
         }
         itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock()));
 
@@ -564,8 +578,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
-                stackRequest.setCount(placedStack.getValue());
+                final IRequestable stackRequest;
+                if (ItemStackUtils.isTool(placedStack.getKey().getItemStack(), ToolType.FLINTANDSTEEL ))
+                {
+                    stackRequest = new Tool(ToolType.FLINTANDSTEEL, 0, 0);
+                }
+                else
+                {
+                    final Stack stack = new Stack(placedStack.getKey().getItemStack());
+                    stack.setCount(placedStack.getValue());
+                    stackRequest = stack;
+                }
+
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;

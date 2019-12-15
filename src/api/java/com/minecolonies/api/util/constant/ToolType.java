@@ -30,6 +30,7 @@ public enum ToolType implements IToolType
     HELMET("helmet", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HELMET)),
     LEGGINGS("leggings", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
     CHESTPLATE("chestplate", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
+    FLINTANDSTEEL("flintandsteel", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_FLINTNSTEEL)),
     BOOTS("boots", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS));
 
     
