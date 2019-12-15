@@ -1233,6 +1233,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
+
+        if (toolType == ToolType.NONE)
+        {
+            return worker.getInventoryCitizen().getHeldItemSlot(Hand.MAIN_HAND);
+        }
+
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();

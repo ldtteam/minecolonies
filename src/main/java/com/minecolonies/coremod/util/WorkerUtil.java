@@ -180,7 +180,7 @@ public final class WorkerUtil
     {
         final int required = target.getHarvestLevel(target.getDefaultState());
 
-        if ((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
+        if ((required < 0 && target.getDefaultState().getMaterial() == Material.WOOD)
               || target instanceof GlazedTerracottaBlock)
         {
             return 0;
