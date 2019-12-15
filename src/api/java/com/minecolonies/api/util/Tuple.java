@@ -1,15 +1,31 @@
 package com.minecolonies.api.util;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Our own tuple implementation with hashcode and equals.
  * @param <A> The first obj.
  * @param <B> The second obj.
  */
-public class Tuple<A, B> extends net.minecraft.util.Tuple<A, B>
+public class Tuple<A, B>
 {
-    public Tuple(final A aIn, final B bIn)
+    private A a;
+    private B b;
+
+    public Tuple(@Nullable final A aIn, @Nullable final B bIn)
     {
-        super(aIn, bIn);
+        this.a = aIn;
+        this.b = bIn;
+    }
+
+    @Nullable
+    public A getFirst() {
+        return this.a;
+    }
+
+    @Nullable
+    public B getSecond() {
+        return this.b;
     }
 
     @Override
@@ -21,9 +37,9 @@ public class Tuple<A, B> extends net.minecraft.util.Tuple<A, B>
     @Override
     public boolean equals(final Object o)
     {
-        if (o instanceof net.minecraft.util.Tuple)
+        if (o instanceof Tuple)
         {
-            return ((net.minecraft.util.Tuple) o).getFirst().equals(this.getFirst()) && ((net.minecraft.util.Tuple) o).getSecond().equals(this.getSecond());
+            return ((Tuple) o).getFirst().equals(this.getFirst()) && ((Tuple) o).getSecond().equals(this.getSecond());
         }
         return false;
     }

@@ -1,6 +1,6 @@
-<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="190 244"/>
 
@@ -28,4 +28,4 @@
     </list>
     <buttonimage id="back" size="37 16" pos="76 214" textcolor="black" label="Back"
                 source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
-</layout>
+</window>

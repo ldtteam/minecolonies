@@ -90,6 +90,7 @@
             <xs:element name="itemicon" type="itemIconType"/>
             <xs:element name="switch" type="switchType"/>
             <xs:element name="dropdown" type="dropdownType"/>
+            <xs:element name="gradient" type="gradientType"/>
         </xs:choice>
     </xs:group>
 
@@ -156,6 +157,7 @@
                 <xs:attribute name="color" type="xs:string"/>
                 <xs:attribute name="hovercolor" type="xs:string"/>
                 <xs:attribute name="shadow" type="xs:boolean"/>
+                <xs:attribute name="wrap" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -216,6 +218,16 @@
                 <xs:attribute name="source" type="xs:string"/>
                 <xs:attribute name="imageoffset" type="fixedSizePair"/>
                 <xs:attribute name="imagesize" type="fixedSizePair"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <gradient> -->
+    <xs:complexType name="gradientType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:attribute name="gradientstart" type="xs:integer"/>
+                <xs:attribute name="gradientend" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
