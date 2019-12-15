@@ -98,8 +98,10 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
-        colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final int dimensionId;
+        colonyId = getColonyIdFromArg(args, 0, -1);
+        dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
+        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -121,7 +123,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             final UUID mayorID = senderEntity.getUniqueID();
             if (tempColony == null)
             {
-                tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                tempColony = IColonyManager.getInstance().getIColonyByOwner(server.getWorld(dimensionId), mayorID);
             }
         }
 
@@ -138,7 +140,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(dimensionId));
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));

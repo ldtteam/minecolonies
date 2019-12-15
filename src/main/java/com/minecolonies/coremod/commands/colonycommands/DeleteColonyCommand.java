@@ -85,6 +85,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
+        final int dimensionId;
         boolean canDestroy = true;
         boolean confirmDelete = false;
         if (args.length == 0)
@@ -101,10 +102,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
                 return;
             }
             colonyId = colony.getID();
+            dimensionId = colony.getDimension();
         }
         else
         {
-            colonyId = getIthArgument(args, 0, -1);
+            colonyId = getColonyIdFromArg(args, 0, -1);
+            dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
             if (args.length > 1)
             {
                 canDestroy = Boolean.parseBoolean(args[1]);
@@ -116,7 +119,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             }
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);

@@ -118,15 +118,9 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         //see if player is allowed to use in the configs
         if (args.length == 1)
         {
-            try
-            {
-                final int colonyId = Integer.parseInt(args[0]);
-                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
-            }
-            catch (final NumberFormatException e)
-            {
-                // we ignore the exception and deal with a null colony below.
-            }
+            final int colonyId = getColonyIdFromArg(args, 0, -1);
+            final int dimensionId = getDimensionIdFromArg(args, 0, 0);
+            if (colonyId != -1) colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
         }
 
         if (null == colony)
@@ -143,14 +137,14 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         //see if player is allowed to use in the configs
         if ((sender instanceof EntityPlayer) && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
         {
-            final IColony colonyIn = IColonyManager.getInstance().getColonyByPosFromWorld(server.getWorld(sender.getEntityWorld().provider.getDimension()), sender.getPosition());
+            final IColony colonyIn = IColonyManager.getInstance().getColonyByPosFromWorld(server.getWorld(colony.getDimension()), sender.getPosition());
             if (isPlayerOpped(sender)
                     || (colonyIn != null
                     && colonyIn.hasTownHall()
                     && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
                     && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getPosition()) < MIN_DISTANCE_TO_TH))
             {
-                TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
+                TeleportToColony.colonyTeleport(server, sender, colony.getDimension() + "|" + colony.getID());
             }
             return;
         }

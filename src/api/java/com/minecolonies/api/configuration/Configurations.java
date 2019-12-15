@@ -53,6 +53,9 @@ public class Configurations
 
         @Config.Comment("Should players be allowed to abandon their colony to create a new one easily? [Default: false]")
         public boolean allowInfiniteColonies = false;
+        
+        @Config.Comment("Should a player be allowed to have a colony in every world at the same time? [Default: false]")
+        public boolean allowColoniesInDifferentWorlds = false;
 
         @Config.RangeInt(min = (CITIZEN_RESPAWN_INTERVAL_MIN), max = CITIZEN_RESPAWN_INTERVAL_MAX)
         @Config.Comment("Average citizen respawn interval (in seconds). [Default: 60]")
