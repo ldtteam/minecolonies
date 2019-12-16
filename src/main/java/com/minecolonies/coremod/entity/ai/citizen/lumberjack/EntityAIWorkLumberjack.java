@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The lumberjack AI class.
@@ -191,12 +192,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
-          new AITarget(PREPARING, this::prepareForWoodcutting, 20),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, 20),
-          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, 20),
-          new AITarget(LUMBERJACK_GATHERING, this::gathering, 20),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, 20)
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
