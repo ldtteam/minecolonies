@@ -47,6 +47,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 
 /**
@@ -138,7 +139,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Pick up stuff which might've been
            */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, 20),
+          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, TICKS_SECOND),
           /*
            * Check if tasks should be executed.
            */

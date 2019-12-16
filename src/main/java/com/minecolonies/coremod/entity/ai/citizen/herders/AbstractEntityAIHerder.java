@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -81,7 +82,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForHerding, 1),
           new AITarget(DECIDE, this::decideWhatToDo, 1),
           new AITarget(HERDER_BREED, this::breedAnimals, 1),

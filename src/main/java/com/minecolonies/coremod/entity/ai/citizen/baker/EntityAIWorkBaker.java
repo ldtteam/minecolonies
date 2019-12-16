@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_RECIPES;
 
@@ -116,7 +117,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForBaking, HIT_DELAY),
           new AITarget(BAKER_KNEADING, this::kneadTheDough, HIT_DELAY),
           new AITarget(BAKER_BAKING, this::bake, HIT_DELAY),

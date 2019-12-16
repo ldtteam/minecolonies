@@ -60,7 +60,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -189,16 +189,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Gather a needed item.
            */
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem, 20),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem, TICKS_SECOND),
           /*
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart, 20),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart, TICKS_SECOND),
           /*
            * Reset if not paused.
            */
-          new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE, 20),
+          new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE, TICKS_SECOND),
           /*
            * Do not work if worker is paused
            */
@@ -206,7 +206,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Start paused with inventory dump
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, 20)
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
     }
 
@@ -1517,12 +1517,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         // Pick random activity.
-        final int percent = worker.getRNG().nextInt(100);
-        if (percent < 8)
+        final int percent = worker.getRNG().nextInt(ONE_HUNDRED_PERCENT);
+        if (percent < VISIT_BUILDING_CHANCE)
         {
             worker.getNavigator().tryMoveToBlockPos(getOwnBuilding().getPosition(), worker.getRNG().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
         }
-        else if (percent < 35)
+        else if (percent < WANDER_CHANCE)
         {
             Vec3d vec3d = RandomPositionGenerator.getLandPos(worker, 10, 7);
             if (vec3d != null)

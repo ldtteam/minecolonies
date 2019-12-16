@@ -11,8 +11,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -85,9 +87,10 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         {
             return getState();
         }
-        job.setProgress(job.getProgress()+1);
+        job.setProgress(job.getProgress() + TICK_DELAY);
 
         final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
+        WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
         if (currentRecipeStorage == null)
         {
             currentRecipeStorage = crusherBuilding.getCurrentRecipe();
@@ -114,6 +117,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
                     }
                 }
 
+                worker.swingArm(EnumHand.MAIN_HAND);
                 job.setCraftCounter(job.getCraftCounter()+1);
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                 worker.decreaseSaturationForContinuousAction();

@@ -49,6 +49,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -113,8 +114,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         super(job);
         super.registerTargets(
           new AITarget(IDLE, () -> START_WORKING, 10),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
-          new AITarget(PREPARING, this::prepareForFarming, 20),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForFarming, TICKS_SECOND),
           new AITarget(FARMER_HOE, this::workAtField, 5),
           new AITarget(FARMER_PLANT, this::workAtField, 5),
           new AITarget(FARMER_HARVEST, this::workAtField, 5)

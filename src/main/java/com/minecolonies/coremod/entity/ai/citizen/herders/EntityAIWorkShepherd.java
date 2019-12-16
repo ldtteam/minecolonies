@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -54,7 +55,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
 
         super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, this::shearSheep, 20)
+          new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
         );
     }
 

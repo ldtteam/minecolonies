@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
@@ -124,11 +125,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForMining, 1),
-          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, 20),
-          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, 20),
-          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, 20),
+          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, TICKS_SECOND),
+          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, TICKS_SECOND),
+          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, TICKS_SECOND),
           new AITarget(MINER_MINING_SHAFT, this::doShaftMining, STANDARD_DELAY),
           new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
           new AITarget(MINER_MINING_NODE, this::executeNodeMining, STANDARD_DELAY)

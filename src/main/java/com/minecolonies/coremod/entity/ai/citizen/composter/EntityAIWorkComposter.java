@@ -26,6 +26,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
@@ -85,7 +86,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(GET_MATERIALS, this::getMaterials, 20),
+          new AITarget(GET_MATERIALS, this::getMaterials, TICKS_SECOND),
           new AITarget(START_WORKING, this::decideWhatToDo, 1),
           new AITarget(COMPOSTER_FILL, this::fillBarrels, 10),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels, 10)

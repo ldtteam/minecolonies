@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The Entity AI study class.
@@ -45,7 +46,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 20),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(STUDY, this::study, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
