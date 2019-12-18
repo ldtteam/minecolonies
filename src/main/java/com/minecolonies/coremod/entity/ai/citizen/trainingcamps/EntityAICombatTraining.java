@@ -15,7 +15,6 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -86,12 +85,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType),
-          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner),
-          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner),
-          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner),
-          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy),
-          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack)
+          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType, 1),
+          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner, 1),
+          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner, 1),
+          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner, 1),
+          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 1),
+          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, 1)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()

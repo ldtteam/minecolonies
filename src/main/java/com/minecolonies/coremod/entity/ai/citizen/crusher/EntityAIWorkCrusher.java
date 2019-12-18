@@ -13,9 +13,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -40,7 +39,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     /**
      * Delay for each of the craftings.
      */
-    private static final int TICK_DELAY = 5;
+    private static final int TICK_DELAY = 20;
 
     /**
      * Constructor for the crusher.
@@ -52,8 +51,8 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(CRUSH, this::crush)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(CRUSH, this::crush, TICK_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance());
@@ -88,12 +87,10 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         {
             return getState();
         }
-        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
-
-        setDelay(TICK_DELAY);
-        job.setProgress(job.getProgress()+1);
+        job.setProgress(job.getProgress() + TICK_DELAY);
 
         final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
+        WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
         if (currentRecipeStorage == null)
         {
             currentRecipeStorage = crusherBuilding.getCurrentRecipe();
@@ -120,6 +117,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
                     }
                 }
 
+                worker.swingArm(Hand.MAIN_HAND);
                 job.setCraftCounter(job.getCraftCounter()+1);
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                 worker.decreaseSaturationForContinuousAction();

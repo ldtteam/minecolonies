@@ -17,11 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
@@ -111,7 +108,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
+          new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
           new AITarget(DECIDE, this::decide, TICKS_SECOND),
           new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),

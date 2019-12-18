@@ -15,7 +15,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,11 +68,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::decide),
-          new AITarget(QUERY_ITEMS, this::queryItems),
-          new AITarget(GET_RECIPE, this::getRecipe),
-          new AITarget(CRAFT, this::craft)
+          new AITarget(IDLE, () -> START_WORKING, 1),
+          new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
+          new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
+          new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
+          new AITarget(CRAFT, this::craft, 1)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -86,19 +85,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         if (job.getTaskQueue().isEmpty())
         {
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
         if (job.getCurrentTask() == null)
         {
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
         if (walkToBuilding())
         {
-            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
@@ -135,7 +131,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         currentRequest = currentTask;
         job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(currentRequest.getRequest().getCount(), currentRecipeStorage));
 
-        setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
 
@@ -151,7 +146,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      */
     private IAIState queryItems()
     {
-        setDelay(STANDARD_DELAY);
         if (currentRecipeStorage == null)
         {
             setDelay(TICKS_20);
