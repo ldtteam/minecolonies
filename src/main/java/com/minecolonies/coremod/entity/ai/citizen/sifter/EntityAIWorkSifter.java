@@ -17,7 +17,6 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -71,9 +70,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, SIFT),
-          new AITarget(SIFT, this::sift)
+          new AITarget(IDLE, SIFT, 1),
+          new AITarget(START_WORKING, SIFT, 1),
+          new AITarget(SIFT, this::sift, TICK_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance()
                                                                 + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
@@ -137,7 +136,6 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         }
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
-        setDelay(TICK_DELAY);
         progress++;
 
         final BuildingSifter sifterBuilding = getOwnBuilding(BuildingSifter.class);
