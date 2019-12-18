@@ -716,7 +716,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if ( getAndCheckWarehouse() != null && getAndCheckWarehouse().getTileEntity() != null )
         {
             job.setActive(true);
-            return false;
+            return true;
         }
 
         job.setActive(false);
@@ -724,6 +724,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE), ChatPriority.BLOCKING));
         }
-        return true;
+        return false;
     }
 }
