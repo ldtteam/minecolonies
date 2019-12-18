@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Block;
@@ -13,7 +15,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -312,11 +313,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             final BlockPos pos = getAndRemoveClosestItemPosition();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
-            return;
-        }
-        if (worker.getNavigator().getPath() == null)
-        {
-            setDelay(WAIT_WHILE_WALKING);
             return;
         }
 
