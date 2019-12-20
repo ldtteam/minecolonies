@@ -253,7 +253,6 @@ public class RecipeStorage implements IRecipeStorage
                 {
                     final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
                     final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false).copy();
-                    slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
                     //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
                     //Deletes some items, but hey.
@@ -264,6 +263,11 @@ public class RecipeStorage implements IRecipeStorage
                     }
 
                     amountNeeded -= count;
+                    if (amountNeeded > 0)
+                    {
+                        slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
+                          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
+                    }
                 }
 
                 // stop looping handlers if we have what we need
