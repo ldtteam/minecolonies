@@ -1226,7 +1226,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (toolType == ToolType.NONE)
         {
-            return worker.getInventoryCitizen().getHeldItemSlot(Hand.MAIN_HAND);
+            final int heldSlot = worker.getInventoryCitizen().getHeldItemSlot(Hand.MAIN_HAND);
+            return heldSlot >= 0 ? heldSlot : 0;
         }
 
         int bestSlot = -1;
