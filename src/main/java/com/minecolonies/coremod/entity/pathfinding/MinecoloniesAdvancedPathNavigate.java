@@ -190,7 +190,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected boolean canNavigate()
     {
-        return !ourEntity.isRiding();
+        // Auto dismount when trying to path.
+        if (ourEntity.isRiding())
+        {
+            ourEntity.dismountRidingEntity();
+        }
+        return true;
     }
 
     @NotNull
