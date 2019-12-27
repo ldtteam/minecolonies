@@ -190,7 +190,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected boolean canNavigate()
     {
-        return true;
+        return !ourEntity.isRiding();
     }
 
     @NotNull
