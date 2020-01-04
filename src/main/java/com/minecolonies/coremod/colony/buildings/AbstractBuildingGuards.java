@@ -725,6 +725,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         this.job = job;
         for (final ICitizenData citizen : getAssignedCitizen())
         {
+            cancelAllRequestsOfCitizen(citizen);
             citizen.setJob(createJob(citizen));
         }
         this.markDirty();

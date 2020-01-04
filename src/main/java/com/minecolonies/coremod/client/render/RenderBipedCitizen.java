@@ -124,14 +124,14 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     @Override
     protected void renderLivingLabel(final Entity entityIn, @NotNull final String str, final double x, final double yIn, final double z, final int maxDistance)
     {
-        double yOffset = entityModel.isChild ? -0.8 : 0;
-        super.renderLivingLabel(entityIn, str, x, yIn + yOffset, z, maxDistance);
+        super.renderLivingLabel(entityIn, str, x, yIn, z, maxDistance);
 
         if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView().hasPendingInteractions())
         {
             double distance = entityIn.getDistanceSq(this.renderManager.info.getProjectedView());
             if (!(distance > (double) (maxDistance * maxDistance)))
             {
+                double yOffset = entityModel.isChild ? -0.8 : 0;
                 boolean isSneaking = entityIn.shouldRenderSneaking();
                 double viewerYaw = this.renderManager.playerViewY;
                 double viewerPitch = this.renderManager.playerViewX;
