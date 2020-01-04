@@ -126,14 +126,13 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             final int count,
             @NotNull final IRecipeStorage storage)
     {
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(count, storage);
         return storage.getCleanedInput().stream()
                  .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
                  .filter(s -> InventoryUtils.getItemCountInItemHandler(building.getMainCitizen().getInventory(),
                    stack -> !ItemStackUtils.isEmpty(stack) && s.getItemStack().isItemEqual(stack)) < s.getAmount())
                  .map(stack -> {
                     final ItemStack craftingHelperStack = stack.getItemStack().copy();
-                     return createNewRequestForStack(manager, craftingHelperStack, stack.getAmount() * craftingCount);
+                     return createNewRequestForStack(manager, craftingHelperStack, stack.getAmount() * count);
                 }).collect(Collectors.toList());
     }
 
