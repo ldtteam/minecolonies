@@ -99,6 +99,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
+        if (job.getActionsDone() > 0)
+        {
+            // Wait to dump before continuing.
+            return getState();
+        }
+
         if (currentRequest != null && currentRecipeStorage != null)
         {
             return QUERY_ITEMS;
