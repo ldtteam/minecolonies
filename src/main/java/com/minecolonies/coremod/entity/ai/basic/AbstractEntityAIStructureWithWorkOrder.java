@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -206,34 +208,23 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 continue;
             }
 
-            if (block instanceof BlockSolidSubstitution)
+            @Nullable Block worldBlock = world.getBlockState(worldPos).getBlock();
+            for (final IPlacementHandler handler : PlacementHandlers.handlers)
             {
-                blockState = getSolidSubstitution(worldPos);
-                block = blockState.getBlock();
-            }
-            if (block == Blocks.GRASS)
-            {
-                block = Blocks.DIRT;
-                blockState = block.getDefaultState();
-            }
-
-            final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
-            if (block instanceof BlockFalling)
-            {
-                final IBlockState downState = BlockPosUtil.getBlockState(world, worldPos.down());
-                if (!downState.getMaterial().isSolid())
+                if (handler.canHandle(world, worldPos, blockState))
                 {
-                    requestBlockToBuildingIfRequired(buildingWorker, getSolidSubstitution(worldPos), blockInfo);
+                    for (final ItemStack stack : handler.getRequiredItems(world, worldPos, blockState, blockInfo.getTileEntityData(), false))
+                    {
+                        if (block != Blocks.AIR
+                              && worldBlock != Blocks.BEDROCK
+                              && !(worldBlock instanceof AbstractBlockHut)
+                              && !isBlockFree(block))
+                        {
+                            buildingWorker.addNeededResource(stack, stack.getCount());
+                        }
+                    }
+                    break;
                 }
-            }
-
-            if (block != null
-                  && block != Blocks.AIR
-                  && worldBlock != Blocks.BEDROCK
-                  && !(worldBlock instanceof AbstractBlockHut)
-                  && !isBlockFree(block, 0))
-            {
-                requestBlockToBuildingIfRequired(buildingWorker, blockState, blockInfo);
             }
         }
 

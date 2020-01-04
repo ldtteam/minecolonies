@@ -87,7 +87,7 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
-     * List of all the items that can be composted
+     * List of all the items that can be planted.
      */
     private final Set<ItemStorage> plantables = new HashSet<>();
 
@@ -259,7 +259,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty())
+        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE)
         {
             return false;
         }
