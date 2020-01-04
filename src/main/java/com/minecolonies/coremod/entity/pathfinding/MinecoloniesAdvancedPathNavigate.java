@@ -435,6 +435,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 currentPath = convertPath(currentPath);
             }
 
+            pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
+            pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
+
             //  If current node is bottom of a ladder, then stay on this node until
             //  the ourEntity reaches the bottom, otherwise they will try to head out early
             if (pEx.isOnLadder() && pEx.getLadderFacing() == EnumFacing.DOWN
