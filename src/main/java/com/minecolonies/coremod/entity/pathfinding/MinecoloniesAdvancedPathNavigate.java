@@ -267,7 +267,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             this.currentPath = null;
             return false;
         }
+        return super.setPath(convertPath(path), speed);
+    }
 
+    /**
+     * Converts the given path to a minecolonies path if needed.
+     *
+     * @param path given path
+     * @return resulting path
+     */
+    private Path convertPath(final Path path)
+    {
         final int pathLength = path.getCurrentPathLength();
         Path tempPath = null;
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
@@ -287,7 +297,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             destination = new BlockPos(finalPoint.x, finalPoint.y, finalPoint.z);
         }
 
-        return super.setPath(tempPath == null ? path : tempPath, speed);
+        return tempPath == null ? path : tempPath;
     }
 
     private boolean processCompletedCalculationResult() throws InterruptedException, ExecutionException
@@ -417,8 +427,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
-            final PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
-            final PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
+            PathPointExtended pEx = null;
+            PathPointExtended pExNext = null;
+
+            if (!(currentPath.getPathPointFromIndex(curNode) instanceof PathPointExtended))
+            {
+                currentPath = convertPath(currentPath);
+            }
 
             //  If current node is bottom of a ladder, then stay on this node until
             //  the ourEntity reaches the bottom, otherwise they will try to head out early
