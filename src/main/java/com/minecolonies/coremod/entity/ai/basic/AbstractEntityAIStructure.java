@@ -512,7 +512,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
-          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(targetStack)));
+          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(itemStack)));
         if (force)
         {
             for (final ItemStack foundStack : new ArrayList<>(foundStacks))
@@ -568,6 +568,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
             }
+            return true;
         }
         return false;
     }
