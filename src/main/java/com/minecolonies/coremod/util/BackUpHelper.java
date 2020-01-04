@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -29,6 +30,11 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
+    /**
+     * The maximum amount of colonies we're trying to load from a backup
+     */
+    private final static int MAX_COLONY_LOAD = 5000;
+
     /**
      * Private constructor to hide implicit one.
      */
@@ -61,9 +67,9 @@ public final class BackUpHelper
                     if (file.exists())
                     {
                         // mark existing files
-                        if (IColonyManager.getInstance().getColonyByDimension(i,dim) == null)
+                        if (IColonyManager.getInstance().getColonyByDimension(i, dim) == null)
                         {
-                            markColonyDeleted(i,dim);
+                            markColonyDeleted(i, dim);
                             addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dim), zos, saveDir);
                         }
                         else
@@ -93,8 +99,38 @@ public final class BackUpHelper
     }
 
     /**
-     * Get save location for Minecolonies backup data, from the world/save
-     * directory.
+     * Loads all colonies from backup files which the world cap is missing.
+     */
+    public static void loadMissingColonies()
+    {
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+
+        for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
+        {
+            int missingFilesInRow = 0;
+            for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
+            {
+                // Check non-deleted files for colony id + dim
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
+                if (file.exists())
+                {
+                    missingFilesInRow = 0;
+                    // Load colony if null
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dim) == null)
+                    {
+                        loadColonyBackup(i, dim);
+                    }
+                }
+                else
+                {
+                    missingFilesInRow++;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get save location for Minecolonies backup data, from the world/save directory.
      *
      * @return Save file for minecolonies.
      */
@@ -142,8 +178,7 @@ public final class BackUpHelper
     }
 
     /**
-     * Save an NBTTagCompound to a file.  Does so in a safe manner using an
-     * intermediate tmp file.
+     * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file.
      *
      * @param file     The destination file to write the data to.
      * @param compound The NBTTagCompound to write to the file.
@@ -249,7 +284,7 @@ public final class BackUpHelper
         }
         else
         {
-            Log.getLogger().warn("Colony is null, creating new colony!");
+            Log.getLogger().warn("Colony is missing, loading backup!");
             final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);

@@ -18,6 +18,7 @@ public class ScrollingList extends ScrollingView
     //  Runtime
     protected DataProvider dataProvider;
     private   PaneParams   listNodeParams;
+    private int maxHeight;
 
     /**
      * Default constructor required by Blockout.
@@ -35,6 +36,17 @@ public class ScrollingList extends ScrollingView
     public ScrollingList(final PaneParams params)
     {
         super(params);
+        this.setMaxHeight(height);
+
+    }
+
+    /**
+     * Max height setter.
+     * @param maxHeight the height to set.
+     */
+    public void setMaxHeight(final int maxHeight)
+    {
+        this.maxHeight = maxHeight;
     }
 
     public void setDataProvider(final IntSupplier countSupplier, final IPaneUpdater paneUpdater)
@@ -66,7 +78,7 @@ public class ScrollingList extends ScrollingView
      */
     public void refreshElementPanes()
     {
-        ((ScrollingListContainer) container).refreshElementPanes(dataProvider, listNodeParams);
+        ((ScrollingListContainer) container).refreshElementPanes(dataProvider, listNodeParams, maxHeight);
     }
 
     @Override

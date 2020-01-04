@@ -93,6 +93,10 @@ public class DropDownList extends View implements ButtonHandler
         overlay.setPosition(0, 0);
 
         list = new ScrollingList(params);
+        if (params.getIntegerAttribute("maxContentHeight") != 0)
+        {
+            list.setMaxHeight(params.getIntegerAttribute("maxContentHeight"));
+        }
         list.setSize(dropDownWidth, dropDownHeight);
         list.setPosition((x + width / 2) - dropDownWidth / 2 + dropDownFixX, y + height);
         list.putInside(overlay);
