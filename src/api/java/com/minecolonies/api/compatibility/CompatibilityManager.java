@@ -259,7 +259,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE)
+        if (itemStack.isEmpty())
         {
             return false;
         }
