@@ -368,6 +368,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     break;
             }
 
+            this.ourEntity.setMoveVertical(0);
             if (newSpeed > 0)
             {
                 this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
@@ -376,7 +377,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 if (world.getBlockState(ourEntity.getPosition().down()).isLadder(world, ourEntity.getPosition().down(), ourEntity))
                 {
-                    this.ourEntity.setMoveVertical(-1);
+                    this.ourEntity.setMoveVertical(-0.5f);
                 }
                 else
                 {
