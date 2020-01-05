@@ -26,8 +26,6 @@ import java.util.UUID;
 
 public interface IColonyView extends IColony
 {
-
-
     /**
      * Get a copy of the freePositions list.
      *
@@ -448,5 +446,21 @@ public interface IColonyView extends IColony
      */
     String getStyle();
 
+    /**
+     * If currently being raided.
+     * @return true if so.
+     */
     boolean isRaiding();
+
+    /**
+     * Get a compact list of all allies.
+     * @return the list.
+     */
+    List<CompactColony> getAllies();
+
+    /**
+     * Get a compact list of all feuds.
+     * @return the list.
+     */
+    List<CompactColony> getFeuds();
 }
