@@ -87,7 +87,7 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
-     * List of all the items that can be composted
+     * List of all the items that can be planted.
      */
     private final Set<ItemStorage> plantables = new HashSet<>();
 

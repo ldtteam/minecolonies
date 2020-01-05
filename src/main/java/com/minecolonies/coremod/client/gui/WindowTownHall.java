@@ -682,8 +682,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         jobCountMap.remove("");
 
-        final Integer maxJobs = jobCountMap.size();
-        final Integer preJobsHeaders = 1;
+        final int maxJobs = jobCountMap.size();
+        final int preJobsHeaders = 1;
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {

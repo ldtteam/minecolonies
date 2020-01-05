@@ -194,7 +194,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(@NotNull final boolean successful)
+    public void finishRequest(final boolean successful)
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
