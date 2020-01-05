@@ -218,7 +218,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         if (block != Blocks.AIR
                               && worldBlock != Blocks.BEDROCK
                               && !(worldBlock instanceof AbstractBlockHut)
-                              && !isBlockFree(block))
+                              && !isBlockFree(block, 0))
                         {
                             buildingWorker.addNeededResource(stack, stack.getCount());
                         }

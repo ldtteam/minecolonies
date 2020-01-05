@@ -276,8 +276,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         job.setMaxCraftingCount(0);
         job.setProgress(0);
         job.setCraftCounter(0);
-        worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
-        worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
+        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+        worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
     }
 
     @Override
