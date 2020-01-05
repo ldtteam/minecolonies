@@ -299,12 +299,14 @@ public final class ColonyView implements IColonyView
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-
-            for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+            if (col != null)
             {
-                if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
-                    allies.add(col);
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                    {
+                        allies.add(col);
+                    }
                 }
             }
         }
@@ -323,11 +325,14 @@ public final class ColonyView implements IColonyView
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-            for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+            if (col != null)
             {
-                if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
-                    feuds.add(col);
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                    {
+                        feuds.add(col);
+                    }
                 }
             }
         }
