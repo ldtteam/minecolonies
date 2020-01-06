@@ -441,4 +441,9 @@ public interface IColonyManager
      * @return the top id.
      */
     int getTopColonyId();
+
+    /**
+     * Reset all colony views on login to new world.
+     */
+    void resetColonyViews();
 }
