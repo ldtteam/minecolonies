@@ -44,17 +44,17 @@ public class CitizenChatHandler implements ICitizenChatHandler
     {
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
-            final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null)
             {
                 final ITextComponent component = new TranslationTextComponent(
                   "block.blockhuttownhall.messageworkerdead",
-                  new TranslationTextComponent(job.getName()),
+                  new TranslationTextComponent(job.getName().toLowerCase()),
                   citizen.getCitizenData().getName(),
                   (int) citizen.posX,
                   (int) citizen.posY,
                   (int) citizen.posZ, damageSource.damageType);
-                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), component.getUnformattedComponentText());
+                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
             }
             else
             {
