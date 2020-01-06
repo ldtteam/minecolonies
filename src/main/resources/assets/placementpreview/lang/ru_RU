@@ -1,0 +1,8 @@
+language.name=Russian
+language.region=RU
+language.code=ru_RU
+
+category.placementpreview=Предосмотр размещения
+placementpreview.key.toggle.enabled=Переключатель вкл
+placementpreview.key.toggle.ghost=Показать призрачные блоки
+placementpreview.key.toggle.wire=Показать проволочный каркас
