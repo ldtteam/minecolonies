@@ -260,7 +260,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void teleportToColony(@NotNull final Button button)
     {
         final int row = alliesList.getListElementIndexByPane(button);
-        final CompactColony ally = building.getColony().getAllies().get(row);
+        final CompactColonyReference ally = building.getColony().getAllies().get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
@@ -710,12 +710,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final CompactColony compactColony = building.getColony().getAllies().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(compactColony.name);
-                final long distance = BlockPosUtil.getDistance2D(compactColony.center, building.getPosition());
+                final CompactColonyReference colonyReference = building.getColony().getAllies().get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyReference.name);
+                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (compactColony.hasTownHall && (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().minThLevelToTeleport.get() || !townHall.canPlayerUseTP()))
+                if (colonyReference.hasTownHall && (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().minThLevelToTeleport.get() || !townHall.canPlayerUseTP()))
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -738,9 +738,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final CompactColony compactColony = building.getColony().getFeuds().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(compactColony.name);
-                final long distance = BlockPosUtil.getDistance2D(compactColony.center, building.getPosition());
+                final CompactColonyReference colonyReference = building.getColony().getFeuds().get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyReference.name);
+                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
             }
         });

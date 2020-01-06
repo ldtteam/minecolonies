@@ -182,12 +182,12 @@ public final class ColonyView implements IColonyView
     /**
      * The list of allies.
      */
-    private List<CompactColony> allies;
+    private List<CompactColonyReference> allies;
 
     /**
      * The list of feuds.
      */
-    private List<CompactColony> feuds;
+    private List<CompactColonyReference> feuds;
 
     /**
      * Base constructor for a colony.
@@ -790,13 +790,13 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColony(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), buf.readInt()));
+            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), buf.readInt()));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColony(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
+            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
         }
 
         return null;
@@ -1389,13 +1389,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public List<CompactColony> getAllies()
+    public List<CompactColonyReference> getAllies()
     {
         return allies;
     }
 
     @Override
-    public List<CompactColony> getFeuds()
+    public List<CompactColonyReference> getFeuds()
     {
         return feuds;
     }

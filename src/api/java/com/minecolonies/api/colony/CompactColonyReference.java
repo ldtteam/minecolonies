@@ -5,7 +5,7 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Compact colony for allies and feud data.
  */
-public class CompactColony
+public class CompactColonyReference
 {
     /**
      * The name of the colony.
@@ -40,7 +40,7 @@ public class CompactColony
      * @param hasTownHall if it has a town hall.
      * @param dimension the dimension it is in.
      */
-    public CompactColony(final String name, final BlockPos center, final int id, final boolean hasTownHall, final int dimension)
+    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final int dimension)
     {
         this.name = name;
         this.center = center;

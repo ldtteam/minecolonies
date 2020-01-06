@@ -456,11 +456,11 @@ public interface IColonyView extends IColony
      * Get a compact list of all allies.
      * @return the list.
      */
-    List<CompactColony> getAllies();
+    List<CompactColonyReference> getAllies();
 
     /**
      * Get a compact list of all feuds.
      * @return the list.
      */
-    List<CompactColony> getFeuds();
+    List<CompactColonyReference> getFeuds();
 }
