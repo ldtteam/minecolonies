@@ -128,6 +128,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
 
+        this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
         {
             return;
@@ -368,7 +369,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     break;
             }
 
-            this.ourEntity.setMoveVertical(0);
             if (newSpeed > 0)
             {
                 this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
