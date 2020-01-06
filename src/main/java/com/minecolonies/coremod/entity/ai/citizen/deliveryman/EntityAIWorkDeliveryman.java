@@ -668,7 +668,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                       .matchFirstInProviderWithAction(
                         entity,
                         stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount() == 1 ? is.getMaxStackSize() : is.getCount(), new InvWrapper(worker.getInventoryCitizen()))
+                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount(), new InvWrapper(worker.getInventoryCitizen()))
                       );
     }
 

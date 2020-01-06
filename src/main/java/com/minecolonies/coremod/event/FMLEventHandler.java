@@ -79,6 +79,10 @@ public class FMLEventHandler
             IColonyManager.getInstance().getIColonyByOwner(((EntityPlayerMP) event.player).getServerWorld(), event.player);
             //ColonyManager.syncAllColoniesAchievements();
         }
+        else
+        {
+            IColonyManager.getInstance().resetColonyViews();
+        }
     }
 
     /**
