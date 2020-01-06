@@ -242,8 +242,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
-            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1);
-            itemStack.setTag(res.getItemStack().getTag());
+            @NotNull final ItemStack itemStack = res.getItemStack().copy();
+            itemStack.setCount(1);
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
             final int needed = res.getAmount() - res.getAvailable();
