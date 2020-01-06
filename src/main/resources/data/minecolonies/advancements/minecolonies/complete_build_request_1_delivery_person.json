@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_warehouse",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutdeliveryman"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_delivery_person.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_delivery_person.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "delivery_person": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "deliveryman",
+        "level": 1
+      }
+    }
+  }
+}

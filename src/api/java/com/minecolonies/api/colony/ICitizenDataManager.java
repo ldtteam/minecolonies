@@ -28,8 +28,10 @@ public interface ICitizenDataManager
     /**
      * Creates a citizen data view from a given network buffer, containing the views data.
      *
+     * @param id the id of the citizen.
      * @param networkBuffer The network buffer to read from.
+     * @param colonyView the colony the citizen belongs to.
      * @return The citizen data view.
      */
-    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer);
+    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer, final IColonyView colonyView);
 }

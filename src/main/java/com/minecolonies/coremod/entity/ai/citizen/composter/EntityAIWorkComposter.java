@@ -11,14 +11,13 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
@@ -84,11 +84,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(GET_MATERIALS, this::getMaterials),
-          new AITarget(START_WORKING, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(GET_MATERIALS, this::getMaterials, TICKS_SECOND),
+          new AITarget(START_WORKING, this::decideWhatToDo, 1),
+          new AITarget(COMPOSTER_FILL, this::fillBarrels, 10),
+          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels, 10)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

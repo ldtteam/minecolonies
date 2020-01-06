@@ -1,0 +1,26 @@
+{
+  "parent": "minecolonies:minecolonies/complete_build_request_1_builder",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutbuilder"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_2_builder.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_2_builder.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "builders_hut": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "builder",
+        "level": 2
+      }
+    }
+  }
+}

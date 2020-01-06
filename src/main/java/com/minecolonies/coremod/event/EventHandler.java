@@ -583,7 +583,7 @@ public class EventHandler
             {
                 return true;
             }
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.warehouse.limit");
+            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.warehouse.limit");
         }
         return false;
     }
@@ -633,7 +633,7 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
+                final ITextComponent deleteButton = new TranslationTextComponent("tile.blockhuttownhall.deletemessagelink")
                                                       .setStyle(new Style()
                                                                   .setBold(true)
                                                                   .setColor(TextFormatting.GOLD)
@@ -644,9 +644,9 @@ public class EventHandler
 
                 if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
                 {
-                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+                    player.sendMessage(new TranslationTextComponent("tile.blockhuttownhall.messageplacedalreadyinfi"));
 
-                    final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.abandonMessageLink")
+                    final ITextComponent abandonButton = new TranslationTextComponent("tile.blockhuttownhall.abandonmessagelink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
                                                                        .setClickEvent(new ClickEvent(
                                                                          ClickEvent.Action.RUN_COMMAND,
@@ -657,7 +657,7 @@ public class EventHandler
                 }
                 else
                 {
-                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyDel"));
+                    player.sendMessage(new TranslationTextComponent("tile.blockhuttownhall.messageplacedalreadydel"));
                 }
                 player.sendMessage(deleteButton);
             }
@@ -669,7 +669,7 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlready"));
+                player.sendMessage(new TranslationTextComponent("tile.blockhuttownhall.messageplacedalready"));
             }
             return false;
         }
@@ -689,7 +689,7 @@ public class EventHandler
                     Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                            + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                     //Placing in a colony which already has a town hall
-                    LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
+                    LanguageHandler.sendPlayerMessage(player, "block.blockhuttownhall.messagetooclose");
                 }
                 return false;
             }
@@ -699,7 +699,7 @@ public class EventHandler
                 if (!world.isRemote)
                 {
                     //  No permission to place hut in colony
-                    LanguageHandler.sendPlayerMessage(player, "block.blockHut.messageNoPermissionPlace", closestColony.getName());
+                    LanguageHandler.sendPlayerMessage(player, "block.blockHut.messagenopermissionplace", closestColony.getName());
                 }
                 return false;
             }
@@ -712,7 +712,7 @@ public class EventHandler
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
-            LanguageHandler.sendPlayerMessage(player, "block.blockHutTownHall.messageTooClose");
+            LanguageHandler.sendPlayerMessage(player, "block.blockhuttownhall.messagetooclose");
             return false;
         }
 
@@ -725,7 +725,7 @@ public class EventHandler
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,
-              "block.blockHutTownHall.messageTooCloseToVillage");
+              "block.blockhuttownhall.messagetooclosetovillage");
             return false;
         }
         return true;

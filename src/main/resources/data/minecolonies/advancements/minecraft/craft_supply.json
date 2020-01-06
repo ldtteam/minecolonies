@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:story/root",
+  "display": {
+    "icon": {
+      "item": "minecolonies:supplychestdeployer"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.root.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.root.description"
+    },
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "supply_ship": {
+      "trigger": "minecolonies:supply_placed"
+    }
+  }
+}

@@ -318,10 +318,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (pEx.isOnLadder())
             {
-                if (handlePathPointOnLadder(pEx))
-                {
-                    return true;
-                }
+                return handlePathPointOnLadder(pEx);
             }
             else if (ourEntity.isInWater())
             {
@@ -371,12 +368,21 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     break;
             }
 
+            this.ourEntity.setMoveVertical(0);
             if (newSpeed > 0)
             {
                 this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
             }
             else
             {
+                if (world.getBlockState(ourEntity.getPosition().down()).isLadder(world, ourEntity.getPosition().down(), ourEntity))
+                {
+                    this.ourEntity.setMoveVertical(-0.5f);
+                }
+                else
+                {
+                    this.ourEntity.getNavigator().clearPath();
+                }
                 return true;
             }
         }

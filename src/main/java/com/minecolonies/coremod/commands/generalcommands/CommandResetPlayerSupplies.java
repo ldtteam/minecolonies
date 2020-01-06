@@ -6,6 +6,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -26,27 +27,18 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        GameProfile profile;
-        try
-        {
-            profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
-        }
-        catch (CommandSyntaxException e)
-        {
-            return 0;
-        }
-
-        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId());
+        final String username = StringArgumentType.getString(context, PLAYERNAME_ARG);
+        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByUsername(username);
         if (player == null)
         {
             if (context.getSource().getEntity() instanceof PlayerEntity)
             {
                 // could not find player with given name.
-                LanguageHandler.sendPlayerMessage((PlayerEntity) context.getSource().getEntity(), "com.minecolonies.command.playernotfound", profile.getName());
+                LanguageHandler.sendPlayerMessage((PlayerEntity) context.getSource().getEntity(), "com.minecolonies.command.playernotfound", username);
             }
             else
             {
-                Log.getLogger().warn(LanguageHandler.format("com.minecolonies.command.playernotfound", profile.getName()));
+                Log.getLogger().warn(LanguageHandler.format("com.minecolonies.command.playernotfound", username));
             }
             return 0;
         }
@@ -59,7 +51,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
     @Override
     public LiteralArgumentBuilder<CommandSource> build()
     {
-        return IMCCommand.newLiteral(getName()).then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute));
+        return IMCCommand.newLiteral(getName()).then(IMCCommand.newArgument(PLAYERNAME_ARG, StringArgumentType.string()).executes(this::checkPreConditionAndExecute));
     }
 
     /**

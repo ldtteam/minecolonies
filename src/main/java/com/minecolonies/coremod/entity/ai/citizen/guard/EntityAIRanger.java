@@ -23,8 +23,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -106,7 +105,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     }
 
     /**
-     * Blockdistance at which attackRanged() will get Control, intentionally set higher than actual attack range
+     * Getter for the attackrange
      */
     @Override
     protected int getAttackRange()
@@ -122,10 +121,10 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     private int getRealAttackRange()
     {
         int attackDist = BASE_DISTANCE_FOR_RANGED_ATTACK;
-        // + 2 Blockrange per building level for a total of +10 from building level
+        // + 1 Blockrange per building level for a total of +5 from building level
         if (buildingGuards != null)
         {
-            attackDist += buildingGuards.getBuildingLevel() * 2;
+            attackDist += buildingGuards.getBuildingLevel();
         }
         // ~ +1 each three levels for a total of +15 from guard level
         if (worker.getCitizenData() != null)
@@ -135,7 +134,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target != null)
         {
-            attackDist += worker.getPosY() - target.posY;
+            attackDist += worker.posY - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -153,7 +152,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * @return The next IAIState to go to.
      */
     @Override
-    protected LivingEntity getTarget()
+    protected LivingEntity getNearbyTarget()
     {
         strafingTime = 0;
         tooCloseNumTicks = 0;
@@ -161,7 +160,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         timeCanSee = 0;
         fleeing = false;
         movingToTarget = false;
-        return super.getTarget();
+        return super.getNearbyTarget();
     }
 
     @Override
@@ -184,13 +183,15 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         final IAIState state = preAttackChecks();
         if (state != getState())
         {
+            worker.getNavigator().clearPath();
+            worker.getMoveHelper().strafe(0, 0);
             setDelay(STANDARD_DELAY);
             return state;
         }
 
         if (worker.getCitizenData() == null)
         {
-            return GUARD_ATTACK_RANGED;
+            return START_WORKING;
         }
 
         final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());
@@ -308,7 +309,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             {
                 worker.resetActiveHand();
             }
-            else if (canSee && sqDistanceToEntity < sqAttackRange)
+            else if (canSee && sqDistanceToEntity <= sqAttackRange)
             {
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.swingArm(Hand.MAIN_HAND);

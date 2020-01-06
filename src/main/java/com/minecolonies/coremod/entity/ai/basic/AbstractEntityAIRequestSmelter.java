@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -9,11 +10,13 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -50,9 +53,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(CRAFT, this::craft),
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
 
     @Override
@@ -193,15 +195,25 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if(entity instanceof FurnaceTileEntity && !((FurnaceTileEntity) entity).isBurning())
+            if( entity instanceof FurnaceTileEntity )
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                      || (hasFuelInFurnaceAndNoSmeltable(furnace))
-                      || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                if ( !((FurnaceTileEntity) entity).isBurning() )
                 {
-                    walkTo = pos;
-                    return START_USING_FURNACE;
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
+                          || (hasFuelInFurnaceAndNoSmeltable(furnace))
+                          || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
+                    {
+                        walkTo = pos;
+                        return START_USING_FURNACE;
+                    }
+                }
+            }
+            else
+            {
+                if ( !(world.getBlockState(pos).getBlock() instanceof FurnaceBlock) )
+                {
+                    ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(pos);
                 }
             }
         }
@@ -217,7 +229,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
@@ -257,6 +272,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                   new InvWrapper(furnace), FUEL_SLOT);
             }
         }
+        else
+        {
+            if ( !(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock) )
+            {
+                ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(walkTo);
+            }
+        }
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return START_WORKING;
@@ -285,8 +307,21 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(FURNACE_USER_NO_FUEL);
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+            }
             return getState();
+        }
+
+        if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
+        {
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
+            setDelay(STANDARD_DELAY);
+            return START_WORKING;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
