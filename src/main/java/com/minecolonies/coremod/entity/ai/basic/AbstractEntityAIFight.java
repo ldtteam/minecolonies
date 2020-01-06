@@ -19,7 +19,6 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,9 +83,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepare)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 10),
+          new AITarget(PREPARING, this::prepare, 1)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
@@ -292,10 +291,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
 
         if (getOwnBuilding() != null)
         {
-            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * 5 * SPEED_LEVEL_BONUS;
+            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
         }
 
-        levelAdjustment = levelAdjustment > 0.5 ? 0.5 : levelAdjustment;
+        levelAdjustment = levelAdjustment > 0.3 ? 0.3 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;
     }
 

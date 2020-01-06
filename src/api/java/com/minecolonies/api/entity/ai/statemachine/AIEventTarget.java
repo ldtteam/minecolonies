@@ -30,29 +30,20 @@ public class AIEventTarget extends TickingEvent<IAIState>
         super(eventType, predicate, action, tickRate);
     }
 
-    // TODO:Remove after giving all targets a tickrate
     public AIEventTarget(
       @NotNull final AIBlockingEventType eventType,
       @NotNull final BooleanSupplier predicate,
-      @NotNull final IAIState IAIState)
+      @NotNull final IAIState IAIState,
+      final int tickRate)
     {
-        super(eventType, predicate, () -> IAIState, 1);
+        super(eventType, predicate, () -> IAIState, tickRate);
     }
 
-    // TODO:Remove after giving all targets a tickrate
     public AIEventTarget(
       @NotNull final AIBlockingEventType eventType,
-      @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<IAIState> action)
+      @NotNull final Supplier<IAIState> action,
+      final int tickRate)
     {
-        super(eventType, predicate, action, 1);
-    }
-
-    // TODO:Remove after giving all targets a tickrate
-    public AIEventTarget(
-      @NotNull final AIBlockingEventType eventType,
-      @NotNull final Supplier<IAIState> action)
-    {
-        super(eventType, () -> true, action, 1);
+        super(eventType, () -> true, action, tickRate);
     }
 }

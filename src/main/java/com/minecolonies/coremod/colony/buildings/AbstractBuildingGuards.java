@@ -21,9 +21,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -81,17 +81,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
-    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1, AttributeModifier.Operation.ADDITION);
+    private final AttributeModifier healthModConfig =
+      new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     /**
      * Vision range per building level.
      */
     private static final int         VISION_RANGE_PER_LEVEL = 5;
-
-    /**
-     * All the mobs.
-     */
-    private final List<MobEntryView> mobs;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -131,7 +127,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Hashmap of mobs we may or may not attack.
      */
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
+    private Map<ResourceLocation, MobEntryView> mobsToAttack = new HashMap<>();
 
     /**
      * The player the guard has been set to follow.
@@ -139,8 +135,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private PlayerEntity followPlayer;
 
     /**
-     * Indicates if in Follow mode what type of follow is use.
-     * True - tight grouping, false - lose grouping.
+     * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
      */
     private boolean tightGrouping;
 
@@ -170,7 +165,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                                  && itemStack.getItem() instanceof ArmorItem
                                  && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
 
-        mobs = calculateMobs();
+        calculateMobs();
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -191,10 +186,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 if (optCitizen.isPresent())
                 {
-                    optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
-
                     final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
-                    optCitizen.get().getAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
+                    AttributeModifierUtils.addHealthModifier(optCitizen.get(), healthModBuildingHP);
                 }
             }
         }
@@ -211,20 +204,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
+                final AbstractEntityCitizen citizenEntity = optCitizen.get();
                 final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
-                optCitizen.get().increaseHPForGuards();
-                optCitizen
-                  .get()
-                  .getAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModBuildingHP);
-                optCitizen
-                  .get()
-                  .getAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModConfig);
-                optCitizen
-                  .get()
-                  .getAttribute(SharedMonsterAttributes.ARMOR)
-                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
+                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
+                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
             colony.getCitizenManager().calculateMaxCitizens();
 
@@ -280,7 +263,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final MobEntryView mobEntry = MobEntryView.read(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
             {
-                mobsToAttack.add(mobEntry);
+                mobsToAttack.put(mobEntry.getEntityEntry().getRegistryName(), mobEntry);
             }
         }
 
@@ -310,7 +293,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         compound.put(NBT_PATROL_TARGETS, wayPointTagList);
 
         @NotNull final ListNBT mobsTagList = new ListNBT();
-        for (@NotNull final MobEntryView entry : mobsToAttack)
+        for (@NotNull final MobEntryView entry : mobsToAttack.values())
         {
             @NotNull final CompoundNBT mobCompound = new CompoundNBT();
             MobEntryView.write(mobCompound, NBT_MOB_VIEW, entry);
@@ -331,7 +314,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
-                optCitizen.get().removeAllHealthModifiers();
+                AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
                 optCitizen.get().setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
                 optCitizen.get().setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
                 optCitizen.get().setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
@@ -363,11 +346,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         if (mobsToAttack.isEmpty())
         {
-            mobsToAttack.addAll(mobs);
+            calculateMobs();
         }
 
         buf.writeInt(mobsToAttack.size());
-        for (final MobEntryView entry : mobsToAttack)
+        for (final MobEntryView entry : mobsToAttack.values())
         {
             MobEntryView.writeToByteBuf(buf, entry);
         }
@@ -520,8 +503,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         private GuardType guardType = null;
 
         /**
-         * Indicates whether tight grouping is use or
-         * lose grouping.
+         * Indicates whether tight grouping is use or lose grouping.
          */
         private boolean tightGrouping = true;
 
@@ -743,6 +725,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         this.job = job;
         for (final ICitizenData citizen : getAssignedCitizen())
         {
+            cancelAllRequestsOfCitizen(citizen);
             citizen.setJob(createJob(citizen));
         }
         this.markDirty();
@@ -884,10 +867,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the map.
      */
     @Override
-    public List<MobEntryView> getMobsToAttack()
+    public Map<ResourceLocation, MobEntryView> getMobsToAttack()
     {
-        mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
-        return new ArrayList<>(mobsToAttack);
+        return mobsToAttack;
     }
 
     /**
@@ -898,8 +880,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void setMobsToAttack(final List<MobEntryView> list)
     {
-        this.mobsToAttack.clear();
-        this.mobsToAttack = new ArrayList<>(list);
+        this.mobsToAttack = new HashMap<>();
+        for (MobEntryView entry : list)
+        {
+            mobsToAttack.put(entry.getEntityEntry().getRegistryName(), entry);
+        }
     }
 
     /**
@@ -1000,9 +985,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the list of MobEntrys to attack.
      */
     @Override
-    public List<MobEntryView> calculateMobs()
+    public void calculateMobs()
     {
-        final List<MobEntryView> mobs = new ArrayList<>();
+        mobsToAttack = new HashMap<>();
 
         int i = 0;
         for (final Map.Entry<ResourceLocation, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
@@ -1010,7 +995,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (entry.getValue().getClassification() == EntityClassification.MONSTER)
             {
                 i++;
-                mobs.add(new MobEntryView(entry.getKey(), true, i));
+                mobsToAttack.put(entry.getKey(), new MobEntryView(entry.getKey(), true, i));
             }
             else
             {
@@ -1019,7 +1004,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     if (entry.getKey() != null && entry.getKey().toString().equals(location))
                     {
                         i++;
-                        mobs.add(new MobEntryView(entry.getKey(), true, i));
+                        mobsToAttack.put(entry.getKey(), new MobEntryView(entry.getKey(), true, i));
                     }
                 }
             }
@@ -1029,10 +1014,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                                                                              .getNetwork()
                                                                              .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
                                                                                  getID(),
-                                                                                 mobsToAttack),
+                                                                                 new ArrayList<>(mobsToAttack.values())),
                                                                                player));
-
-        return mobs;
     }
 
     @Override
@@ -1040,6 +1023,4 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         return true;
     }
-
-
 }

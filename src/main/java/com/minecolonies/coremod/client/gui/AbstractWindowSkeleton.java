@@ -6,6 +6,9 @@ import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.ClickGuiButtonTriggerMessage;
+import com.minecolonies.coremod.network.messages.OpenGuiWindowTriggerMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -30,6 +33,11 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     protected       SwitchView switchView;
 
     /**
+     * This window's resource location
+     */
+    private String resource;
+
+    /**
      * Constructor for the skeleton class of the windows.
      *
      * @param resource Resource location string.
@@ -37,6 +45,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     public AbstractWindowSkeleton(final String resource)
     {
         super(resource);
+        this.resource = resource;
 
         buttons = new HashMap<>();
 
@@ -44,6 +53,8 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
         switchView = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
+
+        Network.getNetwork().sendToServer(new OpenGuiWindowTriggerMessage(this.resource));
     }
 
     /**
@@ -94,6 +105,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
         if (buttons.containsKey(button.getID()))
         {
             buttons.get(button.getID()).accept(button);
+            Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.resource));
         }
         else
         {

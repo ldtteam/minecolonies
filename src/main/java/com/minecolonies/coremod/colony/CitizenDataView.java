@@ -1,18 +1,24 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData. Views
@@ -22,13 +28,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CitizenDataView implements ICitizenDataView
 {
-
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
-
-    /**
-     * The max amount of lines the latest log allows.
-     */
-    private static final int MAX_LINES_OF_LATEST_LOG = 4;
 
     /**
      * Attributes.
@@ -93,12 +93,27 @@ public class CitizenDataView implements ICitizenDataView
     @Nullable
     private BlockPos workBuilding;
 
-    /**
-     * The 4 lines of the latest status.
-     */
-    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
-
     private InventoryCitizen inventory;
+
+    /**
+     * The citizen chat options on the server side.
+     */
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+
+    /**
+     * If the citizen has any primary blocking interactions.
+     */
+    private boolean hasPrimaryBlockingInteractions;
+
+    /**
+     * If the citizen has any primary interactions.
+     */
+    private boolean hasAnyPrimaryInteraction;
+
+    /**
+     * List of primary interactions (sorted by priority).
+     */
+    private List<IInteractionResponseHandler> primaryInteractions;
 
     /**
      * Set View id.
@@ -415,14 +430,6 @@ public class CitizenDataView implements ICitizenDataView
 
         job = buf.readString(32767);
 
-        final int length = buf.readInt();
-        for (int i = 0; i < length; i++)
-        {
-            final String textComp = buf.readString(32767);
-            final TranslationTextComponent textComponent = new TranslationTextComponent(textComp);
-            latestStatus[i] = textComponent;
-        }
-
         colonyId = buf.readInt();
 
         final CompoundNBT compound = buf.readCompoundTag();
@@ -433,17 +440,28 @@ public class CitizenDataView implements ICitizenDataView
         this.inventory.setHeldItem(Hand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
         position = buf.readBlockPos();
-    }
 
-    /**
-     * Get the array of the latest status.
-     *
-     * @return the array of ITextComponents.
-     */
-    @Override
-    public ITextComponent[] getLatestStatus()
-    {
-        return latestStatus.clone();
+        citizenChatOptions.clear();
+        final int size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            final CompoundNBT compoundNBT = buf.readCompoundTag();
+            final ServerCitizenInteractionResponseHandler handler =
+              (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
+            citizenChatOptions.put(handler.getInquiry(), handler);
+        }
+
+        primaryInteractions = citizenChatOptions.values().stream().filter(IInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
+        if (!primaryInteractions.isEmpty())
+        {
+            hasAnyPrimaryInteraction = true;
+            hasPrimaryBlockingInteractions = primaryInteractions.get(0).getPriority().getPriority() >= ChatPriority.IMPORTANT.ordinal();
+        }
+        else
+        {
+            hasAnyPrimaryInteraction = false;
+            hasPrimaryBlockingInteractions = false;
+        }
     }
 
     @Override
@@ -504,5 +522,30 @@ public class CitizenDataView implements ICitizenDataView
     public double getToolsModifiers()
     {
         return toolsModifiers;
+    }
+
+    @Override
+    public List<IInteractionResponseHandler> getOrderedInteractions()
+    {
+        return primaryInteractions;
+    }
+
+    @Override
+    @Nullable
+    public IInteractionResponseHandler getSpecificInteraction(@NotNull final ITextComponent component)
+    {
+        return citizenChatOptions.getOrDefault(component, null);
+    }
+
+    @Override
+    public boolean hasBlockingInteractions()
+    {
+        return this.hasPrimaryBlockingInteractions;
+    }
+
+    @Override
+    public boolean hasPendingInteractions()
+    {
+        return this.hasAnyPrimaryInteraction;
     }
 }

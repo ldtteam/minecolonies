@@ -9,8 +9,10 @@ import com.minecolonies.api.util.EntityUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.Block;
 import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.block.material.Material;
@@ -178,7 +180,7 @@ public final class WorkerUtil
     {
         final int required = target.getHarvestLevel(target.getDefaultState());
 
-        if ((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
+        if ((required < 0 && target.getDefaultState().getMaterial() == Material.WOOD)
               || target instanceof GlazedTerracottaBlock)
         {
             return 0;
@@ -291,6 +293,51 @@ public final class WorkerUtil
                 teLevelSign.markDirty();
                 world.notifyBlockUpdate(levelSignPos, BlockState, BlockState, 3);
             }
+        }
+    }
+
+    /**
+     * Check if there is any already composted land.
+     * @return true if there is any.
+     */
+    public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
+    {
+        for (final BlockPos pos : buildingFlorist.getPlantGround())
+        {
+            if (world.isBlockLoaded(pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityCompostedDirt)
+                {
+                    if (((TileEntityCompostedDirt) entity).isComposted())
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    buildingFlorist.removePlantableGround(pos);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Find the last ladder by iterating over the y pos in the world.
+     * @param pos the starting pos.
+     * @param world the world.
+     * @return the y of the last one.
+     */
+    public static int getLastLadder(@NotNull final BlockPos pos, final World world)
+    {
+        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
+        {
+            return getLastLadder(pos.down(), world);
+        }
+        else
+        {
+            return pos.getY() + 1;
         }
     }
 }

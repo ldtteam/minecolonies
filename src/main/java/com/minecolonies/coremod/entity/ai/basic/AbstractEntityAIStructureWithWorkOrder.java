@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
@@ -205,34 +207,23 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 continue;
             }
 
-            if (block instanceof BlockSolidSubstitution)
+            @Nullable Block worldBlock = world.getBlockState(worldPos).getBlock();
+            for (final IPlacementHandler handler : PlacementHandlers.handlers)
             {
-                blockState = getSolidSubstitution(worldPos);
-                block = blockState.getBlock();
-            }
-            if (block == Blocks.GRASS_BLOCK)
-            {
-                block = Blocks.DIRT;
-                blockState = block.getDefaultState();
-            }
-
-            final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
-            if (block instanceof FallingBlock)
-            {
-                final BlockState downState = BlockPosUtil.getBlockState(world, worldPos.down());
-                if (!downState.getMaterial().isSolid())
+                if (handler.canHandle(world, worldPos, blockState))
                 {
-                    requestBlockToBuildingIfRequired(buildingWorker, getSolidSubstitution(worldPos), blockInfo);
+                    for (final ItemStack stack : handler.getRequiredItems(world, worldPos, blockState, blockInfo.getTileEntityData(), false))
+                    {
+                        if (block != Blocks.AIR
+                              && worldBlock != Blocks.BEDROCK
+                              && !(worldBlock instanceof AbstractBlockHut)
+                              && !isBlockFree(block))
+                        {
+                            buildingWorker.addNeededResource(stack, stack.getCount());
+                        }
+                    }
+                    break;
                 }
-            }
-
-            if (block != null
-                  && block != Blocks.AIR
-                  && worldBlock != Blocks.BEDROCK
-                  && !(worldBlock instanceof AbstractBlockHut)
-                  && !isBlockFree(block))
-            {
-                requestBlockToBuildingIfRequired(buildingWorker, blockState, blockInfo);
             }
         }
 
@@ -271,7 +262,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
-              && !blockState.getBlock().isIn(BlockTags.BEDS)
+              && !(blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART) == BedPart.FOOT)
               && !blockState.getBlock().isIn(BlockTags.BANNERS))
         {
             building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);

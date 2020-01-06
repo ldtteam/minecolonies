@@ -9,6 +9,8 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;
+import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
@@ -20,13 +22,13 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
+import com.minecolonies.coremod.colony.interactionhandling.registry.InteractionResponseHandlerManager;
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +45,8 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final IGuardTypeDataManager         guardTypeDataManager = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
     private       IForgeRegistry<JobEntry>      jobRegistry;
     private       IForgeRegistry<GuardType>     guardTypeRegistry;
+    private       IForgeRegistry<InteractionResponseHandlerEntry> interactionHandlerRegistry;
+    private final IInteractionResponseHandlerDataManager          interactionDataManager  = new InteractionResponseHandlerManager();
 
     @Override
     @NotNull
@@ -99,6 +103,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
+    public IForgeRegistry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
+    {
+        return interactionHandlerRegistry;
+    }
+
+    @Override
     public IGuardTypeDataManager getGuardTypeDataManager()
     {
         return guardTypeDataManager;
@@ -126,6 +136,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IFurnaceRecipes getFurnaceRecipes()
     {
         return FurnaceRecipes.getInstance();
+    }
+
+    @Override
+    public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager()
+    {
+        return interactionDataManager;
     }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
@@ -157,6 +173,15 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                               .setType(GuardType.class)
                               .setIDRange(0, Integer.MAX_VALUE - 1)
                               .create();
+
+        interactionHandlerRegistry = new RegistryBuilder<InteractionResponseHandlerEntry>()
+                        .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
+                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                        .disableSaving()
+                        .allowModification()
+                        .setType(InteractionResponseHandlerEntry.class)
+                        .setIDRange(0, Integer.MAX_VALUE - 1)
+                        .create();
     }
 }
 

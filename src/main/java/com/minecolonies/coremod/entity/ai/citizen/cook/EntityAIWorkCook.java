@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -8,7 +9,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 
 /**
  * Cook AI class.
@@ -87,7 +86,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         super(job);
         super.registerTargets(
-          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
+          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -187,7 +186,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
-            chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
             removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();

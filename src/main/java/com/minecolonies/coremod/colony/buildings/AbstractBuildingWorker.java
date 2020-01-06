@@ -328,6 +328,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         if (citizen != null)
         {
             citizen.setWorkBuilding(this);
+            citizen.getJob().onLevelUp(citizen.getLevel());
             colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;

@@ -193,6 +193,16 @@ public enum AIWorkerState implements IAIState
     GUARD_PATROL(true),
 
     /**
+     * Sleeping on duty
+     */
+    GUARD_SLEEP(false),
+
+    /**
+     * Wake up another guard
+     */
+    GUARD_WAKE(false),
+
+    /**
      * Follow a player.
      */
     GUARD_FOLLOW(true),

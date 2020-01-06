@@ -16,7 +16,6 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -80,13 +80,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForHerding),
-          new AITarget(DECIDE, this::decideWhatToDo),
-          new AITarget(HERDER_BREED, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
-          new AITarget(HERDER_PICKUP, this::pickupItems)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForHerding, 1),
+          new AITarget(DECIDE, this::decideWhatToDo, 1),
+          new AITarget(HERDER_BREED, this::breedAnimals, 1),
+          new AITarget(HERDER_BUTCHER, this::butcherAnimals, 1),
+          new AITarget(HERDER_PICKUP, this::pickupItems, 1)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -308,11 +308,15 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
      */
     private IAIState pickupItems()
     {
-        final List<ItemEntity> items = new ArrayList<>(searchForItemsInArea());
+        final List<ItemEntity> items = searchForItemsInArea();
 
-        for (final ItemEntity item : items)
+        if (!items.isEmpty())
         {
-            walkToBlock(item.getPosition());
+            if (walkToBlock(items.get(0).getPosition()))
+            {
+                setDelay(WALK_DELAY);
+                return getState();
+            }
         }
 
         incrementActionsDoneAndDecSaturation();

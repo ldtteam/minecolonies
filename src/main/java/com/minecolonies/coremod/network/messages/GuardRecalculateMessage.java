@@ -90,7 +90,7 @@ public class GuardRecalculateMessage implements IMessage
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setMobsToAttack(building.calculateMobs());
+                building.calculateMobs();
             }
         }
     }

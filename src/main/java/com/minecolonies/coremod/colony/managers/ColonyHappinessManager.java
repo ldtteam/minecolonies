@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.colony.managers.interfaces.IColonyHappinessManager;
+import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ public class ColonyHappinessManager implements IColonyHappinessManager
         if (this.modifier.isPresent())
         {
             double modifierValue = this.modifier.get();
-            modifierValue = Math.max(CitizenHappinessHandler.MIN_HAPPINESS, Math.min(modifierValue, CitizenHappinessHandler.MAX_HAPPINESS));
+            modifierValue = Math.max(HappinessConstants.MIN_HAPPINESS, Math.min(modifierValue, HappinessConstants.MAX_HAPPINESS));
             this.modifier = Optional.of(modifierValue);
         }
     }
