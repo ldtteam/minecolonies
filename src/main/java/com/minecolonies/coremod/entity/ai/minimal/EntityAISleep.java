@@ -29,17 +29,22 @@ public class EntityAISleep extends Goal
     /**
      * Interval between sleeping particles
      */
-    private static final int PARTICLE_INTERVAL = 30;
+    private static final int TICK_INTERVAL = 30;
 
     /**
      * Chance to play goHomeSound.
      */
-    private static final int CHANCE = 100;
+    private static final int CHANCE = 33;
 
     /**
      * Damage source if has to kill citizen.
      */
     private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
+
+    /**
+     * Max ticks of putting the citizen to bed.
+     */
+    private static final int MAX_BED_TICKS = 10;
 
     /**
      * The citizen.
@@ -59,7 +64,12 @@ public class EntityAISleep extends Goal
     /**
      * Timer for emitting sleeping particle effect
      */
-    private int particleTimer = 0;
+    private int tickTimer = 0;
+
+    /**
+     * Ticks of putting the citizen into bed.
+     */
+    private int bedTicks = 0;
 
     /**
      * Initiate the sleep task.
@@ -120,6 +130,7 @@ public class EntityAISleep extends Goal
             usedBed = null;
         }
         wokeUp = true;
+        bedTicks = 0;
         return false;
     }
 
@@ -139,6 +150,13 @@ public class EntityAISleep extends Goal
     @Override
     public void tick()
     {
+        tickTimer++;
+        if (tickTimer % TICK_INTERVAL != 0)
+        {
+            return;
+        }
+        tickTimer = 0;
+
         // Go home
         if (!citizen.getCitizenColonyHandler().isAtHome())
         {
@@ -146,8 +164,7 @@ public class EntityAISleep extends Goal
             return;
         }
 
-
-        if (!citizen.getCitizenSleepHandler().isAsleep())
+        if (!citizen.getCitizenSleepHandler().isAsleep() || bedTicks < MAX_BED_TICKS)
         {
             findBedAndTryToSleep();
         }
@@ -176,7 +193,6 @@ public class EntityAISleep extends Goal
         {
             if (usedBed == null)
             {
-                boolean foundBed = false;
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
                 {
@@ -191,7 +207,6 @@ public class EntityAISleep extends Goal
                               && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
-                            foundBed = true;
                             citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
 
                             final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
@@ -200,19 +215,16 @@ public class EntityAISleep extends Goal
                             {
                                 citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
                             }
-                            break;
+                            return;
                         }
                     }
                 }
-
-                if (!foundBed)
-                {
-                    usedBed = citizen.getHomePosition();
-                }
+                usedBed = citizen.getHomePosition();
             }
 
             if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
             {
+                bedTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
                 {
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
@@ -227,12 +239,7 @@ public class EntityAISleep extends Goal
      */
     private void sleep()
     {
-        particleTimer++;
-        if (particleTimer % PARTICLE_INTERVAL == 0)
-        {
-            particleTimer = 0;
-            Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.posX, citizen.posY + 1.0d, citizen.posZ), citizen);
-        }
+        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.posX, citizen.posY + 1.0d, citizen.posZ), citizen);
         //TODO make sleeping noises here.
     }
 
