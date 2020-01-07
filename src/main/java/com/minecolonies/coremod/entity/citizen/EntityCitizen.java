@@ -254,7 +254,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
-        this.goalSelector.addGoal(++priority, new EntityAIGoHome(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));

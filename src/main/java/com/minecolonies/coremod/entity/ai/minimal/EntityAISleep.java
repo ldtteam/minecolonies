@@ -4,7 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -14,6 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,6 +26,21 @@ import java.util.EnumSet;
  */
 public class EntityAISleep extends Goal
 {
+    /**
+     * Interval between sleeping particles
+     */
+    private static final int PARTICLE_INTERVAL = 30;
+
+    /**
+     * Chance to play goHomeSound.
+     */
+    private static final int CHANCE = 100;
+
+    /**
+     * Damage source if has to kill citizen.
+     */
+    private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
+
     /**
      * The citizen.
      */
@@ -43,11 +60,6 @@ public class EntityAISleep extends Goal
      * Timer for emitting sleeping particle effect
      */
     private int particleTimer = 0;
-
-    /**
-     * Interval between sleeping particles
-     */
-    private static final int PARTICLE_INTERVAL = 30;
 
     /**
      * Initiate the sleep task.
@@ -70,7 +82,7 @@ public class EntityAISleep extends Goal
     @Override
     public boolean shouldExecute()
     {
-        return (citizen.getDesiredActivity() == DesiredActivity.SLEEP && citizen.getCitizenColonyHandler().isAtHome()) || !wokeUp;
+        return citizen.getDesiredActivity() == DesiredActivity.SLEEP || !wokeUp;
     }
 
     /**
@@ -83,65 +95,8 @@ public class EntityAISleep extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (usedBed == null && citizen.getCitizenData() != null)
-        {
-            this.wokeUp = !citizen.getCitizenData().isAsleep();
-            this.usedBed = citizen.getCitizenData().getBedPos();
-            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ZERO))
-            {
-                this.usedBed = null;
-            }
-        }
-
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
-            wokeUp = false;
-            final IColony colony = citizen.getCitizenColonyHandler().getColony();
-            if (colony == null || colony.getBuildingManager().getBuilding(citizen.getHomePosition()) == null)
-            {
-                return true;
-            }
-
-            if (usedBed == null)
-            {
-                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                if (hut instanceof BuildingHome)
-                {
-                    for (final BlockPos pos : ((BuildingHome) hut).getBedList())
-                    {
-                        final World world = citizen.world;
-                        BlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getExtendedState(state, world, pos);
-                        if (state.getBlock().isIn(BlockTags.BEDS)
-                              && !state.get(BedBlock.OCCUPIED)
-                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                              && world.isAirBlock(pos.up()))
-                        {
-                            usedBed = pos;
-                            citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
-
-                            final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
-                            final BlockState feetState = citizen.world.getBlockState(feetPos);
-                            if (feetState.getBlock().isIn(BlockTags.BEDS))
-                            {
-                                citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
-                            }
-
-                            return true;
-                        }
-                    }
-                }
-
-                usedBed = citizen.getHomePosition();
-            }
-            else
-            {
-                if (citizen.isWorkerAtSiteWithMove(usedBed, 1))
-                {
-                    citizen.getCitizenSleepHandler().trySleep(usedBed);
-                    return true;
-                }
-            }
             return true;
         }
 
@@ -163,7 +118,6 @@ public class EntityAISleep extends Goal
                 }
             }
             usedBed = null;
-
         }
         wokeUp = true;
         return false;
@@ -185,11 +139,94 @@ public class EntityAISleep extends Goal
     @Override
     public void tick()
     {
-        if (!citizen.getCitizenSleepHandler().isAsleep())
+        // Go home
+        if (!citizen.getCitizenColonyHandler().isAtHome())
         {
+            goHome();
             return;
         }
 
+
+        if (!citizen.getCitizenSleepHandler().isAsleep())
+        {
+            findBedAndTryToSleep();
+        }
+        else
+        {
+            // Do the actual sleeping action.
+            sleep();
+        }
+    }
+
+    private void findBedAndTryToSleep()
+    {
+        // Finding bed
+        if (usedBed == null && citizen.getCitizenData() != null)
+        {
+            this.usedBed = citizen.getCitizenData().getBedPos();
+            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ZERO))
+            {
+                this.usedBed = null;
+            }
+        }
+
+        this.wokeUp = false;
+        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
+        {
+            if (usedBed == null)
+            {
+                boolean foundBed = false;
+                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                if (hut instanceof BuildingHome)
+                {
+                    for (final BlockPos pos : ((BuildingHome) hut).getBedList())
+                    {
+                        final World world = citizen.world;
+                        BlockState state = world.getBlockState(pos);
+                        state = state.getBlock().getExtendedState(state, world, pos);
+                        if (state.getBlock().isIn(BlockTags.BEDS)
+                              && !state.get(BedBlock.OCCUPIED)
+                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
+                              && world.isAirBlock(pos.up()))
+                        {
+                            usedBed = pos;
+                            foundBed = true;
+                            citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
+
+                            final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
+                            final BlockState feetState = citizen.world.getBlockState(feetPos);
+                            if (feetState.getBlock().isIn(BlockTags.BEDS))
+                            {
+                                citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!foundBed)
+                {
+                    usedBed = citizen.getHomePosition();
+                }
+            }
+
+            if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
+            {
+                if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
+                {
+                    citizen.getCitizenData().setBedPos(BlockPos.ZERO);
+                    usedBed = null;
+                }
+            }
+        }
+    }
+
+    /**
+     * Make sleeping
+     */
+    private void sleep()
+    {
         particleTimer++;
         if (particleTimer % PARTICLE_INTERVAL == 0)
         {
@@ -197,5 +234,42 @@ public class EntityAISleep extends Goal
             Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.posX, citizen.posY + 1.0d, citizen.posZ), citizen);
         }
         //TODO make sleeping noises here.
+    }
+
+    /**
+     * While going home play a goHome sound for the specific worker by chance.
+     */
+    private void goHome()
+    {
+        final BlockPos pos = citizen.getHomePosition();
+        if (pos == null || pos.equals(BlockPos.ZERO))
+        {
+            //If the citizen has no colony as well, remove the citizen.
+            if (citizen.getCitizenColonyHandler().getColony() == null)
+            {
+                citizen.onDeath(CLEANUP_DAMAGE);
+            }
+            else
+            {
+                //If he has no homePosition strangely then try to  move to the colony.
+                citizen.isWorkerAtSiteWithMove(citizen.getCitizenColonyHandler().getColony().getCenter(), 2);
+            }
+            return;
+        }
+        else
+        {
+            citizen.isWorkerAtSiteWithMove(pos, 2);
+        }
+
+        final int chance = citizen.getRandom().nextInt(CHANCE);
+
+        if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(citizen),
+              citizen.getPosition(),
+              citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(),
+              1);
+            //add further workers as soon as available.
+        }
     }
 }
