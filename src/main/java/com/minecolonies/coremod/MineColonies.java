@@ -174,7 +174,10 @@ public class MineColonies
 
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
 
-        PermissionAPI.registerNode(COLONY_SILENT_VISITOR_PERMISSION, DefaultPermissionLevel.OP, "Disables the enter and leave notifications of players with this node.");
+        if (Configurations.gameplay.operatorVisitsColoniesSilently)
+        {
+            PermissionAPI.registerNode(COLONY_SILENT_VISITOR_PERMISSION, DefaultPermissionLevel.OP, "Disables the enter and leave notifications of players with this node.");
+        }
 
         //Register Vanilla items with tags
 

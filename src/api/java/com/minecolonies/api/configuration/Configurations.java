@@ -620,6 +620,9 @@ public class Configurations
 
         @Config.Comment("Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]")
         public double enchanterExperienceMultiplier = 2;
+
+        @Config.Comment("Should Operators be silent when entering or leaving a colony. [Default: false]")
+        public boolean operatorVisitsColoniesSilently = false;
     }
 
     public static class Compatibility
