@@ -9,8 +9,11 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -26,13 +29,13 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
@@ -123,15 +126,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           /*
            * If IDLE - switch to start working.
            */
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForMining),
-          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
-          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder),
-          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft),
-          new AITarget(MINER_MINING_SHAFT, this::doShaftMining),
-          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
-          new AITarget(MINER_MINING_NODE, this::executeNodeMining)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForMining, 1),
+          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, TICKS_SECOND),
+          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, TICKS_SECOND),
+          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, TICKS_SECOND),
+          new AITarget(MINER_MINING_SHAFT, this::doShaftMining, STANDARD_DELAY),
+          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
+          new AITarget(MINER_MINING_NODE, this::executeNodeMining, STANDARD_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           2 * worker.getCitizenData().getStrength()
@@ -243,6 +246,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
+    }
+
+    @Override
+    public ItemStack getTotalAmount(final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return null;
+        }
+
+        final ItemStack copy = stack.copy();
+        copy.setCount(Math.max(super.getTotalAmount(stack).getCount(), copy.getMaxStackSize()/2));
+        return copy;
     }
 
     @NotNull

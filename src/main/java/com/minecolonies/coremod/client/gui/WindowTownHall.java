@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
@@ -20,7 +19,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
@@ -56,11 +54,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
     /**
-     * Black color.
-     */
-    public static final int BLACK = Color.getByName("black", 0);
-
-    /**
      * List of workOrders.
      */
     private final List<WorkOrderView> workOrders = new ArrayList<>();
@@ -75,18 +68,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     @NotNull
     private final List<Player> users = new ArrayList<>();
-
-    /**
-     * List of citizens.
-     */
-    @NotNull
-    private final List<IColonyView> allies = new ArrayList<>();
-
-    /**
-     * List of citizens.
-     */
-    @NotNull
-    private final List<IColonyView> feuds = new ArrayList<>();
 
     /**
      * List of citizens.
@@ -157,8 +138,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         updateUsers();
         updateCitizens();
         updateWorkOrders();
-        updateAllies();
-        updateFeuds();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
         tabsToPages.put(BUTTON_INFO, PAGE_INFO);
@@ -274,53 +253,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Clears and resets all allies.
-     */
-    private void updateAllies()
-    {
-        allies.clear();
-        final IColony colony = building.getColony();
-
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getInstance().world, player.getID());
-            if (col instanceof ColonyView)
-            {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
-                {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
-                    {
-                        allies.add((IColonyView) col);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Clears and resets all feuds.
-     */
-    private void updateFeuds()
-    {
-        feuds.clear();
-        final IColony colony = building.getColony();
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getInstance().world, player.getID());
-            if (col instanceof ColonyView)
-            {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
-                {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
-                    {
-                        feuds.add((IColonyView) col);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * On Button click teleport to the colony..
      *
      * @param button the clicked button.
@@ -328,12 +260,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void teleportToColony(@NotNull final Button button)
     {
         final int row = alliesList.getListElementIndexByPane(button);
-        final IColonyView ally = allies.get(row);
-        final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
+        final CompactColonyReference ally = building.getColony().getAllies().get(row);
+        final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
-                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.getID(),
-                                                ally.getDimension())))));
+                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.id,
+                                                ally.dimension)))));
 
         Minecraft.getInstance().player.sendMessage(teleport);
         this.close();
@@ -695,8 +627,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
           "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         jobCountMap.remove("");
 
-        final Integer maxJobs = jobCountMap.size();
-        final Integer preJobsHeaders = 1;
+        final int maxJobs = jobCountMap.size();
+        final int preJobsHeaders = 1;
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -772,18 +704,18 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public int getElementCount()
             {
-                return allies.size();
+                return building.getColony().getAllies().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView iColonyView = allies.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(iColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(iColonyView.getCenter(), building.getPosition());
+                final CompactColonyReference colonyReference = building.getColony().getAllies().get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyReference.name);
+                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().minThLevelToTeleport.get() || !townHall.canPlayerUseTP())
+                if (colonyReference.hasTownHall && (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().minThLevelToTeleport.get() || !townHall.canPlayerUseTP()))
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -800,15 +732,15 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public int getElementCount()
             {
-                return feuds.size();
+                return building.getColony().getFeuds().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView iColonyView = feuds.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(iColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(iColonyView.getCenter(), building.getPosition());
+                final CompactColonyReference colonyReference = building.getColony().getFeuds().get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyReference.name);
+                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
             }
         });

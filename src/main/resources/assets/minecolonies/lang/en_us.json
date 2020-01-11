@@ -497,6 +497,7 @@
   "com.minecolonies.coremod.gui.townhall.population.combattrainings": "Squires: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.archertrainings": "Bowmen: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.stonesmelterys": "Stonesmelter: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.smelterys": "Smelter: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.stonemasons": "Stonemason: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.blacksmiths": "Blacksmiths: %d/%d",
 

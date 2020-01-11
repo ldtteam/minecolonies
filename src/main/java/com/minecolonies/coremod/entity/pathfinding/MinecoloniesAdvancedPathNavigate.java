@@ -11,7 +11,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -128,6 +127,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
 
+        this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
         {
             return;
@@ -191,6 +191,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected boolean canNavigate()
     {
+        // Auto dismount when trying to path.
+        if (ourEntity.ridingEntity != null)
+        {
+            ourEntity.stopRiding();
+        }
         return true;
     }
 
@@ -262,7 +267,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             this.currentPath = null;
             return false;
         }
+        return super.setPath(convertPath(path), speed);
+    }
 
+    /**
+     * Converts the given path to a minecolonies path if needed.
+     *
+     * @param path given path
+     * @return resulting path
+     */
+    private Path convertPath(final Path path)
+    {
         final int pathLength = path.getCurrentPathLength();
         Path tempPath = null;
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
@@ -282,7 +297,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             destination = new BlockPos(finalPoint.x, finalPoint.y, finalPoint.z);
         }
 
-        return super.setPath(tempPath == null ? path : tempPath, speed);
+        return tempPath == null ? path : tempPath;
     }
 
     private boolean processCompletedCalculationResult() throws InterruptedException, ExecutionException
@@ -318,10 +333,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (pEx.isOnLadder())
             {
-                if (handlePathPointOnLadder(pEx))
-                {
-                    return true;
-                }
+                return handlePathPointOnLadder(pEx);
             }
             else if (ourEntity.isInWater())
             {
@@ -377,6 +389,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
+                if (world.getBlockState(ourEntity.getPosition().down()).isLadder(world, ourEntity.getPosition().down(), ourEntity))
+                {
+                    this.ourEntity.setMoveVertical(-0.5f);
+                }
+                else
+                {
+                    this.ourEntity.getNavigator().clearPath();
+                }
                 return true;
             }
         }
@@ -423,6 +443,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
+            if (!(currentPath.getPathPointFromIndex(curNode) instanceof PathPointExtended))
+            {
+                currentPath = convertPath(currentPath);
+            }
+            
             final PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
             final PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
 

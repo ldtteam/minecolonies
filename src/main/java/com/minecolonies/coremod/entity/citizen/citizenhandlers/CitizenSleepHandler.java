@@ -4,11 +4,9 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -102,14 +100,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * @param bedLocation The possible location to sleep.
      */
     @Override
-    public void trySleep(final BlockPos bedLocation)
+    public boolean trySleep(final BlockPos bedLocation)
     {
         final BlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
 
         if (!isBed)
         {
-            return;
+            return false;
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
@@ -128,6 +126,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             citizen.getCitizenData().setBedPos(bedLocation);
         }
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
+        return true;
     }
 
     /**

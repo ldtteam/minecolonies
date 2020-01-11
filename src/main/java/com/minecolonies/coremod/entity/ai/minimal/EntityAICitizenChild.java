@@ -291,7 +291,7 @@ public class EntityAICitizenChild extends Goal
 
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),
                   "com.minecolonies.coremod.progress.childGrow",
-                  child.getName());
+                  child.getName().getFormattedText());
                 // Grow up
                 child.setIsChild(false);
                 child.getCitizenData().setIsChild(false);
