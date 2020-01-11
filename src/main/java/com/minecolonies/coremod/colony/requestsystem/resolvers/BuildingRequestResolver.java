@@ -108,22 +108,15 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
         if (totalAvailable >= totalRequested)
             return Lists.newArrayList();
+        
+        if (!building.requiresCompleteRequestFulfillment())
+        {
+            return Lists.newArrayList();
+        }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
         final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
-
-        if (!building.requiresCompleteRequestFulfillment())
-        {
-            if (building.getCitizenForRequest(request.getId()).isPresent())
-            {
-                return Lists.newArrayList(building.getCitizenForRequest(request.getId()).get().createRequestAsync(remainingRequest));
-            }
-            return Lists.newArrayList();
-        }
-        else
-        {
-            return Lists.newArrayList(manager.createRequest(this, remainingRequest));
-        }
+        return Lists.newArrayList(manager.createRequest(this, remainingRequest));
     }
 
     @Override
