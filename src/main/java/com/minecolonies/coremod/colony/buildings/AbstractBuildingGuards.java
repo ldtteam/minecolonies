@@ -193,6 +193,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         super.onUpgradeComplete(newLevel);
+        colony.getCitizenManager().calculateMaxCitizens();
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override

@@ -1,15 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
@@ -131,7 +130,7 @@ public class BuyCitizenMessage implements IMessage
         final PlayerEntity player = ctxIn.getSender();
 
         // Check if we spawn a new citizen
-        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
         {
             // Get item chosen by player
             final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(buyItemIndex);
