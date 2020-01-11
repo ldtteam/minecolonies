@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.init.Blocks;
@@ -56,10 +56,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorking),
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorking, TICKS_SECOND),
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
 
     @Override

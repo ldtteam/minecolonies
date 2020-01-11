@@ -251,7 +251,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         this.tasks.addTask(++priority, new EntityAIEatTask(this));
         this.tasks.addTask(++priority, new EntityAISleep(this));
-        this.tasks.addTask(++priority, new EntityAIGoHome(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));

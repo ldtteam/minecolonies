@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -22,7 +23,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The lumberjack AI class.
@@ -142,6 +143,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private static final int MAX_BLOCKS_MINED = 32;
 
     /**
+     * Delay before going to gather after cutting a tree.
+     */
+    private static final int GATHERING_DELAY  = 3;
+
+    /**
      * Position where the Lumberjack breaks from.
      */
     private BlockPos workFrom;
@@ -190,13 +196,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForWoodcutting),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
-          new AITarget(LUMBERJACK_GATHERING, this::gathering),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
@@ -330,6 +336,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (pathResult.isCancelled())
         {
             pathResult = null;
+            setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
         return getState();
@@ -428,6 +435,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             incrementActionsDoneAndDecSaturation();
             building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
+            setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
 

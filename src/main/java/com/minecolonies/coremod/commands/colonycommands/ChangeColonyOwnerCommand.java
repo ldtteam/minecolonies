@@ -78,7 +78,8 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             return;
         }
 
-        int colonyId = getIthArgument(args, 0, -1);
+        int colonyId = getColonyIdFromArg(args, 0, -1);
+        int dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
         if (colonyId == -1)
         {
             final String playerName = args[0];
@@ -98,7 +99,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
                     sender.sendMessage(new TextComponentString(NO_PLAYER));
                     return;
                 }
-                final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
+                final IColony colony = IColonyManager.getInstance().getIColonyByOwner(server.getWorld(dimensionId), player.getUniqueID());
 
                 if (colony == null)
                 {
@@ -115,7 +116,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             playerName = args[1];
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
@@ -146,7 +147,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             return;
         }
 
-        if (IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player) != null)
+        if (IColonyManager.getInstance().getIColonyByOwner(server.getWorld(colony.getDimension()), player) != null)
         {
             sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, player.getName())));
             return;

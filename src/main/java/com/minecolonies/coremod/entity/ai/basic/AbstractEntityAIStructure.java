@@ -5,6 +5,7 @@ import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -20,7 +21,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -47,6 +47,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 
 /**
@@ -138,15 +139,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Pick up stuff which might've been
            */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, TICKS_SECOND),
           /*
            * Check if tasks should be executed.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE, 1),
           /*
            * Select the appropriate State to do next.
            */
-          new AITarget(START_BUILDING, this::startBuilding),
+          new AITarget(START_BUILDING, this::startBuilding, 1),
           /*
            * Check if we have to build something.
            */
@@ -154,27 +155,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Clean up area completely.
            */
-          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
+          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD), STANDARD_DELAY),
           /*
            * Clear out the building area.
            */
-          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP), STANDARD_DELAY),
           /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP), STANDARD_DELAY),
           /*
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP), STANDARD_DELAY),
           /*
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD), STANDARD_DELAY),
           /*
            * Finalize the building and give back control to the ai.
            */
-          new AITarget(COMPLETE_BUILD, this::completeBuild)
+          new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY)
         );
     }
 
@@ -506,7 +507,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(targetStack)));
+          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(itemStack)));
         if (force)
         {
             for (final ItemStack foundStack : new ArrayList<>(foundStacks))
@@ -562,6 +563,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
             }
+            return true;
         }
         return false;
     }

@@ -149,7 +149,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         for (final IColony colony : coloniesPage)
         {
             sender.sendMessage(new TextComponentString(String.format(
-              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+              ID_AND_NAME_TEXT, colony.getDimension() + "|" + colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                                                       String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
 

@@ -1267,4 +1267,10 @@ public final class ColonyManager implements IColonyManager
         }
         return top;
     }
+
+    @Override
+    public void resetColonyViews()
+    {
+        colonyViews.clear();
+    }
 }

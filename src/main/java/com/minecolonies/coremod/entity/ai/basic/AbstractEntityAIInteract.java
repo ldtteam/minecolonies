@@ -349,11 +349,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
             return;
         }
-        if (worker.getNavigator().getPath() == null)
-        {
-            setDelay(WAIT_WHILE_WALKING);
-            return;
-        }
 
         final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
         //We moved a bit, not stuck

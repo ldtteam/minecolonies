@@ -46,21 +46,23 @@ public final class Constants
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
     public static final int    TICKS_FOURTY_MIN                 = 48000;
     public static final int    MAX_PARAMS_IRECIPESTORAGE        = 4;
-    public static final int    MIN_PARAMS_IRECIPESTORAGE        = 3;
-    public static final String DEFAULT_STYLE                    = "wooden";
-    public static final String SAPLINGS                         = "treeSapling";
-    public static final String ORES                             = "ores";
-    public static final double HALF_BLOCK                       = 0.5D;
-    public static final double SLIGHTLY_UP                      = 0.1D;
-    public static final int    ONE_HUNDRED_PERCENT              = 100;
-    public static final int    DOUBLE                           = 2;
-    public static final int    TRIPLE                           = 3;
-    public static final int    BLOCKS_PER_CHUNK                 = 16;
-    public static final int    NINETY_DEGREE                    = 90;
-    public static final int    HALF_ROTATION                    = 180;
-    public static final int    THREE_QUARTERS                   = 270;
-    public static final float  BED_HEIGHT                       = 0.6875F;
-    public static final float  SLEEPING_RENDER_OFFSET           = -1.5F;
+    public static final int    MIN_PARAMS_IRECIPESTORAGE = 3;
+    public static final String DEFAULT_STYLE             = "wooden";
+    public static final String SAPLINGS                  = "treeSapling";
+    public static final String ORES                      = "ores";
+    public static final double HALF_BLOCK                = 0.5D;
+    public static final double SLIGHTLY_UP               = 0.1D;
+    public static final int    ONE_HUNDRED_PERCENT       = 100;
+    public static final int    VISIT_BUILDING_CHANCE     = 8;
+    public static final int    WANDER_CHANCE             = 35;
+    public static final int    DOUBLE                    = 2;
+    public static final int    TRIPLE                    = 3;
+    public static final int    BLOCKS_PER_CHUNK          = 16;
+    public static final int    NINETY_DEGREE             = 90;
+    public static final int    HALF_ROTATION             = 180;
+    public static final int    THREE_QUARTERS            = 270;
+    public static final float  BED_HEIGHT                = 0.6875F;
+    public static final float  SLEEPING_RENDER_OFFSET    = -1.5F;
     public static final double DEFAULT_VOLUME                   = 0.2;
     public static final double DEFAULT_PITCH_MULTIPLIER         = 0.7D;
     public static final double XP_PARTICLE_EXPLOSION_SIZE       = 20;
@@ -69,6 +71,7 @@ public final class Constants
     public static final float  WATCH_CLOSEST2                   = 3.0F;
     public static final float  WATCH_CLOSEST2_FAR               = 5.0F;
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
+    public static final String COLONY_SILENT_VISITOR_PERMISSION = "minecolonies.colony.visitor.silent";
 
     /**
      * Advancement Criterion Names

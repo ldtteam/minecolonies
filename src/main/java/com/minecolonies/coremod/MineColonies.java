@@ -39,9 +39,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.server.permission.DefaultPermissionLevel;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.COLONY_SILENT_VISITOR_PERMISSION;
 
 @Mod.EventBusSubscriber
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.79-ALPHA,);",
@@ -169,6 +173,11 @@ public class MineColonies
         InteractionValidatorInitializer.init();
 
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
+
+        if (Configurations.gameplay.operatorVisitsColoniesSilently)
+        {
+            PermissionAPI.registerNode(COLONY_SILENT_VISITOR_PERMISSION, DefaultPermissionLevel.OP, "Disables the enter and leave notifications of players with this node.");
+        }
 
         //Register Vanilla items with tags
 

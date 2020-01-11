@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,6 +11,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -102,7 +104,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHorizontal.FACING, block.getValue(BlockHorizontal.FACING)));
+                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockBarracksTowerSubstitution.FACING, block.getValue(AbstractBlockHut.FACING)));
                 final TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileEntityColonyBuilding)
                 {
