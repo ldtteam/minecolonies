@@ -1335,5 +1335,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
+
+    @Override
+    public boolean requiresCompleteRequestFulfillment()
+    {
+        return true;
+    }
+
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

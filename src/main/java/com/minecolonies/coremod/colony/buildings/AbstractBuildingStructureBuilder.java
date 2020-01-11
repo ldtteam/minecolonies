@@ -7,7 +7,6 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -20,7 +19,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -403,5 +401,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             return null;
         }
         return new Tuple<>(this.progressPos, this.progressStage);
+    }
+
+    @Override
+    public boolean requiresCompleteRequestFulfillment()
+    {
+        return false;
     }
 }
