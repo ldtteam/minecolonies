@@ -37,7 +37,7 @@ public final class BuildingUtils
         final int z1;
         final int x3;
         final int z3;
-        final int y1 = location.getY() - 2;
+        final int y1 = location.getY() - 10;
         final int y3;
 
         if(building.getHeight() == 0)
