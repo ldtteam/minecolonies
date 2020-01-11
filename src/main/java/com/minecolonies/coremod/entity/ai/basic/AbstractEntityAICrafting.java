@@ -243,7 +243,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
 
-                if (job.getCraftCounter() == job.getMaxCraftingCount())
+                if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
                     incrementActionsDone();
                     currentRecipeStorage = null;

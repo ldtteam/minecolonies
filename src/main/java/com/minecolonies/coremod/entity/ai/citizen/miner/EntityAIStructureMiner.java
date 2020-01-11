@@ -11,8 +11,11 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -244,6 +247,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
+    }
+
+    @Override
+    public ItemStack getTotalAmount(final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return null;
+        }
+
+        final ItemStack copy = stack.copy();
+        copy.setCount(Math.max(super.getTotalAmount(stack).getCount(), copy.getMaxStackSize()/2));
+        return copy;
     }
 
     @NotNull

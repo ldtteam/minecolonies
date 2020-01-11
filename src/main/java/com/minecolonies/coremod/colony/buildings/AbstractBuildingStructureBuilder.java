@@ -400,4 +400,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         }
         return new Tuple<>(this.progressPos, this.progressStage);
     }
+
+    @Override
+    public boolean requiresCompleteRequestFulfillment()
+    {
+        return false;
+    }
 }

@@ -143,6 +143,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private static final int MAX_BLOCKS_MINED = 32;
 
     /**
+     * Delay before going to gather after cutting a tree.
+     */
+    private static final int GATHERING_DELAY  = 3;
+
+    /**
      * Position where the Lumberjack breaks from.
      */
     private BlockPos workFrom;
@@ -331,6 +336,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (pathResult.isCancelled())
         {
             pathResult = null;
+            setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
         return getState();
@@ -429,6 +435,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             incrementActionsDoneAndDecSaturation();
             building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
+            setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
 
