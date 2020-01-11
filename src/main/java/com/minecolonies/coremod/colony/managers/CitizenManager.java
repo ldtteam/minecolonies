@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ColonyConstants.HAPPINESS_FACTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.WELL_SATURATED_LIMIT;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -91,9 +91,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
-        potentialMaxCitizens = compound.getInteger(TAG_POTENTIAL_MAX_CITIZENS);
-
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
@@ -114,9 +111,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
-        compound.setInteger(TAG_POTENTIAL_MAX_CITIZENS, potentialMaxCitizens);
-
         @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(INBTSerializable::serializeNBT).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CITIZENS, citizenTagList);
     }
@@ -288,7 +282,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     newMaxCitizens += b.getMaxInhabitants();
                 }
-                else if (b instanceof AbstractBuildingGuards)
+                else if (b instanceof AbstractBuildingGuards && b.getBuildingLevel() > 0)
                 {
                     if (b.getAssignedCitizen().size() != 0)
                     {

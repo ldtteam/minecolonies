@@ -192,6 +192,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         super.onUpgradeComplete(newLevel);
+        colony.getCitizenManager().calculateMaxCitizens();
 
         if (newLevel == ACHIEVEMENT_LEVEL)
         {
@@ -201,6 +202,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
         }
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override

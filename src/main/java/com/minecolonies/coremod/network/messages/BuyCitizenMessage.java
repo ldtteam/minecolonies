@@ -120,7 +120,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
         }
 
         // Check if we spawn a new citizen
-        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
         {
             // Get item chosen by player
             final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
