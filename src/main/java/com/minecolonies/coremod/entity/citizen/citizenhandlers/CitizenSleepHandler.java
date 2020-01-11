@@ -98,14 +98,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * @param bedLocation The possible location to sleep.
      */
     @Override
-    public void trySleep(final BlockPos bedLocation)
+    public boolean trySleep(final BlockPos bedLocation)
     {
         final IBlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
 
         if (!isBed)
         {
-            return;
+            return false;
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
@@ -126,6 +126,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             citizen.getCitizenData().setBedPos(bedLocation);
         }
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
+        return true;
     }
 
     /**
