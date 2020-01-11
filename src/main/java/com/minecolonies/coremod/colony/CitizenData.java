@@ -1244,19 +1244,19 @@ public class CitizenData implements ICitizenData
         switch (random.nextInt(AMOUNT_OF_SKILLS))
         {
             case 0:
-                intelligence = Math.min(intelligence + 1, levelCap);
+                intelligence = Math.max(intelligence, Math.min(intelligence + 1, levelCap));
                 break;
             case 1:
-                charisma = Math.min(charisma + 1, levelCap);
+                charisma = Math.max(charisma, Math.min(charisma + 1, levelCap));
                 break;
             case 2:
-                strength = Math.min(strength + 1, levelCap);
+                strength = Math.max(strength, Math.min(strength + 1, levelCap));
                 break;
             case 3:
-                endurance = Math.min(endurance + 1, levelCap);
+                endurance = Math.max(endurance, Math.min(endurance + 1, levelCap));
                 break;
             default:
-                dexterity = Math.min(dexterity + 1, levelCap);
+                dexterity = Math.max(dexterity, Math.min(dexterity + 1, levelCap));
                 break;
         }
         markDirty();

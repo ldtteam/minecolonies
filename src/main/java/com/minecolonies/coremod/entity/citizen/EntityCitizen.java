@@ -40,7 +40,6 @@ import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
@@ -208,11 +207,6 @@ public class EntityCitizen extends AbstractEntityCitizen
     private static final float GUARD_BLOCK_DAMAGE = 0.5f;
 
     /**
-     * Citizen inv Wrapper.
-     */
-    private IItemHandler invWrapper;
-
-    /**
      * Citizen data view.
      */
     private ICitizenDataView citizenDataView;
@@ -237,6 +231,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenStuckHandler = new CitizenStuckHandler(this);
+        this.moveController = new MovementHandler(this);
         this.enablePersistence();
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         initTasks();
@@ -259,7 +254,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
-        this.goalSelector.addGoal(++priority, new EntityAIGoHome(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
@@ -1528,9 +1522,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         return true;
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
-    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
+    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeVarInt(citizenColonyHandler.getColonyId());

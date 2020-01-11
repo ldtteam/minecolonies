@@ -180,6 +180,16 @@ public final class ColonyView implements IColonyView
     private String style = "";
 
     /**
+     * The list of allies.
+     */
+    private List<CompactColonyReference> allies;
+
+    /**
+     * The list of feuds.
+     */
+    private List<CompactColonyReference> feuds;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -284,6 +294,57 @@ public final class ColonyView implements IColonyView
 
         buf.writeString(colony.getStyle());
         buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getServer().getWorld(DimensionType.getById(colony.getDimension()))).size());
+
+        final List<IColony> allies = new ArrayList<>();
+        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
+        {
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
+            if (col != null)
+            {
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                {
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                    {
+                        allies.add(col);
+                    }
+                }
+            }
+        }
+
+        buf.writeInt(allies.size());
+        for (final IColony col : allies)
+        {
+            buf.writeString(col.getName());
+            buf.writeBlockPos(col.getCenter());
+            buf.writeInt(col.getID());
+            buf.writeBoolean(col.hasTownHall());
+            buf.writeInt(col.getDimension());
+        }
+
+        final List<IColony> feuds = new ArrayList<>();
+        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
+        {
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
+            if (col != null)
+            {
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                {
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                    {
+                        feuds.add(col);
+                    }
+                }
+            }
+        }
+
+        buf.writeInt(feuds.size());
+        for (final IColony col : feuds)
+        {
+            buf.writeString(col.getName());
+            buf.writeBlockPos(col.getCenter());
+            buf.writeInt(col.getID());
+            buf.writeInt(col.getDimension());
+        }
     }
 
     /**
@@ -722,6 +783,22 @@ public final class ColonyView implements IColonyView
 
         this.style = buf.readString(32767);
         this.horde = buf.readInt();
+
+        this.allies = new ArrayList<>();
+        this.feuds = new ArrayList<>();
+
+        final int noOfAllies = buf.readInt();
+        for (int i = 0; i < noOfAllies; i++)
+        {
+            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), buf.readInt()));
+        }
+
+        final int noOfFeuds = buf.readInt();
+        for (int i = 0; i < noOfFeuds; i++)
+        {
+            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
+        }
+
         return null;
     }
 
@@ -1309,5 +1386,17 @@ public final class ColonyView implements IColonyView
     public void usedMercenaries()
     {
         mercenaryLastUseTime = world.getGameTime();
+    }
+
+    @Override
+    public List<CompactColonyReference> getAllies()
+    {
+        return allies;
+    }
+
+    @Override
+    public List<CompactColonyReference> getFeuds()
+    {
+        return feuds;
     }
 }

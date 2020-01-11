@@ -15,8 +15,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -53,9 +53,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(CRAFT, this::craft),
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
 
     @Override

@@ -11,9 +11,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
-import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -128,13 +126,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::checkIfExecute, this::getState),
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::checkWareHouse, 20),
-          new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
-          new AITarget(DELIVERY, this::deliver),
-          new AITarget(GATHERING, this::gather),
-          new AITarget(DUMPING, this::dump)
+          new AITarget(IDLE, () -> START_WORKING, 1),
+          new AITarget(START_WORKING, this::checkIfExecute, this::checkWareHouse, TICKS_SECOND),
+          new AITarget(PREPARE_DELIVERY, this::prepareDelivery, 1),
+          new AITarget(DELIVERY, this::deliver, 1),
+          new AITarget(GATHERING, this::gather, STANDARD_DELAY),
+          new AITarget(DUMPING, this::dump, TICKS_SECOND)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
@@ -489,6 +486,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!worker.isWorkerAtSiteWithMove(buildingToDeliver.getInDimensionLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
+            setDelay(10);
             return DELIVERY;
         }
 
@@ -673,7 +671,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
                         (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
                           index,
-                          is.getCount() == 1 ? is.getMaxStackSize() : is.getCount(),
+                          is.getCount(),
                           worker.getInventoryCitizen())
                       );
     }
@@ -722,7 +720,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if ( getAndCheckWareHouse() != null && getAndCheckWareHouse().getTileEntity() != null )
         {
             job.setActive(true);
-            return false;
+            return true;
         }
 
         job.setActive(false);
@@ -730,6 +728,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE), ChatPriority.BLOCKING));
         }
-        return true;
+        return false;
     }
 }
