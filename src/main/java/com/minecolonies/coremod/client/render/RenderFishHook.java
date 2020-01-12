@@ -1,23 +1,17 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.FishRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +132,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
      */
     @NotNull
     @Override
-    protected ResourceLocation getEntityTexture(@NotNull final NewBobberEntity entity)
+    public ResourceLocation getEntityTexture(@NotNull final NewBobberEntity entity)
     {
         return getTexture();
     }

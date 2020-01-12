@@ -27,7 +27,7 @@ public class RendererArcherPirate extends AbstractRendererPirate
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final MobEntity entity)
     {
         return TEXTURE;
     }
