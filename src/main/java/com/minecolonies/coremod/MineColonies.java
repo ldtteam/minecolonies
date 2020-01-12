@@ -51,7 +51,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.server.permission.DefaultPermissionLevel;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.COLONY_SILENT_VISITOR_PERMISSION;
 
 @Mod(Constants.MOD_ID)
 public class MineColonies
@@ -126,6 +130,10 @@ public class MineColonies
         Log.getLogger().warn("FMLLoadCompleteEvent");
         MinecoloniesPlacementHandlers.initHandlers();
         //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
+        if (MineColonies.getConfig().getCommon().operatorVisitsColoniesSilently.get())
+        {
+            PermissionAPI.registerNode(COLONY_SILENT_VISITOR_PERMISSION, DefaultPermissionLevel.OP, "Disables the enter and leave notifications of players with this node.");
+        }
         RequestSystemInitializer.onPostInit();
     }
 
