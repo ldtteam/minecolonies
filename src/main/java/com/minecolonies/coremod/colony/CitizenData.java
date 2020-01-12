@@ -918,7 +918,7 @@ public class CitizenData implements ICitizenData
         {
             final AbstractEntityCitizen citizen = getCitizenEntity().get();
             Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(citizen.posX, citizen.posY, citizen.posZ, ParticleTypes.HAPPY_VILLAGER), getCitizenEntity().get());
+              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER), getCitizenEntity().get());
         }
 
         if (job != null)

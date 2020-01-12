@@ -1,10 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityEnchanter;
-import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.tileentity.TileEntityType;
@@ -20,13 +17,13 @@ public class TileEntityInitializer
     @SubscribeEvent
     public static void registerTileEntity(final RegistryEvent.Register<TileEntityType<?>> event)
     {
-        MinecoloniesTileEntities.SCARECROW = TileEntityType.Builder.create(ScarecrowTileEntity::new,
+        MinecoloniesTileEntities.SCARECROW = (TileEntityType<AbstractScarescrowTileEntity>) TileEntityType.Builder.create(ScarecrowTileEntity::new,
           ModBlocks.blockScarecrow).build(null).setRegistryName(Constants.MOD_ID, "scarecrow");
 
         MinecoloniesTileEntities.BARREL = TileEntityType.Builder.create(TileEntityBarrel::new,
           ModBlocks.blockBarrel).build(null).setRegistryName(Constants.MOD_ID, "barrel");
 
-        MinecoloniesTileEntities.BUILDING = TileEntityType.Builder.create(TileEntityColonyBuilding::new,
+        MinecoloniesTileEntities.BUILDING = (TileEntityType<AbstractTileEntityColonyBuilding>) TileEntityType.Builder.create(TileEntityColonyBuilding::new,
           ModBlocks.getHuts()).build(null).setRegistryName(Constants.MOD_ID, "colonybuilding");
 
         MinecoloniesTileEntities.DECO_CONTROLLER = TileEntityType.Builder.create(TileEntityDecorationController::new,
@@ -41,7 +38,7 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new,
           ModBlocks.blockCompostedDirt).build(null).setRegistryName(Constants.MOD_ID, "composteddirt");
 
-        MinecoloniesTileEntities.ENCHANTER = TileEntityType.Builder.create(TileEntityEnchanter::new,
+        MinecoloniesTileEntities.ENCHANTER = (TileEntityType<? extends TileEntityColonyBuilding>) TileEntityType.Builder.create(TileEntityEnchanter::new,
           ModBlocks.blockHutEnchanter).build(null).setRegistryName(Constants.MOD_ID, "enchanter");
 
 

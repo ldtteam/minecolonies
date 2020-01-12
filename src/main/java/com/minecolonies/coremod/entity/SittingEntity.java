@@ -95,7 +95,7 @@ public class SittingEntity extends Entity
             {
                 Entity e = getPassengers().get(0);
                 this.removePassengers();
-                e.setPosition(this.posX, this.posY + 1, this.posZ);
+                e.setPosition(this.getX(), this.getY() + 1, this.getZ());
             }
             this.remove();
         }

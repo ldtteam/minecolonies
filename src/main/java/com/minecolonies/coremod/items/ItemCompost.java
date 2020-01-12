@@ -13,6 +13,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
@@ -56,7 +57,7 @@ public class ItemCompost extends AbstractItemMinecolonies
             return hook > 0;
         }
         else
-            {
+        {
             if (BlockState.getBlock() instanceof IGrowable)
             {
                 final IGrowable igrowable = (IGrowable)BlockState.getBlock();
@@ -66,7 +67,7 @@ public class ItemCompost extends AbstractItemMinecolonies
                     {
                         if (igrowable.canUseBonemeal(worldIn, worldIn.rand, target, BlockState))
                         {
-                            igrowable.grow(worldIn, worldIn.rand, target, BlockState);
+                            igrowable.grow((ServerWorld) worldIn, worldIn.rand, target, BlockState);
                         }
                         stack.shrink(1);
                     }

@@ -123,7 +123,7 @@ public class EntityAIMournCitizen extends Goal
         if ((citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             || (reachedFinalDestination && checkForRandom()))
         {
-            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class, EntityPredicate.DEFAULT, citizen, citizen.posX, citizen.posY, citizen.posZ, citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
+            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class, EntityPredicate.DEFAULT, citizen, citizen.getX(), citizen.getY(), citizen.getZ(), citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
             if (closestEntity == null)
             {
                 continueLooking = false;
@@ -271,12 +271,12 @@ public class EntityAIMournCitizen extends Goal
 
         if (continueLooking && closestEntity != null)
         {
-            citizen.getLookController().setLookPosition(closestEntity.posX, closestEntity.posY + (double) closestEntity.getEyeHeight(),
-                    closestEntity.posZ, (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
+            citizen.getLookController().setLookPosition(closestEntity.getX(), closestEntity.getY() + (double) closestEntity.getEyeHeight(),
+                    closestEntity.getZ(), (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
         }
         else
         {
-            citizen.getLookController().setLookPosition(citizen.posX, citizen.posY - 10, citizen.posZ, (float) citizen.getHorizontalFaceSpeed(),
+            citizen.getLookController().setLookPosition(citizen.getX(), citizen.getY() - 10, citizen.getZ(), (float) citizen.getHorizontalFaceSpeed(),
                     (float) citizen.getVerticalFaceSpeed());
         }
         super.tick();
