@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -78,7 +79,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
-        return setPathJob(new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, avoid, (int) range, (int) getPathSearchRange(), ourEntity), null, speed);
+        return setPathJob(new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, avoid, (int) range, (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(), ourEntity), null, speed);
     }
 
     @Nullable
@@ -170,7 +171,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         @NotNull final BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
-          new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, dest, (int) getPathSearchRange(), ourEntity),
+          new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, dest, (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(), ourEntity),
           dest, speed);
     }
 
