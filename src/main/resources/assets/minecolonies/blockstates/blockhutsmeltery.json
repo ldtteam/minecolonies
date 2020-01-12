@@ -1,14 +1,20 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "model": "minecolonies:block/blockhutsmeltery"
-  },
   "variants": {
-    "facing": {
-      "north": {"y": 270},
-      "east": {"y": 0},
-      "south": {"y": 90},
-      "west": {"y": 180}
+    "facing=east": {
+      "model": "minecolonies:block/blockhutsmeltery",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:block/blockhutsmeltery",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:block/blockhutsmeltery",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:block/blockhutsmeltery",
+      "y": 270
     }
   }
 }
