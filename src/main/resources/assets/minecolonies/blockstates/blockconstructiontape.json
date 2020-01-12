@@ -1,15 +1,12 @@
 {
-  "forge_marker": 1,
   "variants": {
-    "facing": {
-      "north": {},
-      "east": {"y": 90},
-      "south": {"y": 180},
-      "west": {"y": 270}
-    },
-    "variant": {
-      "straight":  { "model": "minecolonies:block/blockconstructiontape" },
-      "corner":  { "model": "minecolonies:block/blockconstructiontapecorner" }
-    }
+    "facing=east,variant=straight": { "model": "minecolonies:block/blockconstructiontape",  "y": 90 },
+    "facing=south,variant=straight": { "model": "minecolonies:block/blockconstructiontape",  "y": 180 },
+    "facing=west,variant=straight": { "model": "minecolonies:block/blockconstructiontape",  "y": 270 },
+    "facing=north,variant=straight": { "model": "minecolonies:block/blockconstructiontape",  "y": 0 },
+    "facing=east,variant=corner": { "model": "minecolonies:block/blockconstructiontapecorner",  "y": 90 },
+    "facing=south,variant=corner": { "model": "minecolonies:block/blockconstructiontapecorner",  "y": 180 },
+    "facing=west,variant=corner": { "model": "minecolonies:block/blockconstructiontapecorner",  "y": 270 },
+    "facing=north,variant=corner": { "model": "minecolonies:block/blockconstructiontapecorner",  "y": 0 }
   }
 }

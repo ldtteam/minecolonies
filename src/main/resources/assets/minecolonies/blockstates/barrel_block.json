@@ -1,23 +1,44 @@
 {
-  "forge_marker": 1,
-  "parent": "block/block",
   "variants":
   {
-    "facing": {
-        "east":  {"y": 270},
-        "south": {"y": 0},
-        "west":  {"y": 90},
-        "north": {"y": 180}
-    },
-    "variant": {
-      "0perc":   { "model": "minecolonies:block/barrel_block/0perc_crate"},
-      "20perc":  { "model": "minecolonies:block/barrel_block/20perc_crate" },
-      "40perc":  { "model": "minecolonies:block/barrel_block/40perc_crate"},
-      "60perc":  { "model": "minecolonies:block/barrel_block/60perc_crate"},
-      "80perc":  { "model": "minecolonies:block/barrel_block/80perc_crate"},
-      "100perc": { "model": "minecolonies:block/barrel_block/100perc_crate"},
-      "working": { "model": "minecolonies:block/barrel_block/working_crate"},
-      "done":    { "model": "minecolonies:block/barrel_block/100perc_crate"}
-    }
+    "facing=east,variant=0perc": { "model": "minecolonies:block/barrel_block/0perc_crate",  "y": 270 },
+    "facing=south,variant=0perc": { "model": "minecolonies:block/barrel_block/0perc_crate",  "y": 0 },
+    "facing=west,variant=0perc": { "model": "minecolonies:block/barrel_block/0perc_crate",  "y": 90 },
+    "facing=north,variant=0perc": { "model": "minecolonies:block/barrel_block/0perc_crate",  "y": 180 },
+
+    "facing=east,variant=20perc": { "model": "minecolonies:block/barrel_block/20perc",  "y": 270 },
+    "facing=south,variant=20perc": { "model": "minecolonies:block/barrel_block/20perc",  "y": 0 },
+    "facing=west,variant=20perc": { "model": "minecolonies:block/barrel_block/20perc",  "y": 90 },
+    "facing=north,variant=20perc": { "model": "minecolonies:block/barrel_block/20perc",  "y": 180 },
+
+    "facing=east,variant=40perc": { "model": "minecolonies:block/barrel_block/40perc_crate",  "y": 270 },
+    "facing=south,variant=40perc": { "model": "minecolonies:block/barrel_block/40perc_crate",  "y": 0 },
+    "facing=west,variant=40perc": { "model": "minecolonies:block/barrel_block/40perc_crate",  "y": 90 },
+    "facing=north,variant=40perc": { "model": "minecolonies:block/barrel_block/40perc_crate",  "y": 180 },
+
+    "facing=east,variant=60perc": { "model": "minecolonies:block/barrel_block/60perc_crate",  "y": 270 },
+    "facing=south,variant=60perc": { "model": "minecolonies:block/barrel_block/60perc_crate",  "y": 0 },
+    "facing=west,variant=60perc": { "model": "minecolonies:block/barrel_block/60perc_crate",  "y": 90 },
+    "facing=north,variant=60perc": { "model": "minecolonies:block/barrel_block/60perc_crate",  "y": 180 },
+
+    "facing=east,variant=80perc": { "model": "minecolonies:block/barrel_block/80perc_crate",  "y": 270 },
+    "facing=south,variant=80perc": { "model": "minecolonies:block/barrel_block/80perc_crate",  "y": 0 },
+    "facing=west,variant=80perc": { "model": "minecolonies:block/barrel_block/80perc_crate",  "y": 90 },
+    "facing=north,variant=80perc": { "model": "minecolonies:block/barrel_block/80perc_crate",  "y": 180 },
+
+    "facing=east,variant=100perc": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 270 },
+    "facing=south,variant=100perc": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 0 },
+    "facing=west,variant=100perc": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 90 },
+    "facing=north,variant=100perc": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 180 },
+
+    "facing=east,variant=working": { "model": "minecolonies:block/barrel_block/working_crate",  "y": 270 },
+    "facing=south,variant=working": { "model": "minecolonies:block/barrel_block/working_crate",  "y": 0 },
+    "facing=west,variant=working": { "model": "minecolonies:block/barrel_block/working_crate",  "y": 90 },
+    "facing=north,variant=working": { "model": "minecolonies:block/barrel_block/working_crate",  "y": 180 },
+
+    "facing=east,variant=done": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 270 },
+    "facing=south,variant=done": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 0 },
+    "facing=west,variant=done": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 90 },
+    "facing=north,variant=done": { "model": "minecolonies:block/barrel_block/100perc_crate",  "y": 180 }
   }
 }
