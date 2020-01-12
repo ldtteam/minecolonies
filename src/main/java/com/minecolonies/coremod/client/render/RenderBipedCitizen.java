@@ -259,7 +259,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(final Entity entity)
+    public ResourceLocation getEntityTexture(final Entity entity)
     {
         return ((AbstractEntityCitizen) entity).getTexture();
     }

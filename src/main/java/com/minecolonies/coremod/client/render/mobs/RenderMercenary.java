@@ -34,7 +34,7 @@ public class RenderMercenary<T extends EntityMercenary, M extends BipedModel<T>>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(final Entity entity)
+    public ResourceLocation getEntityTexture(final Entity entity)
     {
         return TEXTURE;
     }
