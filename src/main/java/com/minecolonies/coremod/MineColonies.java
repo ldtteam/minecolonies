@@ -7,6 +7,8 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.Log;
@@ -138,32 +140,32 @@ public class MineColonies
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
-        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(NewBobberEntity.class, RenderFishHook::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, RendererPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityArcherPirate.class, RendererArcherPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityMercenary.class, RenderMercenary::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CITIZEN, RenderBipedCitizen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.PIRATE, RendererPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);
 
-        ClientRegistry.bindTileEntityRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntityRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-        ClientRegistry.bindTileEntityRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts()).forEach(
           hut -> {
-              RenderTypeLookup.setRenderLayer(hut, RenderType.func_228643_e_());
-              RenderTypeLookup.setRenderLayer(hut, RenderType.func_228639_c_());
+              RenderTypeLookup.setRenderLayer(hut, RenderType.getCutout());
+              RenderTypeLookup.setRenderLayer(hut, RenderType.getSolid());
           });
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.func_228643_e_());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.getCutout());
     }
 
     /**

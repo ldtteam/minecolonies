@@ -120,7 +120,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
 
             for(int k = 0; k <= 16; ++k) {
                 float f6 = (float)k / 16.0F;
-                bufferbuilder.pos(x + d10 * (double)f6, y + d11 * (double)(f6 * f6 + f6) * 0.5D + 0.25D, z + d12 * (double)f6).color(0, 0, 0, 255).endVertex();
+                bufferbuilder.vertex(x + d10 * (double)f6, y + d11 * (double)(f6 * f6 + f6) * 0.5D + 0.25D, z + d12 * (double)f6).color(0, 0, 0, 255).endVertex();
             }
 
             tessellator.draw();
