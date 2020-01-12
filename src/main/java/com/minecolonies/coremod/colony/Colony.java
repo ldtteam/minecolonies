@@ -769,7 +769,7 @@ public class Colony implements IColony
         @NotNull final ListNBT freeBlocksTagList = new ListNBT();
         for (@NotNull final Block block : freeBlocks)
         {
-            freeBlocksTagList.add(new StringNBT(block.getRegistryName().toString()));
+            freeBlocksTagList.add(StringNBT.of(block.getRegistryName().toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 

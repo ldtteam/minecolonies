@@ -219,7 +219,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(worker.posX, worker.posY - 1f, worker.posZ);
+            entity.setPosition(worker.lastTickPosX, worker.lastTickPosY - 1f, worker.lastTickPosZ);
             entity.setMaxLifeTime(sleepTimer);
             world.addEntity(entity);
             worker.startRiding(entity);
@@ -235,7 +235,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState sleepParticles()
     {
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.posX, worker.posY + 2.0d, worker.posZ), worker);
+        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.lastTickPosX, worker.lastTickPosY + 2.0d, worker.lastTickPosZ), worker);
 
         if (worker.getHealth() < worker.getMaxHealth())
         {
@@ -255,14 +255,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             resetTarget();
             worker.setRevengeTarget(null);
             worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.setPosition(worker.lastTickPosX, worker.lastTickPosY + 1, worker.lastTickPosZ);
             return DECIDE;
         }
 
         worker.getLookController()
-          .setLookPosition(worker.posX + worker.getHorizontalFacing().getXOffset(),
-            worker.posY + worker.getHorizontalFacing().getYOffset(),
-            worker.posZ + worker.getHorizontalFacing().getZOffset(),
+          .setLookPosition(worker.lastTickPosX + worker.getHorizontalFacing().getXOffset(),
+            worker.lastTickPosY + worker.getHorizontalFacing().getYOffset(),
+            worker.lastTickPosZ + worker.getHorizontalFacing().getZOffset(),
             0f,
             30f);
         return null;

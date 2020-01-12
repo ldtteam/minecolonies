@@ -38,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -347,7 +348,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
          return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()) .getBlock() instanceof CropsBlock)
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockScarecrow)
-                 && (world.getBlockState(position).getBlock().isIn(BlockTags.DIRT_LIKE) || world.getBlockState(position).getBlock() instanceof GrassBlock);
+                 && (world.getBlockState(position).getBlock().isIn(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
 
     /**

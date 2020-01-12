@@ -8,13 +8,13 @@ import net.minecraftforge.registries.ObjectHolder;
 public class MinecoloniesTileEntities
 {
     @ObjectHolder("scarecrow")
-    public static TileEntityType<?> SCARECROW;
+    public static TileEntityType<AbstractScarescrowTileEntity> SCARECROW;
 
     @ObjectHolder("barrel")
     public static TileEntityType<?> BARREL;
 
     @ObjectHolder("colonybuilding")
-    public static TileEntityType<?> BUILDING;
+    public static TileEntityType<AbstractTileEntityColonyBuilding> BUILDING;
 
     @ObjectHolder("decorationcontroller")
     public static TileEntityType<?> DECO_CONTROLLER;
@@ -29,5 +29,5 @@ public class MinecoloniesTileEntities
     public static TileEntityType<?> COMPOSTED_DIRT;
 
     @ObjectHolder("enchanter")
-    public static TileEntityType<?> ENCHANTER;
+    public static TileEntityType<? extends TileEntityColonyBuilding> ENCHANTER;
 }
