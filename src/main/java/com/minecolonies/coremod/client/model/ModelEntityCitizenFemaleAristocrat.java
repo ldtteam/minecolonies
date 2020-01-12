@@ -142,56 +142,48 @@ public class ModelEntityCitizenFemaleAristocrat extends CitizenModel
         dressPart6.setRotationPoint(2F, 18F, -4F);
         dressPart6.setTextureSize(64, 64);
         setRotation(dressPart6, 2.503836F, 0.3210144F, -0.3592861F);
-        dressPart6.offsetZ -= 0.1F;
 
         dressPart7 = new ModelRenderer(this, 0, 40);
         dressPart7.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart7.setRotationPoint(-2F, 18F, -4F);
         dressPart7.setTextureSize(64, 64);
         setRotation(dressPart7, 2.070064F, 0.797036F, -0.6991393F);
-        dressPart7.offsetZ -= 0.1F;
 
         dressPart8 = new ModelRenderer(this, 0, 40);
         dressPart8.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart8.setRotationPoint(-5F, 18F, -1F);
         dressPart8.setTextureSize(64, 64);
         setRotation(dressPart8, 2.740167F, 0.6363323F, 0.4537856F);
-        dressPart8.offsetZ -= 0.1F;
 
         dressPart9 = new ModelRenderer(this, 0, 40);
         dressPart9.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart9.setRotationPoint(-5F, 18F, 2F);
         dressPart9.setTextureSize(64, 64);
         setRotation(dressPart9, 3.010485F, 1.313108F, 0.2890419F);
-        dressPart9.offsetZ -= 0.1F;
 
         dressPart10 = new ModelRenderer(this, 0, 40);
         dressPart10.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart10.setRotationPoint(-2F, 18F, 5F);
         dressPart10.setTextureSize(64, 64);
         setRotation(dressPart10, -2.563121F, 0.3303337F, 0.4129171F);
-        dressPart10.offsetZ -= 0.1F;
 
         dressPart11 = new ModelRenderer(this, 0, 40);
         dressPart11.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart11.setRotationPoint(2F, 18F, 5F);
         dressPart11.setTextureSize(64, 64);
         setRotation(dressPart11, -2.458432F, -0.2216398F, -0.3303337F);
-        dressPart11.offsetZ -= 0.1F;
 
         dressPart12 = new ModelRenderer(this, 0, 40);
         dressPart12.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart12.setRotationPoint(4F, 18F, 2F);
         dressPart12.setTextureSize(64, 64);
         setRotation(dressPart12, -2.852551F, 0.5367922F, -0.2064585F);
-        dressPart12.offsetZ -= 0.1F;
 
         dressPart13 = new ModelRenderer(this, 0, 40);
         dressPart13.addCuboid(-2F, 0F, -2F, 4, 7, 4);
         dressPart13.setRotationPoint(4F, 18F, -1F);
         dressPart13.setTextureSize(64, 64);
         setRotation(dressPart13, 2.778193F, -0.5512723F, -0.2477502F);
-        dressPart13.offsetZ -= 0.1F;
 
         bipedHead.addChild(hair1);
         bipedHead.addChild(hair2);
