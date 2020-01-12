@@ -1443,7 +1443,8 @@ public class Colony implements IColony
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION)) {
+            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION))
+            {
                 LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
             }
         }
@@ -1456,7 +1457,8 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION)) {
+            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION))
+            {
                 LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
             }
         }
