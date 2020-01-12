@@ -1275,7 +1275,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void spawnEatingParticle()
     {
-        updateItemUse(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
+        spawnConsumptionEffects(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     @Override
