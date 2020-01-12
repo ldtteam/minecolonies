@@ -235,7 +235,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         }
     }
 
-    @Override
+    /*@Override
     protected void renderLivingAt(final LivingEntity entity, final double x, final double y, final double z)
     {
         final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entity;
@@ -255,7 +255,6 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     @Override
     protected void applyRotations(final LivingEntity entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
     {
-        this.
         final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entityLiving;
         if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
         {
@@ -267,7 +266,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         {
             super.applyRotations(entityLiving, rotationHead, rotationYaw, partialTicks);
         }
-    }
+    }*/
 
     @Nullable
     @Override
