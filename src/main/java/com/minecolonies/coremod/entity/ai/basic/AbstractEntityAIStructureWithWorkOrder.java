@@ -397,7 +397,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private static BlockPos incrementBlock(final BlockPos pos, final BlockPos size)
     {
-        final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(pos);
+        final BlockPos.Mutable progressPos = new BlockPos.Mutable(pos);
         progressPos.setPos(progressPos.getX() + 1, progressPos.getY(), progressPos.getZ());
         if (progressPos.getX() == size.getX())
         {

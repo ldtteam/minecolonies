@@ -4,11 +4,15 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
+import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -62,14 +66,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     }
 
     @Override
-    protected void renderModel(
-      @NotNull final LivingEntity entity,
-      final float limbSwing,
-      final float limbSwingAmount,
-      final float ageInTicks,
-      final float netHeadYaw,
-      final float headPitch,
-      final float scaleFactor)
+    public void render(@NotNull final LivingEntity entity, final float limbSwing, final float partialTicks, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer renderTypeBuffer, final int light)
     {
         final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
         setupMainModelFrom(citizen);
@@ -82,18 +79,25 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack, BipedModel.ArmPose.EMPTY);
 
         updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
-        super.renderModel(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+        super.render((MobEntity) entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
     }
 
     @Override
-    public void doRender(MobEntity entity, double x, double y, double z, float f, float partialTicks)
+    public void render(
+      final MobEntity entity,
+      final float limbSwing,
+      final float partialTicks,
+      final MatrixStack matrixStack,
+      final IRenderTypeBuffer renderTypeBuffer,
+      final int light)
     {
+
         if (isItGhostTime)
         {
             GlStateManager.enableBlend();
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.3F);
 
-            super.doRender(entity, x, y, z, f, partialTicks);
+            super.render(entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
 
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1F);
 
@@ -101,10 +105,9 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         }
         else
         {
-            super.doRender(entity, x, y, z, f, partialTicks);
+            super.render(entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
         }
     }
-
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
         entityModel = (citizen.isFemale()
@@ -113,7 +116,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 
         if (entityModel == null)
         {
-            entityModel = (citizen.isFemale() ? new ModelEntityCitizenFemaleCitizen() : new CitizenModel(0.0F));
+            entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel(0.0F));
         }
 
         entityModel.isChild = citizen.isChild();
@@ -122,9 +125,14 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     }
 
     @Override
-    protected void renderLivingLabel(final Entity entityIn, @NotNull final String str, final double x, final double yIn, final double z, final int maxDistance)
+    protected void renderLabelIfPresent(
+      final Entity entityIn,
+      final String str,
+      final MatrixStack matrixStack,
+      final IRenderTypeBuffer buffer,
+      final int maxDistance)
     {
-        super.renderLivingLabel(entityIn, str, x, yIn, z, maxDistance);
+        super.renderLabelIfPresent(entityIn, str, matrixStack, buffer, maxDistance);
 
         if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView().hasPendingInteractions())
         {
@@ -132,30 +140,33 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
             if (!(distance > (double) (maxDistance * maxDistance)))
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;
-                boolean isSneaking = entityIn.shouldRenderSneaking();
-                double viewerYaw = this.renderManager.playerViewY;
-                double viewerPitch = this.renderManager.playerViewX;
+                boolean isSneaking = entityIn.isSneaking();
+                double viewerYaw = this.renderManager.info.getYaw();
+                double viewerPitch = this.renderManager.info.getPitch();
                 double f2 = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
-                double y = yIn + f2 + 0.3 + yOffset;
+                double y = entityIn.getY() + f2 + 0.3 + yOffset;
 
                 Minecraft.getInstance().textureManager.bindTexture(((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions()  ? BLOCKING_RESOURCE : PENDING_RESOURCE);
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translated(x, y, z);
+                matrixStack.push();
+                matrixStack.translate(entityIn.getX(), entityIn.getY(), entityIn.getZ());
                 GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
-                GlStateManager.rotated(-viewerYaw, 0.0F, 1.0F, 0.0F);
-                GlStateManager.rotated(viewerPitch, 1.0F, 0.0F, 0.0F);
-                GlStateManager.rotated(90.0F, 0.0F, 0.0F, 1.0F);
-                GlStateManager.scalef(-0.025F, -0.025F, 0.025F);
-                GlStateManager.disableLighting();
-                GlStateManager.depthMask(false);
+
+                final Matrix4f matrix = matrixStack.peek().getModel();
+
+                RenderSystem.rotatef((float) -viewerYaw, 0.0F, 1.0F, 0.0F);
+                RenderSystem.rotatef((float) viewerPitch, 1.0F, 0.0F, 0.0F);
+                RenderSystem.rotatef(90.0F, 0.0F, 0.0F, 1.0F);
+                RenderSystem.scalef(-0.025F, -0.025F, 0.025F);
+                RenderSystem.disableLighting();
+                RenderSystem.depthMask(false);
                 if (!isSneaking)
                 {
                     GlStateManager.disableDepthTest();
                 }
 
-                GlStateManager.enableBlend();
-                GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                RenderSystem.enableBlend();
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
                   GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
                   GlStateManager.SourceFactor.ONE,
                   GlStateManager.DestFactor.ZERO);
@@ -163,23 +174,23 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
                 Tessellator tess = Tessellator.getInstance();
                 BufferBuilder r = tess.getBuffer();
                 r.begin(7, DefaultVertexFormats.POSITION_TEX);
-                r.pos(0, 0, 0).tex(0, 0).endVertex();
-                r.pos(0, 10, 0).tex(1, 0).endVertex();
-                r.pos(10, 10, 0).tex(1, 1).endVertex();
-                r.pos(10, 0, 0).tex(0, 1).endVertex();
+                r.vertex(0, 0, 0).texture(0, 0).endVertex();
+                r.vertex(0, 10, 0).texture(1, 0).endVertex();
+                r.vertex(10, 10, 0).texture(1, 1).endVertex();
+                r.vertex(10, 0, 0).texture(0, 1).endVertex();
                 tess.draw();
 
-                GlStateManager.enableTexture();
+                RenderSystem.enableTexture();
                 if (!isSneaking)
                 {
                     GlStateManager.enableDepthTest();
                 }
 
-                GlStateManager.depthMask(true);
-                GlStateManager.enableLighting();
-                GlStateManager.disableBlend();
-                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                GlStateManager.popMatrix();
+                RenderSystem.depthMask(true);
+                RenderSystem.enableLighting();
+                RenderSystem.disableBlend();
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                matrixStack.pop();
             }
         }
     }
@@ -244,12 +255,13 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     @Override
     protected void applyRotations(final LivingEntity entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
     {
+        this.
         final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entityLiving;
         if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
         {
-            GlStateManager.rotated(entityCitizen.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotated(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
-            GlStateManager.rotated(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
+            RenderSystem.rotatef(entityCitizen.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            RenderSystem.rotatef(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+            RenderSystem.rotatef(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
         }
         else
         {

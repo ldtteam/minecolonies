@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCitizenFemaleCitizen extends CitizenModel
+public class ModelEntityFemaleCitizen extends CitizenModel
 {
     private final ModelRenderer breast;
     private final ModelRenderer hair;
@@ -14,7 +14,7 @@ public class ModelEntityCitizenFemaleCitizen extends CitizenModel
     private final ModelRenderer dressPart2;
     private final ModelRenderer dressPart3;
 
-    public ModelEntityCitizenFemaleCitizen()
+    public ModelEntityFemaleCitizen()
     {
         textureWidth = 64;
         textureHeight = 64;

@@ -120,7 +120,7 @@ public final class TeleportHelper
         player.stopRiding();
         if (player.isSleeping())
         {
-            player.wakeUpPlayer(true, true, false);
+            player.wakeUp(true, true);
         }
 
         player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);

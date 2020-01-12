@@ -78,9 +78,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
-        return setPathJob(
-          new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, avoid, (int) range, (int) getPathSearchRange(), ourEntity),
-          null, speed);
+        return setPathJob(new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, avoid, (int) range, (int) getPathSearchRange(), ourEntity), null, speed);
     }
 
     @Nullable
