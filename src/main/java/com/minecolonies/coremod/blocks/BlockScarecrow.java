@@ -15,7 +15,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -77,19 +77,13 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
-    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
+    public ActionResultType onUse(
+      final BlockState state,
+      final World worldIn,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand,
+      final BlockRayTraceResult ray)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -98,10 +92,10 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             if (entity instanceof ScarecrowTileEntity)
             {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (ScarecrowTileEntity) entity, pos);
-                return true;
+                return ActionResultType.SUCCESS;
             }
         }
-        return false;
+        return ActionResultType.FAIL;
     }
 
     @javax.annotation.Nullable

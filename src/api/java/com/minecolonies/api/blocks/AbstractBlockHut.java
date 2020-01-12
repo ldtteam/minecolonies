@@ -1,6 +1,7 @@
 package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
+import com.ldtteam.structurize.client.gui.WindowMultiBlock;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -26,7 +27,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +69,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).nonOpaque());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -124,9 +124,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public abstract BuildingEntry getBuildingEntry();
 
     @Override
-    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
+    public ActionResultType onUse(
+      final BlockState state,
+      final World worldIn,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand,
+      final BlockRayTraceResult ray)
     {
-        /*
+       /*
         If the world is client, open the gui of the building
          */
         if (worldIn.isRemote)
@@ -140,7 +146,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 building.openGui(player.isSneaking());
             }
         }
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @Nullable
@@ -200,28 +206,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
-    public boolean canRenderInLayer(final BlockState state, final BlockRenderLayer layer)
-    {
-        if (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.SOLID)
-        {
-            return true;
-        }
-        return super.canRenderInLayer(state, layer);
     }
 
     /**

@@ -2,13 +2,6 @@ package com.minecolonies.coremod.blocks.schematic;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
-import org.jetbrains.annotations.NotNull;
-
 
 /**
  * This block is used as a substitution block for the Builder.
@@ -41,17 +34,5 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     {
         super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
         setRegistryName(BLOCK_NAME);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
     }
 }

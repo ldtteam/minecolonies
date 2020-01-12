@@ -181,7 +181,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             {
                 final int j = ExperienceOrbEntity.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.lastTickPosX, citizen.lastTickPosY, citizen.lastTickPosZ, j));
             }
         }
 
@@ -192,9 +192,9 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
             CompatibilityUtils.getWorldFromCitizen(citizen).addParticle(ParticleTypes.EXPLOSION,
-              citizen.posX + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
-              citizen.posY + (citizen.getRandom().nextDouble() * citizen.getHeight()),
-              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.lastTickPosX + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.lastTickPosY + (citizen.getRandom().nextDouble() * citizen.getHeight()),
+              citizen.lastTickPosZ + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
               d2,
               d0,
               d1);
@@ -221,7 +221,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
      */
     private List<ExperienceOrbEntity> getXPOrbsOnGrid()
     {
-        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
+        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.lastTickPosX - 2, citizen.lastTickPosY - 2, citizen.lastTickPosZ - 2, citizen.lastTickPosX + 2, citizen.lastTickPosY + 2, citizen.lastTickPosZ + 2);
 
         return CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(ExperienceOrbEntity.class, bb);
     }

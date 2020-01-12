@@ -3,6 +3,7 @@ package com.minecolonies.coremod;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -37,6 +38,8 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -52,6 +55,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 @Mod(Constants.MOD_ID)
 public class MineColonies
@@ -143,9 +148,22 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityMercenary.class, RenderMercenary::new);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
+        ClientRegistry.bindTileEntityRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
+        ClientRegistry.bindTileEntityRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntityRenderer(TileEntityEnchanter.class, new TileEntityEnchanterRenderer());
+
+        Arrays.stream(ModBlocks.getHuts()).forEach(
+          hut -> {
+              RenderTypeLookup.setRenderLayer(hut, RenderType.func_228643_e_());
+              RenderTypeLookup.setRenderLayer(hut, RenderType.func_228639_c_());
+          });
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.func_228643_e_());
     }
 
     /**

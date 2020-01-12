@@ -63,7 +63,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     }
 
     @Override
-    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
+    public ActionResultType onUse(
+      final BlockState state,
+      final World worldIn,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand,
+      final BlockRayTraceResult ray)
     {
         final ItemStack itemstack = player.inventory.getCurrentItem();
         final TileEntity te = worldIn.getTileEntity(pos);
@@ -73,7 +79,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @NotNull
@@ -131,18 +137,5 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     {
         return !worldIn.isAirBlock(pos.down())
                  && worldIn.getBlockState(pos.down()).getBlock() != ModBlocks.blockBarrel;
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.CUTOUT;
     }
 }

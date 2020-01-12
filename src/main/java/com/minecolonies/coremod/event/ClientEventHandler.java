@@ -93,7 +93,7 @@ public class ClientEventHandler
                     {
                         wayPointTemplate = new Structure(world, "schematics/infrastructure/waypoint", settings).getBluePrint();
                     }
-                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate);
+                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
                 }
             }
         }
@@ -126,7 +126,8 @@ public class ClientEventHandler
                 BlueprintHandler.getInstance()
                   .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
                     event.getPartialTicks(),
-                    partolPointTemplate);
+                    partolPointTemplate,
+                    event.getMatrixStack());
             }
         }
     }

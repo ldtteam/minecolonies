@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -35,31 +36,31 @@ public class DebugRendererChunkBorder
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         final double partialTicks = event.getPartialTicks();
-        final PlayerEntity PlayerEntity = Minecraft.getInstance().player;
+        final PlayerEntity player = Minecraft.getInstance().player;
 
-        if (PlayerEntity.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
+        if (player.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
         {
             return;
         }
 
         final World world = Minecraft.getInstance().world;
-        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, PlayerEntity.getPosition());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
 
         if (view == null)
         {
             return;
         }
 
-        if (!center.equals(new Tuple<>(PlayerEntity.chunkCoordX, PlayerEntity.chunkCoordZ)))
+        if (!center.equals(new Tuple<>(player.chunkCoordX, player.chunkCoordZ)))
         {
-            center = new Tuple<>(PlayerEntity.chunkCoordX, PlayerEntity.chunkCoordZ);
+            center = new Tuple<>(player.chunkCoordX, player.chunkCoordZ);
             colonies.clear();
             final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
             for (int incX = -range; incX <= range; incX += 1)
             {
                 for (int incZ = -range; incZ <= range; incZ += 1)
                 {
-                    final Chunk chunk = world.getChunk(PlayerEntity.chunkCoordX + incX, PlayerEntity.chunkCoordZ + incZ);
+                    final Chunk chunk = world.getChunk(player.chunkCoordX + incX, player.chunkCoordZ + incZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
@@ -71,19 +72,17 @@ public class DebugRendererChunkBorder
 
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
-        final double relPlayerX = PlayerEntity.lastTickPosX + (PlayerEntity.posX - PlayerEntity.lastTickPosX) * partialTicks;
-        final double relPlayerY = PlayerEntity.lastTickPosY + (PlayerEntity.posY - PlayerEntity.lastTickPosY) * partialTicks;
-        final double relPlayerZ = PlayerEntity.lastTickPosZ + (PlayerEntity.posZ - PlayerEntity.lastTickPosZ) * partialTicks;
-        final double lowerYLimit = 5 - relPlayerY;
-        final double upperYLimit = 255 - relPlayerY;
+        final Vec3d currView = Minecraft.getInstance().getRenderManager().info.getProjectedView();
+        final double lowerYLimit = 5 - currView.y;
+        final double upperYLimit = 255 - currView.y;
 
-        final double lowerYLimitSmaller = Math.max(lowerYLimit, PlayerEntity.posY - 30 - relPlayerY);
+        final double lowerYLimitSmaller = Math.max(lowerYLimit, currView.y - 30 - currView.y);
 
         GlStateManager.disableTexture();
         GlStateManager.disableBlend();
 
-        final double chunkCoordX = ((double) (PlayerEntity.chunkCoordX << 4) - relPlayerX);
-        final double chunkCoordZ = ((double) (PlayerEntity.chunkCoordZ << 4) - relPlayerZ);
+        final double chunkCoordX = ((double) (player.chunkCoordX << 4) - currView.x);
+        final double chunkCoordZ = ((double) (player.chunkCoordZ << 4) - currView.z);
 
         GlStateManager.lineWidth(1.0F);
         bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
@@ -124,28 +123,28 @@ public class DebugRendererChunkBorder
                 {
                     if (north)
                     {
-                        bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (south)
                     {
-                        bufferbuilder.pos(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (east)
                     {
-                        bufferbuilder.pos(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + 16.0D + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (west)
                     {
-                        bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.vertex(chunkCoordX + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
 
                     if (levels > lowerYLimitSmaller)
                     {
-                        final double addition = upperYLimit/relPlayerY/(upperYLimit/relPlayerY - levels/relPlayerY)*10;
+                        final double addition = upperYLimit/currView.y/(upperYLimit/currView.y - levels/currView.y)*10;
                         levels+= addition > 1 ? addition : 1;
                     }
                     else
@@ -155,31 +154,31 @@ public class DebugRendererChunkBorder
                 }
                 if (north)
                 {
-                    bufferbuilder.pos(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (south)
                 {
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (east)
                 {
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, lowerYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX + 16.0D, upperYLimit, chunkCoordZ + (double) incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (west)
                 {
-                    bufferbuilder.pos(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, lowerYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(chunkCoordX + (double) incX, upperYLimit, chunkCoordZ + (double) incZ + 16.0D).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
             }
         }

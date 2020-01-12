@@ -20,7 +20,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,7 +90,13 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
+    public ActionResultType onUse(
+      final BlockState state,
+      final World worldIn,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand,
+      final BlockRayTraceResult ray)
     {
         if (worldIn.isRemote)
         {
@@ -101,7 +106,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
                 MineColonies.proxy.openDecorationControllerWindow(pos);
             }
         }
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @Override
@@ -144,17 +149,5 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn)
     {
         return state.with(MIRROR, mirrorIn != Mirror.NONE);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
     }
 }

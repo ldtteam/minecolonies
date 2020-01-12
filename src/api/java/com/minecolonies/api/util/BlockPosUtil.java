@@ -458,12 +458,12 @@ public final class BlockPosUtil
 
     /**
      * Create a method for using a {@link BlockPos} when using {@link
-     * net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
+     * net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
      *
-     * @param pos    {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
+     * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.
      */
-    public static void set(@NotNull final BlockPos.MutableBlockPos pos, @NotNull final BlockPos newPos)
+    public static void set(@NotNull final BlockPos.Mutable pos, @NotNull final BlockPos newPos)
     {
         pos.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
     }
@@ -491,7 +491,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
+        return new BlockPos(MathHelper.floor(entity.lastTickPosX), MathHelper.floor(entity.lastTickPosY), MathHelper.floor(entity.lastTickPosZ));
     }
 
     /**
