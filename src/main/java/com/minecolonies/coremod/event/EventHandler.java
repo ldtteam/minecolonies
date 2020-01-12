@@ -53,6 +53,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -719,7 +720,7 @@ public class EventHandler
 
         if (!world.isRemote
               && MineColonies.getConfig().getCommon().protectVillages.get()
-              && world.getChunkProvider()
+              && ((ServerChunkProvider) world.getChunkProvider())
                    .getChunkGenerator()
                    .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
         {

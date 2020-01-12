@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
@@ -121,7 +120,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @Override
     public BlockPos getPosition()
     {
-        return new BlockPos(posX, posY, posZ);
+        return new BlockPos(getPosX(), getPosY(), getPosZ());
     }
 
     @Override
@@ -249,17 +248,17 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
 
     public double getPosX()
     {
-        return posX;
+        return lastTickPosX;
     }
 
     public double getPosY()
     {
-        return posY;
+        return lastTickPosY;
     }
 
     public double getPosZ()
     {
-        return posZ;
+        return lastTickPosZ;
     }
 
     /**
@@ -413,9 +412,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor(posX);
-            final int py = (int) posY;
-            final int pz = MathHelper.floor(posZ);
+            final int px = MathHelper.floor(getPosX());
+            final int py = (int) getPosY();
+            final int pz = MathHelper.floor(getPosZ());
 
             this.onGround =
               CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(

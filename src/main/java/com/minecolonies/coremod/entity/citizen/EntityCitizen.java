@@ -1278,6 +1278,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         updateItemUse(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
+    @Override
+    public void spawnExplosionParticle()
+    {
+        super.spawnExplosionParticle();
+    }
+
     ///////// -------------------- The Handlers -------------------- /////////
 
     private void updateMoveAwayPath()

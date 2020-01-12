@@ -109,7 +109,7 @@ public enum RequestState
      */
     public IntNBT serializeNBT()
     {
-        return new IntNBT(indexList.indexOf(this));
+        return IntNBT.of(indexList.indexOf(this));
     }
 
 
