@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -82,9 +83,9 @@ public final class Pathfinding
         }
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
-        final double dy = entity.lastTickPosY + (double)entity.getEyeHeight() + (entity.posY - entity.lastTickPosY) * frame;
-        final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
+        final double dx = entity.lastTickPosX + (entity.lastTickPosX - entity.lastTickPosX) * frame;
+        final double dy = entity.lastTickPosY + (double)entity.getEyeHeight() + (entity.lastTickPosY - entity.lastTickPosY) * frame;
+        final double dz = entity.lastTickPosZ + (entity.lastTickPosZ - entity.lastTickPosZ) * frame;
 
         GlStateManager.pushMatrix();
         GlStateManager.pushTextureAttributes();
@@ -140,9 +141,9 @@ public final class Pathfinding
         GlStateManager.translated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = n.pos.getX() - entity.posX;
-        final double dy = n.pos.getY() - entity.posY;
-        final double dz = n.pos.getZ() - entity.posZ;
+        final double dx = n.pos.getX() - entity.lastTickPosX;
+        final double dy = n.pos.getY() - entity.lastTickPosY;
+        final double dz = n.pos.getZ() - entity.lastTickPosZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n);
@@ -153,43 +154,43 @@ public final class Pathfinding
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        GlStateManager.color3f(r, g, b);
+        RenderSystem.color3f(r, g, b);
 
         //  X+
-        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
 
         //  X-
-        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
 
         //  Z-
-        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
 
         //  Z+
-        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
-        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
-        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
 
         //  Y+
-        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
 
         //  Y-
-        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
-        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
-        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
 
         tessellator.draw();
 
@@ -200,8 +201,8 @@ public final class Pathfinding
             final double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
 
             vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            vertexBuffer.pos(0.5D, 0.5D, 0.5D).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            vertexBuffer.pos(pdx / 0.25, pdy / 0.25, pdz / 0.25).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.vertex(0.5D, 0.5D, 0.5D).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.vertex(pdx / 0.25, pdy / 0.25, pdz / 0.25).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             tessellator.draw();
         }
 
@@ -220,8 +221,8 @@ public final class Pathfinding
         GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
 
         final EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
-        GlStateManager.rotated(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotated(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        RenderSystem.rotatef((float) -renderManager.info.getProjectedView().y, 0.0F, 1.0F, 0.0F);
+        RenderSystem.rotatef((float) renderManager.info.getProjectedView().x, 1.0F, 0.0F, 0.0F);
         GlStateManager.scaled(-0.014F, -0.014F, 0.014F);
         GlStateManager.translated(0.0F, 18F, 0.0F);
 
@@ -229,7 +230,7 @@ public final class Pathfinding
         GlStateManager.disableDepthTest();
 
         GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(
+        RenderSystem.blendFuncSeparate(
           GlStateManager.SourceFactor.SRC_ALPHA,
           GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
           GlStateManager.SourceFactor.ONE,
@@ -241,10 +242,10 @@ public final class Pathfinding
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexBuffer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.pos((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.pos((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.vertex((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.vertex((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.vertex((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.vertex((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture();
 

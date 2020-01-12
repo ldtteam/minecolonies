@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
@@ -19,6 +20,7 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -90,13 +92,6 @@ public class ChunkCache implements IWorldReader
         return this.chunkArray[i][j].getTileEntity(pos, createType);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public int getCombinedLight(@NotNull BlockPos pos, int lightValue)
-    {
-        return 0;
-    }
-
     @NotNull
     @Override
     public BlockState getBlockState(BlockPos pos)
@@ -133,6 +128,12 @@ public class ChunkCache implements IWorldReader
         return Biomes.PLAINS;
     }
 
+    @Override
+    public Biome getGeneratorStoredBiome(final int p_225604_1_, final int p_225604_2_, final int p_225604_3_)
+    {
+        return null;
+    }
+
     /**
      * Checks to see if an air block exists at the provided location. Note that this only checks to see if the blocks
      * material is set to air, meaning it is possible for non-vanilla blocks to still pass this check.
@@ -142,12 +143,6 @@ public class ChunkCache implements IWorldReader
     {
         BlockState state = this.getBlockState(pos);
         return state.getBlock().isAir(state, this, pos);
-    }
-
-    @Override
-    public int getLightSubtracted(final BlockPos pos, final int amount)
-    {
-        return 0;
     }
 
     @Nullable
@@ -182,6 +177,12 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
+    public BiomeManager getBiomeAccess()
+    {
+        return null;
+    }
+
+    @Override
     public WorldBorder getWorldBorder()
     {
         return null;
@@ -191,13 +192,6 @@ public class ChunkCache implements IWorldReader
     public boolean checkNoEntityCollision(@Nullable final Entity entityIn, final VoxelShape shape)
     {
         return false;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public int getLightFor(LightType type, BlockPos pos)
-    {
-       return 0;
     }
 
     @Override
@@ -227,5 +221,11 @@ public class ChunkCache implements IWorldReader
     private boolean withinBounds(int x, int z)
     {
         return x >= 0 && x < chunkArray.length && z >= 0 && z < chunkArray[x].length && chunkArray[x][z] != null;
+    }
+
+    @Override
+    public WorldLightManager getLightingProvider()
+    {
+        return null;
     }
 }

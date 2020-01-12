@@ -1,75 +1,73 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.constant.Constants;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.entity.model.BookModel;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityEnchanter>
+public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityColonyBuilding>
 {
+    public static final Material TEXTURE_BOOK;
+
+    static
+    {
+        TEXTURE_BOOK = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "textures/blocks/enchanting_table_book.png"));
+    }
+
     /**
      * The book model to be rendered.
      */
     private final BookModel modelBook = new BookModel();
 
     /**
-     * The resource location of the texture.
+     * Create the renderer.
+     * @param dispatcher the dispatcher.
      */
-    private static final ResourceLocation LOC = new ResourceLocation(Constants.MOD_ID, "textures/blocks/enchanting_table_book.png");
-
-    public TileEntityEnchanterRenderer()
+    public TileEntityEnchanterRenderer(final TileEntityRendererDispatcher dispatcher)
     {
-
+        super(dispatcher);
     }
 
     @Override
-    public void render(final TileEntityEnchanter entity, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
+    public void render(@NotNull final TileEntityColonyBuilding ent, float partialTicks, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer renderTypeBuffer, final int lightA, final int lightB)
     {
-        GlStateManager.pushMatrix();
-        GlStateManager.translated((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
-        float tick = (float) entity.tickCount + partialTicks;
-        GlStateManager.translated(0.0F, 0.1F + MathHelper.sin(tick * 0.1F) * 0.01F, 0.0F);
-
-        double rotVPrev = entity.bookRotation - entity.bookRotationPrev;
-        float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
-
-        float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
-        GlStateManager.rotated(-tickBasedRot * 57.295776F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotated(80.0F, 0.0F, 0.0F, 1.0F);
-        this.bindTexture(LOC);
-        float page1 = entity.pageFlipPrev + (entity.pageFlip - entity.pageFlipPrev) * partialTicks + 0.25F;
-        float page2 = entity.pageFlipPrev + (entity.pageFlip - entity.pageFlipPrev) * partialTicks + 0.75F;
-        page1 = (page1 - (float) MathHelper.fastFloor((double) page1)) * 1.6F - 0.3F;
-        page2 = (page2 - (float) MathHelper.fastFloor((double) page2)) * 1.6F - 0.3F;
-        if (page1 < 0.0F)
+        if (ent instanceof TileEntityEnchanter)
         {
-            page1 = 0.0F;
-        }
+            final TileEntityEnchanter entity = (TileEntityEnchanter) ent;
+            matrixStack.push();
+            matrixStack.translate(0.5D, 0.75D, 0.5D);
+            float tick = (float) entity.tickCount + partialTicks;
+            matrixStack.translate(0.0D, (0.1F + MathHelper.sin(tick * 0.1F) * 0.01F), 0.0D);
 
-        if (page2 < 0.0F)
-        {
-            page2 = 0.0F;
-        }
+            double rotVPrev = entity.bookRotation - entity.bookRotationPrev;
+            float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
 
-        if (page1 > 1.0F)
-        {
-            page1 = 1.0F;
+            float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
+            matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(-tickBasedRot));
+            matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(80.0F));
+            float pageFlip = MathHelper.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
+            float flipA = MathHelper.fractionalPart(pageFlip + 0.25F) * 1.6F - 0.3F;
+            float flipB = MathHelper.fractionalPart(pageFlip + 0.75F) * 1.6F - 0.3F;
+            float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
+            this.modelBook.setPageAngles(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getVertexConsumer(renderTypeBuffer, RenderType::getEntitySolid);
+            this.modelBook.func_228249_b_(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+            matrixStack.pop();
         }
-
-        if (page2 > 1.0F)
-        {
-            page2 = 1.0F;
-        }
-
-        float bookSpread = entity.bookSpreadPrev + (entity.bookSpread - entity.bookSpreadPrev) * partialTicks;
-        GlStateManager.enableCull();
-        this.modelBook.render(tick, page1, page2, bookSpread, 0.0F, 0.0625F);
-        GlStateManager.popMatrix();
     }
 }
