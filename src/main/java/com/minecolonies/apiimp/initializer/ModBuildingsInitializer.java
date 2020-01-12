@@ -237,14 +237,14 @@ public final class ModBuildingsInitializer
                                  .setBuildingBlock(ModBlocks.blockHutFlorist)
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.FLORIST_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutEnchanter)
                                  .setBuildingProducer(BuildingEnchanter::new)
                                  .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.ENCHANTER_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                  .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
