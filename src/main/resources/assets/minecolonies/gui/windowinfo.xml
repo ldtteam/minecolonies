@@ -8,7 +8,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
     <label id="name" size="90 11" pos="50 14" textalign="MIDDLE" color="red"/>
 
-    <label id="info" size="150 180" pos="20 30" textalign="TOP_LEFT" label="" color="black" wrap="true"/>
+    <label id="hut_info_button" size="150 180" pos="20 30" textalign="TOP_LEFT" label="" color="black" wrap="true"/>
 
     <buttonimage id="infoPrevPage" size="18 10" pos="13 222" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <label id="pageNum" size="20 11" pos="85 222" textalign="MIDDLE" label="" color="black"/>
