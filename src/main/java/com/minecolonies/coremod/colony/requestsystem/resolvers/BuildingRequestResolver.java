@@ -14,17 +14,14 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
 
@@ -111,6 +108,11 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
         if (totalAvailable >= totalRequested)
             return Lists.newArrayList();
+        
+        if (!building.requiresCompleteRequestFulfillment())
+        {
+            return Lists.newArrayList();
+        }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
         final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
