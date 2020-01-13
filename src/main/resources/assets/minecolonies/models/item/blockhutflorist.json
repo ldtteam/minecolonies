@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockhutfloristflowers",
+  "parent": "minecolonies:block/blockhutflorist",
   "display": {
     "gui": {
       "rotation": [30, 220, 0],

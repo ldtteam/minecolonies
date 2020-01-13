@@ -155,11 +155,7 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts()).forEach(
-          hut -> {
-              RenderTypeLookup.setRenderLayer(hut, RenderType.getCutout());
-              RenderTypeLookup.setRenderLayer(hut, RenderType.getSolid());
-          });
+        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
         RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());
