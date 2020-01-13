@@ -1,25 +1,19 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "model": "forge:block/multi-layer",
-    "custom": {
-      "base": "minecolonies:block/blockhutswineherder",
-      "Solid": "minecolonies:block/blockhutswineherder",
-      "Cutout": "minecolonies:block/blockhutswineherderitems"
-    },
-    "transform": "forge:default-block"
-  },
   "variants": {
     "facing=east": {
+      "model": "minecolonies:block/blockhutswineherder",
       "y": 0
     },
     "facing=south": {
+      "model": "minecolonies:block/blockhutswineherder",
       "y": 90
     },
     "facing=west": {
+      "model": "minecolonies:block/blockhutswineherder",
       "y": 180
     },
     "facing=north": {
+      "model": "minecolonies:block/blockhutswineherder",
       "y": 270
     }
   }
