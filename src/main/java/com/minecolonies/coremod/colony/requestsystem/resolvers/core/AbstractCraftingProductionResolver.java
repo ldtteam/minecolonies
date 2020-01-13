@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCr
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -21,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -126,14 +128,16 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             final int count,
             @NotNull final IRecipeStorage storage)
     {
-        return storage.getCleanedInput().stream()
-                 .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
-                 .filter(s -> InventoryUtils.getItemCountInItemHandler(building.getMainCitizen().getInventory(),
-                   stack -> !ItemStackUtils.isEmpty(stack) && s.getItemStack().isItemEqual(stack)) < s.getAmount())
-                 .map(stack -> {
-                    final ItemStack craftingHelperStack = stack.getItemStack().copy();
-                     return createNewRequestForStack(manager, craftingHelperStack, stack.getAmount() * count);
-                }).collect(Collectors.toList());
+        final List<IToken<?>> materialRequests = new ArrayList<>();
+        for (final ItemStorage ingredient: storage.getCleanedInput())
+        {
+            if (!ItemStackUtils.isEmpty(ingredient.getItemStack()))
+            {
+                final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
+                materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count));
+            }
+        }
+        return materialRequests;
     }
 
     @Nullable

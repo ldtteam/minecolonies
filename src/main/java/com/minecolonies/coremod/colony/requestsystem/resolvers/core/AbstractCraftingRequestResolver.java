@@ -202,7 +202,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             final ItemStack requestStack,
             final int count)
     {
-        final int recipeExecutionsCount = count / requestStack.getCount();
+        final int recipeExecutionsCount = (int) Math.ceil( (double) count / requestStack.getCount());
         return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount)));
     }
 
