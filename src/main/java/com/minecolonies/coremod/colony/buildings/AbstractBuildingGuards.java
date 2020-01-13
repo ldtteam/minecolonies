@@ -192,7 +192,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         super.onUpgradeComplete(newLevel);
-        colony.getCitizenManager().calculateMaxCitizens();
 
         if (newLevel == ACHIEVEMENT_LEVEL)
         {
@@ -202,13 +201,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
         }
-    }
-
-    @Override
-    public void onDestroyed()
-    {
-        super.onDestroyed();
-        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override
@@ -226,7 +218,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
-            colony.getCitizenManager().calculateMaxCitizens();
 
             // Set new home, since guards are housed at their workerbuilding.
             final IBuilding building = citizen.getHomeBuilding();
@@ -341,7 +332,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
         super.removeCitizen(citizen);
-        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override

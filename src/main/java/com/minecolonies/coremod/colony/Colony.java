@@ -1303,6 +1303,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            getCitizenManager().calculateMaxCitizens();
             this.markDirty();
         }
     }
