@@ -1,19 +1,17 @@
 {
   "parent": "block/block",
   "loader": "forge:multi-layer",
+  "textures": { "particle": "minecraft:block/oak_sapling" },
+
   "layers": {
     "base": {
-      "textures": {
-        "particle": "block/oak_sapling"
-      }
     },
     "solid": {
       "textures": {
         "2": "block/terracotta",
         "4": "block/oak_log",
         "5": "block/oak_log_top",
-        "6": "item/iron_axe",
-        "particle": "block/oak_sapling"
+        "6": "item/iron_axe"
       },
       "elements": [
         {
@@ -2333,8 +2331,7 @@
     "cutout": {
       "textures": {
         "0": "block/oak_sapling",
-        "1": "block/spruce_sapling",
-        "particle": "block/oak_sapling"
+        "1": "block/spruce_sapling"
       },
       "elements": [
         {

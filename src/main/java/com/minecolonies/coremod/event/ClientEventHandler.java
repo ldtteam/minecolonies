@@ -76,7 +76,7 @@ public class ClientEventHandler
     @SubscribeEvent
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        Pathfinding.debugDraw(event.getPartialTicks());
+        Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
 
         final Structure structure = Settings.instance.getActiveStructure();
         final ClientWorld world = Minecraft.getInstance().world;

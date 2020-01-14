@@ -2,16 +2,17 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -73,29 +74,31 @@ public final class Pathfinding
      * Render debugging information for the pathfinding system.
      *
      * @param frame entity movement weight.
+     * @param matrixStack the matrix stack to apply to.
      */
     @OnlyIn(Dist.CLIENT)
-    public static void debugDraw(final double frame)
+    public static void debugDraw(final double frame, final MatrixStack matrixStack)
     {
         if (AbstractPathJob.lastDebugNodesNotVisited == null)
         {
             return;
         }
 
-        final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = entity.lastTickPosX + (entity.lastTickPosX - entity.lastTickPosX) * frame;
-        final double dy = entity.lastTickPosY + (double)entity.getEyeHeight() + (entity.lastTickPosY - entity.lastTickPosY) * frame;
-        final double dz = entity.lastTickPosZ + (entity.lastTickPosZ - entity.lastTickPosZ) * frame;
+        final Vec3d vec = Minecraft.getInstance().getRenderManager().info.getProjectedView();
+        final double dx = vec.getX();
+        final double dy = vec.getY();
+        final double dz = vec.getZ();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.pushTextureAttributes();
-        GlStateManager.translated(-dx, -dy, -dz);
+        RenderSystem.pushTextureAttributes();
 
-        GlStateManager.disableTexture();
-        GlStateManager.disableBlend();
-        GlStateManager.disableLighting();
-        GlStateManager.enableCull();
-        GlStateManager.enableDepthTest();
+        matrixStack.push();
+        matrixStack.translate(-dx, -dy, -dz);
+
+        RenderSystem.disableTexture();
+        RenderSystem.disableBlend();
+        RenderSystem.disableLighting();
+        RenderSystem.enableCull();
+        RenderSystem.enableDepthTest();
 
         final Set<Node> debugNodesNotVisited;
         final Set<Node> debugNodesVisited;
@@ -112,17 +115,17 @@ public final class Pathfinding
         {
             for (@NotNull final Node n : debugNodesNotVisited)
             {
-                debugDrawNode(n, 1.0F, 0F, 0F);
+                debugDrawNode(n, 1.0F, 0F, 0F,  matrixStack);
             }
 
             for (@NotNull final Node n : debugNodesVisited)
             {
-                debugDrawNode(n, 0F, 0F, 1.0F);
+                debugDrawNode(n, 0F, 0F, 1.0F, matrixStack);
             }
 
             for (@NotNull final Node n : debugNodesPath)
             {
-                debugDrawNode(n, 0F, 1.0F, 0F);
+                debugDrawNode(n, 0F, 1.0F, 0F, matrixStack);
             }
         }
         catch (final ConcurrentModificationException exc)
@@ -130,15 +133,15 @@ public final class Pathfinding
             Log.getLogger().catching(exc);
         }
 
-        GlStateManager.popAttributes();
-        GlStateManager.popMatrix();
+        RenderSystem.popAttributes();
+        matrixStack.pop();
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b)
+    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b, final MatrixStack matrixStack)
     {
-        GlStateManager.pushMatrix();
-        GlStateManager.translated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
+        matrixStack.push();
+        matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
         final double dx = n.pos.getX() - entity.lastTickPosX;
@@ -146,122 +149,125 @@ public final class Pathfinding
         final double dz = n.pos.getZ() - entity.lastTickPosZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
-            renderDebugText(n);
+            renderDebugText(n, matrixStack);
         }
 
-        GlStateManager.scaled(0.25D, 0.25D, 0.25D);
+        matrixStack.scale(0.25F, 0.25F, 0.25F);
 
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
+
+        final Matrix4f matrix4f = matrixStack.peek().getModel();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         RenderSystem.color3f(r, g, b);
 
         //  X+
-        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
 
         //  X-
-        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
 
         //  Z-
-        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 0.0f, 0.0f).endVertex();
 
         //  Z+
-        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
-        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
-        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
 
         //  Y+
-        vertexBuffer.vertex(1.0, 1.0, 1.0).endVertex();
-        vertexBuffer.vertex(1.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 0.0).endVertex();
-        vertexBuffer.vertex(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
 
         //  Y-
-        vertexBuffer.vertex(0.0, 0.0, 1.0).endVertex();
-        vertexBuffer.vertex(0.0, 0.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 0.0, 0.0).endVertex();
-        vertexBuffer.vertex(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
 
         tessellator.draw();
 
         if (n.parent != null)
         {
-            final double pdx = n.parent.pos.getX() - n.pos.getX() + 0.125;
-            final double pdy = n.parent.pos.getY() - n.pos.getY() + 0.125;
-            final double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
-
+            final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
+            final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
+            final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
             vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            vertexBuffer.vertex(0.5D, 0.5D, 0.5D).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            vertexBuffer.vertex(pdx / 0.25, pdy / 0.25, pdz / 0.25).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.vertex(matrix4f, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.vertex(matrix4f,pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             tessellator.draw();
         }
 
-        GlStateManager.popMatrix();
+        matrixStack.pop();
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void renderDebugText(@NotNull final Node n)
+    private static void renderDebugText(@NotNull final Node n, final MatrixStack matrixStack)
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
         final FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
-        GlStateManager.pushTextureAttributes();
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(0.0F, 0.75F, 0.0F);
-        GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
+
+        matrixStack.push();
+        matrixStack.translate(0.0F, 0.75F, 0.0F);
+        RenderSystem.normal3f(0.0F, 1.0F, 0.0F);
 
         final EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
-        RenderSystem.rotatef((float) -renderManager.info.getProjectedView().y, 0.0F, 1.0F, 0.0F);
-        RenderSystem.rotatef((float) renderManager.info.getProjectedView().x, 1.0F, 0.0F, 0.0F);
-        GlStateManager.scaled(-0.014F, -0.014F, 0.014F);
-        GlStateManager.translated(0.0F, 18F, 0.0F);
+        matrixStack.multiply(renderManager.getRotation());
+        matrixStack.scale(-0.014F, -0.014F, 0.014F);
+        matrixStack.translate(0.0F, 18F, 0.0F);
 
-        GlStateManager.depthMask(false);
-        GlStateManager.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.disableDepthTest();
 
-        GlStateManager.enableBlend();
+        RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(
           GlStateManager.SourceFactor.SRC_ALPHA,
           GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
           GlStateManager.SourceFactor.ONE,
           GlStateManager.DestFactor.ZERO);
-        GlStateManager.disableTexture();
+        RenderSystem.disableTexture();
 
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
+        final Matrix4f matrix4f = matrixStack.peek().getModel();
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexBuffer.vertex((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.vertex((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.vertex((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        vertexBuffer.vertex((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.vertex(matrix4f, (-i - 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
+        vertexBuffer.vertex(matrix4f, (-i - 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
+        vertexBuffer.vertex(matrix4f, (i + 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
+        vertexBuffer.vertex(matrix4f, (i + 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
         tessellator.draw();
-        GlStateManager.enableTexture();
 
-        GlStateManager.translated(0.0F, -5F, 0.0F);
-        fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
-        GlStateManager.translated(0.0F, 8F, 0.0F);
-        fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
+        RenderSystem.enableTexture();
 
-        GlStateManager.enableDepthTest();
-        GlStateManager.depthMask(true);
-        GlStateManager.translated(0.0F, -8F, 0.0F);
-        fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
-        GlStateManager.translated(0.0F, 8F, 0.0F);
-        fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
+        final IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuffer());
+        matrixStack.translate(0.0F, -5F, 0.0F);
+        fontrenderer.draw(s1, -fontrenderer.getStringWidth(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
+        matrixStack.translate(0.0F, 8F, 0.0F);
+        fontrenderer.draw(s2, -fontrenderer.getStringWidth(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
 
-        GlStateManager.popMatrix();
-        GlStateManager.popAttributes();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        matrixStack.translate(0.0F, -8F, 0.0F);
+        fontrenderer.draw(s1, -fontrenderer.getStringWidth(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
+        matrixStack.translate(0.0F, 8F, 0.0F);
+        fontrenderer.draw(s2, -fontrenderer.getStringWidth(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
+        buffer.draw();
+        
+        matrixStack.pop();
     }
 }
