@@ -1,6 +1,9 @@
 {
   "parent": "block/block",
   "loader": "forge:multi-layer",
+  "textures": {
+    "particle": "block/podzol_top"
+  },
   "layers": {
     "base": {
     },
@@ -11,8 +14,7 @@
         "3": "block/hay_block_top",
         "4": "block/oak_planks",
         "5": "block/iron_block",
-        "10": "entity/chest/normal",
-        "particle": "block/podzol_top"
+        "10": "entity/chest/normal"
       },
       "elements": [
         {

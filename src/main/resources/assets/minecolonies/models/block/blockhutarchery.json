@@ -1,13 +1,15 @@
 {
   "parent": "block/block",
   "loader": "forge:multi-layer",
+  "textures": {
+    "particle": "minecraft:item/arrow"
+  },
   "layers": {
     "base": {
     },
     "cutout": {
       "textures": {
-        "0": "minecraft:item/arrow",
-        "particle": "minecraft:item/arrow"
+        "0": "minecraft:item/arrow"
       },
       "elements": [
         {
@@ -211,8 +213,7 @@
       "textures": {
         "1": "minecraft:item/bow",
         "2": "minecraft:block/spruce_planks",
-        "3": "minecraft:block/anvil_top",
-        "particle": "minecraft:item/arrow"
+        "3": "minecraft:block/anvil_top"
       },
       "elements": [
         {

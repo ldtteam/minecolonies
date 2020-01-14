@@ -1,6 +1,7 @@
 {
   "parent": "block/block",
   "loader": "forge:multi-layer",
+  "textures": { "particle": "minecraft:block/red_concrete_powder" },
   "layers": {
     "base": {
     },
@@ -8,8 +9,7 @@
       "textures": {
         "18": "minecraft:block/poppy",
         "19": "minecraft:block/blue_orchid",
-        "20": "minecraft:block/pink_tulip",
-        "particle": "minecraft:block/red_concrete_powder"
+        "20": "minecraft:block/pink_tulip"
       },
       "elements": [
         {
@@ -111,8 +111,7 @@
         "18": "minecraft:block/rose",
         "19": "minecraft:block/blue_orchid",
         "20": "minecraft:block/pink_tulip",
-        "22": "minecraft:block/red_concrete_powder",
-        "particle": "minecraft:block/red_concrete_powder"
+        "22": "minecraft:block/red_concrete_powder"
       },
       "elements": [
         {
