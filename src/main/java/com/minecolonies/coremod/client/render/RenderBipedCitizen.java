@@ -9,11 +9,9 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -21,6 +19,7 @@ import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -31,8 +30,6 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
 
 /**
  * Renderer for the citizens.
@@ -126,70 +123,40 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 
     @Override
     protected void renderLabelIfPresent(
-      final Entity entityIn,
-      final String str,
-      final MatrixStack matrixStack,
-      final IRenderTypeBuffer buffer,
+      @NotNull final Entity entityIn,
+      @NotNull final String str,
+      @NotNull final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer buffer,
       final int maxDistance)
     {
         super.renderLabelIfPresent(entityIn, str, matrixStack, buffer, maxDistance);
 
         if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView().hasPendingInteractions())
         {
-            double distance = entityIn.getDistanceSq(this.renderManager.info.getProjectedView());
-            if (!(distance > (double) (maxDistance * maxDistance)))
+            double distance = this.renderManager.getSquaredDistanceToCamera(entityIn);
+            if (distance <= 4096.0D)
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;
                 boolean isSneaking = entityIn.isSneaking();
-                double viewerYaw = this.renderManager.info.getYaw();
-                double viewerPitch = this.renderManager.info.getPitch();
-                double f2 = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
-                double y = entityIn.getY() + f2 + 0.3 + yOffset;
+                double height = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
+                double y = height + 0.3 + yOffset;
 
-                Minecraft.getInstance().textureManager.bindTexture(((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions()  ? BLOCKING_RESOURCE : PENDING_RESOURCE);
+                final ResourceLocation texture = ((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions()  ? BLOCKING_RESOURCE : PENDING_RESOURCE;
 
                 matrixStack.push();
-                matrixStack.translate(entityIn.getX(), entityIn.getY(), entityIn.getZ());
-                GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
+                matrixStack.translate(0, y, 0);
+                matrixStack.multiply(renderManager.getRotation());
+                matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90));
+
+                matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
                 final Matrix4f matrix = matrixStack.peek().getModel();
+                final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
-                RenderSystem.rotatef((float) -viewerYaw, 0.0F, 1.0F, 0.0F);
-                RenderSystem.rotatef((float) viewerPitch, 1.0F, 0.0F, 0.0F);
-                RenderSystem.rotatef(90.0F, 0.0F, 0.0F, 1.0F);
-                RenderSystem.scalef(-0.025F, -0.025F, 0.025F);
-                RenderSystem.disableLighting();
-                RenderSystem.depthMask(false);
-                if (!isSneaking)
-                {
-                    GlStateManager.disableDepthTest();
-                }
-
-                RenderSystem.enableBlend();
-                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-                  GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                  GlStateManager.SourceFactor.ONE,
-                  GlStateManager.DestFactor.ZERO);
-
-                Tessellator tess = Tessellator.getInstance();
-                BufferBuilder r = tess.getBuffer();
-                r.begin(7, DefaultVertexFormats.POSITION_TEX);
-                r.vertex(0, 0, 0).texture(0, 0).endVertex();
-                r.vertex(0, 10, 0).texture(1, 0).endVertex();
-                r.vertex(10, 10, 0).texture(1, 1).endVertex();
-                r.vertex(10, 0, 0).texture(0, 1).endVertex();
-                tess.draw();
-
-                RenderSystem.enableTexture();
-                if (!isSneaking)
-                {
-                    GlStateManager.enableDepthTest();
-                }
-
-                RenderSystem.depthMask(true);
-                RenderSystem.enableLighting();
-                RenderSystem.disableBlend();
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                r.vertex(matrix,0, 0, 0).texture(0, 0).light(250).endVertex();
+                r.vertex(matrix,0, 10, 0).texture(1, 0).light(250).endVertex();
+                r.vertex(matrix,10, 10, 0).texture(1, 1).light(250).endVertex();
+                r.vertex(matrix,10, 0, 0).texture(0, 1).light(250).endVertex();
                 matrixStack.pop();
             }
         }
