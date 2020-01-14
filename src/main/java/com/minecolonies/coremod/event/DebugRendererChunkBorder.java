@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.MineColonies;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -92,9 +91,10 @@ public class DebugRendererChunkBorder
         stack.push();
 
         RenderSystem.lineWidth(1.0F);
+        bufferbuilder.begin(1, DefaultVertexFormats.POSITION_COLOR);
+
         for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
         {
-            bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
             final int x = c.getKey().getA();
             final int z = c.getKey().getB();
             final int incX = x * 16;
@@ -162,35 +162,35 @@ public class DebugRendererChunkBorder
                 if (north)
                 {
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (south)
                 {
-                    bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (east)
                 {
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (west)
                 {
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.vertex(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
                     bufferbuilder.vertex(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
             }
-            tessellator.draw();
         }
 
+        tessellator.draw();
         RenderSystem.enableBlend();
         RenderSystem.enableTexture();
         stack.pop();
