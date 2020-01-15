@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 /**
  * Citizen model.
  */
-public class CitizenModel extends BipedModel<AbstractEntityCitizen>
+public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<AbstractEntityCitizen>
 {
     public CitizenModel(final float size)
     {
