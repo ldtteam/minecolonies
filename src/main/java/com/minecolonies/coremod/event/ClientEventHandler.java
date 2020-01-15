@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -76,8 +77,10 @@ public class ClientEventHandler
     @SubscribeEvent
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
-
+        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        {
+            Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
+        }
         final Structure structure = Settings.instance.getActiveStructure();
         final ClientWorld world = Minecraft.getInstance().world;
         final PlayerEntity player = Minecraft.getInstance().player;

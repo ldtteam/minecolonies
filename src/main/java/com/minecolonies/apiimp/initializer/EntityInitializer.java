@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -13,12 +14,10 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import net.minecraft.entity.*;
-import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
-import org.objectweb.asm.tree.ModuleExportNode;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_HEIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_WIDTH;
@@ -30,7 +29,7 @@ public class EntityInitializer
 {
     public static void setupEntities()
     {
-        ModEntities.CITIZEN = (EntityType<? extends AgeableEntity>) EntityType.Builder.create(EntityCitizen::new, EntityClassification.CREATURE)
+        ModEntities.CITIZEN = (EntityType<? extends AbstractEntityCitizen>) EntityType.Builder.create(EntityCitizen::new, EntityClassification.CREATURE)
                                                                       .setTrackingRange(ENTITY_TRACKING_RANGE)
                                                                       .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
                                                                       .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)

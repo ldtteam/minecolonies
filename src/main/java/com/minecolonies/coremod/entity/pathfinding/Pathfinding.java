@@ -94,11 +94,10 @@ public final class Pathfinding
         matrixStack.push();
         matrixStack.translate(-dx, -dy, -dz);
 
+        RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.disableBlend();
         RenderSystem.disableLighting();
-        RenderSystem.enableCull();
-        RenderSystem.enableDepthTest();
 
         final Set<Node> debugNodesNotVisited;
         final Set<Node> debugNodesVisited;
@@ -133,6 +132,7 @@ public final class Pathfinding
             Log.getLogger().catching(exc);
         }
 
+        RenderSystem.disableDepthTest();
         RenderSystem.popAttributes();
         matrixStack.pop();
     }
@@ -230,7 +230,6 @@ public final class Pathfinding
         matrixStack.translate(0.0F, 18F, 0.0F);
 
         RenderSystem.depthMask(false);
-        RenderSystem.disableDepthTest();
 
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(
@@ -260,7 +259,6 @@ public final class Pathfinding
         matrixStack.translate(0.0F, 8F, 0.0F);
         fontrenderer.draw(s2, -fontrenderer.getStringWidth(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
 
-        RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
         matrixStack.translate(0.0F, -8F, 0.0F);
         fontrenderer.draw(s1, -fontrenderer.getStringWidth(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);

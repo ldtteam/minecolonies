@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.*;
 import net.minecraftforge.registries.ObjectHolder;
@@ -8,7 +9,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ModEntities
 {
     @ObjectHolder("citizen")
-    public static EntityType<? extends AgeableEntity> CITIZEN;
+    public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
 
     @ObjectHolder("fishhook")
     public static EntityType<?> FISHHOOK;

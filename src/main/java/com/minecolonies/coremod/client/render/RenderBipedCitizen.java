@@ -7,10 +7,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -18,23 +16,16 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 /**
  * Renderer for the citizens.
  */
-public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends CitizenModel> extends MobRenderer
+public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>>
 {
     private static final double  SHADOW_SIZE    = 0.5F;
     private static final int     THREE_QUARTERS = 270;
@@ -57,15 +48,20 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
      */
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new CitizenModel(0.0F), (float) SHADOW_SIZE);
-        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel(0.5F), new CitizenModel(1.0F)));
-        super.addLayer(new HeldItemLayer(this));
+        super(renderManagerIn, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
+        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
+        super.addLayer(new HeldItemLayer<>(this));
     }
 
     @Override
-    public void render(@NotNull final LivingEntity entity, final float limbSwing, final float partialTicks, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer renderTypeBuffer, final int light)
+    public void render(
+      @NotNull final AbstractEntityCitizen citizen,
+      final float limbSwing,
+      final float partialTicks,
+      @NotNull final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer renderTypeBuffer,
+      final int light)
     {
-        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
         setupMainModelFrom(citizen);
 
         final CitizenModel citizenModel = (CitizenModel) entityModel;
@@ -75,34 +71,21 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         final BipedModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack, BipedModel.ArmPose.EMPTY);
         final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack, BipedModel.ArmPose.EMPTY);
 
-        updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
-        super.render((MobEntity) entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
-    }
-
-    @Override
-    public void render(
-      final MobEntity entity,
-      final float limbSwing,
-      final float partialTicks,
-      final MatrixStack matrixStack,
-      final IRenderTypeBuffer renderTypeBuffer,
-      final int light)
-    {
-
+        // todo updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
         if (isItGhostTime)
         {
-            GlStateManager.enableBlend();
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.3F);
+            RenderSystem.enableBlend();
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.3F);
 
-            super.render(entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
+            super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
 
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1F);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
 
-            GlStateManager.disableBlend();
+            RenderSystem.disableBlend();
         }
         else
         {
-            super.render(entity, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
+            super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
         }
     }
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
@@ -122,12 +105,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     }
 
     @Override
-    protected void renderLabelIfPresent(
-      @NotNull final Entity entityIn,
-      @NotNull final String str,
-      @NotNull final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer buffer,
-      final int maxDistance)
+    protected void renderLabelIfPresent(@NotNull final AbstractEntityCitizen entityIn, @NotNull final String str, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int maxDistance)
     {
         super.renderLabelIfPresent(entityIn, str, matrixStack, buffer, maxDistance);
 
@@ -184,11 +162,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         return armPoseMainHand;
     }
 
-    private void updateArmPose(
-      @NotNull final AbstractEntityCitizen citizen,
-      final BipedModel citizenModel,
-      final BipedModel.ArmPose armPoseMainHand,
-      final BipedModel.ArmPose armPoseOffHand)
+    private void updateArmPose(@NotNull final AbstractEntityCitizen citizen, final BipedModel citizenModel, final BipedModel.ArmPose armPoseMainHand, final BipedModel.ArmPose armPoseOffHand)
     {
         if (citizen.getPrimaryHand() == HandSide.RIGHT)
         {
@@ -235,10 +209,10 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         }
     }*/
 
-    @Nullable
+    @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final Entity entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityCitizen entity)
     {
-        return ((AbstractEntityCitizen) entity).getTexture();
+        return entity.getTexture();
     }
 }

@@ -71,28 +71,28 @@ public class ModelEntityBlacksmithFemale extends CitizenModel
         textureHeight = 128;
 
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addCuboid(-3F, -2F, -2F, 4, 10, 4);
+        bipedRightArm.addCuboid(-3F, 2F, -2F, 4, 10, 4);
         bipedRightArm.setRotationPoint(-5F, 6F, 0F);
         bipedRightArm.setTextureSize(256, 128);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addCuboid(-1F, -2F, -2F, 4, 10, 4);
+        bipedLeftArm.addCuboid(-1F, 2F, -2F, 4, 10, 4);
         bipedLeftArm.setRotationPoint(5F, 6F, 0F);
         bipedLeftArm.setTextureSize(256, 128);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addCuboid(-2F, 0F, -2F, 4, 10, 4);
+        bipedRightLeg.addCuboid(-2F, 2F, -2F, 4, 10, 4);
         bipedRightLeg.setRotationPoint(-2F, 14F, 0F);
         bipedRightLeg.setTextureSize(256, 128);
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addCuboid(-2F, 0F, -2F, 4, 10, 4);
+        bipedLeftLeg.addCuboid(-2F, 2F, -2F, 4, 10, 4);
         bipedLeftLeg.setRotationPoint(2F, 14F, 0F);
         bipedLeftLeg.setTextureSize(256, 128);
         bipedLeftLeg.mirror = true;
@@ -113,7 +113,7 @@ public class ModelEntityBlacksmithFemale extends CitizenModel
         setRotation(bipedHead, 0F, 0F, 0F);
 
         bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addCuboid(-4F, 0F, -2F, 8, 10, 4);
+        bipedBody.addCuboid(-4F, 4F, -2F, 8, 10, 4);
         bipedBody.setRotationPoint(0F, 4F, 0F);
         bipedBody.setTextureSize(256, 128);
         bipedBody.mirror = true;
@@ -564,6 +564,7 @@ public class ModelEntityBlacksmithFemale extends CitizenModel
         this.bipedHeadwear.addChild(hairF45);
         this.bipedHeadwear.addChild(hairF46);
         this.bipedHeadwear.addChild(hairF47);
+
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
