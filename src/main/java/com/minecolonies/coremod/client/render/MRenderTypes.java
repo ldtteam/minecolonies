@@ -5,26 +5,46 @@ import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
+/**
+ * Holding all kind of render types of minecolonies
+ */
 public final class MRenderTypes extends RenderType
 {
     private static final VertexFormat format = new VertexFormat(ImmutableList.of(POSITION_3F, TEX_2F, LIGHT_ELEMENT));
 
-    public MRenderTypes(final String p_i225992_1_, final VertexFormat p_i225992_2_, final int p_i225992_3_, final int p_i225992_4_, final boolean p_i225992_5_, final boolean p_i225992_6_, final Runnable p_i225992_7_, final Runnable p_i225992_8_)
+    /**
+     * Private constructor to hide implicit one.
+     * @param name the name of the rendertype.
+     * @param format its format.
+     * @param id1 no idea.
+     * @param id2 no idea.
+     * @param b1 no idea.
+     * @param b2 no idea.
+     * @param b3 no idea.
+     * @param state the rendertype state.
+     */
+    private MRenderTypes(final String name, final VertexFormat format, final int id1, final int id2, final boolean b1, final boolean b2, final Runnable b3, final Runnable state)
     {
-        super(p_i225992_1_, p_i225992_2_, p_i225992_3_, p_i225992_4_, p_i225992_5_, p_i225992_6_, p_i225992_7_, p_i225992_8_);
+        super(name, format, id1, id2, b1, b2, b3, state);
     }
 
-    public static RenderType customTextRenderer(ResourceLocation resourceLocation) {
+    /**
+     * Custom texture renderer type.
+     * @param resourceLocation the location fo the texture.
+     * @return the renderType which is created.
+     */
+    public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
+    {
         final RenderType.State state = RenderType.State.builder()
-                                   .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
+                                         .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
                                          .alpha(RenderState.HALF_ALPHA)
                                          .depthTest(RenderState.ALWAYS_DEPTH_TEST)
                                          .build(true);
 
         return RenderType.of("customRenderer", format, 7, 256, true, false, state);
     }
-
 }
