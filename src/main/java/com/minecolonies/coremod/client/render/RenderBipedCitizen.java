@@ -9,6 +9,8 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.IVertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -93,7 +95,6 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         entityModel = (citizen.isFemale()
                          ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
                          : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
-
         if (entityModel == null)
         {
             entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel(0.0F));

@@ -204,8 +204,13 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      *
      * @return location of the texture.
      */
+    @NotNull
     public ResourceLocation getTexture()
     {
+        if (texture == null)
+        {
+            setTexture();
+        }
         return texture;
     }
 
