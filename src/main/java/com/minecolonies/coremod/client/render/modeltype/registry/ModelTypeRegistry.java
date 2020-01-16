@@ -5,10 +5,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.*;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.client.renderer.entity.model.BipedModel;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,7 +18,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     public ModelTypeRegistry()
     {
         register(BipedModelType.NOBLE, new CitizenModel(), new ModelEntityCitizenFemaleNoble());
-        register(BipedModelType.ARISTOCRAT, new CitizenModel(), new ModelEntityCitizenFemaleAristocrat());
+        register(BipedModelType.ARISTOCRAT, new CitizenModel(), new ModelEntityFemaleAristocrat());
         register(BipedModelType.BUILDER, new CitizenModel(), new ModelEntityBuilderFemale());
         register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
         register(BipedModelType.MINER, new CitizenModel(), new ModelEntityMinerFemale());

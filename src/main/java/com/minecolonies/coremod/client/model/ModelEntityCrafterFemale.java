@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCrafterFemale extends CitizenModel
+public class ModelEntityCrafterFemale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityCrafterFemale()
     {
@@ -51,11 +51,11 @@ public class ModelEntityCrafterFemale extends CitizenModel
         setRotation(bipedHead, 0F, 0F, 0F);
 
         core = new ModelRenderer(this, 38, 93);
-        core.addCuboid(3F, 8.6F, -2F, 2, 2, 2);
+        core.addCuboid(1.75F, 7F, 1.5F, 2, 2, 2);
         core.setRotationPoint(-4.6F, 2F, 0F);
         core.setTextureSize(256, 128);
         core.mirror = true;
-        setRotation(core, 0F, 0.7853982F, 0F);
+        setRotation(core, 0F, 0.75F, 0F);
 
         frontBeam = new ModelRenderer(this, 25, 78);
         frontBeam.addCuboid(3.5F, -4.5F, -2.5F, 1, 13, 5);
@@ -268,7 +268,7 @@ public class ModelEntityCrafterFemale extends CitizenModel
         setRotation(lens2, 0F, 0F, 0F);
 
         strap = new ModelRenderer(this, 0, 85);
-        strap.addCuboid(-1.5F, -7.5F, -4.2F, 1, 2, 9);
+        strap.addCuboid(-1.2F, -7.5F, -4.2F, 1, 2, 9);
         strap.setRotationPoint(0F, 0F, 0F);
         strap.setTextureSize(256, 128);
         strap.mirror = true;

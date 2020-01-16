@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCitizenFemaleAristocrat extends CitizenModel
+public class ModelEntityFemaleAristocrat extends CitizenModel<AbstractEntityCitizen>
 {
     ModelRenderer breast;
     ModelRenderer leftArm2;
@@ -29,7 +29,7 @@ public class ModelEntityCitizenFemaleAristocrat extends CitizenModel
     ModelRenderer dressPart12;
     ModelRenderer dressPart13;
 
-    public ModelEntityCitizenFemaleAristocrat()
+    public ModelEntityFemaleAristocrat()
     {
         textureWidth = 64;
         textureHeight = 64;
@@ -47,7 +47,7 @@ public class ModelEntityCitizenFemaleAristocrat extends CitizenModel
         setRotation(bipedBody, 0F, 0F, 0F);
 
         bipedRightArm = new ModelRenderer(this, 34, 17);
-        bipedRightArm.addCuboid(-2F, 0F, -1F, 3, 12, 3);
+        bipedRightArm.addCuboid(-2F, -2F, -1F, 3, 12, 3);
         bipedRightArm.setRotationPoint(-4F, 0F, 0F);
         bipedRightArm.setTextureSize(64, 64);
         setRotation(bipedRightArm, 0F, 0F, 0F);
