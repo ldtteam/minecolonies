@@ -6,97 +6,99 @@
 
 package com.minecolonies.coremod.client.model;
 
-import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelScarecrowBoth extends CitizenModel
+public class ModelScarecrowBoth extends Model
 {
     //fields
-    ModelRenderer Head;
-    ModelRenderer Post;
-    ModelRenderer LeftArmPeg;
-    ModelRenderer RightArmPeg;
-    ModelRenderer Torso;
-    ModelRenderer RightLegPeg;
-    ModelRenderer LeftLegPeg;
-    ModelRenderer LeftArm;
-    ModelRenderer RightArm;
-    ModelRenderer RightLeg;
-    ModelRenderer LeftLeg;
+    ModelRenderer head;
+    ModelRenderer post;
+    ModelRenderer leftArmPeg;
+    ModelRenderer rightArmPeg;
+    ModelRenderer torso;
+    ModelRenderer rightLegPeg;
+    ModelRenderer leftLegPeg;
+    ModelRenderer leftArm;
+    ModelRenderer rightArm;
+    ModelRenderer rightLeg;
+    ModelRenderer leftLeg;
 
     public ModelScarecrowBoth()
     {
+        super(RenderType::getEntityCutoutNoCull);
         textureWidth = 128;
         textureHeight = 64;
-        Head = new ModelRenderer(this, 0, 0);
-        Head.addCuboid(-8.2F, -35.6F, -4.2F, 8, 8, 8);
-        Head.setRotationPoint(7F, 24F, -1F);
-        Head.setTextureSize(128, 64);
-        Head.mirror = true;
-        setRotation(Head, 0F, 0.1858931F, -0.1092638F);
-        Post = new ModelRenderer(this, 0, 32);
-        Post.addCuboid(-1F, -16F, -1F, 2, 16, 2);
-        Post.setRotationPoint(0F, 24F, 0F);
-        Post.setTextureSize(128, 64);
-        Post.mirror = true;
-        setRotation(Post, 0F, 0F, 0F);
-        LeftArmPeg = new ModelRenderer(this, 9, 33);
-        LeftArmPeg.addCuboid(23.5F, 1F, -1F, 2, 2, 2);
-        LeftArmPeg.setRotationPoint(7F, 24F, 0F);
-        LeftArmPeg.setTextureSize(128, 64);
-        LeftArmPeg.mirror = true;
-        setRotation(LeftArmPeg, 0F, 0F, -1.351339F);
-        RightArmPeg = new ModelRenderer(this, 9, 33);
-        RightArmPeg.addCuboid(-28F, 15.8F, -1F, 2, 2, 2);
-        RightArmPeg.setRotationPoint(7F, 24F, 0F);
-        RightArmPeg.setTextureSize(128, 64);
-        RightArmPeg.mirror = true;
-        setRotation(RightArmPeg, 0F, 0F, 1.351339F);
-        Torso = new ModelRenderer(this, 16, 16);
-        Torso.addCuboid(-10.3F, -27.6F, -2F, 8, 12, 4);
-        Torso.setRotationPoint(7F, 24F, 0F);
-        Torso.setTextureSize(128, 64);
-        Torso.mirror = true;
-        setRotation(Torso, 0F, 0F, -0.0349066F);
-        RightLegPeg = new ModelRenderer(this, 9, 33);
-        RightLegPeg.addCuboid(-11F, -4F, -1F, 2, 2, 2);
-        RightLegPeg.setRotationPoint(7F, 24F, 0F);
-        RightLegPeg.setTextureSize(128, 64);
-        RightLegPeg.mirror = true;
-        setRotation(RightLegPeg, 0F, 0F, 0.0872665F);
-        LeftLegPeg = new ModelRenderer(this, 9, 33);
-        LeftLegPeg.addCuboid(-4.5F, -5F, -1F, 2, 2, 2);
-        LeftLegPeg.setRotationPoint(7F, 24F, 0F);
-        LeftLegPeg.setTextureSize(128, 64);
-        LeftLegPeg.mirror = true;
-        setRotation(LeftLegPeg, 0F, 0F, -0.0872665F);
-        LeftArm = new ModelRenderer(this, 40, 16);
-        LeftArm.addCuboid(22.5F, -10F, -1.99F, 4, 12, 4);
-        LeftArm.setRotationPoint(7F, 24F, 0F);
-        LeftArm.setTextureSize(128, 64);
-        LeftArm.mirror = true;
-        setRotation(LeftArm, 0F, 0F, -1.351339F);
-        RightArm = new ModelRenderer(this, 40, 16);
-        RightArm.addCuboid(-29F, 4.8F, -1.99F, 4, 12, 4);
-        RightArm.setRotationPoint(7F, 24F, 0F);
-        RightArm.setTextureSize(128, 64);
-        RightArm.mirror = true;
-        setRotation(RightArm, 0F, 0F, 1.351339F);
-        RightLeg = new ModelRenderer(this, 0, 16);
-        RightLeg.addCuboid(-12F, -15F, -1.99F, 4, 12, 4);
-        RightLeg.setRotationPoint(7F, 24F, 0F);
-        RightLeg.setTextureSize(128, 64);
-        RightLeg.mirror = true;
-        setRotation(RightLeg, 0F, 0F, 0.0872665F);
-        LeftLeg = new ModelRenderer(this, 0, 16);
-        LeftLeg.addCuboid(-5.5F, -16F, -1.98F, 4, 12, 4);
-        LeftLeg.setRotationPoint(7F, 24F, 0F);
-        LeftLeg.setTextureSize(128, 64);
-        LeftLeg.mirror = true;
-        setRotation(LeftLeg, 0F, 0F, -0.0872665F);
+        head = new ModelRenderer(this, 0, 0);
+        head.addCuboid(-8.2F, -35.6F, -4.2F, 8, 8, 8);
+        head.setRotationPoint(7F, 24F, -1F);
+        head.setTextureSize(128, 64);
+        head.mirror = true;
+        setRotation(head, 0F, 0.1858931F, -0.1092638F);
+        post = new ModelRenderer(this, 0, 32);
+        post.addCuboid(-1F, -16F, -1F, 2, 16, 2);
+        post.setRotationPoint(0F, 24F, 0F);
+        post.setTextureSize(128, 64);
+        post.mirror = true;
+        setRotation(post, 0F, 0F, 0F);
+        leftArmPeg = new ModelRenderer(this, 9, 33);
+        leftArmPeg.addCuboid(23.5F, 1F, -1F, 2, 2, 2);
+        leftArmPeg.setRotationPoint(7F, 24F, 0F);
+        leftArmPeg.setTextureSize(128, 64);
+        leftArmPeg.mirror = true;
+        setRotation(leftArmPeg, 0F, 0F, -1.351339F);
+        rightArmPeg = new ModelRenderer(this, 9, 33);
+        rightArmPeg.addCuboid(-28F, 15.8F, -1F, 2, 2, 2);
+        rightArmPeg.setRotationPoint(7F, 24F, 0F);
+        rightArmPeg.setTextureSize(128, 64);
+        rightArmPeg.mirror = true;
+        setRotation(rightArmPeg, 0F, 0F, 1.351339F);
+        torso = new ModelRenderer(this, 16, 16);
+        torso.addCuboid(-10.3F, -27.6F, -2F, 8, 12, 4);
+        torso.setRotationPoint(7F, 24F, 0F);
+        torso.setTextureSize(128, 64);
+        torso.mirror = true;
+        setRotation(torso, 0F, 0F, -0.0349066F);
+        rightLegPeg = new ModelRenderer(this, 9, 33);
+        rightLegPeg.addCuboid(-11F, -4F, -1F, 2, 2, 2);
+        rightLegPeg.setRotationPoint(7F, 24F, 0F);
+        rightLegPeg.setTextureSize(128, 64);
+        rightLegPeg.mirror = true;
+        setRotation(rightLegPeg, 0F, 0F, 0.0872665F);
+        leftLegPeg = new ModelRenderer(this, 9, 33);
+        leftLegPeg.addCuboid(-4.5F, -5F, -1F, 2, 2, 2);
+        leftLegPeg.setRotationPoint(7F, 24F, 0F);
+        leftLegPeg.setTextureSize(128, 64);
+        leftLegPeg.mirror = true;
+        setRotation(leftLegPeg, 0F, 0F, -0.0872665F);
+        leftArm = new ModelRenderer(this, 40, 16);
+        leftArm.addCuboid(22.5F, -10F, -1.99F, 4, 12, 4);
+        leftArm.setRotationPoint(7F, 24F, 0F);
+        leftArm.setTextureSize(128, 64);
+        leftArm.mirror = true;
+        setRotation(leftArm, 0F, 0F, -1.351339F);
+        rightArm = new ModelRenderer(this, 40, 16);
+        rightArm.addCuboid(-29F, 4.8F, -1.99F, 4, 12, 4);
+        rightArm.setRotationPoint(7F, 24F, 0F);
+        rightArm.setTextureSize(128, 64);
+        rightArm.mirror = true;
+        setRotation(rightArm, 0F, 0F, 1.351339F);
+        rightLeg = new ModelRenderer(this, 0, 16);
+        rightLeg.addCuboid(-12F, -15F, -1.99F, 4, 12, 4);
+        rightLeg.setRotationPoint(7F, 24F, 0F);
+        rightLeg.setTextureSize(128, 64);
+        rightLeg.mirror = true;
+        setRotation(rightLeg, 0F, 0F, 0.0872665F);
+        leftLeg = new ModelRenderer(this, 0, 16);
+        leftLeg.addCuboid(-5.5F, -16F, -1.98F, 4, 12, 4);
+        leftLeg.setRotationPoint(7F, 24F, 0F);
+        leftLeg.setTextureSize(128, 64);
+        leftLeg.mirror = true;
+        setRotation(leftLeg, 0F, 0F, -0.0872665F);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -117,19 +119,16 @@ public class ModelScarecrowBoth extends CitizenModel
       final float p_225598_7_,
       final float p_225598_8_)
     {
-        super.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_, p_225598_5_, p_225598_6_, p_225598_7_, p_225598_8_);
-        Head.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        Post.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        LeftArmPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        RightArmPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        Torso.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        RightLegPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        LeftLegPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        LeftArm.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        RightArm.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        RightLeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
-        LeftLeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        head.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        post.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        leftArmPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        rightArmPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        torso.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        rightLegPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        leftLegPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        leftArm.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        rightArm.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        rightLeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
+        leftLeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
     }
-
-
 }
