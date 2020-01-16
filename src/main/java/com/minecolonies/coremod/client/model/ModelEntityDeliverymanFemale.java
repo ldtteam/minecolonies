@@ -2,11 +2,10 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityDeliverymanFemale extends CitizenModel
+public class ModelEntityDeliverymanFemale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityDeliverymanFemale()
     {
@@ -89,8 +88,6 @@ public class ModelEntityDeliverymanFemale extends CitizenModel
         bipedBody = new ModelRenderer(this, 16, 16);
         bipedBody.addCuboid(-4F, 0F, -4F, 8, 12, 4, 0F);
         bipedBody.setRotationPoint(0F, 1F, -2F);
-        bipedBody.rotateAngleX = 0.34907F;
-        bipedBody.rotateAngleZ = 0F;
 
         RightB = new ModelRenderer(this, 7, 91);
         RightB.addCuboid(-5.1F, 3.3F, 3.2F, 1, 4, 1);
@@ -343,5 +340,11 @@ public class ModelEntityDeliverymanFemale extends CitizenModel
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
+    }
+
+    @Override
+    public float getActualRotation()
+    {
+        return 0.34907F;
     }
 }
