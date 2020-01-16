@@ -30,8 +30,11 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -86,6 +89,18 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
 
         InteractionValidatorInitializer.init();
+    }
+
+    @SubscribeEvent
+    public static void onStitch(final TextureStitchEvent.Pre event)
+    {
+        if (!event.getMap().getId().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        {
+            return;
+        }
+        event.addSprite(new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
+        event.addSprite(new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
+        event.addSprite(new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
     }
 
     /**
