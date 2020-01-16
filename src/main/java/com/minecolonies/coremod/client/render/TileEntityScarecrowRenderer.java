@@ -9,7 +9,6 @@ import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Material;
@@ -31,47 +30,38 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     /**
      * Offset to the block middle.
      */
-    private static final double BLOCK_MIDDLE    = 0.5;
+    private static final double BLOCK_MIDDLE = 0.5;
+
     /**
      * Y-Offset in order to have the scarecrow over ground.
      */
-    private static final double YOFFSET         = 1.5;
-    /**
-     * Which size the scarecrow should have ingame.
-     */
-    private static final float SIZERATIO       = 2F;
+    private static final double YOFFSET = 1.5;
+
     /**
      * Rotate the model some degrees.
      */
-    private static final int    ROTATION        = 180;
-    /**
-     * Rotate it on the following x offset.
-     */
-    private static final float  XROTATIONOFFSET = 0.311F;
-    /**
-     * Rotate it on the following y offset.
-     */
-    private static final float  YROTATIONOFFSET = 0.0F;
-    /**
-     * Rotate it on the following z offset.
-     */
-    private static final float  ZROTATIONOFFSET = 2.845F;
+    private static final int ROTATION = 180;
+
     /**
      * Basic rotation to achieve a certain direction.
      */
-    private static final int    BASIC_ROTATION  = 90;
+    private static final int BASIC_ROTATION = 90;
+
     /**
      * Rotate by amount to go east.
      */
-    private static final int    ROTATE_EAST     = 1;
+    private static final int ROTATE_EAST = 1;
+
     /**
      * Rotate by amount to go south.
      */
-    private static final int    ROTATE_SOUTH    = 2;
+    private static final int ROTATE_SOUTH = 2;
+
     /**
      * Rotate by amount to go west.
      */
-    private static final int    ROTATE_WEST     = 3;
+    private static final int ROTATE_WEST = 3;
+
     /**
      * The model of the scarecrow.
      */
@@ -80,13 +70,11 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
 
     public static final Material SCARECROW_A;
     public static final Material SCARECROW_B;
-
     static
     {
         SCARECROW_A = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
         SCARECROW_B = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
     }
-
     /**
      * The public constructor for the renderer.
      */
@@ -97,22 +85,13 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
 
     @Override
-    public void render(
-      final AbstractScarescrowTileEntity te,
-      final float partialTicks,
-      final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
-      final int lightA,
-      final int lightB)
+    public void render(final AbstractScarescrowTileEntity te, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer iRenderTypeBuffer, final int lightA, final int lightB)
     {
         //Store the transformation
         matrixStack.push();
         //Set viewport to tile entity position to render it
         matrixStack.translate(BLOCK_MIDDLE, YOFFSET, BLOCK_MIDDLE);
         matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(ROTATION));
-
-        //matrixStack.multiply(new Quaternion(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET));
-        //matrixStack.multiply(new Quaternion(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET));
 
         //In the case of worldLags tileEntities may sometimes disappear.
         if (te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
@@ -134,7 +113,6 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
             }
         }
 
-        //matrixStack.scale(2F, 2F, 2F);
         final IVertexBuilder vertexConsumer = getMaterial(te).getVertexConsumer(iRenderTypeBuffer, RenderType::getEntitySolid);
         this.model.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
