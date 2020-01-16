@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
@@ -39,21 +38,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 @OnlyIn(Dist.CLIENT)
 public class ClientEventHandler
 {
-    /**
-     * Seconds to show the citizen info sign.
-     */
-    private static final int SECONDS_TO_SHOW = 5;
-
-    /**
-     * The currently displayed citizen.
-     */
-    private final CitizenDataView citizen = null;
-
-    /**
-     * The ticks passed since showing the sign.
-     */
-    private double ticksPassed = 0;
-
     /**
      * Cached wayPointBlueprint.
      */

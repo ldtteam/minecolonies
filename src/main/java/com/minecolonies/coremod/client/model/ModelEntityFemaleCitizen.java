@@ -1,24 +1,22 @@
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityFemaleCitizen extends CitizenModel
 {
-    private final ModelRenderer breast;
-    private final ModelRenderer hair;
-    private final ModelRenderer dressPart1;
-    private final ModelRenderer dressPart2;
-    private final ModelRenderer dressPart3;
-
     public ModelEntityFemaleCitizen()
     {
         textureWidth = 64;
         textureHeight = 64;
 
+        final ModelRenderer breast;
+        final ModelRenderer hair;
+        final ModelRenderer dressPart1;
+        final ModelRenderer dressPart2;
+        final ModelRenderer dressPart3;
+        
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.addCuboid(-4F, -8F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 0F, 1F);
@@ -39,13 +37,13 @@ public class ModelEntityFemaleCitizen extends CitizenModel
 
         bipedLeftArm = new ModelRenderer(this, 34, 17);
         bipedLeftArm.mirror = true;
-        bipedLeftArm.addCuboid(-1F, 0F, -1F, 3, 12, 3);
+        bipedLeftArm.addCuboid(-1F, -2F, -1F, 3, 12, 3);
         bipedLeftArm.setRotationPoint(4F, 0F, 0F);
         bipedLeftArm.setTextureSize(64, 64);
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
         bipedRightArm = new ModelRenderer(this, 34, 17);
-        bipedRightArm.addCuboid(-2F, 0F, -1F, 3, 12, 3);
+        bipedRightArm.addCuboid(-2F, -2F, -1F, 3, 12, 3);
         bipedRightArm.setRotationPoint(-5F, 0F, 0F);
         bipedRightArm.setTextureSize(64, 64);
         setRotation(bipedRightArm, 0F, 0F, 0F);
@@ -100,7 +98,7 @@ public class ModelEntityFemaleCitizen extends CitizenModel
         bipedBody.addChild(dressPart3);
     }
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
+    void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

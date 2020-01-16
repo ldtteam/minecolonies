@@ -46,13 +46,13 @@ public class ModelEntityCitizenFemaleNoble extends CitizenModel
 
         bipedLeftArm = new ModelRenderer(this, 34, 17);
         bipedLeftArm.mirror = true;
-        bipedLeftArm.addCuboid(-1F, 0F, -1F, 3, 12, 3);
+        bipedLeftArm.addCuboid(-1F, -2F, -1F, 3, 12, 3);
         bipedLeftArm.setRotationPoint(4F, 0F, 0F);
         bipedLeftArm.setTextureSize(128, 64);
         setRotation(bipedLeftArm, 0F, 0F, -0.1396263F);
 
         bipedRightArm = new ModelRenderer(this, 34, 17);
-        bipedRightArm.addCuboid(-2F, 0F, -1F, 3, 12, 3);
+        bipedRightArm.addCuboid(-2F, -2F, -1F, 3, 12, 3);
         bipedRightArm.setRotationPoint(-5F, 0F, 0F);
         bipedRightArm.setTextureSize(128, 64);
         setRotation(bipedRightArm, 0F, 0F, 0F);

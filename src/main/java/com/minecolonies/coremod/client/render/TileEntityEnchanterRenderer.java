@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.tileentity.EnchantmentTableTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.entity.model.BookModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -26,7 +27,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
 
     static
     {
-        TEXTURE_BOOK = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "textures/blocks/enchanting_table_book.png"));
+        TEXTURE_BOOK = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
     }
 
     /**
