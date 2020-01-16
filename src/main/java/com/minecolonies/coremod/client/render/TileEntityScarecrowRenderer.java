@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -38,7 +39,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     /**
      * Which size the scarecrow should have ingame.
      */
-    private static final float SIZERATIO       = .0625F;
+    private static final float SIZERATIO       = 2F;
     /**
      * Rotate the model some degrees.
      */
@@ -75,15 +76,15 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
      * The model of the scarecrow.
      */
     @NotNull
-    private final ModelScarecrowBoth model;
+    private ModelScarecrowBoth model;
 
     public static final Material SCARECROW_A;
     public static final Material SCARECROW_B;
 
     static
     {
-        SCARECROW_A = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "textures/blocks/blockscarecrowpumpkin.png"));
-        SCARECROW_B = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "textures/blocks/blockscarecrownormal.png"));
+        SCARECROW_A = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
+        SCARECROW_B = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
     }
 
     /**
@@ -98,7 +99,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     @Override
     public void render(
       final AbstractScarescrowTileEntity te,
-      final float ratio,
+      final float partialTicks,
       final MatrixStack matrixStack,
       @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
       final int lightA,
@@ -107,8 +108,11 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
         //Store the transformation
         matrixStack.push();
         //Set viewport to tile entity position to render it
-        matrixStack.translate(te.getPos().getX() + BLOCK_MIDDLE, te.getPos().getY() + YOFFSET, te.getPos().getZ() + BLOCK_MIDDLE);
-        matrixStack.multiply(new Quaternion(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET));
+        matrixStack.translate(BLOCK_MIDDLE, YOFFSET, BLOCK_MIDDLE);
+        matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(ROTATION));
+
+        //matrixStack.multiply(new Quaternion(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET));
+        //matrixStack.multiply(new Quaternion(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET));
 
         //In the case of worldLags tileEntities may sometimes disappear.
         if (te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
@@ -117,25 +121,22 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
             switch (facing)
             {
                 case EAST:
-                    matrixStack.multiply(new Quaternion((float) (BASIC_ROTATION * ROTATE_EAST), 0, 1, 0));
+                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_EAST));
                     break;
                 case SOUTH:
-                    matrixStack.multiply(new Quaternion((float) (BASIC_ROTATION * ROTATE_SOUTH), 0, 1, 0));
+                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_SOUTH));
                     break;
                 case WEST:
-                    matrixStack.multiply(new Quaternion((float) (BASIC_ROTATION * ROTATE_WEST), 0, 1, 0));
+                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_WEST));
                     break;
                 default:
                     //don't rotate at all.
             }
         }
 
-        matrixStack.scale(SIZERATIO, SIZERATIO, SIZERATIO);
+        //matrixStack.scale(2F, 2F, 2F);
         final IVertexBuilder vertexConsumer = getMaterial(te).getVertexConsumer(iRenderTypeBuffer, RenderType::getEntitySolid);
         this.model.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
-
-        /* ============ Rendering Code stops here =========== */
-        //Restore the transformation, so other renderer's are not messed up.
         matrixStack.pop();
     }
 
