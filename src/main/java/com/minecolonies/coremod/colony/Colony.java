@@ -606,6 +606,9 @@ public class Colony implements IColony
             buildingManager.readFromNBT(compound);
         }
 
+        // Recalculate max after citizens and buildings are loaded.
+        citizenManager.calculateMaxCitizens();
+
         if (compound.hasKey(TAG_STATS_MANAGER))
         {
             statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER));
@@ -1300,6 +1303,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            getCitizenManager().calculateMaxCitizens();
             this.markDirty();
         }
     }

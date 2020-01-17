@@ -22,31 +22,40 @@ public abstract class AbstractTileEntityRack extends TileEntity
     /**
      * Variable which determines if it is a single or doublechest.
      */
-    protected boolean single = true;
+    protected boolean                single           = true;
     /**
      * Neighbor position of the rack (double chest).
      */
-    protected BlockPos relativeNeighbor = null;
+    protected BlockPos               relativeNeighbor = null;
     /**
      * Is this the main chest of the doubleChest.
      */
-    protected boolean main = false;
+    protected boolean                main             = false;
     /**
      * whether this rack is in a warehouse or not.
      * defaults to not
      * set by the warehouse building upon being built
      */
-    protected boolean inWarehouse = false;
+    protected boolean                inWarehouse      = false;
     /**
      * The inventory of the tileEntity.
      */
-    protected IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
+    protected IItemHandlerModifiable inventory        = new RackInventory(DEFAULT_SIZE);
+
+    /**
+     * Rack inventory type.
+     */
+    public class RackInventory extends ItemStackHandler
     {
+        public RackInventory(final int defaultSize)
+        {
+            super(defaultSize);
+        }
+
         @Override
         protected void onContentsChanged(final int slot)
         {
             updateItemStorage();
-
             super.onContentsChanged(slot);
         }
 
@@ -54,17 +63,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
         public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
             super.setStackInSlot(slot, stack);
-
-            if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
-            {
-                final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-
-                if (colony != null && colony.getRequestManager() != null)
-                {
-                    colony.getRequestManager()
-                            .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
-                }
-            }
+            updateWarehouseIfAvailable(stack);
         }
 
         @NotNull
@@ -75,7 +74,25 @@ public abstract class AbstractTileEntityRack extends TileEntity
             updateItemStorage();
             return result;
         }
-    };
+    }
+
+    /**
+     * Update the warehouse if available with the updated stack.
+     *
+     * @param stack the incoming stack.
+     */
+    private void updateWarehouseIfAvailable(final ItemStack stack)
+    {
+        if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+        {
+            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+            if (colony != null && colony.getRequestManager() != null)
+            {
+                colony.getRequestManager().onColonyUpdate(request ->
+                                                            request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+            }
+        }
+    }
 
     public abstract boolean hasItemStack(ItemStack stack);
 

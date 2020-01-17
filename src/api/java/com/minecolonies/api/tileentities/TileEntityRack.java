@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,15 +155,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void upgradeItemStorage()
     {
         ++size;
-        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-        {
-            @Override
-            protected void onContentsChanged(final int slot)
-            {
-                updateItemStorage();
-                super.onContentsChanged(slot);
-            }
-        };
+        final IItemHandlerModifiable tempInventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
 
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
@@ -330,15 +321,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             size = compound.getInteger(TAG_SIZE);
             if (size > 0)
             {
-                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-                {
-                    @Override
-                    protected void onContentsChanged(final int slot)
-                    {
-                        updateItemStorage();
-                        super.onContentsChanged(slot);
-                    }
-                };
+                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
             }
         }
 
