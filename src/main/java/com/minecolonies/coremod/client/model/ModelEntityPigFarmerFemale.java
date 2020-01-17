@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityPigFarmerFemale extends CitizenModel
+public class ModelEntityPigFarmerFemale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityPigFarmerFemale()
     {

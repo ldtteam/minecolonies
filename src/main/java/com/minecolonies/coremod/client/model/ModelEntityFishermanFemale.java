@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityFishermanFemale extends CitizenModel
+public class ModelEntityFishermanFemale extends CitizenModel<AbstractEntityCitizen>
 {
     //fields
     private final ModelRenderer string;

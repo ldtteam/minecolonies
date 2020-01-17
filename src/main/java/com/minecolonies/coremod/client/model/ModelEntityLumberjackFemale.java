@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityLumberjackFemale extends CitizenModel
+public class ModelEntityLumberjackFemale extends CitizenModel<AbstractEntityCitizen>
 {
     ModelRenderer chest;
     ModelRenderer ponytailBase;

@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityChildFemale extends CitizenModel
+public class ModelEntityChildFemale extends CitizenModel<AbstractEntityCitizen>
 {
     //fields
 
