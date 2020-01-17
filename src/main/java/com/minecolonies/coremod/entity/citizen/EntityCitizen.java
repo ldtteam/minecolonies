@@ -1548,4 +1548,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         super.remove();
     }
+
+    /**
+     * Setter for the citizen pose.
+     * @param pose the pose to set.
+     */
+    public void updatePose(final Pose pose)
+    {
+        setPose(pose);
+    }
 }

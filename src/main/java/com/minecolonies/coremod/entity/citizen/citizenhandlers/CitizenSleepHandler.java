@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Pose;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -111,7 +112,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (float) bedLocation.getY(),
+          (float) bedLocation.getY() + 0.8,
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
         citizen.setMotion(0,0,0);
@@ -121,6 +122,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         setIsAsleep(true);
 
+        citizen.updatePose(Pose.SLEEPING);
         if (citizen.getCitizenData() != null)
         {
             citizen.getCitizenData().setBedPos(bedLocation);
@@ -142,7 +144,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         {
             return;
         }
-
+        citizen.updatePose(Pose.STANDING);
         spawnCitizenFromBed();
     }
 
