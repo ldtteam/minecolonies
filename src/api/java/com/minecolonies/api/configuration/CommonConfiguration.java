@@ -49,6 +49,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
+    public final ForgeConfigSpec.BooleanValue operatorVisitsColoniesSilently;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -199,6 +200,7 @@ public class CommonConfiguration extends AbstractConfiguration
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
+        operatorVisitsColoniesSilently = defineBoolean(builder, "operatorVisitsColoniesSilently", false);
 
         swapToCategory(builder, "commands");
 
