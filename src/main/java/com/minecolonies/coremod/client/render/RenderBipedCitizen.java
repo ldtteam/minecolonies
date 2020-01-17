@@ -9,8 +9,6 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.blaze3d.vertex.IVertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -30,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>>
 {
     private static final double  SHADOW_SIZE    = 0.5F;
-    private static final int     THREE_QUARTERS = 270;
     public static        boolean isItGhostTime  = false;
 
     /**
@@ -66,14 +63,15 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         setupMainModelFrom(citizen);
 
-        final CitizenModel citizenModel = (CitizenModel) entityModel;
+        final CitizenModel<AbstractEntityCitizen> citizenModel = entityModel;
 
         final ItemStack mainHandStack = citizen.getHeldItemMainhand();
         final ItemStack offHandStack = citizen.getHeldItemOffhand();
-        final BipedModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack, BipedModel.ArmPose.EMPTY);
-        final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack, BipedModel.ArmPose.EMPTY);
+        final BipedModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack);
+        final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack);
 
-        // todo updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
+        updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
+
         if (isItGhostTime)
         {
             RenderSystem.enableBlend();
@@ -90,6 +88,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
         }
     }
+
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
         entityModel = (citizen.isFemale()
@@ -97,7 +96,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                          : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
         if (entityModel == null)
         {
-            entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel(0.0F));
+            entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
         }
 
         entityModel.isChild = citizen.isChild();
@@ -141,29 +140,30 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         }
     }
 
-    private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
+    private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack)
     {
         final UseAction enumActionMainHand;
+        BipedModel.ArmPose pose = BipedModel.ArmPose.EMPTY;
         if (!mainHandStack.isEmpty())
         {
-            armPoseMainHand = BipedModel.ArmPose.ITEM;
+            pose = BipedModel.ArmPose.ITEM;
             if (citizen.getItemInUseCount() > 0)
             {
                 enumActionMainHand = mainHandStack.getUseAction();
                 if (enumActionMainHand == UseAction.BLOCK)
                 {
-                    armPoseMainHand = BipedModel.ArmPose.BLOCK;
+                    pose = BipedModel.ArmPose.BLOCK;
                 }
                 else if (enumActionMainHand == UseAction.BOW)
                 {
-                    armPoseMainHand = BipedModel.ArmPose.BOW_AND_ARROW;
+                    pose = BipedModel.ArmPose.BOW_AND_ARROW;
                 }
             }
         }
-        return armPoseMainHand;
+        return pose;
     }
 
-    private void updateArmPose(@NotNull final AbstractEntityCitizen citizen, final BipedModel citizenModel, final BipedModel.ArmPose armPoseMainHand, final BipedModel.ArmPose armPoseOffHand)
+    private void updateArmPose(@NotNull final AbstractEntityCitizen citizen, final BipedModel<AbstractEntityCitizen> citizenModel, final BipedModel.ArmPose armPoseMainHand, final BipedModel.ArmPose armPoseOffHand)
     {
         if (citizen.getPrimaryHand() == HandSide.RIGHT)
         {
@@ -176,39 +176,6 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             citizenModel.leftArmPose = armPoseMainHand;
         }
     }
-
-    /*@Override
-    protected void renderLivingAt(final LivingEntity entity, final double x, final double y, final double z)
-    {
-        final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entity;
-        if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
-        {
-            super.renderLivingAt(entity,
-              x + (double) entityCitizen.getCitizenSleepHandler().getRenderOffsetX(),
-              y + BED_HEIGHT,
-              z + (double) entityCitizen.getCitizenSleepHandler().getRenderOffsetZ());
-        }
-        else
-        {
-            super.renderLivingAt(entity, x, y, z);
-        }
-    }
-
-    @Override
-    protected void applyRotations(final LivingEntity entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
-    {
-        final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entityLiving;
-        if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
-        {
-            RenderSystem.rotatef(entityCitizen.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
-            RenderSystem.rotatef(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
-            RenderSystem.rotatef(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
-        }
-        else
-        {
-            super.applyRotations(entityLiving, rotationHead, rotationYaw, partialTicks);
-        }
-    }*/
 
     @NotNull
     @Override
