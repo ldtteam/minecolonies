@@ -9,6 +9,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
@@ -86,9 +87,8 @@ public class DebugRendererChunkBorder
         final float chunkCoordZ = (float) ((float) (player.chunkCoordZ << 4) - currView.z);
 
         final MatrixStack stack = event.getMatrixStack();
-        final Matrix4f matrix = stack.peek().getModel();
-
         stack.push();
+        final Matrix4f matrix = stack.peek().getModel();
 
         RenderSystem.lineWidth(1.0F);
         bufferbuilder.begin(1, DefaultVertexFormats.POSITION_COLOR);
