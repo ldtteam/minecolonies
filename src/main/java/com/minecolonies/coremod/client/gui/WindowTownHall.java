@@ -6,7 +6,9 @@ import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.CompactColonyReference;
+import com.minecolonies.api.colony.HappinessData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -19,11 +21,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -587,7 +589,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final Map<String, Integer> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
         {
-            if (building.getBuildingLevel() > 0 && building instanceof AbstractBuildingWorker.View)
+            if (building instanceof AbstractBuildingWorker.View)
             {
                 String jobName = ((AbstractBuildingWorker.View) building).getJobName().toLowerCase(Locale.ENGLISH);
                 if (building instanceof AbstractBuildingGuards.View)

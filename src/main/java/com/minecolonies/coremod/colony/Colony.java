@@ -602,6 +602,9 @@ public class Colony implements IColony
             //Compatability with old version!
             buildingManager.read(compound);
         }
+        
+        // Recalculate max after citizens and buildings are loaded.
+        citizenManager.calculateMaxCitizens();
 
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
@@ -1276,6 +1279,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            citizenManager.calculateMaxCitizens();
             this.markDirty();
         }
     }
