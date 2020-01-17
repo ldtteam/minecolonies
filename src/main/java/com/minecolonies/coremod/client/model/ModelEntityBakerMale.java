@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class ModelEntityBakerMale extends CitizenModel
+public class ModelEntityBakerMale extends CitizenModel<AbstractEntityCitizen>
 {
     //fields
     ModelRenderer top;

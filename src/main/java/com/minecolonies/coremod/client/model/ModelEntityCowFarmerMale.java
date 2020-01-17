@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCowFarmerMale extends CitizenModel
+public class ModelEntityCowFarmerMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityCowFarmerMale()
     {

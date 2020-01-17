@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The smelter female model.
  */
-public class ModelEntitySmelterFemale extends CitizenModel
+public class ModelEntitySmelterFemale extends CitizenModel<AbstractEntityCitizen>
 {
     /**
      * Constructor which generates the model.

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Model for the male students (monks).
  */
-public class ModelEntityStudentMale extends CitizenModel
+public class ModelEntityStudentMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityStudentMale()
     {

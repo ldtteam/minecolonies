@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 /**
  * Class used for the bakery entity model.
  */
-public class ModelEntityBakerFemale extends CitizenModel
+public class ModelEntityBakerFemale extends CitizenModel<AbstractEntityCitizen>
 {
 
     public ModelEntityBakerFemale()

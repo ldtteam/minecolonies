@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The chicken farmer female model.
  */
-public class ModelEntityChickenFarmerFemale extends CitizenModel
+public class ModelEntityChickenFarmerFemale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityChickenFarmerFemale()
     {
