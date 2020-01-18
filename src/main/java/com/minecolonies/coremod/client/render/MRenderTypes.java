@@ -3,9 +3,12 @@ package com.minecolonies.coremod.client.render;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.OptionalDouble;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
@@ -45,6 +48,16 @@ public final class MRenderTypes extends RenderType
                                          .depthTest(RenderState.ALWAYS_DEPTH_TEST)
                                          .build(true);
 
-        return RenderType.of("customRenderer", format, 7, 256, true, false, state);
+        return RenderType.of("custommctextrenderer", format, 7, 256, true, false, state);
+    }
+
+    /**
+     * Custom line renderer type.
+     * @return the renderType which is created.
+     */
+    public static RenderType customLineRenderer()
+    {
+        return of("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
+          RenderType.State.builder().lineWidth(new RenderState.LineState(OptionalDouble.empty())).build(false));
     }
 }

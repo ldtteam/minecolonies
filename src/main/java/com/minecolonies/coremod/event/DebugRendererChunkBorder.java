@@ -6,14 +6,11 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.render.MRenderTypes;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -72,16 +69,14 @@ public class DebugRendererChunkBorder
             }
         }
 
-        final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+        final IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        final IVertexBuilder bufferbuilder = buffer.getBuffer(MRenderTypes.customLineRenderer());
+
         final Vec3d currView = Minecraft.getInstance().getRenderManager().info.getProjectedView();
         final float lowerYLimit = (float) (5 - currView.y);
         final float upperYLimit = (float) (255 - currView.y);
 
         final double lowerYLimitSmaller = Math.max(lowerYLimit, currView.y - 30 - currView.y);
-
-        RenderSystem.disableTexture();
-        RenderSystem.disableBlend();
 
         final float chunkCoordX = (float) ((float) (player.chunkCoordX << 4) - currView.x);
         final float chunkCoordZ = (float) ((float) (player.chunkCoordZ << 4) - currView.z);
@@ -89,9 +84,6 @@ public class DebugRendererChunkBorder
         final MatrixStack stack = event.getMatrixStack();
         stack.push();
         final Matrix4f matrix = stack.peek().getModel();
-
-        RenderSystem.lineWidth(1.0F);
-        bufferbuilder.begin(1, DefaultVertexFormats.POSITION_COLOR);
 
         for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
         {
@@ -189,10 +181,7 @@ public class DebugRendererChunkBorder
                 }
             }
         }
-
-        tessellator.draw();
-        RenderSystem.enableBlend();
-        RenderSystem.enableTexture();
         stack.pop();
+        buffer.draw();
     }
 }
