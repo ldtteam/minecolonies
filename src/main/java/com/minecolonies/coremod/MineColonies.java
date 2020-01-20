@@ -92,6 +92,7 @@ public class MineColonies
     }
 
     @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
         if (!event.getMap().getId().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
