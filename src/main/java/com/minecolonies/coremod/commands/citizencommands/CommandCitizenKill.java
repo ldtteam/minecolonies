@@ -52,7 +52,7 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
             return 0;
         }
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseKillCitizensCommand.get())
+        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseKillCitizensCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;
