@@ -120,11 +120,11 @@ achievement.upgrade.townhall.first.desc=Construisez un hôtel de ville!
 tile.minecolonies.blockHutGuardTower.name=Tour de Garde
 tile.blockHutTownHall.messageWorkerDead=Le %s %s est mort aux coordonnées %d %d %d par %s !
 item.minecolonies.scepterGuard.name=Sceptre du garde
-item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
-item.minecolonies.scepterLumberjack.usedStart=First position set.
-item.minecolonies.scepterLumberjack.usedEnd=Second position set.
-item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
-item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
+item.minecolonies.scepterLumberjack.name=Sceptre du bûcheron
+item.minecolonies.scepterLumberjack.usedStart=Première position définie.
+item.minecolonies.scepterLumberjack.usedEnd=Seconde position définie.
+item.minecolonies.scepterLumberjack.restrictionTooBig=La zone définie %s est trop grande. La taille maximum de la zone d'activité du bûcheron est de %s blocs.
+item.minecolonies.scepterLumberjack.restrictionSet=La zone d'activité du bûcheron a été correctement définie, sur une surface de %s blocs, la taille maximale étant de %s blocs.
 
 com.minecolonies.configgui.title=Configuration de MineColonies
 
@@ -236,7 +236,7 @@ com.minecolonies.coremod.gui.workerHuts.workOrder=Ordres de travail
 com.minecolonies.coremod.gui.buildtool.nohut=Pas de hutte
 com.minecolonies.coremod.gui.citizen.skills=Compétences
 com.minecolonies.coremod.gui.townHall.repair=Réparer l'hôtel de ville
-com.minecolonies.coremod.gui.townHall.mercenary=Hire mercenaries
+com.minecolonies.coremod.gui.townHall.mercenary=Recruter des mercenaires
 com.minecolonies.coremod.gui.townHall.mercenaryHire=Engager
 com.minecolonies.coremod.gui.townHall.mercenaryStory=You've encountered some mercenaries nearby your Colony. They offer to help a while with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!
 com.minecolonies.coremod.gui.townHall.hire=Recrutement des hâbitants
@@ -336,7 +336,7 @@ com.minecolonies.coremod.gui.structure.delete.title=Supprimer la Structure
 com.minecolonies.coremod.gui.structure.delete.body=Voulez-vous supprimer "%s" ?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Statique
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatique
-com.minecolonies.coremod.mercenary.mercenaryStealCitizen=%s is unhappy, a mercenary took the %s away!
+com.minecolonies.coremod.mercenary.mercenaryStealCitizen=%s est mécontent, a mercenary took the %s away!
 com.minecolonies.coremod.mercenary.stealBuilding=A mercenary just stole %s from a building!
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Modifieurs de joie
