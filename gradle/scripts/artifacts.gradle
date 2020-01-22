@@ -1,0 +1,10 @@
+javadoc {
+    source += sourceSets.api.allSource
+    source += sourceSets.blockOut.allSource
+}
+
+task apiJar(type: Jar) {
+    from sourceSets.api.output
+    classifier 'api'
+}
+
