@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -46,6 +47,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,8 +55,7 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -227,7 +228,7 @@ public class Colony implements IColony
     /**
      * The colonies state machine
      */
-    private final ITickRateStateMachine colonyStateMachine;
+    private final ITickRateStateMachine<IState> colonyStateMachine;
 
     /**
      * Mournign parameters.
@@ -316,18 +317,19 @@ public class Colony implements IColony
         }
 
 
-        colonyStateMachine = new TickRateStateMachine(INACTIVE, e -> {});
+        colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
-        colonyStateMachine.addTransition(new TickingTransition(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
 
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, this::worldTickSlow , () -> ACTIVE, MAX_TICKRATE));
-        colonyStateMachine.addTransition(new TickingTransition(UNLOADED,this::worldTickUnloaded, () -> UNLOADED, MAX_TICKRATE));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::worldTickSlow, () -> ACTIVE, MAX_TICKRATE));
+        colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, this::worldTickUnloaded, () -> UNLOADED, MAX_TICKRATE));
     }
 
 
@@ -603,6 +605,9 @@ public class Colony implements IColony
             //Compatability with old version!
             buildingManager.readFromNBT(compound);
         }
+
+        // Recalculate max after citizens and buildings are loaded.
+        citizenManager.calculateMaxCitizens();
 
         if (compound.hasKey(TAG_STATS_MANAGER))
         {
@@ -1298,6 +1303,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            getCitizenManager().calculateMaxCitizens();
             this.markDirty();
         }
     }
@@ -1475,7 +1481,9 @@ public class Colony implements IColony
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION)) {
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            }
         }
     }
 
@@ -1486,7 +1494,9 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            if(!PermissionAPI.hasPermission(player, "minecolonies.colony.visitor.silent")) {
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            }
         }
     }
 

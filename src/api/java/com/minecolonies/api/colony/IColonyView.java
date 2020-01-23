@@ -26,8 +26,6 @@ import java.util.UUID;
 
 public interface IColonyView extends IColony
 {
-
-
     /**
      * Get a copy of the freePositions list.
      *
@@ -190,6 +188,13 @@ public interface IColonyView extends IColony
      * @return maximum amount of citizens.
      */
     int getCitizenCount();
+
+    /**
+     * Returns the maximum amount of citizen in the colony considering guard towers
+     *
+     * @return maximum amount of citizens.
+     */
+    int getCitizenCountLimit();
 
     /**
      * Getter for the citizens map.
@@ -441,5 +446,21 @@ public interface IColonyView extends IColony
      */
     String getStyle();
 
+    /**
+     * If currently being raided.
+     * @return true if so.
+     */
     boolean isRaiding();
+
+    /**
+     * Get a compact list of all allies.
+     * @return the list.
+     */
+    List<CompactColonyReference> getAllies();
+
+    /**
+     * Get a compact list of all feuds.
+     * @return the list.
+     */
+    List<CompactColonyReference> getFeuds();
 }

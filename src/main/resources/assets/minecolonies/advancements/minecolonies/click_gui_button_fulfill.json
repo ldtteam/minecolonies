@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/create_build_request_1_builder",
+  "display": {
+    "icon": {
+      "item": "minecolonies:resourcescroll"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.click_gui_button_fulfill.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.click_gui_button_fulfill.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "click_gui_button_fulfill": {
+      "trigger": "minecolonies:click_gui_button",
+      "conditions": {
+        "window_resource_location": "minecolonies:gui/citizen/windowcitizen.xml",
+        "button_id": "fulfill"
+      }
+    }
+  }
+}

@@ -13,7 +13,6 @@ import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
-import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -198,7 +197,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
-                    ColonyUtils.sendToAll(players, new ColonyViewWorkOrderMessage(colony, workOrder));
+                    players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
                 }
             }
             workManager.setDirty(false);
@@ -211,7 +210,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
             final Set<EntityPlayerMP> players = Structures.isDirty() ? closeSubscribers : newSubscribers;
-            ColonyUtils.sendToAll(players, new ColonyStylesMessage());
+            players.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
         Structures.clearDirty();
     }
@@ -229,6 +228,8 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             closeSubscribers.add(subscriber);
             newSubscribers.add(subscriber);
+            // Send view right away upon subscriber add.
+            updateSubscribers();
         }
     }
 

@@ -45,6 +45,7 @@ public final class Loader
         register("switch", SwitchView.class);
         register("dropdown", DropDownList.class);
         register("overlay", OverlayView.class);
+        register("gradient", Gradient.class);
     }
     private Loader()
     {

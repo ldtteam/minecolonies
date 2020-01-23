@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import com.google.common.primitives.Ints;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
 
@@ -81,7 +83,11 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = getIthArgument(args, 0, getColonyId(sender));
+    	int colonyId = getColonyIdFromArg(args, 0, getColonyId(sender));
+    	int dimensionId = getDimensionIdFromArg(args, 0, 
+    			sender instanceof EntityPlayer
+    				? sender.getEntityWorld().provider.getDimension()
+    				: 0);
         final Integer page = getIthArgument(args, 1, 1);
 
         IColony colony = null;
@@ -89,14 +95,14 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         {
             if (colonyId == -1)
             {
-                final IColony icolony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = IColonyManager.getInstance().getIColonyByOwner(server.getWorld(dimensionId), (EntityPlayer) sender);
                 if (icolony != null)
                 {
                     colonyId = icolony.getID();
                 }
             }
         }
-        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
 
         executeShared(server, sender, colony, page);
     }

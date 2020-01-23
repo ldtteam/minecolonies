@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -10,7 +11,6 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         super(job);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
         super.registerTargets(
-          new AITarget(COWBOY_MILK, this::milkCows)
+          new AITarget(COWBOY_MILK, this::milkCows, 1)
         );
     }
 
@@ -110,7 +110,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      */
     private IAIState milkCows()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {

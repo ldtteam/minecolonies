@@ -1,18 +1,21 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.util.AdvancementUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -26,12 +29,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
-import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
 import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.AMOUNT_OF_FOOD_TO_SERVE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
@@ -64,11 +68,6 @@ public class EntityAIEatTask extends EntityAIBase
      * Time required to eat in seconds.
      */
     private static final int REQUIRED_TIME_TO_EAT = 5;
-
-    /**
-     * Filter for message propagation.
-     */
-    protected ChatSpamFilter chatSpamFilter;
 
     /**
      * The different types of AIStates related to eating.
@@ -156,11 +155,6 @@ public class EntityAIEatTask extends EntityAIBase
     @Override
     public void updateTask()
     {
-        if (chatSpamFilter == null)
-        {
-            chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
-        }
-
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {
@@ -243,6 +237,13 @@ public class EntityAIEatTask extends EntityAIBase
         final ItemFood itemFood = (ItemFood) stack.getItem();
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (citizenColony != null )
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, new ItemStack(itemFood)));
+        }
+
         citizenData.markDirty();
         citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
 
@@ -425,14 +426,14 @@ public class EntityAIEatTask extends EntityAIBase
         if (uncookedFood != -1)
         {
             complained = true;
-            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.wrongFood");
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
         if (placeToPath == null)
         {
             if (!complained)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
+                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
             }
             return IDLE;
         }

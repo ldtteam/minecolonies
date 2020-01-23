@@ -53,6 +53,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -76,6 +77,7 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.client.particles.SleepingParticle.SLEEPING_TEXTURE;
 import static com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand.DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED;
 
 /**
@@ -130,6 +132,18 @@ public class EventHandler
                   (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
             }
         }
+    }
+
+    /**
+     * Event used to stitch custom textures.
+     *
+     * @param event the event
+     */
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTextureStitch(@NotNull final TextureStitchEvent.Pre event)
+    {
+        event.getMap().registerSprite(SLEEPING_TEXTURE);
     }
 
     /**
@@ -245,6 +259,19 @@ public class EventHandler
                       || colony.getPermissions().hasPermission(event.player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addImportantColonyPlayer((EntityPlayerMP) event.player);
+                }
+            }
+
+            // Add visiting/subscriber to colony we're logging into
+            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX,event.player.posY, event.player.posZ));
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+            if (cap != null && cap.getOwningColony() != 0)
+            {
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(),event.player.dimension);
+                if (colony != null)
+                {
+                    colony.addVisitingPlayer(event.player);
+                    colony.getPackageManager().addCloseSubscriber((EntityPlayerMP) event.player);
                 }
             }
         }
@@ -646,7 +673,11 @@ public class EventHandler
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                                             colony.getID(), true
                                                           ))));
-                if (Configurations.gameplay.allowInfiniteColonies)
+                if (Configurations.gameplay.allowColoniesInDifferentWorlds)
+                {
+                    return true;
+                }
+                else if (Configurations.gameplay.allowInfiniteColonies)
                 {
                     final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
@@ -663,7 +694,6 @@ public class EventHandler
                 player.sendMessage(deleteButton);
             }
 
-            //  Players are currently only allowed a single colony
             return false;
         }
         else if (colony.hasTownHall())

@@ -140,6 +140,13 @@ public interface ICitizenManager
     int getMaxCitizens();
 
     /**
+     * Get potential max citizens of the colony.
+     * The potential considers all available beds including not assigned guard towers.
+     * @return the amount.
+     */
+    int getPotentialMaxCitizens();
+
+    /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
      * @return The current amount of citizens in the colony.
      */
@@ -152,9 +159,21 @@ public interface ICitizenManager
     void setMaxCitizens(final int newMaxCitizens);
 
     /**
+     * Set the new potential max citizens.
+     * The potential considers all available beds including not assigned guard towers.
+     * @param newMaxCitizens the potential amount to set.
+     */
+    void setPotentialMaxCitizens(final int newMaxCitizens);
+
+    /**
      * Check for the citizen happiness and update the colony happiness with it.
      */
     void checkCitizensForHappiness();
+
+    /**
+     * Tick the citizen data of all active citizens.
+     */
+    void tickCitizenData();
 
     /**
      * Actions to execute on a colony tick.

@@ -77,10 +77,11 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
 
         final Entity senderEntity = sender.getCommandSenderEntity();
 
-        int colonyId = getIthArgument(args, 0, -1);
+        int colonyId = getColonyIdFromArg(args, 0, -1);
+        int dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
         if (colonyId == -1 && senderEntity instanceof EntityPlayer)
         {
-            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(server.getWorld(dimensionId), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
                 sender.sendMessage(new TextComponentString(COLONY_NULL));
@@ -89,7 +90,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             colonyId = colony.getID();
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
 
         if (colony == null)
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +26,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
@@ -84,11 +85,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(GET_MATERIALS, this::getMaterials),
-          new AITarget(START_WORKING, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(GET_MATERIALS, this::getMaterials, TICKS_SECOND),
+          new AITarget(START_WORKING, this::decideWhatToDo, 1),
+          new AITarget(COMPOSTER_FILL, this::fillBarrels, 10),
+          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels, 10)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -159,7 +160,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState decideWhatToDo()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
 
         if(walkToBuilding())
         {
@@ -205,7 +206,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState fillBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
         if(worker.getHeldItem(EnumHand.MAIN_HAND) == ItemStack.EMPTY)
         {
@@ -251,7 +252,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState harvestBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
         if (walkToBlock(currentTarget))
         {
@@ -326,7 +327,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
             for(final EntityPlayer player : getOwnBuilding().getColony().getMessageEntityPlayers())
             {
-                player.sendMessage(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
+                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
             }
         }
         else

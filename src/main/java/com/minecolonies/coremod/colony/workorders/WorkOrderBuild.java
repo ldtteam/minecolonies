@@ -211,6 +211,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public void onCompleted(final IColony colony)
     {
+        super.onCompleted(colony);
         final BlockPos buildingLocation = getBuildingLocation();
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingLocation);
         colony.onBuildingUpgradeComplete(building, getUpgradeLevel());

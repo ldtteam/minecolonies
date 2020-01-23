@@ -135,6 +135,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         if (isCitizenAssigned(citizen))
         {
             assignedCitizen.remove(citizen);
+            colony.getCitizenManager().calculateMaxCitizens();
             markDirty();
         }
     }
@@ -208,6 +209,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
             assignedCitizen.add(citizen);
         }
 
+        colony.getCitizenManager().calculateMaxCitizens();
         markDirty();
         return true;
     }

@@ -18,8 +18,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
@@ -107,33 +106,46 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Method to check if a crafting cycle can be created.
+     *
      * @param manager the manager.
      * @param request the request.
      * @param target the target.
      * @return true if so.
      */
-    protected boolean createsCraftingCycle(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final IRequest<? extends IDeliverable> target)
+    protected boolean createsCraftingCycle(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<?> request,
+      @NotNull final IRequest<? extends IDeliverable> target)
     {
-        return createsCraftingCycle(manager, request, target, 0);
+        return createsCraftingCycle(manager, request, target, 0, new ArrayList<>());
     }
 
     /**
      * Method to check if a crafting cycle can be created.
+     *
      * @param manager the manager.
      * @param request the request.
      * @param target the target to create.
      * @param count the itemCount.
+     * @param reqs the list of reqs.
      * @return true if possible.
      */
     protected boolean createsCraftingCycle(
-            @NotNull final IRequestManager manager,
-            @NotNull final IRequest<?> request,
-            @NotNull final IRequest<? extends IDeliverable> target,
-            final int count)
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<?> request,
+      @NotNull final IRequest<? extends IDeliverable> target,
+      final int count,
+      final List<IRequestable> reqs)
     {
+        if (reqs.contains(request.getRequest()))
+        {
+            return true;
+        }
+        reqs.add(request.getRequest());
+
         if (count > MAX_CRAFTING_CYCLE_DEPTH)
         {
-            return false;
+            return true;
         }
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
@@ -146,7 +158,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1);
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1, reqs);
     }
 
     /**
@@ -190,7 +202,8 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             final ItemStack requestStack,
             final int count)
     {
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack, count)));
+        final int recipeExecutionsCount = (int) Math.ceil( (double) count / requestStack.getCount());
+        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount)));
     }
 
     protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count);

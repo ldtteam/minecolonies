@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * to tell if execution is wanted.
  * And it can change state.
  */
-public class AITarget extends TickingTransition
+public class AITarget extends TickingTransition<IAIState>
 {
     /**
      * Construct a target.
@@ -50,18 +50,6 @@ public class AITarget extends TickingTransition
 
     /**
      * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
-     *
-     * @param predicateState the state it needs to be | null
-     * @param state          the state to switch to
-     */
-    public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state)
-    {
-        this(predicateState, () -> state, 1);
-    }
-
-    /**
-     * Construct a target.
      *
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
@@ -69,18 +57,6 @@ public class AITarget extends TickingTransition
     public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state, @NotNull final int tickRate)
     {
         this(predicateState, () -> state, tickRate);
-    }
-
-    /**
-     * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
-     *
-     * @param state  the state it needs to be | null
-     * @param action the action to apply
-     */
-    public AITarget(@NotNull final IAIState state, @NotNull final Supplier<IAIState> action)
-    {
-        this(state, () -> true, action, 1);
     }
 
     /**

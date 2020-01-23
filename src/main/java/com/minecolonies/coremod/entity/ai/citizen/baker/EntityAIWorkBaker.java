@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -8,6 +10,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import net.minecraft.block.BlockFurnace;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_RECIPES;
 
@@ -101,6 +105,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * So the bakery can rotate between recipes.
      */
     private int currentRecipe = -1;
+
     /**
      * Constructor for the Baker.
      * Defines the tasks the bakery executes.
@@ -111,13 +116,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForBaking),
-          new AITarget(BAKER_KNEADING, this::kneadTheDough),
-          new AITarget(BAKER_BAKING, this::bake),
-          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
-          new AITarget(BAKER_FINISHING, this::finishing)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(PREPARING, this::prepareForBaking, HIT_DELAY),
+          new AITarget(BAKER_KNEADING, this::kneadTheDough, HIT_DELAY),
+          new AITarget(BAKER_BAKING, this::bake, HIT_DELAY),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven, HIT_DELAY),
+          new AITarget(BAKER_FINISHING, this::finishing, HIT_DELAY)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
@@ -154,13 +159,19 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         if (getOwnBuilding().getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+            }
             return getState();
         }
 
         if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_RECIPES);
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_RECIPES), ChatPriority.BLOCKING));
+            }
             return getState();
         }
 
@@ -288,8 +299,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            return PREPARING;
 	        }
 
-	        progress++;
-	        setDelay(HIT_DELAY);
+            progress += HIT_DELAY;
         }
         return getState();
     }
@@ -456,7 +466,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         progress++;
-        setDelay(HIT_DELAY);
         return getState();
     }
 

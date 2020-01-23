@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -17,7 +18,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -84,9 +84,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepare)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 10),
+          new AITarget(PREPARING, this::prepare, 1)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
@@ -122,7 +122,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -292,10 +292,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
 
         if (getOwnBuilding() != null)
         {
-            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * 5 * SPEED_LEVEL_BONUS;
+            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
         }
 
-        levelAdjustment = levelAdjustment > 0.5 ? 0.5 : levelAdjustment;
+        levelAdjustment = levelAdjustment > 0.3 ? 0.3 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;
     }
 

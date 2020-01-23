@@ -14,12 +14,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import org.jetbrains.annotations.NotNull;
+import org.jline.reader.impl.completer.StringsCompleter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public enum ActionArgumentType
@@ -95,7 +101,7 @@ public enum ActionArgumentType
         final List<String> colonyIdList = new ArrayList<>(colonyList.size());
         for (final IColony colony : colonyList)
         {
-            colonyIdList.add(String.valueOf(colony.getID()));
+            colonyIdList.add(String.valueOf(colony.getDimension()) + "|" + String.valueOf(colony.getID()));
         }
         return colonyIdList;
     }
@@ -216,15 +222,7 @@ public enum ActionArgumentType
         {
             return colonyNumberStrings;
         }
-        final Integer result = Ints.tryParse(potentialArgumentValue);
-        if (null != result)
-        {
-            return colonyNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
-        }
-        else
-        {
-            return Collections.emptyList();
-        }
+        return colonyNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
     }
 
     @NotNull
@@ -461,28 +459,52 @@ public enum ActionArgumentType
     private IColony parseColonyValue(@NotNull final ICommandSender sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings(mineColonyDataProvider);
-        final Integer result = Ints.tryParse(potentialArgumentValue);
-        if (null != result)
+        int dimensionId;
+        int colonyNumber;
+        if (potentialArgumentValue.contains("|"))
         {
-            int colonyNumber = result.intValue();
-            if (sender instanceof EntityPlayer && colonyNumber == -1)
-            {
-                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
-                if (icolony != null)
-                {
-                    colonyNumber = icolony.getID();
-                }
-            }
-            if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
-            {
-                return mineColonyDataProvider.getColony(colonyNumber, sender.getEntityWorld().provider.getDimension());
-            }
-            return null;
+        	String[] split = potentialArgumentValue.split(Pattern.quote("|"));
+        	dimensionId = Ints.tryParse(split[0]).intValue();
+        	colonyNumber = Ints.tryParse(split[1]).intValue();
         }
-        else
+        else if (sender instanceof EntityPlayer)
         {
-            return null;
+        	final Integer result = Ints.tryParse(potentialArgumentValue);
+        	if (null != result) {
+        		dimensionId = ((EntityPlayer) sender).dimension;
+        		colonyNumber = result.intValue();
+        	}
+        	else return null;
         }
+        else 
+        {
+        	return null;
+        }
+    	if (sender instanceof EntityPlayer && colonyNumber == -1) 
+    	{
+    		final IColony icolony = mineColonyDataProvider.getIColonyByOwner(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId), (EntityPlayer) sender);
+    		if (icolony != null)
+    		{
+    			colonyNumber = icolony.getID();
+    		}
+    	}
+    	if (colonyNumberStrings.contains(dimensionId + "|" + colonyNumber))
+    	{
+    		return mineColonyDataProvider.getColony(colonyNumber, dimensionId);
+    	}
+    	else 
+    	{
+    		boolean isDimensionLoaded = false;
+    		for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+    		{
+    			if (world.provider.getDimension() == dimensionId) isDimensionLoaded = true;
+    		}
+    		if (!isDimensionLoaded)
+    		{
+    			sender.sendMessage(new TextComponentString("Dimension unloaded, can't access colony data"));
+    		}
+    	}
+    	return null;
     }
 
     @Nullable

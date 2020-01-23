@@ -293,4 +293,10 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken token);
 
     BuildingEntry getBuildingRegistryEntry();
+
+    /**
+     * Check if the building requires always all items to continue working or if a partial quantity would also solve it.
+     * @return true if so.
+     */
+    boolean requiresCompleteRequestFulfillment();
 }

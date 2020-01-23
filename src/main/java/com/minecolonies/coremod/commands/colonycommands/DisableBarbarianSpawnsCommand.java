@@ -78,10 +78,12 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         }
 
         final int colonyId;
+        final int dimensionId;
 
-        colonyId = getIthArgument(args, 0, -1);
+        colonyId = getColonyIdFromArg(args, 0, -1);
+        dimensionId = getDimensionIdFromArg(args, 0, sender.getEntityWorld().provider.getDimension());
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(dimensionId));
 
         if (colony == null)
         {

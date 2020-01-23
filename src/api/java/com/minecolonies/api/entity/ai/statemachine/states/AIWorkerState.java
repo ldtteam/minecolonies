@@ -193,6 +193,16 @@ public enum AIWorkerState implements IAIState
     GUARD_PATROL(true),
 
     /**
+     * Sleeping on duty
+     */
+    GUARD_SLEEP(false),
+
+    /**
+     * Wake up another guard
+     */
+    GUARD_WAKE(false),
+
+    /**
      * Follow a player.
      */
     GUARD_FOLLOW(true),
@@ -478,6 +488,20 @@ public enum AIWorkerState implements IAIState
      * Let the florist compost the block.
      */
     FLORIST_COMPOST(true),
+
+            /*
+### Enchanter ###
+     */
+
+    /**
+     * Let the enchanter gather experience.
+     */
+    ENCHANTER_DRAIN(true),
+
+    /**
+     * Enchant ancient tome.
+     */
+    ENCHANT(false),
 
     /*
 ### Avoid-AI ###

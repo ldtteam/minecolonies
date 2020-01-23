@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:minecolonies/colony_population_5",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockHutWarehouse"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_1_warehouse.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_1_warehouse.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "warehouse": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "warehouse",
+        "level": 1
+      }
+    }
+  }
+}

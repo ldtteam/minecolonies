@@ -330,6 +330,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         if (citizen != null)
         {
             citizen.setWorkBuilding(this);
+            citizen.getJob().onLevelUp(citizen.getLevel());
             colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;
@@ -508,6 +509,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
+        ByteBufUtils.writeUTF8String(buf, this.getJobName());
+        buf.writeInt(getMaxInhabitants());
     }
 
     /**
@@ -587,6 +590,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private HiringMode hiringMode;
 
         /**
+         * The name of the job.
+         */
+        private String jobName;
+
+        /**
+         * The max amount of inhabitants
+         */
+        private int maxInhabitants = 1;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -643,6 +656,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
+            this.jobName = ByteBufUtils.readUTF8String(buf);
+            this.maxInhabitants = buf.readInt();
         }
 
         /**
@@ -766,6 +781,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             this.hiringMode = hiringMode;
             MineColonies.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
+        }
+
+        /**
+         * Get the name of the job.
+         * @return job name.
+         */
+        @Override
+        public String getJobName()
+        {
+            return this.jobName;
+        }
+
+        /**
+         * Get the max number of inhabitants
+         * @return max inhabitants
+         */
+        public int getMaxInhabitants()
+        {
+            return this.maxInhabitants;
         }
     }
 }

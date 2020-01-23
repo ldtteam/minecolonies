@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -9,6 +9,8 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.FieldDataModifier;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.HappinessConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Handler for the citizens happiness.
  * This keeps all the modifiers related to the citizen.
@@ -31,70 +36,6 @@ import java.util.Optional;
  */
 public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
-
-    @NotNull
-    protected final ChatSpamFilter chatSpamFilter;
-
-    /**
-     * constants for house modifier.
-     */
-    public static final int MAX_DAYS_WITHOUT_HOUSE = 30;
-    public static final int MAX_HOUSE_PENALTY = 5;
-    public static final double HOUSE_MODIFIER_POSITIVE = 0.5;
-    public static final int COMPLAIN_DAYS_WITHOUT_HOUSE = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_HOUSE = 14;
-
-    /**
-     * constants for job modifier.
-     */
-    public static final int MAX_DAYS_WITHOUT_JOB = 30;
-    public static final int COMPLAIN_DAYS_WITHOUT_JOB = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_JOB = 14;
-    public static final int MAX_JOB_PENALTY = 5;
-    public static final double JOB_MODIFIER_POSITIVE = 0.5;
-
-    /**
-     * constants for food modifier.
-     */
-    public static final int FOOD_MODIFIER_MAX = -2;
-    public static final int FOOD_MODIFIER_MIN = -1;
-    public static final double FOOD_MODIFIER_POSITIVE = 0.5;
-
-    /**
-     * constants for field modifiers
-     */
-    public static final int FIELD_MAX_DAYS_MODIFIER = 30;
-    public static final double FIELD_MODIFIER_MAX = -0.75;
-    public static final double FIELD_MODIFIER_MIN = -0.15;
-    public static final double FIELD_MODIFIER_POSITIVE = 0.2;
-    public static final double NO_FIELD_MODIFIER = -3.0;
-    public static final int NO_FIELDS_COMPLAINS_DAYS = 7;
-
-    /**
-     * constants for damage modifiers
-     */
-    public static final int DAMAGE_MODIFIER_MAX = -2;
-    public static final int DAMAGE_MODIFIER_MID = -1;
-    public static final double DAMAGE_MODIFIER_MIN = -0.5;
-    public static final double DAMAGE_LOWEST_POINT = 0.25d;
-    public static final double DAMAGE_MEDIUM_POINT = 0.50d;
-    public static final double DAMAGE_HIGHEST_POINT = 0.75d;
-    
-    /**
-     * constants for happiness min/max and start happines values.
-     */
-    public static final int MAX_HAPPINESS = 10;
-    public static final int MIN_HAPPINESS = 1;
-    public static final int BASE_HAPPINESS = 8;
-
-    /**
-     * constants for no tools.
-     */
-    public static final int NO_TOOLS_MODIFIER = 3;
-    public static final int NO_TOOLS_COMPLAINS_DAYS = 7;
-    public static final int NO_TOOLS_DEMANDS_DAYS = 14;
-    public static final int NO_TOOLS_MAX_DAYS_MODIFIER = 30;
-
     /**
      * The citizen assigned to this manager.
      */
@@ -179,8 +120,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         farmerModifier = 0;
         hasNoFields = false;
         needsTool.clear();
-        chatSpamFilter = new ChatSpamFilter(citizen);
-
     }
 
     /**
@@ -238,11 +177,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse++;
             if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsHouse", citizen.getName());
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_HOUSE), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noHouse", citizen.getName());
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOUSE), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -259,11 +198,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsJob", citizen.getName());
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_JOB), ChatPriority.CHITCHAT));
             }
             else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
             {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noJob", citizen.getName());
+                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_JOB), ChatPriority.CHITCHAT));
             }
         }
         else
@@ -307,21 +246,33 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     private void processDailyHappinessForToolData()
     {
         noToolModifier = 0;
+        final int maxToolOpenDays = getMaxOpenToolDays();
+        if (maxToolOpenDays > NO_TOOLS_DEMANDS_DAYS)
+        {
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_TOOL), ChatPriority.CHITCHAT));
+        }
+        else if (maxToolOpenDays > NO_TOOLS_COMPLAINS_DAYS)
+        {
+            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_TOOL), ChatPriority.CHITCHAT));
+        }
+        noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
+    }
+
+    @Override
+    public int getMaxOpenToolDays()
+    {
+        int maxOpenDays = 0;
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
             final int numDays = entry.getValue() + 1;
+            if (numDays > maxOpenDays)
+            {
+                maxOpenDays = numDays;
+            }
             final IToolType toolType = entry.getKey();
             needsTool.put(toolType, numDays);
-            if (numDays > NO_TOOLS_DEMANDS_DAYS)
-            {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.noTool", citizen.getName(), toolType.getDisplayName());
-            }
-            else if (numDays > NO_TOOLS_COMPLAINS_DAYS)
-            {
-                chatSpamFilter.talkWithoutSpam("entity.citizen.demandsTool", citizen.getName(), toolType.getDisplayName());
-            }
-            noToolModifier += (((double) numDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
         }
+        return maxOpenDays;
     }
 
     /**
@@ -620,5 +571,17 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         buf.writeDouble(jobModifier);
         buf.writeDouble(farmerModifier);
         buf.writeDouble(noToolModifier);
+    }
+
+    @Override
+    public int getNumberOfDaysWithoutHouse()
+    {
+        return numberOfDaysWithoutHouse;
+    }
+
+    @Override
+    public int getNumberOfDaysWithoutJob()
+    {
+        return numberOfDaysWithoutJob;
     }
 }

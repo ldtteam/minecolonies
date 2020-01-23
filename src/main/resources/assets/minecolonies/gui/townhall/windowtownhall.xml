@@ -2,8 +2,8 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <image source="minecolonies:textures/gui/townhall_book.png" pos="75 0" size="374 243" />
-    
-    <image id="info0" pos="56 73" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
+
+    <image id="townhall_info_page0" pos="56 73" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
     <image id="actions0" pos="56 97" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png"/>
     <image id="permissions0" pos="56 121" size="31 15" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png"/>
     <image id="citizens0" pos="56 145" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_04.png"/>
@@ -11,9 +11,9 @@
     <image id="workOrder0" pos="56 193" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
     <image id="happiness0" pos="56 217" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
 
-    <buttonimage id="info1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.information)"
-                textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="townhall_info_page1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.information)"
+                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="actions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
                 label="$(com.minecolonies.coremod.gui.townHall.actions)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
@@ -56,7 +56,7 @@
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
 
     <!-- onHoverId="infoExt" onHoverId="actionsExt" onHoverId="permissionsExt" onHoverId="citizensExt" onHoverId="settingsExt" onHoverId="workOrderExt" onHoverId="happinessExt" -->
-    <buttonimage id="info" size="17 17" pos="62 71"
+    <buttonimage id="townhall_info_page" size="17 17" pos="62 71"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
     <buttonimage id="actions" size="17 17" pos="62 95"
                  source="minecolonies:textures/gui/red_wax_actions.png"/>

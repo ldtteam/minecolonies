@@ -8,10 +8,12 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -21,6 +23,11 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public abstract class AbstractWindowBuilding<B extends IBuildingView> extends AbstractWindowSkeleton
 {
+    /**
+     * The info button ID for huts
+     */
+    public static final String BUTTON_INFO_HUTS = "hut_info_button";
+
     /**
      * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      */
@@ -40,11 +47,18 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
 
         this.building = building;
         registerButton(BUTTON_BUILD, this::buildClicked);
+        registerButton(BUTTON_INFO_HUTS, this::infoClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_EDIT_NAME, this::editName);
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        final Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO_HUTS, Button.class);
+
+        if (buttonInfo != null)
+        {
+            buttonInfo.setVisible(I18n.hasKey(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
+        }
     }
 
     /**
@@ -53,6 +67,15 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     private void editName()
     {
         @NotNull final WindowHutNameEntry window = new WindowHutNameEntry(building);
+        window.open();
+    }
+
+    /**
+     * Action when info button is clicked.
+     */
+    private void infoClicked()
+    {
+        @NotNull final WindowInfo window = new WindowInfo(building);
         window.open();
     }
 

@@ -81,8 +81,9 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                .getTarget()
                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
                                                                        .orElse(false))
-                                              .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                              .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                               .filter(c -> ((JobDeliveryman) c.getJob()).isActive())
+                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                      .thenComparing(Comparator.comparing(c -> {
                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
