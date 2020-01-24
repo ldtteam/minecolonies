@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -77,7 +79,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The delay is calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead
      * to a longer delay.
      */
-    private static final int FISHING_DELAY = 500;
+    private static final int FISHING_DELAY = 500 / TICKS_SECOND;
 
     /**
      * The chance the fisherman has to throw his rod. Directly connected with delay.
@@ -154,12 +156,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     @Nullable
     private WaterPathResult lastPathResult;
-
-    /**
-     * The fishingSkill which directly influences the fisherman's chance to throw his rod.
-     * May in the future also influence his luck/charisma.
-     */
-    private int fishingSkill = worker.getCitizenExperienceHandler().getLevel();
 
     /**
      * Connects the citizen with the fishingHook.
@@ -543,6 +539,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void throwRod()
     {
+        Log.getLogger().warn("go");
         if (!world.isRemote)
         {
             WorkerUtil.faceBlock(job.getWater(), worker);
@@ -553,8 +550,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
+            this.entityFishHook.setAngler((EntityCitizen) worker, EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()), worker.getCitizenExperienceHandler().getLevel() + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
             world.addEntity(this.entityFishHook);
-            this.entityFishHook.setAngler((EntityCitizen) worker, 0, fishingSkill);
         }
 
         worker.swingArm(worker.getActiveHand());
@@ -584,7 +581,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        final double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
+        final double chance = random.nextInt(FISHING_DELAY) / (double) (worker.getCitizenExperienceHandler().getLevel() + 1);
         return chance >= CHANCE;
     }
 
@@ -660,7 +657,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
         worker.setCanPickUpLoot(true);
         retrieveRod();
-        fishingSkill = worker.getCitizenExperienceHandler().getLevel();
         return true;
     }
 
