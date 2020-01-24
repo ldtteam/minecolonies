@@ -63,7 +63,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     }
 
     @Override
-    public ActionResultType onUse(
+    public ActionResultType onBlockActivated(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,

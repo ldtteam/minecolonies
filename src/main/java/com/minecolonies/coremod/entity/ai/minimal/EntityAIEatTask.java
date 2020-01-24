@@ -222,9 +222,9 @@ public class EntityAIEatTask extends Goal
             citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
             Network.getNetwork()
               .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
-                citizen.getX(),
-                citizen.getY(),
-                citizen.getZ(),
+                citizen.posX,
+                citizen.posY,
+                citizen.posZ,
                 citizen.rotationPitch,
                 citizen.rotationYaw,
                 citizen.getEyeHeight()), citizen);

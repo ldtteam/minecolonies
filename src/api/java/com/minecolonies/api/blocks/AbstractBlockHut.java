@@ -1,7 +1,6 @@
 package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.ldtteam.structurize.client.gui.WindowMultiBlock;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -69,7 +68,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).nonOpaque());
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).func_226896_b_());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -89,7 +88,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut(final Properties properties)
     {
-        super(properties.nonOpaque());
+        super(properties.func_226896_b_());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -124,7 +123,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public abstract BuildingEntry getBuildingEntry();
 
     @Override
-    public ActionResultType onUse(
+    public ActionResultType onBlockActivated(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,
@@ -143,7 +142,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                   && building.getColony() != null
                   && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                building.openGui(player.isSneaking());
+                building.openGui(player.isShiftKeyDown());
             }
         }
         return ActionResultType.SUCCESS;

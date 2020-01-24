@@ -77,7 +77,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public ActionResultType onUse(
+    public ActionResultType onBlockActivated(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,

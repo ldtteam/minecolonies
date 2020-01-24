@@ -17,7 +17,7 @@ import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
  */
 public final class MRenderTypes extends RenderType
 {
-    private static final VertexFormat format = new VertexFormat(ImmutableList.of(POSITION_3F, TEX_2F, LIGHT_ELEMENT));
+    private static final VertexFormat format = new VertexFormat(ImmutableList.of(POSITION_3F, TEX_2F, TEX_2SB));
 
     /**
      * Private constructor to hide implicit one.
@@ -45,10 +45,10 @@ public final class MRenderTypes extends RenderType
         final RenderType.State state = RenderType.State.builder()
                                          .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
                                          .alpha(RenderState.HALF_ALPHA)
-                                         .depthTest(RenderState.ALWAYS_DEPTH_TEST)
+                                         .depthTest(RenderState.DEPTH_ALWAYS)
                                          .build(true);
 
-        return RenderType.of("custommctextrenderer", format, 7, 256, true, false, state);
+        return RenderType.get("custommctextrenderer", format, 7, 256, true, false, state);
     }
 
     /**
@@ -57,7 +57,8 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customLineRenderer()
     {
-        return of("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
-          RenderType.State.builder().lineWidth(new RenderState.LineState(OptionalDouble.empty())).build(false));
+
+        return get("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
+          RenderType.State.builder().line(new RenderState.LineState(OptionalDouble.empty())).build(false));
     }
 }

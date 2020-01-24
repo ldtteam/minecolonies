@@ -490,7 +490,7 @@ public class Permissions implements IPermissions
             {
                 if (Utils.testFlag(entry.getValue(), action.getFlag()))
                 {
-                    flagsTagList.add(StringNBT.of(action.name()));
+                    flagsTagList.add(StringNBT.valueOf(action.name()));
                 }
             }
             permissionsCompound.put(TAG_FLAGS, flagsTagList);

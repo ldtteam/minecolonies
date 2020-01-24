@@ -169,7 +169,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final ArrowEntity arrow = EntityType.ARROW.create(world);
             arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
             final double xVector = currentShootingTarget.getX() - worker.getPosX();
-            final double yVector = currentShootingTarget.getY() - arrow.getY();
+            final double yVector = currentShootingTarget.getY() - arrow.posY;
             final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
             final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
 

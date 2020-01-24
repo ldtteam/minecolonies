@@ -479,7 +479,7 @@ public class EventHandler
      */
     private static boolean playerRightClickInteract(@NotNull final PlayerEntity player, final World world, final BlockPos pos)
     {
-        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
+        return !player.isShiftKeyDown() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
                  || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 

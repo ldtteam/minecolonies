@@ -92,25 +92,25 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             if (!compound.keySet().contains(TAG_ID))
             {
-                return ActionResult.fail(stack);
+                return ActionResult.func_226251_d_(stack);
             }
             final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.getDimension().getType().getId());
             if (colony == null)
             {
 
-                return ActionResult.fail(stack);
+                return ActionResult.func_226251_d_(stack);
             }
             final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
             final IBuildingView hut = colony.getBuilding(guardTower);
 
-            if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
+            if (hut instanceof AbstractBuildingGuards.View && playerIn.isShiftKeyDown())
             {
                 final WindowGuardControl window = new WindowGuardControl((AbstractBuildingGuards.View) hut);
                 window.open();
             }
         }
 
-        return ActionResult.success(stack);
+        return ActionResult.func_226248_a_(stack);
     }
 
     /**

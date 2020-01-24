@@ -251,21 +251,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
         dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
-    public double getPosX()
-    {
-        return lastTickPosX;
-    }
-
-    public double getPosY()
-    {
-        return lastTickPosY;
-    }
-
-    public double getPosZ()
-    {
-        return lastTickPosZ;
-    }
-
     /**
      * Getter which checks if the citizen is female.
      *

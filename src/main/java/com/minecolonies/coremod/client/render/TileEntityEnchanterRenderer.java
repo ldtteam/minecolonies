@@ -59,14 +59,14 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
 
             float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
-            matrixStack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(-tickBasedRot));
-            matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(80.0F));
+            matrixStack.rotate(Vector3f.YP.rotation(-tickBasedRot));
+            matrixStack.rotate(Vector3f.ZP.rotationDegrees(80.0F));
             float pageFlip = MathHelper.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
-            float flipA = MathHelper.fractionalPart(pageFlip + 0.25F) * 1.6F - 0.3F;
-            float flipB = MathHelper.fractionalPart(pageFlip + 0.75F) * 1.6F - 0.3F;
+            float flipA = MathHelper.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
+            float flipB = MathHelper.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
             float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
-            this.modelBook.setPageAngles(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
-            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getVertexConsumer(renderTypeBuffer, RenderType::getEntitySolid);
+            this.modelBook.func_228247_a_(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getBuffer(renderTypeBuffer, RenderType::entitySolid);
             this.modelBook.func_228249_b_(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.pop();
         }

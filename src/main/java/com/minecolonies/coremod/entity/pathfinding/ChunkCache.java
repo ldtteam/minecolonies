@@ -129,7 +129,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public Biome getGeneratorStoredBiome(final int p_225604_1_, final int p_225604_2_, final int p_225604_3_)
+    public Biome getNoiseBiomeRaw(final int x, final int y, final int z)
     {
         return null;
     }
@@ -177,7 +177,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public BiomeManager getBiomeAccess()
+    public BiomeManager func_225523_d_()
     {
         return null;
     }
@@ -224,7 +224,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public WorldLightManager getLightingProvider()
+    public WorldLightManager getLightManager()
     {
         return null;
     }

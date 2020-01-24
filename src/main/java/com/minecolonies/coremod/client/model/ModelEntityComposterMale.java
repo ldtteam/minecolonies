@@ -20,14 +20,14 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         textureHeight = 64;
 
         gloveR = new ModelRenderer(this, 20, 32);
-        gloveR.addCuboid(1.5F, 3F, -2.5F, 5, 1, 5);
+        gloveR.addBox(1.5F, 3F, -2.5F, 5, 1, 5);
         gloveR.setRotationPoint(-5F, 2F, 0F);
         gloveR.setTextureSize(128, 64);
         gloveR.mirror = true;
         setRotation(gloveR, 0F, 0F, 0F);
 
         gloveL = new ModelRenderer(this, 0, 32);
-        gloveL.addCuboid(-6.5F, 3F, -2.5F, 5, 1, 5);
+        gloveL.addBox(-6.5F, 3F, -2.5F, 5, 1, 5);
         gloveL.setRotationPoint(5F, 2F, 0F);
         gloveL.setTextureSize(128, 64);
         gloveL.mirror = true;
@@ -35,21 +35,21 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         gloveL.mirror = false;
 
         bootR = new ModelRenderer(this, 20, 38);
-        bootR.addCuboid(-0.5F, -8F, -2.5F, 5, 2, 5);
+        bootR.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
         bootR.setRotationPoint(-2F, 12F, 0F);
         bootR.setTextureSize(128, 64);
         bootR.mirror = true;
         setRotation(bootR, 0F, 0F, 0F);
 
         bootL = new ModelRenderer(this, 0, 38);
-        bootL.addCuboid(-4.5F, -8F, -2.5F, 5, 2, 5);
+        bootL.addBox(-4.5F, -8F, -2.5F, 5, 2, 5);
         bootL.setRotationPoint(2F, 12F, 0F);
         bootL.setTextureSize(128, 64);
         bootL.mirror = true;
         setRotation(bootL, 0F, 0F, 0F);
 
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addCuboid(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
         bipedLeftLeg.setTextureSize(128, 64);
         bipedLeftLeg.mirror = true;
@@ -57,35 +57,35 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         bipedLeftLeg.mirror = false;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addCuboid(-2F, 0F, -2F, 4, 12, 4);
+        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
         bipedRightLeg.setTextureSize(128, 64);
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addCuboid(-1F, -2F, -2F, 4, 12, 4);
+        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         bipedLeftArm.setRotationPoint(5F, 2F, 0F);
         bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addCuboid(-3F, -2F, -2F, 4, 12, 4);
+        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
         bipedRightArm.setRotationPoint(-5F, 2F, 0F);
         bipedRightArm.setTextureSize(128, 64);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
         bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addCuboid(-4F, -8F, -4F, 8, 8, 8);
+        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 0F, 0F);
         bipedHead.setTextureSize(128, 64);
         bipedHead.mirror = true;
         setRotation(bipedHead, 0F, 0F, 0F);
 
         bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addCuboid(-4F, 0F, -2F, 8, 12, 4);
+        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
         bipedBody.setRotationPoint(0F, 0F, 0F);
         bipedBody.setTextureSize(128, 64);
         bipedBody.mirror = true;
