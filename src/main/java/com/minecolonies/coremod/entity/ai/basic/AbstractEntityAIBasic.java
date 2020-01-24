@@ -252,13 +252,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return getState();
             }
 
-            final boolean transferred = tryTransferFromPosToWorker(walkTo, needsCurrently);
-            if (!transferred)
-            {
-                walkTo = null;
-                return getStateAfterPickUp();
-            }
-            walkTo = null;
+            tryTransferFromPosToWorker(walkTo, needsCurrently);
         }
 
         return getStateAfterPickUp();

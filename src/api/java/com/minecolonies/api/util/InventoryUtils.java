@@ -1804,6 +1804,7 @@ public class InventoryUtils
                 currentAmount -= returnStack.getCount();
                 if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
                 {
+                    sourceHandler.insertItem(desiredItemSlot, returnStack, false);
                     break;
                 }
             }
@@ -2058,6 +2059,9 @@ public class InventoryUtils
 
             if (slot == -1)
             {
+                final ItemStack stack = input.copy();
+                stack.setCount(input.getCount() - workingStack.getCount());
+                addItemStackToItemHandler(handler, stack);
                 return false;
             }
 
@@ -2074,6 +2078,9 @@ public class InventoryUtils
             tries++;
         }
 
+        final ItemStack stack = input.copy();
+        stack.setCount(input.getCount() - workingStack.getCount());
+        addItemStackToItemHandler(handler, stack);
         return false;
     }
 
