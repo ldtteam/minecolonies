@@ -539,7 +539,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void throwRod()
     {
-        Log.getLogger().warn("go");
         if (!world.isRemote)
         {
             WorkerUtil.faceBlock(job.getWater(), worker);
