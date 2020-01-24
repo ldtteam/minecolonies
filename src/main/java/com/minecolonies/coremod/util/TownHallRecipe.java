@@ -33,18 +33,18 @@ public class TownHallRecipe extends SpecialRecipe
     @Override
     public boolean matches(@NotNull final CraftingInventory inventoryCrafting, @NotNull final World world)
     {
-        if (inventoryCrafting.field_70465_c != null)
+        if (inventoryCrafting.eventHandler != null)
         {
             try
             {
 
-                final Optional<Field> playerField = Arrays.stream(inventoryCrafting.field_70465_c.getClass().getDeclaredFields())
+                final Optional<Field> playerField = Arrays.stream(inventoryCrafting.eventHandler.getClass().getDeclaredFields())
                                                       .filter(string -> string.getName().equals("player") || string.getName().equals("field_192390_i"))
                                                       .findFirst();
                 if (playerField.isPresent())
                 {
                     playerField.get().setAccessible(true);
-                    final PlayerEntity player = (PlayerEntity) playerField.get().get(inventoryCrafting.field_70465_c);
+                    final PlayerEntity player = (PlayerEntity) playerField.get().get(inventoryCrafting.eventHandler);
                     if (player instanceof ServerPlayerEntity)
                     {
                         return ((ServerPlayerEntity) player).getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0

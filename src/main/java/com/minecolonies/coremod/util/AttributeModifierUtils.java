@@ -21,7 +21,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).func_225505_c_())
         {
             entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
         }
@@ -45,7 +45,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).func_225505_c_())
         {
             if (mod.getName().equals(modifierName))
             {

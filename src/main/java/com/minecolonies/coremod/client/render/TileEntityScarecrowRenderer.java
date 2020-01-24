@@ -91,7 +91,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
         matrixStack.push();
         //Set viewport to tile entity position to render it
         matrixStack.translate(BLOCK_MIDDLE, YOFFSET, BLOCK_MIDDLE);
-        matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(ROTATION));
+        matrixStack.rotate(Vector3f.ZP.rotationDegrees(ROTATION));
 
         //In the case of worldLags tileEntities may sometimes disappear.
         if (te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
@@ -100,20 +100,20 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
             switch (facing)
             {
                 case EAST:
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_EAST));
+                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                     break;
                 case SOUTH:
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_SOUTH));
+                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_SOUTH));
                     break;
                 case WEST:
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(BASIC_ROTATION * ROTATE_WEST));
+                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                     break;
                 default:
                     //don't rotate at all.
             }
         }
 
-        final IVertexBuilder vertexConsumer = getMaterial(te).getVertexConsumer(iRenderTypeBuffer, RenderType::getEntitySolid);
+        final IVertexBuilder vertexConsumer = getMaterial(te).getBuffer(iRenderTypeBuffer, RenderType::entitySolid);
         this.model.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
     }

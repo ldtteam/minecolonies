@@ -580,7 +580,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
-            if (player.isSneaking())
+            if (player.isShiftKeyDown())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(this.getName().getFormattedText(), this.getEntityId()));
             }
@@ -1275,7 +1275,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void spawnEatingParticle()
     {
-        spawnConsumptionEffects(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
+        super.func_226293_b_(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     @Override

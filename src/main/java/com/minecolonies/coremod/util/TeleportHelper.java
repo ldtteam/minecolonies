@@ -115,12 +115,13 @@ public final class TeleportHelper
 
         final ServerWorld world = player.getServer().getWorld(DimensionType.getById(colony.getDimension()));
 
+
         ChunkPos chunkpos = new ChunkPos(position);
-        world.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+        world.getChunkProvider().registerTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
         player.stopRiding();
         if (player.isSleeping())
         {
-            player.wakeUp(true, true);
+            player.func_225652_a_(true, true);
         }
 
         player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);

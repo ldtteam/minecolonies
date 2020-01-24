@@ -12,33 +12,33 @@ public class ModelEntityDeliverymanMale extends CitizenModel<AbstractEntityCitiz
         final ModelRenderer backpack;
 
         bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addCuboid(-4F, -7.4F, -4F, 8, 8, 8);
+        bipedHead.addBox(-4F, -7.4F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 2F, -4F);
         bipedHead.mirror = true;
         setRotation(bipedHead, 0.3490659F, 0F, 0F);
         
         bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addCuboid(-4F, 0F, -4F, 8, 12, 4);
+        bipedBody.addBox(-4F, 0F, -4F, 8, 12, 4);
         bipedBody.setRotationPoint(0F, 1F, -2F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addCuboid(0F, 0F, -2F, 4, 12, 4);
+        bipedLeftArm.addBox(0F, 0F, -2F, 4, 12, 4);
         bipedLeftArm.setRotationPoint(4F, 2F, -4F);
 
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addCuboid(-4F, 0F, -2F, 4, 12, 4);
+        bipedRightArm.addBox(-4F, 0F, -2F, 4, 12, 4);
         bipedRightArm.setRotationPoint(-4F, 2F, -4F);
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addCuboid(-2F, 0F, -2F, 4, 12, 4);
+        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
 
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addCuboid(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
 
         backpack = new ModelRenderer(this, 32, 0);
-        backpack.addCuboid(-4F, 0F, 0F, 8, 10, 6);
+        backpack.addBox(-4F, 0F, 0F, 8, 10, 6);
         backpack.setRotationPoint(0F, 1F, -2F);
         backpack.rotateAngleX = 0.34907F;
 

@@ -95,7 +95,7 @@ public class MineColonies
     @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
-        if (!event.getMap().getId().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        if (!event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
         {
             return;
         }
@@ -158,14 +158,14 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.getCutout());
+        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
     }
 
     /**

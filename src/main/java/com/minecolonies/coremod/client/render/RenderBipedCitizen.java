@@ -105,17 +105,17 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     }
 
     @Override
-    protected void renderLabelIfPresent(@NotNull final AbstractEntityCitizen entityIn, @NotNull final String str, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int maxDistance)
+    protected void renderName(@NotNull final AbstractEntityCitizen entityIn, @NotNull final String str, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int maxDistance)
     {
-        super.renderLabelIfPresent(entityIn, str, matrixStack, buffer, maxDistance);
+        super.renderName(entityIn, str, matrixStack, buffer, maxDistance);
 
         if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView().hasPendingInteractions())
         {
-            double distance = this.renderManager.getSquaredDistanceToCamera(entityIn);
+            double distance = this.renderManager.getDistanceToCamera(entityIn.posX, entityIn.posY, entityIn.posZ);
             if (distance <= 4096.0D)
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;
-                boolean isSneaking = entityIn.isSneaking();
+                boolean isSneaking = entityIn.isShiftKeyDown();
                 double height = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
 
@@ -123,18 +123,18 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.push();
                 matrixStack.translate(0, y, 0);
-                matrixStack.multiply(renderManager.getRotation());
-                matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90));
+                matrixStack.rotate(renderManager.getCameraOrientation());
+                matrixStack.rotate(Vector3f.ZP.rotationDegrees(90));
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                final Matrix4f matrix = matrixStack.peek().getModel();
+                final Matrix4f matrix = matrixStack.getLast().getPositionMatrix();
                 final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
-                r.vertex(matrix,0, 0, 0).texture(0, 0).light(250).endVertex();
-                r.vertex(matrix,0, 10, 0).texture(1, 0).light(250).endVertex();
-                r.vertex(matrix,10, 10, 0).texture(1, 1).light(250).endVertex();
-                r.vertex(matrix,10, 0, 0).texture(0, 1).light(250).endVertex();
+                r.pos(matrix,0, 0, 0).tex(0, 0).lightmap(250).endVertex();
+                r.pos(matrix,0, 10, 0).tex(1, 0).lightmap(250).endVertex();
+                r.pos(matrix,10, 10, 0).tex(1, 1).lightmap(250).endVertex();
+                r.pos(matrix,10, 0, 0).tex(0, 1).lightmap(250).endVertex();
                 matrixStack.pop();
             }
         }

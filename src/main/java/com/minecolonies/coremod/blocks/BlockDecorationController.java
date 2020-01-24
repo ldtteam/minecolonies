@@ -90,7 +90,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public ActionResultType onUse(
+    public ActionResultType onBlockActivated(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,

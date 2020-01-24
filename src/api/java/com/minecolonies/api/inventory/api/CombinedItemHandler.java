@@ -81,7 +81,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
             {
                 final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
-                indexList.add(IntNBT.of(index));
+                indexList.add(IntNBT.valueOf(index));
             }
 
             index++;
