@@ -38,7 +38,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
+        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;
