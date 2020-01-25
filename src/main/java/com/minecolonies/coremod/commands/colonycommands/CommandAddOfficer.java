@@ -32,7 +32,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseAddOfficerCommand.get())
+        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseAddOfficerCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;
