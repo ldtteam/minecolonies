@@ -246,7 +246,7 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                  .createBuildingEntry();
 
-        ModBuildings.enchanter = new BuildingEntry.Builder()
+        ModBuildings.university = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutUniversity)
                                    .setBuildingProducer(BuildingUniversity::new)
                                    .setBuildingViewProducer(() -> BuildingUniversity.View::new)

@@ -230,6 +230,7 @@
   "block.minecolonies.blockhutcowboy": "Cowboy's Hut",
   "block.minecolonies.blockhutchickenherder": "ChickenHerders's Hut",
   "block.minecolonies.blockhutbaker": "Bakery",
+  "block.minecolonies.blockhutuniversity": "University",
   "block.minecolonies.blockhutblacksmith": "Blacksmith",
   "block.minecolonies.blockhutbuilder": "Builder's Hut",
   "block.minecolonies.blockhutfarmer": "Farm",
@@ -250,6 +251,7 @@
   "block.minecolonies.blockhutcowboy.name": "Cowboy's Hut",
   "block.minecolonies.blockhutchickenherder.name": "ChickenHerders's Hut",
   "block.minecolonies.blockhutbaker.name": "Bakery",
+  "block.minecolonies.blockhutuniversity.name": "University",
   "block.minecolonies.blockhutblacksmith.name": "Blacksmith",
   "block.minecolonies.blockhutbuilder.name": "Builder's Hut",
   "block.minecolonies.blockhutfarmer.name": "Farm",
@@ -429,6 +431,9 @@
   "com.minecolonies.coremod.job.smelter": "Smelter",
   "com.minecolonies.coremod.job.cook": "Cook",
   "com.minecolonies.coremod.job.bakery": "Baker",
+  "com.minecolonies.coremod.job.researcher": "Researcher",
+
+
   "com.minecolonies.coremod.job.deliveryman": "Deliveryman",
   "com.minecolonies.coremod.job.farmer": "Farmer",
   "com.minecolonies.coremod.job.miner": "Miner",
@@ -555,6 +560,7 @@
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
   "com.minecolonies.coremod.gui.workerhuts.guardtower": "Guard Tower",
 
+  "com.minecolonies.coremod.gui.workerhuts.university": "University",
   "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
   "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "Recipes",
 
@@ -1130,6 +1136,8 @@
   "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",
   "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
+  "com.minecolonies.coremod.gui.townHall.population.universitys": "Universities: %d/%d",
+
   "block.minecolonies.blockhutflorist": "Flower Shop",
 
   "block.minecolonies.blockhutenchanter": "Enchanter",

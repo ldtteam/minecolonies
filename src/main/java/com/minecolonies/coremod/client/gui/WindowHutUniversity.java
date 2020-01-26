@@ -9,7 +9,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the lumberjack hut.
  */
-public class WindowHutUniversity extends AbstractWindowBuilding<BuildingUniversity.View>
+public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUniversity.View>
 {
     /**
      * The building of the lumberjack (Client side representation).

@@ -159,7 +159,7 @@ public final class ModJobsInitializer
                             .setRegistryName(ModJobs.ENCHANTER_ID)
                             .createJobEntry();
 
-        ModJobs.enchanter = new JobEntry.Builder()
+        ModJobs.researcher = new JobEntry.Builder()
                               .setJobProducer(JobResearch::new)
                               .setRegistryName(ModJobs.RESEARCH_ID)
                               .createJobEntry();
