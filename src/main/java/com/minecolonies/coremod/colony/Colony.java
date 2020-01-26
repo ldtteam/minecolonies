@@ -20,6 +20,8 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
+import com.minecolonies.api.research.ResearchEffects;
+import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
@@ -202,6 +204,11 @@ public class Colony implements IColony
      * The request manager assigned to the colony.
      */
     private IRequestManager requestManager;
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private IResearchManager researchManager = new ResearchManager();;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -619,6 +626,11 @@ public class Colony implements IColony
 
         raidManager.read(compound);
 
+        if (compound.hasKey(TAG_RESEARCH))
+        {
+            researchManager.readFromNBT(compound.getCompoundTag(TAG_RESEARCH));
+        }
+
         //  Workload
         workManager.read(compound.getCompound(TAG_WORK));
 
@@ -754,6 +766,10 @@ public class Colony implements IColony
         progressManager.write(compound);
         raidManager.write(compound);
 
+        @NotNull final NBTTagCompound researchManagerCompound = new NBTTagCompound();
+        researchManager.writeToNBT(researchManagerCompound);
+        compound.setTag(TAG_RESEARCH, researchManagerCompound);
+
         // Waypoints
         @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
@@ -812,6 +828,18 @@ public class Colony implements IColony
     public boolean isRemote()
     {
         return false;
+    }
+
+    @Override
+    public ResearchTree getResearchTree()
+    {
+        return this.researchManager.getResearchTree();
+    }
+
+    @Override
+    public ResearchEffects getResearchEffects()
+    {
+        return this.researchManager.getResearchEffects();
     }
 
     /**

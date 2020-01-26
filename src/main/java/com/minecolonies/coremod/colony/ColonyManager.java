@@ -752,13 +752,14 @@ public final class ColonyManager implements IColonyManager
         compatibilityManager.write(compCompound);
         compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
 
-        compound.putBoolean(TAG_DISTANCE, true);
-        final CompoundNBT recipeCompound = new CompoundNBT();
-        recipeManager.write(recipeCompound);
-        compound.put(RECIPE_MANAGER_TAG, recipeCompound);
-        compound.putBoolean(TAG_ALL_CHUNK_STORAGES, true);
-        compound.putBoolean(TAG_NEW_COLONIES, true);
-        compound.putBoolean(TAG_CAP_COLONIES, true);
+        compound.setBoolean(TAG_DISTANCE, true);
+        final NBTTagCompound recipeCompound = new NBTTagCompound();
+        recipeManager.writeToNBT(recipeCompound);
+
+        compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
+        compound.setBoolean(TAG_ALL_CHUNK_STORAGES, true);
+        compound.setBoolean(TAG_NEW_COLONIES, true);
+        compound.setBoolean(TAG_CAP_COLONIES, true);
     }
 
     /**

@@ -54,7 +54,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage getNewInstance(@NotNull final IToken token, @NotNull final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate);
     }

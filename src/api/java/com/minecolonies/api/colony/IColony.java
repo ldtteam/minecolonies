@@ -11,6 +11,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import com.minecolonies.api.research.ResearchTree;
+import com.minecolonies.api.research.ResearchEffects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -258,6 +260,18 @@ public interface IColony
      * @return true if so.
      */
     boolean isRemote();
+
+    /**
+     * Getter for the research tree.
+     * @return the colony own research tree.
+     */
+    ResearchTree getResearchTree();
+
+    /**
+     * Get the colonies own research effects.
+     * @return the ResearchEffects object.
+     */
+    ResearchEffects getResearchEffects();
 
     /**
      * Save the time when mercenaries are used, to set a cooldown.

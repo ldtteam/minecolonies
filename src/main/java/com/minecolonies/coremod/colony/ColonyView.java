@@ -15,6 +15,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.research.ResearchEffects;
+import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
@@ -188,6 +190,16 @@ public final class ColonyView implements IColonyView
      * The list of feuds.
      */
     private List<CompactColonyReference> feuds;
+
+    /**
+     * The research tree of the colony.
+     */
+    private final ResearchTree tree = new ResearchTree();
+
+    /**
+     * The research effects of the colony.
+     */
+    private final ResearchEffects effects = new ResearchEffects();
 
     /**
      * Base constructor for a colony.
@@ -800,6 +812,8 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+
+        return we need to sync the tree and effects.
     }
 
     /**
@@ -1398,5 +1412,17 @@ public final class ColonyView implements IColonyView
     public List<CompactColonyReference> getFeuds()
     {
         return feuds;
+    }
+
+    @Override
+    public ResearchTree getResearchTree()
+    {
+        return this.tree;
+    }
+
+    @Override
+    public ResearchEffects getResearchEffects()
+    {
+        return this.effects;
     }
 }
