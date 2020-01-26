@@ -2,6 +2,6 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_papper_wide.png" size="300 244"/>
-    <dragView id="dragView" size="290 234">
+    <dragView id="dragView" size="280 224" pos="10 10">
     </dragView>
 </window>

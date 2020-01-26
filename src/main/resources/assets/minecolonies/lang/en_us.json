@@ -1271,5 +1271,9 @@
   "com.minecolonies.requestsystem.playerresolver.async": "It would make my job much easier if I had %s.",
   "com.minecolonies.coremod.gui.chat.cancel": "Try cancel that request!",
   "com.minecolonies.coremod.gui.chat.fulfill": "More details please!",
-  "com.minecolonies.coremod.gui.research.title": "Research Branches"
+  "com.minecolonies.coremod.gui.research.title": "Research Branches",
+  "com.minecolonies.coremod.research.requirement.building.level": "Requires: %s level %d",
+  "com.minecolonies.coremod.research.effect.modifier": "%s by %d percent",
+  "com.minecolonies.coremod.research.effect.unlock": "Unlocks %s"
+
 }

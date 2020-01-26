@@ -37,7 +37,7 @@ public class ResearchFactory implements IResearchFactory
     @Override
     public IResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect effect)
     {
-        return new Research(id, parent, branch, desc, depth, effect);
+        return new Research(id, branch, desc, depth, effect);
     }
 
     @NotNull
@@ -86,7 +86,7 @@ public class ResearchFactory implements IResearchFactory
         research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addChild(compound.getString(TAG_CHILD)));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> GlobalResearchTree.researchTree.getResearch(branch, compound.getString(TAG_CHILD)));
         return research;
     }
 }

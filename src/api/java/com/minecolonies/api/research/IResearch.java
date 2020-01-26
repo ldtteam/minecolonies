@@ -133,10 +133,34 @@ public interface IResearch
      * Add a child to a research.
      * @param child the child to add.
      */
-    void addChild(String child);
+    void addChild(IResearch child);
 
     /**
      * Get the list of childs of the research.
      */
     List<String> getChilds();
+
+    /**
+     * Set the parent of a research.
+     * @param id the id of the parent.
+     */
+    void setParent(String id);
+
+
+    /**
+     * Set the research requirement.
+     * @param requirement the requirement.
+     */
+    void setRequirement(final IResearchRequirement requirement);
+    /**
+     * Getter for the research requirement.
+     * @return the requirement.
+     */
+    IResearchRequirement getResearchRequirement();
+
+    /**
+     * Get the effect of the research.
+     * @return the effect.
+     */
+    IResearchEffect getEffect();
 }

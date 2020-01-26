@@ -31,7 +31,7 @@ public class Research implements IResearch
     /**
      * The parent research which has to be completed first.
      */
-    private final String parent;
+    private String parent;
 
     /**
      * The current research state.
@@ -79,17 +79,20 @@ public class Research implements IResearch
     private final List<String> childs = new ArrayList<>();
 
     /**
+     * The requirement for this research.
+     */
+    private IResearchRequirement requirement;
+
+    /**
      * Create the new research.
      * @param id it's id.
-     * @param parent the parent id of it.
      * @param desc it's description text.
      * @param effect it's effect.
      * @param depth the depth in the tree.
      * @param branch the branch it is on.
      */
-    public Research(final String id, final String parent, final String branch, final String desc, final int depth, final IResearchEffect effect)
+    public Research(final String id, final String branch, final String desc, final int depth, final IResearchEffect effect)
     {
-        this.parent = parent;
         this.id = id;
         this.desc = desc;
         this.effect = effect;
@@ -230,7 +233,8 @@ public class Research implements IResearch
     @Override
     public IResearch copy()
     {
-        return new Research(this.id, this.parent, this.branch, this.desc, this.depth, this.effect);
+        //todo add parent and child info
+        return new Research(this.id, this.branch, this.desc, this.depth, this.effect);
     }
 
     @Override
@@ -260,14 +264,39 @@ public class Research implements IResearch
     }
 
     @Override
-    public void addChild(final String child)
+    public void addChild(final IResearch child)
     {
-        this.childs.add(child);
+        this.childs.add(child.getId());
+        child.setParent(this.getId());
+    }
+
+    @Override
+    public void setRequirement(final IResearchRequirement requirement)
+    {
+        this.requirement = requirement;
+    }
+
+    @Override
+    public IResearchRequirement getResearchRequirement()
+    {
+        return this.requirement;
+    }
+
+    @Override
+    public void setParent(final String id)
+    {
+        this.parent = id;
     }
 
     @Override
     public List<String> getChilds()
     {
         return new ArrayList<>(this.childs);
+    }
+
+    @Override
+    public IResearchEffect getEffect()
+    {
+        return effect;
     }
 }

@@ -1,5 +1,8 @@
 package com.minecolonies.api.research;
 
+import com.ldtteam.blockout.controls.Text;
+import net.minecraft.util.text.TranslationTextComponent;
+
 /**
  * The effect of a research.
  * @param <T> the type of the value.
@@ -23,4 +26,10 @@ public interface IResearchEffect<T>
      * @return the String id.
      */
     public String getId();
+
+    /**
+     * Effect description.
+     * @return the desc.
+     */
+    TranslationTextComponent getDesc();
 }

@@ -1,5 +1,7 @@
 package com.minecolonies.api.research;
 
+import net.minecraft.util.text.TranslationTextComponent;
+
 /**
  * The modifier research effect, it returns a double modifier.
  */
@@ -42,5 +44,11 @@ public class ModifierResearchEffect implements IResearchEffect<Double>
     public String getId()
     {
         return this.id;
+    }
+
+    @Override
+    public TranslationTextComponent getDesc()
+    {
+        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier", id, effect * 100);
     }
 }

@@ -36,22 +36,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.branch = branch;
 
         final List<String> researchList = GlobalResearchTree.researchTree.getPrimaryResearch(branch);
-        int offsetY = 0;
-        int depth = 0;
-
         final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
 
         drawTree(0, 0, view, researchList);
 
-
-        //todo then for each branch, get the primary research and then go through it, draw it, get child, draw it, get child (if multiple childs leave behind, make it recurvsive)
-        //todo start by just drawing the name
-        //todo then also display effect
+        //todo then also display effect, and requirement
         //todo fix loading of cost from configuration
-        //todo add requirements (predicates from predicate storage)
+
         //todo add button for action
         //todo render stage with different color
-
+        //todo render progress
 
         //GlobalResearchTree.researchTree
     }
@@ -62,6 +56,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onOpened();
     }
 
+    /**
+     * Draw the tree of research.
+     * @param startY the start y offset.
+     * @param depth the current depth.
+     * @param view the view to append it to.
+     * @param researchList the list of research to go through.
+     * @return the next y offset.
+     */
     public int drawTree(final int startY, final int depth, final DragView view, final List<String> researchList)
     {
         int otherStart = startY;
@@ -76,11 +78,24 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             gradient.setPosition(x + offsetX + 50, y + startY + i * (50 + 20) + 20);
             view.addChild(gradient);
 
-            final Label label = new Label();
-            label.setLabelText(researchLabel);
-            label.setPosition(x + offsetX + 10 + 70, y + startY + i * (50 + 20) + 5 + 20 + 5);
-            label.setColor(WHITE, WHITE);
-            view.addChild(label);
+            final Label nameLabel = new Label();
+            nameLabel.setLabelText(researchLabel);
+            nameLabel.setPosition(x + offsetX + 10 + 70, y + startY + i * (50 + 20) + 5 + 20 + 5);
+            nameLabel.setColor(WHITE, WHITE);
+            view.addChild(nameLabel);
+
+            final Label requirementLabel = new Label();
+            requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());
+            requirementLabel.setPosition(x + offsetX + 10 + 70, nameLabel.getY() + nameLabel.getHeight() + 5);
+            requirementLabel.setColor(WHITE, WHITE);
+            view.addChild(requirementLabel);
+
+            final Label effectLabel = new Label();
+            effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
+            effectLabel.setPosition(x + offsetX + 10 + 70, requirementLabel.getY() + requirementLabel.getHeight() + 5);
+            effectLabel.setColor(WHITE, WHITE);
+            view.addChild(effectLabel);
+
             otherStart = drawTree(otherStart, depth + 1, view, research.getChilds());
         }
 

@@ -12,6 +12,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
+import com.minecolonies.apiimp.initializer.ResearchRequirementInitializer;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -89,6 +90,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
 
         InteractionValidatorInitializer.init();
+        ResearchRequirementInitializer.init();
     }
 
     @SubscribeEvent
