@@ -4,12 +4,14 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -119,7 +121,7 @@ public class Research implements IResearch
             for (final String cost : researchCost)
             {
                 final String[] tuple = cost.split("/*");
-                final Item item = Item.getByNameOrId(tuple[0]);
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(tuple[0]));
                 if (item == null)
                 {
                     Log.getLogger().warn("Couldn't retrieve research costList from config for " + branch + "/" + id + " for item: " + tuple[0]);
@@ -149,7 +151,7 @@ public class Research implements IResearch
     }
 
     @Override
-    public void startResearch(@NotNull final EntityPlayer player)
+    public void startResearch(@NotNull final PlayerEntity player)
     {
         if (state == ResearchState.NOT_STARTED && hasEnoughResources(new InvWrapper(player.inventory)))
         {

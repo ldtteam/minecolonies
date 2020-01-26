@@ -1,6 +1,6 @@
 package com.minecolonies.api.research;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public interface IResearch
      * Start the research.
      * @param player the player starting it.
      */
-    void startResearch(@NotNull EntityPlayer player);
+    void startResearch(@NotNull PlayerEntity player);
 
     /**
      * Tick the research to execute it.

@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.ModifierResearchEffect;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.ResearchConstants.TAG_ID;
@@ -39,18 +39,18 @@ public class ModifierResearchEffectFactory implements IResearchEffectFactory<Mod
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final ModifierResearchEffect effect)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ModifierResearchEffect effect)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        @NotNull final NBTTagCompound stackTag = new NBTTagCompound();
-        compound.setString(TAG_ID, effect.getId());
-        compound.setDouble(TAG_MODIFIER, effect.getEffect());
+        final CompoundNBT compound = new CompoundNBT();
+        @NotNull final CompoundNBT stackTag = new CompoundNBT();
+        compound.putString(TAG_ID, effect.getId());
+        compound.putDouble(TAG_MODIFIER, effect.getEffect());
         return compound;
     }
 
     @NotNull
     @Override
-    public ModifierResearchEffect deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public ModifierResearchEffect deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final String id = nbt.getString(TAG_ID);
         final double effect = nbt.getDouble(TAG_MODIFIER);

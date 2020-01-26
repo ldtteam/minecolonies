@@ -3,8 +3,8 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,19 +56,19 @@ public class ResearchEffects
      * Write the research tree to NBT.
      * @param compound the compound.
      */
-    public void writeToNBT(final NBTTagCompound compound)
+    public void writeToNBT(final CompoundNBT compound)
     {
-        @NotNull final NBTTagList citizenTagList = effectMap.values().stream().map(effect -> StandardFactoryController.getInstance().serialize(effect)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_RESEARCH_EFFECTS, citizenTagList);
+        @NotNull final ListNBT citizenTagList = effectMap.values().stream().map(effect -> StandardFactoryController.getInstance().serialize(effect)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_RESEARCH_EFFECTS, citizenTagList);
     }
 
     /**
      * Read the research tree from NBT.
      * @param compound the compound to read it from.
      */
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
-        effectMap.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_RESEARCH_EFFECTS, Constants.NBT.TAG_COMPOUND))
+        effectMap.putAll(NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_EFFECTS, Constants.NBT.TAG_COMPOUND))
                               .map(researchCompound -> (IResearchEffect) StandardFactoryController.getInstance().deserialize(researchCompound))
                               .collect(Collectors.toMap(IResearchEffect::getId, iEffect -> iEffect)));
     }

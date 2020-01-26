@@ -357,6 +357,14 @@ public final class ColonyView implements IColonyView
             buf.writeInt(col.getID());
             buf.writeInt(col.getDimension());
         }
+
+        final CompoundNBT treeTag = new CompoundNBT();
+        colony.getResearchTree().writeToNBT(treeTag);
+        buf.writeCompoundTag(treeTag);
+
+        final CompoundNBT effectsTag = new CompoundNBT();
+        colony.getResearchEffects().writeToNBT(effectsTag);
+        buf.writeCompoundTag(effectsTag);
     }
 
     /**
@@ -811,9 +819,10 @@ public final class ColonyView implements IColonyView
             feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
         }
 
-        return null;
+        this.tree.readFromNBT(buf.readCompoundTag());
+        this.effects.readFromNBT(buf.readCompoundTag());
 
-        return we need to sync the tree and effects.
+        return null;
     }
 
     /**

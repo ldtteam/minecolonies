@@ -28,6 +28,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.managers.*;
+import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -626,9 +627,9 @@ public class Colony implements IColony
 
         raidManager.read(compound);
 
-        if (compound.hasKey(TAG_RESEARCH))
+        if (compound.keySet().contains(TAG_RESEARCH))
         {
-            researchManager.readFromNBT(compound.getCompoundTag(TAG_RESEARCH));
+            researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
         }
 
         //  Workload
@@ -766,9 +767,9 @@ public class Colony implements IColony
         progressManager.write(compound);
         raidManager.write(compound);
 
-        @NotNull final NBTTagCompound researchManagerCompound = new NBTTagCompound();
+        @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
         researchManager.writeToNBT(researchManagerCompound);
-        compound.setTag(TAG_RESEARCH, researchManagerCompound);
+        compound.put(TAG_RESEARCH, researchManagerCompound);
 
         // Waypoints
         @NotNull final ListNBT wayPointTagList = new ListNBT();

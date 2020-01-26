@@ -1,7 +1,5 @@
 package com.minecolonies.api.research;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 /**
  * The effect of a research.
  * @param <T> the type of the value.

@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,22 +46,22 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        @NotNull final NBTTagCompound stackTag = new NBTTagCompound();
-        storage.getItemStack().writeToNBT(stackTag);
-        compound.setTag(TAG_STACK, stackTag);
-        compound.setInteger(TAG_SIZE, storage.getAmount());
+        final CompoundNBT compound = new CompoundNBT();
+        @NotNull final CompoundNBT stackTag = new CompoundNBT();
+        storage.getItemStack().write(stackTag);
+        compound.put(TAG_STACK, stackTag);
+        compound.putInt(TAG_SIZE, storage.getAmount());
         return compound;
     }
 
     @NotNull
     @Override
-    public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final ItemStack stack = new ItemStack(nbt.getCompoundTag(TAG_STACK));
-        final int size = nbt.getInteger(TAG_SIZE);
+        final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
+        final int size = nbt.getInt(TAG_SIZE);
         return this.getNewInstance(stack, size);
     }
 }

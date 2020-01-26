@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.research.ResearchEffects;
 import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,14 +22,14 @@ public class ResearchManager implements IResearchManager
     private final ResearchEffects effects = new ResearchEffects();
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         tree.readFromNBT(compound);
         effects.readFromNBT(compound);
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         effects.writeToNBT(compound);
         tree.writeToNBT(compound);
