@@ -7,8 +7,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.ResearchConstants.TAG_RESEARCH_TREE;
 
@@ -30,7 +30,7 @@ public class ResearchTree
      */
     public IResearch getResearch(final String branch, final String id)
     {
-        return researchTree.get(branch).get(id).copy();
+        return researchTree.get(branch).get(id);
     }
 
     /**
@@ -50,6 +50,29 @@ public class ResearchTree
         }
         branchMap.put(research.getId(), research);
         researchTree.put(branch,branchMap);
+    }
+
+    /**
+     * Get the list of all branches.
+     * @return the list of branches.
+     */
+    public List<String> getBranches()
+    {
+        return new ArrayList<>(researchTree.keySet());
+    }
+
+    /**
+     * Get the primary research of a certain branch.
+     * @param branch the branch it belongs to.
+     * @return the list of research without parent.
+     */
+    public List<String> getPrimaryResearch(final String branch)
+    {
+        if (!researchTree.containsKey(branch))
+        {
+            return Collections.emptyList();
+        }
+        return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty()).map(IResearch::getId).collect(Collectors.toList());
     }
 
     /**

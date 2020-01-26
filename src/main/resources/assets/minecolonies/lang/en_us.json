@@ -1270,6 +1270,6 @@
   "com.minecolonies.requestsystem.playerresolver.normal": "I need %s to continue working.",
   "com.minecolonies.requestsystem.playerresolver.async": "It would make my job much easier if I had %s.",
   "com.minecolonies.coremod.gui.chat.cancel": "Try cancel that request!",
-  "com.minecolonies.coremod.gui.chat.fulfill": "More details please!"
-
+  "com.minecolonies.coremod.gui.chat.fulfill": "More details please!",
+  "com.minecolonies.coremod.gui.research.title": "Research Branches"
 }

@@ -108,7 +108,7 @@ public class Research implements IResearch
     public boolean canDisplay(final int uni_level)
     {
         final IResearch parentResearch = GlobalResearchTree.researchTree.getResearch(branch, parent);
-        return uni_level >= depth && (!parentResearch.hasResearchedChild() || !parentResearch.isOnlyChild());
+        return uni_level >= depth && (!parentResearch.hasResearchedChild() || !parentResearch.isOnlyChild() || state != ResearchState.NOT_STARTED);
     }
 
     @Override

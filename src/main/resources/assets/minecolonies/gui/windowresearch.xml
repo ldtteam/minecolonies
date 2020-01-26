@@ -1,0 +1,7 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="300 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_papper_wide.png" size="300 244"/>
+    <dragView id="dragView" size="290 234">
+    </dragView>
+</window>

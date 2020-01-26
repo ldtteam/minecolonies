@@ -561,6 +561,11 @@ public final class WindowConstants
     public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
 
     /**
+     * Window resource list gui file.
+     */
+    public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
+
+    /**
      * Id of the type label in the GUI.
      */
     public static final String LABEL_BUILDINGTYPE = "type";
