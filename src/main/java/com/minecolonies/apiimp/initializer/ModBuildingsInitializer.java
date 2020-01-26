@@ -232,7 +232,6 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.POSTBOX_ID))
                                  .createBuildingEntry();
 
-        //todo fix in 1.15
         ModBuildings.florist = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutFlorist)
                                  .setBuildingProducer(BuildingFlorist::new)
@@ -246,6 +245,13 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                  .createBuildingEntry();
+
+        ModBuildings.enchanter = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockHutUniversity)
+                                   .setBuildingProducer(BuildingUniversity::new)
+                                   .setBuildingViewProducer(() -> BuildingUniversity.View::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
+                                   .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -279,5 +285,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.postBox);
         reg.register(ModBuildings.florist);
         reg.register(ModBuildings.enchanter);
+        reg.register(ModBuildings.university);
     }
 }

@@ -159,6 +159,10 @@ public final class ModJobsInitializer
                             .setRegistryName(ModJobs.ENCHANTER_ID)
                             .createJobEntry();
 
+        ModJobs.enchanter = new JobEntry.Builder()
+                              .setJobProducer(JobResearch::new)
+                              .setRegistryName(ModJobs.RESEARCH_ID)
+                              .createJobEntry();
 
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
@@ -188,6 +192,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.sifter);
         reg.register(ModJobs.florist);
         reg.register(ModJobs.enchanter);
-
+        reg.register(ModJobs.researcher);
     }
 }
