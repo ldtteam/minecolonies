@@ -13,7 +13,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.research.IResearch;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ModifierResearchEffect;
 import com.minecolonies.api.research.UnlockResearchEffect;
 
@@ -42,7 +43,8 @@ public class TypeConstants
     public static final TypeToken<ItemStorage>            ITEMSTORAGE        = TypeToken.of(ItemStorage.class);
     public static final TypeToken<UnlockResearchEffect>   UNLOCK_RESEARCH_EF = TypeToken.of(UnlockResearchEffect.class);
     public static final TypeToken<ModifierResearchEffect> MOD_RESEARCH_EF    = TypeToken.of(ModifierResearchEffect.class);
-    public static final TypeToken<IResearch>              RESEARCH           = TypeToken.of(IResearch.class);
+    public static final TypeToken<IGlobalResearch>        GLOBAL_RESEARCH    = TypeToken.of(IGlobalResearch.class);
+    public static final TypeToken<ILocalResearch>         LOCAL_RESEARCH     = TypeToken.of(ILocalResearch.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>                             PLAYER_REQUEST_RESOLVER                         = TypeToken.of(IPlayerRequestResolver.class);

@@ -7,11 +7,11 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.research.LocalResearchTree;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.research.ResearchEffects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -265,7 +265,7 @@ public interface IColony
      * Getter for the research tree.
      * @return the colony own research tree.
      */
-    ResearchTree getResearchTree();
+    LocalResearchTree getResearchTree();
 
     /**
      * Get the colonies own research effects.

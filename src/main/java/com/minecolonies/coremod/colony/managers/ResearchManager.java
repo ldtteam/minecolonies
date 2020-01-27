@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.research.LocalResearchTree;
 import com.minecolonies.api.research.ResearchEffects;
-import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class ResearchManager implements IResearchManager
     /**
      * The research tree of the colony.
      */
-    private final ResearchTree tree = new ResearchTree();
+    private final LocalResearchTree tree = new LocalResearchTree();
 
     /**
      * The research effects of the colony.
@@ -36,7 +36,7 @@ public class ResearchManager implements IResearchManager
     }
 
     @Override
-    public ResearchTree getResearchTree()
+    public LocalResearchTree getResearchTree()
     {
         return this.tree;
     }

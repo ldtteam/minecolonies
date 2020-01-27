@@ -1,5 +1,7 @@
 package com.minecolonies.api.research;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,27 +18,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.research.ResearchConstants.*;
-
 /**
  * The implementation of the IResearch interface which represents one type of research.
  */
-public class Research implements IResearch
+public class GlobalResearch implements IGlobalResearch
 {
     /**
      * The costList of the research.
      */
-    private final List<ItemStorage> costList   = new ArrayList<>();
+    private final List<ItemStorage> costList = new ArrayList<>();
 
     /**
      * The parent research which has to be completed first.
      */
-    private String parent;
-
-    /**
-     * The current research state.
-     */
-    private ResearchState state;
+    private String parent = "";
 
     /**
      * The string id of the research.
@@ -64,11 +59,6 @@ public class Research implements IResearch
     private final int depth;
 
     /**
-     * The progress of the research.
-     */
-    private int progress;
-
-    /**
      * If the research has an only child.
      */
     private boolean onlyChild;
@@ -91,7 +81,7 @@ public class Research implements IResearch
      * @param depth the depth in the tree.
      * @param branch the branch it is on.
      */
-    public Research(final String id, final String branch, final String desc, final int depth, final IResearchEffect effect)
+    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect effect)
     {
         this.id = id;
         this.desc = desc;
@@ -101,17 +91,19 @@ public class Research implements IResearch
     }
 
     @Override
-    public boolean canResearch(final int uni_level)
+    public boolean canResearch(final int uni_level, @NotNull final LocalResearchTree localTree)
     {
-        final IResearch parentResearch = GlobalResearchTree.researchTree.getResearch(branch, parent);
-        return state == ResearchState.NOT_STARTED && canDisplay(uni_level) && parentResearch != null && parentResearch.getState() == ResearchState.FINISHED && (!parentResearch.hasResearchedChild() || !parentResearch.isOnlyChild());
+        final IGlobalResearch parentResearch = GlobalResearchTree.researchTree.getResearch(branch, parent);
+        final ILocalResearch localParentResearch = localTree.getResearch(parentResearch.getBranch(), parentResearch.getId());
+        final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
+
+        return localResearch == null && canDisplay(uni_level) && localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED && (!parentResearch.hasResearchedChild(localTree) || !parentResearch.isOnlyChild());
     }
 
     @Override
     public boolean canDisplay(final int uni_level)
     {
-        final IResearch parentResearch = GlobalResearchTree.researchTree.getResearch(branch, parent);
-        return uni_level >= depth && (!parentResearch.hasResearchedChild() || !parentResearch.isOnlyChild() || state != ResearchState.NOT_STARTED);
+        return uni_level >= depth;
     }
 
     @Override
@@ -120,7 +112,7 @@ public class Research implements IResearch
         costList.clear();
         try
         {
-            final String[] researchCost = (String[]) ResearchConfiguration.class.getField(branch).getClass().getField(id).get(new String[0]);
+            final String[] researchCost = (String[]) MinecoloniesAPIProxy.getInstance().getConfig().getCommon().getClass().getField(id).get(new String[0]);
             for (final String cost : researchCost)
             {
                 final String[] tuple = cost.split("/*");
@@ -154,32 +146,14 @@ public class Research implements IResearch
     }
 
     @Override
-    public void startResearch(@NotNull final PlayerEntity player)
+    public void startResearch(@NotNull final PlayerEntity player, @NotNull final LocalResearchTree localResearchTree)
     {
-        if (state == ResearchState.NOT_STARTED && hasEnoughResources(new InvWrapper(player.inventory)))
+        if (localResearchTree.getResearch(this.branch, this.id) == null && hasEnoughResources(new InvWrapper(player.inventory)))
         {
-            state = ResearchState.IN_PROGRESS;
+            final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
+            research.setState(ResearchState.IN_PROGRESS);
+            localResearchTree.addResearch(branch, research);
         }
-    }
-
-    @Override
-    public void research(final ResearchEffects effects, final ResearchTree tree)
-    {
-        if (state == ResearchState.IN_PROGRESS)
-        {
-            progress++;
-            if (progress >= BASE_RESEARCH_TIME * depth)
-            {
-                state = ResearchState.FINISHED;
-                effects.applyEffect(this.effect);
-            }
-        }
-    }
-
-    @Override
-    public int getProgress()
-    {
-        return (BASE_RESEARCH_TIME * depth)/progress;
     }
 
     @Override
@@ -192,12 +166,6 @@ public class Research implements IResearch
     public String getId()
     {
         return this.id;
-    }
-
-    @Override
-    public ResearchState getState()
-    {
-        return this.state;
     }
 
     @Override
@@ -219,25 +187,6 @@ public class Research implements IResearch
     }
 
     @Override
-    public void setState(final ResearchState value)
-    {
-        this.state = value;
-    }
-
-    @Override
-    public void setProgress(final int progress)
-    {
-        this.progress = progress;
-    }
-
-    @Override
-    public IResearch copy()
-    {
-        //todo add parent and child info
-        return new Research(this.id, this.branch, this.desc, this.depth, this.effect);
-    }
-
-    @Override
     public boolean isOnlyChild()
     {
         return onlyChild;
@@ -250,12 +199,13 @@ public class Research implements IResearch
     }
 
     @Override
-    public boolean hasResearchedChild()
+    public boolean hasResearchedChild(@NotNull final LocalResearchTree localTree)
     {
         for (final String child: this.childs)
         {
-            final IResearch childResearch = GlobalResearchTree.researchTree.getResearch(branch, child);
-            if (childResearch != null && childResearch.getState() != ResearchState.NOT_STARTED)
+            final IGlobalResearch childResearch = GlobalResearchTree.researchTree.getResearch(branch, child);
+            final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
+            if (localResearch == null)
             {
                 return true;
             }
@@ -264,7 +214,7 @@ public class Research implements IResearch
     }
 
     @Override
-    public void addChild(final IResearch child)
+    public void addChild(final IGlobalResearch child)
     {
         this.childs.add(child.getId());
         child.setParent(this.getId());

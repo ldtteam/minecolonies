@@ -50,7 +50,8 @@ public final class Constants
     public static final int    MIN_PARAMS_IRECIPESTORAGE        = 3;
     public static final int    PARAMS_ITEMSTORAGE               = 2;
     public static final int    PARAMS_RESEARCH_EFFECT           = 2;
-    public static final int    PARAMS_RESEARCH                  = 7;
+    public static final int    PARAMS_GLOBAL_RESEARCH           = 7;
+    public static final int    PARAMS_LOCAL_RESEARCH            = 3;
     public static final String DEFAULT_STYLE                    = "wooden";
     public static final String SAPLINGS                         = "treeSapling";
     public static final String ORES                             = "ores";

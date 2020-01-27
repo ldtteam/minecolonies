@@ -3,6 +3,7 @@ package com.minecolonies.api.configuration;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -155,6 +156,38 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue minimalBuildingsToGather;
     public final ForgeConfigSpec.BooleanValue creativeResolve;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
+
+    /*  --------------------------------------------------------------------------------- *
+     *  ------------------- ######## Research Settings ######## ------------------- *
+     *  --------------------------------------------------------------------------------- */
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tacticTraining;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedSwords ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> squireTraining ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knightTraining ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captainTraining ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captainOfTheGuard ;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedBows ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tickShot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> multiShot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rapidShot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterBowman ;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoidance ;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> parry ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> repost ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> duelist ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> provost ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterSwordsman ;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> dodge ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedDodge ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evasion ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedEvasion ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> agileArcher ;
 
     /**
      * Builds common configuration.
@@ -601,6 +634,80 @@ public class CommonConfiguration extends AbstractConfiguration
         creativeResolve = defineBoolean(builder,  "creativeresolve", false);
         canPlayerUseResetCommand = defineBoolean(builder,  "canplayeruseresetcommand", false);
 
+        swapToCategory(builder, "research");
+
+
+        tacticTraining = defineList(builder, "tactictraining",
+          Collections.singletonList("minecraft:iron_block*3"),
+          s -> s instanceof String);
+
+        improvedSwords = defineList(builder, "improvedswords",
+          Collections.singletonList("minecraft:iron_block*6"),
+          s -> s instanceof String);
+        squireTraining = defineList(builder, "squiretraining",
+          Collections.singletonList("minecraft:shield*5"),
+          s -> s instanceof String);
+        knightTraining = defineList(builder, "knighttraining",
+          Collections.singletonList("minecraft:shield*10"),
+          s -> s instanceof String);
+        captainTraining = defineList(builder, "captaintraining",
+          Collections.singletonList("minecraft:shield*25"),
+          s -> s instanceof String);
+        captainOfTheGuard = defineList(builder, "captainoftheguard",
+          Collections.singletonList("minecraft:shield*64"),
+          s -> s instanceof String);
+
+        improvedBows = defineList(builder, "improvedbows",
+          Collections.singletonList("minecraft:iron_block*6"),
+          s -> s instanceof String);
+        tickShot = defineList(builder, "tickshot",
+          Collections.singletonList("minecraft:bow*5"),
+          s -> s instanceof String);
+        multiShot = defineList(builder, "multishot",
+          Collections.singletonList("minecraft:bow*10"),
+          s -> s instanceof String);
+        rapidShot = defineList(builder, "rapidshot",
+          Collections.singletonList("minecraft:bow*25"),
+          s -> s instanceof String);
+        masterBowman = defineList(builder, "masterbowman",
+          Collections.singletonList("minecraft:bow*64"),
+          s -> s instanceof String);
+
+        avoidance = defineList(builder, "avoidance",
+          Collections.singletonList("minecraft:iron_block*3"),
+          s -> s instanceof String);
+
+        parry = defineList(builder, "parry",
+          Collections.singletonList("minecraft:iron_ingot*16"),
+          s -> s instanceof String);
+        repost = defineList(builder, "repost",
+          Collections.singletonList("minecraft:iron_ingot*32"),
+          s -> s instanceof String);
+        duelist = defineList(builder, "duelist",
+          Collections.singletonList("minecraft:iron_ingot*64"),
+          s -> s instanceof String);
+        provost = defineList(builder, "provost",
+          Collections.singletonList("minecraft:diamond*16"),
+          s -> s instanceof String);
+        masterSwordsman = defineList(builder, "masterswordsman",
+          Collections.singletonList("minecraft:diamond*64"),
+          s -> s instanceof String);
+
+        dodge = defineList(builder, "dodge",
+          Collections.singletonList("minecraft:leather*16"),
+          s -> s instanceof String);
+        improvedDodge = defineList(builder, "improveddodge",
+          Collections.singletonList("minecraft:leather*32"),
+          s -> s instanceof String);
+        evasion = defineList(builder, "evasion",
+          Collections.singletonList("minecraft:leather*64"),
+          s -> s instanceof String);
+        improvedEvasion = defineList(builder, "improvedevasion",
+          Collections.singletonList("minecraft:diamond*16"),
+          s -> s instanceof String);
+        agileArcher = defineList(builder, "agilearcher",
+          Collections.singletonList("minecraft:diamond*64"),
+          s -> s instanceof String);
 
         finishCategory(builder);
     }

@@ -8,19 +8,17 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.minecolonies.api.research.ResearchConstants.TAG_RESEARCH_TREE;
 
 /**
  * The class which contains all research.
  */
-public class ResearchTree
+public class LocalResearchTree
 {
     /**
      * The map containing all researches by ID.
      */
-    private final Map<String, Map<String, IGlobalResearch>> researchTree = new HashMap<>();
+    private final Map<String, Map<String, ILocalResearch>> researchTree = new HashMap<>();
 
     /**
      * Get a research by id.
@@ -28,7 +26,7 @@ public class ResearchTree
      * @param branch the branch of the research.
      * @return the IResearch object.
      */
-    public IGlobalResearch getResearch(final String branch, final String id)
+    public ILocalResearch getResearch(final String branch, final String id)
     {
         return researchTree.get(branch).get(id);
     }
@@ -37,9 +35,9 @@ public class ResearchTree
      * Add a research to the tree.
      * @param research the research to add.
      */
-    public void addResearch(final String branch, final IGlobalResearch research)
+    public void addResearch(final String branch, final ILocalResearch research)
     {
-        final Map<String, IGlobalResearch> branchMap;
+        final Map<String, ILocalResearch> branchMap;
         if (researchTree.containsKey(branch))
         {
             branchMap = researchTree.get(branch);
@@ -50,29 +48,6 @@ public class ResearchTree
         }
         branchMap.put(research.getId(), research);
         researchTree.put(branch,branchMap);
-    }
-
-    /**
-     * Get the list of all branches.
-     * @return the list of branches.
-     */
-    public List<String> getBranches()
-    {
-        return new ArrayList<>(researchTree.keySet());
-    }
-
-    /**
-     * Get the primary research of a certain branch.
-     * @param branch the branch it belongs to.
-     * @return the list of research without parent.
-     */
-    public List<String> getPrimaryResearch(final String branch)
-    {
-        if (!researchTree.containsKey(branch))
-        {
-            return Collections.emptyList();
-        }
-        return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty()).map(IGlobalResearch::getId).collect(Collectors.toList());
     }
 
     /**
@@ -95,7 +70,7 @@ public class ResearchTree
     {
         researchTree.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
-                              .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
+                              .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
                               .forEach(research -> addResearch(research.getBranch(), research));
     }
 }

@@ -4,6 +4,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.research.GlobalResearchTree;
+import com.minecolonies.api.research.LocalResearchTree;
 import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
@@ -39,7 +40,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     /**
      * The local tree.
      */
-    private final ResearchTree localTree;
+    private final LocalResearchTree localTree;
 
     /**
      * Constructor for the window of the lumberjack.

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers.interfaces;
 
 
+import com.minecolonies.api.research.LocalResearchTree;
 import com.minecolonies.api.research.ResearchEffects;
 import com.minecolonies.api.research.ResearchTree;
 import net.minecraft.nbt.CompoundNBT;
@@ -27,7 +28,7 @@ public interface IResearchManager
      * Get the instance of the researchTree.
      * @return the ResearchTree object.
      */
-    ResearchTree getResearchTree();
+    LocalResearchTree getResearchTree();
 
     /**
      * Get an instance of the research effects.

@@ -15,8 +15,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.research.LocalResearchTree;
 import com.minecolonies.api.research.ResearchEffects;
-import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
@@ -194,7 +194,7 @@ public final class ColonyView implements IColonyView
     /**
      * The research tree of the colony.
      */
-    private final ResearchTree tree = new ResearchTree();
+    private final LocalResearchTree tree = new LocalResearchTree();
 
     /**
      * The research effects of the colony.
@@ -1424,7 +1424,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ResearchTree getResearchTree()
+    public LocalResearchTree getResearchTree()
     {
         return this.tree;
     }

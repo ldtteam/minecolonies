@@ -6,20 +6,20 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Constants.PARAMS_RESEARCH;
+import static com.minecolonies.api.util.constant.Constants.PARAMS_GLOBAL_RESEARCH;
 
 /**
  * Interface for the IResearchFactory which is responsible for creating and maintaining Research objects.
  */
-public interface IResearchFactory extends IFactory<FactoryVoidInput, IResearch>
+public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlobalResearch>
 {
     @NotNull
     @Override
-    default IResearch getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
+    default IGlobalResearch getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
     {
-        if (context.length < PARAMS_RESEARCH)
+        if (context.length < PARAMS_GLOBAL_RESEARCH)
         {
-            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
+            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH  + " are allowed!");
         }
 
         if(!(context[0] instanceof String))
@@ -73,6 +73,6 @@ public interface IResearchFactory extends IFactory<FactoryVoidInput, IResearch>
      * @return a new Instance of Research.
      */
     @NotNull
-    IResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect effect);
+    IGlobalResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect effect);
 }
 

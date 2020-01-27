@@ -1,0 +1,69 @@
+package com.minecolonies.api.research.factories;
+
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.research.*;
+import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.research.ResearchConstants.*;
+
+/**
+ * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.
+ */
+public class LocalResearchFactory implements ILocalResearchFactory
+{
+    @NotNull
+    @Override
+    public TypeToken<ILocalResearch> getFactoryOutputType()
+    {
+        return TypeConstants.LOCAL_RESEARCH;
+    }
+
+    @NotNull
+    @Override
+    public TypeToken<FactoryVoidInput> getFactoryInputType()
+    {
+        return TypeConstants.FACTORYVOIDINPUT;
+    }
+
+    @NotNull
+    @Override
+    public ILocalResearch getNewInstance(final String id, final String branch, final int depth)
+    {
+        return new LocalResearch(id, branch, depth);
+    }
+
+    @NotNull
+    @Override
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ILocalResearch effect)
+    {
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_STATE, effect.getState().ordinal());
+        compound.putString(TAG_ID, effect.getId());
+        compound.putInt(TAG_PROGRESS, effect.getProgress());
+        return compound;
+    }
+
+    @NotNull
+    @Override
+    public ILocalResearch deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    {
+        final int state = nbt.getInt(TAG_STATE);
+        final String id = nbt.getString(TAG_ID);
+        final String branch = nbt.getString(TAG_BRANCH);
+        final int depth = nbt.getInt(TAG_DEPTH);
+        final int progress = nbt.getInt(TAG_PROGRESS);
+
+        final ILocalResearch research = getNewInstance(id, branch, depth);
+        research.setState(ResearchState.values()[state]);
+        research.setProgress(progress);
+
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> GlobalResearchTree.researchTree.getResearch(branch, compound.getString(TAG_CHILD)));
+        return research;
+    }
+}
