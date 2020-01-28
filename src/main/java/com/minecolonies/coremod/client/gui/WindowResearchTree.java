@@ -10,9 +10,11 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.TryResearchMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,7 +60,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         //todo add how long research will need
         //todo restrict too many parallel research executions (max 1 per worker for now).
 
+        //todo integrate the research effects
         //todo add AI which wanders around
+
+
+        //todo final cleanup
     }
 
     @Override
@@ -67,7 +73,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, button.getID());
-        if (research != null)
+        if (research != null && building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size())
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
             final List<String> researchList = GlobalResearchTree.researchTree.getPrimaryResearch(branch);
@@ -178,9 +184,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setID(research.getId());
 
                 //todo add restriction for OR from here too.
-                if (building.getBuildingLevel() < building.getColony().getResearchTree().getResearchInProgress().size())
+                if (building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {
-                    buttonImage.disable();
+                    buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                 }
 
                 view.addChild(buttonImage);
