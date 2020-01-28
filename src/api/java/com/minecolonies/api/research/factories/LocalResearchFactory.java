@@ -47,7 +47,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
         compound.putString(TAG_ID, research.getId());
         compound.putString(TAG_BRANCH, research.getBranch());
         compound.putInt(TAG_PROGRESS, research.getProgress());
-        compound.putInt(TAG_DEPTH, research.getProgress());
+        compound.putInt(TAG_DEPTH, research.getDepth());
 
         return compound;
     }

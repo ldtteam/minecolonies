@@ -85,6 +85,12 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
+    public int getDepth()
+    {
+        return depth;
+    }
+
+    @Override
     public void setState(final ResearchState value)
     {
         this.state = value;

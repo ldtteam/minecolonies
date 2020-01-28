@@ -30,6 +30,12 @@ public interface ILocalResearch
     String getBranch();
 
     /**
+     * Getter for the research depth.
+     * @return the depth.
+     */
+    int getDepth();
+
+    /**
      * Set the current research state.
      * @param value the state to set.
      */

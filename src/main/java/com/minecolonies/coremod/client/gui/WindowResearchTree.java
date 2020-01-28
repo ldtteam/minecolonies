@@ -57,12 +57,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true);
 
-        //todo add how long research will need
-        //todo restrict too many parallel research executions (max 1 per worker for now).
+        //todo add how long research will need (3h, 6h, 9h, 12h, 24h, 48h) (above each column)
+        //todo finish integrating the building luna made
 
         //todo integrate the research effects
-        //todo add AI which wanders around
-
 
         //todo final cleanup
     }

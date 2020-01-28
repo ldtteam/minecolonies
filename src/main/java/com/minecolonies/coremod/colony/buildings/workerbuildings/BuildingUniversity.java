@@ -11,13 +11,23 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.TickEvent;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Creates a new building for the university.
@@ -33,6 +43,16 @@ public class BuildingUniversity extends AbstractBuildingWorker
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * List of registered barrels.
+     */
+    private final List<BlockPos> bookCases = new ArrayList<>();
+
+    /**
+     * Random obj for random calc.
+     */
+    private final Random random = new Random();
 
     /**
      * Instantiates the building.
@@ -62,6 +82,70 @@ public class BuildingUniversity extends AbstractBuildingWorker
     public String getJobName()
     {
         return UNIVERSITY;
+    }
+
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundNBT compound)
+    {
+        super.deserializeNBT(compound);
+        final ListNBT furnaceTagList = compound.getList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.size(); ++i)
+        {
+            bookCases.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+        }
+    }
+
+    @Override
+    public CompoundNBT serializeNBT()
+    {
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT bookcaseTagList = new ListNBT();
+        for (@NotNull final BlockPos entry : bookCases)
+        {
+            @NotNull final CompoundNBT bookCompound = new CompoundNBT();
+            bookCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            bookcaseTagList.add(bookCompound);
+        }
+        compound.put(TAG_BOOKCASES, bookcaseTagList);
+
+        return compound;
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(block, pos, world);
+        //todo we might in the future want to add our own oredict tag to this.
+        if (block == Blocks.BOOKSHELF)
+        {
+            bookCases.add(pos);
+        }
+    }
+
+    /**
+     * Returns a random bookshelf from the list.
+     *
+     * @return the position of it.
+     */
+    public BlockPos getRandomBookShelf()
+    {
+        if (bookCases.isEmpty())
+        {
+            return getPosition();
+        }
+        final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
+        if (colony.getWorld().getBlockState(returnPos).getBlock() == Blocks.BOOKSHELF)
+        {
+            return returnPos;
+        }
+        bookCases.remove(returnPos);
+        return getPosition();
     }
 
     /**
