@@ -63,7 +63,7 @@ public class GlobalResearchTree
         multiShot.addChild(rapidShot);
         rapidShot.addChild(masterBowman);
 
-        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "avoidance", 1, new UnlockResearchEffect("Shield Usage", true));
+        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockResearchEffect("Shield Usage", true));
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 

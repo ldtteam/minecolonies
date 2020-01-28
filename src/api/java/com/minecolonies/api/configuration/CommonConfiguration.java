@@ -161,19 +161,19 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Research Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tacticTraining;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tactictraining;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedSwords ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> squireTraining ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knightTraining ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captainTraining ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captainOfTheGuard ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedswords;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> squiretraining;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knighttraining;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captaintraining;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> captainoftheguard;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedBows ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tickShot ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> multiShot ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rapidShot ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterBowman ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedbows;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tickshot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> multishot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rapidshot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterbowman;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoidance ;
 
@@ -181,13 +181,13 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> repost ;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> duelist ;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> provost ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterSwordsman ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterswordsman;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> dodge ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedDodge ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improveddodge;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> evasion ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedEvasion ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> agileArcher ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedevasion;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> agilearcher;
 
     /**
      * Builds common configuration.
@@ -637,39 +637,39 @@ public class CommonConfiguration extends AbstractConfiguration
         swapToCategory(builder, "research");
 
 
-        tacticTraining = defineList(builder, "tactictraining",
+        tactictraining = defineList(builder, "tactictraining",
           Collections.singletonList("minecraft:iron_block*3"),
           s -> s instanceof String);
 
-        improvedSwords = defineList(builder, "improvedswords",
+        improvedswords = defineList(builder, "improvedswords",
           Collections.singletonList("minecraft:iron_block*6"),
           s -> s instanceof String);
-        squireTraining = defineList(builder, "squiretraining",
+        squiretraining = defineList(builder, "squiretraining",
           Collections.singletonList("minecraft:shield*5"),
           s -> s instanceof String);
-        knightTraining = defineList(builder, "knighttraining",
+        knighttraining = defineList(builder, "knighttraining",
           Collections.singletonList("minecraft:shield*10"),
           s -> s instanceof String);
-        captainTraining = defineList(builder, "captaintraining",
+        captaintraining = defineList(builder, "captaintraining",
           Collections.singletonList("minecraft:shield*25"),
           s -> s instanceof String);
-        captainOfTheGuard = defineList(builder, "captainoftheguard",
+        captainoftheguard = defineList(builder, "captainoftheguard",
           Collections.singletonList("minecraft:shield*64"),
           s -> s instanceof String);
 
-        improvedBows = defineList(builder, "improvedbows",
+        improvedbows = defineList(builder, "improvedbows",
           Collections.singletonList("minecraft:iron_block*6"),
           s -> s instanceof String);
-        tickShot = defineList(builder, "tickshot",
+        tickshot = defineList(builder, "tickshot",
           Collections.singletonList("minecraft:bow*5"),
           s -> s instanceof String);
-        multiShot = defineList(builder, "multishot",
+        multishot = defineList(builder, "multishot",
           Collections.singletonList("minecraft:bow*10"),
           s -> s instanceof String);
-        rapidShot = defineList(builder, "rapidshot",
+        rapidshot = defineList(builder, "rapidshot",
           Collections.singletonList("minecraft:bow*25"),
           s -> s instanceof String);
-        masterBowman = defineList(builder, "masterbowman",
+        masterbowman = defineList(builder, "masterbowman",
           Collections.singletonList("minecraft:bow*64"),
           s -> s instanceof String);
 
@@ -689,23 +689,23 @@ public class CommonConfiguration extends AbstractConfiguration
         provost = defineList(builder, "provost",
           Collections.singletonList("minecraft:diamond*16"),
           s -> s instanceof String);
-        masterSwordsman = defineList(builder, "masterswordsman",
+        masterswordsman = defineList(builder, "masterswordsman",
           Collections.singletonList("minecraft:diamond*64"),
           s -> s instanceof String);
 
         dodge = defineList(builder, "dodge",
           Collections.singletonList("minecraft:leather*16"),
           s -> s instanceof String);
-        improvedDodge = defineList(builder, "improveddodge",
+        improveddodge = defineList(builder, "improveddodge",
           Collections.singletonList("minecraft:leather*32"),
           s -> s instanceof String);
         evasion = defineList(builder, "evasion",
           Collections.singletonList("minecraft:leather*64"),
           s -> s instanceof String);
-        improvedEvasion = defineList(builder, "improvedevasion",
+        improvedevasion = defineList(builder, "improvedevasion",
           Collections.singletonList("minecraft:diamond*16"),
           s -> s instanceof String);
-        agileArcher = defineList(builder, "agilearcher",
+        agilearcher = defineList(builder, "agilearcher",
           Collections.singletonList("minecraft:diamond*64"),
           s -> s instanceof String);
 

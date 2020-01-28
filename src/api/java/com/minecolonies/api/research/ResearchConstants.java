@@ -28,7 +28,7 @@ public final class ResearchConstants
     /**
      * Base research time, default to 3h playtime.
      */
-    public static final int BASE_RESEARCH_TIME = 20 * 60 * 60 * 3;
+    public static final int BASE_RESEARCH_TIME = 60 * 60 * 3;
 
     /**
      * Constants to write the research to NBT.

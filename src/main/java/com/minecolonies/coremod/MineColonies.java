@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.research.GlobalResearchTree;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -135,8 +136,8 @@ public class MineColonies
     {
         Log.getLogger().warn("FMLLoadCompleteEvent");
         MinecoloniesPlacementHandlers.initHandlers();
-        //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
         RequestSystemInitializer.onPostInit();
+        GlobalResearchTree.researchTree.loadCost();
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -98,4 +98,12 @@ public class ResearchTree
                               .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
                               .forEach(research -> addResearch(research.getBranch(), research));
     }
+
+    /**
+     * Load cost for all research.
+     */
+    public void loadCost()
+    {
+        researchTree.values().forEach(b -> b.values().forEach(IGlobalResearch::loadCostFromConfig));
+    }
 }

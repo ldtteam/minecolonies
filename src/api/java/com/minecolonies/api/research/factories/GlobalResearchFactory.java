@@ -21,7 +21,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<IGlobalResearch> getFactoryOutputType()
+    public TypeToken<GlobalResearch> getFactoryOutputType()
     {
         return TypeConstants.GLOBAL_RESEARCH;
     }
@@ -51,7 +51,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putString(TAG_DESC, effect.getDesc());
         compound.put(TAG_EFFECT, StandardFactoryController.getInstance().serialize(effect));
         compound.putInt(TAG_DEPTH, effect.getDepth());
-        compound.putBoolean(TAG_ONLY_CHILD, effect.isOnlyChild());
+        compound.putBoolean(TAG_ONLY_CHILD, effect.hasOnlyChild());
 
         @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
                                                      {

@@ -7,12 +7,17 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Creates a new building for the university.
@@ -76,6 +81,27 @@ public class BuildingUniversity extends AbstractBuildingWorker
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.university;
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        super.onColonyTick(colony);
+
+        final List<ILocalResearch> inProgress= colony.getResearchTree().getResearchInProgress();
+
+        int i = 1;
+        for (final ILocalResearch research : inProgress)
+        {
+            if (i > getAssignedCitizen().size())
+            {
+                return;
+            }
+
+            colony.getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchEffects(), colony.getResearchTree());
+            this.markDirty();
+            i++;
+        }
     }
 
     /**

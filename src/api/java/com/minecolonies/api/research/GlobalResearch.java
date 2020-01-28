@@ -1,7 +1,8 @@
 package com.minecolonies.api.research;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -11,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -93,11 +95,11 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean canResearch(final int uni_level, @NotNull final LocalResearchTree localTree)
     {
-        final IGlobalResearch parentResearch = GlobalResearchTree.researchTree.getResearch(branch, parent);
-        final ILocalResearch localParentResearch = localTree.getResearch(parentResearch.getBranch(), parentResearch.getId());
+        final IGlobalResearch parentResearch = parent.isEmpty() ? null : GlobalResearchTree.researchTree.getResearch(branch, parent);
+        final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return localResearch == null && canDisplay(uni_level) && localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED && (!parentResearch.hasResearchedChild(localTree) || !parentResearch.isOnlyChild());
+        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED) && ( parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild());
     }
 
     @Override
@@ -112,10 +114,11 @@ public class GlobalResearch implements IGlobalResearch
         costList.clear();
         try
         {
-            final String[] researchCost = (String[]) MinecoloniesAPIProxy.getInstance().getConfig().getCommon().getClass().getField(id).get(new String[0]);
-            for (final String cost : researchCost)
+            final CommonConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getCommon();
+            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost = (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
+            for (final String cost : researchCost.get())
             {
-                final String[] tuple = cost.split("/*");
+                final String[] tuple = cost.split("\\*");
                 final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(tuple[0]));
                 if (item == null)
                 {
@@ -143,6 +146,12 @@ public class GlobalResearch implements IGlobalResearch
             }
         }
         return true;
+    }
+
+    @Override
+    public List<ItemStorage> getCostList()
+    {
+        return ImmutableList.copyOf(costList);
     }
 
     @Override
@@ -187,7 +196,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public boolean isOnlyChild()
+    public boolean hasOnlyChild()
     {
         return onlyChild;
     }

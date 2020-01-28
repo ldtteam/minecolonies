@@ -1,14 +1,17 @@
 package com.minecolonies.api.research;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import static com.minecolonies.api.research.ResearchConstants.TAG_RESEARCH_TREE;
+
+import static com.minecolonies.api.research.ResearchConstants.*;
 
 /**
  * The class which contains all research.
@@ -21,6 +24,11 @@ public class LocalResearchTree
     private final Map<String, Map<String, ILocalResearch>> researchTree = new HashMap<>();
 
     /**
+     * All research in progress.
+     */
+    private final Map<String, ILocalResearch> inProgress = new HashMap<>();
+
+    /**
      * Get a research by id.
      * @param id the id of the research.
      * @param branch the branch of the research.
@@ -28,6 +36,10 @@ public class LocalResearchTree
      */
     public ILocalResearch getResearch(final String branch, final String id)
     {
+        if (!researchTree.containsKey(branch))
+        {
+            return null;
+        }
         return researchTree.get(branch).get(id);
     }
 
@@ -48,6 +60,29 @@ public class LocalResearchTree
         }
         branchMap.put(research.getId(), research);
         researchTree.put(branch,branchMap);
+
+        if (research.getState() == ResearchState.IN_PROGRESS)
+        {
+            inProgress.put(research.getId(), research);
+        }
+    }
+
+    /**
+     * Get a list of all research in progress.
+     * @return the list.
+     */
+    public List<ILocalResearch> getResearchInProgress()
+    {
+        return ImmutableList.copyOf(inProgress.values());
+    }
+
+    /**
+     * Finish a research and remove it from the inProgress list.
+     * @param id the id of the research to remove.
+     */
+    public void finishResearch(final String id)
+    {
+        inProgress.remove(id);
     }
 
     /**
@@ -57,8 +92,8 @@ public class LocalResearchTree
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
-          citizenTagList = researchTree.values().stream().flatMap(map -> map.values().stream()).map(research -> StandardFactoryController.getInstance().serialize(research)).collect(NBTUtils.toListNBT());
-        compound.put(TAG_RESEARCH_TREE, citizenTagList);
+          researchList = researchTree.values().stream().flatMap(map -> map.values().stream()).map(research -> StandardFactoryController.getInstance().serialize(research)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_RESEARCH_TREE, researchList);
     }
 
     /**

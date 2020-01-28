@@ -5,7 +5,6 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.research.GlobalResearchTree;
 import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.ResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.util.ResourceLocation;
@@ -16,22 +15,12 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.SLIGHTLY_BLUE;
 
 /**
  * Window for the lumberjack hut.
  */
 public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUniversity.View>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/windowhutuniversity.xml";
-    private static final String BRANCH_VIEW_ID = "pageBranches";
-    private static final int INITITAL_X_OFFSET = 20;
-    private static final int INITITAL_Y_OFFSET = 30;
-    private static final int BUTTON_PADDING    = 10;
-
     /**
      * The list of branches of the tree.
      */
@@ -60,7 +49,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             button.setLabel(branch);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
             button.setTextColor(SLIGHTLY_BLUE);
-            button.setPosition(x + INITITAL_X_OFFSET + 10, y + offset + INITITAL_Y_OFFSET + 30);
+            button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
             view.addChild(button);
             branches.add(branch);
 
@@ -78,7 +67,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
         if (branches.contains(label))
         {
-            new WindowResearchTree(localTree, label).open();
+            new WindowResearchTree( label, building, this).open();
         }
     }
 
@@ -95,4 +84,3 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         return COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
     }
 }
-

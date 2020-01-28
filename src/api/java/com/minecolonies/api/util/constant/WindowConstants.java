@@ -1226,6 +1226,16 @@ public final class WindowConstants
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
 
     /**
+     * The resource string.
+     */
+    public static final String RESOURCE_STRING = ":gui/windowhutuniversity.xml";
+    public static final String BRANCH_VIEW_ID = "pageBranches";
+    public static final int INITITAL_X_OFFSET = 30;
+    public static final int INITITAL_Y_OFFSET = 60;
+    public static final int BUTTON_PADDING    = 10;
+    public static final String BUTTON_RIGHT_ARROW = "textures/gui/builderhut/builder_sketch_arrow_right_a.png";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

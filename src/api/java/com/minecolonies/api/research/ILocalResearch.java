@@ -46,5 +46,5 @@ public interface ILocalResearch
      * @param effects the research effects class which holds the information of the colony.
      * @param tree the research tree which holds the currently explored tree.
      */
-    void research(ResearchEffects effects, ResearchTree tree);
+    void research(ResearchEffects effects, LocalResearchTree tree);
 }

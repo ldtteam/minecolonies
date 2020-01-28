@@ -1,5 +1,6 @@
 package com.minecolonies.api.research;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,12 @@ public interface IGlobalResearch
      * @return true if so
      */
     boolean hasEnoughResources(final IItemHandler inventory);
+
+    /**
+     * Get the cost list from the research.
+     * @return the list.
+     */
+    List<ItemStorage> getCostList();
 
     /**
      * Start the research.
@@ -76,10 +83,10 @@ public interface IGlobalResearch
 
     /**
      * Check if this research is an only child research.
-     * This means, after being researched no other childs can e researched.
+     * This means, after researching one child no other childs can e researched.
      * @return true if so.
      */
-    boolean isOnlyChild();
+    boolean hasOnlyChild();
 
     /**
      * Set if a research should only allow one child.

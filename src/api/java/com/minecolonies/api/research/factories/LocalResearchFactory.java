@@ -19,7 +19,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<ILocalResearch> getFactoryOutputType()
+    public TypeToken<LocalResearch> getFactoryOutputType()
     {
         return TypeConstants.LOCAL_RESEARCH;
     }
@@ -40,12 +40,15 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ILocalResearch effect)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ILocalResearch research)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putInt(TAG_STATE, effect.getState().ordinal());
-        compound.putString(TAG_ID, effect.getId());
-        compound.putInt(TAG_PROGRESS, effect.getProgress());
+        compound.putInt(TAG_STATE, research.getState().ordinal());
+        compound.putString(TAG_ID, research.getId());
+        compound.putString(TAG_BRANCH, research.getBranch());
+        compound.putInt(TAG_PROGRESS, research.getProgress());
+        compound.putInt(TAG_DEPTH, research.getProgress());
+
         return compound;
     }
 
@@ -62,8 +65,6 @@ public class LocalResearchFactory implements ILocalResearchFactory
         final ILocalResearch research = getNewInstance(id, branch, depth);
         research.setState(ResearchState.values()[state]);
         research.setProgress(progress);
-
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> GlobalResearchTree.researchTree.getResearch(branch, compound.getString(TAG_CHILD)));
         return research;
     }
 }
