@@ -70,13 +70,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, button.getID());
-        if (research != null && building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size())
+        if (research != null && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size())
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
-            final List<String> researchList = GlobalResearchTree.researchTree.getPrimaryResearch(branch);
-            final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
-
-            drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true);
+            close();
         }
 
         if (button.getID().equals("cancel"))
@@ -136,7 +133,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //Calculates how much percent of the next level has been completed.
-                final double progressRatio = (localResearch.getProgress()+1)/(research.getDepth() * (double) BASE_RESEARCH_TIME);
+                final double progressRatio = (localResearch.getProgress()+1)/(research.getDepth() * (double) BASE_RESEARCH_TIME) * 100;
 
                 @NotNull final Image xpBar = new Image();
                 xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
@@ -157,7 +154,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     view.addChild(xpBarFull);
                 }
             }
-            else if (research.getResearchRequirement() != null)
+            else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
             {
                 final Label requirementLabel = new Label();
                 requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());

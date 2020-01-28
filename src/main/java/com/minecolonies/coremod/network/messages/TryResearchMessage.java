@@ -121,6 +121,11 @@ public class TryResearchMessage implements IMessage
             final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, researchId);
             if (research.canResearch(uni.getBuildingLevel(), colony.getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
+                if (!research.getResearchRequirement().isFulfilled(colony))
+                {
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"));
+                    return;
+                }
                 for (final ItemStorage cost : research.getCostList())
                 {
                     InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
