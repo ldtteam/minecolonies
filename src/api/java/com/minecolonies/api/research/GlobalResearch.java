@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * The implementation of the IResearch interface which represents one type of research.
+ * The implementation of the IGlobalResearch interface which represents the research on the global level.
  */
 public class GlobalResearch implements IGlobalResearch
 {

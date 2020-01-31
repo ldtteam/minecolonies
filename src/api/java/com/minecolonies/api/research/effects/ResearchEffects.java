@@ -62,8 +62,8 @@ public class ResearchEffects
     {
         @NotNull final ListNBT citizenTagList = effectMap.values().stream().map(effect -> {
             final CompoundNBT compoundNBT = new CompoundNBT();
-            compound.putString(TAG_ID, effect.getResearchId());
-            compound.putString(TAG_BRANCH, effect.getResearchBranch());
+            compoundNBT.putString(TAG_ID, effect.getResearchId());
+            compoundNBT.putString(TAG_BRANCH, effect.getResearchBranch());
             return compoundNBT;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_RESEARCH_EFFECTS, citizenTagList);
@@ -77,8 +77,8 @@ public class ResearchEffects
     {
         effectMap.putAll(NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_EFFECTS, Constants.NBT.TAG_COMPOUND))
                               .map(researchCompound -> {
-                                  final String researchId = compound.getString(TAG_ID);
-                                  final String branch = compound.getString(TAG_BRANCH);
+                                  final String researchId = researchCompound.getString(TAG_ID);
+                                  final String branch = researchCompound.getString(TAG_BRANCH);
                                   return GlobalResearchTree.researchTree.getResearch(branch, researchId).getEffect();
                               })
                            .filter(Objects::nonNull)

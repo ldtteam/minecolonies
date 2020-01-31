@@ -19,6 +19,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
+
 /**
  * Message for the research execution.
  */
@@ -124,13 +126,22 @@ public class TryResearchMessage implements IMessage
                     player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"));
                     return;
                 }
-                for (final ItemStorage cost : research.getCostList())
-                {
-                    InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
-                }
 
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started"));
-                research.startResearch(player, colony.getResearchTree());
+                if (player.isCreative())
+                {
+                    research.startResearch(player, colony.getResearchTree());
+                    colony.getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth()-1)));
+                }
+                else
+                {
+                    for (final ItemStorage cost : research.getCostList())
+                    {
+                        InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
+                    }
+
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started"));
+                    research.startResearch(player, colony.getResearchTree());
+                }
                 colony.markDirty();
                 // Remove items from player
             }
