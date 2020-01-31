@@ -1277,5 +1277,6 @@
   "com.minecolonies.coremod.research.effect.unlock": "Unlocks %s",
   "com.minecolonies.coremod.research.research": "Research",
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",
-  "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!"
+  "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
+  "com.minecolonies.coremod.research.started": "Research successfully started!"
 }

@@ -257,7 +257,7 @@ public class CommonConfiguration extends AbstractConfiguration
         townHallPadding = defineInteger(builder, "townhallpadding", 20, 1, 20000);
         townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 1, 1, 200);
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
-        enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", false);
+        enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", true);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
         protectVillages = defineBoolean(builder, "protectvillages", false);

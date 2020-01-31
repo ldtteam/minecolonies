@@ -2,10 +2,12 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.DragView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
@@ -55,7 +57,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final List<String> researchList = GlobalResearchTree.researchTree.getPrimaryResearch(branch);
         final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
 
-        drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true);
+        drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true, false, 0);
 
         //todo add how long research will need (3h, 6h, 9h, 12h, 24h, 48h) (above each column)
 
@@ -70,7 +72,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, button.getID());
-        if (research != null && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size())
+        if (research != null && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
             close();
@@ -91,15 +93,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param researchList the list of research to go through.
      * @param tree the local tree of the colony.
      * @param parentResearched if possibly can be researched.
+     * @param abandoned if abandoned child.
      * @return the next y offset.
      */
-    public int drawTree(final int height, final int depth, final DragView view, final List<String> researchList, final LocalResearchTree tree, final boolean parentResearched)
+    public int drawTree(final int height, final int depth, final DragView view, final List<String> researchList, final LocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
     {
         int nextHeight = height;
         for (int i = 0; i < researchList.size(); i++)
         {
             final String researchLabel = researchList.get(i);
-            int offsetX = (depth * (175 + 20));
+            int offsetX = (depth * (175 + 40));
 
             final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, researchLabel);
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
@@ -107,27 +110,42 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final Gradient gradient = new Gradient();
             gradient.setSize(175, 50);
-            gradient.setPosition(x + offsetX + 10, (nextHeight + i) * (50 + 20) + 20);
-            if ( state == ResearchState.IN_PROGRESS )
+            gradient.setPosition(x + offsetX + 10, (nextHeight + Math.min(i, 1)) * (50 + 20) + 20);
+            if (state == ResearchState.IN_PROGRESS)
             {
-                gradient.setGradientStart(255, 204, 0, 150);
-                gradient.setGradientEnd(255, 204, 0, 200);
+                gradient.setGradientStart(227, 249, 184, 255);
+                gradient.setGradientEnd(227, 249, 184, 255);
+                view.addChild(gradient);
             }
-            else if ( state == ResearchState.FINISHED )
+            else if (!parentResearched)
             {
-                gradient.setGradientStart(51, 204, 51, 150);
-                gradient.setGradientEnd(51, 204, 51, 200);
+                gradient.setGradientStart(239, 230, 215, 255);
+                gradient.setGradientEnd(239, 230, 215, 255);
+                view.addChild(gradient);
             }
-            else
+            else if (abandoned)
             {
-                gradient.setGradientStart(102, 204, 255, 150);
-                gradient.setGradientEnd(102, 204, 255, 200);
+                gradient.setGradientStart(191, 184, 172, 255);
+                gradient.setGradientEnd(191, 184, 172, 255);
+                view.addChild(gradient);
             }
-            view.addChild(gradient);
+            else if (state != ResearchState.FINISHED)
+            {
+                gradient.setGradientStart(102, 204, 255, 255);
+                gradient.setGradientEnd(102, 204, 255, 255);
+                view.addChild(gradient);
+            }
+
+            final Box box = new Box();
+            box.setColor(218, 202, 171);
+            box.setSize(175, 50);
+            box.setPosition(gradient.getX(), gradient.getY());
+            view.addChild(box);
 
             final Label nameLabel = new Label();
             nameLabel.setLabelText(research.getDesc());
-            nameLabel.setPosition(x + offsetX + 10 + 50, (nextHeight + i) * (50 + 20) + 5 + 20 + 5);
+            nameLabel.setPosition(x + offsetX + 10 + 50, (nextHeight + Math.min(i, 1)) * (50 + 20) + 5 + 20 + 5);
+            nameLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
             view.addChild(nameLabel);
 
             if (state == ResearchState.IN_PROGRESS)
@@ -159,15 +177,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 final Label requirementLabel = new Label();
                 requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());
                 requirementLabel.setPosition(offsetX + 10 + 5, nameLabel.getY() + nameLabel.getHeight() + 10);
+                requirementLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
+
                 view.addChild(requirementLabel);
             }
 
             final Label effectLabel = new Label();
             effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
             effectLabel.setPosition(offsetX + 10 + 5, nameLabel.getY() + nameLabel.getHeight() * 2 + 10 + 10);
+            effectLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
+
             view.addChild(effectLabel);
 
-            if ( parentResearched && state == ResearchState.NOT_STARTED)
+            if ( parentResearched && state == ResearchState.NOT_STARTED && !abandoned )
             {
                 final ButtonImage buttonImage = new ButtonImage();
                 buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -177,7 +199,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + 10);
                 buttonImage.setID(research.getId());
 
-                //todo add restriction for OR from here too.
                 if (building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
@@ -199,48 +220,110 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     storageOffset += 20;
                 }
             }
-
-            if (!research.getChilds().isEmpty())
+            else if (!parentResearched)
             {
-                final Image image = new Image();
-                image.setImage(new ResourceLocation(Constants.MOD_ID, BUTTON_RIGHT_ARROW));
-                image.setSize(20, 6);
-                image.setPosition(gradient.getX() + gradient.getWidth(), gradient.getY() + gradient.getHeight()/2);
-                view.addChild(image);
+                final Image lockIcon = new Image();
+                lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon.png"));
+                lockIcon.setSize(15, 17);
+                lockIcon.setPosition( effectLabel.getX() + BUTTON_LENGTH, effectLabel.getY() + effectLabel.getHeight() + 10);
+                view.addChild(lockIcon);
+            }
 
-                for (int x = 1; x < research.getChilds().size(); x++)
+            final boolean firstSibling = i == 0;
+            final boolean secondSibling = i == 1;
+
+            final boolean lastSibling = i+1 >= researchList.size();
+
+            if (!research.getParent().isEmpty())
+            {
+                if (firstSibling && lastSibling)
                 {
-                    if (research.hasOnlyChild())
+                    final Image corner = new Image();
+                    corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right.png"));
+                    corner.setSize(40, 50);
+                    corner.setPosition(gradient.getX() - 40, gradient.getY());
+                    view.addChild(corner);
+                }
+                else
+                {
+                    if (secondSibling)
                     {
-                        final Image circle = new Image();
-                        circle.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/circle.png"));
-                        circle.setSize(23, 24);
-                        circle.setPosition(gradient.getX() + gradient.getWidth() / 2 - circle.getWidth()/2, gradient.getY() + x * (gradient.getHeight() + 20) -10);
-                        view.addChild(circle);
+                        for (int dif = 1; dif < (nextHeight + Math.min(i, 1)) - parentHeight; dif++)
+                        {
+                            final Image corner = new Image();
+                            corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_down.png"));
+                            corner.setSize(40, 70);
+                            corner.setPosition(gradient.getX() - 40, (dif) * (gradient.getHeight() + 20) + 20);
+                            view.addChild(corner);
+                        }
+                    }
 
-                        final Label orLabel = new Label();
-                        orLabel.setColor(Color.getByName("black", 0));
-                        orLabel.setLabelText("or");
-                        orLabel.setPosition(gradient.getX() + gradient.getWidth() / 2 - circle.getWidth()/2 + 5, gradient.getY() + x * (gradient.getHeight() + 20) + 2);
-                        view.addChild(orLabel);
-
+                    if (firstSibling)
+                    {
                         final Image corner = new Image();
-                        corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_sketch_arrow_corner_right_a.png"));
-                        corner.setSize(16, 20);
-                        corner.setPosition(gradient.getX() + gradient.getWidth() / 2, gradient.getY() + x * (gradient.getHeight() + 20) + 15);
+                        corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_down.png"));
+                        corner.setSize(40, 70);
+                        corner.setPosition(gradient.getX() - 40, gradient.getY());
                         view.addChild(corner);
                     }
                     else
                     {
-                        final Image corner = new Image();
-                        corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_sketch_arrow_corner_right_a.png"));
-                        corner.setSize(16, 20);
-                        corner.setPosition(gradient.getX() + gradient.getWidth() / 2, gradient.getY() + x * (gradient.getHeight() + 20) + 5);
-                        view.addChild(corner);
+                        if (GlobalResearchTree.researchTree.getResearch(branch, research.getParent()).hasOnlyChild())
+                        {
+                            final Label orLabel = new Label();
+                            orLabel.setColor(Color.getByName("black", 0));
+                            orLabel.setLabelText("or");
+                            orLabel.setPosition(gradient.getX() - 40 + 14, gradient.getY() + 10);
+                            view.addChild(orLabel);
+
+                            if (lastSibling)
+                            {
+                                final Image circle = new Image();
+                                circle.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_or.png"));
+                                circle.setSize(40, 50);
+                                circle.setPosition(gradient.getX() - 40, gradient.getY());
+                                view.addChild(circle);
+                            }
+                            else
+                            {
+                                final Image corner = new Image();
+                                corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_or_down.png"));
+                                corner.setSize(40, 70);
+                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                view.addChild(corner);
+                            }
+                        }
+                        else
+                        {
+                            if (lastSibling)
+                            {
+                                final Image corner = new Image();
+                                corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and.png"));
+                                corner.setSize(40, 50);
+                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                view.addChild(corner);
+                            }
+                            else
+                            {
+                                final Image corner = new Image();
+                                corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and_more.png"));
+                                corner.setSize(40, 70);
+                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                view.addChild(corner);
+                            }
+                        }
                     }
                 }
 
-                nextHeight = drawTree(nextHeight + i, depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED);
+            }
+
+            if (!research.getChilds().isEmpty())
+            {
+                nextHeight = drawTree(nextHeight + Math.min(i, 1), depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED, research.hasOnlyChild() && research.hasResearchedChild(tree), (nextHeight + Math.min(i, 1)));
+            }
+            else
+            {
+                nextHeight += Math.min(i, 1);
             }
         }
 

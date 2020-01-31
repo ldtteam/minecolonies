@@ -214,7 +214,7 @@ public class GlobalResearch implements IGlobalResearch
         {
             final IGlobalResearch childResearch = GlobalResearchTree.researchTree.getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
-            if (localResearch == null)
+            if (localResearch != null)
             {
                 return true;
             }

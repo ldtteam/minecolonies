@@ -131,6 +131,7 @@ public class TryResearchMessage implements IMessage
                     InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
                 }
 
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started"));
                 research.startResearch(player, colony.getResearchTree());
                 colony.markDirty();
                 // Remove items from player
