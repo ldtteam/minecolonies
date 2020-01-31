@@ -4,6 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.interfaces.IGlobalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.interfaces.IResearchEffect;
+import com.minecolonies.api.research.interfaces.IResearchRequirement;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -90,6 +95,7 @@ public class GlobalResearch implements IGlobalResearch
         this.effect = effect;
         this.depth = depth;
         this.branch = branch;
+        this.effect.setParent(id, branch);
     }
 
     @Override
@@ -99,7 +105,7 @@ public class GlobalResearch implements IGlobalResearch
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED) && ( parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild());
+        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED) && ( parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6 || !localTree.branchAlreadyResearchedLevelSix(branch));
     }
 
     @Override

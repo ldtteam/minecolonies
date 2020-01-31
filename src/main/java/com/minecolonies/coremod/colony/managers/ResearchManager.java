@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.ResearchEffects;
+import com.minecolonies.api.research.effects.ResearchEffects;
 import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;

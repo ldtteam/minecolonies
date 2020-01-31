@@ -1,6 +1,7 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.effects;
 
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.GlobalResearchTree;
+import com.minecolonies.api.research.interfaces.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,9 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.ResearchConstants.TAG_RESEARCH_EFFECTS;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
  * The map of unlocked research effects of a given colony.
@@ -58,7 +60,12 @@ public class ResearchEffects
      */
     public void writeToNBT(final CompoundNBT compound)
     {
-        @NotNull final ListNBT citizenTagList = effectMap.values().stream().map(effect -> StandardFactoryController.getInstance().serialize(effect)).collect(NBTUtils.toListNBT());
+        @NotNull final ListNBT citizenTagList = effectMap.values().stream().map(effect -> {
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            compound.putString(TAG_ID, effect.getResearchId());
+            compound.putString(TAG_BRANCH, effect.getResearchBranch());
+            return compoundNBT;
+        }).collect(NBTUtils.toListNBT());
         compound.put(TAG_RESEARCH_EFFECTS, citizenTagList);
     }
 
@@ -69,7 +76,12 @@ public class ResearchEffects
     public void readFromNBT(final CompoundNBT compound)
     {
         effectMap.putAll(NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_EFFECTS, Constants.NBT.TAG_COMPOUND))
-                              .map(researchCompound -> (IResearchEffect) StandardFactoryController.getInstance().deserialize(researchCompound))
-                              .collect(Collectors.toMap(IResearchEffect::getId, iEffect -> iEffect)));
+                              .map(researchCompound -> {
+                                  final String researchId = compound.getString(TAG_ID);
+                                  final String branch = compound.getString(TAG_BRANCH);
+                                  return GlobalResearchTree.researchTree.getResearch(branch, researchId).getEffect();
+                              })
+                           .filter(Objects::nonNull)
+                           .collect(Collectors.toMap(IResearchEffect::getId, iEffect -> iEffect)));
     }
 }

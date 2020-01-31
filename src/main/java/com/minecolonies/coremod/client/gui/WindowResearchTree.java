@@ -7,7 +7,9 @@ import com.ldtteam.blockout.views.DragView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.research.interfaces.IGlobalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.research.ResearchConstants.BASE_RESEARCH_TIME;
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -59,7 +61,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true, false, 0);
 
-        //todo add how long research will need (3h, 6h, 9h, 12h, 24h, 48h) (above each column)
+        for (int i = 1; i <= 6; i++)
+        {
+            final Label timeLabel = new Label();
+            timeLabel.setLabelText(Math.pow(2, i-1) + "h");
+            timeLabel.setPosition((i-1) * (175 + 40) + 175/2, 10);
+            timeLabel.setColor(Color.rgbaToInt(218, 202, 171, 255));
+            view.addChild(timeLabel);
+        }
 
         //todo integrate the research effects
 
@@ -151,7 +160,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //Calculates how much percent of the next level has been completed.
-                final double progressRatio = (localResearch.getProgress()+1)/(research.getDepth() * (double) BASE_RESEARCH_TIME) * 100;
+                final double progressRatio = (localResearch.getProgress()+1)/(Math.pow(2, depth-1) * (double) BASE_RESEARCH_TIME) * 100;
 
                 @NotNull final Image xpBar = new Image();
                 xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);

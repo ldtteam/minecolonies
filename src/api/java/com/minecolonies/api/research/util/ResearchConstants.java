@@ -1,4 +1,4 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.util;
 
 /**
  * Class for research constants.
@@ -28,7 +28,7 @@ public final class ResearchConstants
     /**
      * Base research time, default to 3h playtime.
      */
-    public static final int BASE_RESEARCH_TIME = 60 * 60 * 3 / 25;
+    public static final int BASE_RESEARCH_TIME = 60 * 60 / 25;
 
     /**
      * Constants to write the research to NBT.

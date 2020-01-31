@@ -1,6 +1,10 @@
 package com.minecolonies.api.research;
 
-import static com.minecolonies.api.research.ResearchConstants.BASE_RESEARCH_TIME;
+import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.util.ResearchState;
+
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 
 /**
  * The implementation of the ILocalResearch interface which represents one type of research, stored in each colony.
@@ -51,7 +55,7 @@ public class LocalResearch implements ILocalResearch
         if (state == ResearchState.IN_PROGRESS)
         {
             progress++;
-            if (progress >= BASE_RESEARCH_TIME * depth)
+            if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth-1))
             {
                 state = ResearchState.FINISHED;
                 effects.applyEffect(GlobalResearchTree.researchTree.getResearch(this.branch, this.getId()).getEffect());

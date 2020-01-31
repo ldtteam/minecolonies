@@ -4,7 +4,6 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.research.GlobalResearchTree;
-import com.minecolonies.api.research.LocalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.util.ResourceLocation;
@@ -26,10 +25,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
      */
     private final List<String> branches = new ArrayList<>();
 
-    /**
-     * The local tree.
-     */
-    private final LocalResearchTree localTree;
 
     /**
      * Constructor for the window of the lumberjack.
@@ -55,8 +50,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
             offset += button.getHeight() + BUTTON_PADDING;
         }
-
-        localTree = building.getColony().getResearchTree();
     }
 
     @Override

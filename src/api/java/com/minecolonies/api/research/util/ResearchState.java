@@ -1,4 +1,4 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.util;
 
 /**
  * Class which defines the possible states of a research.s

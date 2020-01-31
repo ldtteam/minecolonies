@@ -21,7 +21,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.ResearchEffects;
+import com.minecolonies.api.research.effects.ResearchEffects;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;

@@ -1,17 +1,12 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.effects;
 
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
  * The unlock research effect, it returns true if unlocked and else false.
  */
-public class UnlockResearchEffect implements IResearchEffect<Boolean>
+public class UnlockResearchEffect extends AbstractResearchEffect<Boolean>
 {
-    /**
-     * The String id of the research effect.
-     */
-    private final String id;
-
     /**
      * Whether the effect has been unlocked or not.
      */
@@ -24,7 +19,7 @@ public class UnlockResearchEffect implements IResearchEffect<Boolean>
      */
     public UnlockResearchEffect(final String id, final boolean unlocked)
     {
-        this.id = id;
+        super(id);
         this.unlocked = unlocked;
     }
 
@@ -41,14 +36,8 @@ public class UnlockResearchEffect implements IResearchEffect<Boolean>
     }
 
     @Override
-    public String getId()
-    {
-        return this.id;
-    }
-
-    @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.unlock", id);
+        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.unlock", this.getId());
     }
 }

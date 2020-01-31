@@ -1,6 +1,7 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.interfaces.IGlobalResearch;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.ResearchConstants.TAG_RESEARCH_TREE;
+import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_TREE;
 
 /**
  * The class which contains all research.

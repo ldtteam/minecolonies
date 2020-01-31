@@ -2,16 +2,17 @@ package com.minecolonies.api.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.research.ResearchConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
  * The class which contains all research.
@@ -27,6 +28,11 @@ public class LocalResearchTree
      * All research in progress.
      */
     private final Map<String, ILocalResearch> inProgress = new HashMap<>();
+
+    /**
+     * Map containing all branches for which the level 6 research has been occupied already.
+     */
+    private final Map<String, Boolean> levelSixResearchReached = new HashMap<>();
 
     /**
      * Get a research by id.
@@ -65,6 +71,21 @@ public class LocalResearchTree
         {
             inProgress.put(research.getId(), research);
         }
+
+        if (research.getDepth() == 6)
+        {
+            levelSixResearchReached.put(research.getBranch(), true);
+        }
+    }
+
+    /**
+     * Check if a branch already researched a level 6 research.
+     * @param branch the branch to check.
+     * @return true if so.
+     */
+    public boolean branchAlreadyResearchedLevelSix(final String branch)
+    {
+        return levelSixResearchReached.getOrDefault(branch, false);
     }
 
     /**

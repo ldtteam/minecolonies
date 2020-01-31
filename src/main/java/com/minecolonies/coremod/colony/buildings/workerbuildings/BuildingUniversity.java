@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.research.effects.UnlockResearchEffect;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
@@ -18,10 +19,12 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -94,6 +97,18 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         super.onDestroyed();
+    }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockResearchEffect effect = colony.getResearchEffects().getEffect("Barracks", UnlockResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            return;
+        }
+        super.requestUpgrade(player, builder);
     }
 
     @Override

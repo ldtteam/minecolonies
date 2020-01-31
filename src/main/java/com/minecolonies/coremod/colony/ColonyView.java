@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.ResearchEffects;
+import com.minecolonies.api.research.effects.ResearchEffects;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;

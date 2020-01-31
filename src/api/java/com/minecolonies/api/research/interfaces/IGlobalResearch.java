@@ -1,6 +1,7 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.interfaces;
 
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.LocalResearchTree;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;

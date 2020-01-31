@@ -14,6 +14,8 @@ import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.effects.ModifierResearchEffect;
+import com.minecolonies.api.research.effects.UnlockResearchEffect;
 
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ public class TypeConstants
     public static final TypeToken<ItemStorage>            ITEMSTORAGE        = TypeToken.of(ItemStorage.class);
     public static final TypeToken<UnlockResearchEffect>   UNLOCK_RESEARCH_EF = TypeToken.of(UnlockResearchEffect.class);
     public static final TypeToken<ModifierResearchEffect> MOD_RESEARCH_EF    = TypeToken.of(ModifierResearchEffect.class);
-    public static final TypeToken<GlobalResearch>        GLOBAL_RESEARCH     = TypeToken.of(GlobalResearch.class);
+    public static final TypeToken<GlobalResearch>         GLOBAL_RESEARCH    = TypeToken.of(GlobalResearch.class);
     public static final TypeToken<LocalResearch>         LOCAL_RESEARCH      = TypeToken.of(LocalResearch.class);
 
     /////Request system specific

@@ -4,13 +4,13 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.ResearchConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.

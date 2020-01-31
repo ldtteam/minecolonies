@@ -1,4 +1,8 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.interfaces;
+
+import com.minecolonies.api.research.LocalResearchTree;
+import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.util.ResearchState;
 
 /**
  * Interface defining how a local research at a colony is.

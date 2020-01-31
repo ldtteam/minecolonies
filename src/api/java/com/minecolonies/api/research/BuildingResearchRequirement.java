@@ -1,6 +1,7 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.research.interfaces.IResearchRequirement;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
