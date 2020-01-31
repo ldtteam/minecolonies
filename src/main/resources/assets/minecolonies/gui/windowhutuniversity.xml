@@ -6,8 +6,9 @@
         	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
         <view id="pageBranches" size="100% 100%">
-            <label id="title" size="100% 11" pos="0 20" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.research.title)"/>
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label id="title" size="130 11" pos="30 13" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.research.title)"/>
+
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
