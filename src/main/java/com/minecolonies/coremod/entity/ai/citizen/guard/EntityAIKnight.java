@@ -111,8 +111,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
      */
     protected IAIState attackProtect()
     {
-        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
-          Items.SHIELD);
+        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
 
         if (target != null && target.isAlive())
         {

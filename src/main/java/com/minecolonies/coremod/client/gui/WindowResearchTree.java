@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -31,16 +31,19 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowResearchTree extends AbstractWindowSkeleton
 {
-    private static final int LABEL_OFFSET_X = 10;
-    private static final int LABEL_OFFSET_Y = 5;
-    private static final int Y_PADDING    = 20;
-    private static final String DRAG_VIEW_ID = "dragView";
-
+    /**
+     * The branch of this research.
+     */
     private final String branch;
 
+    /**
+     * The university building.
+     */
     private final BuildingUniversity.View  building;
 
-
+    /**
+     * The previous window.
+     */
     private final WindowHutUniversity last;
 
     /**
@@ -61,18 +64,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true, false, 0);
 
-        for (int i = 1; i <= 6; i++)
+        for (int i = 1; i <= MAX_DEPTH; i++)
         {
             final Label timeLabel = new Label();
             timeLabel.setLabelText(Math.pow(2, i-1) + "h");
-            timeLabel.setPosition((i-1) * (175 + 40) + 175/2, 10);
+            timeLabel.setPosition((i-1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2, TIMELABEL_Y_POSITION);
             timeLabel.setColor(Color.rgbaToInt(218, 202, 171, 255));
             view.addChild(timeLabel);
         }
-
-        //todo integrate the research effects
-
-        //todo final cleanup
     }
 
     @Override
@@ -111,15 +110,15 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         for (int i = 0; i < researchList.size(); i++)
         {
             final String researchLabel = researchList.get(i);
-            int offsetX = (depth * (175 + 40));
+            int offsetX = (depth * (GRADIENT_WIDTH + X_SPACING));
 
             final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, researchLabel);
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
             final ResearchState state = localResearch == null ? ResearchState.NOT_STARTED : localResearch.getState();
 
             final Gradient gradient = new Gradient();
-            gradient.setSize(175, 50);
-            gradient.setPosition(x + offsetX + 10, (nextHeight + Math.min(i, 1)) * (50 + 20) + 20);
+            gradient.setSize(GRADIENT_WIDTH, GRADIENT_HEIGHT);
+            gradient.setPosition(offsetX + INITIAL_X_OFFSET, (nextHeight + Math.min(i, 1)) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING);
             if (state == ResearchState.IN_PROGRESS)
             {
                 gradient.setGradientStart(227, 249, 184, 255);
@@ -147,13 +146,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final Box box = new Box();
             box.setColor(218, 202, 171);
-            box.setSize(175, 50);
+            box.setSize(GRADIENT_WIDTH, GRADIENT_HEIGHT);
             box.setPosition(gradient.getX(), gradient.getY());
             view.addChild(box);
 
             final Label nameLabel = new Label();
             nameLabel.setLabelText(research.getDesc());
-            nameLabel.setPosition(x + offsetX + 10 + 50, (nextHeight + Math.min(i, 1)) * (50 + 20) + 5 + 20 + 5);
+            nameLabel.setPosition(offsetX + INITIAL_X_OFFSET + NAME_OFFSET, (nextHeight + Math.min(i, 1)) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + INITIAL_Y_OFFSET);
             nameLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
             view.addChild(nameLabel);
 
@@ -164,11 +163,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
                 @NotNull final Image xpBar = new Image();
                 xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
-                xpBar.setPosition(offsetX + 40 + 5, nameLabel.getY() + nameLabel.getHeight() + 30);
+                xpBar.setPosition(offsetX + X_SPACING + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + XPBAR_Y_OFFSET);
 
                 @NotNull final Image xpBar2 = new Image();
                 xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
-                xpBar2.setPosition(90 + offsetX + 40 + 5, nameLabel.getY() + nameLabel.getHeight() + 30);
+                xpBar2.setPosition(XPBAR_LENGTH + offsetX + X_SPACING + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + XPBAR_Y_OFFSET);
 
                 view.addChild(xpBar);
                 view.addChild(xpBar2);
@@ -177,7 +176,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     @NotNull final Image xpBarFull = new Image();
                     xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) progressRatio, XP_HEIGHT, false);
-                    xpBarFull.setPosition(offsetX + 40 + 5, nameLabel.getY() + nameLabel.getHeight() + 30);
+                    xpBarFull.setPosition(offsetX + X_SPACING + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + XPBAR_Y_OFFSET);
                     view.addChild(xpBarFull);
                 }
             }
@@ -185,7 +184,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 final Label requirementLabel = new Label();
                 requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());
-                requirementLabel.setPosition(offsetX + 10 + 5, nameLabel.getY() + nameLabel.getHeight() + 10);
+                requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
                 requirementLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
 
                 view.addChild(requirementLabel);
@@ -193,7 +192,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final Label effectLabel = new Label();
             effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
-            effectLabel.setPosition(offsetX + 10 + 5, nameLabel.getY() + nameLabel.getHeight() * 2 + 10 + 10);
+            effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET);
             effectLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
 
             view.addChild(effectLabel);
@@ -205,7 +204,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research"));
                 buttonImage.setTextColor(Color.getByName("black", 0));
                 buttonImage.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-                buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + 10);
+                buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
                 buttonImage.setID(research.getId());
 
                 if (building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
@@ -222,19 +221,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     stack.setCount(storage.getAmount());
                     final ItemIcon icon = new ItemIcon();
                     icon.setItem(stack);
-                    icon.setPosition(buttonImage.getX() + buttonImage.getWidth() + storageOffset, effectLabel.getY() + effectLabel.getHeight() + 10);
-                    icon.setSize(16, 16);
+                    icon.setPosition(buttonImage.getX() + buttonImage.getWidth() + storageOffset, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
+                    icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                     view.addChild(icon);
 
-                    storageOffset += 20;
+                    storageOffset += COST_OFFSET;
                 }
             }
             else if (!parentResearched)
             {
                 final Image lockIcon = new Image();
                 lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon.png"));
-                lockIcon.setSize(15, 17);
-                lockIcon.setPosition( effectLabel.getX() + BUTTON_LENGTH, effectLabel.getY() + effectLabel.getHeight() + 10);
+                lockIcon.setSize(LOCK_WIDTH, LOCK_HEIGHT);
+                lockIcon.setPosition( effectLabel.getX() + BUTTON_LENGTH, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
                 view.addChild(lockIcon);
             }
 
@@ -249,8 +248,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     final Image corner = new Image();
                     corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right.png"));
-                    corner.setSize(40, 50);
-                    corner.setPosition(gradient.getX() - 40, gradient.getY());
+                    corner.setSize(X_SPACING, GRADIENT_HEIGHT);
+                    corner.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                     view.addChild(corner);
                 }
                 else
@@ -261,8 +260,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                         {
                             final Image corner = new Image();
                             corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_down.png"));
-                            corner.setSize(40, 70);
-                            corner.setPosition(gradient.getX() - 40, (dif) * (gradient.getHeight() + 20) + 20);
+                            corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
+                            corner.setPosition(gradient.getX() - X_SPACING, (dif) * (gradient.getHeight() + Y_SPACING) + Y_SPACING);
                             view.addChild(corner);
                         }
                     }
@@ -271,8 +270,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     {
                         final Image corner = new Image();
                         corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_down.png"));
-                        corner.setSize(40, 70);
-                        corner.setPosition(gradient.getX() - 40, gradient.getY());
+                        corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
+                        corner.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                         view.addChild(corner);
                     }
                     else
@@ -282,23 +281,23 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             final Label orLabel = new Label();
                             orLabel.setColor(Color.getByName("black", 0));
                             orLabel.setLabelText("or");
-                            orLabel.setPosition(gradient.getX() - 40 + 14, gradient.getY() + 10);
+                            orLabel.setPosition(gradient.getX() - X_SPACING + OR_X_OFFSET, gradient.getY() + OR_Y_OFFSET);
                             view.addChild(orLabel);
 
                             if (lastSibling)
                             {
                                 final Image circle = new Image();
                                 circle.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_or.png"));
-                                circle.setSize(40, 50);
-                                circle.setPosition(gradient.getX() - 40, gradient.getY());
+                                circle.setSize(X_SPACING, GRADIENT_HEIGHT);
+                                circle.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                                 view.addChild(circle);
                             }
                             else
                             {
                                 final Image corner = new Image();
                                 corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_or_down.png"));
-                                corner.setSize(40, 70);
-                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
+                                corner.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                                 view.addChild(corner);
                             }
                         }
@@ -308,16 +307,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             {
                                 final Image corner = new Image();
                                 corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and.png"));
-                                corner.setSize(40, 50);
-                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                corner.setSize(X_SPACING, GRADIENT_HEIGHT);
+                                corner.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                                 view.addChild(corner);
                             }
                             else
                             {
                                 final Image corner = new Image();
                                 corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and_more.png"));
-                                corner.setSize(40, 70);
-                                corner.setPosition(gradient.getX() - 40, gradient.getY());
+                                corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
+                                corner.setPosition(gradient.getX() - X_SPACING, gradient.getY());
                                 view.addChild(corner);
                             }
                         }
