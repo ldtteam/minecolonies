@@ -71,6 +71,10 @@ public class LocalResearchTree
         {
             inProgress.put(research.getId(), research);
         }
+        else if (research.getState() == ResearchState.FINISHED)
+        {
+            inProgress.remove(research.getId());
+        }
 
         if (research.getDepth() == 6)
         {

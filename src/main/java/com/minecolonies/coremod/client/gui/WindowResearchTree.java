@@ -131,7 +131,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 gradient.setGradientEnd(239, 230, 215, 255);
                 view.addChild(gradient);
             }
-            else if (abandoned)
+            else if (abandoned && state != ResearchState.FINISHED)
             {
                 gradient.setGradientStart(191, 184, 172, 255);
                 gradient.setGradientEnd(191, 184, 172, 255);
@@ -159,7 +159,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //Calculates how much percent of the next level has been completed.
-                final double progressRatio = (localResearch.getProgress()+1)/(Math.pow(2, depth-1) * (double) BASE_RESEARCH_TIME) * 100;
+                final double progressRatio = (localResearch.getProgress()+1)/(Math.pow(2, localResearch.getDepth()-1) * (double) BASE_RESEARCH_TIME) * 100;
 
                 @NotNull final Image xpBar = new Image();
                 xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);

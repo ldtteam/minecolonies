@@ -163,7 +163,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public void startResearch(@NotNull final PlayerEntity player, @NotNull final LocalResearchTree localResearchTree)
     {
-        if (localResearchTree.getResearch(this.branch, this.id) == null && hasEnoughResources(new InvWrapper(player.inventory)))
+        if (localResearchTree.getResearch(this.branch, this.id) == null)
         {
             final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
             research.setState(ResearchState.IN_PROGRESS);

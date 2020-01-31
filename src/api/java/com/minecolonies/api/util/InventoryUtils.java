@@ -2106,7 +2106,7 @@ public class InventoryUtils
 
             final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, localCount, false));
 
-            if (removedSize == ItemStackUtils.getSize(workingStack))
+            if (removedSize == count)
             {
                 return;
             }
