@@ -23,12 +23,15 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.research.effects.ModifierResearchEffect;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobKnight;
+import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
@@ -723,6 +726,19 @@ public class EntityCitizen extends AbstractEntityCitizen
             performMoveAway(sourceEntity);
         }
         setLastAttackedEntity(damageSource.getTrueSource());
+
+        if (citizenJobHandler.getColonyJob() instanceof JobKnight)
+        {
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Block Attacks", ModifierResearchEffect.class);
+            if (effect != null)
+            {
+                if (getRandom().nextDouble() < effect.getEffect())
+                {
+                    return false;
+                }
+            }
+        }
+
         final boolean result = super.attackEntityFrom(damageSource, damageInc);
 
         if (damageSource.isMagicDamage() || damageSource.isFireDamage())
@@ -802,6 +818,28 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
         }
         super.damageShield(damage);
+    }
+
+    @Override
+    public int getTotalArmorValue()
+    {
+        if (citizenJobHandler.getColonyJob() instanceof JobKnight)
+        {
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Melee Armour", ModifierResearchEffect.class);
+            if (effect != null)
+            {
+                return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
+            }
+        }
+        else if(citizenJobHandler.getColonyJob() instanceof JobRanger)
+        {
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Archer Armour", ModifierResearchEffect.class);
+            if (effect != null)
+            {
+                return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
+            }
+        }
+        return super.getTotalArmorValue();
     }
 
     @Override

@@ -26,11 +26,9 @@ public class GlobalResearchTree
         final GlobalResearch tacticTraining = new GlobalResearch("tactictraining", "combat", "Tactic Training", 1, new UnlockResearchEffect("Barracks", true));
         tacticTraining.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
 
-        //todo
         final GlobalResearch improvedSwords = new GlobalResearch("improvedswords", "combat", "Improved Swords", 2, new UnlockResearchEffect("Combat Academy", true));
         improvedSwords.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        //todo
         final GlobalResearch squireTraining = new GlobalResearch("squiretraining", "combat", "Squire Training", 3, new ModifierResearchEffect("Block Attacks", 0.05));
         squireTraining.setRequirement(new BuildingResearchRequirement(3, "combatacademy"));
 
@@ -48,11 +46,9 @@ public class GlobalResearchTree
         knightTraining.addChild(captainTraining);
         captainTraining.addChild(captainOfTheGuard);
 
-        //todo
         final GlobalResearch improvedBows = new GlobalResearch("improvedbows", "combat", "Improved Bows", 2, new UnlockResearchEffect("Archery", true));
         improvedBows.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        //todo
         final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Tick Shot", 3, new ModifierResearchEffect("Double Arrows", 0.05));
         tickShot.setRequirement(new BuildingResearchRequirement(3, "archery"));
 
@@ -70,12 +66,10 @@ public class GlobalResearchTree
         multiShot.addChild(rapidShot);
         rapidShot.addChild(masterBowman);
 
-        //todo
         final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockResearchEffect("Shield Usage", true));
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 
-        //todo
         final GlobalResearch parry = new GlobalResearch("parry", "combat", "Parry", 2, new ModifierResearchEffect("Melee Armour", 0.05));
         parry.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
 
@@ -96,7 +90,6 @@ public class GlobalResearchTree
         duelist.addChild(provost);
         provost.addChild(masterSwordsman);
 
-        //todo
         final GlobalResearch dodge = new GlobalResearch("dodge", "combat", "Dodge", 2, new ModifierResearchEffect("Archer Armour", 0.05));
         dodge.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
 
