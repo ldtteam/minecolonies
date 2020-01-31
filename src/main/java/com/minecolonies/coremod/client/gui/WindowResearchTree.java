@@ -192,7 +192,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final Label effectLabel = new Label();
             effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
-            effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET);
+            effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
             effectLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
 
             view.addChild(effectLabel);
