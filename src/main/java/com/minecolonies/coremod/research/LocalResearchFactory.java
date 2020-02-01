@@ -7,6 +7,7 @@ import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.interfaces.ILocalResearch;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.requestsystem.data.StandardDataStoreManager;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,9 +20,9 @@ public class LocalResearchFactory implements ILocalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<ILocalResearch> getFactoryOutputType()
+    public TypeToken<LocalResearch> getFactoryOutputType()
     {
-        return TypeConstants.LOCAL_RESEARCH;
+        return TypeToken.of(LocalResearch.class);
     }
 
     @NotNull

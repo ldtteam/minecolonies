@@ -38,9 +38,7 @@ public class TypeConstants
     public static final TypeToken<IRetryable>             RETRYABLE          = TypeToken.of(IRetryable.class);
     public static final TypeToken<RecipeStorage>          RECIPE             = TypeToken.of(RecipeStorage.class);
     public static final TypeToken<IDeliverable>           DELIVERABLE        = TypeToken.of(IDeliverable.class);
-    public static final TypeToken<ItemStorage>               ITEMSTORAGE     = TypeToken.of(ItemStorage.class);
-    public static final TypeToken<IGlobalResearch> GLOBAL_RESEARCH = TypeToken.of(IGlobalResearch.class);
-    public static final TypeToken<ILocalResearch>  LOCAL_RESEARCH  = TypeToken.of(ILocalResearch.class);
+    public static final TypeToken<ItemStorage>            ITEMSTORAGE     = TypeToken.of(ItemStorage.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>                             PLAYER_REQUEST_RESOLVER                         = TypeToken.of(IPlayerRequestResolver.class);

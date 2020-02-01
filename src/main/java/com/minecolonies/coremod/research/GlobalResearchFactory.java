@@ -24,9 +24,9 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<IGlobalResearch> getFactoryOutputType()
+    public TypeToken<GlobalResearch> getFactoryOutputType()
     {
-        return TypeConstants.GLOBAL_RESEARCH;
+        return TypeToken.of(GlobalResearch.class);
     }
 
     @NotNull
