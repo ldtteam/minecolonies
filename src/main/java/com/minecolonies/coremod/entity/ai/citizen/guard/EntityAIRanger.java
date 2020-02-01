@@ -135,7 +135,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target != null)
         {
-            attackDist += worker.lastTickPosY - target.lastTickPosY;
+            attackDist += worker.posY - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -195,9 +195,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             return START_WORKING;
         }
 
-        final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());
+        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
         final boolean canSee = worker.getEntitySenses().canSee(target);
-        final double sqAttackRange = getRealAttackRange();
+        final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
 
         if (canSee)
         {
@@ -362,6 +362,10 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                     worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.world.addEntity(arrow);
                 }
+
+                arrow.setDamage(damage);
+                worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                worker.world.addEntity(arrow);
 
                 final double xDiff = target.posX - worker.getPosX();
                 final double zDiff = target.posZ - worker.getPosZ();

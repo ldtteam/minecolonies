@@ -18,8 +18,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -290,7 +288,8 @@ public final class EntityUtils
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
         return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.getPosition().add(1, 1, 1), entity.getPosition().add(-1, -1, -1)))
                  .stream()
-                 .anyMatch(ent -> ent.lastTickPosX == entity.lastTickPosX && ent.lastTickPosY == entity.lastTickPosY && ent.lastTickPosZ == entity.lastTickPosZ && ItemStackUtils.getListOfStackForEntity(entity, placer).equals(existingReq));
+                 .anyMatch(ent -> ent.posX == entity.posX && ent.posY == entity.posY && ent.posZ == entity.posZ && ItemStackUtils.getListOfStackForEntity(entity, placer)
+                                                                                                                     .equals(existingReq));
     }
 
     public static boolean isEntityAtPosition(final Entity entity, final World world, final AbstractEntityCitizen entityCitizen)

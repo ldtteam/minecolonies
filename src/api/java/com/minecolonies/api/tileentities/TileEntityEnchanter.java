@@ -50,8 +50,8 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
         PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F), ((float) this.pos.getY() + 0.5F), ((float) this.pos.getZ() + 0.5F), 3.0D, false);
         if (player != null)
         {
-            double playerXPos = player.lastTickPosX - (double) ((float) this.pos.getX() + 0.5F);
-            double playerZPos = player.lastTickPosZ - (double) ((float) this.pos.getZ() + 0.5F);
+            double playerXPos = player.posX - (double) ((float) this.pos.getX() + 0.5F);
+            double playerZPos = player.posZ - (double) ((float) this.pos.getZ() + 0.5F);
             this.tRot = (float) MathHelper.atan2(playerZPos, playerXPos);
             this.bookSpread += 0.1F;
             if (this.bookSpread < 0.5F || rand.nextInt(40) == 0)
