@@ -31,7 +31,6 @@ public final class ResearchConstants
     public static final String TAG_EFFECT     = "effect";
     public static final String TAG_DEPTH      = "depth";
     public static final String TAG_PROGRESS   = "progress";
-    public static final String TAG_COST       = "cost";
     public static final String TAG_CHILDS     = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD = "onlyChild";
     public static final String TAG_CHILD     = "child";
