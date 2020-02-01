@@ -7,7 +7,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -144,9 +147,9 @@ public final class Pathfinding
         matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = n.pos.getX() - entity.lastTickPosX;
-        final double dy = n.pos.getY() - entity.lastTickPosY;
-        final double dz = n.pos.getZ() - entity.lastTickPosZ;
+        final double dx = n.pos.getX() - entity.posX;
+        final double dy = n.pos.getY() - entity.posY;
+        final double dz = n.pos.getZ() - entity.posZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n, matrixStack);

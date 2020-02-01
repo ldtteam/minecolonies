@@ -2,13 +2,12 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -491,7 +490,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.lastTickPosX), MathHelper.floor(entity.lastTickPosY), MathHelper.floor(entity.lastTickPosZ));
+        return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
     }
 
     /**

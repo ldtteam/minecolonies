@@ -118,10 +118,10 @@ public class EntityAIAttackArcher extends Goal
             {
 
                 final ArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
-                arrowEntity.setPosition(entity.lastTickPosX, entity.lastTickPosY + 1, entity.lastTickPosZ);
-                final double xVector = target.lastTickPosX - entity.lastTickPosX;
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.lastTickPosY;
-                final double zVector = target.lastTickPosZ - entity.lastTickPosZ;
+                arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
+                final double xVector = target.posX - entity.posX;
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
+                final double zVector = target.posZ - entity.posZ;
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
 
