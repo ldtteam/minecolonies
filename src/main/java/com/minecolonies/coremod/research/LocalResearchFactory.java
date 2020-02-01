@@ -1,9 +1,9 @@
-package com.minecolonies.api.research.factories;
+package com.minecolonies.coremod.research;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.interfaces.ILocalResearch;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -19,7 +19,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<LocalResearch> getFactoryOutputType()
+    public TypeToken<ILocalResearch> getFactoryOutputType()
     {
         return TypeConstants.LOCAL_RESEARCH;
     }

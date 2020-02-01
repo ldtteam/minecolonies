@@ -1,8 +1,9 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearchTree;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -17,7 +18,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 /**
  * The class which contains all research.
  */
-public class LocalResearchTree
+public class LocalResearchTree implements ILocalResearchTree
 {
     /**
      * The map containing all researches by ID.
@@ -34,12 +35,7 @@ public class LocalResearchTree
      */
     private final Map<String, Boolean> levelSixResearchReached = new HashMap<>();
 
-    /**
-     * Get a research by id.
-     * @param id the id of the research.
-     * @param branch the branch of the research.
-     * @return the IResearch object.
-     */
+    @Override
     public ILocalResearch getResearch(final String branch, final String id)
     {
         if (!researchTree.containsKey(branch))
@@ -49,10 +45,7 @@ public class LocalResearchTree
         return researchTree.get(branch).get(id);
     }
 
-    /**
-     * Add a research to the tree.
-     * @param research the research to add.
-     */
+    @Override
     public void addResearch(final String branch, final ILocalResearch research)
     {
         final Map<String, ILocalResearch> branchMap;
@@ -82,38 +75,25 @@ public class LocalResearchTree
         }
     }
 
-    /**
-     * Check if a branch already researched a level 6 research.
-     * @param branch the branch to check.
-     * @return true if so.
-     */
+    @Override
     public boolean branchAlreadyResearchedLevelSix(final String branch)
     {
         return levelSixResearchReached.getOrDefault(branch, false);
     }
 
-    /**
-     * Get a list of all research in progress.
-     * @return the list.
-     */
+    @Override
     public List<ILocalResearch> getResearchInProgress()
     {
         return ImmutableList.copyOf(inProgress.values());
     }
 
-    /**
-     * Finish a research and remove it from the inProgress list.
-     * @param id the id of the research to remove.
-     */
+    @Override
     public void finishResearch(final String id)
     {
         inProgress.remove(id);
     }
 
-    /**
-     * Write the research tree to NBT.
-     * @param compound the compound.
-     */
+    @Override
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
@@ -121,11 +101,7 @@ public class LocalResearchTree
         compound.put(TAG_RESEARCH_TREE, researchList);
     }
 
-    /**
-     * Read the research tree from NBT.
-     * @param compound the compound to read it from.
-    +
-     */
+    @Override
     public void readFromNBT(final CompoundNBT compound)
     {
         researchTree.clear();

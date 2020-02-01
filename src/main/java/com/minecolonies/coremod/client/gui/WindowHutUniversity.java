@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.View;
-import com.minecolonies.api.research.GlobalResearchTree;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.util.ResourceLocation;
@@ -37,7 +37,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
         final View view = this.findPaneOfTypeByID(BRANCH_VIEW_ID, View.class);
         int offset = 0;
-        for (final String branch: GlobalResearchTree.researchTree.getBranches())
+        for (final String branch: IGlobalResearchTree.getInstance().getBranches())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));

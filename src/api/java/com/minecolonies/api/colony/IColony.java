@@ -7,12 +7,12 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.research.LocalResearchTree;
+import com.minecolonies.api.research.interfaces.ILocalResearchTree;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -265,13 +265,13 @@ public interface IColony
      * Getter for the research tree.
      * @return the colony own research tree.
      */
-    LocalResearchTree getResearchTree();
+    ILocalResearchTree getResearchTree();
 
     /**
      * Get the colonies own research effects.
      * @return the ResearchEffects object.
      */
-    ResearchEffects getResearchEffects();
+    IResearchEffects getResearchEffects();
 
     /**
      * Save the time when mercenaries are used, to set a cooldown.

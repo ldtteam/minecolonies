@@ -6,9 +6,10 @@ import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.DragView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.interfaces.IGlobalResearch;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearchTree;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -59,7 +60,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.building = building;
         this.last = last;
 
-        final List<String> researchList = GlobalResearchTree.researchTree.getPrimaryResearch(branch);
+        final List<String> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
         final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true, false, 0);
@@ -79,7 +80,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         super.onButtonClicked(button);
 
-        final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, button.getID());
+        final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, button.getID());
         if (research != null && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
@@ -104,7 +105,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param abandoned if abandoned child.
      * @return the next y offset.
      */
-    public int drawTree(final int height, final int depth, final DragView view, final List<String> researchList, final LocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
+    public int drawTree(final int height, final int depth, final DragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
     {
         int nextHeight = height;
         for (int i = 0; i < researchList.size(); i++)
@@ -112,7 +113,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final String researchLabel = researchList.get(i);
             int offsetX = (depth * (GRADIENT_WIDTH + X_SPACING));
 
-            final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, researchLabel);
+            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchLabel);
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
             final ResearchState state = localResearch == null ? ResearchState.NOT_STARTED : localResearch.getState();
 
@@ -276,7 +277,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     }
                     else
                     {
-                        if (GlobalResearchTree.researchTree.getResearch(branch, research.getParent()).hasOnlyChild())
+                        if (IGlobalResearchTree.getInstance().getResearch(branch, research.getParent()).hasOnlyChild())
                         {
                             final Label orLabel = new Label();
                             orLabel.setColor(Color.getByName("black", 0));

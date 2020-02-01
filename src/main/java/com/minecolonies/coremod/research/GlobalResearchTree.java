@@ -1,6 +1,7 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.research.interfaces.IGlobalResearch;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,28 +17,20 @@ import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_
 /**
  * The class which contains all research.
  */
-public class ResearchTree
+public class GlobalResearchTree implements IGlobalResearchTree
 {
     /**
      * The map containing all researches by ID.
      */
     private final Map<String, Map<String, IGlobalResearch>> researchTree = new HashMap<>();
 
-    /**
-     * Get a research by id.
-     * @param id the id of the research.
-     * @param branch the branch of the research.
-     * @return the IResearch object.
-     */
+    @Override
     public IGlobalResearch getResearch(final String branch, final String id)
     {
         return researchTree.get(branch).get(id);
     }
 
-    /**
-     * Add a research to the tree.
-     * @param research the research to add.
-     */
+    @Override
     public void addResearch(final String branch, final IGlobalResearch research)
     {
         final Map<String, IGlobalResearch> branchMap;
@@ -53,20 +46,13 @@ public class ResearchTree
         researchTree.put(branch,branchMap);
     }
 
-    /**
-     * Get the list of all branches.
-     * @return the list of branches.
-     */
+    @Override
     public List<String> getBranches()
     {
         return new ArrayList<>(researchTree.keySet());
     }
 
-    /**
-     * Get the primary research of a certain branch.
-     * @param branch the branch it belongs to.
-     * @return the list of research without parent.
-     */
+    @Override
     public List<String> getPrimaryResearch(final String branch)
     {
         if (!researchTree.containsKey(branch))
@@ -76,10 +62,7 @@ public class ResearchTree
         return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty()).map(IGlobalResearch::getId).collect(Collectors.toList());
     }
 
-    /**
-     * Write the research tree to NBT.
-     * @param compound the compound.
-     */
+    @Override
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
@@ -87,11 +70,7 @@ public class ResearchTree
         compound.put(TAG_RESEARCH_TREE, citizenTagList);
     }
 
-    /**
-     * Read the research tree from NBT.
-     * @param compound the compound to read it from.
-    +
-     */
+    @Override
     public void readFromNBT(final CompoundNBT compound)
     {
         researchTree.clear();
@@ -100,9 +79,7 @@ public class ResearchTree
                               .forEach(research -> addResearch(research.getBranch(), research));
     }
 
-    /**
-     * Load cost for all research.
-     */
+    @Override
     public void loadCost()
     {
         researchTree.values().forEach(b -> b.values().forEach(IGlobalResearch::loadCostFromConfig));

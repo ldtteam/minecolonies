@@ -1,7 +1,6 @@
 package com.minecolonies.api.research.interfaces;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.LocalResearchTree;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public interface IGlobalResearch
      * @param uni_level the level of the university.
      * @return true if so.
      */
-    boolean canResearch(int uni_level, @NotNull final LocalResearchTree localTree);
+    boolean canResearch(int uni_level, @NotNull final ILocalResearchTree localTree);
 
     /**
      * Check if this research can be displayed in the GUI.
@@ -50,7 +49,7 @@ public interface IGlobalResearch
      * @param player the player starting it.
      * @param localResearchTree  the local research tree to store in the colony.
      */
-    void startResearch(@NotNull final PlayerEntity player, @NotNull final LocalResearchTree localResearchTree);
+    void startResearch(@NotNull final PlayerEntity player, @NotNull final ILocalResearchTree localResearchTree);
 
     /**
      * Human readable description of research.
@@ -100,7 +99,7 @@ public interface IGlobalResearch
      * @param localTree the local tree of the colony.
      * @return true if so.
      */
-    boolean hasResearchedChild(@NotNull final LocalResearchTree localTree);
+    boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree);
 
     /**
      * Add a child to a research.

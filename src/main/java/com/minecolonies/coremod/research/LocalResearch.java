@@ -1,7 +1,9 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffects;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.interfaces.ILocalResearchTree;
 import com.minecolonies.api.research.util.ResearchState;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
@@ -50,7 +52,7 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
-    public void research(final ResearchEffects effects, final LocalResearchTree tree)
+    public void research(final IResearchEffects effects, final ILocalResearchTree tree)
     {
         if (state == ResearchState.IN_PROGRESS)
         {
@@ -58,7 +60,7 @@ public class LocalResearch implements ILocalResearch
             if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth-1))
             {
                 state = ResearchState.FINISHED;
-                effects.applyEffect(GlobalResearchTree.researchTree.getResearch(this.branch, this.getId()).getEffect());
+                effects.applyEffect(IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffect());
                 tree.finishResearch(this.id);
             }
         }

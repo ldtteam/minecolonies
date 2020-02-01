@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.research.GlobalResearchTree;
 import com.minecolonies.api.research.interfaces.IGlobalResearch;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -118,7 +118,7 @@ public class TryResearchMessage implements IMessage
         if (colony.getResearchTree().getResearch(branch, researchId) == null)
         {
             final IBuilding uni = colony.getBuildingManager().getBuilding(university);
-            final IGlobalResearch research = GlobalResearchTree.researchTree.getResearch(branch, researchId);
+            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
             if (research.canResearch(uni.getBuildingLevel(), colony.getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
                 if (!research.getResearchRequirement().isFulfilled(colony))

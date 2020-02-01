@@ -20,8 +20,9 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
-import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffects;
+import com.minecolonies.api.research.interfaces.ILocalResearchTree;
+import com.minecolonies.coremod.research.ResearchEffects;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
@@ -832,13 +833,13 @@ public class Colony implements IColony
     }
 
     @Override
-    public LocalResearchTree getResearchTree()
+    public ILocalResearchTree getResearchTree()
     {
         return this.researchManager.getResearchTree();
     }
 
     @Override
-    public ResearchEffects getResearchEffects()
+    public IResearchEffects getResearchEffects()
     {
         return this.researchManager.getResearchEffects();
     }

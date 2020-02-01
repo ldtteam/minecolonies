@@ -1,4 +1,4 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.interfaces.IResearchRequirement;

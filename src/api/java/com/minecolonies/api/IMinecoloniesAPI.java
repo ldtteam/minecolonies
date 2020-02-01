@@ -15,6 +15,7 @@ import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public interface IMinecoloniesAPI
@@ -53,4 +54,6 @@ public interface IMinecoloniesAPI
     IFurnaceRecipes getFurnaceRecipes();
 
     IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager();
+
+    IGlobalResearchTree getGlobalResearchTree();
 }

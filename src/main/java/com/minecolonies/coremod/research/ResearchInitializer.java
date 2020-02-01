@@ -1,27 +1,16 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.research.effects.ModifierResearchEffect;
-import com.minecolonies.api.research.effects.UnlockResearchEffect;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 
 /**
  * The class which loads the global research tree.
  */
-public class GlobalResearchTree
+public class ResearchInitializer
 {
-    /**
-     * The map containing all researches by ID.
-     */
-    public static final ResearchTree researchTree = new ResearchTree();
-
-    static
-    {
-        fillResearchTree();
-    }
-
     /**
      * Method to fill the research tree with the elements.
      */
-    private static void fillResearchTree()
+    public static void fillResearchTree(final IGlobalResearchTree researchTree)
     {
         final GlobalResearch tacticTraining = new GlobalResearch("tactictraining", "combat", "Tactic Training", 1, new UnlockResearchEffect("Barracks", true));
         tacticTraining.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
@@ -137,5 +126,15 @@ public class GlobalResearchTree
         researchTree.addResearch(evasion.getBranch(), evasion);
         researchTree.addResearch(improvedEvasion.getBranch(), improvedEvasion);
         researchTree.addResearch(agileArcher.getBranch(), agileArcher);
+    }
+
+    /**
+     * Private constructor to hide implicit public one.
+     */
+    private ResearchInitializer()
+    {
+        /*
+         * Intentionally left empty.
+         */
     }
 }

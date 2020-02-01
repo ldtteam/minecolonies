@@ -1,11 +1,12 @@
-package com.minecolonies.api.research.factories;
+package com.minecolonies.coremod.research;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.interfaces.IGlobalResearch;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.research.interfaces.IResearchEffect;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -23,7 +24,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 {
     @NotNull
     @Override
-    public TypeToken<GlobalResearch> getFactoryOutputType()
+    public TypeToken<IGlobalResearch> getFactoryOutputType()
     {
         return TypeConstants.GLOBAL_RESEARCH;
     }
@@ -82,7 +83,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> GlobalResearchTree.researchTree.getResearch(branch, compound.getString(TAG_CHILD)));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(TAG_CHILD)));
         return research;
     }
 }

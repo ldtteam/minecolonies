@@ -17,6 +17,7 @@ import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
@@ -142,6 +143,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager()
     {
         return interactionDataManager;
+    }
+
+    @Override
+    public IGlobalResearchTree getGlobalResearchTree()
+    {
+        return MineColonies.getGlobalResearchTree();
     }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)

@@ -1,6 +1,7 @@
-package com.minecolonies.api.research.effects;
+package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.research.GlobalResearchTree;
+import com.minecolonies.api.research.effects.IResearchEffects;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
 import com.minecolonies.api.research.interfaces.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
@@ -19,20 +20,14 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 /**
  * The map of unlocked research effects of a given colony.
  */
-public class ResearchEffects
+public class ResearchEffects implements IResearchEffects
 {
     /**
      * The map of the research effects, from a string identifier to the effect.
      */
     private final Map<String, IResearchEffect> effectMap = new HashMap<>();
 
-    /**
-     * Get the research effect which is assigned to a particular string.
-     * @param id the id of the effect.
-     * @param type it's type.
-     * @param <W> the Generic type.
-     * @return one of the expected type or null.
-     */
+    @Override
     public <W extends IResearchEffect> W getEffect(final String id, @NotNull final Class<W> type)
     {
         final IResearchEffect effect = effectMap.get(id);
@@ -45,19 +40,13 @@ public class ResearchEffects
         return null;
     }
 
-    /**
-     * Apply the effect to the research effects class.
-     * @param effect the effect to apply.
-     */
+    @Override
     public void applyEffect(final IResearchEffect effect)
     {
         effectMap.put(effect.getId(), effect);
     }
 
-    /**
-     * Write the research tree to NBT.
-     * @param compound the compound.
-     */
+    @Override
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT citizenTagList = effectMap.values().stream().map(effect -> {
@@ -69,17 +58,14 @@ public class ResearchEffects
         compound.put(TAG_RESEARCH_EFFECTS, citizenTagList);
     }
 
-    /**
-     * Read the research tree from NBT.
-     * @param compound the compound to read it from.
-     */
+    @Override
     public void readFromNBT(final CompoundNBT compound)
     {
         effectMap.putAll(NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_EFFECTS, Constants.NBT.TAG_COMPOUND))
                               .map(researchCompound -> {
                                   final String researchId = researchCompound.getString(TAG_ID);
                                   final String branch = researchCompound.getString(TAG_BRANCH);
-                                  return GlobalResearchTree.researchTree.getResearch(branch, researchId).getEffect();
+                                  return IGlobalResearchTree.getInstance().getResearch(branch, researchId).getEffect();
                               })
                            .filter(Objects::nonNull)
                            .collect(Collectors.toMap(IResearchEffect::getId, iEffect -> iEffect)));

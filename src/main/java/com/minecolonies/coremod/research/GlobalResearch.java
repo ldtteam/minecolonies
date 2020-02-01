@@ -1,13 +1,10 @@
-package com.minecolonies.api.research;
+package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.interfaces.IGlobalResearch;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
-import com.minecolonies.api.research.interfaces.IResearchEffect;
-import com.minecolonies.api.research.interfaces.IResearchRequirement;
+import com.minecolonies.api.research.interfaces.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,9 +95,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public boolean canResearch(final int uni_level, @NotNull final LocalResearchTree localTree)
+    public boolean canResearch(final int uni_level, @NotNull final ILocalResearchTree localTree)
     {
-        final IGlobalResearch parentResearch = parent.isEmpty() ? null : GlobalResearchTree.researchTree.getResearch(branch, parent);
+        final IGlobalResearch parentResearch = parent.isEmpty() ? null : IGlobalResearchTree.getInstance().getResearch(branch, parent);
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
@@ -161,7 +157,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void startResearch(@NotNull final PlayerEntity player, @NotNull final LocalResearchTree localResearchTree)
+    public void startResearch(@NotNull final PlayerEntity player, @NotNull final ILocalResearchTree localResearchTree)
     {
         if (localResearchTree.getResearch(this.branch, this.id) == null)
         {
@@ -214,11 +210,11 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public boolean hasResearchedChild(@NotNull final LocalResearchTree localTree)
+    public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
         for (final String child: this.childs)
         {
-            final IGlobalResearch childResearch = GlobalResearchTree.researchTree.getResearch(branch, child);
+            final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
             if (localResearch != null)
             {

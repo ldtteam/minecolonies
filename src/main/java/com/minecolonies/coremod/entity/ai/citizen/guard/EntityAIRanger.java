@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.research.effects.ModifierResearchEffect;
+import com.minecolonies.coremod.research.ModifierResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -362,10 +362,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                     worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.world.addEntity(arrow);
                 }
-
-                arrow.setDamage(damage);
-                worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.world.addEntity(arrow);
 
                 final double xDiff = target.posX - worker.getPosX();
                 final double zDiff = target.posZ - worker.getPosZ();

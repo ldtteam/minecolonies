@@ -1,5 +1,6 @@
-package com.minecolonies.api.research.effects;
+package com.minecolonies.coremod.research;
 
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**

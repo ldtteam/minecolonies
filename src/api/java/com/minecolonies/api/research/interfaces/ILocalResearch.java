@@ -1,7 +1,6 @@
 package com.minecolonies.api.research.interfaces;
 
-import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffects;
 import com.minecolonies.api.research.util.ResearchState;
 
 /**
@@ -56,5 +55,5 @@ public interface ILocalResearch
      * @param effects the research effects class which holds the information of the colony.
      * @param tree the research tree which holds the currently explored tree.
      */
-    void research(ResearchEffects effects, LocalResearchTree tree);
+    void research(IResearchEffects effects, ILocalResearchTree tree);
 }

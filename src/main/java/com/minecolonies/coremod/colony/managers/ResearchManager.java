@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.api.research.LocalResearchTree;
-import com.minecolonies.api.research.effects.ResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffects;
+import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
+import com.minecolonies.coremod.research.ResearchEffects;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class ResearchManager implements IResearchManager
     /**
      * The research effects of the colony.
      */
-    private final ResearchEffects effects = new ResearchEffects();
+    private final IResearchEffects effects = new ResearchEffects();
 
     @Override
     public void readFromNBT(@NotNull final CompoundNBT compound)
@@ -42,7 +43,7 @@ public class ResearchManager implements IResearchManager
     }
 
     @Override
-    public ResearchEffects getResearchEffects()
+    public IResearchEffects getResearchEffects()
     {
         return this.effects;
     }

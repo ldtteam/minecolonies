@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.research.GlobalResearchTree;
+import com.minecolonies.coremod.research.ResearchInitializer;
+import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
+import com.minecolonies.coremod.research.GlobalResearchTree;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -69,6 +71,11 @@ public class MineColonies
     private static Configuration config;
 
     /**
+     * Create the global research tree.
+     */
+    private static IGlobalResearchTree globalResearchTree;
+
+    /**
      * The proxy.
      */
     public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
@@ -90,6 +97,9 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
 
         InteractionValidatorInitializer.init();
+
+        globalResearchTree = new GlobalResearchTree();
+        ResearchInitializer.fillResearchTree(globalResearchTree);
     }
 
     @SubscribeEvent
@@ -137,7 +147,7 @@ public class MineColonies
         Log.getLogger().warn("FMLLoadCompleteEvent");
         MinecoloniesPlacementHandlers.initHandlers();
         RequestSystemInitializer.onPostInit();
-        GlobalResearchTree.researchTree.loadCost();
+        globalResearchTree.loadCost();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -177,5 +187,14 @@ public class MineColonies
     public static Configuration getConfig()
     {
         return config;
+    }
+
+    /**
+     * Get the instance of the GlobalResearchTree.
+     * @return the instance.
+     */
+    public static IGlobalResearchTree getGlobalResearchTree()
+    {
+        return globalResearchTree;
     }
 }
