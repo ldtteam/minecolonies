@@ -357,7 +357,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
 
-        if (vec3.squareDistanceTo(ourEntity.lastTickPosX, vec3.y, ourEntity.lastTickPosZ) < Math.random() * 0.1)
+        if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
         {
             //This way he is less nervous and gets up the ladder
             double newSpeed = 0.05;
@@ -418,8 +418,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         Vec3d vec3d = this.getPath().getPosition(this.ourEntity);
 
-        if (vec3d.squareDistanceTo(new Vec3d(ourEntity.lastTickPosX, vec3d.y, ourEntity.lastTickPosZ)) < 0.1
-              && Math.abs(ourEntity.lastTickPosY - vec3d.y) < 0.5)
+        if (vec3d.squareDistanceTo(new Vec3d(ourEntity.posX, vec3d.y, ourEntity.posZ)) < 0.1
+              && Math.abs(ourEntity.posY - vec3d.y) < 0.5)
         {
             this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
             if (this.noPath())
@@ -570,7 +570,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
-        return moveToXYZ(e.lastTickPosX, e.lastTickPosY, e.lastTickPosZ, speed);
+        return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
     /**
