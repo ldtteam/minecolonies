@@ -286,7 +286,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)))
         {
             final int experience = ExperienceOrbEntity.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.lastTickPosX, this.lastTickPosY, this.lastTickPosZ, experience));
+            CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.posX, this.posY, this.posZ, experience));
         }
         super.onDeathUpdate();
     }

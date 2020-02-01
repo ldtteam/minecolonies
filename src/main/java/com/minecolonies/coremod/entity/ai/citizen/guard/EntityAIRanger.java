@@ -134,7 +134,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target != null)
         {
-            attackDist += worker.lastTickPosY - target.lastTickPosY;
+            attackDist += worker.posY - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -194,9 +194,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             return START_WORKING;
         }
 
-        final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());
+        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
         final boolean canSee = worker.getEntitySenses().canSee(target);
-        final double sqAttackRange = getRealAttackRange();
+        final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
 
         if (canSee)
         {
@@ -316,9 +316,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 final ArrowEntity arrow = EntityType.ARROW.create(world);
                 arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
-                final double xVector = target.lastTickPosX - worker.getPosX();
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.lastTickPosY;
-                final double zVector = target.lastTickPosZ - worker.getPosZ();
+                final double xVector = target.posX - worker.getPosX();
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
+                final double zVector = target.posZ - worker.getPosZ();
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 double damage = getRangedAttackDamage();
 
@@ -348,8 +348,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 worker.world.addEntity(arrow);
 
-                final double xDiff = target.lastTickPosX - worker.getPosX();
-                final double zDiff = target.lastTickPosZ - worker.getPosZ();
+                final double xDiff = target.posX - worker.getPosX();
+                final double zDiff = target.posZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 worker.move(MoverType.SELF, new Vec3d(goToX, 0, goToZ));
@@ -367,7 +367,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                  * It is possible the object is higher than guard and guard can't get there.
                  * Guard will try to back up to get some distance to be able to shoot target.
                  */
-                if (target.lastTickPosY > worker.getPosY() + Y_VISION + Y_VISION)
+                if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
                 {
                     fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
                     fleeing = true;

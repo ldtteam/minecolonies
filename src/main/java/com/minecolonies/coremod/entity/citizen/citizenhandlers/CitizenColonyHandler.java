@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -295,13 +294,13 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (homeBuilding instanceof BuildingHome)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getA().getA(), citizen.lastTickPosY - 1, corners.getB().getA(),
+            return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
               corners.getA().getB(),
-              citizen.lastTickPosY + 1,
+              citizen.posY + 1,
               corners.getB().getB()).contains(new Vec3d(citizen.getPosition()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq(Math.floor(citizen.lastTickPosX), citizen. lastTickPosY,  Math.floor(citizen.lastTickPosZ),false) <= RANGE_TO_BE_HOME;
+        return homePosition.distanceSq(Math.floor(citizen.posX), citizen.posY, Math.floor(citizen.posZ), false) <= RANGE_TO_BE_HOME;
     }
 }

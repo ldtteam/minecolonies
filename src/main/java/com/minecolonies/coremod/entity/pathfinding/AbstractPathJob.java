@@ -246,9 +246,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.lastTickPosX),
-                                                                                    (int) entity.lastTickPosY,
-                                                                                    MathHelper.floor(entity.lastTickPosZ));
+        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.posX),
+          (int) entity.posY,
+          MathHelper.floor(entity.posZ));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
@@ -263,8 +263,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault)
         {
             //Push away from fence
-            final double dX = entity.lastTickPosX - Math.floor(entity.lastTickPosX);
-            final double dZ = entity.lastTickPosZ - Math.floor(entity.lastTickPosZ);
+            final double dX = entity.posX - Math.floor(entity.posX);
+            final double dZ = entity.posZ - Math.floor(entity.posZ);
 
             if (dX < TOO_CLOSE_TO_FENCE)
             {
