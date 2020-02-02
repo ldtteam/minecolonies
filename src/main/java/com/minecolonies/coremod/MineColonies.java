@@ -92,7 +92,6 @@ public class MineColonies
 
         InteractionValidatorInitializer.init();
 
-        ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
     }
 
     @SubscribeEvent
@@ -127,6 +126,8 @@ public class MineColonies
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
+
+        ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
     }
 
     /**
