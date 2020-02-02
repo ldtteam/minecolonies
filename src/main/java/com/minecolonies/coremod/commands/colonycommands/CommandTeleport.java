@@ -32,7 +32,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseColonyTPCommand.get())
+        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseColonyTPCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;

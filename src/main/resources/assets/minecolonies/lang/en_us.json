@@ -656,6 +656,9 @@
   "com.minecolonies.coremod.permission.access_free_blocks": "Access free-blocks",
   "com.minecolonies.coremod.permission.explode": "Explode",
 
+  "com.minecolonies.coremod.permission.receive_messages_far_away": "Distant Messages",
+  "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "Keep colony loaded",
+
   "item.supplycampdeployer.invalid": "Requiring a flat ground of at least 16*17 without grass or flowers on them.",
   "item.supplycampdeployer.invalid.solid_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.",
   "item.supplycampdeployer.invalid.air_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be air: %s.",

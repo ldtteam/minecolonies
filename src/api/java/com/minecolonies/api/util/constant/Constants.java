@@ -72,6 +72,7 @@ public final class Constants
     public static final float  WATCH_CLOSEST2             = 3.0F;
     public static final float  WATCH_CLOSEST2_FAR         = 5.0F;
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
+    public static final String COLONY_SILENT_VISITOR_PERMISSION = "minecolonies.colony.visitor.silent";
 
     /**
      * Advancement Criterion Names
