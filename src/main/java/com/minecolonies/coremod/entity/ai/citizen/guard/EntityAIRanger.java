@@ -316,7 +316,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(Hand.MAIN_HAND);
 
                 int amountOfArrows = 1;
-                final ModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchEffects().getEffect("Double Arrows", ModifierResearchEffect.class);
+                final ModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Double Arrows", ModifierResearchEffect.class);
                 if (effect != null)
                 {
                     if (worker.getRandom().nextDouble() < effect.getEffect())

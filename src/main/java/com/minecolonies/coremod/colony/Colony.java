@@ -20,16 +20,13 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
-import com.minecolonies.api.research.effects.IResearchEffects;
-import com.minecolonies.api.research.interfaces.ILocalResearchTree;
-import com.minecolonies.coremod.research.ResearchEffects;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.managers.*;
-import com.minecolonies.coremod.colony.managers.interfaces.IResearchManager;
+import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -833,15 +830,9 @@ public class Colony implements IColony
     }
 
     @Override
-    public ILocalResearchTree getResearchTree()
+    public IResearchManager getResearchManager()
     {
-        return this.researchManager.getResearchTree();
-    }
-
-    @Override
-    public IResearchEffects getResearchEffects()
-    {
-        return this.researchManager.getResearchEffects();
+        return this.researchManager;
     }
 
     /**

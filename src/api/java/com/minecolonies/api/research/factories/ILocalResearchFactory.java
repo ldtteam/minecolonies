@@ -3,7 +3,7 @@ package com.minecolonies.api.research.factories;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearch;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.PARAMS_LOCAL_RESEARCH;

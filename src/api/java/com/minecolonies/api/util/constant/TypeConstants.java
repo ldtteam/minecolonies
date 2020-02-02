@@ -13,8 +13,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.research.interfaces.IGlobalResearch;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
 
 import java.util.UUID;
 

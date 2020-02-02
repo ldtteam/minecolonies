@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
-import com.minecolonies.api.research.interfaces.ILocalResearchTree;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
@@ -102,11 +105,17 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void readFromNBT(final CompoundNBT compound, final IResearchEffectManager effects)
     {
         researchTree.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
                               .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
-                              .forEach(research -> addResearch(research.getBranch(), research));
+                              .forEach(research -> {
+                                  addResearch(research.getBranch(), research);
+                                  if (research.getState() == ResearchState.FINISHED)
+                                  {
+                                      effects.applyEffect(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffect());
+                                  }
+                              });
     }
 }

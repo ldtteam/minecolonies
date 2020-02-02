@@ -729,7 +729,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Block Attacks", ModifierResearchEffect.class);
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Block Attacks", ModifierResearchEffect.class);
             if (effect != null)
             {
                 if (getRandom().nextDouble() < effect.getEffect())
@@ -825,7 +825,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Melee Armour", ModifierResearchEffect.class);
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Melee Armour", ModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
@@ -833,7 +833,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         else if(citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchEffects().getEffect("Archer Armour", ModifierResearchEffect.class);
+            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Archer Armour", ModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));

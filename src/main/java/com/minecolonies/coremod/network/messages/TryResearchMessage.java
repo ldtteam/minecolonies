@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.research.interfaces.IGlobalResearch;
-import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -115,11 +115,11 @@ public class TryResearchMessage implements IMessage
             return;
         }
 
-        if (colony.getResearchTree().getResearch(branch, researchId) == null)
+        if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) == null)
         {
             final IBuilding uni = colony.getBuildingManager().getBuilding(university);
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
-            if (research.canResearch(uni.getBuildingLevel(), colony.getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
+            if (research.canResearch(uni.getBuildingLevel(), colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
                 if (!research.getResearchRequirement().isFulfilled(colony))
                 {
@@ -129,8 +129,8 @@ public class TryResearchMessage implements IMessage
 
                 if (player.isCreative())
                 {
-                    research.startResearch(player, colony.getResearchTree());
-                    colony.getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth()-1)));
+                    research.startResearch(player, colony.getResearchManager().getResearchTree());
+                    colony.getResearchManager().getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth()-1)));
                 }
                 else
                 {
@@ -140,7 +140,7 @@ public class TryResearchMessage implements IMessage
                     }
 
                     player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started"));
-                    research.startResearch(player, colony.getResearchTree());
+                    research.startResearch(player, colony.getResearchManager().getResearchTree());
                 }
                 colony.markDirty();
                 // Remove items from player

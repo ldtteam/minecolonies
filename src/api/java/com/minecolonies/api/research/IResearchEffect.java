@@ -1,4 +1,4 @@
-package com.minecolonies.api.research.interfaces;
+package com.minecolonies.api.research;
 
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -31,23 +31,4 @@ public interface IResearchEffect<T>
      * @return the desc.
      */
     TranslationTextComponent getDesc();
-
-    /**
-     * Get the id of the research it belongs to.
-     * @return the research id.
-     */
-    String getResearchId();
-
-    /**
-     * Get the branch name of the research it belongs to.
-     * @return the branch name.
-     */
-    String getResearchBranch();
-
-    /**
-     * Set the parent research of the effect.
-     * @param researchId the id of the parent.
-     * @param branch the branch of it.
-     */
-    void setParent(final String researchId, final String branch);
 }

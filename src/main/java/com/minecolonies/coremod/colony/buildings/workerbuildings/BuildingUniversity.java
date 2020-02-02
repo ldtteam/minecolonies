@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
@@ -172,7 +172,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     {
         super.onColonyTick(colony);
 
-        final List<ILocalResearch> inProgress= colony.getResearchTree().getResearchInProgress();
+        final List<ILocalResearch> inProgress= colony.getResearchManager().getResearchTree().getResearchInProgress();
 
         int i = 1;
         for (final ILocalResearch research : inProgress)
@@ -182,7 +182,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
-            colony.getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchEffects(), colony.getResearchTree());
+            colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree());
             this.markDirty();
             i++;
         }

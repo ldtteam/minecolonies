@@ -1,5 +1,6 @@
-package com.minecolonies.api.research.interfaces;
+package com.minecolonies.api.research;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
@@ -110,7 +111,7 @@ public interface IGlobalResearch
     /**
      * Get the list of childs of the research.
      */
-    List<String> getChilds();
+    ImmutableList<String> getChilds();
 
     /**
      * Set the parent of a research.

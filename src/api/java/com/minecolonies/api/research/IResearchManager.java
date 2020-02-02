@@ -1,7 +1,6 @@
-package com.minecolonies.coremod.colony.managers.interfaces;
+package com.minecolonies.api.research;
 
-import com.minecolonies.api.research.effects.IResearchEffects;
-import com.minecolonies.api.research.interfaces.ILocalResearchTree;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,5 +31,5 @@ public interface IResearchManager
      * Get an instance of the research effects.
      * @return the ResearchEffects object.
      */
-    IResearchEffects getResearchEffects();
+    IResearchEffectManager getResearchEffects();
 }

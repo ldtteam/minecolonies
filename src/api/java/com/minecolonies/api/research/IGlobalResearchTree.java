@@ -1,4 +1,4 @@
-package com.minecolonies.api.research.interfaces;
+package com.minecolonies.api.research;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import net.minecraft.nbt.CompoundNBT;

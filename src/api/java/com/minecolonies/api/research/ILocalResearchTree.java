@@ -1,6 +1,6 @@
-package com.minecolonies.api.research.interfaces;
+package com.minecolonies.api.research;
 
-import com.minecolonies.api.research.interfaces.ILocalResearch;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundNBT;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public interface ILocalResearchTree
     /**
      * Read the research tree from NBT.
      * @param compound the compound to read it from.
-    +
+     * @param effects the effects.
      */
-    void readFromNBT(final CompoundNBT compound);
+    void readFromNBT(final CompoundNBT compound, final IResearchEffectManager effects);
 }

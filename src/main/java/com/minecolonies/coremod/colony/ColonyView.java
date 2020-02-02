@@ -15,10 +15,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.research.effects.IResearchEffects;
-import com.minecolonies.api.research.interfaces.ILocalResearchTree;
-import com.minecolonies.coremod.research.LocalResearchTree;
-import com.minecolonies.coremod.research.ResearchEffects;
+import com.minecolonies.api.research.IResearchManager;
+import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
@@ -194,14 +192,9 @@ public final class ColonyView implements IColonyView
     private List<CompactColonyReference> feuds;
 
     /**
-     * The research tree of the colony.
-     */
-    private final ILocalResearchTree tree = new LocalResearchTree();
-
-    /**
      * The research effects of the colony.
      */
-    private final IResearchEffects effects = new ResearchEffects();
+    private final IResearchManager manager = new ResearchManager();
 
     /**
      * Base constructor for a colony.
@@ -361,12 +354,8 @@ public final class ColonyView implements IColonyView
         }
 
         final CompoundNBT treeTag = new CompoundNBT();
-        colony.getResearchTree().writeToNBT(treeTag);
+        colony.getResearchManager().writeToNBT(treeTag);
         buf.writeCompoundTag(treeTag);
-
-        final CompoundNBT effectsTag = new CompoundNBT();
-        colony.getResearchEffects().writeToNBT(effectsTag);
-        buf.writeCompoundTag(effectsTag);
     }
 
     /**
@@ -821,9 +810,7 @@ public final class ColonyView implements IColonyView
             feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
         }
 
-        this.tree.readFromNBT(buf.readCompoundTag());
-        this.effects.readFromNBT(buf.readCompoundTag());
-
+        this.manager.readFromNBT(buf.readCompoundTag());
         return null;
     }
 
@@ -1426,14 +1413,8 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ILocalResearchTree getResearchTree()
+    public IResearchManager getResearchManager()
     {
-        return this.tree;
-    }
-
-    @Override
-    public IResearchEffects getResearchEffects()
-    {
-        return this.effects;
+        return manager;
     }
 }

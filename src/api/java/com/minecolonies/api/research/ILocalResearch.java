@@ -1,6 +1,6 @@
-package com.minecolonies.api.research.interfaces;
+package com.minecolonies.api.research;
 
-import com.minecolonies.api.research.effects.IResearchEffects;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 
 /**
@@ -10,7 +10,7 @@ public interface ILocalResearch
 {
     /**
      * Getter for the progress of the research.
-     * @return the progress an int between 0-100.
+     * @return the progress in ticks.
      */
     int getProgress();
 
@@ -55,5 +55,5 @@ public interface ILocalResearch
      * @param effects the research effects class which holds the information of the colony.
      * @param tree the research tree which holds the currently explored tree.
      */
-    void research(IResearchEffects effects, ILocalResearchTree tree);
+    void research(IResearchEffectManager effects, ILocalResearchTree tree);
 }

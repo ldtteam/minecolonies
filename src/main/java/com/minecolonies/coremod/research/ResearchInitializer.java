@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
+import com.minecolonies.api.research.IGlobalResearchTree;
 
 /**
  * The class which loads the global research tree.
@@ -12,10 +12,10 @@ public class ResearchInitializer
      */
     public static void fillResearchTree(final IGlobalResearchTree researchTree)
     {
-        final GlobalResearch tacticTraining = new GlobalResearch("tactictraining", "combat", "Tactic Training", 1, new UnlockResearchEffect("Barracks", true));
+        final GlobalResearch tacticTraining = new GlobalResearch("tactictraining", "combat", "Tactic Training", 1, new UnlockBuildingResearchEffect("Barracks", true));
         tacticTraining.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
 
-        final GlobalResearch improvedSwords = new GlobalResearch("improvedswords", "combat", "Improved Swords", 2, new UnlockResearchEffect("Combat Academy", true));
+        final GlobalResearch improvedSwords = new GlobalResearch("improvedswords", "combat", "Improved Swords", 2, new UnlockBuildingResearchEffect("Combat Academy", true));
         improvedSwords.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
         final GlobalResearch squireTraining = new GlobalResearch("squiretraining", "combat", "Squire Training", 3, new ModifierResearchEffect("Block Attacks", 0.05));
@@ -35,7 +35,7 @@ public class ResearchInitializer
         knightTraining.addChild(captainTraining);
         captainTraining.addChild(captainOfTheGuard);
 
-        final GlobalResearch improvedBows = new GlobalResearch("improvedbows", "combat", "Improved Bows", 2, new UnlockResearchEffect("Archery", true));
+        final GlobalResearch improvedBows = new GlobalResearch("improvedbows", "combat", "Improved Bows", 2, new UnlockBuildingResearchEffect("Archery", true));
         improvedBows.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
         final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Tick Shot", 3, new ModifierResearchEffect("Double Arrows", 0.05));
@@ -55,7 +55,7 @@ public class ResearchInitializer
         multiShot.addChild(rapidShot);
         rapidShot.addChild(masterBowman);
 
-        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockResearchEffect("Shield Usage", true));
+        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockAbilityResearchEffect("Shield Usage", true));
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 

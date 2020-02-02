@@ -6,10 +6,10 @@ import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.DragView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.interfaces.IGlobalResearch;
-import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
-import com.minecolonies.api.research.interfaces.ILocalResearch;
-import com.minecolonies.api.research.interfaces.ILocalResearchTree;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -63,7 +63,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final List<String> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
         final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
 
-        drawTree(0, 0, view, researchList, building.getColony().getResearchTree(), true, false, 0);
+        drawTree(0, 0, view, researchList, building.getColony().getResearchManager().getResearchTree(), true, false, 0);
 
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
@@ -81,7 +81,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, button.getID());
-        if (research != null && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+        if (research != null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
             close();
@@ -208,7 +208,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
                 buttonImage.setID(research.getId());
 
-                if (building.getBuildingLevel() <= building.getColony().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+                if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                 }

@@ -2,6 +2,7 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -9,8 +10,6 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.api.research.interfaces.IGlobalResearchTree;
-import com.minecolonies.coremod.research.GlobalResearchTree;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -71,11 +70,6 @@ public class MineColonies
     private static Configuration config;
 
     /**
-     * Create the global research tree.
-     */
-    private static IGlobalResearchTree globalResearchTree;
-
-    /**
      * The proxy.
      */
     public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
@@ -98,8 +92,7 @@ public class MineColonies
 
         InteractionValidatorInitializer.init();
 
-        globalResearchTree = new GlobalResearchTree();
-        ResearchInitializer.fillResearchTree(globalResearchTree);
+        ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
     }
 
     @SubscribeEvent
@@ -147,7 +140,7 @@ public class MineColonies
         Log.getLogger().warn("FMLLoadCompleteEvent");
         MinecoloniesPlacementHandlers.initHandlers();
         RequestSystemInitializer.onPostInit();
-        globalResearchTree.loadCost();
+        MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().loadCost();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -187,14 +180,5 @@ public class MineColonies
     public static Configuration getConfig()
     {
         return config;
-    }
-
-    /**
-     * Get the instance of the GlobalResearchTree.
-     * @return the instance.
-     */
-    public static IGlobalResearchTree getGlobalResearchTree()
-    {
-        return globalResearchTree;
     }
 }

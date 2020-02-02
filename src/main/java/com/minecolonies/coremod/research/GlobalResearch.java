@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.interfaces.*;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -91,7 +91,6 @@ public class GlobalResearch implements IGlobalResearch
         this.effect = effect;
         this.depth = depth;
         this.branch = branch;
-        this.effect.setParent(id, branch);
     }
 
     @Override
@@ -250,9 +249,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public List<String> getChilds()
+    public ImmutableList<String> getChilds()
     {
-        return new ArrayList<>(this.childs);
+        return ImmutableList.copyOf(this.childs);
     }
 
     @Override
