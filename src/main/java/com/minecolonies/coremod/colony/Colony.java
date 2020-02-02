@@ -51,6 +51,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -602,6 +603,9 @@ public class Colony implements IColony
             //Compatability with old version!
             buildingManager.read(compound);
         }
+        
+        // Recalculate max after citizens and buildings are loaded.
+        citizenManager.calculateMaxCitizens();
 
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
@@ -1276,6 +1280,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            citizenManager.calculateMaxCitizens();
             this.markDirty();
         }
     }
@@ -1442,7 +1447,10 @@ public class Colony implements IColony
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION))
+            {
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            }
         }
     }
 
@@ -1453,7 +1461,10 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            if (!PermissionAPI.hasPermission(player, COLONY_SILENT_VISITOR_PERMISSION))
+            {
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            }
         }
     }
 

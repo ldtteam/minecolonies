@@ -49,6 +49,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
+    public final ForgeConfigSpec.BooleanValue operatorVisitsColoniesSilently;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -62,8 +63,6 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
     public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseCitizenInfoCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseListCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
@@ -199,6 +198,7 @@ public class CommonConfiguration extends AbstractConfiguration
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
+        operatorVisitsColoniesSilently = defineBoolean(builder, "operatorVisitsColoniesSilently", false);
 
         swapToCategory(builder, "commands");
 
@@ -210,8 +210,6 @@ public class CommonConfiguration extends AbstractConfiguration
         canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
         canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
         canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", true);
-        canPlayerUseCitizenInfoCommand = defineBoolean(builder, "canplayerusecitizeninfocommand", true);
-        canPlayerUseListCitizensCommand = defineBoolean(builder, "canplayeruselistcitizenscommand", true);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", true);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);

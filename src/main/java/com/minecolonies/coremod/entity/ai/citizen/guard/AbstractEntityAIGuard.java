@@ -223,6 +223,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             entity.setMaxLifeTime(sleepTimer);
             world.addEntity(entity);
             worker.startRiding(entity);
+            worker.getNavigator().clearPath();
 
             return true;
         }
@@ -757,7 +758,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     public boolean isInAttackDistance(final BlockPos position)
     {
-        return BlockPosUtil.getMaxDistance2D(worker.getPosition(), position) <= getAttackRange();
+        return BlockPosUtil.getDistanceSquared2D(worker.getPosition(), position) <= getAttackRange() * getAttackRange();
     }
 
     /**
@@ -781,7 +782,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private boolean isWithinPersecutionDistance(final BlockPos entityPos)
     {
-        return BlockPosUtil.getMaxDistance2D(getTaskReferencePoint(), entityPos) <= getPersecutionDistance() + getAttackRange();
+        return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + getAttackRange(), 2);
     }
 
     /**
