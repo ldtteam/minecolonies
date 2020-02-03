@@ -1,7 +1,5 @@
 package com.minecolonies.api.research.effects;
 
-import com.minecolonies.api.research.IResearchEffect;
-
 /**
  * Abstract research effect.
  */

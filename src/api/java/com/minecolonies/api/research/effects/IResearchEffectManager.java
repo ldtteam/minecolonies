@@ -1,11 +1,9 @@
 package com.minecolonies.api.research.effects;
 
-import com.minecolonies.api.research.IResearchEffect;
-import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The map of unlocked research effects of a given colony.
+ * The manager of unlocked research effects of a given colony.
  */
 public interface IResearchEffectManager
 {

@@ -1,4 +1,4 @@
-package com.minecolonies.api.research;
+package com.minecolonies.api.research.effects;
 
 import net.minecraft.util.text.TranslationTextComponent;
 

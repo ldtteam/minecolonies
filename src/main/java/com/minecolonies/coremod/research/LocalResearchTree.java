@@ -8,7 +8,6 @@ import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.MineColonies;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;

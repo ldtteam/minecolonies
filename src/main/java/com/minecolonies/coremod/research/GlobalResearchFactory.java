@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;

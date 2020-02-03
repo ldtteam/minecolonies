@@ -11,11 +11,6 @@ public final class ResearchConstants
     public static final String TAG_RESEARCH_TREE = "researchTree";
 
     /**
-     * The research tree tag.
-     */
-    public static final String TAG_RESEARCH_EFFECTS = "researchEffects";
-
-    /**
      * Base research time, default to 3h playtime.
      */
     public static final int BASE_RESEARCH_TIME = 60 * 60 / 25;

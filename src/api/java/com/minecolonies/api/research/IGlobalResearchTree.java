@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.*;
 
 /**
- * The class which contains all research.
+ * The interface for the object that holds all research globally.
  */
 public interface IGlobalResearchTree
 {

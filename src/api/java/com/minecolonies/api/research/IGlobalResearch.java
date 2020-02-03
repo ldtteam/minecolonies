@@ -2,6 +2,7 @@ package com.minecolonies.api.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Interface defining how a research is.
+ * Interface defining how a research globally is defined.
  */
 public interface IGlobalResearch
 {

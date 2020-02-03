@@ -1,9 +1,11 @@
-package com.minecolonies.api.crafting;
+package com.minecolonies.coremod.colony.crafting;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorageFactory;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

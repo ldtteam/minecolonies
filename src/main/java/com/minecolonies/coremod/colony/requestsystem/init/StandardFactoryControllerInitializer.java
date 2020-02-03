@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.requestsystem.factory.standard.TypeTokenFacto
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
-import com.minecolonies.api.crafting.ItemStorageFactory;
-import com.minecolonies.api.crafting.RecipeStorageFactory;
+import com.minecolonies.coremod.colony.crafting.ItemStorageFactory;
+import com.minecolonies.coremod.colony.crafting.RecipeStorageFactory;
 import com.minecolonies.coremod.research.LocalResearchFactory;
 import com.minecolonies.coremod.research.GlobalResearchFactory;
 import com.minecolonies.coremod.colony.requestsystem.data.*;

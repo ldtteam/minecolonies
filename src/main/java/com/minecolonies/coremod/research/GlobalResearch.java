@@ -5,6 +5,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
