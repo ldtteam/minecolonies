@@ -194,11 +194,6 @@ public class BuildingUniversity extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * Milk Cows or not.
-         */
-        private boolean milkCows = true;
-
-        /**
          * Instantiates the view of the building.
          * @param c the colonyView.
          * @param l the location of the block.

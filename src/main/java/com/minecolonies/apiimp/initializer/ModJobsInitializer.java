@@ -161,7 +161,7 @@ public final class ModJobsInitializer
 
         ModJobs.researcher = new JobEntry.Builder()
                               .setJobProducer(JobResearch::new)
-                              .setRegistryName(ModJobs.RESEARCH_ID)
+                              .setRegistryName(ModJobs.RESEARCHER_ID)
                               .createJobEntry();
 
         reg.register(ModJobs.placeHolder);

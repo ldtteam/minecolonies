@@ -79,7 +79,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public boolean branchAlreadyResearchedLevelSix(final String branch)
+    public boolean branchFinishedHighestLevel(final String branch)
     {
         return levelSixResearchReached.getOrDefault(branch, false);
     }

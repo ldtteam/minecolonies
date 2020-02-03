@@ -25,10 +25,11 @@ public interface ILocalResearchTree
 
     /**
      * Check if a branch already researched a level 6 research.
+     * This is important since only 1 of these can be researched for each branch.
      * @param branch the branch to check.
      * @return true if so.
      */
-    boolean branchAlreadyResearchedLevelSix(final String branch);
+    boolean branchFinishedHighestLevel(final String branch);
 
     /**
      * Get a list of all research in progress.

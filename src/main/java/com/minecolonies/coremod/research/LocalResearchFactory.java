@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
- * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.
+ * Factory implementation taking care of creating new instances, serializing and deserializing LocalResearch.
  */
 public class LocalResearchFactory implements ILocalResearchFactory
 {

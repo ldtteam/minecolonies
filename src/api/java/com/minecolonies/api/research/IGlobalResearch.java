@@ -84,7 +84,7 @@ public interface IGlobalResearch
 
     /**
      * Check if this research is an only child research.
-     * This means, after researching one child no other childs can e researched.
+     * This means, after researching one child no other childs can be researched.
      * @return true if so.
      */
     boolean hasOnlyChild();
@@ -96,7 +96,7 @@ public interface IGlobalResearch
     void setOnlyChild(boolean onlyChild);
 
     /**
-     * Check if this research has other childs.
+     * Check if this research has other children and if one of these children has been research already.
      * @param localTree the local tree of the colony.
      * @return true if so.
      */
@@ -109,7 +109,7 @@ public interface IGlobalResearch
     void addChild(IGlobalResearch child);
 
     /**
-     * Get the list of childs of the research.
+     * Get the list of children of the research.
      */
     ImmutableList<String> getChilds();
 

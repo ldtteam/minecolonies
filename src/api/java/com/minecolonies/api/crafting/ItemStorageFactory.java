@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.
+ * Factory implementation taking care of creating new instances, serializing and deserializing ItemStorage.
  */
 public class ItemStorageFactory implements IItemStorageFactory
 {

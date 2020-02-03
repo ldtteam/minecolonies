@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the lumberjack hut.
+ * Window for the university.
  */
 public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUniversity.View>
 {

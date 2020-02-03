@@ -5,6 +5,7 @@ import com.minecolonies.api.research.util.ResearchState;
 
 /**
  * Interface defining how a local research at a colony is.
+ * This represents how a colony stores researches they finished or started.
  */
 public interface ILocalResearch
 {
