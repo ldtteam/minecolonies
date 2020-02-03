@@ -427,7 +427,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
-            if (!(currentPath.getPathPointFromIndex(curNode) instanceof PathPointExtended))
+            if (!(currentPath.getPathPointFromIndex(curNode) instanceof PathPointExtended) || !(currentPath.getPathPointFromIndex(curNodeNext) instanceof PathPointExtended))
             {
                 currentPath = convertPath(currentPath);
             }
