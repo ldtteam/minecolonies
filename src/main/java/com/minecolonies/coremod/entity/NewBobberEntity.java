@@ -73,25 +73,22 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         this.angler = citizen;
         float f = this.angler.rotationPitch;
         float f1 = this.angler.rotationYaw;
-        float f2 = MathHelper.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f3 = MathHelper.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f4 = -MathHelper.cos(-f * ((float) Math.PI / 180F));
-        float f5 = MathHelper.sin(-f * ((float) Math.PI / 180F));
-        double d0 = this.angler.posX - (double)f3 * 0.3D;
-        double d1 = this.angler.getEyeHeight();
-        double d2 = this.angler.posZ - (double)f2 * 0.3D;
+        float f2 = MathHelper.cos(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
+        float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
+        float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
+        float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
+        double d0 = this.angler.getPosX() - (double)f3 * 0.3D;
+        double d1 = this.angler.getPosYEye();
+        double d2 = this.angler.getPosZ() - (double)f2 * 0.3D;
         this.setLocationAndAngles(d0, d1, d2, f1, f);
-        Vec3d vec3d = new Vec3d((double) (-f3), (double) MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double) (-f2));
+        Vec3d vec3d = new Vec3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
         double d3 = vec3d.length();
-        vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
-          0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
-          0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
+        vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
         this.setMotion(vec3d);
-        this.rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180F / (float) Math.PI));
-        this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) MathHelper.sqrt(horizontalMag(vec3d))) * (double) (180F / (float) Math.PI));
+        this.rotationYaw = (float)(MathHelper.atan2(vec3d.x, vec3d.z) * (double)(180F / (float)Math.PI));
+        this.rotationPitch = (float)(MathHelper.atan2(vec3d.y, (double)MathHelper.sqrt(horizontalMag(vec3d))) * (double)(180F / (float)Math.PI));
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
-        final FishingRodItem item = (FishingRodItem) this.getAngler().getHeldItemMainhand().getItem();
         this.luck = Math.max(0, luck);
         this.lureSpeed = Math.max(0, lurespeed);
     }
