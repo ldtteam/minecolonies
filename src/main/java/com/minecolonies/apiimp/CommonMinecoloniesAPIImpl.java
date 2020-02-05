@@ -17,6 +17,7 @@ import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
@@ -26,6 +27,7 @@ import com.minecolonies.coremod.colony.interactionhandling.registry.InteractionR
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
+import com.minecolonies.coremod.research.GlobalResearchTree;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -47,6 +49,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private       IForgeRegistry<GuardType>     guardTypeRegistry;
     private       IForgeRegistry<InteractionResponseHandlerEntry> interactionHandlerRegistry;
     private final IInteractionResponseHandlerDataManager          interactionDataManager  = new InteractionResponseHandlerManager();
+    private static IGlobalResearchTree globalResearchTree = new GlobalResearchTree();
 
     @Override
     @NotNull
@@ -142,6 +145,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager()
     {
         return interactionDataManager;
+    }
+
+    @Override
+    public IGlobalResearchTree getGlobalResearchTree()
+    {
+        return globalResearchTree;
     }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)

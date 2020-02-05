@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.coremod.research.ModifierResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -314,39 +315,53 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.swingArm(Hand.MAIN_HAND);
 
-                final ArrowEntity arrow = EntityType.ARROW.create(world);
-                arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
-                final double xVector = target.posX - worker.getPosX();
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
-                final double zVector = target.posZ - worker.getPosZ();
-                final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                double damage = getRangedAttackDamage();
-
-                // Add bow enchant effects: Knocback and fire
-                final ItemStack bow = worker.getHeldItem(Hand.MAIN_HAND);
-
-                if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow) > 0)
+                int amountOfArrows = 1;
+                final ModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Double Arrows", ModifierResearchEffect.class);
+                if (effect != null)
                 {
-                    arrow.setFire(100);
-                }
-                final int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
-                if (k > 0)
-                {
-                    arrow.setKnockbackStrength(k);
+                    if (worker.getRandom().nextDouble() < effect.getEffect())
+                    {
+                        amountOfArrows++;
+                    }
                 }
 
-                final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
-
-                arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
-
-                if (worker.getHealth() <= worker.getMaxHealth() * 0.2D)
+                for (int i = 0; i < amountOfArrows; i++)
                 {
-                    damage *= 2;
-                }
+                    final ArrowEntity arrow = EntityType.ARROW.create(world);
+                    arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
+                    final double xVector = target.posX - worker.getPosX();
+                    final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
+                    final double zVector = target.posZ - worker.getPosZ();
 
-                arrow.setDamage(damage);
-                worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.world.addEntity(arrow);
+                    final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                    double damage = getRangedAttackDamage();
+
+                    // Add bow enchant effects: Knocback and fire
+                    final ItemStack bow = worker.getHeldItem(Hand.MAIN_HAND);
+
+                    if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow) > 0)
+                    {
+                        arrow.setFire(100);
+                    }
+                    final int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
+                    if (k > 0)
+                    {
+                        arrow.setKnockbackStrength(k);
+                    }
+
+                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+
+                    arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
+
+                    if (worker.getHealth() <= worker.getMaxHealth() * 0.2D)
+                    {
+                        damage *= 2;
+                    }
+
+                    arrow.setDamage(damage);
+                    worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.world.addEntity(arrow);
+                }
 
                 final double xDiff = target.posX - worker.getPosX();
                 final double zDiff = target.posZ - worker.getPosZ();

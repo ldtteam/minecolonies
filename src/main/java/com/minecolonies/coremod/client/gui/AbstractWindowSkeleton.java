@@ -107,10 +107,6 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
             buttons.get(button.getID()).accept(button);
             Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.resource));
         }
-        else
-        {
-            Log.getLogger().warn(this.getClass().getName() + ": Unhandled Button ID:" + button.getID());
-        }
     }
 
     /**

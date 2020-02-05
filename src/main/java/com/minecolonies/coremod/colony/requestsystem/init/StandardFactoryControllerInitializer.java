@@ -6,7 +6,10 @@ import com.minecolonies.api.colony.requestsystem.factory.standard.TypeTokenFacto
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
-import com.minecolonies.api.crafting.RecipeStorageFactory;
+import com.minecolonies.coremod.colony.crafting.ItemStorageFactory;
+import com.minecolonies.coremod.colony.crafting.RecipeStorageFactory;
+import com.minecolonies.coremod.research.LocalResearchFactory;
+import com.minecolonies.coremod.research.GlobalResearchFactory;
 import com.minecolonies.coremod.colony.requestsystem.data.*;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
@@ -52,6 +55,9 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new RecipeStorageFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new ItemStorageFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new GlobalResearchFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new LocalResearchFactory());
         StandardFactoryController.getInstance().registerNewFactory(new IntegerFactory());
         StandardFactoryController.getInstance().registerNewFactory(new TypeTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestIdentitiesDataStore.Factory());

@@ -4,6 +4,8 @@ import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -18,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.*;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -111,12 +112,13 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
      */
     protected IAIState attackProtect()
     {
-        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
-          Items.SHIELD);
+        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
 
         if (target != null && target.isAlive())
         {
-            if (shieldSlot != -1)
+            final UnlockAbilityResearchEffect
+              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Shield Usage", UnlockAbilityResearchEffect.class);
+            if (effect != null && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                 worker.setActiveHand(Hand.OFF_HAND);

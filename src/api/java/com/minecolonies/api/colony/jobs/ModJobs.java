@@ -35,6 +35,7 @@ public final class ModJobs
     public static final ResourceLocation SIFTER_ID         = new ResourceLocation(Constants.MOD_ID,"sifter");
     public static final ResourceLocation FLORIST_ID        = new ResourceLocation(Constants.MOD_ID,"florist");
     public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation(Constants.MOD_ID,"enchanter");
+    public static final ResourceLocation RESEARCHER_ID     = new ResourceLocation(Constants.MOD_ID,"researcher");;
 
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
@@ -64,6 +65,7 @@ public final class ModJobs
     public static       JobEntry         sifter;
     public static       JobEntry         florist;
     public static       JobEntry         enchanter;
+    public static       JobEntry         researcher;
 
     private ModJobs()
     {

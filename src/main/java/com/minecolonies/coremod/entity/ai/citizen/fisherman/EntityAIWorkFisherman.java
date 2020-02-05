@@ -343,8 +343,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @NotNull
     private IAIState tryDifferentAngles()
     {
-
-
         if (job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;

@@ -408,6 +408,11 @@ public final class NbtTagConstants
     public static final String TAG_LADDER_COUNTER = "ladder";
 
     /**
+     * Research manager compound TAG.
+     */
+    public static final String TAG_RESEARCH = "research";
+
+    /**
      * Lumberjack/Tree Tags for NBT
      */
     public static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";

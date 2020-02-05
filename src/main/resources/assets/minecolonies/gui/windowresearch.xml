@@ -1,0 +1,8 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="400 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_papper_wide.png" size="400 244"/>
+    <dragView id="dragView" size="360 224" pos="20 10">
+    </dragView>
+    <buttonimage id="cancel" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+</window>

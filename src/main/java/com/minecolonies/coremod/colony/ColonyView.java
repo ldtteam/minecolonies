@@ -15,6 +15,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.research.IResearchManager;
+import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
@@ -190,6 +192,11 @@ public final class ColonyView implements IColonyView
     private List<CompactColonyReference> feuds;
 
     /**
+     * The research effects of the colony.
+     */
+    private final IResearchManager manager = new ResearchManager();
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -345,6 +352,10 @@ public final class ColonyView implements IColonyView
             buf.writeInt(col.getID());
             buf.writeInt(col.getDimension());
         }
+
+        final CompoundNBT treeTag = new CompoundNBT();
+        colony.getResearchManager().writeToNBT(treeTag);
+        buf.writeCompoundTag(treeTag);
     }
 
     /**
@@ -799,6 +810,7 @@ public final class ColonyView implements IColonyView
             feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
         }
 
+        this.manager.readFromNBT(buf.readCompoundTag());
         return null;
     }
 
@@ -1398,5 +1410,11 @@ public final class ColonyView implements IColonyView
     public List<CompactColonyReference> getFeuds()
     {
         return feuds;
+    }
+
+    @Override
+    public IResearchManager getResearchManager()
+    {
+        return manager;
     }
 }

@@ -1,12 +1,12 @@
 {
   "variants": {
-    "facing=east,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 90, "x": 90},
-    "facing=south,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 180, "x": 90},
-    "facing=west,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 270, "x": 90},
-    "facing=north,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 0, "x": 90},
-    "facing=east,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 90, "x": 90},
-    "facing=south,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 180, "x": 90},
-    "facing=west,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 270, "x": 90},
-    "facing=north,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 0, "x": 90}
+    "facing=east,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 270, "x": 90},
+    "facing=south,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 0, "x": 90},
+    "facing=west,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 90, "x": 90},
+    "facing=north,mirror=true": { "model": "minecolonies:block/decorationcontroller",  "y": 180, "x": 90},
+    "facing=east,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 270, "x": 90},
+    "facing=south,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 0, "x": 90},
+    "facing=west,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 90, "x": 90},
+    "facing=north,mirror=false": { "model": "minecolonies:block/decorationcontroller",  "y": 180, "x": 90}
   }
 }

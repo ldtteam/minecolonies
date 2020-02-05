@@ -26,6 +26,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.managers.*;
+import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -202,6 +203,11 @@ public class Colony implements IColony
      * The request manager assigned to the colony.
      */
     private IRequestManager requestManager;
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private IResearchManager researchManager = new ResearchManager();;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -619,6 +625,11 @@ public class Colony implements IColony
 
         raidManager.read(compound);
 
+        if (compound.keySet().contains(TAG_RESEARCH))
+        {
+            researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
+        }
+
         //  Workload
         workManager.read(compound.getCompound(TAG_WORK));
 
@@ -754,6 +765,10 @@ public class Colony implements IColony
         progressManager.write(compound);
         raidManager.write(compound);
 
+        @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
+        researchManager.writeToNBT(researchManagerCompound);
+        compound.put(TAG_RESEARCH, researchManagerCompound);
+
         // Waypoints
         @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
@@ -812,6 +827,12 @@ public class Colony implements IColony
     public boolean isRemote()
     {
         return false;
+    }
+
+    @Override
+    public IResearchManager getResearchManager()
+    {
+        return this.researchManager;
     }
 
     /**
