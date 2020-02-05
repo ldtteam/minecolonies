@@ -133,6 +133,7 @@ public class NetworkChannel
         registerMessage(++idx, EnchanterQtySetMessage.class, EnchanterQtySetMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
+        registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

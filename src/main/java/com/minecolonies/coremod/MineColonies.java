@@ -2,12 +2,14 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -89,6 +91,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
 
         InteractionValidatorInitializer.init();
+
     }
 
     @SubscribeEvent
@@ -123,6 +126,8 @@ public class MineColonies
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
+
+        ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
     }
 
     /**
@@ -135,8 +140,8 @@ public class MineColonies
     {
         Log.getLogger().warn("FMLLoadCompleteEvent");
         MinecoloniesPlacementHandlers.initHandlers();
-        //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
         RequestSystemInitializer.onPostInit();
+        MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().loadCost();
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -47,6 +47,7 @@ public final class ModBlocks
     public static AbstractBlockHut blockPostBox;
     public static AbstractBlockHut blockHutFlorist;
     public static AbstractBlockHut blockHutEnchanter;
+    public static AbstractBlockHut blockHutUniversity;
 
     /**
      * Utility blocks.
@@ -100,6 +101,7 @@ public final class ModBlocks
           blockHutShepherd,
           blockHutSmeltery,
           blockHutSwineHerder,
-          blockHutTownHall};
+          blockHutTownHall,
+          blockHutUniversity};
     }
 }

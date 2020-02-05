@@ -755,6 +755,7 @@ public final class ColonyManager implements IColonyManager
         compound.putBoolean(TAG_DISTANCE, true);
         final CompoundNBT recipeCompound = new CompoundNBT();
         recipeManager.write(recipeCompound);
+
         compound.put(RECIPE_MANAGER_TAG, recipeCompound);
         compound.putBoolean(TAG_ALL_CHUNK_STORAGES, true);
         compound.putBoolean(TAG_NEW_COLONIES, true);

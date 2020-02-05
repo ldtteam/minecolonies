@@ -1,9 +1,11 @@
-package com.minecolonies.api.crafting;
+package com.minecolonies.coremod.colony.crafting;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorageFactory;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -54,7 +56,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage getNewInstance(@NotNull final IToken token, @NotNull final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate);
     }

@@ -9,6 +9,7 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMessage;
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
@@ -21,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Abstract class for window for worker building.
  *
- * @param <B> Class extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}
+ * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
+public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
 
 {
     /**

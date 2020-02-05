@@ -368,8 +368,9 @@ public final class TranslationConstants
     @NonNls
     public static final String ASYNC_REQUEST = "com.minecolonies.requestsystem.playerresolver.async";
     @NonNls
-    public static final String NORMAL_REQUEST  = "com.minecolonies.requestsystem.playerresolver.normal";
-
+    public static final String NORMAL_REQUEST                        = "com.minecolonies.requestsystem.playerresolver.normal";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY = "com.minecolonies.coremod.gui.workerhuts.university";
 
     private TranslationConstants()
     {

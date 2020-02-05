@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -258,6 +259,12 @@ public interface IColony
      * @return true if so.
      */
     boolean isRemote();
+
+    /**
+     * Get the research manager.
+     * @return the research manager object.
+     */
+    IResearchManager getResearchManager();
 
     /**
      * Save the time when mercenaries are used, to set a cooldown.
