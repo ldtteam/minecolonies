@@ -114,11 +114,12 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
                   || block instanceof BlockGlazedTerracotta
                   || block instanceof BlockHardenedClay)
             {
+
                 return true;
             }
         }
 
-        return item == Items.BRICK || item == Items.COAL;
+        return item == Items.BRICK || item == Items.COAL || item == Items.CHARCOAL;
     }
 
     @Override
