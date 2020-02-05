@@ -1279,6 +1279,8 @@
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
-  "com.minecolonies.coremod.research.havetounlock": "Build a University to unlock this Building first!"
+  "com.minecolonies.coremod.research.havetounlock": "Build a University to unlock this Building first!",
+
+  "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!"
 }
 
