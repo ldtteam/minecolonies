@@ -95,7 +95,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         }
 
         final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab || ((ItemBlock) item).getBlock() instanceof BlockTimberFrame))
         {
             return true;
         }
