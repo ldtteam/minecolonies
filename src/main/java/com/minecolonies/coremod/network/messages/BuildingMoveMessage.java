@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -38,6 +39,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -170,6 +172,14 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final IBlockState state)
     {
+        final BlockState blockState = CompatibilityUtils.getWorldFromEntity(player).getBlockState(buildPos);
+        if ( blockState.getBlock() instanceof IBuilderUndestroyable
+                 || blockState.getBlock() == Blocks.BEDROCK)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.movebuilding.invalid"));
+            return;
+        }
+
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);

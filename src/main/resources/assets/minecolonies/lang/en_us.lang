@@ -1104,3 +1104,4 @@ com.minecolonies.requestsystem.playerresolver.normal=I need %s to continue worki
 com.minecolonies.requestsystem.playerresolver.async=It would make my job much easier if I had %s.
 com.minecolonies.coremod.gui.chat.cancel=Try cancel that request!
 com.minecolonies.coremod.gui.chat.fulfill=More details please!
+com.minecolonies.coremod.movebuilding.invalid=Can't reposition to this position, undestroyable block at destination!
