@@ -154,6 +154,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Position where the Builders constructs from.
      */
     private BlockPos workFrom;
+
     /**
      * The time in ticks the lumberjack has waited already.
      * Directly connected with the MAX_WAITING_TIME.
@@ -181,11 +182,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     @Nullable
     private TreePathResult pathResult;
+
     /**
      * A counter by how much the tree search radius
      * has been increased by now.
      */
-    private int            searchIncrement = 0;
+    private int searchIncrement = 0;
 
     /**
      * Create a new LumberjackAI.

@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
 
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
@@ -11,4 +11,6 @@
     <buttonimage id="build" size="129 17" pos="30 110" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                 label="$(com.minecolonies.coremod.gui.workerhuts.upgradeRepair)"/>
+    <buttonimage id="info" size="17 17" pos="14 214"
+                 source="minecolonies:textures/gui/red_wax_information.png"/>
 </window>
