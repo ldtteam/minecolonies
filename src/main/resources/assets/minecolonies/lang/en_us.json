@@ -1297,7 +1297,7 @@
   "com.minecolonies.coremod.info.lumberjack.2.name": "Tree Detection",
   "com.minecolonies.coremod.info.lumberjack.2": "3. The definition of a \"Tree\" in Minecraft is pretty hazy at best, we've done our best to define a tree, but in some cases it may not be enough. Generally we define a tree as a log and leaves (within a near vicinity), due to this some of your huts or decorations may be affected by the lumberjack, to counter this you can place a piece of Cobblestone below a log to mark it as \"not a tree\".",
   "com.minecolonies.coremod.info.lumberjack.3.name": "Leveling",
-  "com.minecolonies.coremod.info.lumberjack.3": "As all workers the lumberjack levels up while building.\n Similar to the builder, with higher levels their speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing."
+  "com.minecolonies.coremod.info.lumberjack.3": "As all workers the lumberjack levels up while building.\n Similar to the builder, with higher levels their speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!"
 }
