@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,16 +109,18 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         if (item instanceof BlockItem)
         {
             final Block block = ((BlockItem) item).getBlock();
-            if (block == Blocks.STONE ||
-                    block == Blocks.STONE_BRICKS ||
-                    block == Blocks.SMOOTH_STONE ||
+            if (block.isIn(BlockTags.STONE_BRICKS) ||
+                    block == Blocks.STONE         ||
+                    block == Blocks.STONE_BRICKS  ||
+                    block == Blocks.SMOOTH_STONE  ||
                     block instanceof GlazedTerracottaBlock)
             {
+
                 return true;
             }
         }
 
-        return item == Items.BRICK || item == Items.COAL;
+        return item == Items.BRICK || item == Items.COAL || item == Items.CHARCOAL;
     }
 
     @Override
