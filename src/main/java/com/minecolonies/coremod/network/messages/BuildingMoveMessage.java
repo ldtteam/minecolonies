@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -31,6 +32,7 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.event.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -38,6 +40,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -159,6 +162,7 @@ public class BuildingMoveMessage implements IMessage
             player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
             return;
         }
+
         handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, buildingId, state);
     }
 
@@ -179,6 +183,14 @@ public class BuildingMoveMessage implements IMessage
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
+        final BlockState blockState = CompatibilityUtils.getWorldFromEntity(player).getBlockState(buildPos);
+        if ( blockState.getBlock() instanceof IBuilderUndestroyable
+                 || blockState.getBlock() == Blocks.BEDROCK)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.movebuilding.invalid"));
+            return;
+        }
+
         final String hut = sn.getSection();
 
         final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockhut" + hut));

@@ -124,7 +124,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public boolean canDespawn(final double distanceToClosestPlayer)
     {
-        return shouldDespawn() || getColony() == null;
+        return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null );
     }
 
     /**
