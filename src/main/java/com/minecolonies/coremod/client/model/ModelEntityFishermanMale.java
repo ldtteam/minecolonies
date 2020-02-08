@@ -197,22 +197,19 @@ public class ModelEntityFishermanMale extends CitizenModel<AbstractEntityCitizen
         shape7.mirror = true;
         setRotation(shape7, -0.0743572F, 0F, 0F);
 
-        rightBoot = new ModelRenderer(this, 20, 102);
-        rightBoot.addBox(-2.7F, 4F, -2.5F, 5, 2, 5);
+        rightBoot = new ModelRenderer(this, 20, 38);
+        rightBoot.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
         rightBoot.setRotationPoint(-2F, 12F, 0F);
         rightBoot.setTextureSize(256, 128);
         rightBoot.mirror = true;
         setRotation(rightBoot, 0F, 0F, 0F);
 
-        leftBoot = new ModelRenderer(this, 0, 102);
-        leftBoot.addBox(-2.3F, 4F, -2.49F, 5, 2, 5);
+        leftBoot = new ModelRenderer(this, 0, 38);
+        leftBoot.addBox(-4.5F, -8F, -2.5F, 5, 2, 5);
         leftBoot.setRotationPoint(2F, 12F, 0F);
         leftBoot.setTextureSize(256, 128);
         leftBoot.mirror = true;
         setRotation(leftBoot, 0F, 0F, 0F);
-
-        //bipedLeftLeg.addChild(leftBoot);
-        //bipedRightLeg.addChild(rightBoot);
 
         bipedBody.addChild(hookTie1);
         hookTie1.addChild(fish1);
