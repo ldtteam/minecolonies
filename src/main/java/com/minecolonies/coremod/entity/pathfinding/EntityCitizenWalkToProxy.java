@@ -139,6 +139,14 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 //First calculate way to miner building.
                 newProxy = getProxy(buildingPos, citizen.getPosition(), BlockPosUtil.getDistanceSquared(citizen.getPosition(), buildingPos));
 
+                if (buildingPos.getY() - level.getDepth() > 25)
+                {
+                    addToProxyList(
+                      new BlockPos(
+                        ladderPos.getX() + building.getVectorX(),
+                        level.getDepth() + (buildingPos.getY() - level.getDepth()) / 2,
+                        ladderPos.getZ() + building.getVectorZ()));
+                }
 
                 //Then add the ladder position as the latest node.
                 addToProxyList(
