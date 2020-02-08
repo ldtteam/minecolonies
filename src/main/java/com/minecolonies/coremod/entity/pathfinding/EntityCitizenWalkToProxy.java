@@ -136,7 +136,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 final BlockPos buildingPos = building.getPosition();
                 final BlockPos newProxy;
 
-                //First calculate way to miner building. BlockPos{x=-568, y=67, z=264}
+                //First calculate way to miner building.
                 newProxy = getProxy(buildingPos, citizen.getPosition(), BlockPosUtil.getDistanceSquared(citizen.getPosition(), buildingPos));
 
                 if (buildingPos.getY() - level.getDepth() > 25)
@@ -148,7 +148,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                         ladderPos.getZ() + building.getVectorZ()));
                 }
 
-                //Then add the ladder position as the latest node. BlockPos{x=-569, y=10, z=264}
+                //Then add the ladder position as the latest node.
                 addToProxyList(
                   new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
