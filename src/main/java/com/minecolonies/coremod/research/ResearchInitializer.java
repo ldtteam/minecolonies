@@ -20,16 +20,16 @@ public class ResearchInitializer
         final GlobalResearch improvedSwords = new GlobalResearch("improvedswords", "combat", "Improved Swords", 2, new UnlockBuildingResearchEffect("Combat Academy", true));
         improvedSwords.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch squireTraining = new GlobalResearch("squiretraining", "combat", "Squire Training", 3, new MultiplierModifierResearchEffect("Block Attacks", 0.05));
+        final GlobalResearch squireTraining = new GlobalResearch("squiretraining", "combat", "Squire Training", 3, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.05));
         squireTraining.setRequirement(new BuildingResearchRequirement(3, "combatacademy"));
 
-        final GlobalResearch knightTraining = new GlobalResearch("knighttraining", "combat", "Knight Training", 4, new MultiplierModifierResearchEffect("Block Attacks", 0.10));
+        final GlobalResearch knightTraining = new GlobalResearch("knighttraining", "combat", "Knight Training", 4, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.10));
         knightTraining.setRequirement(new BuildingResearchRequirement(4, "combatacademy"));
 
-        final GlobalResearch captainTraining = new GlobalResearch("captaintraining", "combat", "Captain Training", 5, new MultiplierModifierResearchEffect("Block Attacks", 0.25));
+        final GlobalResearch captainTraining = new GlobalResearch("captaintraining", "combat", "Captain Training", 5, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.25));
         captainTraining.setRequirement(new BuildingResearchRequirement(5, "combatacademy"));
 
-        final GlobalResearch captainOfTheGuard = new GlobalResearch("captainoftheguard", "combat", "Captain of the Guard", 6, new MultiplierModifierResearchEffect("Block Attacks", 0.5));
+        final GlobalResearch captainOfTheGuard = new GlobalResearch("captainoftheguard", "combat", "Captain of the Guard", 6, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.5));
 
         tacticTraining.addChild(improvedSwords);
         improvedSwords.addChild(squireTraining);
@@ -40,16 +40,16 @@ public class ResearchInitializer
         final GlobalResearch improvedBows = new GlobalResearch("improvedbows", "combat", "Improved Bows", 2, new UnlockBuildingResearchEffect("Archery", true));
         improvedBows.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Tick Shot", 3, new MultiplierModifierResearchEffect("Double Arrows", 0.05));
+        final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Tick Shot", 3, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.05));
         tickShot.setRequirement(new BuildingResearchRequirement(3, "archery"));
 
-        final GlobalResearch multiShot = new GlobalResearch("multishot", "combat", "Multi Shot", 4, new MultiplierModifierResearchEffect("Double Arrows", 0.10));
+        final GlobalResearch multiShot = new GlobalResearch("multishot", "combat", "Multi Shot", 4, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.10));
         multiShot.setRequirement(new BuildingResearchRequirement(4, "archery"));
 
-        final GlobalResearch rapidShot = new GlobalResearch("rapidshot", "combat", "Rapid Shot", 5, new MultiplierModifierResearchEffect("Double Arrows", 0.25));
+        final GlobalResearch rapidShot = new GlobalResearch("rapidshot", "combat", "Rapid Shot", 5, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.25));
         rapidShot.setRequirement(new BuildingResearchRequirement(5, "archery"));
 
-        final GlobalResearch masterBowman = new GlobalResearch("masterbowman", "combat", "Master Bowman", 6, new MultiplierModifierResearchEffect("Double Arrows", 0.5));
+        final GlobalResearch masterBowman = new GlobalResearch("masterbowman", "combat", "Master Bowman", 6, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.5));
 
         tacticTraining.addChild(improvedBows);
         improvedBows.addChild(tickShot);
@@ -57,7 +57,7 @@ public class ResearchInitializer
         multiShot.addChild(rapidShot);
         rapidShot.addChild(masterBowman);
 
-        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockAbilityResearchEffect("Shield Usage", true));
+        final GlobalResearch avoidance = new GlobalResearch("avoidance", "combat", "Avoidance", 1, new UnlockAbilityResearchEffect(SHIELD_USAGE, true));
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 
@@ -161,7 +161,7 @@ public class ResearchInitializer
         evade.addChild(flee);
         flee.addChild(hotFoot);
 
-        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new AdditionModifierResearchEffect("None", 0));
+        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new AdditionModifierResearchEffect(NONE, 0));
         accuracy.setOnlyChild(true);
 
         final GlobalResearch quickDraw = new GlobalResearch("quickdraw", "combat", "Quick Draw", 2, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));

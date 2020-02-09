@@ -734,7 +734,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (citizenJobHandler.getColonyJob() instanceof JobKnight)
             {
                 final MultiplierModifierResearchEffect effect =
-                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Block Attacks", MultiplierModifierResearchEffect.class);
+                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
                 if (effect != null)
                 {
                     if (getRandom().nextDouble() < effect.getEffect())

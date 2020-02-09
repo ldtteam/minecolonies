@@ -28,6 +28,7 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 import static com.minecolonies.api.research.util.ResearchConstants.MELEE_DAMAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -119,7 +120,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         if (target != null && target.isAlive())
         {
             final UnlockAbilityResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Shield Usage", UnlockAbilityResearchEffect.class);
+              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class);
             if (effect != null && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);

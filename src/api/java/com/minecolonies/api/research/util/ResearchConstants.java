@@ -65,6 +65,10 @@ public final class ResearchConstants
     public static final String MELEE_DAMAGE = "Melee Damage";
     public static final String ARCHER_DAMAGE = "Archer Damage";
     public static final String RETREAT       = "Retreat";
+    public static final String NONE          = "None";
+    public static final String SHIELD_USAGE  = "Shield Usage";
+    public static final String DOUBLE_ARROWS = "Double Arrows";
+    public static final String BLOCK_ATTACKS = "Block Attacks";
 
     /**
      * Private constructor to hide implicit public one.

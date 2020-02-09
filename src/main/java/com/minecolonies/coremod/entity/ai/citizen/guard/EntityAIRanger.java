@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_DAMAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -319,7 +320,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 int amountOfArrows = 1;
                 final MultiplierModifierResearchEffect
-                  effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Double Arrows", MultiplierModifierResearchEffect.class);
+                  effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(DOUBLE_ARROWS, MultiplierModifierResearchEffect.class);
                 if (effect != null)
                 {
                     if (worker.getRandom().nextDouble() < effect.getEffect())
