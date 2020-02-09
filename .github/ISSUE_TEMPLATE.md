@@ -26,3 +26,8 @@ Version:
 2. <!-- And then this -->
 3. <!-- So that this happens -->
 4. ... Profit
+
+### Logs: Latest.log and crashlog at https://gist.github.com/
+<!-- Add your latest.log and crashlog(if you got one) to https://gist.github.com/ and put the link below. Those are often important in figuring out where issues are. -->
+- latest.log:
+- crashlog:
