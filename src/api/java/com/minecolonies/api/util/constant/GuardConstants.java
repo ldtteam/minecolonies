@@ -25,7 +25,7 @@ public final class GuardConstants
     /**
      * Range a guard should be within of Follow for Lose Formation.
      */
-    public static final int GUARD_FOLLOW_LOSE_RANGE = 20;
+    public static final int GUARD_FOLLOW_LOSE_RANGE = 15;
 
     /**
      * Y search range.

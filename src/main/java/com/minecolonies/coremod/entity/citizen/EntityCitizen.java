@@ -23,7 +23,8 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.research.ModifierResearchEffect;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -84,6 +85,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Objects;
 
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -719,7 +721,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage, final Entity sourceEntity)
     {
-        final float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
+        float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
         if (!world.isRemote)
         {
@@ -727,16 +729,31 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         setLastAttackedEntity(damageSource.getTrueSource());
 
-        if (citizenJobHandler.getColonyJob() instanceof JobKnight)
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenData != null)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Block Attacks", ModifierResearchEffect.class);
-            if (effect != null)
+            if (citizenJobHandler.getColonyJob() instanceof JobKnight)
             {
-                if (getRandom().nextDouble() < effect.getEffect())
+                final MultiplierModifierResearchEffect effect =
+                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Block Attacks", MultiplierModifierResearchEffect.class);
+                if (effect != null)
                 {
-                    return false;
+                    if (getRandom().nextDouble() < effect.getEffect())
+                    {
+                        return false;
+                    }
                 }
             }
+
+            if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth() &&  getHealth() < ((int) getMaxHealth() * 0.2D))
+            {
+                final MultiplierModifierResearchEffect effect =
+                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
+                if (effect != null)
+                {
+                    damageInc *= 1 - effect.getEffect();
+                }
+            }
+
         }
 
         final boolean result = super.attackEntityFrom(damageSource, damageInc);
@@ -825,7 +842,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Melee Armour", ModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect
+              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(MELEE_ARMOR, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
@@ -833,7 +851,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         else if(citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            final ModifierResearchEffect effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect("Archer Armour", ModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect
+              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_ARMOR, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));

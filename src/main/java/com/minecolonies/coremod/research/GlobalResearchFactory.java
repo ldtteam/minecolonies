@@ -59,7 +59,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
                                                      {
                                                          final CompoundNBT childCompound = new CompoundNBT();
-                                                         childCompound.putString(TAG_CHILD, child);
+                                                         childCompound.putString(TAG_RESEARCH_CHILD, child);
                                                          return childCompound;
                                                      }).collect(NBTUtils.toListNBT());
         compound.put(TAG_CHILDS, childTagList);
@@ -83,7 +83,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(TAG_CHILD)));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(
+          TAG_RESEARCH_CHILD)));
         return research;
     }
 }

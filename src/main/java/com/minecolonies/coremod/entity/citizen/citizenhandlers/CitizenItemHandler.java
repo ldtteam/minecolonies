@@ -7,6 +7,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -20,7 +21,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.minecolonies.api.research.util.ResearchConstants.ARMOR_DURABILITY;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_PITCH_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
@@ -316,7 +317,16 @@ public class CitizenItemHandler implements ICitizenItemHandler
             {
                 continue;
             }
-            stack.damageItem(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
+
+            double armorDamage = damage;
+            final MultiplierModifierResearchEffect
+              effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARMOR_DURABILITY, MultiplierModifierResearchEffect.class);
+            if (effect != null)
+            {
+                armorDamage *= 1 - effect.getEffect();
+            }
+
+            stack.damageItem(Math.max(1, (int) (armorDamage / 4)), citizen, (i) -> {
                 i.sendBreakAnimation(Hand.MAIN_HAND);
             });
         }

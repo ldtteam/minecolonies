@@ -4,7 +4,8 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.coremod.research.ModifierResearchEffect;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_DAMAGE;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -316,13 +318,22 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(Hand.MAIN_HAND);
 
                 int amountOfArrows = 1;
-                final ModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Double Arrows", ModifierResearchEffect.class);
+                final MultiplierModifierResearchEffect
+                  effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Double Arrows", MultiplierModifierResearchEffect.class);
                 if (effect != null)
                 {
                     if (worker.getRandom().nextDouble() < effect.getEffect())
                     {
                         amountOfArrows++;
                     }
+                }
+
+                double extraDamage = 0.0D;
+                final AdditionModifierResearchEffect
+                  dmgEffect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_DAMAGE, AdditionModifierResearchEffect.class);
+                if (dmgEffect != null)
+                {
+                    extraDamage += dmgEffect.getEffect();
                 }
 
                 for (int i = 0; i < amountOfArrows; i++)
@@ -334,7 +345,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                     final double zVector = target.posZ - worker.getPosZ();
 
                     final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                    double damage = getRangedAttackDamage();
+                    double damage = getRangedAttackDamage() + extraDamage;
+
 
                     // Add bow enchant effects: Knocback and fire
                     final ItemStack bow = worker.getHeldItem(Hand.MAIN_HAND);
