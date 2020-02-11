@@ -477,7 +477,7 @@ public class EventHandler
      */
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final PlayerEntity player)
     {
-        final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
+        final Block heldBlock =Block.getBlockFromItem( event.getItemStack().getItem() );
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
         {
             if (event.getWorld().isRemote)
