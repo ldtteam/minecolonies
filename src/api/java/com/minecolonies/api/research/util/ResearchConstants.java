@@ -27,8 +27,8 @@ public final class ResearchConstants
     public static final String TAG_DEPTH      = "depth";
     public static final String TAG_PROGRESS   = "progress";
     public static final String TAG_CHILDS     = "hasResearchedChild";
-    public static final String TAG_ONLY_CHILD = "onlyChild";
-    public static final String TAG_CHILD     = "child";
+    public static final String TAG_ONLY_CHILD     = "onlyChild";
+    public static final String TAG_RESEARCH_CHILD = "child";
 
     /**
      * Research constants for window.
@@ -53,6 +53,22 @@ public final class ResearchConstants
     public static final int LOCK_HEIGHT = 17;
     public static final int OR_X_OFFSET = 14;
     public static final int OR_Y_OFFSET = 10;
+
+    /**
+     * Research effects.
+     */
+    public static final String ARCHER_ARMOR = "Archer Armour";
+    public static final String MELEE_ARMOR = "Melee Armour";
+    public static final String ARMOR_DURABILITY = "Armor Durability";
+    public static final String FLEEING_DAMAGE = "Fleeing Damage";
+    public static final String FLEEING_SPEED = "Fleeing Speed";
+    public static final String MELEE_DAMAGE = "Melee Damage";
+    public static final String ARCHER_DAMAGE = "Archer Damage";
+    public static final String RETREAT       = "Retreat";
+    public static final String NONE          = "None";
+    public static final String SHIELD_USAGE  = "Shield Usage";
+    public static final String DOUBLE_ARROWS = "Double Arrows";
+    public static final String BLOCK_ATTACKS = "Block Attacks";
 
     /**
      * Private constructor to hide implicit public one.

@@ -121,7 +121,7 @@ public class TryResearchMessage implements IMessage
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
             if (research.canResearch(uni.getBuildingLevel(), colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
-                if (!research.getResearchRequirement().isFulfilled(colony))
+                if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
                 {
                     player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"));
                     return;

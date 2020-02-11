@@ -4,9 +4,9 @@ import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
- * The modifier research effect, it returns a double modifier.
+ * The modifier multiplication research effect, it returns a double modifier.
  */
-public class ModifierResearchEffect extends AbstractResearchEffect<Double>
+public class MultiplierModifierResearchEffect extends AbstractResearchEffect<Double>
 {
     /**
      * The effect to apply.
@@ -18,7 +18,7 @@ public class ModifierResearchEffect extends AbstractResearchEffect<Double>
      * @param id the id to unlock.
      * @param effect the effect.
      */
-    public ModifierResearchEffect(final String id, final double effect)
+    public MultiplierModifierResearchEffect(final String id, final double effect)
     {
         super(id);
         this.effect = effect;
@@ -39,6 +39,6 @@ public class ModifierResearchEffect extends AbstractResearchEffect<Double>
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier", this.getId(), effect * 100);
+        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier.multiplication", this.getId(), effect * 100);
     }
 }

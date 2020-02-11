@@ -20,6 +20,9 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
@@ -37,6 +40,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.FLEEING_SPEED;
+import static com.minecolonies.api.research.util.ResearchConstants.RETREAT;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -61,7 +66,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Max derivation of current position when following..
      */
-    private static final int MAX_FOLLOW_DERIVATION = 20;
+    private static final int MAX_FOLLOW_DERIVATION = 40;
 
     /**
      * Max derivation of current position when guarding.
@@ -276,6 +281,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState regen()
     {
+        final AdditionModifierResearchEffect
+          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_SPEED, AdditionModifierResearchEffect.class);
+        if (effect != null)
+        {
+            if (!worker.isPotionActive(Effects.SPEED))
+            {
+                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 200, (int) (0 + effect.getEffect())));
+            }
+        }
+
         if (walkToBuilding())
         {
             return GUARD_REGEN;
@@ -345,7 +360,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return GUARD_FOLLOW;
         }
 
-        if (buildingGuards.isTightGrouping())
+         if (buildingGuards.isTightGrouping())
         {
             worker.isWorkerAtSiteWithMove(buildingGuards.getPlayerToFollow(), GUARD_FOLLOW_TIGHT_RANGE);
         }
@@ -670,8 +685,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
         {
-            resetTarget();
-            return GUARD_REGEN;
+            final UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RETREAT, UnlockAbilityResearchEffect.class);
+            if (effect != null)
+            {
+                resetTarget();
+                return GUARD_REGEN;
+            }
         }
 
         if (!checkForTarget())
