@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 
+import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -64,7 +66,7 @@ public class DirectPlaceMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link ByteBuf}.
+     * Reads this packet from a {@link PacketBuffer}.
      *
      * @param buf The buffer begin read from.
      */
@@ -77,7 +79,7 @@ public class DirectPlaceMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link ByteBuf}.
+     * Writes this packet to a {@link PacketBuffer}.
      *
      * @param buf The buffer being written to.
      */
@@ -102,7 +104,7 @@ public class DirectPlaceMessage implements IMessage
         final PlayerEntity player = ctxIn.getSender();
         final World world = player.getEntityWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+        if (( IColonyManager.getInstance().getIColonyByOwner(world, player) ==  null && colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             player.getEntityWorld().setBlockState(pos, state);
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), stack);
