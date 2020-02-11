@@ -42,6 +42,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -380,7 +381,6 @@ public class EventHandler
             }
             if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
             {
-
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
                 if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BedBlock.PART))
@@ -402,10 +402,33 @@ public class EventHandler
                     }
                 }
             }
-
             handleEventCancellation(event, player);
         }
 
+        if (event.getEntity() instanceof PlayerEntity && event.getItemStack().getItem() instanceof BlockItem)
+        {
+            final Block block = ((BlockItem) event.getItemStack().getItem()).getBlock().getBlock();
+            if (block instanceof AbstractBlockHut && block != ModBlocks.blockPostBox)
+            {
+                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
+                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+                {
+                    event.setCanceled(true);
+                    return;
+                }
+
+                if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
+                {
+                    final ItemStack stack = new ItemStack(block);
+                    if (!stack.isEmpty() && !world.isRemote)
+                    {
+                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState(), event.getPos().up(), stack), (ServerPlayerEntity) player);
+                    }
+                    event.setCanceled(true);
+                }
+                return;
+            }
+        }
 
         if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
         {
@@ -422,35 +445,6 @@ public class EventHandler
                 }
             }
             event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onBlockPlaced(@NotNull final BlockEvent.EntityPlaceEvent event)
-    {
-        if (event.getEntity() instanceof PlayerEntity)
-        {
-            final PlayerEntity player = (PlayerEntity) event.getEntity();
-            final World world = player.world;
-            if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
-            {
-                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
-                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-                {
-                    event.setCanceled(true);
-                    return;
-                }
-
-                if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
-                {
-                    final ItemStack stack = new ItemStack(event.getPlacedBlock().getBlock());
-                    if (!stack.isEmpty() && !world.isRemote)
-                    {
-                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) player);
-                    }
-                    event.setCanceled(true);
-                }
-            }
         }
     }
 
