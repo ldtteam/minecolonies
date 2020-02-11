@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
-import com.ldtteam.blockout.views.DragView;
+import com.ldtteam.blockout.views.ZoomDragView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
@@ -61,7 +61,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.last = last;
 
         final List<String> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
-        final DragView view = findPaneOfTypeByID(DRAG_VIEW_ID, DragView.class);
+        final ZoomDragView view = findPaneOfTypeByID(DRAG_VIEW_ID, ZoomDragView.class);
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchManager().getResearchTree(), true, false, 0);
 
@@ -105,7 +105,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param abandoned if abandoned child.
      * @return the next y offset.
      */
-    public int drawTree(final int height, final int depth, final DragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
+    public int drawTree(final int height, final int depth, final ZoomDragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
     {
         int nextHeight = height;
         for (int i = 0; i < researchList.size(); i++)
