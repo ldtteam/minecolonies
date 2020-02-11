@@ -729,31 +729,34 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         setLastAttackedEntity(damageSource.getTrueSource());
 
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenData != null)
+        if (!world.isRemote)
         {
-            if (citizenJobHandler.getColonyJob() instanceof JobKnight)
+            if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenData != null)
             {
-                final MultiplierModifierResearchEffect effect =
-                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
-                if (effect != null)
+                if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    if (getRandom().nextDouble() < effect.getEffect())
+                    final MultiplierModifierResearchEffect effect =
+                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
+                    if (effect != null)
                     {
-                        return false;
+                        if (getRandom().nextDouble() < effect.getEffect())
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
+                      && getHealth() < ((int) getMaxHealth() * 0.2D))
+                {
+                    final MultiplierModifierResearchEffect effect =
+                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
+                    if (effect != null)
+                    {
+                        damageInc *= 1 - effect.getEffect();
                     }
                 }
             }
-
-            if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth() &&  getHealth() < ((int) getMaxHealth() * 0.2D))
-            {
-                final MultiplierModifierResearchEffect effect =
-                  citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
-                if (effect != null)
-                {
-                    damageInc *= 1 - effect.getEffect();
-                }
-            }
-
         }
 
         final boolean result = super.attackEntityFrom(damageSource, damageInc);
@@ -763,10 +766,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             return result;
         }
 
-        citizenItemHandler.updateArmorDamage(damageInc);
-        if (citizenData != null)
+        if (!world.isRemote)
         {
-            getCitizenData().getCitizenHappinessHandler().setDamageModifier();
+            citizenItemHandler.updateArmorDamage(damageInc);
+            if (citizenData != null)
+            {
+                getCitizenData().getCitizenHappinessHandler().setDamageModifier();
+            }
         }
 
         return result;
