@@ -42,6 +42,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -351,61 +352,75 @@ public class EventHandler
         final World world = event.getWorld();
         BlockPos bedBlockPos = event.getPos();
 
-        //Only execute for the main hand our colony events.
-        if (event.getHand() == Hand.MAIN_HAND)
+        // this was the simple way of doing it, minecraft calls onBlockActivated
+        // and uses that return value, but I didn't want to call it twice
+        if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
         {
-            // this was the simple way of doing it, minecraft calls onBlockActivated
-            // and uses that return value, but I didn't want to call it twice
-            if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+            final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
+            if (colony != null
+                  && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
-                if (colony != null
-                      && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-                {
-                    event.setCanceled(true);
-                }
-
-                return;
-            }
-            else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getFormattedText())
-                       && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
-            {
-                LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
             }
 
-            if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
-            {
-                return;
-            }
-            if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
-            {
+            return;
+        }
+        else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getFormattedText())
+                   && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
+        {
+            LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
+            event.setCanceled(true);
+        }
 
-                final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
-                //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-                if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BedBlock.PART))
+        if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
+            //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
+            if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BedBlock.PART))
+            {
+                final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
+                if (world.getBlockState(event.getPos()).isBedFoot(world, event.getPos()))
                 {
-                    final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
-                    if (world.getBlockState(event.getPos()).isBedFoot(world, event.getPos()))
-                    {
-                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BedBlock.HORIZONTAL_FACING));
-                    }
-                    //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
+                    bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BedBlock.HORIZONTAL_FACING));
+                }
+                //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 
-                    for (final ICitizenData citizen : citizenList)
+                for (final ICitizenData citizen : citizenList)
+                {
+                    if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                     {
-                        if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
-                        {
-                            event.setCanceled(true);
-                            LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
-                        }
+                        event.setCanceled(true);
+                        LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
                     }
                 }
             }
-
-            handleEventCancellation(event, player);
         }
 
+        handleEventCancellation(event, player);
+        if (event.getEntity() instanceof PlayerEntity && event.getItemStack().getItem() instanceof BlockItem)
+        {
+            final Block block = ((BlockItem) event.getItemStack().getItem()).getBlock().getBlock();
+            if (block instanceof AbstractBlockHut && block != ModBlocks.blockPostBox)
+            {
+                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
+                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+                {
+                    event.setCanceled(true);
+                    return;
+                }
+
+                if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
+                {
+                    final ItemStack stack = new ItemStack(block);
+                    if (!stack.isEmpty() && !world.isRemote)
+                    {
+                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState(), event.getPos().up(), stack), (ServerPlayerEntity) player);
+                    }
+                    event.setCanceled(true);
+                }
+                return;
+            }
+        }
 
         if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
         {
@@ -422,35 +437,6 @@ public class EventHandler
                 }
             }
             event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onBlockPlaced(@NotNull final BlockEvent.EntityPlaceEvent event)
-    {
-        if (event.getEntity() instanceof PlayerEntity)
-        {
-            final PlayerEntity player = (PlayerEntity) event.getEntity();
-            final World world = player.world;
-            if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
-            {
-                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
-                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-                {
-                    event.setCanceled(true);
-                    return;
-                }
-
-                if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
-                {
-                    final ItemStack stack = new ItemStack(event.getPlacedBlock().getBlock());
-                    if (!stack.isEmpty() && !world.isRemote)
-                    {
-                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) player);
-                    }
-                    event.setCanceled(true);
-                }
-            }
         }
     }
 
@@ -491,7 +477,7 @@ public class EventHandler
      */
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final PlayerEntity player)
     {
-        final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
+        final Block heldBlock =Block.getBlockFromItem( event.getItemStack().getItem() );
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
         {
             if (event.getWorld().isRemote)
