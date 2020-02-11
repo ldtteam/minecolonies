@@ -1273,7 +1273,9 @@
   "com.minecolonies.coremod.gui.chat.fulfill": "More details please!",
   "com.minecolonies.coremod.gui.research.title": "Research Branches",
   "com.minecolonies.coremod.research.requirement.building.level": "Requires: %s level %d",
-  "com.minecolonies.coremod.research.effect.modifier": "%s by %d percent",
+  "com.minecolonies.coremod.research.effect.modifier.multiplication": "%s by %d percent",
+  "com.minecolonies.coremod.research.effect.modifier.addition": "%s + %d",
+
   "com.minecolonies.coremod.research.effect.unlock": "Unlocks %s",
   "com.minecolonies.coremod.research.research": "Research",
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",

@@ -4,8 +4,9 @@ import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -26,6 +27,8 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
+import static com.minecolonies.api.research.util.ResearchConstants.MELEE_DAMAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -117,7 +120,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         if (target != null && target.isAlive())
         {
             final UnlockAbilityResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect("Shield Usage", UnlockAbilityResearchEffect.class);
+              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class);
             if (effect != null && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
@@ -215,6 +218,14 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             addDmg += getLevelDamage();
+
+            final AdditionModifierResearchEffect
+              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MELEE_DAMAGE, AdditionModifierResearchEffect.class);
+            if (effect != null)
+            {
+                addDmg += effect.getEffect();
+            }
+
             return (int) ((addDmg) * MineColonies.getConfig().getCommon().knightDamageMult.get());
         }
         return (int) (BASE_PHYSICAL_DAMAGE * MineColonies.getConfig().getCommon().knightDamageMult.get());

@@ -189,6 +189,37 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedevasion;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> agilearcher;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedleather ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> boiledleather;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironskin ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironarmour;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelarmour;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin ;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> regeneration;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoid;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evade ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> flee;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotfoot;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> feint;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fear ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> retreat;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fullretreat;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> accuracy ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> quickdraw;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> powerattack ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> cleave;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> mightycleave;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> whirlwind;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> preciseshot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> penetratingshot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> piercingshot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> woundingshot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> deadlyaim;
+
     /**
      * Builds common configuration.
      *
@@ -707,6 +738,91 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         agilearcher = defineList(builder, "agilearcher",
           Collections.singletonList("minecraft:diamond*64"),
+          s -> s instanceof String);
+
+        this.improvedleather = defineList(builder, "improvedleather",
+          Collections.singletonList("minecraft:leather*32"),
+          s -> s instanceof String);
+        this.boiledleather = defineList(builder, "boiledleather",
+          Collections.singletonList("minecraft:leather*64"),
+          s -> s instanceof String);
+        this.ironskin = defineList(builder, "ironskin",
+          Collections.singletonList("minecraft:iron_ingot*16"),
+          s -> s instanceof String);
+        this.ironarmour = defineList(builder, "ironarmour",
+          Collections.singletonList("minecraft:iron_ingot*32"),
+          s -> s instanceof String);
+        this.steelarmour = defineList(builder, "steelarmour",
+          Collections.singletonList("minecraft:iron_ingot*64"),
+          s -> s instanceof String);
+        this.diamondskin = defineList(builder, "diamondskin",
+          Collections.singletonList("minecraft:diamond*64"),
+          s -> s instanceof String);
+
+        this.regeneration = defineList(builder, "regeneration",
+          Collections.singletonList("minecraft:emerald*1"),
+          s -> s instanceof String);
+
+        this.feint = defineList(builder, "feint",
+          Collections.singletonList("minecraft:emerald*8"),
+          s -> s instanceof String);
+        this.fear = defineList(builder, "fear",
+          Collections.singletonList("minecraft:emerald*16"),
+          s -> s instanceof String);
+        this.retreat = defineList(builder, "retreat",
+          Collections.singletonList("minecraft:emerald*32"),
+          s -> s instanceof String);
+        this.fullretreat = defineList(builder, "fullretreat",
+          Collections.singletonList("minecraft:emerald*64"),
+          s -> s instanceof String);
+
+        this.avoid = defineList(builder, "avoid",
+          Collections.singletonList("minecraft:emerald*8"),
+          s -> s instanceof String);
+        this.evade = defineList(builder, "dodge",
+          Collections.singletonList("minecraft:emerald*16"),
+          s -> s instanceof String);
+        this.flee = defineList(builder, "dodge",
+          Collections.singletonList("minecraft:emerald*32"),
+          s -> s instanceof String);
+        this.hotfoot = defineList(builder, "dodge",
+          Collections.singletonList("minecraft:emerald*64"),
+          s -> s instanceof String);
+
+        this.accuracy = defineList(builder, "accuracy",
+          Collections.singletonList("minecraft:iron_ingot*1"),
+          s -> s instanceof String);
+
+        this.quickdraw = defineList(builder, "quickdraw",
+          Collections.singletonList("minecraft:iron_block*2"),
+          s -> s instanceof String);
+        this.powerattack = defineList(builder, "powerattack",
+          Collections.singletonList("minecraft:iron_block*4"),
+          s -> s instanceof String);
+        this.cleave = defineList(builder, "cleave",
+          Collections.singletonList("minecraft:iron_block*8"),
+          s -> s instanceof String);
+        this.mightycleave = defineList(builder, "mightycleave",
+          Collections.singletonList("minecraft:iron_block*16"),
+          s -> s instanceof String);
+        this.whirlwind = defineList(builder, "whirlwind",
+          Collections.singletonList("minecraft:iron_block*32"),
+          s -> s instanceof String);
+
+        this.preciseshot = defineList(builder, "preciseshot",
+          Collections.singletonList("minecraft:flint*16"),
+          s -> s instanceof String);
+        this.penetratingshot = defineList(builder, "penetratingshot",
+          Collections.singletonList("minecraft:flint*32"),
+          s -> s instanceof String);
+        this.piercingshot = defineList(builder, "piercingshot",
+          Collections.singletonList("minecraft:flint*64"),
+          s -> s instanceof String);
+        this.woundingshot = defineList(builder, "woundingshot",
+          Collections.singletonList("minecraft:flint*128"),
+          s -> s instanceof String);
+        this.deadlyaim = defineList(builder, "deadlyaim",
+          Collections.singletonList("minecraft:flint*256"),
           s -> s instanceof String);
 
         finishCategory(builder);
