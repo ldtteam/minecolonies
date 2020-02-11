@@ -36,6 +36,11 @@ public final class WindowConstants
     public static final String BUTTON_INFO = "info";
 
     /**
+     * Id of the info button in the GUI.
+     */
+    public static final String BUTTON_INFOPAGE = "infopage";
+
+    /**
      * Id of the action button in the GUI.
      */
     public static final String BUTTON_ACTIONS = "actions";

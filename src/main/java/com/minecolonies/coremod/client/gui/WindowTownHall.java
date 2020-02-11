@@ -140,7 +140,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         updateWorkOrders();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
-        tabsToPages.put(BUTTON_INFO, PAGE_INFO);
+        tabsToPages.put(BUTTON_INFOPAGE, PAGE_INFO);
         tabsToPages.put(BUTTON_SETTINGS, PAGE_SETTINGS);
         tabsToPages.put(BUTTON_PERMISSIONS, PAGE_PERMISSIONS);
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);

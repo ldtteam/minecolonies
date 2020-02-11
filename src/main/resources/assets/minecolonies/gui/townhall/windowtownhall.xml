@@ -56,7 +56,7 @@
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
 
     <!-- onHoverId="infoExt" onHoverId="actionsExt" onHoverId="permissionsExt" onHoverId="citizensExt" onHoverId="settingsExt" onHoverId="workOrderExt" onHoverId="happinessExt" -->
-    <buttonimage id="info" size="17 17" pos="62 71"
+    <buttonimage id="infopage" size="17 17" pos="62 71"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
     <buttonimage id="actions" size="17 17" pos="62 95"
                  source="minecolonies:textures/gui/red_wax_actions.png"/>
