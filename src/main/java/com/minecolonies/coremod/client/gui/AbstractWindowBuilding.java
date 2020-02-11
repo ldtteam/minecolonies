@@ -50,7 +50,10 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
 
-        buttonInfo.setVisible(I18n.hasKey(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
+        if (buttonInfo != null)
+        {
+            buttonInfo.setVisible(I18n.hasKey(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
+        }
     }
 
     /**
