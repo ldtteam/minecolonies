@@ -461,10 +461,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                                       .collect(Collectors.toList());
                 handlers.add(getInventory());
                 this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
-                                                                                          .distinct()
                                                                                           .filter(handler -> handler instanceof IItemHandlerModifiable
                                                                                                                && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
+                                                                                          .distinct()
                                                                                           .toArray(IItemHandlerModifiable[]::new));
             }
 
