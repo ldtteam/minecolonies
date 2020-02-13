@@ -1,18 +1,17 @@
-package com.minecolonies.api.util;
+package com.minecolonies.api.entity.mobs;
 
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.IArcherMobEntity;
-import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -25,22 +24,26 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
-public final class MobSpawnUtils
+/**
+ * Util class for raider mobs/spawning
+ */
+public final class RaiderMobUtils
 {
 
-    private MobSpawnUtils()
+    public static double MOB_SPAWN_DEVIATION_STEPS = 0.3;
+
+    private RaiderMobUtils()
     {
         throw new IllegalStateException("Tried to initialize: MobSpawnUtils but this is a Utility class.");
     }
 
     /**
-     * Sets up the mob ai for a minecolonies mob.
-     * Calls into the api to get the required ai tasks from the registry and loads the tasks.
+     * Sets up the mob ai for a minecolonies mob. Calls into the api to get the required ai tasks from the registry and loads the tasks.
      *
      * @param mob The mob to set the AI Tasks on.
      */
@@ -56,8 +59,8 @@ public final class MobSpawnUtils
     /**
      * Set mob attributes.
      *
-     * @param mob The mob to set the attributes on.
-     * @param colony    The colony that the mob is attacking.
+     * @param mob    The mob to set the attributes on.
+     * @param colony The colony that the mob is attacking.
      */
     public static void setMobAttributes(final EntityLiving mob, final IColony colony)
     {
@@ -89,7 +92,7 @@ public final class MobSpawnUtils
     {
         if (colony != null)
         {
-            final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
+            final int raidLevel = (int) (colony.getRaiderManager().getColonyRaidLevel() * BARBARIAN_HEALTH_MULTIPLIER);
             return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
         }
         return BARBARIAN_BASE_HEALTH;
@@ -97,43 +100,56 @@ public final class MobSpawnUtils
 
     /**
      * Sets up and spawns the Barbarian entities of choice
-     *  @param entityToSpawn  The entity which should be spawned
+     *
+     * @param entityToSpawn  The entity which should be spawned
      * @param numberOfSpawns The number of times the entity should be spawned
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
-     * @param colony the colony to spawn them close to.
+     * @param colony         the colony to spawn them close to.
      */
     public static void spawn(
       final ResourceLocation entityToSpawn,
       final int numberOfSpawns,
       final BlockPos spawnLocation,
       final World world,
-      final IColony colony)
+      final IColony colony,
+      final int eventID)
     {
-        if (spawnLocation != null && entityToSpawn != null && world != null)
+        if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
         {
 
             final int x = spawnLocation.getX();
             final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
             final int z = spawnLocation.getZ();
+            double spawnDeviationX = 0;
+            double spawnDeviationZ = 0;
 
-            IntStream.range(0, numberOfSpawns).forEach(theInteger ->
+            for (int i = 0; i < numberOfSpawns; i++)
             {
-                final AbstractEntityBarbarian entity = (AbstractEntityBarbarian) EntityList.createEntityByIDFromName(entityToSpawn, world);
+                final AbstractEntityMinecoloniesMob entity = (AbstractEntityMinecoloniesMob) EntityList.createEntityByIDFromName(entityToSpawn, world);
 
                 if (entity != null)
                 {
-                    setEquipment(entity);
-                    entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.setPositionAndRotation(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.spawnEntity(world, entity);
                     entity.setColony(colony);
+                    entity.setEventID(eventID);
+                    entity.registerWithColony();
+                    spawnDeviationZ += MOB_SPAWN_DEVIATION_STEPS;
+
+                    if (spawnDeviationZ > 2)
+                    {
+                        spawnDeviationZ = 0;
+                        spawnDeviationX += MOB_SPAWN_DEVIATION_STEPS;
+                    }
                 }
-            });
+            }
         }
     }
 
     /**
      * Set the equipment of a certain mob.
+     *
      * @param mob the equipment to set up.
      */
     public static void setEquipment(final AbstractEntityMinecoloniesMob mob)
@@ -175,5 +191,23 @@ public final class MobSpawnUtils
                 }
             }
         }
+    }
+
+    /**
+     * Returns the barbarians close to an entity.
+     *
+     * @param entity             The entity to test against
+     * @param distanceFromEntity The distance to check for
+     * @return the barbarians (if any) that is nearest
+     */
+    public static List<AbstractEntityMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
+    {
+        return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(
+          AbstractEntityMinecoloniesMob.class,
+          entity.getEntityBoundingBox().expand(
+            distanceFromEntity,
+            3.0D,
+            distanceFromEntity),
+          Entity::isEntityAlive);
     }
 }

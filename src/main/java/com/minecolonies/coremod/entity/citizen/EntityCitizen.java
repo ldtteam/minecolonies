@@ -17,7 +17,6 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModItems;
@@ -62,7 +61,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -361,7 +359,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.MOURN;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world).isEmpty()))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
             return DesiredActivity.SLEEP;
@@ -771,18 +769,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
             {
-                boolean isBarbarianClose = false;
-                for (final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
-                {
-                    if (MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
-                    {
-                        isBarbarianClose = true;
-                        break;
-                    }
-                }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !isBarbarianClose)
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !citizenColonyHandler.getColony().getRaiderManager().isRaided())
                     {
                         penalty = CITIZEN_KILL_PENALTY;
                         break;

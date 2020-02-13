@@ -120,9 +120,8 @@ public class Configurations
         @Config.Comment("The minimum number of nights between raids. [Default: 1]")
         public int minimumNumberOfNightsBetweenRaids = 1;
 
-        // TODO: change to true over time
         @Config.Comment("Should Mobs attack citizens? [Default: false")
-        public boolean mobAttackCitizens = false;
+        public boolean mobAttackCitizens = true;
 
         @Config.Comment("Should Citizens call guards for help when attacked? default:true")
         public boolean citizenCallForHelp = true;

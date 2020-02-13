@@ -206,7 +206,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         sender.sendMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
         sender.sendMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
 
-        if (!colony.isCanHaveBarbEvents())
+        if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
             sender.sendMessage(new TextComponentString(CANNOT_BE_RAIDED));
         }

@@ -1,12 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -57,6 +53,14 @@ public interface IRaiderManager
      */
     void setWillRaidTonight(final boolean willRaid);
 
+    boolean areSpiesEnabled();
+
+    void setSpiesEnabled(boolean enabled);
+
+    void raiderEvent();
+
+    BlockPos calculateSpawnLocation();
+
     /**
      * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
      * @param directionX the first direction parameter.
@@ -71,49 +75,24 @@ public interface IRaiderManager
      */
     List<BlockPos> getLastSpawnPoints();
 
-    /**
-     * Register a raider at the colony.
-     * @param raider the raider to register.
-     */
-    void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider);
+    int calcBabarianAmount();
+
+    boolean isRaided();
 
     /**
-     * Unregister a raider from the colony.
-     * @param raider the raider to unregister.
-     * @param world the serverWorld.
+     * Called on nightfall.
      */
-    void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world);
+    void onNightFall();
 
-    /**
-     * Gets the horde of raiders approaching the colony.
-     * @param world the serverWorld.
-     * @return the list of entities.
-     */
-    List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
+    int getNightsSinceLastRaid();
 
-    /**
-     * Register a certain raider origin schematic to the colony..
-     * @param ship the ship description.
-     * @param position the position.
-     * @param worldTime the world time at spawn.
-     */
-    void registerRaiderOriginSchematic(final String ship, final BlockPos position, final long worldTime);
+    void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
-    /**
-     * Reads the raider manager from NBT.
-     * @param compound the compound to read it from.
-     */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void tryToRaidColony(final IColony colony);
 
-    /**
-     * Called on colony tick.
-     * @param colony the colony being ticked.
-     */
-    void onColonyTick(@NotNull final IColony colony);
+    boolean canRaid();
 
-    /**
-     * Writes the raider manager to NBT.
-     * @param compound the compound to write it to.
-     */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    boolean isItTimeToRaid();
+
+    int getColonyRaidLevel();
 }

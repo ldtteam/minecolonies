@@ -5,16 +5,14 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIAttackArcher;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIRaiderAttackMelee;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIWalkToRandomHuts;
 import com.minecolonies.coremod.util.MultimapCollector;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +43,8 @@ public class MobAIRegistry implements IMobAIRegistry
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIOpenFenceGate(mob, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
           .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true))
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE))

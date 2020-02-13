@@ -3,15 +3,12 @@ package com.minecolonies.api.entity.mobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,14 +16,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
+import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -76,6 +72,18 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     private int ladderCounter = 0;
 
     /**
+     * The raids event id.
+     */
+    private int eventID = 0;
+
+    /**
+     * Whether this entity is registered with the colony yet.
+     */
+    private boolean isRegistered = false;
+
+    private int invulTime = 2 * 20;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -83,12 +91,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     public AbstractEntityMinecoloniesMob(final World world)
     {
         super(world);
+        this.setEntityInvulnerable(true);
+        RaiderMobUtils.setEquipment(this);
     }
 
     @Override
     protected void initEntityAI()
     {
-        MobSpawnUtils.setupMobAi(this);
+        RaiderMobUtils.setupMobAi(this);
     }
 
     @Override
@@ -102,7 +112,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (entityIn instanceof AbstractEntityMinecoloniesMob
+        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
               && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
         {
             return;
@@ -226,7 +236,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         compound.setInteger(TAG_STUCK_COUNTER, stuckCounter);
         compound.setInteger(TAG_LADDER_COUNTER, ladderCounter);
         compound.setInteger(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
+        compound.setInteger(TAG_EVENT_ID, eventID);
         return super.writeToNBT(compound);
+    }
+
+    @Override
+    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+    {
+        return this;
     }
 
     @Override
@@ -235,6 +252,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInteger(TAG_STUCK_COUNTER);
         ladderCounter = compound.getInteger(TAG_LADDER_COUNTER);
+        eventID = compound.getInteger(TAG_EVENT_ID);
         if (compound.hasKey(TAG_COLONY_ID))
         {
             final int colonyId = compound.getInteger(TAG_COLONY_ID);
@@ -243,12 +261,27 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
+
+        if (colony == null || eventID == 0)
+        {
+            this.setDead();
+        }
+
         super.readFromNBT(compound);
     }
 
     @Override
     public void onLivingUpdate()
     {
+        if (invulTime > 0)
+        {
+            invulTime--;
+        }
+        else
+        {
+            this.setEntityInvulnerable(false);
+        }
+
         if (world.isRemote)
         {
             super.onLivingUpdate();
@@ -264,20 +297,27 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
 
             if (shouldDespawn())
             {
+                this.onDeath(new DamageSource("despawn"));
                 this.setDead();
+                return;
+            }
+
+            if (!isRegistered)
+            {
+                registerWithColony();
             }
 
             if (currentCount <= 0)
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
-                MobSpawnUtils.setMobAttributes(this, getColony());
+                RaiderMobUtils.setMobAttributes(this, getColony());
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
                       && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
-                    BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
+                    RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
                       .stream().filter(entity -> !entity.isPotionActive(SPEED_EFFECT))
-                      .forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                      .forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, 0)));
                 }
             }
             else
@@ -290,12 +330,15 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         super.onLivingUpdate();
     }
 
-    @Nullable
     @Override
-    public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata)
+    public void setDead()
     {
-        MobSpawnUtils.setEquipment(this);
-        return super.onInitialSpawn(difficulty, livingdata);
+        super.setDead();
+
+        if (!world.isRemote && colony != null && eventID > 0)
+        {
+            colony.getEventManager().unregisterEntity(this, eventID);
+        }
     }
 
     @Override
@@ -311,16 +354,10 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
 
     /**
      * Getter for the colony.
-     * Gets a value from the ColonyManager if null.
      * @return the colony the barbarian is assigned to attack.e
      */
     public IColony getColony()
     {
-        if (!world.isRemote && colony == null)
-        {
-            this.setColony(IColonyManager.getInstance().getClosestColony(CompatibilityUtils.getWorldFromEntity(this), this.getPosition()));
-        }
-
         return colony;
     }
 
@@ -329,7 +366,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
      */
     public void registerWithColony()
     {
-        getColony();
+        if (colony == null || eventID == 0)
+        {
+            setDead();
+            return;
+        }
+
+        colony.getEventManager().registerEntity(this, eventID);
+        isRegistered = true;
     }
 
     @Override
@@ -338,7 +382,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
-            getColony().getRaiderManager().unregisterRaider(this, (WorldServer) world);
+            getColony().getEventManager().onEntityDeath(this, eventID);
         }
     }
 
@@ -351,7 +395,16 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         if (colony != null)
         {
             this.colony = colony;
-            this.colony.getRaiderManager().registerRaider(this);
         }
+    }
+
+    public int getEventID()
+    {
+        return eventID;
+    }
+
+    public void setEventID(final int eventID)
+    {
+        this.eventID = eventID;
     }
 }

@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS        = 20;
+    private static final double PIRATE_SWIM_BONUS        = 30;
     public static final  double MIN_Y_DISTANCE           = 0.001;
 
     @Nullable

@@ -34,7 +34,7 @@ public final class RaiderConstants
     public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
     public static final int    SPEED_EFFECT_DURATION       = 60;
-    public static final int    SPEED_EFFECT_MULTIPLIER     = 2;
+    public static final double SPEED_EFFECT_MULTIPLIER     = 1.3;
 
     /**
      * Amount of ladders to place before destroying blocks.

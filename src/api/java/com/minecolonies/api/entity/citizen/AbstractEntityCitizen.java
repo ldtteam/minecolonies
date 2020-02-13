@@ -115,10 +115,9 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
      * @param dimensionIn dimension to travel to.
      */
     @Override
-    @Nullable
-    public Entity changeDimension(final int dimensionIn)
+    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
     {
-        return null;
+        return this;
     }
 
     @NotNull

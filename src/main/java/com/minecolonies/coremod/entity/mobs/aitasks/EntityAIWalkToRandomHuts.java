@@ -240,10 +240,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         entity.setStuckCounter(entity.getStuckCounter() + 1);
         final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
-        if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
+        if ((world.isAirBlock(front) && world.isAirBlock(front.down(3))) || world.getBlockState(front).getBlock() == Blocks.LAVA
+              || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
         {
             notStuckTime = 0;
-            world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
+            world.setBlockState(front, Blocks.LEAVES2.getDefaultState());
         }
 
         if (entity.getStuckCounter() > 1 && Configurations.gameplay.doBarbariansBreakThroughWalls)
@@ -280,11 +281,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     private void handleBarbarianLadderPlacement(final IBlockState ladderHere, final IBlockState ladderUp)
     {
-        if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
+        if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid() && ladderUp.isFullBlock())
         {
             world.setBlockState(entity.getPosition().up(), ladderHere);
         }
-        else if (ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
+        else if (ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid() && ladderHere.isFullBlock())
         {
             world.setBlockState(entity.getPosition(), ladderUp);
         }
@@ -313,13 +314,14 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     {
         for (final EnumFacing dir : directions)
         {
-            if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+            final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
+            if (state.getMaterial().isSolid() && state.isFullBlock())
             {
                 if (random.nextBoolean())
                 {
                     world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
                 }
-                else if (!ladderHere.getMaterial().isLiquid())
+                else if (!ladderHere.getMaterial().isLiquid() && ladderHere.isFullBlock())
                 {
                     world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
                 }

@@ -1,0 +1,16 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" size="190 133"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="100% 100%"/>
+
+    <buttonimage id="cancel" size="14 15" pos="165 5"
+                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+
+    <text id="text" size="150 85" pos="15 5" color="black"/>
+    <itemicon id="hireSpiesIcon" size="25 25" pos="15 90"/>
+    <label id="amount" size="15 15" pos="45 96" color="black"/>
+    <buttonimage id="hireSpies" size="86 17" pos="65 98" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+                 label="$(com.minecolonies.coremod.gui.barracks.spieshire)"/>
+</window>
