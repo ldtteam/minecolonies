@@ -2073,7 +2073,7 @@ public class InventoryUtils
     }
 
     /**
-     * Remove a list of stacks from a given Itemhandler
+     * Remove a stack from a given Itemhandler
      *
      * @param handler the itemHandler.
      * @param input   the stack to remove.
@@ -2566,7 +2566,6 @@ public class InventoryUtils
                     }
                 }
             }
-
 			return false;
         }
 
