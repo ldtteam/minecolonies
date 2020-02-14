@@ -151,7 +151,7 @@ public final class ColonyView implements IColonyView
     /**
      * Wether the colony is raided
      */
-    private boolean isRaided;
+    private boolean isUnderRaid;
 
     /**
      * The world.
@@ -793,7 +793,7 @@ public final class ColonyView implements IColonyView
 
         this.style = ByteBufUtils.readUTF8String(buf);
 
-        this.isRaided = buf.readBoolean();
+        this.isUnderRaid = buf.readBoolean();
         this.spiesEnabled = buf.readBoolean();
 
         this.allies = new ArrayList<>();
@@ -1367,7 +1367,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isRaiding()
     {
-        return this.isRaided;
+        return this.isUnderRaid;
     }
 
     @Override
@@ -1395,7 +1395,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isSpiesEnabled()
+    public boolean areSpiesEnabled()
     {
         return spiesEnabled;
     }

@@ -52,6 +52,9 @@ public class EventManager implements IEventManager
      */
     private final Map<Integer, IColonyEvent> events = new HashMap<>();
 
+    /**
+     * The related structure manager, which takes care of structures for the events.
+     */
     private final EventStructureManager structureManager;
 
     public EventManager(final IColony colony)
@@ -63,7 +66,7 @@ public class EventManager implements IEventManager
     /**
      * Adds a event event to the colony.
      *
-     * @param colonyEvent
+     * @param colonyEvent the event to add
      */
     @Override
     public void addEvent(final IColonyEvent colonyEvent)

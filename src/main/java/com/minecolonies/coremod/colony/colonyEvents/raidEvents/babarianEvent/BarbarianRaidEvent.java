@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.ColonyState;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.IRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
@@ -32,6 +32,9 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
 
+/**
+ * Barbarian raid event for the colony, triggers a horde of barbarians which spawn and attack the colony.
+ */
 public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
 {
     /**

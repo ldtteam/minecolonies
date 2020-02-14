@@ -86,10 +86,20 @@ public interface IColonyEvent
      */
     public void readFromNBT(final NBTTagCompound compound);
 
+    /**
+     * Called to register an entity with this event
+     *
+     * @param entity
+     */
     default public void registerEntity(final Entity entity) {}
 
     ;
 
+    /**
+     * called to unregister an entity with this event
+     *
+     * @param entity
+     */
     default public void unregisterEntity(final Entity entity) {}
 
     ;

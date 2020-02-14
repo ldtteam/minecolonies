@@ -51,6 +51,9 @@ public class EventStructureManager implements IEventStructureManager
      */
     private final EventManager eventManager;
 
+    /**
+     * The colony this manager belongs to
+     */
     private final IColony colony;
 
     public EventStructureManager(final EventManager eventManager, final IColony colony)

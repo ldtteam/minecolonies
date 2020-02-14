@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
@@ -287,6 +288,11 @@ public class PirateRaidEvent implements IColonyEvent, IRaidEvent
         return spawnerCount * 2 + ADD_MAX_PIRATES;
     }
 
+    /**
+     * Sets the ship size for this event.
+     *
+     * @param shipSize
+     */
     public void setShipSize(final ShipSize shipSize)
     {
         this.shipSize = shipSize;

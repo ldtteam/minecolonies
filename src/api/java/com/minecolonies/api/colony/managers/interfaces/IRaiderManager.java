@@ -53,12 +53,28 @@ public interface IRaiderManager
      */
     void setWillRaidTonight(final boolean willRaid);
 
+    /**
+     * Returns whether spies are enabled
+     *
+     * @return
+     */
     boolean areSpiesEnabled();
 
+    /**
+     * Sets whether spies are enabled
+     * @param enabled
+     */
     void setSpiesEnabled(boolean enabled);
 
+    /**
+     * Triggers a raid on the colony
+     */
     void raiderEvent();
 
+    /**
+     * Calculates the spawn position for raids
+     * @return
+     */
     BlockPos calculateSpawnLocation();
 
     /**
@@ -75,8 +91,17 @@ public interface IRaiderManager
      */
     List<BlockPos> getLastSpawnPoints();
 
-    int calcBabarianAmount();
+    /**
+     * Calculates the barbarian amount for raids
+     *
+     * @return
+     */
+    int calcBarbarianAmount();
 
+    /**
+     * Whether the colony is currently raided.
+     * @return
+     */
     boolean isRaided();
 
     /**
@@ -84,15 +109,39 @@ public interface IRaiderManager
      */
     void onNightFall();
 
+    /**
+     * Returns the amount of nights since the last raid
+     * @return
+     */
     int getNightsSinceLastRaid();
 
+    /**
+     * Sets the amount of nights since the last raid
+     * @param nightsSinceLastRaid
+     */
     void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
+    /**
+     * Tries to raid the colony, if possible.
+     * @param colony
+     */
     void tryToRaidColony(final IColony colony);
 
+    /**
+     * Whether the colony can be raided.
+     * @return
+     */
     boolean canRaid();
 
+    /**
+     * Returns true when it is time to raid
+     * @return
+     */
     boolean isItTimeToRaid();
 
+    /**
+     * calculates the colonies raid level
+     * @return
+     */
     int getColonyRaidLevel();
 }

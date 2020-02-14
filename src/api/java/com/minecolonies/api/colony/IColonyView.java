@@ -455,5 +455,5 @@ public interface IColonyView extends IColony
      */
     List<CompactColonyReference> getFeuds();
 
-    boolean isSpiesEnabled();
+    boolean areSpiesEnabled();
 }

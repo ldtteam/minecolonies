@@ -554,6 +554,7 @@ tile.minecolonies.blockHutBarracksTower.name=BarracksTower
 tile.minecolonies.blockHutBarracks.name=Barracks
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 com.minecolonies.coremod.gui.barracks.spieshire=Hire
+com.minecolonies.coremod.gui.barracks.spies.desc=During raids you can hire spies here, to infiltrate the enemy lines. Those then let you know enemy positions although they demand some gold as payment. Put the gold into the barracks inventory to automatically pay them.
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
 com.minecolonies.coremod.gui.hiring.buttonFire=Fire

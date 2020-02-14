@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -30,7 +31,7 @@ import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
 
 /**
- * Handles hostile raid events.
+ * Handles spawning hostile raid events.
  */
 public class RaidManager implements IRaiderManager
 {
@@ -146,8 +147,7 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
-        int amount = calcBabarianAmount();
-        amount = 55;
+        int amount = calcBarbarianAmount();
         if (amount <= 0)
         {
             return;
@@ -292,7 +292,7 @@ public class RaidManager implements IRaiderManager
      * @return
      */
     @Override
-    public int calcBabarianAmount()
+    public int calcBarbarianAmount()
     {
         return Math.min(Configurations.gameplay.maxBarbarianSize,
           (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
@@ -316,7 +316,7 @@ public class RaidManager implements IRaiderManager
     {
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof PirateRaidEvent || event instanceof BarbarianRaidEvent)
+            if (event instanceof IRaidEvent)
             {
                 return true;
             }

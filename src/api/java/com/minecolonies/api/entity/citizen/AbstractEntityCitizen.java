@@ -117,7 +117,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
     @Override
     public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
     {
-        return this;
+        return null;
     }
 
     @NotNull

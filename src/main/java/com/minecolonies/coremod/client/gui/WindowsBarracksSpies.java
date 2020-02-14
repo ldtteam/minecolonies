@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Window;
@@ -75,12 +76,11 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT, 0);
         goldCount += InventoryUtils.getItemCountInItemHandler(rackInv, Items.GOLD_INGOT, 0);
 
-        if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().isSpiesEnabled())
+        if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled())
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setTextContent(
-          "During raids you can hire spies here, to infiltrate the enemy lines. Those then let you know enemy positions although they demand some gold as payment. Put the gold into the barracks inventory to automatically pay them.");
+        findPaneOfTypeByID(TEXT_ID, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.barracks.spies.desc"));
     }
 
     @Override

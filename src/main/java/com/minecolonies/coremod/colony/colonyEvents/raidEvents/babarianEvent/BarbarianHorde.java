@@ -9,13 +9,27 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
  */
 public class BarbarianHorde
 {
+    /**
+     * NBT Tags
+     */
     public static final String TAG_NUMBEROFRAIDERS = "horde_numberOfRaiders";
     public static final String TAG_NUMBEROFARCHERS = "horde_numberOfArchers";
     public static final String TAG_NUMBEROFBOSSES  = "horde_numberOfBosses";
     public static final String TAG_HORDESIZE       = "horde_hordeSize";
 
+    /**
+     * Amount of melee barbarians
+     */
     public int numberOfRaiders;
+
+    /**
+     * Amount of archer barbarians
+     */
     public int numberOfArchers;
+
+    /**
+     * Amount of boss barbarians
+     */
     public int numberOfBosses;
 
     /**

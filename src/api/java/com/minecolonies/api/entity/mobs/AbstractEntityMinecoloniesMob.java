@@ -81,6 +81,9 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
      */
     private boolean isRegistered = false;
 
+    /**
+     * The invulnerability timer for spawning, to prevent suffocate/grouping damage.
+     */
     private int invulTime = 2 * 20;
 
     /**
