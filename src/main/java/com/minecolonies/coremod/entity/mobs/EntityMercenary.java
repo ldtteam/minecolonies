@@ -371,7 +371,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         if (slapTimer == 0 && entityIn instanceof PlayerEntity)
         {
             slapTimer = SLAP_INTERVAL;
-            entityIn.attackEntityFrom(new EntityDamageSource("Slap", this), 1.0f);
+            entityIn.attackEntityFrom(new EntityDamageSource("slap", this), 1.0f);
             this.swingArm(Hand.OFF_HAND);
         }
 
