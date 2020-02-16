@@ -156,7 +156,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     protected IAIState shoot()
     {
         setDelay(STANDARD_DELAY);
-        if (currentShootingTarget == null || isSetup())
+        if (currentShootingTarget == null || !isSetup())
         {
             return START_WORKING;
         }
