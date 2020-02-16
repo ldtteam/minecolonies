@@ -233,7 +233,7 @@ public class EntityMercenaryAI extends Goal
         {
             entity.swingArm(Hand.MAIN_HAND);
             entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.0f);
-            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getName().getFormattedText(), entity), 15);
+            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), 15);
             entity.getAttackTarget().setFire(3);
             attacktimer = ATTACK_DELAY;
         }

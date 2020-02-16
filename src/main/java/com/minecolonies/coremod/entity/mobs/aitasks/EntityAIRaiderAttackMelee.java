@@ -104,7 +104,7 @@ public class EntityAIRaiderAttackMelee extends Goal
 
             if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                target.attackEntityFrom(new EntityDamageSource(entity.getName().getFormattedText(), entity), (float) damageToBeDealt);
+                target.attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), (float) damageToBeDealt);
                 entity.swingArm(Hand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRNG()));
                 target.setRevengeTarget(entity);
