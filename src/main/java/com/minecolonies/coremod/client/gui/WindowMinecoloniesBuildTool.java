@@ -57,7 +57,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
@@ -84,7 +84,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),
