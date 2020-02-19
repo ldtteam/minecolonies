@@ -9,7 +9,7 @@
       ],
       "rolls": 1,
       "entries": [
-        {e
+        {
           "type": "minecraft:item",
           "name": "minecolonies:blockhutuniversity",
           "functions": [
