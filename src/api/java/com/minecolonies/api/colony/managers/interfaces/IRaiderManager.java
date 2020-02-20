@@ -144,4 +144,11 @@ public interface IRaiderManager
      * @return
      */
     int getColonyRaidLevel();
+
+    /**
+     * Returns a random building for raiders to go to, groups up 3 raiders to the same position.
+     *
+     * @return
+     */
+    BlockPos getRandomBuilding();
 }

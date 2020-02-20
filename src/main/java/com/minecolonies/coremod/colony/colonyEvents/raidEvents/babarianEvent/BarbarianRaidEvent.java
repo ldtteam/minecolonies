@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.ColonyState;
@@ -55,7 +56,7 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
     /**
      * The minimum distance to the colony center where mobs are allowed to spawn
      */
-    public static int MIN_CENTER_DISTANCE = 200;
+    public static int MIN_CENTER_DISTANCE = 100;
 
     /**
      * The amount of babarians overall
@@ -160,7 +161,7 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isEntityAlive())
         {
             entity.setDead();
             return;
@@ -218,6 +219,11 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
             return;
         }
 
+        if (entity.isDead)
+        {
+            Log.getLogger().warn("THROWS TANTRUM!");
+        }
+
         if (entity instanceof EntityChiefBarbarian)
         {
             chiefs.remove(entity);
@@ -269,7 +275,10 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
     @Override
     public void onUpdate()
     {
-        colony.getRaiderManager().setNightsSinceLastRaid(0);
+        if (horde.hordeSize == 0)
+        {
+            status = EventStatus.DONE;
+        }
 
         if (!respawns.isEmpty())
         {
@@ -285,27 +294,42 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
             return;
         }
 
-        final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
-        if (spawnPos == null)
+        if (chiefs.size() + archers.size() + barbarians.size() < horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers)
         {
-            return;
+            final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            if (spawnPos != null)
+            {
+                RaiderMobUtils.spawn(CHIEF, horde.numberOfBosses - chiefs.size(), spawnPos, colony.getWorld(), colony, id);
+                RaiderMobUtils.spawn(ARCHER, horde.numberOfArchers - archers.size(), spawnPos, colony.getWorld(), colony, id);
+                RaiderMobUtils.spawn(BARBARIAN, horde.numberOfRaiders - barbarians.size(), spawnPos, colony.getWorld(), colony, id);
+            }
         }
 
-        RaiderMobUtils.spawn(CHIEF, horde.numberOfBosses - chiefs.size(), spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(ARCHER, horde.numberOfArchers - archers.size(), spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(BARBARIAN, horde.numberOfRaiders - barbarians.size(), spawnPos, colony.getWorld(), colony, id);
 
-        // Mark entities when spies exist
-        if (colony.getRaiderManager().areSpiesEnabled())
-        {
             for (final Entity entity : getEntities())
             {
-                if (entity instanceof EntityLivingBase)
+                if (entity instanceof EntityLivingBase && colony.getRaiderManager().areSpiesEnabled())
                 {
                     ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 550));
                 }
+
+                if (entity.isDead)
+                {
+                    Log.getLogger().warn("Has dead entity still!");
+                    //  entity.setDead();
+                }
+
+                if (!colony.getWorld().isBlockLoaded(entity.getPosition()))
+                {
+                    Log.getLogger().warn("Unloaded entity at " + entity.getPosition() + ", isDead:" + entity.isDead);
+                    entity.setDead();
+                }
+                else if (colony.getWorld().getEntityByID(entity.getEntityId()) == null)
+                {
+                    Log.getLogger().warn("Loaded chunk, but missing in world entity!");
+                }
             }
-        }
+
     }
 
     @Override

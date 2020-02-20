@@ -60,6 +60,11 @@ public class RaiderKillCommand extends AbstractKillCommand<AbstractEntityMinecol
             if (colony != null && entity.getEventID() > 0)
             {
                 final IColonyEvent event = colony.getEventManager().getEventByID(entity.getEventID());
+                if (event == null)
+                {
+                    continue;
+                }
+
                 event.onEntityDeath(entity);
                 event.setStatus(EventStatus.DONE);
             }

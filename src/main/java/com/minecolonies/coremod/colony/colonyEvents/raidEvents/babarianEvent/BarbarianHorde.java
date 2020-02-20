@@ -104,7 +104,7 @@ public class BarbarianHorde
         horde.numberOfRaiders = compound.getInteger(TAG_NUMBEROFRAIDERS);
         horde.numberOfArchers = compound.getInteger(TAG_NUMBEROFARCHERS);
         horde.numberOfBosses = compound.getInteger(TAG_NUMBEROFBOSSES);
-
+        horde.hordeSize = horde.numberOfArchers + horde.numberOfRaiders + horde.numberOfBosses;
         return horde;
     }
 }

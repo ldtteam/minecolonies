@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -138,7 +139,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * The entity this job belongs to.
      */
-    private EntityLivingBase entity;
+    private WeakReference<EntityLivingBase> entity;
 
     /**
      * AbstractPathJob constructor.
@@ -188,7 +189,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesNotVisited = new HashSet<>();
             debugNodesPath = new HashSet<>();
         }
-        this.entity = entity;
+        this.entity = new WeakReference<>(entity);
     }
 
     /**
@@ -229,7 +230,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesNotVisited = new HashSet<>();
             debugNodesPath = new HashSet<>();
         }
-        this.entity = entity;
+        this.entity = new WeakReference<>(entity);
     }
 
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
@@ -1094,7 +1095,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected boolean isLadder(@NotNull final Block block, final BlockPos pos)
     {
-        return block.isLadder(this.world.getBlockState(pos), world, pos, entity);
+        return block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
     }
 
     protected boolean isLadder(final BlockPos pos)

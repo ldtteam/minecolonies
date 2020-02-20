@@ -108,8 +108,8 @@ public class Configurations
         public int spawnBarbarianSize = 5;
 
         @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
-        @Config.Comment("The max size of a barbarian horde. [Default: 20]")
-        public int maxBarbarianSize = 20;
+        @Config.Comment("The max size of a barbarian horde. [Default: 60]")
+        public int maxBarbarianSize = 60;
 
         @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles. [Default: true]")
         public boolean doBarbariansBreakThroughWalls = true;

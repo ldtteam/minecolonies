@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
@@ -38,7 +39,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    public static final int SPAWN_MODIFIER = 3;
+    public static final double SPAWN_MODIFIER = 1.5;
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -74,6 +75,16 @@ public class RaidManager implements IRaiderManager
      * Whether the spies are currently active, active spies mark enemies with glow.
      */
     private boolean spiesEnabled;
+
+    /**
+     * The last building position for raiders to walk to
+     */
+    private BlockPos lastBuilding;
+
+    /**
+     * The time the last building pos was used.
+     */
+    private int buildingPosUsage = 0;
 
     /**
      * Creates the RaidManager for a colony.
@@ -136,6 +147,10 @@ public class RaidManager implements IRaiderManager
     @Override
     public void setSpiesEnabled(final boolean enabled)
     {
+        if (spiesEnabled != enabled)
+        {
+            colony.markDirty();
+        }
         spiesEnabled = enabled;
     }
 
@@ -196,8 +211,6 @@ public class RaidManager implements IRaiderManager
             }
             addRaiderSpawnPoint(targetSpawnPoint);
         }
-
-        nightsSinceLastRaid = 0;
         colony.markDirty();
     }
 
@@ -262,7 +275,7 @@ public class RaidManager implements IRaiderManager
         }
 
         int radius = DEFAULT_SPAWN_RADIUS;
-        while (world.isAreaLoaded(thePos, radius))
+        while (radius < MAX_SPAWN_RADIUS && world.isAreaLoaded(thePos, radius))
         {
             radius += DEFAULT_SPAWN_RADIUS;
         }
@@ -316,7 +329,7 @@ public class RaidManager implements IRaiderManager
     {
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof IRaidEvent)
+            if (event instanceof IRaidEvent && event.getStatus() == EventStatus.PROGRESSING)
             {
                 return true;
             }
@@ -327,7 +340,14 @@ public class RaidManager implements IRaiderManager
     @Override
     public void onNightFall()
     {
-        nightsSinceLastRaid++;
+        if (!isRaided())
+        {
+            nightsSinceLastRaid++;
+        }
+        else
+        {
+            nightsSinceLastRaid = 0;
+        }
     }
 
     @Override
@@ -418,8 +438,15 @@ public class RaidManager implements IRaiderManager
         @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
         for (@NotNull final ICitizenData citizen : citizensList)
         {
-            levels += citizen.getLevel();
+            levels += citizen.getLevel() / 5;
         }
+
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            levels += building.getBuildingLevel();
+        }
+
+        levels += citizensList.size();
 
         return levels;
     }
@@ -434,5 +461,30 @@ public class RaidManager implements IRaiderManager
     {
         return colony.getRaiderManager().getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
                  && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+    }
+
+    @Override
+    @NotNull
+    public BlockPos getRandomBuilding()
+    {
+        buildingPosUsage++;
+        if (buildingPosUsage > 3 || lastBuilding == null)
+        {
+            buildingPosUsage = 0;
+            final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
+            final Object[] buildingArray = buildingList.toArray();
+            if (buildingArray.length != 0)
+            {
+                final int rand = colony.getWorld().rand.nextInt(buildingArray.length);
+                final IBuilding building = (IBuilding) buildingArray[rand];
+                lastBuilding = building.getPosition();
+            }
+            else
+            {
+                lastBuilding = colony.getCenter();
+            }
+        }
+
+        return lastBuilding;
     }
 }

@@ -254,7 +254,7 @@ public final class PirateEventUtils
             return startPos;
         }
 
-        BlockPos diff = startPos.subtract(colony.getCenter());
+        BlockPos diff = colony.getCenter().subtract(startPos);
         diff = new BlockPos(diff.getX() / accuracy, diff.getY() / accuracy, diff.getZ() / accuracy);
 
         final int sqMaxDist = maxDistance * maxDistance;
@@ -266,7 +266,7 @@ public final class PirateEventUtils
         {
             tempPos = tempPos.add(diff);
 
-            if (BlockPosUtil.getDistanceSquared2D(maxDistancePos, startPos) > sqMaxDist || BlockPosUtil.getDistanceSquared2D(tempPos, colony.getCenter()) > sqMinDist)
+            if (BlockPosUtil.getDistanceSquared2D(maxDistancePos, tempPos) > sqMaxDist || BlockPosUtil.getDistanceSquared2D(tempPos, colony.getCenter()) < sqMinDist)
             {
                 return null;
             }

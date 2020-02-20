@@ -178,7 +178,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
-            this.newNavigator.setEnterDoors(false);
+            this.newNavigator.setEnterDoors(true);
         }
         return newNavigator;
     }
@@ -313,7 +313,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
             if (currentCount <= 0)
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
-                RaiderMobUtils.setMobAttributes(this, getColony());
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
                       && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
@@ -369,12 +368,12 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
      */
     public void registerWithColony()
     {
-        if (colony == null || eventID == 0)
+        if (colony == null || eventID == 0 || isDead)
         {
             setDead();
             return;
         }
-
+        RaiderMobUtils.setMobAttributes(this, getColony());
         colony.getEventManager().registerEntity(this, eventID);
         isRegistered = true;
     }

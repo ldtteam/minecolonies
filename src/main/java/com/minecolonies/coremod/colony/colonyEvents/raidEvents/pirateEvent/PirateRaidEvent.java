@@ -243,7 +243,7 @@ public class PirateRaidEvent implements IColonyEvent, IRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isEntityAlive())
         {
             entity.setDead();
             return;

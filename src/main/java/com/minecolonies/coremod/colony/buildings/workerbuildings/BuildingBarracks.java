@@ -138,6 +138,11 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+        if (colony.getWorld().isRemote)
+        {
+            return;
+        }
+
         if (colony.getRaiderManager().isRaided())
         {
             if (!colony.getRaiderManager().areSpiesEnabled())

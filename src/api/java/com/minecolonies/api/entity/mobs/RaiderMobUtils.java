@@ -16,6 +16,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -27,6 +29,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
@@ -36,6 +39,18 @@ public final class RaiderMobUtils
 {
 
     public static double MOB_SPAWN_DEVIATION_STEPS = 0.3;
+
+    public final static IAttribute MOB_ATTACK_DAMAGE = new RangedAttribute(null, "mc_mob_damage", 2.0, 1.0, 20);
+
+    /**
+     * Damage increased by 1 for every 200 raid level difficulty
+     */
+    public static int DAMAGE_PER_X_RAID_LEVEL = 200;
+
+    /**
+     * Max damage from raidlevels
+     */
+    public static int MAX_RAID_LEVEL_DAMAGE = 3;
 
     private RaiderMobUtils()
     {
@@ -67,35 +82,39 @@ public final class RaiderMobUtils
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
 
-        final double attackDamage = Configurations.gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
-        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
-        if (mob instanceof IChiefBarbarianEntity)
+        final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
+
+        final double attackDamage =
+          (float) Configurations.gameplay.barbarianHordeDifficulty / MAX_BARBARIAN_DIFFICULTY + ATTACK_DAMAGE + Math.max(raidLevel / DAMAGE_PER_X_RAID_LEVEL,
+            MAX_RAID_LEVEL_DAMAGE);
+        mob.getAttributeMap().registerAttribute(MOB_ATTACK_DAMAGE);
+        mob.getEntityAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage);
+
+        if (mob instanceof IChiefMobEntity)
         {
             final double chiefArmor = Configurations.gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
+            mob.getEntityAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage + 2.0);
         }
         else
         {
             final double armor = Configurations.gameplay.barbarianHordeDifficulty * ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
-        mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
+        mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(raidLevel));
         mob.setHealth(mob.getMaxHealth());
     }
 
     /**
      * Sets the entity's health based on the raidLevel
      *
+     * @param raidLevel
      * @return returns the health in the form of a double
      */
-    private static double getHealthBasedOnRaidLevel(final IColony colony)
+    private static double getHealthBasedOnRaidLevel(final int raidLevel)
     {
-        if (colony != null)
-        {
-            final int raidLevel = (int) (colony.getRaiderManager().getColonyRaidLevel() * BARBARIAN_HEALTH_MULTIPLIER);
-            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
-        }
-        return BARBARIAN_BASE_HEALTH;
+        return Math.max(BARBARIAN_BASE_HEALTH,
+          (BARBARIAN_BASE_HEALTH + raidLevel * BARBARIAN_HEALTH_MULTIPLIER) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
     }
 
     /**
