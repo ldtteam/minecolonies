@@ -288,7 +288,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             for (int i = 0; i < pathLength; ++i)
             {
                 final PathPoint point = path.getPathPointFromIndex(i);
-                newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
+                if (!(point instanceof PathPointExtended))
+                {
+                    newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
+                }
+                else
+                {
+                    newPoints[i] = (PathPointExtended) point;
+                }
             }
 
             tempPath = new Path(newPoints);
