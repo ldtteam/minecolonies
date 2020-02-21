@@ -259,6 +259,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return tryMoveToBlockPos(e.getPosition(), speed);
     }
 
+    // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
+    @Override
+    protected void removeSunnyPath() {}
+
     @Override
     public boolean setPath(@Nullable final Path path, final double speed)
     {
