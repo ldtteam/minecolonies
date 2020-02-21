@@ -15,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -978,9 +979,23 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         final BlockState below = world.getBlockState(parent.pos.down());
-        final VoxelShape bb = below.getCollisionShape(world, pos.down());
-        if (bb != null && bb.getEnd(Direction.Axis.Y) < 1)
+        final VoxelShape bb = below.getCollisionShape(world, parent.pos.down());
+        if (bb.getEnd(Direction.Axis.Y) < 1)
         {
+            double dif = bb.getEnd(Direction.Axis.Y);
+            final double parentY = target.getCollisionShape(world, pos).getEnd(Direction.Axis.Y);
+            dif = dif + 1 - parentY;
+            if (dif < 1.3)
+            {
+                return pos.getY() + 1;
+            }
+            if (target.getBlock() instanceof StairsBlock
+                  && dif - 0.5 < 1.3
+                  && target.get(StairsBlock.HALF) == Half.BOTTOM
+                  && BlockPosUtil.getXZFacing(parent.pos, pos) == target.get(StairsBlock.FACING))
+            {
+                return pos.getY() + 1;
+            }
             return -1;
         }
 
@@ -992,7 +1007,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         BlockPos localPos = pos;
         final VoxelShape bb = world.getBlockState(localPos).getCollisionShape(world, localPos);
-        if (bb != null && bb.getEnd(Direction.Axis.Y) < 1)
+        if (bb.getEnd(Direction.Axis.Y) < 1)
         {
             localPos = pos.up();
         }
@@ -1029,7 +1044,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid();
+                return !block.getMaterial().isLiquid() && block.getBlock() != Blocks.SNOW;
             }
         }
 
@@ -1062,8 +1077,7 @@ public abstract class AbstractPathJob implements Callable<Path>
               || block instanceof WallBlock
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof AbstractBlockBarrel
-              || (blockState.getShape(world, pos) != null
-                   && blockState.getShape(world, pos).getEnd(Direction.Axis.Y) > 1.0))
+              || (blockState.getShape(world, pos).getEnd(Direction.Axis.Y) > 1.0))
         {
             return SurfaceType.NOT_PASSABLE;
         }
@@ -1073,7 +1087,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.DROPABLE;
         }
 
-        if (blockState.getMaterial().isSolid())
+        if (blockState.getMaterial().isSolid() || blockState.getBlock() == Blocks.SNOW)
         {
             return SurfaceType.WALKABLE;
         }
