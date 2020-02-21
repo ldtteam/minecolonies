@@ -114,6 +114,11 @@ public class WindowResourceList extends AbstractWindowSkeleton
         pullResourcesFromHut();
 
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
+        if (resourceList == null)
+        {
+            close();
+            return;
+        }
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
