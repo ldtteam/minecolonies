@@ -280,7 +280,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         final int pathLength = path.getCurrentPathLength();
         Path tempPath = null;
-        if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
+        if (pathLength > 0)
         {
             //  Fix vanilla PathPoints to be PathPointExtended
             @NotNull final PathPointExtended[] newPoints = new PathPointExtended[pathLength];
@@ -288,7 +288,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             for (int i = 0; i < pathLength; ++i)
             {
                 final PathPoint point = path.getPathPointFromIndex(i);
-                newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
+                if (!(point instanceof PathPointExtended))
+                {
+                    newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
+                }
+                else
+                {
+                    newPoints[i] = (PathPointExtended) point;
+                }
             }
 
             tempPath = new Path(newPoints);
@@ -427,11 +434,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
-            if (!(currentPath.getPathPointFromIndex(curNode) instanceof PathPointExtended))
+            final PathPoint pNormal = currentPath.getPathPointFromIndex(curNode);
+            final PathPoint pNormalNext = currentPath.getPathPointFromIndex(curNodeNext);
+
+            if (!(pNormal instanceof PathPointExtended))
             {
-                currentPath = convertPath(currentPath);
+                currentPath.setPoint(curNode, new PathPointExtended(new BlockPos(pNormal.x, pNormal.y, pNormal.z)));
             }
-            
+            if (!(pNormalNext instanceof PathPointExtended))
+            {
+                currentPath.setPoint(curNode, new PathPointExtended(new BlockPos(pNormalNext.x, pNormalNext.y, pNormalNext.z)));
+            }
+
             final PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
             final PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
 

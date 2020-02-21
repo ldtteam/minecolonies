@@ -20,6 +20,10 @@ repositories {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
     flatDir {
         dirs 'libs'
     }
@@ -87,6 +91,8 @@ configurations {
 }
 
 dependencies {
+    compileOnly "inventory-tweaks:InventoryTweaks:${config.inventorytweaks_version}:api"
+
     contained "com.ldtteam:structurize:${config.minecraft_version}-${config.structurize_version}"
     deobfCompile "com.ldtteam:structurize:${config.minecraft_version}-${config.structurize_version}"
 

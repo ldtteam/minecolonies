@@ -2,6 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
+import invtweaks.api.container.ChestContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -17,6 +18,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * The container class for the rack.
  */
+@ChestContainer
 public class ContainerRack extends net.minecraft.inventory.Container
 {
     /**

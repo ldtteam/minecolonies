@@ -144,7 +144,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     @Override
     protected boolean canDespawn()
     {
-        return shouldDespawn() || getColony() == null;
+        return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null );
     }
 
     /**
