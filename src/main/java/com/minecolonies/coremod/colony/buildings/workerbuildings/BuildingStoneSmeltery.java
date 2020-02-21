@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlazedTerracotta;
 import net.minecraft.block.BlockHardenedClay;
+import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -112,8 +113,10 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             if (block == Blocks.STONE
                   || block == Blocks.STONEBRICK
                   || block instanceof BlockGlazedTerracotta
-                  || block instanceof BlockHardenedClay)
+                  || block instanceof BlockHardenedClay
+                  || block instanceof BlockStoneBrick )
             {
+
                 return true;
             }
         }

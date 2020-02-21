@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.structurize.blocks.decorative.BlockShingle;
 import com.ldtteam.structurize.blocks.decorative.BlockShingleSlab;
+import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -94,7 +95,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         }
 
         final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
+        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab || ((ItemBlock) item).getBlock() instanceof BlockTimberFrame))
         {
             return true;
         }

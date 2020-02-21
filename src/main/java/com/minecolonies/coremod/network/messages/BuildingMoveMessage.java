@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -33,11 +34,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -170,6 +173,14 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final IBlockState state)
     {
+        final IBlockState blockState = CompatibilityUtils.getWorldFromEntity(player).getBlockState(buildPos);
+        if ( blockState.getBlock() instanceof IBuilderUndestroyable
+                 || blockState.getBlock() == Blocks.BEDROCK)
+        {
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.movebuilding.invalid"));
+            return;
+        }
+
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
