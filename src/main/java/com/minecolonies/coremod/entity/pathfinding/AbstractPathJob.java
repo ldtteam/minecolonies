@@ -262,7 +262,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         else if (state.getBlock() instanceof ScaffoldingBlock)
         {
-            p.setLadderFacing(Direction.NORTH);
+            p.setLadderFacing(Direction.UP);
         }
         else
         {

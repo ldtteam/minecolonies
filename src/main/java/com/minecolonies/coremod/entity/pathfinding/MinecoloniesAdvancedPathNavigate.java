@@ -126,6 +126,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
 
+        entity.setSneaking(false);
         this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
         {
@@ -383,9 +384,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 case EAST:
                     vec3 = vec3.add(-1, 0, 0);
                     break;
+                case UP:
+                    vec3 = vec3.add(0, 1, 0);
+                    break;
                 //  Any other value is going down, so lets not move at all
                 default:
                     newSpeed = 0;
+                    entity.setSneaking(true);
                     break;
             }
 
