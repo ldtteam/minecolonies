@@ -211,8 +211,8 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-                  pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
+                  pos, Rotation.values()[rotation], mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
         else if(freeMode !=  null )
