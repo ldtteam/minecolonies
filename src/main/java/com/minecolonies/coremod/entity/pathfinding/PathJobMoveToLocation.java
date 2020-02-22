@@ -9,6 +9,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
+
 /**
  * Job that handles moving to a location.
  */

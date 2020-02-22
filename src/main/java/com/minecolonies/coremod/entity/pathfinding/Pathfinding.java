@@ -25,6 +25,8 @@ import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.concurrent.*;
 
+import static com.minecolonies.api.util.constant.PathingConstants.debugNodeMonitor;
+
 /**
  * Static class the handles all the Pathfinding.
  */
@@ -106,7 +108,7 @@ public final class Pathfinding
         final Set<Node> debugNodesVisited;
         final Set<Node> debugNodesPath;
 
-        synchronized (AbstractPathJob.debugNodeMonitor)
+        synchronized (debugNodeMonitor)
         {
             debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
             debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
