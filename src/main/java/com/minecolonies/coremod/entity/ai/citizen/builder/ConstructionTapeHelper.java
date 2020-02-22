@@ -4,6 +4,7 @@ import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
@@ -77,10 +78,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.with(FACING, Direction.SOUTH));
+                    world.setBlockState(row1, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.SOUTH), world, row1));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.with(FACING, Direction.NORTH));
+                    world.setBlockState(row2, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.NORTH), world, row2));
                 }
             }
             else
@@ -89,10 +90,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.with(FACING, Direction.SOUTH));
+                    world.setBlockState(row1, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.SOUTH), world, row1));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.with(FACING, Direction.NORTH));
+                    world.setBlockState(row2, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.NORTH), world, row2));
                 }
             }
             if (z1 < z3)
@@ -101,10 +102,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.with(FACING, Direction.EAST));
+                    world.setBlockState(row3, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.EAST), world, row3));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.with(FACING, Direction.WEST));
+                    world.setBlockState(row4, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.WEST), world, row4));
                 }
             }
             else
@@ -113,10 +114,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.with(FACING, Direction.EAST));
+                    world.setBlockState(row3, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.EAST), world, row3));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.with(FACING, Direction.WEST));
+                    world.setBlockState(row4, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.WEST), world, row4));
                 }
             }
             newY = checkIfPlaceable(x1, y, z1, world);
@@ -127,10 +128,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3, y, z3, world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, constructionTape.with(FACING, Direction.SOUTH));
-            world.setBlockState(corner2, constructionTape.with(FACING, Direction.EAST));
-            world.setBlockState(corner3, constructionTape.with(FACING, Direction.WEST));
-            world.setBlockState(corner4, constructionTape.with(FACING, Direction.NORTH));
+            world.setBlockState(corner1, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.SOUTH), world, corner1));
+            world.setBlockState(corner2, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.EAST), world, corner2));
+            world.setBlockState(corner3, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.WEST), world, corner3));
+            world.setBlockState(corner4, BlockConstructionTape.getTapeShape(constructionTape.with(FACING, Direction.NORTH), world, corner4));
         }
     }
 

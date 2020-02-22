@@ -223,7 +223,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      * @param position the position.Re
      * @return the blockState to use.
      */
-    private static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
+    public static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
     {
         final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
                 world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
