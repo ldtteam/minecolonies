@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "textures": {
     "particle": "block/oak_planks",
     "0": "minecolonies:blocks/blockhuttownhallfrontback",

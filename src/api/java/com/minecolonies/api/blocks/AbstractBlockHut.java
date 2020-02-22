@@ -25,6 +25,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +62,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * The default resistance (against explosions).
      */
     public static final float RESISTANCE = Float.POSITIVE_INFINITY;
+
+    /**
+     * Smaller shape.
+     */
+    private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+
 
     /**
      * Constructor for a hut block.
@@ -121,6 +130,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @return The building entry.
      */
     public abstract BuildingEntry getBuildingEntry();
+
+    @NotNull
+    @Override
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    {
+        return SHAPE;
+    }
 
     @Override
     public ActionResultType onBlockActivated(
