@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "parent": "block/block",
   "loader": "forge:multi-layer",
   "textures": { "particle": "minecraft:block/red_concrete_powder" },

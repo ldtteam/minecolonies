@@ -6,7 +6,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -213,7 +212,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction dir, final BlockState state, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos pos)
     {
         super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos);
-        return getTapeShape(stateIn, worldIn, currentPos);
+        return getOptimalStateForPlacement(stateIn, worldIn, currentPos);
     }
 
     /**
@@ -223,7 +222,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      * @param position the position.Re
      * @return the blockState to use.
      */
-    private static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
+    public static BlockState getOptimalStateForPlacement(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
     {
         final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
                 world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
@@ -247,7 +246,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return getTapeShape(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
+        return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
     }
 
     @Override

@@ -1,4 +1,6 @@
-{   "parent": "block/block",
+{
+  "ambientocclusion": false,
+  "parent": "block/block",
   "textures": {
     "particle": "minecolonies:blocks/enchanting_table_bottom",
     "bottom": "minecolonies:blocks/enchanting_table_bottom",
