@@ -106,6 +106,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     {
         if (this.builder == null)
         {
+            Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.resourcescroll.nobuilder"));
             close();
             return;
         }
@@ -116,6 +117,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
+            Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.resourcescroll.null"));
             close();
             return;
         }
