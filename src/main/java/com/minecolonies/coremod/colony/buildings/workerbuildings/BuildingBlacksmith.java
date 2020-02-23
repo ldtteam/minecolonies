@@ -112,6 +112,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
                 output.getItem() instanceof SwordItem ||
                 output.getItem() instanceof ArmorItem ||
                 output.getItem() instanceof HoeItem ||
+                output.getItem() instanceof ShieldItem ||
                 Compatibility.isTinkersWeapon(output) ||
                 ingots == size ||
                 nuggets == size;

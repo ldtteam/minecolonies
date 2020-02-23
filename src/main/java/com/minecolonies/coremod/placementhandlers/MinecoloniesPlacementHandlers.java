@@ -13,15 +13,22 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -140,12 +147,16 @@ public final class MinecoloniesPlacementHandlers
                 handleTileEntityPlacement(tileEntityData, world, pos);
             }
 
+            world.setBlockState(pos, blockState, UPDATE_FLAG);
+
             final TileEntity entity = world.getTileEntity(pos);
+
+            final BlockState state =  BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
             if (entity instanceof ChestTileEntity)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
             }
-            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            else if (!world.setBlockState(pos, state, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -175,7 +186,7 @@ public final class MinecoloniesPlacementHandlers
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
         {
-            return blockState.getBlock() instanceof BlockMinecoloniesRack;
+            return blockState.getBlock() instanceof AbstractChestBlock;
         }
 
         @Override

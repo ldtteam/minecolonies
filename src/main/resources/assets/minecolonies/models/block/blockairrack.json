@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "textures": {
     "particle": "minecolonies:blocks/rack/wood"
   },

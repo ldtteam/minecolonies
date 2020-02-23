@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "textures": {
     "0": "minecolonies:blocks/rack/wood",
     "1": "minecolonies:blocks/rack/stone",
