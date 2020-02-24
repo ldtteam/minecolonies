@@ -335,6 +335,7 @@ public class BuildToolPlaceMessage implements IMessage
 
         if (building == null)
         {
+            Log.getLogger().error(buildPos.toString() + " colony is null here");
             Log.getLogger().error("BuildTool: building is null!");
         }
         else
