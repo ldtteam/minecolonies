@@ -197,7 +197,7 @@ public class BuildToolPasteMessage implements IMessage
         {
             if (isHut)
             {
-                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state);
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state , complete);
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
@@ -257,14 +257,15 @@ public class BuildToolPasteMessage implements IMessage
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      * @param state         The state of the hut.
+     * @param complete      If complete or not.
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final PlayerEntity player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
-        if (tempColony != null
+        if (!complete && tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
               && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))
         {
@@ -278,8 +279,11 @@ public class BuildToolPasteMessage implements IMessage
         {
             world.destroyBlock(buildPos, true);
             world.setBlockState(buildPos, state);
-            ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
-            setupBuilding(world, player, sn, rotation, buildPos, mirror);
+            if (!complete)
+            {
+                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                setupBuilding(world, player, sn, rotation, buildPos, mirror);
+            }
         }
     }
 
