@@ -414,7 +414,7 @@ public class EventHandler
                     final ItemStack stack = new ItemStack(block);
                     if (!stack.isEmpty() && !world.isRemote)
                     {
-                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState(), event.getPos().up(), stack), (ServerPlayerEntity) player);
+                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING, event.getPlayer().getHorizontalFacing()), event.getPos().up(), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }

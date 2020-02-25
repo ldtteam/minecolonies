@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
+import com.minecolonies.coremod.colony.jobs.JobHealer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +60,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     @Override
     public IJob createJob(final ICitizenData citizen)
     {
-        return new JobPlaceholder(citizen);
+        return new JobHealer(citizen);
     }
 
     @NotNull
