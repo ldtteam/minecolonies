@@ -456,7 +456,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.removeBlock(coords, false);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition(), job.getStructure().getSettings());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getWorkOrder().getBuildingLocation(), job.getStructure().getSettings());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
