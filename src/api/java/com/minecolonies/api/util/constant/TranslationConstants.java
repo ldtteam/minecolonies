@@ -288,6 +288,8 @@ public final class TranslationConstants
     @NonNls
     public static final String CMCG_HAPPINESS_FOOD                                                 = "com.minecolonies.coremod.gui.happiness.food";
     @NonNls
+    public static final String CMCG_HAPPINESS_HEALTH                                               = "com.minecolonies.coremod.gui.happiness.health";
+    @NonNls
     public static final String CMCG_HAPPINESS_DAMAGE                                               = "com.minecolonies.coremod.gui.happiness.damage";
     @NonNls
     public static final String CMCG_HAPPINESS_HOUSE                                                = "com.minecolonies.coremod.gui.happiness.house";
@@ -355,6 +357,8 @@ public final class TranslationConstants
     public static final String RAW_FOOD      = "com.minecolonies.coremod.ai.wrongfood";
     @NonNls
     public static final String NO_RESTAURANT = "com.minecolonies.coremod.ai.norestaurant";
+    @NonNls
+    public static final String NO_HOSPITAL = "com.minecolonies.coremod.ai.nohospital";
     @NonNls
     public static final String DEMANDS_HOUSE = "entity.citizen.demandshouse";
     @NonNls

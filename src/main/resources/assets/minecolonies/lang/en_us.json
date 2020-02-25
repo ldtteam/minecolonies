@@ -21,6 +21,11 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
 
+  "minecolonies.config.diseasemodifier": "Disease Modifier",
+  "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare. [Default: 5]",
+  "minecolonies.config.diseases": "Diseases",
+  "minecolonies.config.diseases.comment": "All diseases citizens can get. The name, how common it is, and all ingredients to cure it.",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the florist can plant.",
 
@@ -628,6 +633,7 @@
 
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
   "com.minecolonies.coremod.gui.happiness.food": "Food Modifier",
+  "com.minecolonies.coremod.gui.happiness.health": "Health Modifier",
   "com.minecolonies.coremod.gui.happiness.damage": "Damage Modifier",
   "com.minecolonies.coremod.gui.happiness.house": "House Modifier",
   "com.minecolonies.coremod.gui.happiness.job": "Job Modifier",
@@ -747,6 +753,7 @@
 
   "com.minecolonies.coremod.ai.nochairs": "Restaurant does not have any chairs for me to eat something!",
   "com.minecolonies.coremod.ai.norestaurant": "Please build a restaurant or get me something to eat!",
+  "com.minecolonies.coremod.ai.nohospital": "Please build a hospital I have the %s and need to be cured with: %s",
   "com.minecolonies.coremod.ai.nowarehouse": "Build a warehouse or bring me food to serve to my clients!",
   "com.minecolonies.coremod.ai.nofood": "I can't find any food in the warehouse.",
   "com.minecolonies.coremod.status.cooking": "Cooking",
@@ -1307,6 +1314,6 @@
   "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a builder hut first by shift right clicking a builder hut!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
-  "block.minecolonies.blockhuthospital": "Hospital"
+  "block.minecolonies.blockhuthospital": "Hospital",
 }
 

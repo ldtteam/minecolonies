@@ -64,4 +64,10 @@ public class JobHealer extends AbstractJob
     {
         return new EntityAIWorkHealer(this);
     }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 0;
+    }
 }

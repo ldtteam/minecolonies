@@ -171,6 +171,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The citizen sleep handler.
      */
     private final ICitizenSleepHandler citizenSleepHandler;
+
+    /**
+     * The citizen sleep handler.
+     */
+    private final ICitizenDiseaseHandler citizenDiseaseHandler;
+
     /**
      * The path-result of trying to move away
      */
@@ -236,6 +242,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenStuckHandler = new CitizenStuckHandler(this);
+        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
+
         this.moveController = new MovementHandler(this);
         this.enablePersistence();
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
@@ -257,6 +265,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.goalSelector.addGoal(++priority, new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
+        this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
@@ -651,6 +660,17 @@ public class EntityCitizen extends AbstractEntityCitizen
     public ICitizenStuckHandler getCitizenStuckHandler()
     {
         return citizenStuckHandler;
+    }
+
+    /**
+     * The Handler to check if a citizen is stuck.
+     *
+     * @return the instance of the handler.
+     */
+    @Override
+    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
+    {
+        return citizenDiseaseHandler;
     }
 
     /**
@@ -1067,6 +1087,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         compound.putBoolean(TAG_DAY, isDay);
         compound.putBoolean(TAG_CHILD, child);
         compound.putBoolean(TAG_MOURNING, mourning);
+
+        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -1095,6 +1117,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
+
+        citizenDiseaseHandler.read(compound);
     }
 
     /**
@@ -1194,6 +1218,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             onPrimaryLivingUpdateTick();
         }
 
+        citizenDiseaseHandler.tick();
         if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
         {
             citizenStuckHandler.tick();

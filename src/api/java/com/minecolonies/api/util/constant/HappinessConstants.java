@@ -31,6 +31,11 @@ public final class HappinessConstants
     public static final double FOOD_MODIFIER_POSITIVE = 0.5;
 
     /**
+     * constants for health modifier.
+     */
+    public static final int HEALTH_MODIFIER_MAX = -2;
+
+    /**
      * constants for field modifiers
      */
     public static final int FIELD_MAX_DAYS_MODIFIER = 30;

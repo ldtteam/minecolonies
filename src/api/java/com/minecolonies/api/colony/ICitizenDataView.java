@@ -81,6 +81,11 @@ public interface ICitizenDataView extends ICitizen
     double getFoodModifier();
 
     /**
+     * @return returns the current modifier related to health.
+     */
+    double getHealthmodifier();
+
+    /**
      * @return returns the current modifier related to damage.
      */
     double getDamageModifier();

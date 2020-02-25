@@ -472,6 +472,26 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
+    public BlockPos getBestHospital(final AbstractEntityCitizen citizen)
+    {
+        double distance = Double.MAX_VALUE;
+        BlockPos goodHospital = null;
+        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingHospital && building.getBuildingLevel() > 0)
+            {
+                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                if (localDistance < distance)
+                {
+                    distance = localDistance;
+                    goodHospital = building.getPosition();
+                }
+            }
+        }
+        return goodHospital;
+    }
+
+    @Override
     public void setTownHall(@Nullable final ITownHall building)
     {
         this.townHall = building;
