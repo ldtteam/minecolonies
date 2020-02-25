@@ -23,6 +23,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -57,9 +60,9 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     private static final float RESISTANCE = Float.POSITIVE_INFINITY;
 
     /**
-     * How much light goes through the block.
+     * Smaller shape.
      */
-    private static final int LIGHT_OPACITY = 0;
+    private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     public BlockMinecoloniesRack()
     {
@@ -71,6 +74,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Override
     public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
         return true;
+    }
+
+    @NotNull
+    @Override
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    {
+        return SHAPE;
     }
 
     @Nullable
@@ -87,6 +97,18 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             return super.getStateForPlacement(context);
         }
 
+        return getPlacementState(state, entity, pos);
+    }
+
+    /**
+     * Get the statement ready.
+     * @param state the state to place.
+     * @param entity the tileEntity.
+     * @param pos the position.
+     * @return the next state.
+     */
+    public static BlockState getPlacementState(final BlockState state, final TileEntity entity, final BlockPos pos)
+    {
         final AbstractTileEntityRack rack = (AbstractTileEntityRack) entity;
         if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
         {

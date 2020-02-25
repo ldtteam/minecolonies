@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "credit": "EnderDude124 made this model in Blockbench!",
   "textures": {
     "0": "minecolonies:blocks/postbox",
