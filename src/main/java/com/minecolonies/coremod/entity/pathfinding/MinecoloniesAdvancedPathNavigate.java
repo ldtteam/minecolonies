@@ -83,7 +83,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    protected PathResult setPathJob(
+    public PathResult setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
       final double speed)
@@ -536,7 +536,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
 
         final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
-        job.setAreaRestriction(startRestriction, endRestriction);
 
         return (TreePathResult) setPathJob(job, null, speed);
     }

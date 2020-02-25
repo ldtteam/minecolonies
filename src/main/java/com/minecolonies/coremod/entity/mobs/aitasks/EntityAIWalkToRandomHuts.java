@@ -2,16 +2,13 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
@@ -31,6 +28,10 @@ import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
  */
 public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
+    /**
+     * Min distance to the target block which is considered too close.
+     */
+    private static final double MIN_TP_DIST = 100 * 100;
 
     /**
      * The moving entity.
@@ -83,11 +84,24 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     private int passedTicks = 0;
 
     /**
-     * The pathresult of trying to move away from a point
+     * Update invterval of the AI
      */
-    private PathResult moveAwayPath;
+    private static int UPDATE_INTERVAL = 40;
 
-    private static int UPDATE_INTERVAL = 10;
+    /**
+     * Ticktimer for the update rate
+     */
+    int tickTimer = 0;
+
+    /**
+     * Counter for distance/time stuck.
+     */
+    private int totalStuckTime = 0;
+
+    /**
+     * Whether the entity had a path last update
+     */
+    boolean hadPath = false;
 
     /**
      * Constructor for AI
@@ -101,7 +115,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
-        lastIndex = -1;
         this.setMutexBits(3);
     }
 
@@ -110,8 +123,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     {
         return this.entity.isEntityAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null;
     }
-
-    int tickTimer = 0;
 
     /**
      * Keep ticking a continuous task that has already been started
@@ -127,20 +138,20 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         if (this.isEntityAtSiteWithMove(targetBlock, 2))
         {
             targetBlock = getRandomBuilding();
-            passedTicks = 0;
-            lastIndex = -1;
-            stuckTime = 0;
-            entity.setStuckCounter(0);
+            resetStuckCounters();
         }
     }
 
     /**
-     * Clears the path and target.
+     * Resets stuck counters
      */
-    private void clearTarget()
+    private void resetStuckCounters()
     {
-        entity.getNavigator().clearPath();
-        targetBlock = null;
+        passedTicks = 0;
+        stuckTime = 0;
+        lastIndex = -1;
+        entity.setStuckCounter(0);
+        totalStuckTime = 0;
     }
 
     /**
@@ -150,24 +161,18 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     public void startExecuting()
     {
         proxy = new GeneralEntityWalkToProxy(entity);
-        stuckTime = 0;
         targetBlock = getRandomBuilding();
-        passedTicks = 0;
-        lastIndex = -1;
         hadPath = false;
+        resetStuckCounters();
     }
 
     @Override
     public void resetTask()
     {
-        stuckTime = 0;
         targetBlock = getRandomBuilding();
-        passedTicks = 0;
-        lastIndex = -1;
         hadPath = false;
+        resetStuckCounters();
     }
-
-    boolean hadPath = false;
 
     /**
      * returns whether the entity as at a site with a move, And moves it
@@ -210,9 +215,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             else if (entity.getNavigator().getPath().getCurrentPathIndex() > 5)
             {
                 // Not stuck when progressing on a slightly longer path(no short unstuck-path)
-                stuckTime = 0;
-                passedTicks = 0;
-                entity.setStuckCounter(0);
+                resetStuckCounters();
             }
             lastIndex = entity.getNavigator().getPath().getCurrentPathIndex();
         }
@@ -221,41 +224,15 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         // Stuck timout
         passedTicks += UPDATE_INTERVAL;
-        if (BlockPosUtil.getDistance2D(entity.getPosition(), targetBlock) * SECONDS_A_MINUTE < passedTicks)
+        final long targetDist = BlockPosUtil.getDistance2D(entity.getPosition(), targetBlock);
+        if (targetDist > MIN_TP_DIST && targetDist * SECONDS_A_MINUTE < passedTicks)
         {
-            // Try reseting the target first
-            if (!(BlockPosUtil.getDistance2D(entity.getPosition(), targetBlock) * SECONDS_A_MINUTE + 100 < passedTicks))
+            if (handleTotalStuck())
             {
-                targetBlock = entity.getColony().getRaiderManager().getRandomBuilding();
-                return false;
+                resetStuckCounters();
+                targetBlock = getRandomBuilding();
             }
-
-            // Fully considered stuck when a timeout for the current target position is reached, teleports to another barbarian
-            final List<Entity> entities = entity.getColony().getEventManager().getEventByID(entity.getEventID()).getEntities();
-            if (!entities.isEmpty())
-            {
-                for (final Entity en : entities)
-                {
-                    // Teleport to fellow raider
-                    if (en != entity)
-                    {
-                        entity.setPositionAndUpdate(en.posX, en.posY, en.posZ);
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                // Kills the stuck barbarian if it is the last.
-                entity.onDeath(new DamageSource("despawn"));
-                entity.setDead();
-                return false;
-            }
-
-            passedTicks = 0;
-            stuckTime = 0;
-            entity.setStuckCounter(0);
-            targetBlock = getRandomBuilding();
+            return false;
         }
 
         if (stuckTime > 5)
@@ -264,6 +241,25 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
 
         return false;
+    }
+
+    /**
+     * Handles beeing completly stuck, teleports the entity a little.
+     */
+    private boolean handleTotalStuck()
+    {
+        // Try reseting the target first
+        totalStuckTime++;
+        if (totalStuckTime == 1)
+        {
+            passedTicks -= UPDATE_INTERVAL * 2;
+            targetBlock = entity.getColony().getRaiderManager().getRandomBuilding();
+            return false;
+        }
+
+        final BlockPos tpPos = BlockPosUtil.getFloor(entity.getPosition().offset(BlockPosUtil.getXZFacing(entity.getPosition(), targetBlock), 5), world);
+        entity.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+        return true;
     }
 
     /**
@@ -288,7 +284,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         // try to path away from the stuck pos every 50 ticks when stuck
         if (entity.getStuckCounter() % 5 == 0)
         {
-            moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+            entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
         }
         else
         {
@@ -303,7 +299,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     private void handleBarbarianMovementSpecials()
     {
         Collections.shuffle(directions);
-        if (random.nextBoolean())
+        // Switch between placing ladders and block breaks, every 5 times
+        if (entity.getStuckCounter() % 10 < 5)
         {
             handleBarbarianLadderPlacement();
         }
@@ -354,15 +351,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     {
         for (final EnumFacing dir : directions)
         {
-            final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
-            final IBlockState state2 = world.getBlockState(entity.getPosition().offset(dir).up());
-            if (state.getBlock().isCollidable() && !state.getMaterial().isLiquid() || state.getBlock() instanceof BlockDoor && world.getDifficulty() == EnumDifficulty.HARD
-                  || state2.getBlock().isCollidable() && !state2.getMaterial().isLiquid() || state2.getBlock() instanceof BlockDoor && world.getDifficulty() == EnumDifficulty.HARD)
+            final BlockPos posToDestroy = entity.getPosition().up(random.nextInt(3)).offset(dir);
+            final IBlockState state = world.getBlockState(posToDestroy);
+            if (state.getBlock() != Blocks.AIR && state.getBlock().isCollidable() && !state.getMaterial().isLiquid() || (state.getBlock() instanceof BlockDoor
+                                                                                                                           && world.getDifficulty() == EnumDifficulty.HARD))
             {
-                final BlockPos posToDestroy;
-                posToDestroy = breakRandomBlockIn(dir);
                 world.destroyBlock(posToDestroy, true);
-                break;
             }
         }
     }
@@ -381,30 +375,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 break;
             }
         }
-    }
-
-    /**
-     * Randomly breaks a block in the given direction
-     * @param dir direction to break a block in
-     * @return
-     */
-    @NotNull
-    private BlockPos breakRandomBlockIn(final EnumFacing dir)
-    {
-        final BlockPos posToDestroy;
-        switch (random.nextInt(4))
-        {
-            case 1:
-                posToDestroy = entity.getPosition().offset(dir).up();
-                break;
-            case 2:
-                posToDestroy = entity.getPosition().offset(dir);
-                break;
-            default:
-                posToDestroy = entity.getPosition().up(2);
-                break;
-        }
-        return posToDestroy;
     }
 
     /**

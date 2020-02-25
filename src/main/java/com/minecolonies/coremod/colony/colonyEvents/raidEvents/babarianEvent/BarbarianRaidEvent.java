@@ -305,45 +305,19 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
             }
         }
 
-
+        if (colony.getRaiderManager().areSpiesEnabled())
+        {
             for (final Entity entity : getEntities())
             {
-                if (entity instanceof EntityLivingBase && colony.getRaiderManager().areSpiesEnabled())
-                {
-                    ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 550));
-                }
-
-                if (entity.isDead)
-                {
-                    Log.getLogger().warn("Has dead entity still!");
-                    //  entity.setDead();
-                }
-
-                if (!colony.getWorld().isBlockLoaded(entity.getPosition()))
-                {
-                    Log.getLogger().warn("Unloaded entity at " + entity.getPosition() + ", isDead:" + entity.isDead);
-                    entity.setDead();
-                }
-                else if (colony.getWorld().getEntityByID(entity.getEntityId()) == null)
-                {
-                    Log.getLogger().warn("Loaded chunk, but missing in world entity!");
-                }
+                ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 550));
             }
-
+        }
     }
 
     @Override
     public void onFinish()
     {
-        for (final Entity entity : chiefs.keySet())
-        {
-            entity.setDead();
-        }
-        for (final Entity entity : archers.keySet())
-        {
-            entity.setDead();
-        }
-        for (final Entity entity : barbarians.keySet())
+        for (final Entity entity : getEntities())
         {
             entity.setDead();
         }
