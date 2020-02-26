@@ -121,7 +121,7 @@ public class ClientProxy extends CommonProxy
             }
             else
             {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen", new Exception());
                 return null;
             }
         }

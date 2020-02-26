@@ -55,7 +55,7 @@ public class BuildingDataManager implements IBuildingDataManager
 
         if (entry == null)
         {
-            Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName));
+            Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
             return null;
         }
 
@@ -71,7 +71,7 @@ public class BuildingDataManager implements IBuildingDataManager
 
         if (entry == null)
         {
-            Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName));
+            Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
             return null;
         }
 

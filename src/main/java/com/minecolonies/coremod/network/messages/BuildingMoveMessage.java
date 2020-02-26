@@ -248,7 +248,7 @@ public class BuildingMoveMessage implements IMessage
 
         if (building == null)
         {
-            Log.getLogger().error("BuildTool: building is null!");
+            Log.getLogger().error("BuildTool: building is null!", new Exception());
         }
         else
         {

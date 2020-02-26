@@ -194,10 +194,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
         if (tempAI == null)
         {
-            Log.getLogger().error("Failed to create AI for citizen!");
+            Log.getLogger().error("Failed to create AI for citizen!", new Exception());
             if (citizen == null)
             {
-                Log.getLogger().error("CitizenData is null for job: " + nameTag + " jobClass: " + this.getClass());
+                Log.getLogger().error("CitizenData is null for job: " + nameTag + " jobClass: " + this.getClass(), new Exception());
                 return;
             }
             Log.getLogger()
