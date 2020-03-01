@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -11,17 +10,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
-import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
@@ -34,7 +28,6 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITAL;
@@ -71,9 +64,19 @@ public class EntityAISickTask extends Goal
     private static final int CHANCE_FOR_RANDOM_CURE = 10;
 
     /**
+     * Attempts to position right in the bed.
+     */
+    private static final int GOING_TO_BED_ATTEMPTS  = 20;
+
+    /**
      * The waiting ticks.
      */
     private int waitingTicks = 0;
+
+    /**
+     * The bed the citizen is sleeping in.
+     */
+    private BlockPos usedBed;
 
     /**
      * The different types of AIStates related to eating.
@@ -137,6 +140,8 @@ public class EntityAISickTask extends Goal
             return;
         }
 
+        //todo we need to add a potion effect to them.
+
         switch (currentState)
         {
             case CHECK_FOR_CURE:
@@ -182,16 +187,17 @@ public class EntityAISickTask extends Goal
             }
         }
 
-        citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
+        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-        if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
+        final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+
+        if (hospital != null)
         {
             if (usedBed == null)
             {
-                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                if (hut instanceof BuildingHome)
+                if (hospital instanceof BuildingHospital)
                 {
-                    for (final BlockPos pos : ((BuildingHome) hut).getBedList())
+                    for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                     {
                         final World world = citizen.world;
                         BlockState state = world.getBlockState(pos);
@@ -210,7 +216,7 @@ public class EntityAISickTask extends Goal
                             {
                                 citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
                             }
-                            return;
+                            return FIND_EMPTY_BED;
                         }
                     }
                 }
@@ -219,14 +225,22 @@ public class EntityAISickTask extends Goal
 
             if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
             {
-                bedTicks++;
+                waitingTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
                 {
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
+                //todo if successful register with the hospital building
+                //todo after all todos are done test if they go to the hospital and ly down.
             }
         }
+
+        if (waitingTicks > GOING_TO_BED_ATTEMPTS)
+        {
+            return WAIT_FOR_CURE;
+        }
+        return FIND_EMPTY_BED;
     }
 
     /**
@@ -242,6 +256,14 @@ public class EntityAISickTask extends Goal
             return CHECK_FOR_CURE;
         }
 
+        if (usedBed != null)
+        {
+            final BlockState bed = citizen.world.getBlockState(usedBed);
+            if (bed.isBed(citizen.world, usedBed, null))
+            {
+                citizen.world.setBlockState(usedBed,bed.with(BedBlock.OCCUPIED, false), 0x03);
+            }
+        }
         final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
         citizen.setHeldItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
 
