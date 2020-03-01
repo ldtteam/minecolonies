@@ -93,7 +93,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Whether to retrieve the guard on low health.
      */
-    private boolean retrieveOnLowHealth = false;
+    private boolean retrieveOnLowHealth = true;
 
     /**
      * The level for getting our achievement
