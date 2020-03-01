@@ -40,7 +40,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
-    @NotNull
     public Colony create(final World world, final BlockPos position)
     {
         final int colonyID = getNextColonyID();
@@ -51,8 +50,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
         if (list[colonyID] != null)
         {
-            Log.getLogger().error(String.format("Already a colony registered to id=%d, colony=%s, not creating new colony", colonyID, list[colonyID].getName()));
-            return (Colony) list[colonyID];
+            Log.getLogger().error(String.format("Already a colony registered to id=%d, colony=%s, not creating new colony", colonyID, list[colonyID].getName()), new Exception());
+            return null;
         }
 
         final Colony colony = new Colony(colonyID, world, position);
@@ -91,7 +90,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             Log.getLogger().error(String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
                                                   colony.getID(),
                                                   existingColony.getName(),
-                                                  colony.getName()));
+                                                  colony.getName()), new Exception());
             return;
         }
 
