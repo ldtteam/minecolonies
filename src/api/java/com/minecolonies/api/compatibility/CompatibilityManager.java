@@ -187,7 +187,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void discover()
+    public void discover(final boolean serverSide)
     {
         discoverBlockList();
 
@@ -201,7 +201,10 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCrusherModes();
         discoverSifting();
         discoverFood();
-        discoverFuel();
+        if (serverSide)
+        {
+            discoverFuel();
+        }
         discoverEnchantments();
 
         discoveredAlready = true;

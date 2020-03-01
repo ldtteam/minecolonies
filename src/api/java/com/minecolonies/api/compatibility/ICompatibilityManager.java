@@ -41,8 +41,9 @@ public interface ICompatibilityManager
 
     /**
      * Method called to instantiate the requirements.
+     * @param serverSide if server side (true) or client side (false).
      */
-    void discover();
+    void discover(final boolean serverSide);
 
     /**
      * Gets the sapling matching a leave.

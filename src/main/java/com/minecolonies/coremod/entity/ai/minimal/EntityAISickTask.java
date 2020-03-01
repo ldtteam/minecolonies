@@ -10,13 +10,18 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Hand;
@@ -41,12 +46,12 @@ public class EntityAISickTask extends Goal
     /**
      * Min distance to hut before pathing to hospital.
      */
-    private static final int MIN_DIST_TO_HUT      = 5;
+    private static final int MIN_DIST_TO_HUT = 5;
 
     /**
      * Min distance to hospital before trying to find a bed.
      */
-    private static final int MIN_DIST_TO_HOSPITAL         = 3;
+    private static final int MIN_DIST_TO_HOSPITAL = 3;
 
     /**
      * Min distance to the hospital in general.
@@ -56,7 +61,7 @@ public class EntityAISickTask extends Goal
     /**
      * Required time to cure.
      */
-    private static final int REQUIRED_TIME_TO_CURE  = 60;
+    private static final int REQUIRED_TIME_TO_CURE = 60;
 
     /**
      * Chance for a random cure to happen.
@@ -66,7 +71,7 @@ public class EntityAISickTask extends Goal
     /**
      * Attempts to position right in the bed.
      */
-    private static final int GOING_TO_BED_ATTEMPTS  = 20;
+    private static final int GOING_TO_BED_ATTEMPTS = 20;
 
     /**
      * The waiting ticks.
@@ -109,6 +114,11 @@ public class EntityAISickTask extends Goal
     private BlockPos placeToPath;
 
     /**
+     * Delay ticks.
+     */
+    private int delayTicks = 0;
+
+    /**
      * Instantiates this task.
      *
      * @param citizen the citizen.
@@ -134,14 +144,19 @@ public class EntityAISickTask extends Goal
     @Override
     public void tick()
     {
+        if (++delayTicks % TICKS_SECOND != 0)
+        {
+            return;
+        }
+        delayTicks = 0;
+
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {
             return;
         }
 
-        //todo we need to add a potion effect to them.
-
+        citizen.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
         switch (currentState)
         {
             case CHECK_FOR_CURE:
@@ -173,6 +188,7 @@ public class EntityAISickTask extends Goal
 
     /**
      * Find an empty bed to ly in.
+     *
      * @return the next state to go to.
      */
     private DiseaseState findEmptyBed()
@@ -191,36 +207,30 @@ public class EntityAISickTask extends Goal
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
         final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
 
-        if (hospital != null)
+        if (hospital instanceof BuildingHospital)
         {
             if (usedBed == null)
             {
-                if (hospital instanceof BuildingHospital)
+                for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                 {
-                    for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
+                    final World world = citizen.world;
+                    BlockState state = world.getBlockState(pos);
+                    state = state.getBlock().getExtendedState(state, world, pos);
+                    if (state.getBlock().isIn(BlockTags.BEDS)
+                          && !state.get(BedBlock.OCCUPIED)
+                          && state.get(BedBlock.PART).equals(BedPart.HEAD)
+                          && world.isAirBlock(pos.up()))
                     {
-                        final World world = citizen.world;
-                        BlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getExtendedState(state, world, pos);
-                        if (state.getBlock().isIn(BlockTags.BEDS)
-                              && !state.get(BedBlock.OCCUPIED)
-                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                              && world.isAirBlock(pos.up()))
-                        {
-                            usedBed = pos;
-                            citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
-
-                            final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
-                            final BlockState feetState = citizen.world.getBlockState(feetPos);
-                            if (feetState.getBlock().isIn(BlockTags.BEDS))
-                            {
-                                citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
-                            }
-                            return FIND_EMPTY_BED;
-                        }
+                        usedBed = pos;
+                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCitizenId());
+                        return FIND_EMPTY_BED;
                     }
                 }
-                usedBed = citizen.getHomePosition();
+
+                if (usedBed == null)
+                {
+                    return WAIT_FOR_CURE;
+                }
             }
 
             if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
@@ -228,16 +238,16 @@ public class EntityAISickTask extends Goal
                 waitingTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
                 {
+                    ((BuildingHospital) hospital).registerPatient(usedBed, 0);
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
-                //todo if successful register with the hospital building
-                //todo after all todos are done test if they go to the hospital and ly down.
             }
         }
 
         if (waitingTicks > GOING_TO_BED_ATTEMPTS)
         {
+            waitingTicks = 0;
             return WAIT_FOR_CURE;
         }
         return FIND_EMPTY_BED;
@@ -256,14 +266,6 @@ public class EntityAISickTask extends Goal
             return CHECK_FOR_CURE;
         }
 
-        if (usedBed != null)
-        {
-            final BlockState bed = citizen.world.getBlockState(usedBed);
-            if (bed.isBed(citizen.world, usedBed, null))
-            {
-                citizen.world.setBlockState(usedBed,bed.with(BedBlock.OCCUPIED, false), 0x03);
-            }
-        }
         final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
         citizen.setHeldItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
 
@@ -271,7 +273,11 @@ public class EntityAISickTask extends Goal
         {
             citizen.swingArm(Hand.MAIN_HAND);
             citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            //todo add some nice particle effect over the citizen
+            Network.getNetwork().sendToTrackingEntity(
+              new CircleParticleEffectMessage(
+                citizen.getPositionVec().add(0, 2, 0),
+                ParticleTypes.HAPPY_VILLAGER,
+                waitingTicks), citizen);
         }
 
         waitingTicks++;
@@ -299,6 +305,15 @@ public class EntityAISickTask extends Goal
             }
         }
 
+        if (usedBed != null)
+        {
+            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
+            final IColony colony = citizen.getCitizenColonyHandler().getColony();
+            final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+            ((BuildingHospital) hospital).registerPatient(usedBed, 0);
+            usedBed = null;
+            citizen.getCitizenData().setBedPos(BlockPos.ZERO);
+        }
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         citizenData.getCitizenHappinessHandler().setHealthModifier(true);
         citizenData.markDirty();
@@ -333,19 +348,19 @@ public class EntityAISickTask extends Goal
             return IDLE;
         }
 
+        if (citizen.getRandom().nextInt(10000) < CHANCE_FOR_RANDOM_CURE)
+        {
+            //cure(citizenData);
+        }
+
+        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
+        {
+            return GO_TO_HOSPITAL;
+        }
+
         if (!citizen.getCitizenSleepHandler().isAsleep())
         {
             return FIND_EMPTY_BED;
-        }
-
-        if ( citizen.getRandom().nextInt(10000) < CHANCE_FOR_RANDOM_CURE )
-        {
-            cure(citizenData);
-        }
-
-        if (BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
-        {
-            return GO_TO_HOSPITAL;
         }
 
         return WAIT_FOR_CURE;
@@ -364,7 +379,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DIST_TO_HUT))
+        if (citizen.getCitizenSleepHandler().isAsleep() || citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DIST_TO_HUT))
         {
             return SEARCH_HOSPITAL;
         }
@@ -383,7 +398,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL))
+        if (citizen.getCitizenSleepHandler().isAsleep() || citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL))
         {
             return WAIT_FOR_CURE;
         }
@@ -409,7 +424,8 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()), new TranslationTextComponent(NO_HOSPITAL),
+              ChatPriority.BLOCKING));
             return IDLE;
         }
 

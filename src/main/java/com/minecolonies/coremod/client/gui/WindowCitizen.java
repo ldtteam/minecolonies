@@ -520,7 +520,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
             for (int i = row; i <= levels.length; i++)
             {
                 final Image image = window.findPaneOfTypeByID("modifierImage" + i, Image.class);
-                image.hide();
+                if (image != null)
+                {
+                    image.hide();
+                }
             }
         }
     }

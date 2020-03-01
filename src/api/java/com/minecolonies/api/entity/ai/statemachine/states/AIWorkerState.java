@@ -514,7 +514,18 @@ public enum AIWorkerState implements IAIState
 
     NEED_RUN(true),
 
-    RUNNING(true);
+    RUNNING(true),
+
+      /*
+### Healer ###
+     */
+    REQUEST_CURE(true),
+
+    CURE(true),
+
+    WANDER(true),
+
+    FREE_CURE(true);
 
     /**
      * Is it okay to eat.

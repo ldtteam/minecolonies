@@ -107,6 +107,11 @@ public class EntityAIEatTask extends Goal
     private int foodSlot = -1;
 
     /**
+     * Delay ticks.
+     */
+    private int delayTicks = 0;
+
+    /**
      * Restaurant to which the citizen should path.
      */
     private BlockPos placeToPath;
@@ -156,6 +161,12 @@ public class EntityAIEatTask extends Goal
     @Override
     public void tick()
     {
+        if (++delayTicks % TICKS_SECOND != 0)
+        {
+            return;
+        }
+        delayTicks = 0;
+
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {
@@ -215,11 +226,9 @@ public class EntityAIEatTask extends Goal
 
         citizen.setHeldItem(Hand.MAIN_HAND, stack);
 
-        if (waitingTicks % 10 == 0)
-        {
-            citizen.swingArm(Hand.MAIN_HAND);
-            citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            Network.getNetwork()
+        citizen.swingArm(Hand.MAIN_HAND);
+        citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+        Network.getNetwork()
               .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
                 citizen.posX,
                 citizen.posY,
@@ -227,10 +236,9 @@ public class EntityAIEatTask extends Goal
                 citizen.rotationPitch,
                 citizen.rotationYaw,
                 citizen.getEyeHeight()), citizen);
-        }
 
         waitingTicks++;
-        if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_EAT)
+        if (waitingTicks < REQUIRED_TIME_TO_EAT)
         {
             return EAT;
         }
@@ -355,7 +363,7 @@ public class EntityAIEatTask extends Goal
 
         waitingTicks++;
 
-        if (waitingTicks > TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+        if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
         {
             waitingTicks = 0;
             return GET_FOOD_YOURSELF;

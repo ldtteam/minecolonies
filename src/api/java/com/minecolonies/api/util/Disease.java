@@ -75,9 +75,9 @@ public class Disease
         for (final ItemStack cureStack : cure)
         {
             cureString.append(cureStack.getDisplayName().getString());
-            cureString.append(" ");
+            cureString.append("+");
         }
-        cureString.deleteCharAt(cureString.length());
+        cureString.deleteCharAt(cureString.length()-1);
         return cureString.toString();
     }
 }

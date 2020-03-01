@@ -838,7 +838,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(false);
         }
     }
 
@@ -852,7 +852,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(true);
         }
     }
 
