@@ -14,23 +14,15 @@ import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,26 +133,20 @@ public final class MinecoloniesPlacementHandlers
             {
                 return blockState;
             }
-            
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos);
-            }
-
-            world.setBlockState(pos, blockState, UPDATE_FLAG);
 
             final TileEntity entity = world.getTileEntity(pos);
-
-            final BlockState state =  BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
             if (entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
-            else if (!world.setBlockState(pos, state, UPDATE_FLAG))
+            else
             {
-                return ActionProcessingResult.DENY;
+                world.setBlockState(pos, blockState, UPDATE_FLAG);
+                if (tileEntityData != null)
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                }
             }
-
             return blockState;
         }
 
@@ -203,7 +189,7 @@ public final class MinecoloniesPlacementHandlers
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null && entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
             else
             {
