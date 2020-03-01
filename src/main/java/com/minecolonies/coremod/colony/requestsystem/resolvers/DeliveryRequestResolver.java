@@ -138,7 +138,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
             if (freeDeliveryMan == null)
             {
-                Log.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId());
+                Log.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId(), new Exception());
             }
             else
             {

@@ -103,7 +103,7 @@ public final class SortingUtils
             slotLimit = inv.getLastIndex(currentSlot.get());
             while (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
             {
-                Log.getLogger().error("Trying to dump into same slot again!");
+                Log.getLogger().error("Trying to dump into same slot again!", new Exception());
             }
             tempSize -= tempStack.getCount();
             requiredSlots.decrementAndGet();

@@ -377,7 +377,7 @@ public class BuildingManager implements IBuildingManager
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
                         colony.getID(),
                         tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()));
+                        tileEntity.getPosition()), new Exception());
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
