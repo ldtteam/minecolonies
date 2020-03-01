@@ -115,7 +115,7 @@ public final class ColonyManager implements IColonyManager
 
         if (colony.getWorld() == null)
         {
-            Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!");
+            Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!", new Exception());
             return;
         }
 
@@ -1001,7 +1001,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyView view = getColonyView(colonyID, dim);
         if (view == null)
         {
-            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID), new Exception());
         }
         else
         {
@@ -1091,7 +1091,7 @@ public final class ColonyManager implements IColonyManager
         }
         else
         {
-            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId), new Exception());
         }
     }
 
