@@ -328,7 +328,7 @@ public class InventoryUtils
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
         }
-        return itemHandler != null && getItemCountInItemHandler(itemHandler, itemStackSelectionPredicate) > 0;
+        return itemHandler != null && findFirstSlotInItemHandlerNotEmptyWith(itemHandler,itemStackSelectionPredicate) > -1;
     }
 
     /**
@@ -581,7 +581,7 @@ public class InventoryUtils
     }
 
     /**
-     * Returns the index of the first occurrence of an ItemStack that matches
+     * Returns a map with all itemhandlers and slots matching the predicate in the provider.
      * the given predicate in the {@link ICapabilityProvider}.
      *
      * @param provider                    Provider to check
@@ -874,13 +874,26 @@ public class InventoryUtils
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
                 while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
                 {
-                    resultStack = itemHandler.insertItem(slot, resultStack, false);
+                    resultStack = itemHandler.insertItem(slot, resultStack, true);
                     if (!ItemStackUtils.isEmpty(resultStack))
                     {
                         slot++;
                     }
+                    // result empty, we can insert the whole stack
+                    else
+                    {
+                        resultStack = itemStack;
+                        slot = itemHandler.getSlots() == 0 ? -1 : 0;
+                        while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                        {
+                            resultStack = itemHandler.insertItem(slot, resultStack, false);
+                            if (!ItemStackUtils.isEmpty(resultStack))
+                            {
+                                slot++;
+                            }
+                        }
+                    }
                 }
-
 
                 return ItemStackUtils.isEmpty(resultStack);
             }
@@ -896,7 +909,7 @@ public class InventoryUtils
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
-     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable final ItemStack itemStack)
     {
@@ -1308,7 +1321,7 @@ public class InventoryUtils
             return false;
         }
 
-        return getItemCountInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate) > 0;
+        return findFirstSlotInItemHandlerNotEmptyWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate) > -1;
     }
 
     /**
@@ -1473,7 +1486,7 @@ public class InventoryUtils
                                                                            final int sourceIndex,
                                                                            @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
@@ -1485,19 +1498,11 @@ public class InventoryUtils
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
             if (ItemStackUtils.isEmpty(sourceStack))
             {
-                sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
                 return true;
             }
         }
 
-        final ItemStack originalStack = sourceStack.copy();
-        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
-        {
-            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
-            sourceHandler.extractItem(sourceIndex, usedAmount, false);
-            return true;
-        }
-
+        sourceHandler.insertItem(sourceIndex, sourceStack, false);
         return false;
     }
 
@@ -1517,7 +1522,7 @@ public class InventoryUtils
       final int count,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, true);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, false);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
@@ -1529,19 +1534,11 @@ public class InventoryUtils
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
             if (ItemStackUtils.isEmpty(sourceStack))
             {
-                sourceHandler.extractItem(sourceIndex, count, false);
                 return true;
             }
         }
 
-        final ItemStack originalStack = sourceStack.copy();
-        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
-        {
-            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
-            sourceHandler.extractItem(sourceIndex, usedAmount, false);
-            return true;
-        }
-
+        sourceHandler.insertItem(sourceIndex, sourceStack, false);
         return false;
     }
 
@@ -1559,14 +1556,14 @@ public class InventoryUtils
       final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
             return true;
         }
 
-        sourceStack = mergeItemStackIntoNextBestSlotInItemHandlers(sourceHandler, sourceIndex, targetHandler);
+        sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
@@ -1578,18 +1575,11 @@ public class InventoryUtils
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
             if (ItemStackUtils.isEmpty(sourceStack))
             {
-                sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
                 return true;
             }
         }
 
-        final ItemStack originalStack = sourceStack.copy();
-        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
-        {
-            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
-            sourceHandler.extractItem(sourceIndex, usedAmount, false);
-            return true;
-        }
+        sourceHandler.insertItem(sourceIndex,sourceStack,false);
 
         return false;
     }
@@ -1648,18 +1638,18 @@ public class InventoryUtils
      * @param sourceHandler The {@link IItemHandler} that works as Source.
      * @param sourceIndex   The index of the slot that is being extracted from.
      * @param targetHandler The {@link IItemHandler} that works as Target.
-     * @return True when the swap was successful, false when not.
      */
-    public static ItemStack mergeItemStackIntoNextBestSlotInItemHandlers(
+    public static void mergeItemStackIntoNextBestSlotInItemHandlers(
       @NotNull final IItemHandler sourceHandler,
       final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        int amount = sourceStack.getCount();
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
-            return sourceStack;
+            return;
         }
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
@@ -1670,11 +1660,12 @@ public class InventoryUtils
                 if (ItemStackUtils.isEmpty(sourceStack))
                 {
                     sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-                    return sourceStack;
+                    return;
                 }
             }
         }
-        return sourceStack;
+
+        sourceHandler.extractItem(sourceIndex, amount - sourceStack.getCount(), false);
     }
 
     /**
@@ -1801,11 +1792,15 @@ public class InventoryUtils
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
-                currentAmount -= returnStack.getCount();
                 if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
                 {
                     sourceHandler.insertItem(desiredItemSlot, returnStack, false);
                     break;
+                }
+                // Only reduce if successfully inserted.
+                else
+                {
+                    currentAmount -= returnStack.getCount();
                 }
             }
         }
@@ -1828,6 +1823,7 @@ public class InventoryUtils
             final int amount,
             final IItemHandler targetHandler, final int slot)
     {
+        // might be an error, first stack doesnt necessarily match the needed amount, leading to returning true even if inserted less amount than desired.
         final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
                 itemStackSelectionPredicate::test);
 
@@ -1840,7 +1836,13 @@ public class InventoryUtils
         {
             return false;
         }
-        targetHandler.insertItem(slot, returnStack, false);
+
+        final ItemStack insertResult = targetHandler.insertItem(slot, returnStack, false);
+        if (!ItemStackUtils.isEmpty(insertResult))
+        {
+            sourceHandler.insertItem(desiredItemSlot, insertResult, false);
+            return false;
+        }
         return true;
     }
 
@@ -1918,15 +1920,7 @@ public class InventoryUtils
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
         {
-            if(ItemStackUtils.isEmpty(mergeItemStackIntoNextBestSlotInItemHandlers(handler, sourceIndex, targetHandler)))
-            {
-                return true;
-            }
-        }
-
-        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
-        {
-            if (transferItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, targetHandler))
+            if(transferItemStackIntoNextBestSlotInItemHandler(handler, sourceIndex, targetHandler))
             {
                 return true;
             }
@@ -2040,52 +2034,38 @@ public class InventoryUtils
     }
 
     /**
-     * Remove a stack from a given Itemhandler
+     * Tries to remove a stack with its size from a given Itemhandler.
+     * Only removes sth if the whole size can be removed.
      *
      * @param handler the itemHandler.
      * @param input   the stack to remove.
-     * @return true if succesful.
+     * @return true if removed the stack
      */
-    public static boolean removeStackFromItemHandler(final IItemHandler handler, final ItemStack input)
+    public static boolean tryRemoveStackFromItemHandler(final IItemHandler handler, final ItemStack input)
     {
-        final ItemStack workingStack = input.copy();
-        int maxTries = 0;
-        maxTries += ItemStackUtils.getSize(workingStack);
+        int amount = input.getCount();
 
-        int tries = 0;
-        while (tries < maxTries)
+        for (int i = 0;i < handler.getSlots();i++)
         {
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
-
-            if (slot == -1)
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(handler.getStackInSlot(i), input))
             {
-                final ItemStack stack = input.copy();
-                stack.setCount(input.getCount() - workingStack.getCount());
-                addItemStackToItemHandler(handler, stack);
-                return false;
-            }
+                amount = amount - handler.extractItem(i,amount,false).getCount();
 
-            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(workingStack), false));
-
-            if (removedSize == ItemStackUtils.getSize(workingStack))
-            {
-                return true;
+                if (amount == 0)
+                {
+                    return true;
+                }
             }
-            else
-            {
-                ItemStackUtils.changeSize(workingStack, -removedSize);
-            }
-            tries++;
         }
 
-        final ItemStack stack = input.copy();
-        stack.setCount(input.getCount() - workingStack.getCount());
-        addItemStackToItemHandler(handler, stack);
+        final ItemStack revertStack = input.copy();
+        revertStack.setCount(input.getCount() - amount);
+        addItemStackToItemHandler(handler,revertStack);
         return false;
     }
 
     /**
-     * Remove a stack with a certain qty from a given Itemhandler
+     * Force remove a stack with a certain amount from a given Itemhandler
      *
      * @param handler the itemHandler.
      * @param input   the stack to remove.
@@ -2218,10 +2198,6 @@ public class InventoryUtils
                 {
                     foundEmptySlot = true;
                 }
-                foundItem = true;
-            }
-            else if (compareItems(stack, inStack.getItem()))
-            {
                 foundItem = true;
             }
 
@@ -2555,12 +2531,11 @@ public class InventoryUtils
 	
         final Predicate<ItemStack> wantToKeep = toKeepInTarget.or(stack -> ItemStackUtils.compareItemStackListIgnoreStackSize(toSwap, stack));
 
-        swapping:
         for (final ItemStack itemStack : toSwap)
         {
             for (final IItemHandler sourceInventory : sourceInventories)
             {
-                if (removeStackFromItemHandler(sourceInventory, itemStack))
+                if (tryRemoveStackFromItemHandler(sourceInventory, itemStack))
                 {
                     ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
 

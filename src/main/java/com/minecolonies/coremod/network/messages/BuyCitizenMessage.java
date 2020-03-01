@@ -141,7 +141,7 @@ public class BuyCitizenMessage implements IMessage
             final IItemHandler playerInv = new InvWrapper(player.inventory);
 
             // Remove items from player
-            if (InventoryUtils.removeStackFromItemHandler(playerInv, toRemove))
+            if (InventoryUtils.tryRemoveStackFromItemHandler(playerInv, toRemove))
             {
                 // Create new citizen
                 colony.increaseBoughtCitizenCost();
