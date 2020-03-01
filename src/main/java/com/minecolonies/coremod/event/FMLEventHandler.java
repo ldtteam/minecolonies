@@ -9,7 +9,6 @@ import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -81,12 +80,6 @@ public class FMLEventHandler
     public static void onServerStopped(final FMLServerStoppedEvent event)
     {
         Pathfinding.shutdown();
-    }
-
-    @SubscribeEvent
-    public static void lootLoad(LootTableLoadEvent event) {
-
-        LootTableEventHandler.addTomeToMobs(event);
     }
 
 
