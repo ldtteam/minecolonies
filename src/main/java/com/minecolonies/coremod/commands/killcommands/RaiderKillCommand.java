@@ -65,7 +65,7 @@ public class RaiderKillCommand extends AbstractKillCommand<AbstractEntityMinecol
                     continue;
                 }
 
-                event.onEntityDeath(entity);
+                colony.getEventManager().onEntityDeath(entity, entity.getEventID());
                 event.setStatus(EventStatus.DONE);
             }
             entity.setDead();

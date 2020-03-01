@@ -6,7 +6,8 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
  */
-public class PirateRaidEvent implements IColonyEvent, IRaidEvent
+public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnEvent
 {
     /**
      * This raids event id, registry entries use res locations as ids.
@@ -311,7 +312,7 @@ public class PirateRaidEvent implements IColonyEvent, IRaidEvent
     }
 
     @Override
-    public BlockPos getStartPos()
+    public BlockPos getSpawnPos()
     {
         return spawnPoint;
     }
@@ -344,6 +345,14 @@ public class PirateRaidEvent implements IColonyEvent, IRaidEvent
     public ResourceLocation getEventTypeID()
     {
         return PIRATE_RAID_EVENT_TYPE_ID;
+    }
+
+    @Override
+    public List<Tuple<String, BlockPos>> getSchematicSpawns()
+    {
+        final List<Tuple<String, BlockPos>> paths = new ArrayList<>();
+        paths.add(new Tuple<>(Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, spawnPoint));
+        return paths;
     }
 
     @Override

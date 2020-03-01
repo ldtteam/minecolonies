@@ -148,7 +148,7 @@ public class BuildingBarracks extends AbstractBuilding
             if (!colony.getRaiderManager().areSpiesEnabled())
             {
                 final int amount = InventoryUtils.getItemCountInItemHandler(this.getTileEntity().getInventory(), Items.GOLD_INGOT, 0);
-                if (amount > SPIES_GOLD_COST)
+                if (amount >= SPIES_GOLD_COST)
                 {
                     InventoryUtils.removeStackFromItemHandler(tileEntity.getInventory(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST));
                     colony.getRaiderManager().setSpiesEnabled(true);

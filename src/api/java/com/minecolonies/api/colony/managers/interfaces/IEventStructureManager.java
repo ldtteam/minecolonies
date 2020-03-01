@@ -31,7 +31,7 @@ public interface IEventStructureManager
     void loadBackupForEvent(int eventID);
 
     /**
-     * Reads all saved schematics from nbt
+     * Reads all saved schematics from nbt, needs to happen before the event managers nbt read.
      * @param compound
      */
     void readFromNBT(@NotNull NBTTagCompound compound);

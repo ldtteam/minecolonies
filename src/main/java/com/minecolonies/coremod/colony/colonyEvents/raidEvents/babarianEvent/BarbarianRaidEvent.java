@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -36,7 +36,7 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 /**
  * Barbarian raid event for the colony, triggers a horde of barbarians which spawn and attack the colony.
  */
-public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
+public class BarbarianRaidEvent implements IColonyRaidEvent
 {
     /**
      * This raids event id, registry entries use res locations as ids.
@@ -113,7 +113,7 @@ public class BarbarianRaidEvent implements IColonyEvent, IRaidEvent
     }
 
     @Override
-    public BlockPos getStartPos()
+    public BlockPos getSpawnPos()
     {
         return spawnPoint;
     }

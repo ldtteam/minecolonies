@@ -9,6 +9,8 @@ import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
@@ -211,6 +213,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             {
                 // Stuck when we have a path, but are not progressing on it
                 stuckTime++;
+
+                if (totalStuckTime > 0 && trySkipAheadOnPath())
+                {
+                    resetStuckCounters();
+                }
             }
             else if (entity.getNavigator().getPath().getCurrentPathIndex() > 5)
             {
@@ -225,9 +232,9 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         // Stuck timout
         passedTicks += UPDATE_INTERVAL;
         final long targetDist = BlockPosUtil.getDistance2D(entity.getPosition(), targetBlock);
-        if (targetDist > MIN_TP_DIST && targetDist * SECONDS_A_MINUTE < passedTicks)
+        if (entity.getStuckCounter() >= 5 || targetDist * SECONDS_A_MINUTE < passedTicks)
         {
-            if (handleTotalStuck())
+            if (handleTotalStuck(targetDist))
             {
                 resetStuckCounters();
                 targetBlock = getRandomBuilding();
@@ -246,20 +253,50 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * Handles beeing completly stuck, teleports the entity a little.
      */
-    private boolean handleTotalStuck()
+    private boolean handleTotalStuck(final long targetDist)
     {
         // Try reseting the target first
         totalStuckTime++;
+
+        if (trySkipAheadOnPath())
+        {
+            return true;
+        }
+
         if (totalStuckTime == 1)
         {
             passedTicks -= UPDATE_INTERVAL * 2;
+            entity.setStuckCounter(entity.getStuckCounter() - 2);
             targetBlock = entity.getColony().getRaiderManager().getRandomBuilding();
             return false;
         }
 
-        final BlockPos tpPos = BlockPosUtil.getFloor(entity.getPosition().offset(BlockPosUtil.getXZFacing(entity.getPosition(), targetBlock), 5), world);
-        entity.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
-        return true;
+        if (targetDist > MIN_TP_DIST)
+        {
+            final BlockPos tpPos = BlockPosUtil.getFloor(entity.getPosition().offset(BlockPosUtil.getXZFacing(entity.getPosition(), targetBlock), 5), world);
+            entity.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Tries to skip ahead on an existing path.
+     */
+    private boolean trySkipAheadOnPath()
+    {
+        final Path path = entity.getNavigator().getPath();
+        if (path != null && !path.isFinished())
+        {
+            if (path.getCurrentPathLength() >= 5)
+            {
+                final PathPoint pathPoint = path.getPathPointFromIndex(4);
+                entity.setPositionAndUpdate(pathPoint.x, pathPoint.y, pathPoint.z);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

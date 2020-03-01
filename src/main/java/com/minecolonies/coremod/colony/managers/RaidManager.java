@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -329,7 +329,7 @@ public class RaidManager implements IRaiderManager
     {
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof IRaidEvent && event.getStatus() == EventStatus.PROGRESSING)
+            if (event instanceof IColonyRaidEvent && event.getStatus() == EventStatus.PROGRESSING)
             {
                 return true;
             }

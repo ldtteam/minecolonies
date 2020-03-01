@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SCHEMATIC_LIST;
@@ -119,13 +121,24 @@ public class EventStructureManager implements IEventStructureManager
             if (entry.getValue() == eventID)
             {
                 final String backupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
+                final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
 
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                  new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath,
+                  fileName,
                   entry.getKey(),
                   0,
                   Mirror.NONE,
                   true);
+
+                try
+                {
+
+                    Structurize.proxy.getSchematicsFolder().toPath().resolve(fileName + SCHEMATIC_EXTENSION_NEW).toFile().delete();
+                }
+                catch (Exception e)
+                {
+                    Log.getLogger().info("Minor issue: Failed at deleteing a backup schematic at " + fileName, e);
+                }
 
                 iterator.remove();
             }

@@ -38,8 +38,14 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 public final class RaiderMobUtils
 {
 
+    /**
+     * Distances in which spawns are spread
+     */
     public static double MOB_SPAWN_DEVIATION_STEPS = 0.3;
 
+    /**
+     * Mob attribute, used for custom attack damage
+     */
     public final static IAttribute MOB_ATTACK_DAMAGE = new RangedAttribute(null, "mc_mob_damage", 2.0, 1.0, 20);
 
     /**
@@ -87,7 +93,7 @@ public final class RaiderMobUtils
         final double attackDamage =
           (float) Configurations.gameplay.barbarianHordeDifficulty / MAX_BARBARIAN_DIFFICULTY + ATTACK_DAMAGE + Math.max(raidLevel / DAMAGE_PER_X_RAID_LEVEL,
             MAX_RAID_LEVEL_DAMAGE);
-        mob.getAttributeMap().registerAttribute(MOB_ATTACK_DAMAGE);
+
         mob.getEntityAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage);
 
         if (mob instanceof IChiefMobEntity)

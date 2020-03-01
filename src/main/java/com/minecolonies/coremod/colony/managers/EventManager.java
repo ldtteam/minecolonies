@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.colonyEvents.IColonyEntitySpawnEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IEventManager;
@@ -108,12 +109,12 @@ public class EventManager implements IEventManager
     public void registerEntity(@NotNull final Entity entity, final int eventID)
     {
         final IColonyEvent event = events.get(eventID);
-        if (event == null)
+        if (!(event instanceof IColonyEntitySpawnEvent))
         {
             entity.setDead();
             return;
         }
-        event.registerEntity(entity);
+        ((IColonyEntitySpawnEvent) event).registerEntity(entity);
     }
 
     /**
@@ -126,9 +127,9 @@ public class EventManager implements IEventManager
     public void unregisterEntity(@NotNull final Entity entity, final int eventID)
     {
         final IColonyEvent event = events.get(eventID);
-        if (event != null)
+        if (event instanceof IColonyEntitySpawnEvent)
         {
-            event.unregisterEntity(entity);
+            ((IColonyEntitySpawnEvent) event).unregisterEntity(entity);
         }
     }
 
@@ -142,9 +143,9 @@ public class EventManager implements IEventManager
     public void onEntityDeath(final EntityLiving entity, final int eventID)
     {
         final IColonyEvent event = events.get(eventID);
-        if (event != null)
+        if (event instanceof IColonyEntitySpawnEvent)
         {
-            event.onEntityDeath(entity);
+            ((IColonyEntitySpawnEvent) event).onEntityDeath(entity);
         }
     }
 
