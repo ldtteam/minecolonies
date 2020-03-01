@@ -120,7 +120,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void resetTask()
     {
-        worker.getCitizenStatusHandler().setStatus(Status.IDLE);
+        resetAI();
     }
 
     /**

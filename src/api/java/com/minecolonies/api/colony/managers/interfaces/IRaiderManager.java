@@ -1,12 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -58,6 +54,30 @@ public interface IRaiderManager
     void setWillRaidTonight(final boolean willRaid);
 
     /**
+     * Returns whether spies are enabled
+     *
+     * @return
+     */
+    boolean areSpiesEnabled();
+
+    /**
+     * Sets whether spies are enabled
+     * @param enabled
+     */
+    void setSpiesEnabled(boolean enabled);
+
+    /**
+     * Triggers a raid on the colony
+     */
+    void raiderEvent();
+
+    /**
+     * Calculates the spawn position for raids
+     * @return
+     */
+    BlockPos calculateSpawnLocation();
+
+    /**
      * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
      * @param directionX the first direction parameter.
      * @param directionZ the second direction paramter.
@@ -72,48 +92,63 @@ public interface IRaiderManager
     List<BlockPos> getLastSpawnPoints();
 
     /**
-     * Register a raider at the colony.
-     * @param raider the raider to register.
+     * Calculates the barbarian amount for raids
+     *
+     * @return
      */
-    void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider);
+    int calcBarbarianAmount();
 
     /**
-     * Unregister a raider from the colony.
-     * @param raider the raider to unregister.
-     * @param world the serverWorld.
+     * Whether the colony is currently raided.
+     * @return
      */
-    void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world);
+    boolean isRaided();
 
     /**
-     * Gets the horde of raiders approaching the colony.
-     * @param world the serverWorld.
-     * @return the list of entities.
+     * Called on nightfall.
      */
-    List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
+    void onNightFall();
 
     /**
-     * Register a certain raider origin schematic to the colony..
-     * @param ship the ship description.
-     * @param position the position.
-     * @param worldTime the world time at spawn.
+     * Returns the amount of nights since the last raid
+     * @return
      */
-    void registerRaiderOriginSchematic(final String ship, final BlockPos position, final long worldTime);
+    int getNightsSinceLastRaid();
 
     /**
-     * Reads the raider manager from NBT.
-     * @param compound the compound to read it from.
+     * Sets the amount of nights since the last raid
+     * @param nightsSinceLastRaid
      */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
     /**
-     * Called on colony tick.
-     * @param colony the colony being ticked.
+     * Tries to raid the colony, if possible.
+     * @param colony
      */
-    void onColonyTick(@NotNull final IColony colony);
+    void tryToRaidColony(final IColony colony);
 
     /**
-     * Writes the raider manager to NBT.
-     * @param compound the compound to write it to.
+     * Whether the colony can be raided.
+     * @return
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    boolean canRaid();
+
+    /**
+     * Returns true when it is time to raid
+     * @return
+     */
+    boolean isItTimeToRaid();
+
+    /**
+     * calculates the colonies raid level
+     * @return
+     */
+    int getColonyRaidLevel();
+
+    /**
+     * Returns a random building for raiders to go to, groups up 3 raiders to the same position.
+     *
+     * @return
+     */
+    BlockPos getRandomBuilding();
 }

@@ -90,6 +90,13 @@ public interface IWalkToProxy
     EntityLiving getEntity();
 
     /**
+     * Getter for the current proxy.
+     *
+     * @return
+     */
+    BlockPos getCurrentProxy();
+
+    /**
      * Reset the target of the proxy.
      */
     void reset();

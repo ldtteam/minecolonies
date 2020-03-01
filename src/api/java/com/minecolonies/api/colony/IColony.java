@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.colony.ColonyState;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -133,13 +134,6 @@ public interface IColony
     IRequestManager getRequestManager();
 
     /**
-     * Get whether there will be a raid in this colony tonight, or not.
-     *
-     * @return Boolean value true if raid, false if not
-     */
-    boolean hasWillRaidTonight();
-
-    /**
      * Called to mark this colony dirty, and in need of syncing / saving.
      */
     void markDirty();
@@ -150,20 +144,6 @@ public interface IColony
      * @return true if so.
      */
     boolean canBeAutoDeleted();
-
-    /**
-     * return whether or not a colony is allowed to have barbarian events triggered.
-     *
-     * @return true if so.
-     */
-    boolean isCanHaveBarbEvents();
-
-    /**
-     * return whether or not the colony has had it's "RaidTonight" calculated yet.
-     *
-     * @return true if so.
-     */
-    boolean isHasRaidBeenCalculated();
 
     /**
      * Method used to get a {@link IRequester} from a given Position. Is always a Building.
@@ -234,7 +214,10 @@ public interface IColony
 
     IStatisticAchievementManager getStatsManager();
 
+    @NotNull
     IRaiderManager getRaiderManager();
+
+    IEventManager getEventManager();
 
     IColonyPackageManager getPackageManager();
 
@@ -270,10 +253,6 @@ public interface IColony
 
 
     NBTTagCompound getColonyTag();
-
-    int getNightsSinceLastRaid();
-
-    void setNightsSinceLastRaid(int nights);
 
     boolean isNeedToMourn();
 
@@ -362,4 +341,6 @@ public interface IColony
      * @return amount of chunks
      */
     int getLoadedChunkCount();
+
+    ColonyState getState();
 }

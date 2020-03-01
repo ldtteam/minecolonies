@@ -381,19 +381,10 @@ public interface IColonyView extends IColony
     IRequestManager getRequestManager();
 
     @Override
-    boolean hasWillRaidTonight();
-
-    @Override
     void markDirty();
 
     @Override
     boolean canBeAutoDeleted();
-
-    @Override
-    boolean isCanHaveBarbEvents();
-
-    @Override
-    boolean isHasRaidBeenCalculated();
 
     @Nullable
     @Override
@@ -463,4 +454,6 @@ public interface IColonyView extends IColony
      * @return the list.
      */
     List<CompactColonyReference> getFeuds();
+
+    boolean areSpiesEnabled();
 }

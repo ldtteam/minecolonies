@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS        = 20;
+    private static final double PIRATE_SWIM_BONUS        = 30;
     public static final  double MIN_Y_DISTANCE           = 0.001;
 
     @Nullable
@@ -83,7 +83,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    protected PathResult setPathJob(
+    public PathResult setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
       final double speed)
@@ -155,13 +155,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int newY = (int) y;
         final int newZ = MathHelper.floor(z);
 
-        if ((destination != null
-               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
-              || (originalDestination != null
-                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)
-                    && pathResult != null
-                    && pathResult.isInProgress())
-              || (pathResult != null && (pathResult.isInProgress() || pathResult.isComputing())))
+        if (pathResult != null &&
+              (
+                pathResult.isComputing()
+                  || (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+                  || (originalDestination != null && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ))
+              )
+        )
         {
             return pathResult;
         }
@@ -258,6 +258,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         return tryMoveToBlockPos(e.getPosition(), speed);
     }
+
+    // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
+    @Override
+    protected void removeSunnyPath() {}
 
     @Override
     public boolean setPath(@Nullable final Path path, final double speed)
@@ -532,7 +536,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
 
         final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
-        job.setAreaRestriction(startRestriction, endRestriction);
 
         return (TreePathResult) setPathJob(job, null, speed);
     }

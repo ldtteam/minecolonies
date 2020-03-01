@@ -30,6 +30,7 @@ import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessa
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -41,6 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -73,8 +75,10 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
+import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.client.particles.SleepingParticle.SLEEPING_TEXTURE;
@@ -369,6 +373,19 @@ public class EventHandler
             itemstack.setTagCompound(compound);
 
             event.setCanceled(true);
+            return;
+        }
+
+        if (event.getState().getBlock() instanceof BlockMobSpawner)
+        {
+            final TileEntityMobSpawner spawner = (TileEntityMobSpawner) event.getWorld().getTileEntity(event.getPos());
+
+            final IColony colony = IColonyManager.getInstance()
+                                     .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInteger(TAG_COLONY_ID), event.getWorld().provider.getDimension());
+            if (colony != null)
+            {
+                colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInteger(TAG_EVENT_ID), spawner);
+            }
         }
     }
 

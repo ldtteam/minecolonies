@@ -1,19 +1,18 @@
 package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.StructureLoadingUtils;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.commands.CommandEntryPointNew;
-import com.minecolonies.coremod.event.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.fixers.TileEntityIdFixer;
@@ -48,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.Constants.COLONY_SILENT_VISITOR_PERMISSION;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.79-ALPHA,);",
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies = "after:gbook;required-after:structurize@[0.10.244-ALPHA,);",
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
@@ -79,7 +78,6 @@ public class MineColonies
 
     static
     {
-        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
     }
@@ -292,6 +290,7 @@ public class MineColonies
         getNetwork().registerMessage(CrusherSetModeMessage.class, CrusherSetModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuyCitizenMessage.class, BuyCitizenMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(HireMercenaryMessage.class, HireMercenaryMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(HireSpiesMessage.class, HireSpiesMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(SifterSettingsMessage.class, SifterSettingsMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(HutRenameMessage.class, HutRenameMessage.class, ++id, Side.SERVER);

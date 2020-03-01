@@ -149,9 +149,9 @@ public final class ColonyView implements IColonyView
     private IRequestManager requestManager;
 
     /**
-     * The number of raiders in the horde.
+     * Wether the colony is raided
      */
-    private int horde;
+    private boolean isUnderRaid;
 
     /**
      * The world.
@@ -187,6 +187,11 @@ public final class ColonyView implements IColonyView
      * The list of feuds.
      */
     private List<CompactColonyReference> feuds;
+
+    /**
+     * Whether spies are active and highlight enemy positions.
+     */
+    private boolean spiesEnabled;
 
     /**
      * Base constructor for a colony.
@@ -292,7 +297,8 @@ public final class ColonyView implements IColonyView
         buf.writeLong(colony.getMercenaryUseTime());
 
         ByteBufUtils.writeUTF8String(buf, colony.getStyle());
-        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
+        buf.writeBoolean(colony.getRaiderManager().isRaided());
+        buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         final List<IColony> allies = new ArrayList<>();
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
@@ -542,6 +548,12 @@ public final class ColonyView implements IColonyView
         return 0;
     }
 
+    @Override
+    public ColonyState getState()
+    {
+        return null;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -780,7 +792,9 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = ByteBufUtils.readUTF8String(buf);
-        this.horde = buf.readInt();
+
+        this.isUnderRaid = buf.readBoolean();
+        this.spiesEnabled = buf.readBoolean();
 
         this.allies = new ArrayList<>();
         this.feuds = new ArrayList<>();
@@ -1076,12 +1090,6 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean hasWillRaidTonight()
-    {
-        return false;
-    }
-
-    @Override
     public void markDirty()
     {
         /*
@@ -1091,18 +1099,6 @@ public final class ColonyView implements IColonyView
 
     @Override
     public boolean canBeAutoDeleted()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isCanHaveBarbEvents()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isHasRaidBeenCalculated()
     {
         return false;
     }
@@ -1231,18 +1227,6 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public int getNightsSinceLastRaid()
-    {
-        return 0;
-    }
-
-    @Override
-    public void setNightsSinceLastRaid(final int nights)
-    {
-
-    }
-
-    @Override
     public boolean isNeedToMourn()
     {
         return false;
@@ -1363,6 +1347,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public IEventManager getEventManager()
+    {
+        return null;
+    }
+
+    @Override
     public IColonyPackageManager getPackageManager()
     {
         return null;
@@ -1377,7 +1367,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isRaiding()
     {
-        return this.horde > 0;
+        return this.isUnderRaid;
     }
 
     @Override
@@ -1402,5 +1392,11 @@ public final class ColonyView implements IColonyView
     public List<CompactColonyReference> getFeuds()
     {
         return feuds;
+    }
+
+    @Override
+    public boolean areSpiesEnabled()
+    {
+        return spiesEnabled;
     }
 }
