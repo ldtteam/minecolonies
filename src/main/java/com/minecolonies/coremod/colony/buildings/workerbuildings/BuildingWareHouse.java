@@ -37,8 +37,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Class of the warehouse building.
@@ -253,7 +256,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)
             {
-                handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                handleBuildingOverChest(pos, (ChestTileEntity) entity, world, null);
             }
             if (entity instanceof TileEntityRack)
             {
@@ -265,12 +268,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Handles the chest placement.
-     *
-     * @param pos   at pos.
+     *  @param pos   at pos.
      * @param chest the entity.
      * @param world the world.
+     * @param tileEntityData the rack te data.
      */
-    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world)
+    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
     {
         final List<ItemStack> inventory = new ArrayList<>();
         final int size = chest.getSizeInventory();
@@ -285,6 +288,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
 
         world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
+        if (tileEntityData != null)
+        {
+            handleTileEntityPlacement(tileEntityData, world, pos);
+        }
         final TileEntity entity = world.getTileEntity(pos);
         if (entity instanceof TileEntityRack)
         {
