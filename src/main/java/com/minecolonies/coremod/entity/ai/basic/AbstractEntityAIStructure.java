@@ -367,16 +367,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
 
-            @Nullable final Block block = structureBlock.block;
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
-
             @Nullable final BlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             return placeBlockAt(blockState, structureBlock.blockPosition);
@@ -456,7 +446,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.removeBlock(coords, false);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition(), job.getStructure().getSettings());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getWorkOrder().getBuildingLocation(), job.getStructure().getSettings());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -629,7 +619,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
         if (ItemStackUtils.isEmpty(stack))
         {
-            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
+            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock(), new Exception());
             return false;
         }
 
@@ -763,14 +753,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
 
             return placeBlockAt(blockState, structureBlock.blockPosition);
         }

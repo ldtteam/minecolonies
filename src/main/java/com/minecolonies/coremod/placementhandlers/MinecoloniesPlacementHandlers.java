@@ -1,21 +1,28 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.blocks.PlaceholderBlock;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.tileentities.TileEntityPlaceholder;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -225,7 +232,7 @@ public final class MinecoloniesPlacementHandlers
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
         {
-            return blockState.getBlock() == ModBlocks.blockBarracksTowerSubstitution;
+            return blockState.getBlock() == com.ldtteam.structurize.blocks.ModBlocks.placeholderBlock;
         }
 
         @Override
@@ -237,12 +244,71 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
+            if (tileEntityData != null)
+            {
+                TileEntity tileEntity = TileEntity.create(tileEntityData);
+                if (tileEntity instanceof TileEntityPlaceholder)
+                {
+                    final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();
+                    if (stack.getItem() instanceof BlockItem)
+                    {
+                        final Block block = ((BlockItem) stack.getItem()).getBlock();
+                        if (block instanceof AbstractBlockHut)
+                        {
+                            if (world.getBlockState(pos).getBlock() == block)
+                            {
+                                return blockState;
+                            }
+
+                            final TileEntity building = world.getTileEntity(centerPos);
+                            if (building instanceof TileEntityColonyBuilding)
+                            {
+                                world.setBlockState(pos, block.getDefaultState().with(AbstractBlockHut.FACING, blockState.get(PlaceholderBlock.HORIZONTAL_FACING)));
+                                final TileEntity tile = world.getTileEntity(pos);
+                                if (tile instanceof TileEntityColonyBuilding)
+                                {
+                                    ((TileEntityColonyBuilding) tile).setStyle(((TileEntityColonyBuilding) building).getStyle());
+                                }
+                                ((TileEntityColonyBuilding) building).getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
+
+                                final IBuilding theBuilding = ((TileEntityColonyBuilding) building).getColony().getBuildingManager().getBuilding(pos);
+                                if (theBuilding instanceof BuildingBarracksTower)
+                                {
+                                    theBuilding.setStyle(((TileEntityColonyBuilding) building).getStyle());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             return blockState;
         }
 
         @Override
         public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
         {
+            if (tileEntityData != null)
+            {
+                TileEntity tileEntity = TileEntity.create(tileEntityData);
+                if (tileEntity instanceof TileEntityPlaceholder)
+                {
+                    final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();
+                    if (stack.getItem() instanceof BlockItem)
+                    {
+                        final Block block = ((BlockItem) stack.getItem()).getBlock();
+                        if (block instanceof AbstractBlockHut)
+                        {
+                            if (world.getBlockState(pos).getBlock() == block)
+                            {
+                                return Collections.emptyList();
+                            }
+                        }
+                        final List<ItemStack> list = new ArrayList<>();
+                        list.add(stack);
+                        return list;
+                    }
+                }
+            }
             return Collections.emptyList();
         }
     }

@@ -35,7 +35,7 @@ public interface ICitizenHappinessHandler
      * set the Damage modifier on the citizens happiness
      * depending on how hurt they are.
      */
-    void setDamageModifier();
+    void updateDamageModifier();
 
     /**
      * Called to set if the farmer can farm a specific field.

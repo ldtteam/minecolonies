@@ -91,7 +91,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 Log.getLogger().error(
                   String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
                     worker.getCitizenColonyHandler().getColony().getID(),
-                    worker.getCitizenData().getId(), job.getWorkOrderId()));
+                    worker.getCitizenData().getId(), job.getWorkOrderId()), new Exception());
                 return;
             }
 
@@ -102,7 +102,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
+                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()), new Exception());
                     return;
                 }
 

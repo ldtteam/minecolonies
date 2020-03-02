@@ -115,7 +115,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
 
                     if (localState.getMaterial().isSolid())
                     {
-                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).getTileEntityData(), structure.getWorld());
+                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).getTileEntityData(), structure.getWorld(), pos);
                     }
                     else
                     {
@@ -130,7 +130,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             final BlockState localState = this.structure.getBlockState(coords).getBlockState();
             final BlockPos newWorldPos = pos.add(coords);
 
-            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld());
+            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld(), pos);
         }
 
         for (final CompoundNBT compound : this.structure.getEntityData())
@@ -166,8 +166,9 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      * @param complete       if complete with it.
      * @param tileEntityData the tileEntity.
      * @param world          the world it is being placed in.
+     * @param centerPos the position this is centered around.
      */
-    private void handleBlockPlacement(final BlockPos pos, final BlockState localState, final boolean complete, final CompoundNBT tileEntityData, final World world)
+    private void handleBlockPlacement(final BlockPos pos, final BlockState localState, final boolean complete, final CompoundNBT tileEntityData, final World world, final BlockPos centerPos)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         IBuilding building = null;
@@ -182,7 +183,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             {
                 try
                 {
-                    final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, structure.getLocalPosition(), structure.getSettings());
+                    final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, centerPos.add(structure.getOffset()), structure.getSettings());
                     if (result instanceof BlockState)
                     {
                         final BlockState blockState = (BlockState) result;

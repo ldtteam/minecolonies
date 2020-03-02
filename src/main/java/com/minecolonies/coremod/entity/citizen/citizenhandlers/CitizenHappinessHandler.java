@@ -309,12 +309,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * depending on how hurt they are.
      */
     @Override
-    public void setDamageModifier()
+    public void updateDamageModifier()
     {
         final Optional<AbstractEntityCitizen> entityCitizen = citizen.getCitizenEntity();
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
+            final double prevDamageModifier = damageModifier;
             if (health < DAMAGE_LOWEST_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MAX;
@@ -327,9 +328,16 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             {
                 damageModifier = DAMAGE_MODIFIER_MIN;
             }
-            citizen.markDirty();
+            else
+            {
+                damageModifier = 0;
+            }
+
+            if (prevDamageModifier != damageModifier)
+            {
+                citizen.markDirty();
+            }
         }
-        citizen.markDirty();
     }
 
     /**

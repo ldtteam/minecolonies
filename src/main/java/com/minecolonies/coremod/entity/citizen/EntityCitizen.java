@@ -791,7 +791,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenItemHandler.updateArmorDamage(damageInc);
             if (citizenData != null)
             {
-                getCitizenData().getCitizenHappinessHandler().setDamageModifier();
+                getCitizenData().getCitizenHappinessHandler().updateDamageModifier();
             }
         }
 
@@ -1450,6 +1450,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (citizenData != null)
         {
+            citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
     }

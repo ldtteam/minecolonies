@@ -166,7 +166,7 @@ public class PermissionsMessage
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             if (colony == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
 
@@ -188,7 +188,7 @@ public class PermissionsMessage
                     colony.getPermissions().togglePermission(rank, action);
                     break;
                 default:
-                    Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()));
+                    Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()), new Exception());
             }
         }
 
@@ -282,7 +282,7 @@ public class PermissionsMessage
             }
             else
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
             }
         }
     }
@@ -361,7 +361,7 @@ public class PermissionsMessage
             }
             else
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
             }
         }
     }
@@ -445,7 +445,7 @@ public class PermissionsMessage
 
             if (colony == null || colony.getWorld() == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
             final PlayerEntity player = ctxIn.getSender();
@@ -530,7 +530,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
             final PlayerEntity player = ctxIn.getSender();
