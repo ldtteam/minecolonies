@@ -20,7 +20,6 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
@@ -141,26 +140,20 @@ public final class MinecoloniesPlacementHandlers
             {
                 return blockState;
             }
-            
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos);
-            }
-
-            world.setBlockState(pos, blockState, UPDATE_FLAG);
 
             final TileEntity entity = world.getTileEntity(pos);
-
-            final BlockState state =  BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
             if (entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
-            else if (!world.setBlockState(pos, state, UPDATE_FLAG))
+            else
             {
-                return ActionProcessingResult.DENY;
+                world.setBlockState(pos, blockState, UPDATE_FLAG);
+                if (tileEntityData != null)
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                }
             }
-
             return blockState;
         }
 
@@ -203,7 +196,7 @@ public final class MinecoloniesPlacementHandlers
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null && entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
             else
             {
