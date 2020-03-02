@@ -20,6 +20,7 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
