@@ -220,6 +220,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
         final String disease = data.getCitizenEntity().get().getCitizenDiseaseHandler().getDisease();
         if (disease.isEmpty())
         {
+            data.getCitizenEntity().get().heal(5);
             //todo give the worker the cure
             return DECIDE;
         }
