@@ -1486,12 +1486,30 @@ public class InventoryUtils
                                                                            final int sourceIndex,
                                                                            @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
             return true;
         }
+
+        boolean success = false;
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, true);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                success = true;
+                break;
+            }
+        }
+
+        if (!success)
+        {
+            return false;
+        }
+
+        sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1522,12 +1540,30 @@ public class InventoryUtils
       final int count,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, false);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, true);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
             return true;
         }
+
+        boolean success = false;
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, true);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                success = true;
+                break;
+            }
+        }
+
+        if (!success)
+        {
+            return false;
+        }
+
+        sourceStack = sourceHandler.extractItem(sourceIndex, count, false);
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1556,19 +1592,40 @@ public class InventoryUtils
       final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
             return true;
+        }
+
+        sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+            sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
+            sourceHandler.insertItem(sourceIndex,sourceStack,false);
+            return true;
+        }
+
+        boolean success = false;
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, true);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                success = true;
+                break;
+            }
+        }
+
+        if (!success)
+        {
+            return false;
         }
 
         sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
-
-        if(ItemStackUtils.isEmpty(sourceStack))
-        {
-            return true;
-        }
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1580,7 +1637,6 @@ public class InventoryUtils
         }
 
         sourceHandler.insertItem(sourceIndex,sourceStack,false);
-
         return false;
     }
 
@@ -1823,9 +1879,8 @@ public class InventoryUtils
             final int amount,
             final IItemHandler targetHandler, final int slot)
     {
-        // might be an error, first stack doesnt necessarily match the needed amount, leading to returning true even if inserted less amount than desired.
         final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
-                itemStackSelectionPredicate::test);
+                itemStackSelectionPredicate.and(stack -> stack.getCount() >= amount)::test);
 
         if (desiredItemSlot == -1)
         {
