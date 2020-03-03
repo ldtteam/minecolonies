@@ -141,26 +141,20 @@ public final class MinecoloniesPlacementHandlers
             {
                 return blockState;
             }
-            
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos);
-            }
-
-            world.setBlockState(pos, blockState, UPDATE_FLAG);
 
             final TileEntity entity = world.getTileEntity(pos);
-
-            final BlockState state =  BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
             if (entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
-            else if (!world.setBlockState(pos, state, UPDATE_FLAG))
+            else
             {
-                return ActionProcessingResult.DENY;
+                world.setBlockState(pos, blockState, UPDATE_FLAG);
+                if (tileEntityData != null)
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                }
             }
-
             return blockState;
         }
 
@@ -203,7 +197,7 @@ public final class MinecoloniesPlacementHandlers
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null && entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
             }
             else
             {

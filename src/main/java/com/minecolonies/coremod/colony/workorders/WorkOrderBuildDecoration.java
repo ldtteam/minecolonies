@@ -120,7 +120,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             final StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
-                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName);
+                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName, new Exception());
             }
             else
             {
@@ -156,7 +156,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         if (structureName == null)
         {
-            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!");
+            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!", new Exception());
         }
         else
         {

@@ -57,7 +57,7 @@ public final class ChunkDataHelper
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
@@ -167,7 +167,7 @@ public final class ChunkDataHelper
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
@@ -294,7 +294,7 @@ public final class ChunkDataHelper
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
@@ -362,7 +362,7 @@ public final class ChunkDataHelper
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
@@ -410,7 +410,7 @@ public final class ChunkDataHelper
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
