@@ -89,22 +89,22 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue doBarbariansSpawn;
-    public final ForgeConfigSpec.IntValue barbarianHordeDifficulty;
-    public final ForgeConfigSpec.IntValue spawnBarbarianSize;
-    public final ForgeConfigSpec.IntValue maxBarbarianSize;
+    public final ForgeConfigSpec.IntValue     barbarianHordeDifficulty;
+    public final ForgeConfigSpec.IntValue     spawnBarbarianSize;
+    public final ForgeConfigSpec.IntValue     maxBarbarianSize;
     public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls;
-    public final ForgeConfigSpec.IntValue averageNumberOfNightsBetweenRaids;
-    public final ForgeConfigSpec.IntValue minimumNumberOfNightsBetweenRaids;
-    // TODO: change to true over time
+    public final ForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
+    public final ForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
+    public final ForgeConfigSpec.BooleanValue shouldRaidersBreakDoors;
     public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
     public final ForgeConfigSpec.BooleanValue citizenCallForHelp;
     public final ForgeConfigSpec.BooleanValue rangerEnchants;
-    public final ForgeConfigSpec.DoubleValue rangerDamageMult;
-    public final ForgeConfigSpec.DoubleValue knightDamageMult;
-    public final ForgeConfigSpec.DoubleValue guardHealthMult;
+    public final ForgeConfigSpec.DoubleValue  rangerDamageMult;
+    public final ForgeConfigSpec.DoubleValue  knightDamageMult;
+    public final ForgeConfigSpec.DoubleValue  guardHealthMult;
     public final ForgeConfigSpec.BooleanValue pvp_mode;
-    public final ForgeConfigSpec.IntValue daysUntilPirateshipsDespawn;
-    public final ForgeConfigSpec.IntValue maxYForBarbarians;
+    public final ForgeConfigSpec.IntValue     daysUntilPirateshipsDespawn;
+    public final ForgeConfigSpec.IntValue     maxYForBarbarians;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
@@ -303,7 +303,8 @@ public class CommonConfiguration extends AbstractConfiguration
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 3, 1, 10);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 1, 1, 30);
-        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", false);
+        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
+        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
         rangerEnchants = defineBoolean(builder, "rangerenchants", true);
         rangerDamageMult = defineDouble(builder,  "rangerdamagemult", 1.0, 0.1, 5.0);

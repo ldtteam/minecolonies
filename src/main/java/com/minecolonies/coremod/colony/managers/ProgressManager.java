@@ -167,7 +167,7 @@ public class ProgressManager implements IProgressManager
         if (!notifiedProgress.contains(type))
         {
             notifiedProgress.add(type);
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.progress." + type.name().toLowerCase(Locale.US));
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.progress." + type.name().toLowerCase(Locale.US));
             colony.markDirty();
         }
     }

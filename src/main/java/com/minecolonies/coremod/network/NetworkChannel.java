@@ -134,6 +134,7 @@ public class NetworkChannel
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
+        registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
