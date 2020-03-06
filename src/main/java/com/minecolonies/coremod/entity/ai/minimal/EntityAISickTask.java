@@ -37,6 +37,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITAL;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
+import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -448,7 +449,7 @@ public class EntityAISickTask extends Goal
         final String id = citizen.getCitizenDiseaseHandler().getDisease();
         if (id.isEmpty())
         {
-            if (citizenData.getHealth() > 2.0)
+            if (citizen.getHealth() > SEEK_DOCTOR_HEALTH)
             {
                 reset();
                 currentState = IDLE;
@@ -487,5 +488,9 @@ public class EntityAISickTask extends Goal
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_CURE;
+        if (citizen.getCitizenSleepHandler().isAsleep())
+        {
+            citizen.wakeUp();
+        }
     }
 }

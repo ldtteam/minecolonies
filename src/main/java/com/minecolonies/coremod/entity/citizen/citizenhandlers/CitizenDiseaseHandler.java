@@ -19,7 +19,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Health at which citizens seek a doctor.
      */
-    private static final double SEEK_DOCTOR_HEALTH = 2.0;
+    public static final double SEEK_DOCTOR_HEALTH = 4.0;
 
     /**
      * Base likelihood of a citizen getting a disease.
@@ -65,7 +65,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty() || ( !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() < SEEK_DOCTOR_HEALTH);
+        return !disease.isEmpty() || ( !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
     }
 
     @Override
