@@ -104,6 +104,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         this.enablePersistence();
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
+        this.experienceValue = BARBARIAN_EXP_DROP;
         RaiderMobUtils.setupMobAi(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
@@ -334,17 +335,6 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             colony.getEventManager().unregisterEntity(this, eventID);
         }
         super.remove();
-    }
-
-    @Override
-    protected void onDeathUpdate()
-    {
-        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)))
-        {
-            final int experience = ExperienceOrbEntity.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.posX, this.posY, this.posZ, experience));
-        }
-        super.onDeathUpdate();
     }
 
     /**
