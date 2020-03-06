@@ -38,9 +38,20 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private static final double PIRATE_SWIM_BONUS        = 30;
     private static final double BARBARIAN_SWIM_BONUS     = 15;
     public static final  double MIN_Y_DISTANCE           = 0.001;
+    public static final  int    MAX_SPEED_ALLOWED        = 100;
+
+    /**
+     * Amount of ticks before vanilla stuck handling is allowed to discard an existing path
+     */
+    private static final long MIN_KEEP_TIME = 100;
 
     @Nullable
     private PathResult pathResult;
+
+    /**
+     * The world time when a path was added.
+     */
+    private long pathStartTime = 0;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -81,7 +92,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
-        return setPathJob(new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, avoid, (int) range, (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(), ourEntity), null, speed);
+        return setPathJob(new PathJobMoveAwayFromLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
+          start,
+          avoid,
+          (int) range,
+          (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(),
+          ourEntity), null, speed);
     }
 
     @Nullable
@@ -95,6 +111,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         this.destination = dest;
         this.originalDestination = dest;
         this.walkSpeed = speed;
+
+        if (speed > MAX_SPEED_ALLOWED)
+        {
+            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            return null;
+        }
 
         calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
@@ -174,7 +196,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         @NotNull final BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
-          new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity), start, dest, (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(), ourEntity),
+          new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
+            start,
+            dest,
+            (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(),
+            ourEntity),
           dest, speed);
     }
 
@@ -243,6 +269,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void setSpeed(final double d)
     {
+        if (d > MAX_SPEED_ALLOWED)
+        {
+            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            return;
+        }
         walkSpeed = d;
     }
 
@@ -264,7 +295,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public boolean tryMoveToEntityLiving(final Entity entityIn, final double speedIn)
     {
-        return tryMoveToBlockPos(entityIn.getPosition(), speed);
+        return tryMoveToBlockPos(entityIn.getPosition(), speedIn);
     }
 
     // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
@@ -279,6 +310,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             this.currentPath = null;
             return false;
         }
+        pathStartTime = world.getGameTime();
         return super.setPath(convertPath(path), speed);
     }
 
@@ -349,8 +381,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (!this.noPath())
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            final PathPointExtended pExNext = getPath().getCurrentPathLength() > this.getPath().getCurrentPathIndex() + 1
+                                                ? (PathPointExtended) this.getPath()
+                                                                        .getPathPointFromIndex(this.getPath()
+                                                                                                 .getCurrentPathIndex() + 1)
+                                                : null;
 
-            if (pEx.isOnLadder())
+            if (pEx.isOnLadder() && (pExNext != null && pEx.y != pExNext.y))
             {
                 return handlePathPointOnLadder(pEx);
             }
@@ -470,7 +507,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 currentPath = convertPath(currentPath);
             }
-            
+
             final PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
             final PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
 
@@ -491,6 +528,22 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         super.pathFollow();
+    }
+
+    /**
+     * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
+     *
+     * @param positionVec3
+     */
+    @Override
+    protected void checkForStuck(Vec3d positionVec3)
+    {
+        if (world.getGameTime() - pathStartTime < MIN_KEEP_TIME)
+        {
+            return;
+        }
+
+        super.checkForStuck(positionVec3);
     }
 
     /**
@@ -546,9 +599,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Used to find a tree.
      *
      * @param startRestriction the start of the restricted area.
-     * @param endRestriction the end of the restricted area.
-     * @param speed      walking speed.
-     * @param treesToCut the trees which should be cut.
+     * @param endRestriction   the end of the restricted area.
+     * @param speed            walking speed.
+     * @param treesToCut       the trees which should be cut.
      * @return the result of the search.
      */
     public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
@@ -556,7 +609,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
 
-        final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
+        final PathJobFindTree job =
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
 
         return (TreePathResult) setPathJob(job, null, speed);
     }

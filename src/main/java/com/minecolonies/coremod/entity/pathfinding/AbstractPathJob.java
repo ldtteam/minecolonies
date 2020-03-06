@@ -311,14 +311,14 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param onPath     checks if the node is on a path.
      * @return cost to move from the parent to the new position.
      */
-    protected static double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath)
+    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
     {
         double cost = 1D;
 
-        if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0))
+        if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
-            //  Tax the cost for jumping, dropping (warning: also taxes stairs)
-            cost *= JUMP_DROP_COST;
+            //  Tax the cost for jumping, dropping
+            cost *= JUMP_DROP_COST * Math.abs(dPos.getY());
         }
 
         if (onPath)
@@ -391,7 +391,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         Node bestNode = getAndSetupStartNode();
 
-        double bestNodeResultScore = getNodeResultScore(bestNode);
+        double bestNodeResultScore = Double.MIN_VALUE;
 
         while (!nodesOpen.isEmpty())
         {
@@ -405,7 +405,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
 
             // Limiting max amount of nodes mapped
-            if (totalNodesVisited > MineColonies.getConfig().getCommon().pathfindingMaxNodes.get())
+            if (totalNodesVisited > MineColonies.getConfig().getCommon().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
             {
                 break;
             }
@@ -428,8 +428,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange &&
-                  (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) )
+            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ))
             {
                 walkCurrentNode(currentNode);
             }
@@ -724,7 +723,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.down()).getBlock());
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
@@ -870,10 +869,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        for (int i = 2; i <= 4; i++)
+        for (int i = 2; i <= 10; i++)
         {
             final BlockState below = world.getBlockState(pos.down(i));
-            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)
+            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 4 || below.getMaterial().isLiquid())
             {
                 //  Level path
                 return pos.getY() - i + 1;

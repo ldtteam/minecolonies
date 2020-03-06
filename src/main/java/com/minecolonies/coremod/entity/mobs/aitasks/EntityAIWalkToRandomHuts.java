@@ -31,7 +31,7 @@ public class EntityAIWalkToRandomHuts extends Goal
     /**
      * Min distance to the target block which is considered too close.
      */
-    private static final double MIN_TP_DIST = 100 * 100;
+    private static final double MIN_TP_DIST = 100;
 
     /**
      * The moving entity.
@@ -237,8 +237,8 @@ public class EntityAIWalkToRandomHuts extends Goal
             {
                 resetStuckCounters();
                 targetBlock = getRandomBuilding();
+                return false;
             }
-            return false;
         }
 
         if (stuckTime > 5)
