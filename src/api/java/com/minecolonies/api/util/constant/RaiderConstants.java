@@ -11,7 +11,7 @@ public final class RaiderConstants
     /**
      * The amount of EXP to drop on entity death.
      */
-    public static final int BARBARIAN_EXP_DROP = 1;
+    public static final int BARBARIAN_EXP_DROP = 5;
 
     /**
      * The range for the barb to move away.
