@@ -488,9 +488,5 @@ public class EntityAISickTask extends Goal
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_CURE;
-        if (citizen.getCitizenSleepHandler().isAsleep())
-        {
-            citizen.wakeUp();
-        }
     }
 }

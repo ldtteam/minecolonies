@@ -335,9 +335,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                       cure::isItemEqual,
                       cure.getCount(), citizen.getInventoryCitizen()
                     );
-
-                    needsCurrently = stack -> stack.isItemEqual(cure);
-                    return GATHERING_REQUIRED_MATERIALS;
                 }
             }
         }
