@@ -525,7 +525,9 @@ public enum AIWorkerState implements IAIState
 
     WANDER(true),
 
-    FREE_CURE(true);
+    FREE_CURE(true),
+
+    CURE_PLAYER(true);
 
     /**
      * Is it okay to eat.

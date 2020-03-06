@@ -187,4 +187,10 @@ public interface ICitizenManager
      * @param mourn boolean to indicate if citizen should mourn or not
      */
     void updateCitizenMourn(final boolean mourn);
+
+    /**
+     * Get a random citizen.
+     * @return the random citizen.
+     */
+    ICitizenData getRandomCitizen();
 }

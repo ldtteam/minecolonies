@@ -164,6 +164,10 @@ public class InteractionValidatorInitializer
                                                                                 .stream()
                                                                                 .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems().getOrDefault(ORE_LIST, new ArrayList<>()).contains(storage)));
 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
+          citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
+
+
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
 
