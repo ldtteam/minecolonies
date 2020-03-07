@@ -136,6 +136,17 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 bedMap.put(bedPos, bedCompound.getInt(TAG_ID));
             }
         }
+
+        final ListNBT patientTagList = compound.getList(TAG_PATIENTS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < patientTagList.size(); ++i)
+        {
+            final CompoundNBT patientCompound = patientTagList.getCompound(i);
+            final int patientId = patientCompound.getInt(TAG_ID);
+            if (!patients.containsKey(patientId))
+            {
+                patients.put(patientId, new Patient(patientCompound));
+            }
+        }
     }
 
     @Override
@@ -153,6 +164,18 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 bedTagList.add(bedCompound);
             }
             compound.put(TAG_BEDS, bedTagList);
+        }
+
+        if (!patients.isEmpty())
+        {
+            @NotNull final ListNBT patientTagList = new ListNBT();
+            for (@NotNull final Patient patient: patients.values())
+            {
+                final CompoundNBT patientCompound = new CompoundNBT();
+                patient.write(patientCompound);
+                patientTagList.add(patientCompound);
+            }
+            compound.put(TAG_PATIENTS, patientTagList);
         }
 
         return compound;

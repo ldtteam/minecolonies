@@ -151,7 +151,7 @@ public class EntityAISickTask extends Goal
     @Override
     public void tick()
     {
-        if (++delayTicks % TICKS_SECOND != 0)
+        if (++delayTicks == TICKS_SECOND)
         {
             return;
         }

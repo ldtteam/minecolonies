@@ -1,5 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.healer;
 
+import net.minecraft.nbt.CompoundNBT;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
+
 /**
  * Class representing a patient.
  */
@@ -35,6 +40,16 @@ public class Patient
     }
 
     /**
+     * Load the Patient from nbt.
+     * @param patientCompound the nbt to load it from.
+     */
+    public Patient(final CompoundNBT patientCompound)
+    {
+        this.id = patientCompound.getInt(TAG_ID);
+        this.state = PatientState.values()[patientCompound.getInt(TAG_STATUS)];
+    }
+
+    /**
      * Get the citizen id of the patient.
      * @return the int id.
      */
@@ -59,5 +74,15 @@ public class Patient
     public void setState(final PatientState state)
     {
         this.state = state;
+    }
+
+    /**
+     * Write the Patient to nbt.
+     * @param compoundNBT the compound to write it to.
+     */
+    public void write(final CompoundNBT compoundNBT)
+    {
+        compoundNBT.putInt(TAG_ID, id);
+        compoundNBT.putInt(TAG_STATUS, state.ordinal());
     }
 }

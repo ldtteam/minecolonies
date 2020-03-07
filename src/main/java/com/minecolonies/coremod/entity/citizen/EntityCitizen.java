@@ -664,7 +664,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * The Handler to check if a citizen is stuck.
+     * The Handler to check if a citizen is sick.
      *
      * @return the instance of the handler.
      */
