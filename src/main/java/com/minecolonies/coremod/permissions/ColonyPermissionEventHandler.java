@@ -423,19 +423,19 @@ public class ColonyPermissionEventHandler
 
             if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 90);
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 90);
             }
             if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 75);
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 75);
             }
             else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 50);
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 50);
             }
             else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 25);
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 25);
             }
 
             if (localProgress >= hardness - 1)

@@ -493,7 +493,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         final double[] levels =
           new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(),
             citizen.getToolsModifiers()};
-        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
+        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
 
         window.findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         if (window.findPaneByID(HAPPINESS_MODIFIER_PANE) != null)

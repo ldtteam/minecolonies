@@ -18,18 +18,19 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
@@ -40,6 +41,7 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
@@ -71,7 +73,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -364,15 +365,15 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
-        {
-            return DesiredActivity.MOURN;
-        }
-
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((ServerWorld) world).isEmpty()))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
             return DesiredActivity.SLEEP;
+        }
+
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
+        {
+            return DesiredActivity.MOURN;
         }
 
         return null;
@@ -771,7 +772,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenItemHandler.updateArmorDamage(damageInc);
             if (citizenData != null)
             {
-                getCitizenData().getCitizenHappinessHandler().setDamageModifier();
+                getCitizenData().getCitizenHappinessHandler().updateDamageModifier();
             }
         }
 
@@ -792,18 +793,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof PlayerEntity && !world.isRemote)
             {
-                boolean isBarbarianClose = false;
-                for (final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((ServerWorld) world))
-                {
-                    if (MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
-                    {
-                        isBarbarianClose = true;
-                        break;
-                    }
-                }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !isBarbarianClose)
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !citizenColonyHandler.getColony().getRaiderManager().isRaided())
                     {
                         penalty = CITIZEN_KILL_PENALTY;
                         break;
@@ -879,7 +871,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                         .stream()
                         .noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_NOT_ALLOWED);
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
 
@@ -890,7 +882,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     {
                         if (citizen.getName().equals(name))
                         {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_SAME);
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
@@ -1425,6 +1417,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (citizenData != null)
         {
+            citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
     }

@@ -14,19 +14,17 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
+import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.managers.*;
-import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -123,6 +121,11 @@ public class Colony implements IColony
     private final IRaiderManager raidManager = new RaidManager(this);
 
     /**
+     * Event manager of the colony.
+     */
+    private final IEventManager eventManager = new EventManager(this);
+
+    /**
      * The colony package manager.
      */
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
@@ -189,11 +192,6 @@ public class Colony implements IColony
     private BlockPos center;
 
     /**
-     * The amount of nights since the last raid.
-     */
-    private int nightsSinceLastRaid = 0;
-
-    /**
      * The colony permission object.
      */
     @NotNull
@@ -232,7 +230,7 @@ public class Colony implements IColony
     /**
      * The colonies state machine
      */
-    private final ITickRateStateMachine<IState> colonyStateMachine;
+    private final ITickRateStateMachine<ColonyState> colonyStateMachine;
 
     /**
      * Mournign parameters.
@@ -392,10 +390,10 @@ public class Colony implements IColony
     private boolean worldTickSlow()
     {
         buildingManager.cleanUpBuildings(this);
-        MobEventsUtils.tryToRaidColony(this);
+        raidManager.tryToRaidColony(this);
         citizenManager.onColonyTick(this);
         updateAttackingPlayers();
-        raidManager.onColonyTick(this);
+        eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
 
@@ -436,7 +434,8 @@ public class Colony implements IColony
         if (isDay && !world.isDaytime())
         {
             isDay = false;
-            nightsSinceLastRaid++;
+            eventManager.onNightFall();
+            raidManager.onNightFall();
             if (!packageManager.getCloseSubscribers().isEmpty())
             {
                 citizenManager.checkCitizensForHappiness();
@@ -623,7 +622,7 @@ public class Colony implements IColony
             colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
         }
 
-        raidManager.read(compound);
+        eventManager.readFromNBT(compound);
 
         if (compound.keySet().contains(TAG_RESEARCH))
         {
@@ -763,7 +762,7 @@ public class Colony implements IColony
         compound.put(TAG_WORK, workManagerCompound);
 
         progressManager.write(compound);
-        raidManager.write(compound);
+        eventManager.writeToNBT(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
         researchManager.writeToNBT(researchManagerCompound);
@@ -1138,24 +1137,6 @@ public class Colony implements IColony
         return requestManager;
     }
 
-    @Override
-    public boolean hasWillRaidTonight()
-    {
-        return raidManager.willRaidTonight();
-    }
-
-    @Override
-    public boolean isCanHaveBarbEvents()
-    {
-        return raidManager.canHaveRaiderEvents();
-    }
-
-    @Override
-    public boolean isHasRaidBeenCalculated()
-    {
-        return raidManager.hasRaidBeenCalculated();
-    }
-
     /**
      * Marks the instance dirty.
      */
@@ -1180,7 +1161,7 @@ public class Colony implements IColony
 
     @Override
     @NotNull
-    public List<PlayerEntity> getMessagePlayerEntitys()
+    public List<PlayerEntity> getMessagePlayerEntities()
     {
         List<PlayerEntity> players = new ArrayList<>();
 
@@ -1199,7 +1180,7 @@ public class Colony implements IColony
     @NotNull
     public List<PlayerEntity> getImportantMessageEntityPlayers()
     {
-        final Set<PlayerEntity> playerList = new HashSet<>(getMessagePlayerEntitys());
+        final Set<PlayerEntity> playerList = new HashSet<>(getMessagePlayerEntities());
 
         for (final ServerPlayerEntity player : packageManager.getImportantColonyPlayers())
         {
@@ -1428,6 +1409,17 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the event manager of the colony.
+     *
+     * @return the event manager.
+     */
+    @Override
+    public IEventManager getEventManager()
+    {
+        return eventManager;
+    }
+
+    /**
      * Get the packagemanager of the colony.
      *
      * @return the manager.
@@ -1474,7 +1466,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessagePlayerEntitys().contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
+        if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1502,28 +1494,6 @@ public class Colony implements IColony
             Log.getLogger().warn("Something went wrong persisting colony: " + id, e);
         }
         return this.colonyTag;
-    }
-
-    /**
-     * Getter for the nights since the last raid.
-     *
-     * @return the number of nights.
-     */
-    @Override
-    public int getNightsSinceLastRaid()
-    {
-        return nightsSinceLastRaid;
-    }
-
-    /**
-     * Setter for the nights since the last raid.
-     *
-     * @param nights the number of nights.
-     */
-    @Override
-    public void setNightsSinceLastRaid(final int nights)
-    {
-        this.nightsSinceLastRaid = nights;
     }
 
     /**
@@ -1752,5 +1722,11 @@ public class Colony implements IColony
     public int getLoadedChunkCount()
     {
         return loadedChunks.size();
+    }
+
+    @Override
+    public ColonyState getState()
+    {
+        return colonyStateMachine.getState();
     }
 }
