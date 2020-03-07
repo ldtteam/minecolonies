@@ -173,6 +173,24 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                         this.currentPatient = patient;
                         return CURE;
                     }
+
+                    final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+                    for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
+                    {
+                        boolean hasCureRequested = false;
+                        for (final IRequest<? extends Stack> request : list)
+                        {
+                            if (request.getRequest().getStack().isItemEqual(cure))
+                            {
+                                hasCureRequested = true;
+                            }
+                        }
+                        if (!hasCureRequested)
+                        {
+                            patient.setState(Patient.PatientState.NEW);
+                            break;
+                        }
+                    }
                 }
                 else
                 {
