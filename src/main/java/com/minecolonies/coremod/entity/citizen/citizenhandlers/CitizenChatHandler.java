@@ -60,7 +60,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
-                  "block.blockhuttownhall.messagecolonistdead",
+                  "tile.blockhuttownhall.messagecolonistdead",
                   citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
             }
         }
@@ -90,7 +90,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
-            final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys());
+            final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)

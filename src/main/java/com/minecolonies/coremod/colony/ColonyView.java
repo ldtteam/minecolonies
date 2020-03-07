@@ -15,13 +15,13 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.research.IResearchManager;
-import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -37,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -152,9 +151,9 @@ public final class ColonyView implements IColonyView
     private IRequestManager requestManager;
 
     /**
-     * The number of raiders in the horde.
+     * Wether the colony is raided
      */
-    private int horde;
+    private boolean isUnderRaid;
 
     /**
      * The world.
@@ -195,6 +194,11 @@ public final class ColonyView implements IColonyView
      * The research effects of the colony.
      */
     private final IResearchManager manager = new ResearchManager();
+
+    /**
+     * Whether spies are active and highlight enemy positions.
+     */
+    private boolean spiesEnabled;
 
     /**
      * Base constructor for a colony.
@@ -300,8 +304,8 @@ public final class ColonyView implements IColonyView
         buf.writeLong(colony.getMercenaryUseTime());
 
         buf.writeString(colony.getStyle());
-        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getServer().getWorld(DimensionType.getById(colony.getDimension()))).size());
-
+        buf.writeBoolean(colony.getRaiderManager().isRaided());
+        buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         final List<IColony> allies = new ArrayList<>();
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
@@ -555,6 +559,12 @@ public final class ColonyView implements IColonyView
         return 0;
     }
 
+    @Override
+    public ColonyState getState()
+    {
+        return null;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -793,7 +803,9 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readString(32767);
-        this.horde = buf.readInt();
+
+        this.isUnderRaid = buf.readBoolean();
+        this.spiesEnabled = buf.readBoolean();
 
         this.allies = new ArrayList<>();
         this.feuds = new ArrayList<>();
@@ -1090,12 +1102,6 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean hasWillRaidTonight()
-    {
-        return false;
-    }
-
-    @Override
     public void markDirty()
     {
         /*
@@ -1105,18 +1111,6 @@ public final class ColonyView implements IColonyView
 
     @Override
     public boolean canBeAutoDeleted()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isCanHaveBarbEvents()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isHasRaidBeenCalculated()
     {
         return false;
     }
@@ -1138,7 +1132,7 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<PlayerEntity> getMessagePlayerEntitys()
+    public List<PlayerEntity> getMessagePlayerEntities()
     {
         return new ArrayList<>();
     }
@@ -1242,18 +1236,6 @@ public final class ColonyView implements IColonyView
     public CompoundNBT getColonyTag()
     {
         return null;
-    }
-
-    @Override
-    public int getNightsSinceLastRaid()
-    {
-        return 0;
-    }
-
-    @Override
-    public void setNightsSinceLastRaid(final int nights)
-    {
-
     }
 
     @Override
@@ -1371,6 +1353,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public IEventManager getEventManager()
+    {
+        return null;
+    }
+
+    @Override
     public IColonyPackageManager getPackageManager()
     {
         return null;
@@ -1385,7 +1373,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isRaiding()
     {
-        return this.horde > 0;
+        return this.isUnderRaid;
     }
 
     @Override
@@ -1416,5 +1404,11 @@ public final class ColonyView implements IColonyView
     public IResearchManager getResearchManager()
     {
         return manager;
+    }
+
+    @Override
+    public boolean areSpiesEnabled()
+    {
+        return spiesEnabled;
     }
 }

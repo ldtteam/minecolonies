@@ -4,6 +4,7 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -124,6 +125,12 @@ public abstract class CommonProxy implements IProxy
     public static void registerInteractionTypes(@NotNull final RegistryEvent.Register<InteractionResponseHandlerEntry> event)
     {
         ModInteractionsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerRaidEventTypes(@NotNull final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)
+    {
+        ModColonyEventTypeInitializer.init(event);
     }
 
     @SubscribeEvent
