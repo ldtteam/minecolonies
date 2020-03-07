@@ -406,7 +406,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
 
-        if (citizenSleepHandler.isAsleep())
+        if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())
         {
             citizenSleepHandler.onWakeUp();
         }

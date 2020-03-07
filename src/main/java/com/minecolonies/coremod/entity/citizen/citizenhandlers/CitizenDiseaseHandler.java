@@ -27,7 +27,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Base likelihood of a citizen getting a disease.
      */
-    private static final int DISEASE_FACTOR = 10000;
+    private static final int DISEASE_FACTOR = 100000;
 
     /**
      * The citizen assigned to this manager.

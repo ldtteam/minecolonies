@@ -114,7 +114,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         citizen.updatePose(Pose.SLEEPING);
         citizen.getNavigator().clearPath();
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (float) bedLocation.getY() + 0.6875F,
+          (float) bedLocation.getY() + 0.8F,
           ((float) bedLocation.getZ() + HALF_BLOCK));
         citizen.setBedPosition(bedLocation);
 
