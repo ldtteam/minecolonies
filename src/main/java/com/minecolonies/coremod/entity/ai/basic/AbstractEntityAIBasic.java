@@ -741,6 +741,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isInTileEntity(final TileEntity entity, final ItemStack is)
     {
+        // TODO: is the itemstack size relevant?
         return is != null
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(

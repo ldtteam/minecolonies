@@ -136,7 +136,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
             {
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(Hand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
-                InventoryUtils.removeStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
+                InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
             }
 
             incrementActionsDoneAndDecSaturation();
