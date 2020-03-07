@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
@@ -134,6 +135,11 @@ public class EntityAISickTask extends Goal
     @Override
     public boolean shouldExecute()
     {
+        if (citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.isSleeping())
+        {
+            return false;
+        }
+
         if (currentState != IDLE)
         {
             return true;
