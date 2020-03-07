@@ -639,18 +639,18 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Run through all blocks and check if they match one of our lucky oreBlocks.
+     * Go through the disease config and setup all possible diseases.
      */
     private void discoverDiseases()
     {
         if (diseases.isEmpty())
         {
-            for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().diseases.get())
+            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().diseases.get())
             {
-                final String[] split = ore.split(",");
+                final String[] split = disease.split(",");
                 if (split.length < 3)
                 {
-                    Log.getLogger().warn("Wrongly configured disease: " + ore);
+                    Log.getLogger().warn("Wrongly configured disease: " + disease);
                     continue;
                 }
 
@@ -667,7 +667,7 @@ public class CompatibilityManager implements ICompatibilityManager
                         final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(theItem[0], theItem[1]));
                         if (item == null || item == Items.AIR)
                         {
-                            Log.getLogger().warn("Invalid lucky block: " + ore);
+                            Log.getLogger().warn("Invalid cure item: " + disease);
                             continue;
                         }
 
@@ -682,7 +682,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
                 catch (final NumberFormatException e)
                 {
-                    Log.getLogger().warn("Wrongly configured disease: " + ore);
+                    Log.getLogger().warn("Wrongly configured disease: " + disease);
                 }
             }
         }
