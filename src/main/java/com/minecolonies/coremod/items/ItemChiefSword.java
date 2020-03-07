@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.items.IChiefSwordItem;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +38,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
     {
         if (entityIn instanceof PlayerEntity && isSelected)
         {
-            BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE)
+            RaiderMobUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE)
               .forEach(entity -> entity.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }

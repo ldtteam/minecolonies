@@ -34,7 +34,7 @@ public final class PathingConstants
     /**
      * Additional cost of swimming - base 1.
      */
-    public static final double SWIM_COST = 10D;
+    public static final double SWIM_COST = 5D;
 
     /**
      * Distance which is considered to be too close to a fence.
