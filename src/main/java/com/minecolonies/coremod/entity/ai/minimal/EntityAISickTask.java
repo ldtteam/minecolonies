@@ -351,7 +351,7 @@ public class EntityAISickTask extends Goal
 
         if (citizen.getRandom().nextInt(10000) < CHANCE_FOR_RANDOM_CURE)
         {
-            //cure(citizenData);
+            cure(citizenData);
         }
 
         if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
