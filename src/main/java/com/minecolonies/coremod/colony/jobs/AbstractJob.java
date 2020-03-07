@@ -51,7 +51,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     /**
      * The priority assigned with every main AI job.
      */
-    private static final int TASK_PRIORITY = 3;
+    private static final int TASK_PRIORITY = 4;
 
     /**
      * Citizen connected with the job.

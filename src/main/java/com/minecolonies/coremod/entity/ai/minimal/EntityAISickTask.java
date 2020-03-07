@@ -270,19 +270,18 @@ public class EntityAISickTask extends Goal
         final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
         citizen.setHeldItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
 
-        if (waitingTicks % 10 == 0)
-        {
-            citizen.swingArm(Hand.MAIN_HAND);
-            citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+
+        citizen.swingArm(Hand.MAIN_HAND);
+        citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
                 citizen.getPositionVec().add(0, 2, 0),
                 ParticleTypes.HAPPY_VILLAGER,
                 waitingTicks), citizen);
-        }
+
 
         waitingTicks++;
-        if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_CURE)
+        if (waitingTicks < REQUIRED_TIME_TO_CURE)
         {
             return APPLY_CURE;
         }
@@ -320,6 +319,7 @@ public class EntityAISickTask extends Goal
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
         citizen.setHealth((float) citizenData.getMaxHealth());
+        reset();
     }
 
     /**

@@ -322,7 +322,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
         {
             for (final ItemStack cure : disease.getCure())
             {
-                if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(cure)) < cure.getCount())
+                if (InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), stack -> stack.isItemEqual(cure)) < cure.getCount())
                 {
                     if (InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
                     {
@@ -340,7 +340,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
         }
 
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        citizen.getCitizenDiseaseHandler().cure();
         currentPatient.setState(Patient.PatientState.TREATED);
         currentPatient = null;
         return DECIDE;
