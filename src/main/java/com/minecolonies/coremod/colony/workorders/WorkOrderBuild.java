@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -121,14 +121,14 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         if (hasBuilder && sendMessage)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
         }
 
         if (!hasBuilder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageNoBuilder");
         }
     }

@@ -173,7 +173,11 @@ public class CitizenManager implements ICitizenManager
         }
         else
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace",spawnLocation.getX(),spawnLocation.getY(),spawnLocation.getZ());
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+              "com.minecolonies.coremod.citizens.nospace",
+              spawnLocation.getX(),
+              spawnLocation.getY(),
+              spawnLocation.getZ());
         }
         return data;
     }
@@ -193,7 +197,7 @@ public class CitizenManager implements ICitizenManager
             if (getMaxCitizens() == getCitizens().size() && !force)
             {
                 LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntitys(),
+                  colony.getMessagePlayerEntities(),
                   "block.blockHutTownHall.messageMaxSize",
                   colony.getName());
             }

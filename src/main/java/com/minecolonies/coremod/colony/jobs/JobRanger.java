@@ -56,11 +56,9 @@ public class JobRanger extends AbstractJobGuard
         {
             final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
 
-            // +1 Heart on levels 6,12,18,25,34,43,54 ...
+            // +1 half heart every 5 level
             final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                (int) (getCitizen().getLevel() / (5.0 + getCitizen().getLevel() / 20.0) * 2),
-                AttributeModifier.Operation.ADDITION);
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getLevel() / 5, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

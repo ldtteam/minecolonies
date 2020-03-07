@@ -503,7 +503,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos getFloor(@NotNull final BlockPos position, @NotNull final World world)
     {
-        final BlockPos floor = getFloor(position, 0, world);
+        final BlockPos floor = getFloor(new BlockPos.Mutable(position), 0, world);
         if (floor == null)
         {
             return position;
@@ -520,7 +520,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @Nullable
-    public static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos.Mutable position, final int depth, @NotNull final World world)
     {
         if (depth > MAX_DEPTH)
         {
@@ -529,14 +529,15 @@ public final class BlockPosUtil
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
         {
-            return getFloor(position.down(), depth + 1, world);
+            return getFloor(position.setPos(position.getX(), position.getY() - 1, position.getZ()), depth + 1, world);
         }
         //If there is no air above the block go upwards
-        if (!EntityUtils.solidOrLiquid(world, position.up()))
+        if (!EntityUtils.solidOrLiquid(world, position.setPos(position.getX(), position.getY() + 1, position.getZ())) &&
+              !EntityUtils.solidOrLiquid(world, position.setPos(position.getX(), position.getY() + 2, position.getZ())))
         {
-            return position;
+            return position.toImmutable();
         }
-        return getFloor(position.up(), depth + 1, world);
+        return getFloor(position.setPos(position.getX(), position.getY() + 1, position.getZ()), depth + 1, world);
     }
 
     /**

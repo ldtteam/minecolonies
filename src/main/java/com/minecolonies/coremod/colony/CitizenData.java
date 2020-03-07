@@ -930,6 +930,7 @@ public class CitizenData implements ICitizenData
 
     /**
      * Increases the levels of the citizen.
+     * returns true if level up succeeded
      */
     private void increaseLevel()
     {
@@ -939,6 +940,10 @@ public class CitizenData implements ICitizenData
             if (entry.getA() < MAX_CITIZEN_LEVEL)
             {
                 this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(entry.getA() + 1, entry.getB()));
+            }
+            else
+            {
+                this.levelExperienceMap.put(job.getExperienceTag(),new Tuple<Integer,Double> ((int)MAX_CITIZEN_LEVEL,ExperienceUtils.getXPNeededForNextLevel(MAX_CITIZEN_LEVEL-1)));
             }
         }
     }
