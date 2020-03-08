@@ -111,18 +111,22 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return false;
         }
 
+        citizen.updatePose(Pose.SLEEPING);
+        citizen.getNavigator().clearPath();
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (float) bedLocation.getY() + 0.8,
+          (float) bedLocation.getY() + 0.8F,
           ((float) bedLocation.getZ() + HALF_BLOCK));
+        citizen.setBedPosition(bedLocation);
 
-        citizen.setMotion(0,0,0);
+        citizen.setMotion(Vec3d.ZERO);
+        citizen.isAirBorne = true;
 
         //Remove item while citizen is asleep.
         citizen.getCitizenItemHandler().removeHeldItem();
 
         setIsAsleep(true);
 
-        citizen.updatePose(Pose.SLEEPING);
+
         if (citizen.getCitizenData() != null)
         {
             citizen.getCitizenData().setBedPos(bedLocation);
@@ -145,6 +149,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return;
         }
         citizen.updatePose(Pose.STANDING);
+        citizen.clearBedPosition();
         spawnCitizenFromBed();
     }
 

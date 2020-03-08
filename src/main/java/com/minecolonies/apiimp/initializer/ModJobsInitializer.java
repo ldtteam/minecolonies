@@ -164,6 +164,11 @@ public final class ModJobsInitializer
                               .setRegistryName(ModJobs.RESEARCHER_ID)
                               .createJobEntry();
 
+        ModJobs.healer     = new JobEntry.Builder()
+                               .setJobProducer(JobHealer::new)
+                               .setRegistryName(ModJobs.HEALER_ID)
+                               .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -193,5 +198,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.florist);
         reg.register(ModJobs.enchanter);
         reg.register(ModJobs.researcher);
+        reg.register(ModJobs.healer);
     }
 }

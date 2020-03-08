@@ -50,6 +50,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
+    public final ForgeConfigSpec.IntValue diseaseModifier;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -132,9 +133,10 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
-    public final ForgeConfigSpec.DoubleValue enchanterExperienceMultiplier;
+    public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
+    public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
 
-    public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -261,6 +263,7 @@ public class CommonConfiguration extends AbstractConfiguration
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
+        diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
 
         swapToCategory(builder, "commands");
 
@@ -280,9 +283,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
 
         swapToCategory(builder, "claims");
-
-        /*workingRangeTownHall = defineInteger(builder, "workingrangetownhall", 0, 0, 0);*/
-
+        
         workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 8, 1, 50);
         minTownHallPadding = defineInteger(builder, "mintownhallpadding", 3, 1, 200);
         townHallPadding = defineInteger(builder, "townhallpadding", 20, 1, 20000);
@@ -647,6 +648,11 @@ public class CommonConfiguration extends AbstractConfiguration
 
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
 
+        diseases = defineList(builder, "diseases",
+          Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
+                        "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
+                        "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
+          s -> s instanceof String);
 
         swapToCategory(builder, "pathfinding");
 
@@ -667,7 +673,6 @@ public class CommonConfiguration extends AbstractConfiguration
         canPlayerUseResetCommand = defineBoolean(builder,  "canplayeruseresetcommand", false);
 
         swapToCategory(builder, "research");
-
 
         tactictraining = defineList(builder, "tactictraining",
           Collections.singletonList("minecraft:iron_block*3"),

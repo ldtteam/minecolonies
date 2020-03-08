@@ -247,4 +247,9 @@ public final class CitizenConstants
      * Chance to dump, if < this then dump else not.
      */
     public static final int CHANCE_TO_DUMP = 8;
+
+    /**
+     * Disease tag,
+     */
+    public static final String TAG_DISEASE = "disease";
 }

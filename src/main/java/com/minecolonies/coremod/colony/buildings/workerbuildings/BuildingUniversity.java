@@ -81,7 +81,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return UNIVERSITY;
+        return "com.minecolonies.coremod.job.researcher";
     }
 
     @Override

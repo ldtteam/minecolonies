@@ -38,6 +38,7 @@ public final class ModBuildings
     public static final String        FLORIST_ID        = "florist";
     public static final String        ENCHANTER_ID      = "enchanter";
     public static final String        UNIVERSITY_ID     = "university";
+    public static final String        HOSPITAL_ID       = "hospital";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -72,6 +73,7 @@ public final class ModBuildings
     public static       BuildingEntry florist;
     public static       BuildingEntry enchanter;
     public static       BuildingEntry university;
+    public static       BuildingEntry hospital;
 
     private ModBuildings()
     {

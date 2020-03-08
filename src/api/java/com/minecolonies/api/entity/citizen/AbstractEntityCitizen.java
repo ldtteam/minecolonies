@@ -624,6 +624,13 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public abstract ICitizenStuckHandler getCitizenStuckHandler();
 
     /**
+     * The Handler to check if the citizen is sick.
+     *
+     * @return the instance of the handler.
+     */
+    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
+
+    /**
      * Check if the citizen can eat now by considering the state and the job tasks.
      *
      * @return true if so.
