@@ -6,6 +6,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
+import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.block.*;
@@ -97,6 +98,16 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> food = new HashSet<>();
 
     /**
+     * Set of all possible diseases.
+     */
+    private final Map<String, Disease> diseases = new HashMap();
+
+    /**
+     * List of diseases including the random factor.
+     */
+    private final List<String> diseaseList = new ArrayList<>();
+
+    /**
      * List of lucky oreBlocks which get dropped by the miner.
      */
     private final List<ItemStorage> luckyOres = new ArrayList<>();
@@ -176,7 +187,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void discover()
+    public void discover(final boolean serverSide)
     {
         discoverBlockList();
 
@@ -186,10 +197,14 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostableItems();
         discoverPlantables();
         discoverLuckyOres();
+        discoverDiseases();
         discoverCrusherModes();
         discoverSifting();
         discoverFood();
-        discoverFuel();
+        if (serverSide)
+        {
+            discoverFuel();
+        }
         discoverEnchantments();
 
         discoveredAlready = true;
@@ -344,6 +359,18 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfPlantables()
     {
         return ImmutableList.copyOf(plantables);
+    }
+
+    @Override
+    public String getRandomDisease()
+    {
+        return diseaseList.get(random.nextInt(diseaseList.size()));
+    }
+
+    @Override
+    public Disease getDisease(final String disease)
+    {
+        return diseases.get(disease);
     }
 
     @Override
@@ -609,6 +636,57 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks");
+    }
+
+    /**
+     * Go through the disease config and setup all possible diseases.
+     */
+    private void discoverDiseases()
+    {
+        if (diseases.isEmpty())
+        {
+            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().diseases.get())
+            {
+                final String[] split = disease.split(",");
+                if (split.length < 3)
+                {
+                    Log.getLogger().warn("Wrongly configured disease: " + disease);
+                    continue;
+                }
+
+                try
+                {
+                    final String name = split[0];
+                    final int rarity = Integer.parseInt(split[1]);
+
+                    final List<ItemStack> cure = new ArrayList<>();
+
+                    for (int i = 2; i < split.length; i++)
+                    {
+                        final String[] theItem = split[i].split(":");
+                        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(theItem[0], theItem[1]));
+                        if (item == null || item == Items.AIR)
+                        {
+                            Log.getLogger().warn("Invalid cure item: " + disease);
+                            continue;
+                        }
+
+                        final ItemStack stack = new ItemStack(item, 1);
+                        cure.add(stack);
+                    }
+                    diseases.put(name, new Disease(name, rarity, cure));
+                    for (int i = 0; i < rarity; i++)
+                    {
+                        diseaseList.add(name);
+                    }
+                }
+                catch (final NumberFormatException e)
+                {
+                    Log.getLogger().warn("Wrongly configured disease: " + disease);
+                }
+            }
+        }
+        Log.getLogger().info("Finished discovering diseases");
     }
 
     /**

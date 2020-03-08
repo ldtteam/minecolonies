@@ -206,13 +206,19 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     boolean isIdling();
 
     /**
-     * Reset the AI after eating at a restaurant
+     * Reset the AI.
      */
-    void resetAIAfterEating();
+    void resetAI();
 
     /**
      * Method to check if the colony job allows avoidance.
      * @return true if so.
      */
     boolean allowsAvoidance();
+
+    /**
+     * Disease modifier of the job.
+     * @return the modifier of the job.
+     */
+    int getDiseaseModifier();
 }

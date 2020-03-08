@@ -80,6 +80,11 @@ public class CitizenManager implements ICitizenManager
     private int respawnInterval = 30 * TICKS_SECOND;
 
     /**
+     * Random obj.
+     */
+    private Random random = new Random();
+
+    /**
      * Creates the Citizenmanager for a colony.
      *
      * @param colony the colony.
@@ -537,5 +542,11 @@ public class CitizenManager implements ICitizenManager
                 citizen.getCitizenEntity().get().setMourning(mourn);
             }
         }
+    }
+
+    @Override
+    public ICitizenData getRandomCitizen()
+    {
+        return (ICitizenData) citizens.values().toArray()[random.nextInt(citizens.values().size())];
     }
 }

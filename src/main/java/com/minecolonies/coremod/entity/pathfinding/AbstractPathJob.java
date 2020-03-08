@@ -991,7 +991,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid() && block.getBlock() != Blocks.SNOW;
+                return !block.getMaterial().isLiquid() &&  ( block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1);
             }
         }
 
@@ -1034,7 +1034,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.DROPABLE;
         }
 
-        if (blockState.getMaterial().isSolid() || blockState.getBlock() == Blocks.SNOW)
+        if (blockState.getMaterial().isSolid() || ( blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1))
         {
             return SurfaceType.WALKABLE;
         }

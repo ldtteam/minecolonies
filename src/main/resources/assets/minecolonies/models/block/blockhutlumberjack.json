@@ -3,7 +3,6 @@
   "parent": "block/block",
   "loader": "forge:multi-layer",
   "textures": { "particle": "minecraft:block/oak_sapling" },
-
   "layers": {
     "base": {
     },

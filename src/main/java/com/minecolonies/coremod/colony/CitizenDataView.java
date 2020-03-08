@@ -69,6 +69,7 @@ public class CitizenDataView implements ICitizenDataView
      * each type of modifier.
      */
     private double foodModifier;
+    private double healthmodifier;
     private double damageModifier;
     private double houseModifier;
     private double jobModifier;
@@ -427,6 +428,7 @@ public class CitizenDataView implements ICitizenDataView
         jobModifier = buf.readDouble();
         fieldsModifier = buf.readDouble();
         toolsModifiers = buf.readDouble();
+        healthmodifier = buf.readDouble();
 
         job = buf.readString(32767);
 
@@ -477,6 +479,15 @@ public class CitizenDataView implements ICitizenDataView
     public double getFoodModifier()
     {
         return foodModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to food.
+     */
+    @Override
+    public double getHealthmodifier()
+    {
+        return healthmodifier;
     }
 
     /**
