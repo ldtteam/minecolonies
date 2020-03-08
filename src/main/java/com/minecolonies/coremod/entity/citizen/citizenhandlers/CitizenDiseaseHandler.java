@@ -99,7 +99,10 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
             final IColony colony = citizen.getCitizenColonyHandler().getColony();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
-            hospital.onWakeUp();
+            if (hospital != null)
+            {
+                hospital.onWakeUp();
+            }
         }
     }
 }
