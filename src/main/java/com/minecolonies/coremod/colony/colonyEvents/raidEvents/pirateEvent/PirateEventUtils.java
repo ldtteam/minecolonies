@@ -29,7 +29,7 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    public static final String PIRATESHIP_FOLDER = "/Ships/";
+    public static final String PIRATESHIP_FOLDER = "/ships/";
 
     /**
      * Distance at which spawners are active
