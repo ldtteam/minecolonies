@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.util;
+package com.minecolonies.coremod.entity.ai.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
@@ -211,7 +212,7 @@ public class StructureIterator
      * @return a Result enum specifying the result
      */
     @NotNull
-    public Result advanceBlock()
+    public Result advanceBlock(final AbstractEntityAIStructure abstractEntityAIStructure)
     {
         switch (this.stage)
         {
@@ -220,7 +221,7 @@ public class StructureIterator
                   structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                                       || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
-                return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
                                                                                          || structureBlock.block == Blocks.AIR
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
@@ -228,7 +229,7 @@ public class StructureIterator
                                                                           structureBlock.entity == null || structureBlock.entity.length <= 0);
             case DECORATE:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
-                                                                       structureBlock.doesStructureBlockEqualWorldBlock()
+                                                                          doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
                                                                          || structureBlock.metadata.getMaterial().isSolid());
             case REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock,
@@ -236,6 +237,22 @@ public class StructureIterator
             default:
                 return Result.NEW_BLOCK;
         }
+    }
+
+    /**
+     * Check if the block equals the world block and connect with the building if necessary.
+     * @param block the structure block.
+     * @param entityAIStructure the AI instance.
+     * @return true if so.
+     */
+    private boolean doesStructureBlockEqualWorldBlock(final StructureBlock block, final AbstractEntityAIStructure entityAIStructure)
+    {
+        if (block.doesStructureBlockEqualWorldBlock())
+        {
+            entityAIStructure.connectBlockToBuildingIfNecessary(block.metadata, block.blockPosition);
+            return true;
+        }
+        return false;
     }
 
     /**
