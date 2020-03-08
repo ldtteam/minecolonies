@@ -292,6 +292,11 @@ public final class NbtTagConstants
     public static final String TAG_BEDS = "beds";
 
     /**
+     * Patients tags.
+     */
+    public static final String TAG_PATIENTS = "patients";
+
+    /**
      * Var for first pos string.
      */
     public static final String FIRST_POS_STRING = "pos1";

@@ -54,4 +54,10 @@ public class JobMiner extends AbstractJobStructure
     {
         return new EntityAIStructureMiner(this);
     }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 2;
+    }
 }

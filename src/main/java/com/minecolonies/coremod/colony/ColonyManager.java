@@ -289,6 +289,7 @@ public final class ColonyManager implements IColonyManager
                 return building;
             }
         }
+        Log.getLogger().warn("Colony at place is null! " + w.getDimension().getType().getId());
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))
@@ -837,7 +838,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(false);
         }
     }
 
@@ -851,7 +852,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(true);
         }
     }
 

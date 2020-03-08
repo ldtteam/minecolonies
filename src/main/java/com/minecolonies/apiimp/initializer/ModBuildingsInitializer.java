@@ -253,6 +253,13 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
                                    .createBuildingEntry();
 
+        ModBuildings.hospital = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutHospital)
+                                    .setBuildingProducer(BuildingHospital::new)
+                                    .setBuildingViewProducer(() -> BuildingHospital.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
+                                    .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -286,5 +293,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.florist);
         reg.register(ModBuildings.enchanter);
         reg.register(ModBuildings.university);
+        reg.register(ModBuildings.hospital);
     }
 }

@@ -17,7 +17,6 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
@@ -77,6 +76,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
         PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
+        PlacementHandlers.handlers.add(new BuildingBarracksTowerSub());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -273,10 +273,7 @@ public final class MinecoloniesPlacementHandlers
                                 ((TileEntityColonyBuilding) building).getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
 
                                 final IBuilding theBuilding = ((TileEntityColonyBuilding) building).getColony().getBuildingManager().getBuilding(pos);
-                                if (theBuilding instanceof BuildingBarracksTower)
-                                {
-                                    theBuilding.setStyle(((TileEntityColonyBuilding) building).getStyle());
-                                }
+                                theBuilding.setStyle(((TileEntityColonyBuilding) building).getStyle());
                             }
                         }
                     }
@@ -313,6 +310,57 @@ public final class MinecoloniesPlacementHandlers
             return Collections.emptyList();
         }
     }
+
+    public static class BuildingBarracksTowerSub implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+        {
+            return blockState.getBlock() == ModBlocks.blockBarracksTowerSubstitution;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos,
+          final PlacementSettings settings)
+        {
+            if (world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            if (tileEntityData != null)
+            {
+                try
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Unable to place TileEntity");
+                }
+            }
+
+            return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        {
+            return Collections.emptyList();
+        }
+    }
+
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {

@@ -589,12 +589,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         {
             if (building.getBuildingLevel() > 0 && building instanceof AbstractBuildingWorker.View)
             {
-                String jobName = ((AbstractBuildingWorker.View) building).getJobName().toLowerCase(Locale.ENGLISH);
+                String jobName = LanguageHandler.format(((AbstractBuildingWorker.View) building).getJobName()).toLowerCase(Locale.ENGLISH);
                 if (building instanceof AbstractBuildingGuards.View)
                 {
                     final String[] splitString = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey().split("\\.");
                     final int length = splitString.length;
-                    jobName = splitString[length - 1].toLowerCase(Locale.ENGLISH);
+                    jobName = LanguageHandler.format(splitString[length - 1].toLowerCase(Locale.ENGLISH));
                 }
                 if (jobCountMap.get(jobName) == null)
                 {
