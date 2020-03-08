@@ -313,7 +313,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
     {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ()) * 6;
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
         if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
