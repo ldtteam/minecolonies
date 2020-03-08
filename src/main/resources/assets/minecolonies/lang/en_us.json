@@ -493,8 +493,8 @@
   "com.minecolonies.coremod.gui.townhall.population.composters": "Composters: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.builders": "Builders: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.cooks": "Cooks: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.rangers": "Rangers: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.knights": "Knights: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.rangers": "Archers: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.melees": "Knights: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.students": "Students: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.enchanters": "Enchanters: %d/%d",
@@ -1316,6 +1316,10 @@
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
   "block.minecolonies.blockhuthospital": "Hospital",
-  "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!"
+  "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!",
+  "com.minecolonies.coremod.job.healer": "Healer",
+  "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
+  "com.minecolonies.coremod.gui.townhall.population.healers": "Healers: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d"
 }
 

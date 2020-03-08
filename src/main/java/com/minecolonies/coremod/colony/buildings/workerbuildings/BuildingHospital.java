@@ -101,7 +101,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     @Override
     public String getJobName()
     {
-        return HOSPITAL_DESC;
+        return "com.minecolonies.coremod.job.healer";
     }
 
     @Override
