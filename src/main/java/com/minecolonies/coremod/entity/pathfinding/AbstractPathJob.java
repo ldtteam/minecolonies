@@ -832,11 +832,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         final SurfaceType walkability = isWalkableSurface(below, pos);
         if (walkability == SurfaceType.WALKABLE)
         {
-            final VoxelShape tbb = below.getCollisionShape(world, pos.down());
-            if (tbb.getEnd(Direction.Axis.Y) < 0.5)
-            {
-                return pos.getY() - 1;
-            }
             //  Level path
             return pos.getY();
         }
@@ -951,11 +946,6 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        final VoxelShape tbb = target.getCollisionShape(world, parent.pos);
-        if (tbb.getEnd(Direction.Axis.Y) < 0.5)
-        {
-            return pos.getY();
-        }
         //  Jump up one
         return pos.getY() + 1;
     }
