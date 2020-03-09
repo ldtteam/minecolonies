@@ -446,7 +446,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
                 final BlockState worldState = world.getBlockState(coords);
 
-                if (worldState.getMaterial() != Material.AIR
+                if (!sameInWorld
+                      && worldState.getMaterial() != Material.AIR
                       && !(worldState.getBlock() instanceof DoublePlantBlock && worldState.get(DoublePlantBlock.HALF).equals(DoubleBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
