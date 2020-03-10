@@ -201,10 +201,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCrusherModes();
         discoverSifting();
         discoverFood();
-        if (serverSide)
-        {
-            discoverFuel();
-        }
+        discoverFuel();
         discoverEnchantments();
 
         discoveredAlready = true;
