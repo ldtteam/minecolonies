@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.ldtteam.structures.helpers.Structure;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -69,7 +68,6 @@ public class BuildToolPasteMessage implements IMessage
     private BlockPos                 pos;
     private boolean                  isHut;
     private boolean                  mirror;
-    private WindowBuildTool.FreeMode freeMode;
 
     /**
      * Empty constructor used when registering the 
@@ -95,8 +93,7 @@ public class BuildToolPasteMessage implements IMessage
       final String structureName,
       final String workOrderName, final BlockPos pos,
       final int rotation, final boolean isHut,
-      final Mirror mirror, final boolean complete,
-      final WindowBuildTool.FreeMode freeMode, final BlockState state)
+      final Mirror mirror, final boolean complete, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -106,7 +103,6 @@ public class BuildToolPasteMessage implements IMessage
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
         this.complete = complete;
-        this.freeMode = freeMode;
         this.state = state;
     }
 
@@ -130,12 +126,6 @@ public class BuildToolPasteMessage implements IMessage
         mirror = buf.readBoolean();
 
         complete = buf.readBoolean();
-
-        final int modeId = buf.readInt();
-        if(modeId >= 0)
-        {
-            freeMode = WindowBuildTool.FreeMode.values()[modeId];
-        }
 
         state = Block.getStateById(buf.readInt());
     }
@@ -162,15 +152,6 @@ public class BuildToolPasteMessage implements IMessage
         buf.writeBoolean(mirror);
 
         buf.writeBoolean(complete);
-
-        if(freeMode == null)
-        {
-            buf.writeInt(-1);
-        }
-        else
-        {
-            buf.writeInt(freeMode.ordinal());
-        }
 
         buf.writeInt(Block.getStateId(state));
     }
@@ -215,7 +196,7 @@ public class BuildToolPasteMessage implements IMessage
                   pos, Rotation.values()[rotation], mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
-        else if(freeMode !=  null )
+        else if( structureName.contains("supply") )
         {
             if(player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
             {
@@ -223,11 +204,11 @@ public class BuildToolPasteMessage implements IMessage
                 return;
             }
             final List<ItemStack> stacks = new ArrayList<>();
-            if(freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
+            if(structureName.contains("supplyship"))
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
             }
-            else if(freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
+            if(structureName.contains("supplycamp"))
             {
                 stacks.add(new ItemStack(ModItems.supplyCamp));
             }

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -170,7 +169,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation)
     {
         /*
          * Intentionally left empty.
