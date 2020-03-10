@@ -30,7 +30,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * StructureIterator name and location.
      */
-    private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplyship";
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "supplyship";
 
     /**
      * Offset south/west of the supply chest.

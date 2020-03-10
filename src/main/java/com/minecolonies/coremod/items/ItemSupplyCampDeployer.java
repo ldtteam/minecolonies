@@ -32,7 +32,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * The name of the structure
      */
-    private static final String SUPPLY_CAMP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplycamp";
+    private static final String SUPPLY_CAMP_STRUCTURE_NAME = "supplycamp";
 
     /**
      * Offset south/west of the supply camp.
