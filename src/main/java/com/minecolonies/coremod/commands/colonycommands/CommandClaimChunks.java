@@ -59,7 +59,7 @@ public class CommandClaimChunks implements IMCOPCommand
         final IChunkmanagerCapability chunkManager = sender.world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElse(null);
         if (chunkManager == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return 0;
         }
 

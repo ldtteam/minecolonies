@@ -60,4 +60,10 @@ public class JobSwineHerder extends AbstractJob
     {
         return BipedModelType.PIG_FARMER;
     }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 2;
+    }
 }

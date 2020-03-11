@@ -11,7 +11,7 @@ public final class RaiderConstants
     /**
      * The amount of EXP to drop on entity death.
      */
-    public static final int BARBARIAN_EXP_DROP = 1;
+    public static final int BARBARIAN_EXP_DROP = 5;
 
     /**
      * The range for the barb to move away.
@@ -35,7 +35,7 @@ public final class RaiderConstants
     public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
     public static final int    SPEED_EFFECT_DURATION       = 60;
-    public static final int    SPEED_EFFECT_MULTIPLIER     = 2;
+    public static final int    SPEED_EFFECT_MULTIPLIER     = 1;
 
     /**
      * Amount of ladders to place before destroying blocks.
@@ -45,7 +45,7 @@ public final class RaiderConstants
     /**
      * Amount of ticks to despawn the barbarian.
      */
-    public static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 10;
+    public static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 30;
 
     /**
      * Randomly execute it every this ticks.
@@ -55,7 +55,7 @@ public final class RaiderConstants
     /**
      * Barbarian Attack Damage.
      */
-    public static final double ATTACK_DAMAGE = 2.0D;
+    public static final double ATTACK_DAMAGE = 1.0D;
 
     /**
      * Values used in Spawn() method
@@ -86,9 +86,9 @@ public final class RaiderConstants
     public static final double MOVEMENT_SPEED              = 0.25D;
     public static final double ARMOR                       = 0.5D;
     public static final double CHIEF_ARMOR                 = 8D;
-    public static final double BARBARIAN_BASE_HEALTH       = 5;
+    public static final double BARBARIAN_BASE_HEALTH       = 15;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
-    public static final double ATTACK_SPEED_DIVIDER = 3;
+    public static final double ATTACK_SPEED_DIVIDER        = 3;
 
 
     /**

@@ -4,13 +4,11 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,12 +21,14 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
+import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
+import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -78,6 +78,21 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private int ladderCounter = 0;
 
     /**
+     * The raids event id.
+     */
+    private int eventID = 0;
+
+    /**
+     * Whether this entity is registered with the colony yet.
+     */
+    private boolean isRegistered = false;
+
+    /**
+     * The invulnerability timer for spawning, to prevent suffocate/grouping damage.
+     */
+    private int invulTime = 2 * 20;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -89,13 +104,17 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         this.enablePersistence();
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        MobSpawnUtils.setupMobAi(this);
+        this.experienceValue = BARBARIAN_EXP_DROP;
+        RaiderMobUtils.setupMobAi(this);
+        this.setInvulnerable(true);
+        RaiderMobUtils.setEquipment(this);
+        getAttributes().registerAttribute(MOB_ATTACK_DAMAGE);
     }
 
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (entityIn instanceof AbstractEntityMinecoloniesMob
+        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
               && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
         {
             return;
@@ -146,7 +165,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
-            this.newNavigator.getNodeProcessor().setCanOpenDoors(false);
+            this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
         }
         return newNavigator;
     }
@@ -207,7 +226,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
+        compound.putInt(TAG_EVENT_ID, eventID);
         super.writeAdditional(compound);
+    }
+
+    @Override
+    public Entity changeDimension(DimensionType dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+    {
+        return this;
     }
 
     @Override
@@ -216,7 +242,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
         ladderCounter = compound.getInt(TAG_LADDER_COUNTER);
-        if (compound.keySet().contains(TAG_COLONY_ID))
+        eventID = compound.getInt(TAG_EVENT_ID);
+        if (compound.contains(TAG_COLONY_ID))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
@@ -224,12 +251,27 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
+
+        if (colony == null || eventID == 0)
+        {
+            this.remove();
+        }
+
         super.readAdditional(compound);
     }
 
     @Override
     public void livingTick()
     {
+        if (invulTime > 0)
+        {
+            invulTime--;
+        }
+        else
+        {
+            this.setInvulnerable(false);
+        }
+
         if (world.isRemote)
         {
             super.livingTick();
@@ -245,18 +287,24 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
             if (shouldDespawn())
             {
+                this.onDeath(new DamageSource("despawn"));
                 this.remove();
+                return;
+            }
+
+            if (!isRegistered)
+            {
+                registerWithColony();
             }
 
             if (currentCount <= 0)
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
-                MobSpawnUtils.setMobAttributes(this, getColony());
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
                       && MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
-                    BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
+                    RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
                       .stream().filter(entity -> !entity.isPotionActive(Effects.SPEED))
                       .forEach(entity -> entity.addPotionEffect(new EffectInstance(Effects.SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
@@ -271,38 +319,30 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         super.livingTick();
     }
 
-    @Nullable
     @Override
     public ILivingEntityData onInitialSpawn(
       final IWorld worldIn, final DifficultyInstance difficultyIn, final SpawnReason reason, @Nullable final ILivingEntityData spawnDataIn, @Nullable final CompoundNBT dataTag)
     {
-        MobSpawnUtils.setEquipment(this);
+        RaiderMobUtils.setEquipment(this);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     @Override
-    protected void onDeathUpdate()
+    public void remove()
     {
-        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)))
+        if (!world.isRemote && colony != null && eventID > 0)
         {
-            final int experience = ExperienceOrbEntity.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.posX, this.posY, this.posZ, experience));
+            colony.getEventManager().unregisterEntity(this, eventID);
         }
-        super.onDeathUpdate();
+        super.remove();
     }
 
     /**
      * Getter for the colony.
-     * Gets a value from the ColonyManager if null.
      * @return the colony the barbarian is assigned to attack.e
      */
     public IColony getColony()
     {
-        if (!world.isRemote && colony == null)
-        {
-            this.setColony(IColonyManager.getInstance().getClosestColony(CompatibilityUtils.getWorldFromEntity(this), this.getPosition()));
-        }
-
         return colony;
     }
 
@@ -311,7 +351,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      */
     public void registerWithColony()
     {
-        getColony();
+        if (colony == null || eventID == 0 || dead)
+        {
+            remove();
+            return;
+        }
+        RaiderMobUtils.setMobAttributes(this, getColony());
+        colony.getEventManager().registerEntity(this, eventID);
+        isRegistered = true;
     }
 
     @Override
@@ -320,7 +367,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
-            getColony().getRaiderManager().unregisterRaider(this, (ServerWorld) world);
+            getColony().getEventManager().onEntityDeath(this, eventID);
         }
     }
 
@@ -340,7 +387,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         if (colony != null)
         {
             this.colony = colony;
-            this.colony.getRaiderManager().registerRaider(this);
         }
+    }
+
+    public int getEventID()
+    {
+        return eventID;
+    }
+
+    public void setEventID(final int eventID)
+    {
+        this.eventID = eventID;
     }
 }

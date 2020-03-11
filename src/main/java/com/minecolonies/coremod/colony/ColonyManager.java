@@ -115,7 +115,7 @@ public final class ColonyManager implements IColonyManager
 
         if (colony.getWorld() == null)
         {
-            Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!");
+            Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!", new Exception());
             return;
         }
 
@@ -289,6 +289,7 @@ public final class ColonyManager implements IColonyManager
                 return building;
             }
         }
+        Log.getLogger().warn("Colony at place is null! " + w.getDimension().getType().getId());
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))
@@ -837,7 +838,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(false);
         }
     }
 
@@ -851,7 +852,7 @@ public final class ColonyManager implements IColonyManager
 
         if (!compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover();
+            compatibilityManager.discover(true);
         }
     }
 
@@ -1001,7 +1002,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyView view = getColonyView(colonyID, dim);
         if (view == null)
         {
-            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID), new Exception());
         }
         else
         {
@@ -1091,7 +1092,7 @@ public final class ColonyManager implements IColonyManager
         }
         else
         {
-            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId), new Exception());
         }
     }
 

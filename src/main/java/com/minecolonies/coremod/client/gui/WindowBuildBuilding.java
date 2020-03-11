@@ -249,7 +249,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
             else
             {
-                Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+                Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen", new Exception());
             }
         }
 

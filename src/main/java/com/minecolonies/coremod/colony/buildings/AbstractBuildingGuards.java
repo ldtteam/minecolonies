@@ -97,7 +97,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Whether to retrieve the guard on low health.
      */
-    private boolean retrieveOnLowHealth = false;
+    private boolean retrieveOnLowHealth = true;
 
     /**
      * Whether to patrol manually or not.
@@ -915,7 +915,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (this.getColony().getWorld() != null)
         {
             this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
-            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER));
+            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER,false,false));//no reason for particales
 
             if (followPlayer != null)
             {

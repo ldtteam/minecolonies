@@ -13,6 +13,7 @@ import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
@@ -150,7 +151,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         {
             return localXp;
         }
-     
+
         final ItemStack tool = citizen.getInventoryCitizen().getStackInSlot(toolSlot);
         if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
         {
@@ -210,8 +211,16 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         for (@NotNull final ExperienceOrbEntity orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue() / 2.0D);
-            orb.remove();
+            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double)this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            double d1 = vec3d.lengthSquared();
+
+            if (d1 < 1.0D) {
+                addExperience(orb.getXpValue() / 2.0D);
+                orb.remove();
+                return;
+            }
+            double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
+            orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
         }
     }
 

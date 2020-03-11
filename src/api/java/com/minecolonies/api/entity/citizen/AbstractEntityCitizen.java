@@ -35,6 +35,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,9 +110,13 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
         return ticksExisted;
     }
 
-    @Nullable
+    /**
+     * We override this method and execute no code to avoid citizens travelling to the nether.
+     *
+     * @param dimensionIn dimension to travel to.
+     */
     @Override
-    public Entity changeDimension(@NotNull final DimensionType destination)
+    public Entity changeDimension(DimensionType dimensionIn, ITeleporter teleporter)
     {
         return null;
     }
@@ -617,6 +622,13 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * @return the instance of the handler.
      */
     public abstract ICitizenStuckHandler getCitizenStuckHandler();
+
+    /**
+     * The Handler to check if the citizen is sick.
+     *
+     * @return the instance of the handler.
+     */
+    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
 
     /**
      * Check if the citizen can eat now by considering the state and the job tasks.

@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +44,16 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutbarracks.xml";
 
     /**
+     * Spies button id.
+     */
+    private static final String SPIES_BUTTON = "hireSpies";
+
+    /**
+     * The spies button icon id
+     */
+    private static final String SPIES_BUTTON_ICON = "hireSpiesIcon";
+
+    /**
      * Required building level to see the barbarian spawnpoints in the GUI.
      */
     private static final int BUILDING_LEVEL_FOR_LIST = 3;
@@ -63,7 +76,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Colony View of the colony.
      */
-    private final IColonyView iColonyView;
+    private final IColonyView view;
 
     /**
      * Creates the Window object.
@@ -73,8 +86,16 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     public WindowBarracksBuilding(final BuildingBarracks.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
-        iColonyView = building.getColony();
+        view = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
+        findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
+        registerButton(SPIES_BUTTON, this::hireSpiesClicked);
+
+        if (building.getBuildingLevel() < 3)
+        {
+            findPaneOfTypeByID(SPIES_BUTTON, ButtonImage.class).setVisible(false);
+            findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setVisible(false);
+        }
     }
 
     /**
@@ -89,14 +110,30 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         return "com.minecolonies.coremod.gui.workerhuts.buildBarracks";
     }
 
+    /**
+     * Open the spies gui when the button is clicked.
+     *
+     * @param button
+     */
+    private void hireSpiesClicked(final Button button)
+    {
+        @NotNull final WindowsBarracksSpies window = new WindowsBarracksSpies(this.building, this.building.getID());
+        window.open();
+    }
+
     @Override
     public void onOpened()
     {
         super.onOpened();
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
-            final List<BlockPos> spawnPoints = iColonyView.getLastSpawnPoints();
-            if(iColonyView.isRaiding())
+            final List<BlockPos> spawnPoints = view.getLastSpawnPoints();
+            if (spawnPoints.size() == 0)
+            {
+                return;
+            }
+
+            if (view.isRaiding())
             {
                 findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
             }
@@ -105,14 +142,14 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
                 @Override
                 public int getElementCount()
                 {
-                    return spawnPoints.size() - (iColonyView.isRaiding() ? 1 : 0);
+                    return spawnPoints.size() - (view.isRaiding() ? 1 : 0);
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = spawnPoints.get(index);
-                    if(!(iColonyView.isRaiding() && index == spawnPoints.size()-1))
+                    if (!(view.isRaiding() && index == spawnPoints.size() - 1))
                     {
                         rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
                     }

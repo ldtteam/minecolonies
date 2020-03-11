@@ -310,7 +310,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            Log.getLogger().error("handleDecoration: Could not build " + sn);
+            Log.getLogger().error("handleDecoration: Could not build " + sn, new Exception());
         }
     }
 
@@ -335,7 +335,7 @@ public class BuildToolPlaceMessage implements IMessage
 
         if (building == null)
         {
-            Log.getLogger().error("BuildTool: building is null!");
+            Log.getLogger().error("BuildTool: building is null!", new Exception());
         }
         else
         {

@@ -52,6 +52,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     private double foodModifier;
 
     /**
+     * holds the modifier for health.
+     */
+    private double healthModifier;
+
+    /**
      * holds the modifier for damage.
      */
     private double damageModifier;
@@ -145,6 +150,20 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         else
         {
             foodModifier = 0;
+        }
+        citizen.markDirty();
+    }
+
+    @Override
+    public void setHealthModifier(final boolean isHealthy)
+    {
+        if (!isHealthy)
+        {
+            healthModifier = HEALTH_MODIFIER_MAX;
+        }
+        else
+        {
+            healthModifier = 0;
         }
         citizen.markDirty();
     }
@@ -290,12 +309,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * depending on how hurt they are.
      */
     @Override
-    public void setDamageModifier()
+    public void updateDamageModifier()
     {
         final Optional<AbstractEntityCitizen> entityCitizen = citizen.getCitizenEntity();
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
+            final double prevDamageModifier = damageModifier;
             if (health < DAMAGE_LOWEST_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MAX;
@@ -308,9 +328,16 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             {
                 damageModifier = DAMAGE_MODIFIER_MIN;
             }
-            citizen.markDirty();
+            else
+            {
+                damageModifier = 0;
+            }
+
+            if (prevDamageModifier != damageModifier)
+            {
+                citizen.markDirty();
+            }
         }
-        citizen.markDirty();
     }
 
     /**
@@ -370,7 +397,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
 
     /**
      * @param hasHouse
-     *            indicate the citizen has an assigned house
+     * indicate the citizen has an assigned house
      */
     @Override
     public void setHomeModifier(final boolean hasHouse)
@@ -417,7 +444,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             return citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().get();
         }
 
-        double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier;
+        double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier + healthModifier;
         if (value > MAX_HAPPINESS)
         {
             value = MAX_HAPPINESS;
@@ -469,6 +496,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         taskCompound.putDouble(NbtTagConstants.TAG_BASE, baseHappiness);
         taskCompound.putDouble(NbtTagConstants.TAG_FOOD, foodModifier);
         taskCompound.putDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
+        taskCompound.putDouble(NbtTagConstants.TAG_HEALTH, healthModifier);
         taskCompound.putDouble(NbtTagConstants.TAG_HOUSE, houseModifier);
         taskCompound.putInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE, numberOfDaysWithoutHouse);
 
@@ -520,6 +548,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         final CompoundNBT tagCompound = compound.getCompound(NbtTagConstants.TAG_HAPPINESS_NAME);
         baseHappiness = tagCompound.getDouble(NbtTagConstants.TAG_BASE);
         foodModifier = tagCompound.getDouble(NbtTagConstants.TAG_FOOD);
+        healthModifier = tagCompound.getDouble(NbtTagConstants.TAG_HEALTH);
         damageModifier = tagCompound.getDouble(NbtTagConstants.TAG_DAMAGE);
         houseModifier = tagCompound.getDouble(NbtTagConstants.TAG_HOUSE);
         numberOfDaysWithoutHouse = tagCompound.getInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE);
@@ -571,6 +600,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         buf.writeDouble(jobModifier);
         buf.writeDouble(farmerModifier);
         buf.writeDouble(noToolModifier);
+        buf.writeDouble(healthModifier);
     }
 
     @Override

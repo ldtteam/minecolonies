@@ -26,6 +26,11 @@ public class PathJobMoveToLocation extends AbstractPathJob
     private float destinationSlack = DESTINATION_SLACK_NONE;
 
     /**
+     * The manhattan distance between start and end.
+     */
+    private final long startEndDist;
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world world the entity is in.
@@ -39,6 +44,8 @@ public class PathJobMoveToLocation extends AbstractPathJob
         super(world, start, end, range, entity);
 
         this.destination = new BlockPos(end);
+
+        startEndDist = start.manhattanDistance(end);
     }
 
     /**
@@ -68,12 +75,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        final int dx = pos.getX() - destination.getX();
-        final int dy = pos.getY() - destination.getY();
-        final int dz = pos.getZ() - destination.getZ();
-
-        //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
+        return -(startEndDist - destination.manhattanDistance(pos));
     }
 
     /**
@@ -104,7 +106,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -destination.distanceSq(n.pos);
+        //  For Result Score higher is better
+        return (startEndDist - destination.manhattanDistance(n.pos)) - 0.2 * n.getScore();
     }
 }
