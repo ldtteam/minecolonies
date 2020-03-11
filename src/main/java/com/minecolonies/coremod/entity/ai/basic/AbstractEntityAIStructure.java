@@ -16,7 +16,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.util.StructureIterator;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -202,7 +202,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
         @NotNull final Supplier<StructureIterator.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull final Supplier<StructureIterator.Result> advanceBlock = () -> currentStructure.advanceBlock();
+        @NotNull final Supplier<StructureIterator.Result> advanceBlock = () -> currentStructure.advanceBlock(this);
 
         return () ->
         {
@@ -367,16 +367,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
 
-            @Nullable final Block block = structureBlock.block;
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
-
             @Nullable final BlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             return placeBlockAt(blockState, structureBlock.blockPosition);
@@ -431,9 +421,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (handlers.canHandle(world, coords, blockState))
             {
-                if (!MineColonies.getConfig().getCommon().builderInfiniteResources.get())
+                boolean sameInWorld = false;
+                if (world.getBlockState(coords).getBlock() == blockState.getBlock())
                 {
-                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
+                    sameInWorld = true;
+                }
+                if (!sameInWorld && !MineColonies.getConfig().getCommon().builderInfiniteResources.get())
+                {
+                    final List<ItemStack> requiredItems =
+                      handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
@@ -447,9 +443,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     }
                 }
 
+
                 final BlockState worldState = world.getBlockState(coords);
 
-                if (worldState.getMaterial() != Material.AIR
+                if (!sameInWorld
+                      && worldState.getMaterial() != Material.AIR
                       && !(worldState.getBlock() instanceof DoublePlantBlock && worldState.get(DoublePlantBlock.HALF).equals(DoubleBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
@@ -474,7 +472,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (result instanceof BlockState)
                 {
                     decrease = (BlockState) result;
-                    decreaseInventory(coords, decrease.getBlock(), decrease);
+                    if (!sameInWorld)
+                    {
+                        decreaseInventory(coords, decrease.getBlock(), decrease);
+                    }
                     connectBlockToBuildingIfNecessary(decrease, coords);
                     worker.swingArm(worker.getActiveHand());
                     worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
@@ -629,7 +630,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
         if (ItemStackUtils.isEmpty(stack))
         {
-            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
+            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock(), new Exception());
             return false;
         }
 
@@ -763,14 +764,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
 
             return placeBlockAt(blockState, structureBlock.blockPosition);
         }

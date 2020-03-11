@@ -324,7 +324,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for(final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntitys())
+            for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())
             {
                 player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
             }

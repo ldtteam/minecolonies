@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -120,7 +120,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             final StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
-                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName);
+                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName, new Exception());
             }
             else
             {
@@ -156,7 +156,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         if (structureName == null)
         {
-            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!");
+            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!", new Exception());
         }
         else
         {
@@ -211,7 +211,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
 
         hasSentMessageForThisWorkOrder = true;
-        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
           "entity.builder.messageNoBuilder");
     }
 

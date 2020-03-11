@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
@@ -7,21 +8,24 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.NBTUtils;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -32,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
@@ -60,6 +65,11 @@ public class BuildingBarracks extends AbstractBuilding
     private final List<BlockPos> towers = new ArrayList<>();
 
     /**
+     * The goldcost for spies
+     */
+    public static int SPIES_GOLD_COST = 5;
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -68,6 +78,7 @@ public class BuildingBarracks extends AbstractBuilding
     public BuildingBarracks(@NotNull final IColony colony, final BlockPos pos)
     {
         super(colony, pos);
+        keepX.put((stack) -> stack.getItem() == Items.GOLD_INGOT, new Tuple<>(STACKSIZE, true));
     }
 
     @Override
@@ -136,6 +147,33 @@ public class BuildingBarracks extends AbstractBuilding
                     towers.add(pos);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        if (colony.getWorld().isRemote)
+        {
+            return;
+        }
+
+        if (colony.getRaiderManager().isRaided())
+        {
+            if (!colony.getRaiderManager().areSpiesEnabled())
+            {
+                final int amount = InventoryUtils.getItemCountInItemHandler(this.getTileEntity().getInventory(), Items.GOLD_INGOT);
+                if (amount >= SPIES_GOLD_COST)
+                {
+                    InventoryUtils.removeStackFromItemHandler(tileEntity.getInventory(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST), SPIES_GOLD_COST);
+                    colony.getRaiderManager().setSpiesEnabled(true);
+                    colony.markDirty();
+                }
+            }
+        }
+        else
+        {
+            colony.getRaiderManager().setSpiesEnabled(false);
         }
     }
 

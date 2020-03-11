@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -37,19 +38,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
-    private final IColonyManager                colonyManager        = new ColonyManager();
-    private final ICitizenDataManager           citizenDataManager   = new CitizenDataManager();
-    private final IMobAIRegistry                mobAIRegistry        = new MobAIRegistry();
-    private final IPathNavigateRegistry         pathNavigateRegistry = new PathNavigateRegistry();
-    private       IForgeRegistry<BuildingEntry> buildingRegistry;
-    private final IBuildingDataManager          buildingDataManager  = new BuildingDataManager();
-    private final IJobDataManager               jobDataManager       = new JobDataManager();
-    private final IGuardTypeDataManager         guardTypeDataManager = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
-    private       IForgeRegistry<JobEntry>      jobRegistry;
-    private       IForgeRegistry<GuardType>     guardTypeRegistry;
-    private       IForgeRegistry<InteractionResponseHandlerEntry> interactionHandlerRegistry;
-    private final IInteractionResponseHandlerDataManager          interactionDataManager  = new InteractionResponseHandlerManager();
-    private static IGlobalResearchTree globalResearchTree = new GlobalResearchTree();
+    private final  IColonyManager                                  colonyManager          = new ColonyManager();
+    private final  ICitizenDataManager                             citizenDataManager     = new CitizenDataManager();
+    private final  IMobAIRegistry                                  mobAIRegistry          = new MobAIRegistry();
+    private final  IPathNavigateRegistry                           pathNavigateRegistry   = new PathNavigateRegistry();
+    private        IForgeRegistry<BuildingEntry>                   buildingRegistry;
+    private final  IBuildingDataManager                            buildingDataManager    = new BuildingDataManager();
+    private final  IJobDataManager                                 jobDataManager         = new JobDataManager();
+    private final  IGuardTypeDataManager                           guardTypeDataManager   = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
+    private        IForgeRegistry<JobEntry>                        jobRegistry;
+    private        IForgeRegistry<GuardType>                       guardTypeRegistry;
+    private        IForgeRegistry<InteractionResponseHandlerEntry> interactionHandlerRegistry;
+    private final  IInteractionResponseHandlerDataManager          interactionDataManager = new InteractionResponseHandlerManager();
+    private        IForgeRegistry<ColonyEventTypeRegistryEntry>    colonyEventRegistry;
+    private static IGlobalResearchTree                             globalResearchTree     = new GlobalResearchTree();
 
     @Override
     @NotNull
@@ -184,13 +186,25 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                               .create();
 
         interactionHandlerRegistry = new RegistryBuilder<InteractionResponseHandlerEntry>()
-                        .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
-                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                        .disableSaving()
-                        .allowModification()
-                        .setType(InteractionResponseHandlerEntry.class)
-                        .setIDRange(0, Integer.MAX_VALUE - 1)
-                        .create();
+                                       .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
+                                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                                       .disableSaving()
+                                       .allowModification()
+                                       .setType(InteractionResponseHandlerEntry.class)
+                                       .setIDRange(0, Integer.MAX_VALUE - 1)
+                                       .create();
+
+        colonyEventRegistry = new RegistryBuilder<ColonyEventTypeRegistryEntry>()
+                                .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"))
+                                .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                                .disableSaving().allowModification().setType(ColonyEventTypeRegistryEntry.class)
+                                .setIDRange(0, Integer.MAX_VALUE - 1).create();
+    }
+
+    @Override
+    public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
+    {
+        return colonyEventRegistry;
     }
 }
 

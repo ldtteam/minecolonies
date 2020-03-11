@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "minecolonies:block/blockhuthospital",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:block/blockhuthospital",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:block/blockhuthospital",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:block/blockhuthospital",
+      "y": 270
+    }
+  }
+}

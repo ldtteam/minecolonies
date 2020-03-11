@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -30,6 +29,7 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -79,7 +79,6 @@ public class MineColonies
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
         config = new Configuration();
 
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(BarbarianSpawnEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));

@@ -59,6 +59,8 @@ public class InteractionValidatorInitializer
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOSPITAL),
+          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && citizen.getColony().getBuildingManager().getBestHospital(citizen.getCitizenEntity().get()) == null );
 
         InteractionValidatorRegistry.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
@@ -162,6 +164,10 @@ public class InteractionValidatorInitializer
                                                                                 .stream()
                                                                                 .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems().getOrDefault(ORE_LIST, new ArrayList<>()).contains(storage)));
 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
+          citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
+
+
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
 
@@ -202,12 +208,12 @@ public class InteractionValidatorInitializer
               return false;
           });
 
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE );
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB);
+          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_JOB),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > COMPLAIN_DAYS_WITHOUT_JOB && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() <= DEMANDS_DAYS_WITHOUT_JOB);
+          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > COMPLAIN_DAYS_WITHOUT_JOB && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
     }

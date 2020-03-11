@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -66,7 +65,7 @@ public class AttackingPlayer
         }
 
         return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE
-                 && MobEventsUtils.getColonyRaidLevel(guardColony) <= MobEventsUtils.getColonyRaidLevel(colony) * 2;
+                 && guardColony.getRaiderManager().getColonyRaidLevel() <= colony.getRaiderManager().getColonyRaidLevel() * 2;
     }
 
     /**

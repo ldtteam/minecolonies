@@ -1,33 +1,37 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
-import net.minecraft.block.DoorBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.LadderBlock;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.LEVITATION_EFFECT;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
+import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 
 /**
  * Raider Pathing Class
  */
 public class EntityAIWalkToRandomHuts extends Goal
 {
+    /**
+     * Min distance to the target block which is considered too close.
+     */
+    private static final double MIN_TP_DIST = 100;
 
     /**
      * The moving entity.
@@ -65,9 +69,9 @@ public class EntityAIWalkToRandomHuts extends Goal
     private GeneralEntityWalkToProxy proxy;
 
     /**
-     * The last position he was at.
+     * The last path index he was at.
      */
-    private BlockPos lastPos = null;
+    private int lastIndex = -1;
 
     /**
      * Time the entity is at the same position already.
@@ -75,23 +79,34 @@ public class EntityAIWalkToRandomHuts extends Goal
     private int stuckTime = 1;
 
     /**
-     * Time the entity is not stuck.
-     */
-    private int notStuckTime = 0;
-
-    /**
      * The amount of passed ticks.
      */
     private int passedTicks = 0;
 
     /**
-     * The pathresult of trying to move away from a point
+     * Update invterval of the AI
      */
-    private PathResult moveAwayPath;
+    private static int UPDATE_INTERVAL = 40;
+
+    /**
+     * Ticktimer for the update rate
+     */
+    int tickTimer = 0;
+
+    /**
+     * Counter for distance/time stuck.
+     */
+    private int totalStuckTime = 0;
+
+    /**
+     * Whether the entity had a path last update
+     */
+    boolean hadPath = false;
 
     /**
      * Constructor for AI
-     *  @param creatureIn the creature that the AI applies to
+     *
+     * @param creatureIn the creature that the AI applies to
      * @param speedIn    The speed at which the Entity walks
      */
     public EntityAIWalkToRandomHuts(final AbstractEntityMinecoloniesMob creatureIn, final double speedIn)
@@ -100,30 +115,44 @@ public class EntityAIWalkToRandomHuts extends Goal
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
-        lastPos = entity.getPosition();
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
     public boolean shouldExecute()
     {
-        if (this.targetBlock == null)
-        {
-            this.targetBlock = getRandomBuilding();
-        }
-
-        return this.targetBlock != null;
+        return this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null;
     }
 
     /**
-     * Returns whether an in-progress Goal should continue executing
-     *
-     * @return Boolean value of whether or not to continue executing
+     * Keep ticking a continuous task that has already been started
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public void tick()
     {
-        return !this.entity.getNavigator().noPath() && this.entity.isAlive();
+        if (++tickTimer < UPDATE_INTERVAL)
+        {
+            return;
+        }
+        tickTimer = 0;
+
+        if (this.isEntityAtSiteWithMove(targetBlock, 2))
+        {
+            targetBlock = getRandomBuilding();
+            resetStuckCounters();
+        }
+    }
+
+    /**
+     * Resets stuck counters
+     */
+    private void resetStuckCounters()
+    {
+        passedTicks = 0;
+        stuckTime = 0;
+        lastIndex = -1;
+        entity.setStuckCounter(0);
+        totalStuckTime = 0;
     }
 
     /**
@@ -132,18 +161,18 @@ public class EntityAIWalkToRandomHuts extends Goal
     @Override
     public void startExecuting()
     {
-        if (targetBlock != null)
-        {
-            if (this.isEntityAtSiteWithMove(targetBlock, 2))
-            {
-                targetBlock = getRandomBuilding();
-            }
-        }
-        else
-        {
-            targetBlock = getRandomBuilding();
-        }
-        lastPos = entity.getPosition();
+        proxy = new GeneralEntityWalkToProxy(entity);
+        targetBlock = getRandomBuilding();
+        hadPath = false;
+        resetStuckCounters();
+    }
+
+    @Override
+    public void resetTask()
+    {
+        targetBlock = getRandomBuilding();
+        hadPath = false;
+        resetStuckCounters();
     }
 
     /**
@@ -160,196 +189,233 @@ public class EntityAIWalkToRandomHuts extends Goal
             return true;
         }
 
-        if (handleProxyWhileMoving())
+        if (proxy.walkToBlock(site, range, true))
         {
-            return proxy.walkToBlock(site, range, true);
-        }
-        updateStuckTimers();
-
-        lastPos = entity.getPosition();
-
-        if (resetStuckTimers())
-        {
+            // true if we're at the site.
             return true;
         }
 
-        if (stuckTime > 2)
+        if (entity.getNavigator().getPath() == null || entity.getNavigator().getPath().isFinished())
         {
-            return handleEntityBeingStuck();
-        }
+            // With no path reset the last path index point to -1
+            lastIndex = -1;
 
-        return proxy.walkToBlock(site, range, true);
-    }
-
-    private boolean handleProxyWhileMoving()
-    {
-        passedTicks++;
-        if (proxy == null)
-        {
-            proxy = new GeneralEntityWalkToProxy(entity);
-        }
-
-        if (passedTicks % TICKS_SECOND != 0)
-        {
-            return true;
-        }
-        passedTicks = 0;
-        return false;
-    }
-
-    private void updateStuckTimers()
-    {
-        if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1).expand(-1, -1, -1)
-              .intersects(new AxisAlignedBB(lastPos)))
-        {
-            final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
-            final VoxelShape collisionBox = world.getBlockState(entity.getPosition()).getCollisionShape(world, entity.getPosition());
-            if (!world.getBlockState(front).getMaterial().isSolid()
-                  || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
-                  || (!collisionBox.isEmpty() && collisionBox.getBoundingBox().maxY > 1.0))
+            if (!hadPath)
             {
+                // Stuck when we have no path and had no path last update before(10 ticks)
                 stuckTime++;
-            }
-            else
-            {
-                notStuckTime++;
             }
         }
         else
         {
-            stuckTime = 0;
-            notStuckTime++;
+            if (entity.getNavigator().getPath().getCurrentPathIndex() == lastIndex)
+            {
+                // Stuck when we have a path, but are not progressing on it
+                stuckTime++;
+
+                if (totalStuckTime > 0 && trySkipAheadOnPath())
+                {
+                    resetStuckCounters();
+                }
+            }
+            else if (entity.getNavigator().getPath().getCurrentPathIndex() > 5)
+            {
+                // Not stuck when progressing on a slightly longer path(no short unstuck-path)
+                resetStuckCounters();
+            }
+            lastIndex = entity.getNavigator().getPath().getCurrentPathIndex();
         }
+
+        hadPath = entity.getNavigator().getPath() != null && !entity.getNavigator().getPath().isFinished();
+
+        // Stuck timout
+        passedTicks += UPDATE_INTERVAL;
+        final long targetDist = BlockPosUtil.getDistance2D(entity.getPosition(), targetBlock);
+        if (entity.getStuckCounter() >= 5 || targetDist * SECONDS_A_MINUTE < passedTicks)
+        {
+            if (handleTotalStuck(targetDist))
+            {
+                resetStuckCounters();
+                targetBlock = getRandomBuilding();
+                return false;
+            }
+        }
+
+        if (stuckTime > 5)
+        {
+            handleEntityBeingStuck();
+        }
+
+        return false;
     }
 
-    private boolean resetStuckTimers()
+    /**
+     * Handles beeing completly stuck, teleports the entity a little.
+     */
+    private boolean handleTotalStuck(final long targetDist)
     {
-        if (notStuckTime > 1)
+        // Try reseting the target first
+        totalStuckTime++;
+
+        if (trySkipAheadOnPath())
         {
-            entity.setStuckCounter(0);
-            entity.setLadderCounter(0);
-            notStuckTime = 0;
-            stuckTime = 0;
             return true;
+        }
+
+        if (totalStuckTime == 1)
+        {
+            passedTicks -= UPDATE_INTERVAL * 2;
+            entity.setStuckCounter(entity.getStuckCounter() - 2);
+            targetBlock = entity.getColony().getRaiderManager().getRandomBuilding();
+            return false;
+        }
+
+        if (targetDist > MIN_TP_DIST)
+        {
+            final BlockPos tpPos = BlockPosUtil.getFloor(entity.getPosition().offset(BlockPosUtil.getXZFacing(entity.getPosition(), targetBlock), 5), world);
+            entity.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Tries to skip ahead on an existing path.
+     */
+    private boolean trySkipAheadOnPath()
+    {
+        final Path path = entity.getNavigator().getPath();
+        if (path != null && !path.isFinished())
+        {
+            if (path.getCurrentPathLength() >= 5)
+            {
+                final PathPoint pathPoint = path.getPathPointFromIndex(4);
+                entity.setPositionAndUpdate(pathPoint.x, pathPoint.y, pathPoint.z);
+                return true;
+            }
         }
         return false;
     }
 
+    /**
+     * Handles the entity beeing stuck, resets the path, places temporary blocks and ladders/block breaks if needed.
+     *
+     * @return
+     */
     private boolean handleEntityBeingStuck()
     {
         entity.getNavigator().clearPath();
+        stuckTime = 0;
         entity.setStuckCounter(entity.getStuckCounter() + 1);
         final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
-        if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA)
+        // Places temporary leaf block to walk on
+        if ((world.isAirBlock(front) && world.isAirBlock(front.down(3))) || world.getBlockState(front).getBlock() == Blocks.LAVA
+              || world.getBlockState(front).getFluidState().getFluid() == Fluids.FLOWING_LAVA)
         {
-            notStuckTime = 0;
-            world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
+            world.setBlockState(front, Blocks.ACACIA_LEAVES.getDefaultState());
         }
 
-        if (entity.getStuckCounter() > 1 && MineColonies.getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+        // try to path away from the stuck pos every 50 ticks when stuck
+        if (entity.getStuckCounter() % 5 == 0)
         {
-            handleBarbarianMovementSpecials();
+            entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
         }
         else
         {
-            if (moveAwayPath == null || !moveAwayPath.isInProgress())
-            {
-                moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
-            }
+            handleBarbarianMovementSpecials();
         }
         return false;
     }
 
+    /**
+     * Places ladders and breaks blocks in a random direction
+     */
     private void handleBarbarianMovementSpecials()
     {
         Collections.shuffle(directions);
-
-        entity.setLadderCounter(entity.getLadderCounter() + 1);
-        notStuckTime = 0;
-        final BlockState ladderHere = world.getBlockState(entity.getPosition());
-        final BlockState ladderUp = world.getBlockState(entity.getPosition().up());
-        if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
+        // Switch between placing ladders and block breaks, every 5 times
+        if (entity.getStuckCounter() % 10 < 5)
         {
-            handleBarbarianLadderPlacement(ladderHere, ladderUp);
+            handleBarbarianLadderPlacement();
         }
-        else
+        else if (MineColonies.getConfig().getCommon().doBarbariansBreakThroughWalls.get())
         {
             handleBarbarianBlockBreakment();
         }
     }
 
-    private void handleBarbarianLadderPlacement(final BlockState ladderHere, final BlockState ladderUp)
+    /**
+     * Handles the ladder placement, if the upper or lower ladder exists it places one with the same orientation, else it uses a random one.
+     */
+    private void handleBarbarianLadderPlacement()
     {
-        if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
+        final BlockState ladderHere = world.getBlockState(entity.getPosition());
+        final BlockState ladderUp = world.getBlockState(entity.getPosition().up());
+
+        if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
         {
-            world.setBlockState(entity.getPosition().up(), ladderHere);
+            final Direction facingHere = ladderHere.get(LadderBlock.FACING);
+            final BlockState upState = world.getBlockState(entity.getPosition().up().offset(facingHere));
+
+            if (upState.getMaterial().isSolid() && Blocks.LADDER.isValidPosition(ladderHere, world, entity.getPosition().up()))
+            {
+                world.setBlockState(entity.getPosition().up(), ladderHere);
+            }
         }
-        else if (ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
+        else if (ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
         {
-            world.setBlockState(entity.getPosition(), ladderUp);
+            final Direction facingUp = ladderUp.get(LadderBlock.FACING);
+            final BlockState downState = world.getBlockState(entity.getPosition().offset(facingUp.getOpposite()));
+
+            if (downState.getMaterial().isSolid() && Blocks.LADDER.isValidPosition(ladderUp, world, entity.getPosition()))
+            {
+                world.setBlockState(entity.getPosition(), ladderUp);
+            }
         }
         else if (ladderUp.getBlock() != Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
         {
-            handleNextLadderPlacement(ladderHere);
+            handleNextLadderPlacement();
         }
     }
 
+    /**
+     * Handles the brock breaking, only collideable - nonsolid blocks are broken. Doors only at hard difficulty
+     */
     private void handleBarbarianBlockBreakment()
     {
         for (final Direction dir : directions)
         {
-            final BlockState state = world.getBlockState(entity.getPosition().offset(dir));
-            if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof DoorBlock)
+            final BlockPos posToDestroy = entity.getPosition().up(random.nextInt(3)).offset(dir);
+            final BlockState state = world.getBlockState(posToDestroy);
+            if (state.getBlock() != Blocks.AIR && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
+                                                                                        && world.getDifficulty() == Difficulty.HARD))
             {
-                final BlockPos posToDestroy;
-                posToDestroy = breakRandomBlockIn(dir);
                 world.destroyBlock(posToDestroy, true);
-                break;
             }
         }
-    }
-
-    private void handleNextLadderPlacement(final BlockState ladderHere)
-    {
-        for (final Direction dir : directions)
-        {
-            if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
-            {
-                if (random.nextBoolean())
-                {
-                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite()));
-                }
-                else if (!ladderHere.getMaterial().isLiquid())
-                {
-                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite()));
-                }
-                break;
-            }
-        }
-    }
-
-    @NotNull
-    private BlockPos breakRandomBlockIn(final Direction dir)
-    {
-        final BlockPos posToDestroy;
-        switch (random.nextInt(4))
-        {
-            case 1:
-                posToDestroy = entity.getPosition().offset(dir).up();
-                break;
-            case 2:
-                posToDestroy = entity.getPosition().offset(dir);
-                break;
-            default:
-                posToDestroy = entity.getPosition().up(2);
-                break;
-        }
-        return posToDestroy;
     }
 
     /**
-     * gets a random building from the nearby colony
+     * Places the next ladder in a random direction.
+     */
+    private void handleNextLadderPlacement()
+    {
+        for (final Direction dir : directions)
+        {
+            final BlockState toPlace = Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite());
+            final BlockState state = world.getBlockState(entity.getPosition().up().offset(dir));
+            if (state.getMaterial().isSolid() && Blocks.LADDER.isValidPosition(toPlace, world, entity.getPosition().offset(dir)))
+            {
+                world.setBlockState(entity.getPosition().up(), toPlace);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Gets a random building from the raidmanager.
      *
      * @return A random building
      */
@@ -360,18 +426,6 @@ public class EntityAIWalkToRandomHuts extends Goal
             return null;
         }
 
-        final Collection<IBuilding> buildingList = entity.getColony().getBuildingManager().getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
-        if (buildingArray.length != 0)
-        {
-            final int rand = random.nextInt(buildingArray.length);
-            final IBuilding building = (IBuilding) buildingArray[rand];
-
-            return building.getPosition();
-        }
-        else
-        {
-            return null;
-        }
+        return entity.getColony().getRaiderManager().getRandomBuilding();
     }
 }

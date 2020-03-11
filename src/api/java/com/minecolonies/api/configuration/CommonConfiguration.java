@@ -50,6 +50,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
+    public final ForgeConfigSpec.IntValue diseaseModifier;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -89,22 +90,22 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue doBarbariansSpawn;
-    public final ForgeConfigSpec.IntValue barbarianHordeDifficulty;
-    public final ForgeConfigSpec.IntValue spawnBarbarianSize;
-    public final ForgeConfigSpec.IntValue maxBarbarianSize;
+    public final ForgeConfigSpec.IntValue     barbarianHordeDifficulty;
+    public final ForgeConfigSpec.IntValue     spawnBarbarianSize;
+    public final ForgeConfigSpec.IntValue     maxBarbarianSize;
     public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls;
-    public final ForgeConfigSpec.IntValue averageNumberOfNightsBetweenRaids;
-    public final ForgeConfigSpec.IntValue minimumNumberOfNightsBetweenRaids;
-    // TODO: change to true over time
+    public final ForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
+    public final ForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
+    public final ForgeConfigSpec.BooleanValue shouldRaidersBreakDoors;
     public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
     public final ForgeConfigSpec.BooleanValue citizenCallForHelp;
     public final ForgeConfigSpec.BooleanValue rangerEnchants;
-    public final ForgeConfigSpec.DoubleValue rangerDamageMult;
-    public final ForgeConfigSpec.DoubleValue knightDamageMult;
-    public final ForgeConfigSpec.DoubleValue guardHealthMult;
+    public final ForgeConfigSpec.DoubleValue  rangerDamageMult;
+    public final ForgeConfigSpec.DoubleValue  knightDamageMult;
+    public final ForgeConfigSpec.DoubleValue  guardHealthMult;
     public final ForgeConfigSpec.BooleanValue pvp_mode;
-    public final ForgeConfigSpec.IntValue daysUntilPirateshipsDespawn;
-    public final ForgeConfigSpec.IntValue maxYForBarbarians;
+    public final ForgeConfigSpec.IntValue     daysUntilPirateshipsDespawn;
+    public final ForgeConfigSpec.IntValue     maxYForBarbarians;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
@@ -132,9 +133,10 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
-    public final ForgeConfigSpec.DoubleValue enchanterExperienceMultiplier;
+    public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
+    public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
 
-    public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -261,6 +263,7 @@ public class CommonConfiguration extends AbstractConfiguration
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
+        diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
 
         swapToCategory(builder, "commands");
 
@@ -280,9 +283,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
 
         swapToCategory(builder, "claims");
-
-        /*workingRangeTownHall = defineInteger(builder, "workingrangetownhall", 0, 0, 0);*/
-
+        
         workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 8, 1, 50);
         minTownHallPadding = defineInteger(builder, "mintownhallpadding", 3, 1, 200);
         townHallPadding = defineInteger(builder, "townhallpadding", 20, 1, 20000);
@@ -303,7 +304,8 @@ public class CommonConfiguration extends AbstractConfiguration
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 3, 1, 10);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 1, 1, 30);
-        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", false);
+        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
+        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
         rangerEnchants = defineBoolean(builder, "rangerenchants", true);
         rangerDamageMult = defineDouble(builder,  "rangerdamagemult", 1.0, 0.1, 5.0);
@@ -646,6 +648,11 @@ public class CommonConfiguration extends AbstractConfiguration
 
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
 
+        diseases = defineList(builder, "diseases",
+          Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
+                        "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
+                        "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
+          s -> s instanceof String);
 
         swapToCategory(builder, "pathfinding");
 
@@ -666,7 +673,6 @@ public class CommonConfiguration extends AbstractConfiguration
         canPlayerUseResetCommand = defineBoolean(builder,  "canplayeruseresetcommand", false);
 
         swapToCategory(builder, "research");
-
 
         tactictraining = defineList(builder, "tactictraining",
           Collections.singletonList("minecraft:iron_block*3"),

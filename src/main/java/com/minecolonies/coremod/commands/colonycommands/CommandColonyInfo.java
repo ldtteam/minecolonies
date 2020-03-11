@@ -65,7 +65,7 @@ public class CommandColonyInfo implements IMCCommand
         sender.sendMessage(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
         sender.sendMessage(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()));
 
-        if (!colony.isCanHaveBarbEvents())
+        if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
             sender.sendMessage(new StringTextComponent(CANNOT_BE_RAIDED));
         }

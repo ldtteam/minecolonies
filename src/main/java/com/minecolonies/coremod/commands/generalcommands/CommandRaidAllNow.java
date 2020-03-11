@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands.generalcommands;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -24,7 +23,7 @@ public class CommandRaidAllNow implements IMCOPCommand
 
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+            colony.getRaiderManager().raiderEvent();
         }
 
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.raidtonight");

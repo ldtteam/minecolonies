@@ -377,7 +377,7 @@ public class BuildingManager implements IBuildingManager
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
                         colony.getID(),
                         tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()));
+                        tileEntity.getPosition()), new Exception());
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
@@ -469,6 +469,26 @@ public class BuildingManager implements IBuildingManager
             }
         }
         return goodCook;
+    }
+
+    @Override
+    public BlockPos getBestHospital(final AbstractEntityCitizen citizen)
+    {
+        double distance = Double.MAX_VALUE;
+        BlockPos goodHospital = null;
+        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingHospital && building.getBuildingLevel() > 0)
+            {
+                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                if (localDistance < distance)
+                {
+                    distance = localDistance;
+                    goodHospital = building.getPosition();
+                }
+            }
+        }
+        return goodHospital;
     }
 
     @Override

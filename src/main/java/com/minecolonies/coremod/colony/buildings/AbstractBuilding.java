@@ -275,27 +275,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
         if (!canBeBuiltByBuilder(level) && !workOrderBuildBuilding.canBeResolved(colony, level))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
             return;
         }
 
         if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ZERO))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuildersTooFar");
             return;
         }
 
         if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuildTooHigh");
             return;
         }
         else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuildTooLow");
             return;
         }
@@ -309,7 +309,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
              }
              else
              {
-                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
+                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                    "entity.builder.messageBuilderNecessary", Integer.toString(level));
                  return;
              }
@@ -585,7 +585,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
             else
             {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
                 final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING);

@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
@@ -37,7 +37,7 @@ public class BuyCitizenMessage implements IMessage
     private int buyItemIndex;
 
     /**
-     * The dimension of the 
+     * The dimension of the
      */
     private int dimension;
 
@@ -124,7 +124,7 @@ public class BuyCitizenMessage implements IMessage
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
 
-        if (colony == null)
+        if (colony == null || !colony.getPermissions().hasPermission(ctxIn.getSender(), Action.MANAGE_HUTS))
         {
             return;
         }
@@ -141,7 +141,7 @@ public class BuyCitizenMessage implements IMessage
             final IItemHandler playerInv = new InvWrapper(player.inventory);
 
             // Remove items from player
-            if (InventoryUtils.removeStackFromItemHandler(playerInv, toRemove))
+            if (InventoryUtils.tryRemoveStackFromItemHandler(playerInv, toRemove))
             {
                 // Create new citizen
                 colony.increaseBoughtCitizenCost();
@@ -161,7 +161,7 @@ public class BuyCitizenMessage implements IMessage
                 data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
                 data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.progress.hireCitizen");
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.progress.hireCitizen");
                 colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }
         }

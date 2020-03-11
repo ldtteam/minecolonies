@@ -14,7 +14,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -52,7 +51,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     /**
      * The priority assigned with every main AI job.
      */
-    private static final int TASK_PRIORITY = 3;
+    private static final int TASK_PRIORITY = 4;
 
     /**
      * Citizen connected with the job.
@@ -194,10 +193,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
         if (tempAI == null)
         {
-            Log.getLogger().error("Failed to create AI for citizen!");
+            Log.getLogger().error("Failed to create AI for citizen!", new Exception());
             if (citizen == null)
             {
-                Log.getLogger().error("CitizenData is null for job: " + nameTag + " jobClass: " + this.getClass());
+                Log.getLogger().error("CitizenData is null for job: " + nameTag + " jobClass: " + this.getClass(), new Exception());
                 return;
             }
             Log.getLogger()
@@ -421,11 +420,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         return (workerAI.get() != null && workerAI.get().getState() == AIWorkerState.IDLE);
     }
 
-    /**
-     * Reset the AI after eating at a restaurant
-     */
     @Override
-    public void resetAIAfterEating()
+    public void resetAI()
     {
         if (workerAI.get() != null)
         {
@@ -437,5 +433,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public boolean allowsAvoidance()
     {
         return true;
+    }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 1;
     }
 }

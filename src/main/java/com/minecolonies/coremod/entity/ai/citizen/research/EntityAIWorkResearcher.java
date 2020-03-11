@@ -26,7 +26,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     /**
      * Delay for each subject study.
      */
-    private static final int STUDY_DELAY = 20 * 60;
+    private static final int STUDY_DELAY = 60;
 
     /**
      * The current pos to study at.
@@ -78,7 +78,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
             return getState();
         }
 
-        worker.decreaseSaturationForAction();
+        worker.decreaseSaturationForContinuousAction();
 
         studyPos = null;
         setDelay(STUDY_DELAY);

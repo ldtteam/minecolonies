@@ -32,6 +32,7 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SilverfishBlock;
+import net.minecraft.block.SpawnerBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -44,6 +45,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -75,7 +77,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
+import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.commands.colonycommands.CommandDeleteColony.COLONY_DELETE_COMMAND;
@@ -340,6 +344,28 @@ public class EventHandler
     }
 
     /**
+     * Event called on player block breaks.
+     *
+     * @param event
+     */
+    @SubscribeEvent
+    public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
+    {
+        if (event.getState().getBlock() instanceof SpawnerBlock)
+        {
+            final MobSpawnerTileEntity spawner = (MobSpawnerTileEntity) event.getWorld().getTileEntity(event.getPos());
+
+            final IColony colony = IColonyManager.getInstance()
+                                     .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
+                                       event.getWorld().getDimension().getType().getId());
+            if (colony != null)
+            {
+                colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+            }
+        }
+    }
+
+    /**
      * Event when a player right clicks a block, or right clicks with an item. Event gets cancelled when player has no permission. Event gets cancelled when the player has no
      * permission to place a hut, and tried it.
      *
@@ -414,7 +440,7 @@ public class EventHandler
                     final ItemStack stack = new ItemStack(block);
                     if (!stack.isEmpty() && !world.isRemote)
                     {
-                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState(), event.getPos().up(), stack), (ServerPlayerEntity) player);
+                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING, event.getPlayer().getHorizontalFacing()), event.getPos().up(), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }

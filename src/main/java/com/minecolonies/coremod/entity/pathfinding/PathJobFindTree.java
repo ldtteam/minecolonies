@@ -40,15 +40,6 @@ public class PathJobFindTree extends AbstractPathJob
      */
     private final IColony colony;
 
-    private BlockPos startRestriction = null;
-    private BlockPos endRestriction = null;
-
-    public void setAreaRestriction(final BlockPos start, final BlockPos end)
-    {
-        this.startRestriction = start;
-        this.endRestriction = end;
-    }
-
     /**
      * AbstractPathJob constructor.
      *

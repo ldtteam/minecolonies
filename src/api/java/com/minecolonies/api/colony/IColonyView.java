@@ -10,9 +10,9 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -381,19 +381,10 @@ public interface IColonyView extends IColony
     IRequestManager getRequestManager();
 
     @Override
-    boolean hasWillRaidTonight();
-
-    @Override
     void markDirty();
 
     @Override
     boolean canBeAutoDeleted();
-
-    @Override
-    boolean isCanHaveBarbEvents();
-
-    @Override
-    boolean isHasRaidBeenCalculated();
 
     @Nullable
     @Override
@@ -463,4 +454,6 @@ public interface IColonyView extends IColony
      * @return the list.
      */
     List<CompactColonyReference> getFeuds();
+
+    boolean areSpiesEnabled();
 }
