@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
@@ -85,14 +84,14 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation)
     {
         if (pos == null && Settings.instance.getActiveStructure() == null)
         {
             return;
         }
 
-        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation, mode);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation);
         window.open();
     }
 
