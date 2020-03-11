@@ -86,15 +86,22 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     {
         final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
-        Network.getNetwork().sendToServer(new BuildToolPasteMessage(
-          name.toString(),
-          name.toString(),
-          Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
-          name.isHut(),
-          Settings.instance.getMirror(),
-          complete, Settings.instance.getFreeMode(),
-          state));
+        if ( name.isHut() || Settings.instance.getFreeMode() != null )
+        {
+            Network.getNetwork().sendToServer(new BuildToolPasteMessage(
+              name.toString(),
+              name.toString(),
+              Settings.instance.getPosition(),
+              Settings.instance.getRotation(),
+              name.isHut(),
+              Settings.instance.getMirror(),
+              complete, Settings.instance.getFreeMode(),
+              state));
+        }
+        else
+        {
+            super.paste(name, complete);
+        }
     }
 
     @Override

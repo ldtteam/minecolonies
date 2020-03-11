@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "credit": "Made with Blockbench",
   "textures": {
     "0": "minecraft:block/podzol_top",

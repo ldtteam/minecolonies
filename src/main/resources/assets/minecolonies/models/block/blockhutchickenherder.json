@@ -1,4 +1,5 @@
 {
+  "ambientocclusion": false,
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
     "5": "minecolonies:blocks/chicken",

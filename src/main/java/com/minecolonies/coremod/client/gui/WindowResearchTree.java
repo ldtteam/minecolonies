@@ -208,7 +208,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
                 buttonImage.setID(research.getId());
 
-                if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+                if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() || !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)) || research.getDepth() > building.getBuildingLevel())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                 }

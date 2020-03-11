@@ -6,6 +6,7 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -24,16 +25,14 @@ import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -198,14 +197,10 @@ public class BuildToolPasteMessage implements IMessage
         {
             if (isHut)
             {
-                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state);
-            }
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state , complete);
+                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
+                  pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
-            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-              pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
-
-            if (isHut)
-            {
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
@@ -213,6 +208,11 @@ public class BuildToolPasteMessage implements IMessage
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorldFromEntity(player));
                 }
+            }
+            else
+            {
+                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
+                  pos, Rotation.values()[rotation], mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
         else if(freeMode !=  null )
@@ -257,14 +257,15 @@ public class BuildToolPasteMessage implements IMessage
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      * @param state         The state of the hut.
+     * @param complete      If complete or not.
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final PlayerEntity player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
-        if (tempColony != null
+        if (!complete && tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
               && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))
         {
@@ -277,9 +278,12 @@ public class BuildToolPasteMessage implements IMessage
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
-            ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
-            setupBuilding(world, player, sn, rotation, buildPos, mirror);
+            world.setBlockState(buildPos, state);
+            if (!complete)
+            {
+                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                setupBuilding(world, player, sn, rotation, buildPos, mirror);
+            }
         }
     }
 
