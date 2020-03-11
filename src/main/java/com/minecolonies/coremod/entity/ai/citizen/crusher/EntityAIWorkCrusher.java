@@ -156,6 +156,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
      *
      * @return the next state to go to.
      */
+    @Override
     protected IAIState craft()
     {
         if (currentRecipeStorage == null)

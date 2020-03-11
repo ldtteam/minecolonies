@@ -148,15 +148,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final ItemStack stack)
     {
-        for(final IToken token : recipes)
-        {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && storage.getPrimaryOutput().isItemEqual(stack))
-            {
-                return storage;
-            }
-        }
-        return null;
+        return getFirstRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(stack));
     }
 
     /**
@@ -200,19 +192,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count)
     {
-        for(final IToken token : recipes)
-        {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
-                {
-                    return storage;
-                }
-            }
-        }
-        return null;
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count);
     }
 
     @Override
