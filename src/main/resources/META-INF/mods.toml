@@ -54,6 +54,6 @@ MineColonies is a Colony/Town Simulator that adds many structures and NPC worker
 [[dependencies.minecolonies]]
     modId="structurize"
     mandatory=true
-    versionRange="[0.10.264-ALPHA,)"
+    versionRange="[0.10.273-ALPHA,)"
     ordering="AFTER"
     side="BOTH"

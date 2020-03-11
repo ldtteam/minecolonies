@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -33,7 +32,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * The name of the structure
      */
-    private static final String SUPPLY_CAMP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplycamp";
+    private static final String SUPPLY_CAMP_STRUCTURE_NAME = "supplycamp";
 
     /**
      * Offset south/west of the supply camp.
@@ -97,7 +96,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0, null);
+            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0);
             return;
         }
 
@@ -122,7 +121,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations, WindowBuildTool.FreeMode.SUPPLYCAMP);
+        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations);
     }
 
     /**
