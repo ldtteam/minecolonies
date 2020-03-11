@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -31,7 +30,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * StructureIterator name and location.
      */
-    private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplyship";
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "supplyship";
 
     /**
      * Offset south/west of the supply chest.
@@ -99,7 +98,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0, null);
+            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0);
             return;
         }
 
@@ -124,7 +123,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_SHIP_STRUCTURE_NAME, rotations, WindowBuildTool.FreeMode.SUPPLYSHIP);
+        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_SHIP_STRUCTURE_NAME, rotations);
     }
 
     /**

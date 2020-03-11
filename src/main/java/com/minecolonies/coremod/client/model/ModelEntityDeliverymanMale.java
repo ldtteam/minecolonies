@@ -22,12 +22,16 @@ public class ModelEntityDeliverymanMale extends CitizenModel<AbstractEntityCitiz
         bipedBody.setRotationPoint(0F, 1F, -2F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(0F, 0F, -2F, 4, 12, 4);
+        bipedLeftArm.addBox(-1F, -0.5F, -4.9F, 4, 12, 4, 0F);
         bipedLeftArm.setRotationPoint(4F, 2F, -4F);
+        bipedLeftArm.setTextureSize(256, 128);
+        bipedLeftArm.mirror = true;
 
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-4F, 0F, -2F, 4, 12, 4);
+        bipedRightArm.addBox(-3F, -0.5F, -4.9F, 4, 12, 4, 0F);
         bipedRightArm.setRotationPoint(-4F, 2F, -4F);
+        bipedRightArm.setTextureSize(256, 128);
+        bipedRightArm.mirror = true;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.BlockState;
@@ -58,9 +57,8 @@ public interface IProxy
      * @param pos the position.
      * @param structureName the structure name.
      * @param rotation the rotation.
-     * @param mode the mode.
      */
-    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode);
+    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation);
 
     /**
      * Opens a clipboard window.
