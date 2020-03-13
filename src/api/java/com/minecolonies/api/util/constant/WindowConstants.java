@@ -33,7 +33,7 @@ public final class WindowConstants
     /**
      * Id of the info button in the GUI.
      */
-    public static final String BUTTON_INFO = "townhall_info_page";
+    public static final String BUTTON_INFO = "info";
 
     /**
      * Id of the info button in the GUI.
