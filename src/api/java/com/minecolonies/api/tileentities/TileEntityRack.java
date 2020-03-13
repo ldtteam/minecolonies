@@ -340,15 +340,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             size = compound.getInt(TAG_SIZE);
             if (size > 0)
             {
-                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE)
-                {
-                    @Override
-                    protected void onContentsChanged(final int slot)
-                    {
-                        updateItemStorage();
-                        super.onContentsChanged(slot);
-                    }
-                };
+                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
             }
         }
 
