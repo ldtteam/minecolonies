@@ -1625,7 +1625,7 @@ public class InventoryUtils
             return false;
         }
 
-        sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
+        sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
