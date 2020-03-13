@@ -131,7 +131,7 @@ public class BuyCitizenMessage implements IMessage
         final PlayerEntity player = ctxIn.getSender();
 
         // Check if we spawn a new citizen
-        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
         {
             // Get item chosen by player
             final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(buyItemIndex);
