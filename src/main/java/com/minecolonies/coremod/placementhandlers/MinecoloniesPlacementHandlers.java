@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
@@ -154,6 +155,8 @@ public final class MinecoloniesPlacementHandlers
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos);
                 }
+                final BlockState newState =  BlockMinecoloniesRack.getPlacementState(blockState, world.getTileEntity(pos), pos);
+                world.setBlockState(pos, newState);
             }
             return blockState;
         }
