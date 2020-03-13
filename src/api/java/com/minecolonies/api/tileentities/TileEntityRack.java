@@ -244,50 +244,62 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     protected void updateBlockState()
     {
-        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack && (main || single))
+        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack)
         {
-            final BlockState typeHere;
-            final BlockState typeNeighbor;
-            if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
+            if (!main && !single && !getOtherChest().isMain())
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
-                {
+                main = true;
+            }
 
-                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                     .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+            if ((main || single))
+            {
+                final BlockState typeHere;
+                final BlockState typeNeighbor;
+                if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
+                {
+                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    {
+
+                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    }
+                    else
+                    {
+                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                        typeNeighbor = null;
+                    }
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
-                    typeNeighbor = null;
+                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    {
+                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    }
+                    else
+                    {
+                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                        typeNeighbor = null;
+                    }
+                }
+
+                // This here avoids that two racks can be main at the same time.
+                if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
+                {
+                    getOtherChest().setMain(false);
+                }
+
+                world.setBlockState(pos, typeHere);
+                if (typeNeighbor != null)
+                {
+                    world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
                 }
             }
             else
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
-                {
-                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                     .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
-                }
-                else
-                {
-                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
-                    typeNeighbor = null;
-                }
-            }
-
-            // This here avoids that two racks can be main at the same time.
-            if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
-            {
-                getOtherChest().setMain(false);
-            }
-
-            world.setBlockState(pos, typeHere);
-            if (typeNeighbor != null)
-            {
-                world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                getOtherChest().updateBlockState();
             }
         }
     }
