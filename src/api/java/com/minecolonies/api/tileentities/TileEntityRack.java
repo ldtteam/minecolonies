@@ -246,7 +246,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack)
         {
-            if (!main && !single && !getOtherChest().isMain())
+            if (!main && !single && getOtherChest() != null && !getOtherChest().isMain())
             {
                 main = true;
             }
