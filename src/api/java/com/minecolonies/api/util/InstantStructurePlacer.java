@@ -183,14 +183,10 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             {
                 try
                 {
-                    final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, centerPos.add(structure.getOffset()), structure.getSettings());
-                    if (result instanceof BlockState)
+                    handlers.handle(world, pos, localState, tileEntityData, complete, centerPos.add(structure.getOffset()), structure.getSettings());
+                    if (building != null)
                     {
-                        final BlockState blockState = (BlockState) result;
-                        if (building != null)
-                        {
-                            building.registerBlockPosition(blockState, pos, world);
-                        }
+                        building.registerBlockPosition(localState, pos, world);
                     }
                 }
                 catch (final ClassCastException e)
