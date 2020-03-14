@@ -100,7 +100,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     @Override
     public boolean isValid(final IColony colony)
     {
-        return colony.getBuildingManager().getBuilding(minerBuilding) != null;
+        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**
