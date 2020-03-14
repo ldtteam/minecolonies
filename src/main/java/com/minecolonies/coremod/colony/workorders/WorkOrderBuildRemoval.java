@@ -38,6 +38,6 @@ public class WorkOrderBuildRemoval extends WorkOrderBuild
     @Override
     public boolean isValid(@NotNull final IColony colony)
     {
-        return true;
+        return super.isValid(colony);
     }
 }
