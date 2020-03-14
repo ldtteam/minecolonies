@@ -31,6 +31,7 @@ public final class NbtTagConstants
     public static final String TAG_PRIO_MODE              = "prioMode";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";
+    public static final String TAG_COLONY_MANAGER         = "colonymanager";
     public static final String TAG_UUID                   = "uuid";
     public static final String TAG_STATISTICS             = "statistics";
     public static final String TAG_MINER_STATISTICS       = "minerStatistics";
