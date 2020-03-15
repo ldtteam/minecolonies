@@ -670,9 +670,10 @@
   "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "Keep colony loaded",
 
   "item.supplycampdeployer.invalid": "Requiring a flat ground of at least 16*17 without grass or flowers on them.",
-  "item.supplycampdeployer.invalid.solid_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.",
-  "item.supplycampdeployer.invalid.air_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be air: %s.",
-  "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your supply camp near an existing colony.",
+  "item.supplycampdeployer.invalid.water_block_needed": "Placing a supply ship requires water under the ship. These blocks must be water: %s.",
+  "item.supplycampdeployer.invalid.solid_block_needed": "Placing a supply camp requires flat solid ground. These blocks must be solid: %s.",
+  "item.supplycampdeployer.invalid.air_block_needed": "Placing a supply camp or ship requires air above the ground or sea level. These blocks must be air: %s.",
+  "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your supply camp or ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "SupplyShip Chest",
   "item.minecolonies.supplycampdeployer": "SupplyCamp Chest",
   "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall happiness:",
