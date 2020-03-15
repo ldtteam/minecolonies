@@ -9,8 +9,6 @@ public final class NbtTagConstants
     public static final String TAG_NAME                   = "name";
     public static final String TAG_DIMENSION              = "dimension";
     public static final String TAG_CENTER                 = "center";
-    public static final String TAG_MAX_CITIZENS           = "maxCitizens";
-    public static final String TAG_POTENTIAL_MAX_CITIZENS = "potentialMaxCitizens";
     public static final String TAG_BUILDINGS              = "buildings";
     public static final String TAG_BUILDING               = "building";
     public static final String TAG_BUILDINGS_CLAIM        = "buildingsClaim";
@@ -33,6 +31,7 @@ public final class NbtTagConstants
     public static final String TAG_PRIO_MODE              = "prioMode";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";
+    public static final String TAG_COLONY_MANAGER         = "colonymanager";
     public static final String TAG_UUID                   = "uuid";
     public static final String TAG_STATISTICS             = "statistics";
     public static final String TAG_MINER_STATISTICS       = "minerStatistics";

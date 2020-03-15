@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANAGER;
 
 /**
  *
@@ -119,11 +121,15 @@ public interface IColonyManagerCapability
      */
     public class Storage implements Capability.IStorage<IColonyManagerCapability>
     {
+
         @Override
         public INBT writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
+            final CompoundNBT managerCompound = new CompoundNBT();
+            IColonyManager.getInstance().write(managerCompound);
+            compound.put(TAG_COLONY_MANAGER, managerCompound);
             return compound;
         }
 
@@ -165,6 +171,11 @@ public interface IColonyManagerCapability
                         }
                         Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
                     }
+                }
+
+                if (compound.keySet().contains(TAG_COLONY_MANAGER))
+                {
+                    IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
                 }
             }
         }
