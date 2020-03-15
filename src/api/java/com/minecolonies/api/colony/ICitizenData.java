@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -60,6 +60,11 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * Initializes a new citizen, when not read from nbt
      */
     void initForNewCitizen();
+
+    /**
+     * Initializes the entities values from citizen data.
+     */
+    void initEntityValues();
 
     /**
      * Sets wether this citizen is female.

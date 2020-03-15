@@ -1599,44 +1599,11 @@ public class InventoryUtils
             return true;
         }
 
-        sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,true);
-
-        if(ItemStackUtils.isEmpty(sourceStack))
+        if (addItemStackToItemHandler(targetHandler, sourceStack))
         {
-            sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-            sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
-            sourceHandler.insertItem(sourceIndex,sourceStack,false);
+            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
             return true;
         }
-
-        boolean success = false;
-        for (int i = 0; i < targetHandler.getSlots(); i++)
-        {
-            sourceStack = targetHandler.insertItem(i, sourceStack, true);
-            if (ItemStackUtils.isEmpty(sourceStack))
-            {
-                success = true;
-                break;
-            }
-        }
-
-        if (!success)
-        {
-            return false;
-        }
-
-        sourceStack = targetHandler.insertItem(sourceIndex,sourceStack,false);
-
-        for (int i = 0; i < targetHandler.getSlots(); i++)
-        {
-            sourceStack = targetHandler.insertItem(i, sourceStack, false);
-            if (ItemStackUtils.isEmpty(sourceStack))
-            {
-                return true;
-            }
-        }
-
-        sourceHandler.insertItem(sourceIndex,sourceStack,false);
         return false;
     }
 

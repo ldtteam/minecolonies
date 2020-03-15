@@ -559,17 +559,8 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @Nullable
     public ICitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-        {
-            final ICitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
-            if (data != null)
-            {
-                citizenData = data;
-            }
-        }
         return citizenData;
     }
 
@@ -1094,7 +1085,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isServerWorld())
         {
-            citizenColonyHandler.updateColonyServer();
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
         }
 
         isDay = compound.getBoolean(TAG_DAY);
@@ -1324,7 +1315,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenData(@Nullable final ICitizenData data)
     {
-        this.citizenData = data;
+        if (data != null)
+        {
+            this.citizenData = data;
+            data.initEntityValues();
+        }
     }
 
     /**
@@ -1438,7 +1433,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
-        citizenColonyHandler.updateColonyServer();
+        citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
 
         if (citizenData != null)
         {
@@ -1619,14 +1614,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         return new ContainerCitizenInventory(id, inv, buffer);
     }
 
+    /**
+     * Removes the entity from world.
+     */
     @Override
     public void remove()
     {
-        if (citizenData != null)
-        {
-            citizenData.setLastPosition(getCurrentPosition());
-            citizenData.setCitizenEntity(null);
-        }
+        citizenColonyHandler.onCitizenRemoved();
         super.remove();
     }
 
