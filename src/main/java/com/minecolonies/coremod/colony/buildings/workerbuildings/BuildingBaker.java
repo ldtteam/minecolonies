@@ -33,8 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
 /**
  * Building for the bakery.
  */
@@ -71,26 +69,20 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     private static final String TAG_FURNACE_POS = "furnacePos";
 
     /**
-     * Tag used to store the recipes positions.
-     */
-    private static final String TAG_RECIPE_POS = "recipePos";
-
-    /**
      * Tag used to store the furnaces map.
      */
     private static final String TAG_FURNACES = "furnaces";
-    /**
-     * Wait this amount of ticks before checking again.
-     */
-    private static final int WAIT_TICKS = 16 * TICKS_SECOND;
+
     /**
      * Always try to keep at least 2 stacks of wheat in the inventory and in the worker chest.
      */
     private static final int WHEAT_TO_KEEP = 128;
+
     /**
      * List of furnaces added to this building.
      */
     private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
+
     /**
      * Map of tasks for the bakery to work on.
      */

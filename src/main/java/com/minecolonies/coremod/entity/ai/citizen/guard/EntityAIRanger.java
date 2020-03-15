@@ -340,6 +340,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 for (int i = 0; i < amountOfArrows; i++)
                 {
                     final ArrowEntity arrow = EntityType.ARROW.create(world);
+                    arrow.setShooter(worker);
                     arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
                     final double xVector = target.posX - worker.getPosX();
                     final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;

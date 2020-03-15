@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
@@ -36,14 +35,12 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_IS_MIRRORED    = "mirrored";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
-    private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
     private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
     protected boolean  isBuildingMirrored;
     protected int      buildingRotation;
     protected String   structureName;
-    protected String   md5;
     protected boolean  cleared;
     protected String   workOrderName;
     protected int      amountOfRes;
@@ -113,22 +110,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-        md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        if (!Structures.hasMD5(structureName))
-        {
-            // If the schematic move we can use the MD5 hash to find it
-            final StructureName newSN = Structures.getStructureNameByMD5(md5);
-            if (newSN == null)
-            {
-                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName, new Exception());
-            }
-            else
-            {
-                Log.getLogger().warn("WorkOrderBuildDecoration.read: replace " + sn + " by " + newSN);
-                structureName = newSN.toString();
-            }
-        }
-
         buildingRotation = compound.getInt(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
@@ -150,10 +131,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             compound.putString(TAG_WORKORDER_NAME, workOrderName);
         }
         compound.putBoolean(TAG_IS_CLEARED, cleared);
-        if (md5 != null)
-        {
-            compound.putString(TAG_SCHEMATIC_MD5, md5);
-        }
         if (structureName == null)
         {
             Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!", new Exception());
@@ -172,7 +149,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     @Override
     public boolean isValid(final IColony colony)
     {
-        return true;
+        return structureName != null && super.isValid(colony);
     }
 
     /**
