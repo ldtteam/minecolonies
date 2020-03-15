@@ -26,8 +26,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -155,8 +155,11 @@ public final class MinecoloniesPlacementHandlers
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos);
                 }
-                final BlockState newState =  BlockMinecoloniesRack.getPlacementState(blockState, world.getTileEntity(pos), pos);
-                world.setBlockState(pos, newState);
+                if (entity instanceof TileEntityRack)
+                {
+                    final BlockState newState = BlockMinecoloniesRack.getPlacementState(blockState, world.getTileEntity(pos), pos);
+                    world.setBlockState(pos, newState);
+                }
             }
             return blockState;
         }

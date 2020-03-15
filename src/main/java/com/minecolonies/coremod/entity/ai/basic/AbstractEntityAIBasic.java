@@ -89,12 +89,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected BlockPos currentWorkingLocation = null;
 
     /**
-     * The block the ai is currently standing at or wants to stand.
-     */
-    @Nullable
-    protected BlockPos currentStandingLocation = null;
-
-    /**
      * The time in ticks until the next action is made.
      */
     private int delay = 0;
@@ -468,27 +462,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * The worker will move and animate correctly while he waits.
      *
      * @return true if we have to wait for something
-     *
-     * @see #currentStandingLocation @see #currentWorkingLocation
      */
     private boolean waitingForSomething()
     {
         if (delay > 0)
         {
-            if (currentStandingLocation != null
-                  && (!worker.getNavigator().noPath() || !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY)))
-            {
-                //Don't decrease delay as we are just walking...
-                return true;
-            }
-            if (delay % HIT_EVERY_X_TICKS == 0)
+            if (delay % HIT_EVERY_X_TICKS == 0 && currentWorkingLocation != null && EntityUtils.isLivingAtSite(worker,
+              currentWorkingLocation.getX(),
+              currentWorkingLocation.getY(),
+              currentWorkingLocation.getZ(),
+              DEFAULT_RANGE_FOR_DELAY))
             {
                 worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
             }
             delay -= getTickRate();
+            if (delay <= 0)
+            {
+                clearWorkTarget();
+            }
             return true;
         }
-        clearWorkTarget();
         return false;
     }
 
@@ -497,7 +490,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void clearWorkTarget()
     {
-        this.currentStandingLocation = null;
         this.currentWorkingLocation = null;
         this.delay = 0;
     }
@@ -766,7 +758,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!proxy.walkToBlock(stand, range))
         {
-            workOnBlock(null, stand, DELAY_RECHECK);
+            workOnBlock(null, DELAY_RECHECK);
             return true;
         }
         return false;
@@ -775,15 +767,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Sets the block the AI is currently working on.
      * This block will receive animation hits on delay.
-     *
-     * @param target  the block that will be hit
-     * @param stand   the block the worker will walk to
+     *  @param target  the block that will be hit
      * @param timeout the time in ticks to hit the block
      */
-    private void workOnBlock(@Nullable final BlockPos target, @Nullable final BlockPos stand, final int timeout)
+    private void workOnBlock(@Nullable final BlockPos target, final int timeout)
     {
         this.currentWorkingLocation = target;
-        this.currentStandingLocation = stand;
         this.delay = timeout;
     }
 

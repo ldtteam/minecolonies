@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
@@ -16,21 +15,15 @@ public interface ICitizenColonyHandler
     @Nullable
     IBuildingWorker getWorkBuilding();
 
-    /**
-     * Assigns a citizen to a colony.
-     *
-     * @param c    the colony.
-     * @param data the data of the new citizen.
-     */
-    void initEntityCitizenValues(@Nullable IColony c, @Nullable ICitizenData data);
-
     @Nullable
     IBuilding getHomeBuilding();
 
     /**
      * Server-specific update for the EntityCitizen.
+     * @param colonyID
+     * @param citizenID
      */
-    void updateColonyServer();
+    void registerWithColony(final int colonyID, final int citizenID);
 
     /**
      * Update the client side of the citizen entity.
@@ -63,9 +56,9 @@ public interface ICitizenColonyHandler
     void setColonyId(int colonyId);
 
     /**
-     * Clears the colony of the citizen.
+     * Actions when the entity is removed.
      */
-    void clearColony();
+    void onCitizenRemoved();
 
     /**
      * Check if a citizen is at home.
