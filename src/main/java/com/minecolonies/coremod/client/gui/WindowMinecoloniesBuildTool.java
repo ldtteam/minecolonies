@@ -106,10 +106,11 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void checkAndPlace()
     {
+        final List<PlacementError> placementErrorList = new ArrayList<>();
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror())))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
             {
                 super.pasteNice();
             }
@@ -120,48 +121,52 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         }
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
-            final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
               Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
             {
                 super.pasteNice();
             }
-            else
-            {
-                final Map<PlacementError.PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
-                  placementErrorList);
-                for (final Map.Entry<PlacementError.PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
-                {
-                    final PlacementError.PlacementErrorType placementErrorType = entry.getKey();
-                    final List<BlockPos> blockPosList = entry.getValue();
+        }
 
-                    final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
-                    final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
-                    String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
-                    if (blockPosList.size() > numberOfBlocksTOReport)
-                    {
-                        outputList += "...";
-                    }
-                    final String errorMessage;
-                    switch (placementErrorType)
-                    {
-                        case NOT_SOLID:
-                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
-                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
-                            break;
-                        case NEEDS_AIR_ABOVE:
-                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
-                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
-                            break;
-                        case INSIDE_COLONY:
-                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
-                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
-                            break;
-                        default:
-                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
-                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
-                            break;
-                    }
+        if (!placementErrorList.isEmpty())
+        {
+            final Map<PlacementError.PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
+              placementErrorList);
+            for (final Map.Entry<PlacementError.PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
+            {
+                final PlacementError.PlacementErrorType placementErrorType = entry.getKey();
+                final List<BlockPos> blockPosList = entry.getValue();
+
+                final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
+                final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
+                String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
+                if (blockPosList.size() > numberOfBlocksTOReport)
+                {
+                    outputList += "...";
+                }
+                final String errorMessage;
+                switch (placementErrorType)
+                {
+                    case NOT_WATER:
+                        errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY, outputList);
+                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
+                        break;
+                    case NOT_SOLID:
+                        errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
+                        break;
+                    case NEEDS_AIR_ABOVE:
+                        errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
+                        break;
+                    case INSIDE_COLONY:
+                        errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
+                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
+                        break;
+                    default:
+                        errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
+                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
+                        break;
                 }
             }
         }
