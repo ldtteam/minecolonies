@@ -226,6 +226,8 @@ public final class TranslationConstants
     @NonNls
     public static final String SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY                           = "item.supplycampdeployer.invalid.solid_block_needed";
     @NonNls
+    public static final String SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY                           = "item.supplycampdeployer.invalid.water_block_needed";
+    @NonNls
     public static final String SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY                     = "item.supplycampdeployer.invalid.air_block_needed";
     @NonNls
     public static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY                       = "item.supplycampdeployer.invalid.inside_existing_colony";

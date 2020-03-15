@@ -242,7 +242,7 @@ public interface IColonyManager
      *
      * @param compound NBT Tag.
      */
-    void read(@NotNull CompoundNBT compound, @NotNull World world);
+    void read(@NotNull CompoundNBT compound);
 
     /**
      * On Client tick, clears views when player left.

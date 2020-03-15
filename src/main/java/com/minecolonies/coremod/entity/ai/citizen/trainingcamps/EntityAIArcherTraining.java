@@ -167,6 +167,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             worker.swingArm(Hand.MAIN_HAND);
 
             final ArrowEntity arrow = EntityType.ARROW.create(world);
+            arrow.setShooter(worker);
             arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
             final double xVector = currentShootingTarget.getX() - worker.getPosX();
             final double yVector = currentShootingTarget.getY() - arrow.posY;
