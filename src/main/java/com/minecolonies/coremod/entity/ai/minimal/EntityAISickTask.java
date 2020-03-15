@@ -327,7 +327,7 @@ public class EntityAISickTask extends Goal
         citizenData.getCitizenHappinessHandler().setHealthModifier(true);
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
-        citizen.setHealth((float) citizenData.getMaxHealth());
+        citizen.setHealth(citizen.getMaxHealth());
         reset();
     }
 
