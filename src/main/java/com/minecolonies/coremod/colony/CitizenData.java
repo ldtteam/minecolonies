@@ -182,6 +182,7 @@ public class CitizenData implements ICitizenData
     private int    charisma;
     private int    intelligence;
     private int    dexterity;
+
     private double health;
     private double maxHealth;
 
