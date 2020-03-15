@@ -41,7 +41,7 @@ public class EventStructureManager implements IEventStructureManager
     /**
      * Backup schematics folder name.
      */
-    public static final String STRUCTURE_BACKUP_FOLDER = "structBackup";
+    public static final String STRUCTURE_BACKUP_FOLDER = "structbackup";
 
     /**
      * The map which holds the backup schematics to load. pos,event id
