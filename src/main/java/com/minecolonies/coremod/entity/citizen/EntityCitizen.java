@@ -559,6 +559,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
+    @NotNull
     public ICitizenData getCitizenData()
     {
         return citizenData;

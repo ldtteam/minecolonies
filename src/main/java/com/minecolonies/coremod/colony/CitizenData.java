@@ -371,6 +371,47 @@ public class CitizenData implements ICitizenData
     }
 
     /**
+     * Initializes the entities values from citizen data.
+     */
+    @Override
+    public void initEntityValues()
+    {
+        if (!getCitizenEntity().isPresent())
+        {
+            return;
+        }
+
+        final AbstractEntityCitizen citizen = getCitizenEntity().get();
+
+        citizen.setCitizenId(getId());
+        citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
+
+        citizen.setIsChild(isChild());
+        citizen.setCustomName(new StringTextComponent(getName()));
+
+        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+
+        citizen.setFemale(isFemale());
+        citizen.setTextureId(getTextureId());
+
+        citizen.getDataManager().set(DATA_COLONY_ID, colony.getID());
+        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
+        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
+        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
+        citizen.getDataManager().set(DATA_IS_CHILD, isChild());
+        citizen.getDataManager().set(DATA_BED_POS, getBedPos());
+
+        citizen.getCitizenExperienceHandler().updateLevel();
+
+        setLastPosition(citizen.getPosition());
+
+        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
+
+        markDirty();
+    }
+
+    /**
      * Generates a random name from a set of names.
      *
      * @param rand Random object.
@@ -800,6 +841,7 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
+        BlockPosUtil.write(nbtTagCompound, TAG_POS, lastPosition);
         nbtTagCompound.putDouble(TAG_SATURATION, saturation);
 
         if (job != null)
