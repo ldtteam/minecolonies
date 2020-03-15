@@ -1,17 +1,13 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
@@ -23,31 +19,14 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     private static final double TIE_BREAKER = 1.001D;
 
     /**
-     * All directions to try to avoid to.
-     */
-    private static final int DIRECTIONS_TO_TRY = 4;
-    /**
-     * Random object.
-     */
-    private static final Random rand = new Random();
-    /**
      * Position to run to, in order to avoid something.
      */
     @NotNull
     protected final BlockPos avoid;
     /**
-     * Heuristic point used for calculation.
-     */
-    @NotNull
-    protected final BlockPos heuristicPoint;
-    /**
      * Required avoidDistance.
      */
     protected final int avoidDistance;
-    /**
-     * Direction he should run off to.
-     */
-    private final Direction direction;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -65,42 +44,6 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
-
-        double dx = (double) (start.getX() - avoid.getX()) + 1;
-        double dz = (double) (start.getZ() - avoid.getZ()) + 1;
-
-        final double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
-        dx *= scalar;
-        dz *= scalar;
-
-        final Direction avoidDir = BlockPosUtil.getXZFacing(start, avoid);
-
-        final int randomValue = rand.nextInt(DIRECTIONS_TO_TRY);
-        if (randomValue == 0 && avoidDir != Direction.EAST)
-        {
-            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ());
-            direction = Direction.EAST;
-        }
-        else if (randomValue == 1 && avoidDir != Direction.WEST)
-        {
-            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ());
-            direction = Direction.WEST;
-        }
-        else if (randomValue == 2 && avoidDir != Direction.NORTH)
-        {
-            heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
-            direction = Direction.NORTH;
-        }
-        else if (avoidDir != Direction.SOUTH)
-        {
-            heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() + (int) dz);
-            direction = Direction.SOUTH;
-        }
-        else
-        {
-            heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
-            direction = Direction.NORTH;
-        }
     }
 
     /**
@@ -130,12 +73,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        final int dx = pos.getX() - heuristicPoint.getX();
-        final int dy = pos.getY() - heuristicPoint.getY();
-        final int dz = pos.getZ() - heuristicPoint.getZ();
-
-        //  Manhattan Distance with a 1/1000th tie-breaker
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
+        return -avoid.distanceSq(pos);
     }
 
     /**
@@ -148,10 +86,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        final BlockPos vector = n.pos.subtract(avoid);
-        final double nodeResult = getNodeResultScore(n);
-        final int avoidSq = (avoidDistance * avoidDistance);
-        return nodeResult >= avoidSq && (Direction.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction) || nodeResult > avoidSq * avoidDistance);
+        return Math.sqrt(avoid.distanceSq(n.pos)) > avoidDistance;
     }
 
     /**
@@ -163,6 +98,6 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        return avoid.distanceSq(n.pos);
+        return -avoid.distanceSq(n.pos);
     }
 }
