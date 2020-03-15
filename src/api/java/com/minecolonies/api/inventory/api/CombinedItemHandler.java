@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -179,7 +178,16 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public int getSlots()
     {
-        return Arrays.stream(handlers).mapToInt(IItemHandler::getSlots).sum();
+        int sum = 0;
+        for (final IItemHandler handler : handlers)
+        {
+            if (handler != null)
+            {
+                sum += handler.getSlots();
+            }
+        }
+
+        return sum;
     }
 
     /**

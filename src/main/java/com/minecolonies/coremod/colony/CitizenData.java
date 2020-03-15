@@ -18,13 +18,13 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
-import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -35,8 +35,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +45,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -171,19 +172,16 @@ public class CitizenData implements ICitizenData
      * Its entitity.
      */
     @NotNull
-    private WeakReference<AbstractEntityCitizen> entity;
+    private WeakReference<AbstractEntityCitizen> entity = new WeakReference<>(null);
 
     /**
-     * Attributes, which influence the workers behaviour.
-     * May be added more later.
+     * Attributes, which influence the workers behaviour. May be added more later.
      */
     private int    strength;
     private int    endurance;
     private int    charisma;
     private int    intelligence;
     private int    dexterity;
-    private double health;
-    private double maxHealth;
 
     /**
      * The citizens saturation at the current moment.
@@ -196,9 +194,8 @@ public class CitizenData implements ICitizenData
     private boolean justAte;
 
     /**
-     * The current experiences levels the citizen is on depending on his job.
-     * The total amount of experiences the citizen has depending on his job.
-     * This also includes the amount of experiences within their Experience Bar.
+     * The current experiences levels the citizen is on depending on his job. The total amount of experiences the citizen has depending on his job. This also includes the amount of
+     * experiences within their Experience Bar.
      */
     private Map<String, Tuple<Integer, Double>> levelExperienceMap = new HashMap<>();
 
@@ -208,8 +205,7 @@ public class CitizenData implements ICitizenData
     private BlockPos lastPosition = new BlockPos(0, 0, 0);
 
     /**
-     * The citizen happiness handler.
-     * +
+     * The citizen happiness handler. +
      */
     private final CitizenHappinessHandler citizenHappinessHandler;
 
@@ -219,8 +215,7 @@ public class CitizenData implements ICitizenData
     private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
-     * Create a CitizenData given an ID.
-     * Used as a super-constructor or during loading.
+     * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
      * @param colony Colony the Citizen belongs to.
@@ -244,8 +239,7 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Return the entity instance of the citizen data. Respawn the citizen if
-     * needed.
+     * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */
@@ -270,7 +264,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void setCitizenEntity(@Nullable final AbstractEntityCitizen citizen)
     {
-        if (entity != null)
+        if (entity.get() != null)
         {
             entity.clear();
         }
@@ -318,14 +312,6 @@ public class CitizenData implements ICitizenData
     public int hashCode()
     {
         int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (female ? 1 : 0);
-        result = 31 * result + (colony != null ? colony.hashCode() : 0);
-        result = 31 * result + strength;
-        result = 31 * result + endurance;
-        result = 31 * result + charisma;
-        result = 31 * result + intelligence;
-        result = 31 * result + dexterity;
         return result;
     }
 
@@ -348,34 +334,7 @@ public class CitizenData implements ICitizenData
         {
             return false;
         }
-        if (female != data.female)
-        {
-            return false;
-        }
-        if (strength != data.strength)
-        {
-            return false;
-        }
-        if (endurance != data.endurance)
-        {
-            return false;
-        }
-        if (charisma != data.charisma)
-        {
-            return false;
-        }
-        if (intelligence != data.intelligence)
-        {
-            return false;
-        }
-        if (dexterity != data.dexterity)
-        {
-            return false;
-        }
-        if (name != null ? !name.equals(data.name) : (data.name != null))
-        {
-            return false;
-        }
+
         return colony != null ? (data.colony != null && colony.getID() == data.colony.getID()) : (data.colony == null);
     }
 
@@ -413,8 +372,6 @@ public class CitizenData implements ICitizenData
         paused = false;
         name = generateName(rand);
 
-        health = BASE_MAX_HEALTH;
-        maxHealth = BASE_MAX_HEALTH;
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
 
@@ -435,6 +392,47 @@ public class CitizenData implements ICitizenData
             dexterity = rand.nextInt(levelCap - 1) + 1;
         }
         //Initialize the citizen skills and make sure they are never 0
+
+        markDirty();
+    }
+
+    /**
+     * Initializes the entities values from citizen data.
+     */
+    @Override
+    public void initEntityValues()
+    {
+        if (!getCitizenEntity().isPresent())
+        {
+            return;
+        }
+
+        final AbstractEntityCitizen citizen = getCitizenEntity().get();
+
+        citizen.setCitizenId(getId());
+        citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
+
+        citizen.setIsChild(isChild());
+        citizen.setCustomName(new StringTextComponent(getName()));
+
+        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+
+        citizen.setFemale(isFemale());
+        citizen.setTextureId(getTextureId());
+
+        citizen.getDataManager().set(DATA_COLONY_ID, colony.getID());
+        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
+        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
+        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
+        citizen.getDataManager().set(DATA_IS_CHILD, isChild());
+        citizen.getDataManager().set(DATA_BED_POS, getBedPos());
+
+        citizen.getCitizenExperienceHandler().updateLevel();
+
+        setLastPosition(citizen.getPosition());
+
+        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
 
         markDirty();
     }
@@ -575,9 +573,7 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * When a building is destroyed, inform the citizen so it can do any cleanup
-     * of associations that the building's. own AbstractBuilding.onDestroyed did
-     * not do.
+     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's. own AbstractBuilding.onDestroyed did not do.
      *
      * @param building building that is destroyed.
      */
@@ -692,53 +688,15 @@ public class CitizenData implements ICitizenData
     @Override
     public void updateCitizenEntityIfNecessary()
     {
-        final List<AbstractEntityCitizen> list = ((ServerWorld) colony.getWorld())
-                                                   .getEntities()
-                                                   .filter(e -> e instanceof AbstractEntityCitizen)
-                                                   .map(e -> (AbstractEntityCitizen) e)
-                                                   .filter(
-                                                     entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
-                                                                        && entityCitizen.getCitizenData().getId() == getId()).collect(Collectors.toList());
-
-        if (!list.isEmpty())
+        if (getCitizenEntity().isPresent())
         {
-            setCitizenEntity(list.get(0));
-
-            // Remove duplicated entities while we're at it
-            for (int i = 1; i < list.size(); i++)
-            {
-                Log.getLogger().warn("Removing duplicate entity:" + list.get(i).getName());
-                colony.getWorld().getEntityByID(list.get(i).getEntityId()).remove();
-            }
             return;
         }
 
-        //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
-        //No biggy lets respawn an entity.
-        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), null, true);
-
-        //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
-        //We check if we created one or not.
-        getCitizenEntity().ifPresent(entityCitizen -> {
-
-            BlockPos location = null;
-            if (getWorkBuilding() == null)
-            {
-                if (colony.hasTownHall())
-                {
-                    location = colony.getBuildingManager().getTownHall().getPosition();
-                }
-            }
-            else
-            {
-                location = getWorkBuilding().getPosition();
-            }
-
-            if (location != null)
-            {
-                TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
-            }
-        });
+        if (colony.getWorld().isBlockLoaded(getLastPosition()))
+        {
+            colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
+        }
     }
 
     /**
@@ -929,8 +887,7 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Increases the levels of the citizen.
-     * returns true if level up succeeded
+     * Increases the levels of the citizen. returns true if level up succeeded
      */
     private void increaseLevel()
     {
@@ -943,7 +900,8 @@ public class CitizenData implements ICitizenData
             }
             else
             {
-                this.levelExperienceMap.put(job.getExperienceTag(),new Tuple<Integer,Double> ((int)MAX_CITIZEN_LEVEL,ExperienceUtils.getXPNeededForNextLevel(MAX_CITIZEN_LEVEL-1)));
+                this.levelExperienceMap.put(job.getExperienceTag(),
+                  new Tuple<Integer, Double>((int) MAX_CITIZEN_LEVEL, ExperienceUtils.getXPNeededForNextLevel(MAX_CITIZEN_LEVEL - 1)));
             }
         }
     }
@@ -1420,24 +1378,6 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Get the max health
-     */
-    @Override
-    public double getMaxHealth()
-    {
-        return maxHealth;
-    }
-
-    /**
-     * Get the current healh
-     */
-    @Override
-    public double getHealth()
-    {
-        return health;
-    }
-
-    /**
      * Check if the citizen just ate.
      *
      * @return true if so.
@@ -1520,9 +1460,7 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_LEVEL_MAP, levelTagList);
 
-        nbtTagCompound.putDouble(TAG_HEALTH, health);
-        nbtTagCompound.putDouble(TAG_MAX_HEALTH, maxHealth);
-
+        BlockPosUtil.write(nbtTagCompound, TAG_POS, lastPosition);
 
         @NotNull final CompoundNBT nbtTagSkillsCompound = new CompoundNBT();
         nbtTagSkillsCompound.putInt(TAG_SKILL_STRENGTH, strength);
@@ -1569,8 +1507,7 @@ public class CitizenData implements ICitizenData
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
 
-        health = nbtTagCompound.getFloat(TAG_HEALTH);
-        maxHealth = nbtTagCompound.getFloat(TAG_MAX_HEALTH);
+        lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
 
         final CompoundNBT nbtTagSkillsCompound = nbtTagCompound.getCompound("skills");
         strength = nbtTagSkillsCompound.getInt("strength");
@@ -1632,7 +1569,9 @@ public class CitizenData implements ICitizenData
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
                 final ServerCitizenInteractionResponseHandler handler =
-                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance()
+                                                              .getInteractionResponseHandlerDataManager()
+                                                              .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }

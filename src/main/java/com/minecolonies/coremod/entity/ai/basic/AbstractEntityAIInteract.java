@@ -254,7 +254,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
         currentWorkingLocation = blockToMine;
-        currentStandingLocation = safeStand;
 
 
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
