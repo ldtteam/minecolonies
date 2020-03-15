@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -48,15 +49,8 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Placeholder skills.
      */
-    private int level;
-    private double experience;
     private double health;
     private double maxHealth;
-    private int strength;
-    private int endurance;
-    private int charisma;
-    private int intelligence;
-    private int dexterity;
     private double saturation;
 
     /**
@@ -117,6 +111,11 @@ public class CitizenDataView implements ICitizenDataView
     private List<IInteractionResponseHandler> primaryInteractions;
 
     /**
+     * The citizen skill handler on the client side.
+     */
+    private final CitizenSkillHandler citizenSkillHandler;
+
+    /**
      * Set View id.
      *
      * @param id
@@ -125,68 +124,39 @@ public class CitizenDataView implements ICitizenDataView
     protected CitizenDataView(final int id)
     {
         this.id = id;
+        this.citizenSkillHandler = new CitizenSkillHandler();
     }
 
-    /**
-     * Id getter.
-     *
-     * @return view Id.
-     */
     @Override
     public int getId()
     {
         return id;
     }
 
-    /**
-     * Entity Id getter.
-     *
-     * @return entity id.
-     */
     @Override
     public int getEntityId()
     {
         return entityId;
     }
 
-    /**
-     * Entity name getter.
-     *
-     * @return entity name.
-     */
     @Override
     public String getName()
     {
         return name;
     }
 
-    /**
-     * Check entity sex.
-     *
-     * @return true if entity is female.
-     */
     @Override
     public boolean isFemale()
     {
         return female;
     }
 
-    /**
-     * Check if the entity is paused.
-     *
-     * @return true if entity is paused.
-     */
     @Override
     public boolean isPaused()
     {
         return paused;
     }
 
-    /**
-     * Check if the entity is a child
-     *
-     * @return true if child
-     */
     @Override
     public boolean isChild()
     {
@@ -202,44 +172,12 @@ public class CitizenDataView implements ICitizenDataView
         this.paused = p;
     }
 
-    /**
-     * Entity level getter.
-     *
-     * @return the citizens level.
-     */
-    @Override
-    public int getLevel()
-    {
-        return level;
-    }
-
-    /**
-     * Entity experience getter.
-     *
-     * @return it's experience.
-     */
-    @Override
-    public double getExperience()
-    {
-        return experience;
-    }
-
-    /**
-     * Entity job getter.
-     *
-     * @return the job as a string.
-     */
     @Override
     public String getJob()
     {
         return job;
     }
 
-    /**
-     * Get the entities home building.
-     *
-     * @return the home coordinates.
-     */
     @Override
     @Nullable
     public BlockPos getHomeBuilding()
@@ -247,11 +185,6 @@ public class CitizenDataView implements ICitizenDataView
         return homeBuilding;
     }
 
-    /**
-     * Get the entities work building.
-     *
-     * @return the work coordinates.
-     */
     @Override
     @Nullable
     public BlockPos getWorkBuilding()
@@ -263,139 +196,47 @@ public class CitizenDataView implements ICitizenDataView
      * DEPRECATED
      */
     @Override
-    @Nullable
     public void setWorkBuilding(final BlockPos bp)
     {
         this.workBuilding = bp;
     }
 
-    /**
-     * Get the colony id of the citizen.
-     *
-     * @return unique id of the colony.
-     */
     @Override
     public int getColonyId()
     {
         return colonyId;
     }
 
-    /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    @Override
-    public int getStrength()
-    {
-        return strength;
-    }
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    @Override
-    public int getEndurance()
-    {
-        return endurance;
-    }
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    @Override
-    public int getCharisma()
-    {
-        return charisma;
-    }
-
-    /**
-     * Gets the current Happiness value for the citizen
-     * 
-     * @return citizens current Happiness value
-     */
     @Override
     public double getHappiness()
     {
         return happiness;
     }
 
-    /**
-     * Get the saturation of the citizen.
-     *
-     * @return the saturation a double.
-     */
     @Override
     public double getSaturation()
     {
         return saturation;
     }
 
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen Intelligence value.
-     */
-    @Override
-    public int getIntelligence()
-    {
-        return intelligence;
-    }
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    @Override
-    public int getDexterity()
-    {
-        return dexterity;
-    }
-
-    /**
-     * Health getter.
-     *
-     * @return citizen Dexterity value
-     */
     @Override
     public double getHealth()
     {
         return health;
     }
 
-    /**
-     * Max health getter.
-     *
-     * @return citizen Dexterity value.
-     */
     @Override
     public double getMaxHealth()
     {
         return maxHealth;
     }
 
-    /**
-     * Get the last registered position of the citizen.
-     * 
-     * @return the BlockPos.
-     */
     @Override
     public BlockPos getPosition()
     {
         return position;
     }
 
-    /**
-     * Deserialize the attributes and variables from transition.
-     *
-     * @param buf
-     *            Byte buffer to deserialize.
-     */
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
@@ -409,16 +250,9 @@ public class CitizenDataView implements ICitizenDataView
         workBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
 
         // Attributes
-        level = buf.readInt();
-        experience = buf.readDouble();
         health = buf.readFloat();
         maxHealth = buf.readFloat();
 
-        strength = buf.readInt();
-        endurance = buf.readInt();
-        charisma = buf.readInt();
-        intelligence = buf.readInt();
-        dexterity = buf.readInt();
         saturation = buf.readDouble();
         happiness = buf.readDouble();
 
@@ -429,6 +263,8 @@ public class CitizenDataView implements ICitizenDataView
         fieldsModifier = buf.readDouble();
         toolsModifiers = buf.readDouble();
         healthmodifier = buf.readDouble();
+
+        citizenSkillHandler.read(buf.readCompoundTag());;
 
         job = buf.readString(32767);
 

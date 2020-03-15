@@ -34,11 +34,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     private final EntityCitizen citizen;
 
     /**
-     * Skill modifier defines how fast a citizen levels in a certain skill.
-     */
-    private double skillModifier = 0;
-
-    /**
      * The current level.
      */
     private int level;
@@ -52,9 +47,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         this.citizen = citizen;
     }
 
-    /**
-     * Updates the level of the citizen.
-     */
     @Override
     public void updateLevel()
     {
@@ -62,29 +54,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         citizen.getDataManager().set(DATA_LEVEL, level);
         if (citizen.getCitizenData().getJob() != null)
         {
-            citizen.getCitizenData().getJob().onLevelUp(level);
+            citizen.getCitizenData().getJob().onLevelUp();
         }
     }
 
-    /**
-     * Set the skill modifier which defines how fast a citizen levels in a
-     * certain skill.
-     *
-     * @param modifier input modifier.
-     */
-    @Override
-    public void setSkillModifier(final int modifier)
-    {
-        this.skillModifier = modifier;
-    }
-
-    /**
-     * Add experience points to citizen.
-     * Increases the citizen level if he has sufficient experience.
-     * This will reset the experience.
-     *
-     * @param xp the amount of points added.
-     */
     @Override
     public void addExperience(final double xp)
     {
@@ -112,12 +85,33 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         localXp = localXp * bonusXp;
         final double saturation = citizen.getCitizenData().getSaturation();
 
-        XpBasedOnSaturationCalculator xpBasedOnSaturationCalculator = new XpBasedOnSaturationCalculator(localXp, saturation).invoke();
-        if (xpBasedOnSaturationCalculator.is())
+        if (saturation <= 0)
         {
             return;
         }
-        localXp = xpBasedOnSaturationCalculator.getLocalXp();
+
+        if (saturation < AVERAGE_SATURATION)
+        {
+            if (saturation < LOW_SATURATION)
+            {
+                localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+            }
+            else
+            {
+                localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
+            }
+        }
+        else if (saturation > AVERAGE_SATURATION)
+        {
+            if (saturation > HIGH_SATURATION)
+            {
+                localXp += localXp * BIG_SATURATION_FACTOR * saturation;
+            }
+            else
+            {
+                localXp += localXp * LOW_SATURATION_FACTOR * saturation;
+            }
+        }
 
         final double maxValue = Integer.MAX_VALUE - citizen.getCitizenData().getExperience();
         if (localXp > maxValue)
@@ -164,10 +158,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         return localXp;
     }
 
-    /**
-     * Drop some experience share depending on the experience and
-     * experienceLevel.
-     */
     @Override
     public void dropExperience()
     {
@@ -203,13 +193,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
     }
 
-    /**
-     * Collect exp orbs around the entity.
-     */
     @Override
     public void gatherXp()
     {
-        for (@NotNull final ExperienceOrbEntity orb : getXPOrbsOnGrid())
+        //todo test BB
+        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
         {
             Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double)this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
@@ -221,92 +209,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             }
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
             orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
-        }
-    }
-
-    /**
-     * Defines the area in which the citizen automatically gathers experience.
-     *
-     * @return a list of xp orbs around the entity.
-     */
-    private List<ExperienceOrbEntity> getXPOrbsOnGrid()
-    {
-        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
-
-        return CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(ExperienceOrbEntity.class, bb);
-    }
-
-    /**
-     * Get the level of the citizen.
-     * @return the level.
-     */
-    @Override
-    public int getLevel()
-    {
-        return this.level;
-    }
-
-    /**
-     * Setter for the level.
-     * @param level the level.
-     */
-    @Override
-    public void setLevel(final int level)
-    {
-        this.level = level;
-    }
-
-    private class XpBasedOnSaturationCalculator
-    {
-        private final double  saturation;
-        private       boolean myResult;
-        private       double  localXp;
-
-        public XpBasedOnSaturationCalculator(final double localXp, final double saturation)
-        {
-            this.localXp = localXp;
-            this.saturation = saturation;
-        }
-
-        boolean is() {return myResult;}
-
-        public double getLocalXp()
-        {
-            return localXp;
-        }
-
-        public XpBasedOnSaturationCalculator invoke()
-        {
-            if (saturation < AVERAGE_SATURATION)
-            {
-                if (saturation <= 0)
-                {
-                    myResult = true;
-                    return this;
-                }
-
-                if (saturation < LOW_SATURATION)
-                {
-                    localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-            else if (saturation > AVERAGE_SATURATION)
-            {
-                if (saturation > HIGH_SATURATION)
-                {
-                    localXp += localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp += localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-            myResult = false;
-            return this;
         }
     }
 }

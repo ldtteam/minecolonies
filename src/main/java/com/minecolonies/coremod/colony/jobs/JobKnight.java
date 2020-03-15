@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -50,7 +51,7 @@ public class JobKnight extends AbstractJobGuard
      * Custom Action on Levelup, increases Knight HP
      */
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp()
     {
         // Bonus Health for knights(gets reset upon Firing)
         if (getCitizen().getCitizenEntity().isPresent())

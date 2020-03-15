@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -47,9 +48,10 @@ public class JobRanger extends AbstractJobGuard
 
     /**
      * Custom Action on Levelup, increases Guard HP
+     * @param newLevel
      */
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp(final ICitizenSkillHandler newLevel)
     {
         // Bonus Health for guards(gets reset upon Firing)
         if (getCitizen().getCitizenEntity().isPresent())

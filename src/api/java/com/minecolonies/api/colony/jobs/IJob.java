@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -150,7 +151,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
      */
-    void onLevelUp(int newLevel);
+    void onLevelUp();
 
     /**
      * Get the CitizenData that this Job belongs to.

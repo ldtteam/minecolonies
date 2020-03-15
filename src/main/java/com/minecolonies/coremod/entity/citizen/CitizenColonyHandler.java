@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.citizenhandlers;
+package com.minecolonies.coremod.entity.citizen;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.IColony;

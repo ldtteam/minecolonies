@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
@@ -328,9 +329,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
+     * @param newLevel
      */
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp(final ICitizenSkillHandler newLevel)
     {
         // Default does nothing
     }
