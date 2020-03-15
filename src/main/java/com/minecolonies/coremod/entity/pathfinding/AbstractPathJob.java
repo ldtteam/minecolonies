@@ -313,7 +313,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
     {
-        double cost = 1D;
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
         if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
@@ -413,23 +413,21 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             handleDebugOptions(currentNode);
 
-            if (isAtDestination(currentNode))
-            {
+            if (isAtDestination(currentNode)) {
                 bestNode = currentNode;
                 result.setPathReachesDestination(true);
                 break;
             }
 
             //  If this is the closest node to our destination, treat it as our best node
-            final double nodeResultScore = getNodeResultScore(currentNode);
-            if (nodeResultScore > bestNodeResultScore)
-            {
+            final double nodeResultScore =
+                    getNodeResultScore(currentNode);
+            if (nodeResultScore > bestNodeResultScore) {
                 bestNode = currentNode;
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ))
-            {
+            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) {
                 walkCurrentNode(currentNode);
             }
         }
