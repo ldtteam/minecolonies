@@ -132,7 +132,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param size  the size.
      * @return true if so.
      */
-    @NotNull
     public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList)
     {
         for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
@@ -163,9 +162,8 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      *
      * @param world the world.
      * @param pos   the position.
-     * @return true if is water
      */
-    private static boolean checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
+    private static void checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
     {
         final boolean isSolid = world.getBlockState(pos).getMaterial().isSolid();
         final boolean notInAnyColony = notInAnyColony(world, pos);
@@ -179,7 +177,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
             placementErrorList.add(placementError);
         }
-        return isSolid && notInAnyColony;
     }
 
     /**
