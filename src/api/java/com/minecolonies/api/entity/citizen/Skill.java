@@ -9,152 +9,152 @@ public enum Skill
 {
     Athletics {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Strength;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Dexterity;
         }
     },
     Dexterity {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Agility;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Athletics;
         }
     },
     Strength {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Athletics;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Agility;
         }
     },
     Agility {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Dexterity;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Strength;
         }
     },
     Stamina {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Memory;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Mana;
         }
     },
     Mana {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Determination;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Stamina;
         }
     },
     Adaptability {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Creativity;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Determination;
         }
     },
     Determination {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Mana;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Adaptability;
         }
     },
     Creativity {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Adaptability;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Memory;
         }
     },
     Memory {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return Skill.Stamina;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return Skill.Creativity;
         }
     },
     Intelligence {
         @Override
-        Skill getComplimentary()
+        public Skill getComplimentary()
         {
             return null;
         }
 
         @Override
-        Skill getAdverse()
+        public Skill getAdverse()
         {
             return null;
         }
     };
 
     @Nullable
-    abstract Skill getComplimentary();
+    public abstract Skill getComplimentary();
 
     @Nullable
-    abstract Skill getAdverse();
+    public abstract Skill getAdverse();
 }
 

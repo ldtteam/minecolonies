@@ -92,4 +92,11 @@ public interface ICitizenItemHandler
      * @param damage damage dealt.
      */
     void updateArmorDamage(double damage);
+
+    /**
+     * Apply mending to the armour.
+     * @return the remaining xp.
+     * @param localXp the xp to add.
+     */
+    double applyMending(final double localXp);
 }

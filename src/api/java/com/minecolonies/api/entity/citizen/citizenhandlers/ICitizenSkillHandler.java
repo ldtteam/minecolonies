@@ -3,6 +3,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.Random;
@@ -18,9 +19,11 @@ public interface ICitizenSkillHandler
 
     void read(CompoundNBT compoundNBT);
 
-    void tryLevelUpIntelligence(Random random, int customChance, AbstractEntityCitizen citizen);
-
     void tryLevelUpIntelligence(Random random, int customChance, ICitizenData citizen);
 
-    void addExperience(IBuilding building, double xp);
+    int getLevel(Skill intelligence);
+
+    void addXpToSkill(Skill primary, double xp, ICitizenData data);
+
+    void removeXpFromSkill(Skill skill, double xp, ICitizenData data);
 }

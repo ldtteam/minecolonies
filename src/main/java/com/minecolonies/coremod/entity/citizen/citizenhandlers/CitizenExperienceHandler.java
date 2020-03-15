@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -34,11 +38,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     private final EntityCitizen citizen;
 
     /**
-     * The current level.
-     */
-    private int level;
-
-    /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
@@ -50,8 +49,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     @Override
     public void updateLevel()
     {
-        level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
-        citizen.getDataManager().set(DATA_LEVEL, level);
         if (citizen.getCitizenData().getJob() != null)
         {
             citizen.getCitizenData().getJob().onLevelUp();
@@ -64,26 +61,20 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
-        final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
-        if (citizen.getCitizenData() != null)
-        {
-            addExperienceToCitizenData(xp, citizenHutLevel, citizenHutMaxLevel);
-        }
-    }
 
-    private void addExperienceToCitizenData(final double xp, final double citizenHutLevel, final double citizenHutMaxLevel)
-    {
-        if ((citizenHutLevel < citizenHutMaxLevel
-               && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel()) || citizen.getCitizenData().getLevel() >= MAX_CITIZEN_LEVEL)
+        final ICitizenData data = citizen.getCitizenData();
+        final IBuilding workBuilding = data.getWorkBuilding();
+        if (!(workBuilding instanceof AbstractBuildingWorker))
         {
             return;
         }
 
-        double localXp = xp * skillModifier / EXP_DIVIDER;
-        final double workBuildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
-        final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(citizen.getCitizenData().getLevel() + 2.0D)) / 2;
-        localXp = localXp * bonusXp;
+        final double workBuildingLevel = workBuilding.getBuildingLevel();
+        final double bonusXp = 1 + (workBuildingLevel * citizenHutLevel) / 10;
+        double localXp = xp * bonusXp;
         final double saturation = citizen.getCitizenData().getSaturation();
+        final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
+        localXp += localXp * ( intelligenceLevel / 10.0 );
 
         if (saturation <= 0)
         {
@@ -94,68 +85,37 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         {
             if (saturation < LOW_SATURATION)
             {
-                localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+                localXp -= localXp * BIG_SATURATION_FACTOR;
             }
             else
             {
-                localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
+                localXp -= localXp * LOW_SATURATION_FACTOR;
             }
         }
         else if (saturation > AVERAGE_SATURATION)
         {
             if (saturation > HIGH_SATURATION)
             {
-                localXp += localXp * BIG_SATURATION_FACTOR * saturation;
+                localXp += localXp * BIG_SATURATION_FACTOR;
             }
             else
             {
-                localXp += localXp * LOW_SATURATION_FACTOR * saturation;
+                localXp += localXp * LOW_SATURATION_FACTOR;
             }
         }
 
-        final double maxValue = Integer.MAX_VALUE - citizen.getCitizenData().getExperience();
-        if (localXp > maxValue)
-        {
-            localXp = maxValue;
-        }
+        localXp = citizen.getCitizenItemHandler().applyMending(localXp);
 
-        localXp = applyMending(localXp);
-        citizen.getCitizenData().addExperience(localXp);
+        final Skill primary = ((AbstractBuildingWorker) workBuilding).getPrimarySkill();
+        final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
 
-        while (ExperienceUtils.getXPNeededForNextLevel(citizen.getCitizenData().getLevel()) < citizen.getCitizenData().getExperience())
-        {
-            citizen.getCitizenData().levelUp();
-        }
-        updateLevel();
-        citizen.markDirty();
-    }
+        data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
+        data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / 10, data);
+        data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / 10, data);
 
-    /**
-     * repair random equipped/held item with mending enchant.
-     *
-     * @param xp amount of xp available to mend with
-     * @return xp left after mending
-     */
-    private double applyMending(final double xp)
-    {
-        double localXp = xp;
-
-        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(Enchantments.MENDING));
-        if (toolSlot == -1)
-        {
-            return localXp;
-        }
-
-        final ItemStack tool = citizen.getInventoryCitizen().getStackInSlot(toolSlot);
-        if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
-        {
-            //2 xp to heal 1 dmg
-            final double dmgHealed = Math.min(localXp / 2, tool.getDamage());
-            localXp -= dmgHealed * 2;
-            tool.setDamage(tool.getDamage() - (int) Math.ceil(dmgHealed));
-        }
-
-        return localXp;
+        data.getCitizenSkillHandler().addXpToSkill(secondary, localXp / 2.0, data);
+        data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / 20, data);
+        data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / 20, data);
     }
 
     @Override

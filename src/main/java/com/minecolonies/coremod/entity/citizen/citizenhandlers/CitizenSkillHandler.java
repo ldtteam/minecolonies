@@ -7,12 +7,9 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Tuple;
@@ -104,17 +101,84 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness();
         if (skillMap.get(Skill.Intelligence).getB() < levelCap * 9)
         {
-            addExperience(citizen.getWorkBuilding(), 10);
+            addXpToSkill(Skill.Intelligence, 10, citizen);
         }
     }
 
     @Override
-    public void addExperience(final IBuilding building, final double xp)
+    public int getLevel(final Skill skill)
     {
-        if (building != null)
+        return skillMap.get(skill).getA();
+    }
+
+    @Override
+    public void addXpToSkill(final Skill skill, final double xp, final ICitizenData data)
+    {
+        final Tuple<Integer, Double> tuple = skillMap.get(skill);
+        int level = tuple.getA();
+        final double currentXp = tuple.getB();
+
+        final IBuilding home = data.getHomeBuilding();
+
+        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
+        final double citizenHutMaxLevel = home == null ? 5 : home.getMaxBuildingLevel();
+
+        if ((citizenHutLevel < citizenHutMaxLevel && Math.pow(2.0, citizenHutLevel + 1.0) <= level) || level >= MAX_CITIZEN_LEVEL)
         {
-            //todo get entry from map, check if xp > levelUp, then level up.
-            //todo gotta check into current experience handling, maybe this here is not ncessary and we can make a direct assign from there and call that.
+            return;
+        }
+
+        double xpToLevelUp = Math.min(Double.MAX_VALUE, currentXp + xp);
+        while (xpToLevelUp > 0)
+        {
+            final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(level);
+            if (nextLevel > xpToLevelUp)
+            {
+                skillMap.put(skill, new Tuple<>(level, xpToLevelUp));
+                xpToLevelUp = 0;
+            }
+            else
+            {
+                xpToLevelUp = xpToLevelUp - nextLevel;
+                level++;
+            }
+        }
+
+        if (level > tuple.getA())
+        {
+            levelUp();
+            data.markDirty();
+        }
+    }
+
+    @Override
+    public void removeXpFromSkill(final Skill skill, final double xp, final ICitizenData data)
+    {
+        final Tuple<Integer, Double> tuple = skillMap.get(skill);
+        int level = tuple.getA();
+        final double currentXp = tuple.getB();
+
+        //todo reduce xp here! (if xp < xp we have alright, else, we gotta reduce level)
+        double xpToLevelUp = Math.min(Double.MAX_VALUE, currentXp + xp);
+        while (xpToLevelUp > 0)
+        {
+            final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(level);
+            if (nextLevel > xpToLevelUp)
+            {
+                skillMap.put(skill, new Tuple<>(level, xpToLevelUp));
+                xpToLevelUp = 0;
+            }
+            else
+            {
+                xpToLevelUp = xpToLevelUp - nextLevel;
+                level++;
+            }
+        }
+
+        if (level > tuple.getA())
+        {
+            levelUp();
+            data.markDirty();
         }
     }
 
