@@ -85,14 +85,14 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     @Override
     public Skill getPrimarySkill()
     {
-        return null;
+        return Skill.Mana;
     }
 
     @NotNull
     @Override
     public Skill getSecondarySkill()
     {
-        return null;
+        return Skill.Knowledge;
     }
 
     @Override
