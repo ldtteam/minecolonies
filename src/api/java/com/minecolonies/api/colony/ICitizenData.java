@@ -329,5 +329,10 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      */
     void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
 
+    /**
+     * Get the clean job modifier.
+     * Primary skill + secondary divided by 4.
+     * @return the int modifier.
+     */
     int getJobModifier();
 }

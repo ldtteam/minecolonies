@@ -66,7 +66,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void init(final ICitizenData mom, final ICitizenData dad, final Random rand)
+    public void init(@NotNull final ICitizenData mom, @NotNull final ICitizenData dad, final Random rand)
     {
         for (final Skill skill : Skill.values())
         {
@@ -74,6 +74,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         }
     }
 
+    @NotNull
     @Override
     public CompoundNBT write()
     {
@@ -94,7 +95,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void read(final CompoundNBT compoundNBT)
+    public void read(@NotNull final CompoundNBT compoundNBT)
     {
         final ListNBT levelTagList = compoundNBT.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); ++i)
@@ -106,7 +107,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void tryLevelUpIntelligence(final Random random, final int customChance, final ICitizenData citizen)
+    public void tryLevelUpIntelligence(@NotNull final Random random, final int customChance, @NotNull final ICitizenData citizen)
     {
         if ((customChance > 0 && random.nextInt(customChance) > 0) || (customChance < 1 && random.nextInt(CHANCE_TO_LEVEL) > 0))
         {
@@ -121,13 +122,13 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public int getLevel(final Skill skill)
+    public int getLevel(@NotNull final Skill skill)
     {
         return skillMap.get(skill).getA();
     }
 
     @Override
-    public void incrementLevel(final Skill skill, final int level)
+    public void incrementLevel(@NotNull final Skill skill, final int level)
     {
         final Tuple<Integer, Double> current = skillMap.get(skill);
         skillMap.put(skill, new Tuple<>(Math.min(MAX_CITIZEN_LEVEL, Math.max(current.getA() + level, 1)), current.getB()));
@@ -174,7 +175,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void removeXpFromSkill(final Skill skill, final double xp, final ICitizenData data)
+    public void removeXpFromSkill(@NotNull final Skill skill, final double xp, @NotNull final ICitizenData data)
     {
         final Tuple<Integer, Double> tuple = skillMap.get(skill);
         int level = tuple.getA();
@@ -220,7 +221,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public int getJobModifier(final ICitizenData data)
+    public int getJobModifier(@NotNull final ICitizenData data)
     {
         final IBuilding workBuilding = data.getWorkBuilding();
         if (workBuilding instanceof AbstractBuildingWorker)

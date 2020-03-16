@@ -162,9 +162,17 @@ public enum Skill
           }
       };
 
+    /**
+     * The complimentary skill that levels up with the skill.
+     * @return the complimentary skill.
+     */
     @Nullable
     public abstract Skill getComplimentary();
 
+    /**
+     * The adverse skill that loses xp with the skill.
+     * @return the adverse skill.
+     */
     @Nullable
     public abstract Skill getAdverse();
 }
