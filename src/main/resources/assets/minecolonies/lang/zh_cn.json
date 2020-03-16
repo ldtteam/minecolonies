@@ -21,6 +21,10 @@
   "minecolonies.config.disablecitizenvoices": "市民声音",
   "minecolonies.config.disablecitizenvoices.comment": "禁用市民的声音[默认: false]",
   
+  "minecolonies.config.diseasemodifier": "疾病指数",
+  "minecolonies.config.diseasemodifier.comment": "疾病有多普遍 1 =非常常见，100 =非常罕见（默认值:5）",
+  "minecolonies.config.diseases": "疾病",
+  "minecolonies.config.diseases.comment": "可配置市民得的疾病、名字、罕见程度、以及治愈方法",
   "minecolonies.config.listofplantables": "花卉小屋的花",
   "minecolonies.config.listofplantables.comment": "花卉小屋可以种植的物品和物品标签",
   
@@ -106,8 +110,8 @@
   "minecolonies.config.minthleveltoteleport.comment": "市政厅必须达到设定等级，才允许传送其他殖民地 [默认值: 3]",
   "minecolonies.config.suggestbuildtoolplacement": "建筑工具放置",
   "minecolonies.config.suggestbuildtoolplacement.comment": "当试图放置一个没有建筑工具的建筑物时，建议使用建筑工具。 [默认值: true]",
-  "minecolonies.config.foodmodifier": "食物消耗",
-  "minecolonies.config.foodmodifier.comment": "食物消耗调节 (最小值: 1.0). [默认值: 1.0]",
+  "minecolonies.config.foodmodifier": "食物指数",
+  "minecolonies.config.foodmodifier.comment": "食物消耗指数 (最小值: 1.0). [默认值: 1.0]",
   "minecolonies.config.teleportbuffer": "传送冷却",
   "minecolonies.config.teleportbuffer.comment": "距离下一次传送等待时间 (秒). [默认值: 120]",
   "minecolonies.config.oplevelforserver": "服务器OP等级",
@@ -138,8 +142,6 @@
   "minecolonies.config.canplayerusedeletecolonycommand.comment": "Should the player be allowed to use the '/mc colony delete' command? [默认值: true]",
   "minecolonies.config.numberofattemptsforsafttp": "Number of Attempts for Safe TP",
   "minecolonies.config.numberofattemptsforsafttp.comment": "Amount of attempts to find a save rtp. [默认值: 4]",
-  "minecolonies.config.workingrangetownhall": "Working Range of Townhall",
-  "minecolonies.config.workingrangetownhall.comment": "Max distance a colony can claim a chunk from the center, 0 if disable maximum.  [默认值: 0]",
   "minecolonies.config.workingrangetownhallchunks": "Working Range of Townhall in Chunks",
   "minecolonies.config.workingrangetownhallchunks.comment": "Colony size (radius in chunks around central colony chunk). Only for the static mode. [默认值: 8]",
   "minecolonies.config.mintownhallpadding": "Minimum Townhall Padding",
@@ -285,7 +287,7 @@
   
   "item.minecolonies.ancienttome": "古籍",
   "item.minecolonies.chiefsword": "首领之剑",
-  "item.minecolonies.scepterGuard": "卫兵权杖",									
+  "item.minecolonies.scepterGuard": "卫兵权杖",
   
   "entity.worker.inventoryfullchestfull": "请给我的建筑箱子腾出空间，我无法存放我的物品",
   "entity.builder.messagebuildstart": "开始建造 %s",
@@ -293,7 +295,7 @@
   "entity.builder.messagebuildtoohigh": "%s 太高了，请把建筑高度降低到 y=256 以下",
   "entity.builder.messagebuildtoolow": "%s 太低了，请把建筑高度提升到 y=0 以上",
   "entity.builder.messageneedmaterial": "我需要 %s (数量: %d)",
-  "entity.builder.messagebuildernecessary": "需要一个 %d 级的建筑师小屋来建造或升级这个建筑",														  
+  "entity.builder.messagebuildernecessary": "需要一个 %d 级的建筑师小屋来建造或升级这个建筑",
   
   "entity.miner.messageneedtools": "需要工具 %s!",
   "entity.miner.messageneedblockanditem": "我需要 %s!",
@@ -311,7 +313,7 @@
   "entity.archerbarbarian": "野蛮人射手",
   
   "entity.builder.messagenobuilder": "你需要一个建筑工人来建造或升级这个建筑",
-  "entity.farmer.needseed": "我需要%s 来种植",			 
+  "entity.farmer.needseed": "我需要%s 来种植",
   
   "entity.citizen.nojob": "有一份工作将会很棒",
   "entity.citizen.demandsjob": "我等了两个多星期才终于有了工作！我很难过！",
@@ -371,9 +373,9 @@
   "com.minecolonies.command.citizenspawn.success": "生成新的市民: %s",
   
   "com.minecolonies.command.colonyidnotfound": "此维度中找不到id%s的殖民地！",
-  "com.minecolonies.command.playernotfound": "Player %s could not be found.",
+  "com.minecolonies.command.playernotfound": "找不到玩家 %s .",
   "com.minecolonies.command.notenabledinconfig": "此命令被禁用",
-  "com.minecolonies.command.resetsupply": "Successfully reset the supply camp and ship placement",					  
+  "com.minecolonies.command.resetsupply": "Successfully reset the supply camp and ship placement",
   
   "com.minecolonies.coremod.status.worker.goingtohut": "回小屋",
   "com.minecolonies.coremod.status.herder.breeding": "饲育中",
@@ -1202,10 +1204,18 @@
   "com.minecolonies.coremod.info.lumberjack.1": "现在让我们了解一下伐木工人的限制：\n\n 1. 伐木工人-小屋的等级决定可以使用的工具：\n   lvl 0. 木制/金质工具\n   lvl 1. 石头工具\n   lvl 2. 铁质工具\n   lvl 4. 钻石工具\n   lvl 5. 附魔工具\n\n  2. 伐木工能在自身（而不是小屋）的150格范围内搜寻树木，搜索时会从50格的范围开始，如果没有找到一棵树，依次增加5格。",
   "com.minecolonies.coremod.info.lumberjack.2.name": "树木检测",
   "com.minecolonies.coremod.info.lumberjack.2": "3. Minecraft中关于'树'的定义是非常模糊的，我们已经尽力去定义树，但是在有些情况下它还是做的不够好。通常我们把树定义为一根圆木和树叶(在很近的范围内)，因此你的小屋或者装饰物也许会受到伐木工人的影响，为了解决这个问题，你可以在原木下方放一块圆石，这样就会标记为'不是树'",
+  "com.minecolonies.coremod.info.lumberjack.3.name": "获得升级",
   "com.minecolonies.coremod.info.lumberjack.3": "伐木工人工作时会提升等级。\n  和建筑工人类似，更高等级的建筑工人速度也会得到提升。小屋等级越高则伐木工人升级越快。\n  但是，他们的等级最高提升至小屋的等级。因此，如果他们对自己的生活环境感到不快他们便会停止升级直到你提供给他们更好的房子。",
 
   "com.minecolonies.coremod.movebuilding.invalid": "无法重新定位到该位置，目标位置有不可破坏的方块！",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "无法找到建筑工人，请Shift右击一个建筑师小屋。",
-  "com.minecolonies.coremod.resourcescroll.null": "打开资源滚动条出错，请重试。"
+  "com.minecolonies.coremod.resourcescroll.nobuilder": "无法找到建筑工人，请Shift右击一个建筑师小屋",
+  "com.minecolonies.coremod.resourcescroll.null": "打开资源滚动条出错，请重试",
+  "com.minecolonies.coremod.gui.workerhuts.hospital": "医院",
+  "block.minecolonies.blockhuthospital": "医院",
+  "com.minecolonies.coremod.healer.fullinv": "我的物品栏满了，我不能接受治疗！",
+  "com.minecolonies.coremod.job.healer": "医生",
+  "com.minecolonies.coremod.gui.workerhuts.healer": "医院",
+  "com.minecolonies.coremod.gui.townhall.population.healers": "医生: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "研究员: %d/%d"
 }
