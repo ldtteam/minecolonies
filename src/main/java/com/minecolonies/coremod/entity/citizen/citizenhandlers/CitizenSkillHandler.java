@@ -41,6 +41,11 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     private static final int CHILD_STATS_VARIANCE = 3;
 
     /**
+     * Max inheritance of stats.
+     */
+    private static final int MAX_INHERITANCE = 10;
+
+    /**
      * Skill map.
      */
     public Map<Skill, Tuple<Integer, Double>> skillMap        = new HashMap<>();
@@ -70,7 +75,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     {
         for (final Skill skill : Skill.values())
         {
-            skillMap.put(skill, new Tuple<>((mom.getCitizenSkillHandler().getLevel(skill) + dad.getCitizenSkillHandler().getLevel(skill)) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE), 0.0D));
+            skillMap.put(skill, new Tuple<>((Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE), 0.0D));
         }
     }
 
