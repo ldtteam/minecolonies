@@ -36,7 +36,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     /**
      * The max level the building doesn't let filtering yet.
      */
-    private static final int MAX_LEVEL_BEFORE_SORTING = 2;
+    private static final int MAX_LEVEL_BEFORE_SORTING = 3;
 
     /**
      * The building of the florist (Client side representation).

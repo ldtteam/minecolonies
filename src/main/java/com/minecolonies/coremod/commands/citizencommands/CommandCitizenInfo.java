@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -92,7 +93,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth());
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.citizeninfo.skills",
-          citizenData.getCitizenSkillHandler().getSkills().values().stream().map(Tuple::getA).collect(Collectors.toList()));
+          citizenData.getCitizenSkillHandler().getSkills().values().stream().map(Tuple::getA).toArray());
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {
@@ -103,7 +104,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender,
               "com.minecolonies.command.citizeninfo.job",
-              entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName());
+              new TranslationTextComponent(entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName()));
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.citizeninfo.activity",
               entityCitizen.getDesiredActivity(),
               entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription());
