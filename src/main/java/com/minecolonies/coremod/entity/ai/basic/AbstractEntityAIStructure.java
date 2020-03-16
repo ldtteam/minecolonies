@@ -661,7 +661,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
+            setDelay(MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER));
         }
 
         return true;
@@ -889,7 +889,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 world.removeBlock(currentBlock.blockPosition, false);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
-                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
+                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER));
             }
             else
             {

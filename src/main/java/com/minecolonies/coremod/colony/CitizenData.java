@@ -332,44 +332,6 @@ public class CitizenData implements ICitizenData
         markDirty();
     }
 
-    @Override
-    public void initEntityValues()
-    {
-        if (!getCitizenEntity().isPresent())
-        {
-            return;
-        }
-
-        final AbstractEntityCitizen citizen = getCitizenEntity().get();
-
-        citizen.setCitizenId(getId());
-        citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
-
-        citizen.setIsChild(isChild());
-        citizen.setCustomName(new StringTextComponent(getName()));
-
-        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-
-        citizen.setFemale(isFemale());
-        citizen.setTextureId(getTextureId());
-
-        citizen.getDataManager().set(DATA_COLONY_ID, colony.getID());
-        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
-        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
-        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
-        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
-        citizen.getDataManager().set(DATA_IS_CHILD, isChild());
-        citizen.getDataManager().set(DATA_BED_POS, getBedPos());
-
-        citizen.getCitizenExperienceHandler().updateLevel();
-
-        setLastPosition(citizen.getPosition());
-
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
-
-        markDirty();
-    }
-
     /**
      * Initializes the entities values from citizen data.
      */
@@ -912,8 +874,8 @@ public class CitizenData implements ICitizenData
                 final Skill primary = buildingWorker.getPrimarySkill();
                 final Skill secondary = buildingWorker.getSecondarySkill();
 
-                citizenSkillHandler.increaseLevel(primary, level / 2);
-                citizenSkillHandler.increaseLevel(secondary, level / 4);
+                citizenSkillHandler.addXpToSkill(primary, level / 2, this);
+                citizenSkillHandler.addXpToSkill(secondary, level / 4, this);
             }
 
             final Random random = new Random();
@@ -922,8 +884,8 @@ public class CitizenData implements ICitizenData
                 final Skill primary = Skill.values()[random.nextInt(Skill.values().length)];
                 final Skill secondary = Skill.values()[random.nextInt(Skill.values().length)];
 
-                citizenSkillHandler.increaseLevel(primary, entry.getValue() / 2);
-                citizenSkillHandler.increaseLevel(secondary, entry.getValue() / 4);
+                citizenSkillHandler.addXpToSkill(primary, entry.getValue() / 2, this);
+                citizenSkillHandler.addXpToSkill(secondary, entry.getValue() / 4, this);
             }
         }
 
@@ -1023,6 +985,12 @@ public class CitizenData implements ICitizenData
             }
             markDirty();
         }
+    }
+
+    @Override
+    public int getJobModifier()
+    {
+        return getCitizenSkillHandler().getJobModifier(this);
     }
 
     // --------------------------- Request Handling --------------------------- //

@@ -13,9 +13,11 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.CITIZENID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
@@ -89,17 +91,8 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         }
 
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth());
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender,
-          "com.minecolonies.command.citizeninfo.levelandage",
-          entityCitizen.getCitizenExperienceHandler().getLevel(),
-          entityCitizen.getGrowingAge(),
-          citizenData.getLevel());
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.citizeninfo.skills",
-          citizenData.getCharisma(),
-          citizenData.getDexterity(),
-          citizenData.getEndurance(),
-          citizenData.getIntelligence(),
-          citizenData.getStrength());
+          citizenData.getCitizenSkillHandler().getSkills().values().stream().map(Tuple::getA).collect(Collectors.toList()));
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {

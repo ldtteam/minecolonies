@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -43,16 +44,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS
  */
 public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter>
 {
-    /**
-     * How often should intelligence factor into the enchanter's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should intelligence factor into the enchanter's skill modifier.
-     */
-    private static final int CHARISMA_MULTIPLIER = 1;
-
     /**
      * Predicate to define an ancient tome which can be enchanted.
      */
@@ -100,7 +91,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
             new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma() + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -118,7 +108,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return DECIDE;
         }
 
-        if (worker.getCitizenExperienceHandler().getLevel() < getOwnBuilding().getBuildingLevel())
+        if (worker.getCitizenData().getJobModifier() < getOwnBuilding().getBuildingLevel())
         {
             final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
@@ -356,8 +346,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             }
         }
 
-        worker.getCitizenData().addExperience(citizenToGatherFrom.drainExperience(maxDrain));
-        while (ExperienceUtils.getXPNeededForNextLevel(worker.getCitizenData().getLevel()) < worker.getCitizenData().getExperience())
+        worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, citizenToGatherFrom.getCitizenSkillHandler().drainExperience(maxDrain), worker.getCitizenData());
+        while (ExperienceUtils.getXPNeededForNextLevel(worker.getCitizenData().getJobModifier()) < worker.getCitizenData().getExperience())
         {
             worker.getCitizenData().levelUp();
         }

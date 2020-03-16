@@ -217,7 +217,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
-        if (worker.getRandom().nextInt((int) (worker.getCitizenExperienceHandler().getLevel() * 0.5) + 10) == 1)
+        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getJobModifier() * 0.5) + 10) == 1)
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
@@ -813,7 +813,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return 0;
         }
         // Level scaling damage, +1 on 6,12,19,28,38,50,66 ...
-        return worker.getCitizenData().getLevel() / (5 + worker.getCitizenData().getLevel() / 15);
+        return worker.getCitizenData().getJobModifier() / (5 + worker.getCitizenData().getJobModifier() / 15);
     }
 
     /**

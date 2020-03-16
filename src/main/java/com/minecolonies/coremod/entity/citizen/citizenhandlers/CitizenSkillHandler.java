@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -146,7 +147,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
 
         if (level > tuple.getA())
         {
-            levelUp();
+            levelUp(data);
             data.markDirty();
         }
     }
@@ -156,158 +157,74 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     {
         final Tuple<Integer, Double> tuple = skillMap.get(skill);
         int level = tuple.getA();
-        final double currentXp = tuple.getB();
+        double currentXp = tuple.getB();
 
-        //todo reduce xp here! (if xp < xp we have alright, else, we gotta reduce level)
-        double xpToLevelUp = Math.min(Double.MAX_VALUE, currentXp + xp);
-        while (xpToLevelUp > 0)
+        double xpToDiscount = xp;
+        while (xpToDiscount > 0)
         {
-            final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(level);
-            if (nextLevel > xpToLevelUp)
+            if (currentXp >= xpToDiscount)
             {
-                skillMap.put(skill, new Tuple<>(level, xpToLevelUp));
-                xpToLevelUp = 0;
+                skillMap.put(skill, new Tuple<>(level, currentXp - xpToDiscount));
+                xpToDiscount = 0;
             }
             else
             {
-                xpToLevelUp = xpToLevelUp - nextLevel;
-                level++;
+                xpToDiscount -= currentXp;
+                currentXp = ExperienceUtils.getXPNeededForNextLevel(level-1);
+                level--;
             }
         }
 
-        if (level > tuple.getA())
+        if (level < tuple.getA())
         {
-            levelUp();
             data.markDirty();
         }
     }
 
-    /**
-     * Levelup actions for the citizen, increases levels and notifies the Citizen's Job
-     */
     @Override
-    public void levelUp()
+    public void levelUp(final ICitizenData data)
     {
-        increaseLevel();
-
-        // Show levelup particles
-        if (getCitizenEntity().isPresent())
+        // Show level-up particles
+        if (data.getCitizenEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = data.getCitizenEntity().get();
             Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER), getCitizenEntity().get());
+              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER), data.getCitizenEntity().get());
         }
 
-        if (job != null)
+        if (data.getJob() != null)
         {
-            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            job.onLevelUp(entry.getA());
+            data.getJob().onLevelUp();
         }
-    }
-
-    /**
-     * Increases the levels of the citizen. returns true if level up succeeded
-     * @param primary
-     * @param i
-     */
-    public void increaseLevel(final Skill primary, final int i)
-    {
-        if (job != null)
-        {
-            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            if (entry.getA() < MAX_CITIZEN_LEVEL)
-            {
-                this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(entry.getA() + 1, entry.getB()));
-            }
-            else
-            {
-                this.levelExperienceMap.put(job.getExperienceTag(),
-                  new Tuple<Integer, Double>((int) MAX_CITIZEN_LEVEL, ExperienceUtils.getXPNeededForNextLevel(MAX_CITIZEN_LEVEL - 1)));
-            }
-        }
-    }
-
-    /**
-     * Returns the default chance to levelup
-     */
-    @Override
-    public int getChanceToLevel() {return CHANCE_TO_LEVEL;}
-
-
-    /**
-     * Returns the levels of the citizen.
-     *
-     * @return levels of the citizen.
-     */
-    @Override
-    public int getLevel()
-    {
-        if (job == null)
-        {
-            return 0;
-        }
-        return queryLevelExperienceMap().getA();
-    }
-
-    /**
-     * Returns the experiences of the citizen.
-     *
-     * @return experiences of the citizen.
-     */
-    @Override
-    public double getExperience()
-    {
-        if (job == null)
-        {
-            return 0;
-        }
-        return queryLevelExperienceMap().getB();
-    }
-
-    /**
-     * Query the map and compute absent if necessary.
-     *
-     * @return the tuple for the job.
-     */
-    private Tuple<Integer, Double> queryLevelExperienceMap()
-    {
-        return levelExperienceMap.computeIfAbsent(job.getExperienceTag(), jobKey -> new Tuple<>(0, 0.0D));
     }
 
     @Override
-    public double drainExperience(final int levelDrain)
+    public int getJobModifier(final ICitizenData data)
     {
-        if (job != null)
+        final IBuilding workBuilding = data.getWorkBuilding();
+        if (workBuilding instanceof AbstractBuildingWorker)
         {
-            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
-
-            final double xpDrain = Math.min(drain, entry.getB());
-            final double newXp = entry.getB() - (xpDrain / MineColonies.getConfig().getCommon().enchanterExperienceMultiplier.get());
-            final int newLevel = ExperienceUtils.calculateLevel(newXp);
-
-            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
-            this.markDirty();
-            return xpDrain;
+            final Skill primary = ((AbstractBuildingWorker) workBuilding).getPrimarySkill();
+            final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
+            return (getLevel(primary) + getLevel(secondary))/4;
         }
         return 0;
     }
 
     @Override
-    public void spendLevels(final int levelDrain)
+    public double getTotalXP()
     {
-        if (job != null)
+        double totalXp = 0;
+        for (final Tuple<Integer, Double> tuple : skillMap.values())
         {
-            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            final double drain = ExperienceUtils.getXPNeededForNextLevel(levelDrain - 1);
-
-            final double xpDrain = Math.min(drain, entry.getB());
-            final double newXp = entry.getB() - xpDrain;
-            final int newLevel = ExperienceUtils.calculateLevel(newXp);
-
-            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(newLevel, newXp));
-            this.markDirty();
+            totalXp += tuple.getB();
         }
+        return totalXp;
     }
 
+    @Override
+    public Map<Skill, Tuple<Integer, Double>> getSkills()
+    {
+        return ImmutableMap.copyOf(skillMap);
+    }
 }

@@ -27,16 +27,6 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAICrafting<J>
 {
     /**
-     * How often should strength factor into the crusher's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 2;
-
-    /**
-     * How often should endurance factor into the crusher's skill modifier.
-     */
-    private static final int ENDURANCE_MULTIPLIER = 1;
-
-    /**
      * Delay for each of the craftings.
      */
     private static final int TICK_DELAY = 20;
@@ -54,8 +44,6 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(CRUSH, this::crush, TICK_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                                                + ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
     }
 
@@ -102,7 +90,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
+        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
         {
             job.setProgress(0);
 

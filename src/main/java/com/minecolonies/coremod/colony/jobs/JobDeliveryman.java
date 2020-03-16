@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.sounds.DeliverymanSounds;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -81,7 +80,7 @@ public class JobDeliveryman extends AbstractJob
             final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
               .setBaseValue(
-                BASE_MOVEMENT_SPEED + (newLevel > 50 ? 50 : newLevel) * BONUS_SPEED_PER_LEVEL);
+                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
         }
     }
 

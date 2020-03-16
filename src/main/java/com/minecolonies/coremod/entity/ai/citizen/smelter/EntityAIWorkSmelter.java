@@ -47,16 +47,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 {
     /**
-     * How often should strength factor into the smelter's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 2;
-
-    /**
-     * How often should intelligence factor into the smelter's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 1;
-
-    /**
      * Time the worker delays until the next hit.
      */
     private static final int HIT_DELAY = 20;
@@ -121,8 +111,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         super.registerTargets(
           new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff, HIT_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                  + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -272,7 +260,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
+        final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getJobModifier(), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
@@ -394,7 +382,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     private ItemStack extractEnchantFromItem(final ItemStack item)

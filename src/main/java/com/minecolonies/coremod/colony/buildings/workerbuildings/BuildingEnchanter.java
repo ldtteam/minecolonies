@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
@@ -83,6 +84,20 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     public String getJobName()
     {
         return ENCHANTER;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return null;
     }
 
     @Override
@@ -296,20 +311,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         public int getDailyDrain()
         {
             return qty;
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.CHARISMA;
         }
 
         /**

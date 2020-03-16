@@ -26,16 +26,6 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
 {
     /**
-     * How often should intelligence factor into the archer's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should dexterity factor into the archer's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
      * Xp per successful shot.
      */
     private static final int XP_PER_SUCCESSFUL_SHOT = 1;
@@ -97,9 +87,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
           new AITarget(ARCHER_SHOOT, this::shoot, 1)
 
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(
-          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-            + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
     }
 
     /**
@@ -174,7 +161,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
             final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
 
-            final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+            final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
             worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));

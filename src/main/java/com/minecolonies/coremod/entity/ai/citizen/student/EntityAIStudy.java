@@ -99,7 +99,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         if (currentItems.isEmpty())
         {
             // Default levelup
-            data.tryRandomLevelUp(world.rand);
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50, data);
             worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
@@ -126,8 +126,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
             worker.setHeldItem(Hand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            data.tryRandomLevelUp(world.rand, data.getChanceToLevel() * 100 / chosenItem.getSkillIncreasePct());
-
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50 * 100 / chosenItem.getSkillIncreasePct(), data);
             // Break item rand
             if (world.rand.nextInt(100) <= chosenItem.getBreakPct())
             {

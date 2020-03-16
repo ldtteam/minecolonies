@@ -133,7 +133,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         // ~ +1 each three levels for a total of +15 from guard level
         if (worker.getCitizenData() != null)
         {
-            attackDist += (worker.getCitizenData().getLevel() / 50.0f) * 15;
+            attackDist += (worker.getCitizenData().getJobModifier() / 50.0f) * 15;
         }
 
         if (target != null)
@@ -363,7 +363,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         arrow.setKnockbackStrength(k);
                     }
 
-                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
 
                     arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
@@ -427,7 +427,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getJobModifier() / 2);
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;

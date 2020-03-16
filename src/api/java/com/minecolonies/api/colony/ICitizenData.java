@@ -328,4 +328,6 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param handler the new handler.
      */
     void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
+
+    int getJobModifier();
 }

@@ -327,14 +327,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         return false;
     }
 
-    /**
-     * Levelup actions on citizen levelup, allows custom actions based on Jobs
-     * @param newLevel
-     */
     @Override
-    public void onLevelUp(final ICitizenSkillHandler newLevel)
+    public void onLevelUp()
     {
-        // Default does nothing
+
     }
 
     /**

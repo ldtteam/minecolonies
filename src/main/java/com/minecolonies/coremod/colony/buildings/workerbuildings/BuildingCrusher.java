@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -26,7 +27,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,6 +149,20 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public boolean canCraftComplexRecipes()
     {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Stamina;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Strength;
     }
 
     /**
@@ -401,20 +415,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutCrusher(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

@@ -36,7 +36,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     public EntityAIWorkCowboy(@NotNull final JobCowboy job)
     {
         super(job);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows, 1)
         );

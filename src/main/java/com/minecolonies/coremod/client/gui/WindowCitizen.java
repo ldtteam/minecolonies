@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -20,12 +21,12 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
-import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.StringTextComponent;
@@ -35,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -129,7 +132,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar(citizen, this);
         createHappinessBar(citizen, this);
-        createXpBar(citizen, this);
         createSkillContent(citizen, this);
         updateHappiness(citizen, this);
 
@@ -282,40 +284,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
-     * Creates the xp bar for each citizen.
-     * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
-     * Then creates an xp bar and fills it up with the available xp.
-     *
-     * @param citizen the citizen.
-     * @param window  the window to fill.
-     */
-    public static void createXpBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
-    {
-        //Calculates how much percent of the next level has been completed.
-        final double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(), citizen.getLevel());
-        window.findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
-
-        @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
-        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
-
-        if (experienceRatio > 0)
-        {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
-        }
-    }
-
-    /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      *
      * @param citizen pointer to the citizen data view
@@ -356,16 +324,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
-        window.findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
-        window.findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
-        window.findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
-        window.findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
+        for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+        {
+            window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Label.class).setLabelText(
+              LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
+        }
     }
 
     @Override

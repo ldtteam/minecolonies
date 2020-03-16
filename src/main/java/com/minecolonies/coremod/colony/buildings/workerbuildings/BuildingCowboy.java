@@ -73,6 +73,20 @@ public class BuildingCowboy extends AbstractBuildingWorker
         return COWBOY;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Athletics;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Stamina;
+    }
+
     /**
      * The abstract method which creates a job for the building.
      *
@@ -125,20 +139,6 @@ public class BuildingCowboy extends AbstractBuildingWorker
     {
         this.milkCows = milkCows;
         markDirty();
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.DEXTERITY;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.STRENGTH;
     }
 
     /**
