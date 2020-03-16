@@ -17,6 +17,8 @@ public interface ICitizenSkillHandler
 {
     void init(int levelCap);
 
+    void init(ICitizenData mom, ICitizenData dad, Random rand);
+
     CompoundNBT write();
 
     void read(CompoundNBT compoundNBT);
@@ -24,6 +26,8 @@ public interface ICitizenSkillHandler
     void tryLevelUpIntelligence(Random random, int customChance, ICitizenData citizen);
 
     int getLevel(Skill intelligence);
+
+    void incrementLevel(Skill skill, int level);
 
     void addXpToSkill(Skill primary, double xp, ICitizenData data);
 

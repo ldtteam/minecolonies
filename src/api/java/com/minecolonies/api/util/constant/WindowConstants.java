@@ -1191,6 +1191,11 @@ public final class WindowConstants
     public static final String ATTRIBUTES_LABEL = "attributes";
 
     /**
+     * Id of the attributes label in the GUI.
+     */
+    public static final String ATTRIBUTES_LABEL2 = "attributes2";
+
+    /**
      * Link to the xml file of the window.
      */
     public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";

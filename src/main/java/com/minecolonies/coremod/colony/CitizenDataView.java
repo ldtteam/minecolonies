@@ -4,6 +4,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
@@ -394,5 +395,11 @@ public class CitizenDataView implements ICitizenDataView
     public boolean hasPendingInteractions()
     {
         return this.hasAnyPrimaryInteraction;
+    }
+
+    @Override
+    public ICitizenSkillHandler getCitizenSkillHandler()
+    {
+        return citizenSkillHandler;
     }
 }

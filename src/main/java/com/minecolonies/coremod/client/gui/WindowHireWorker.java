@@ -269,17 +269,30 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
                 StringBuilder attributes = new StringBuilder();
                 final String intermString = " | ";
-                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+
+                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
+                for (int i = 0; i < 5; i++)
                 {
+                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
                     @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
                       LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
                     attributes.append(text).append(intermString);
                 }
-
                 attributes.delete(attributes.length() - intermString.length(), attributes.length());
+
+                StringBuilder attributes2 = new StringBuilder();
+                for (int i = 5; i < list.size(); i++)
+                {
+                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
+                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                    attributes2.append(text).append(intermString);
+                }
+                attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
         });
     }

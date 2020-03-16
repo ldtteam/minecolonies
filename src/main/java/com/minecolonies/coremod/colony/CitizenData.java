@@ -853,8 +853,9 @@ public class CitizenData implements ICitizenData
             setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")));
         }
 
-        if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP))
+        if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
         {
+            citizenSkillHandler.init(10);
             final Map<String, Integer> levels = new HashMap<>();
             final ListNBT levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
@@ -865,27 +866,14 @@ public class CitizenData implements ICitizenData
                 levels.put(jobName, level);
             }
 
-            if (job != null && getWorkBuilding() != null)
-            {
-                String current = job.getExperienceTag();
-                int level = levels.remove(current);
-
-                IBuildingWorker buildingWorker = getWorkBuilding();
-                final Skill primary = buildingWorker.getPrimarySkill();
-                final Skill secondary = buildingWorker.getSecondarySkill();
-
-                citizenSkillHandler.addXpToSkill(primary, level / 2, this);
-                citizenSkillHandler.addXpToSkill(secondary, level / 4, this);
-            }
-
             final Random random = new Random();
             for (final Map.Entry<String, Integer> entry : levels.entrySet())
             {
                 final Skill primary = Skill.values()[random.nextInt(Skill.values().length)];
                 final Skill secondary = Skill.values()[random.nextInt(Skill.values().length)];
 
-                citizenSkillHandler.addXpToSkill(primary, entry.getValue() / 2, this);
-                citizenSkillHandler.addXpToSkill(secondary, entry.getValue() / 4, this);
+                citizenSkillHandler.incrementLevel(primary, entry.getValue() / 2);
+                citizenSkillHandler.incrementLevel(secondary, entry.getValue() / 4);
             }
         }
 

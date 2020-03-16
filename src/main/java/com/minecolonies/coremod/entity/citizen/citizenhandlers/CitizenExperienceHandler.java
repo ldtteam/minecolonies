@@ -145,7 +145,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     @Override
     public void gatherXp()
     {
-        //todo test BB
+        if (citizen.world.isRemote)
+        {
+            return;
+        }
+
         for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
         {
             Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double)this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());

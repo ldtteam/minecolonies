@@ -51,11 +51,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap();
 
     /**
-     * The max daily drain per worker.
-     */
-    private int dailyDrain = 1;
-
-    /**
      * The random variable.
      */
     private Random random = new Random();
@@ -138,25 +133,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         markDirty();
     }
 
-    /**
-     * Set the daily drainage.
-     * @param qty the quantity to set.
-     */
-    public void setDailyDrainage(final int qty)
-    {
-        this.dailyDrain = qty;
-        markDirty();
-    }
-
-    /**
-     * Get the daily drain
-     * @return the drain
-     */
-    public int getDailyDrain()
-    {
-        return dailyDrain;
-    }
-
     @Override
     public void onWakeUp()
     {
@@ -173,7 +149,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
                                       .map(this::deserializeListElement)
                                       .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
-        dailyDrain = compound.getInt(TAG_QUANTITY);
     }
 
     /**
@@ -193,7 +168,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
         compound.put(TAG_GATHER_LIST, buildingToGatherFrom.entrySet().stream().map(this::serializeListElement).collect(NBTUtils.toListNBT()));
-        compound.putInt(TAG_QUANTITY, dailyDrain);
         return compound;
     }
 
@@ -214,7 +188,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             buf.writeBlockPos(pos);
         }
-        buf.writeInt(dailyDrain);
     }
 
     /**
@@ -261,11 +234,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         private List<BlockPos> buildingToGatherFrom = new ArrayList<>();
 
         /**
-         * The daily drainage quantity.
-         */
-        private int qty = 1;
-
-        /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
@@ -292,7 +260,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
             {
                 buildingToGatherFrom.add(buf.readBlockPos());
             }
-            qty = buf.readInt();
         }
 
         /**
@@ -302,15 +269,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         public List<BlockPos> getBuildingsToGatherFrom()
         {
             return new ArrayList<>(buildingToGatherFrom);
-        }
-
-        /**
-         * Getter for the daily drain.
-         * @return the daily quantity.
-         */
-        public int getDailyDrain()
-        {
-            return qty;
         }
 
         /**
@@ -331,15 +289,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             buildingToGatherFrom.remove(blockPos);
             Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, false));
-        }
-
-        /**
-         * Set the daily quantity.
-         * @param qty the qty to set.
-         */
-        public void setQuantity(final int qty)
-        {
-            this.qty = qty;
         }
     }
 }

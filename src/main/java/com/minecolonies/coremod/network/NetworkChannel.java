@@ -130,7 +130,6 @@ public class NetworkChannel
         registerMessage(++idx, DecorationControllUpdateMessage.class, DecorationControllUpdateMessage::new);
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
-        registerMessage(++idx, EnchanterQtySetMessage.class, EnchanterQtySetMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);

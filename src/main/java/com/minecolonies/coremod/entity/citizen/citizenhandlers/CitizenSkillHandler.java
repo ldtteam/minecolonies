@@ -36,6 +36,11 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     private static final int CHANCE_TO_LEVEL = 50;
 
     /**
+     * Defines how much child stats very from parents average(+ or -).
+     */
+    private static final int CHILD_STATS_VARIANCE = 3;
+
+    /**
      * Skill map.
      */
     public Map<Skill, Tuple<Integer, Double>> skillMap        = new HashMap<>();
@@ -57,6 +62,15 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             {
                 skillMap.put(skill, new Tuple<>(random.nextInt(levelCap - 1) + 1, 0.0D));
             }
+        }
+    }
+
+    @Override
+    public void init(final ICitizenData mom, final ICitizenData dad, final Random rand)
+    {
+        for (final Skill skill : Skill.values())
+        {
+            skillMap.put(skill, new Tuple<>((mom.getCitizenSkillHandler().getLevel(skill) + dad.getCitizenSkillHandler().getLevel(skill)) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE), 0.0D));
         }
     }
 
@@ -113,6 +127,13 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
+    public void incrementLevel(final Skill skill, final int level)
+    {
+        final Tuple<Integer, Double> current = skillMap.get(skill);
+        skillMap.put(skill, new Tuple<>(Math.min(MAX_CITIZEN_LEVEL, Math.max(current.getA() + level, 1)), current.getB()));
+    }
+
+    @Override
     public void addXpToSkill(final Skill skill, final double xp, final ICitizenData data)
     {
         final Tuple<Integer, Double> tuple = skillMap.get(skill);
@@ -135,7 +156,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(level);
             if (nextLevel > xpToLevelUp)
             {
-                skillMap.put(skill, new Tuple<>(level, xpToLevelUp));
+                skillMap.put(skill, new Tuple<>(Math.min(MAX_CITIZEN_LEVEL, level), xpToLevelUp));
                 xpToLevelUp = 0;
             }
             else
@@ -164,7 +185,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             if (currentXp >= xpToDiscount)
             {
-                skillMap.put(skill, new Tuple<>(level, currentXp - xpToDiscount));
+                skillMap.put(skill, new Tuple<>(Math.max(1, level), currentXp - xpToDiscount));
                 xpToDiscount = 0;
             }
             else

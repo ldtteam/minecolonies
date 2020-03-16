@@ -18,10 +18,10 @@ import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
-import com.minecolonies.coremod.util.ExperienceUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
@@ -30,10 +30,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -50,6 +50,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.getItem() == ModItems.ancientTome;
 
     /**
+     * Predicate to define an ancient tome which can be enchanted.
+     */
+    private static final Predicate<ItemStack> IS_BOOK = item -> !item.isEmpty() && item.getItem() == Items.BOOK;
+
+    /**
      * Min distance to drain from citizen.
      */
     private static final long MIN_DISTANCE_TO_DRAIN = 5;
@@ -57,12 +62,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     /**
      * Max progress ticks until drainage is complete (per Level).
      */
-    private static final int MAX_PROGRESS_TICKS = 20;
+    private static final int MAX_PROGRESS_TICKS = 60;
 
     /**
      * Max progress ticks until drainage is complete (per Level).
      */
     private static final int MAX_ENCHANTMENT_TICKS = 60 * 5;
+
+    /**
+     * Minimum mana requirement per level.
+     */
+    private static final int MANA_REQ_PER_LEVEL    = 10;
 
     /**
      * The citizen entity to gather from.
@@ -108,7 +118,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return DECIDE;
         }
 
-        if (worker.getCitizenData().getJobModifier() < getOwnBuilding().getBuildingLevel())
+        if (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
             final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
@@ -117,6 +127,19 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 {
                     worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
+                return IDLE;
+            }
+
+            final int booksInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_BOOK);
+            if (booksInInv <= 0)
+            {
+                final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
+                if (numberOfBooksInBuilding > 0)
+                {
+                    needsCurrently = IS_BOOK;
+                    return GATHERING_REQUIRED_MATERIALS;
+                }
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.BOOK, 1));
                 return IDLE;
             }
 
@@ -213,7 +236,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
                 final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
 
-                data.spendLevels(tuple.getB());
+                //Decrement mana.
+                data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -tuple.getB());
                 worker.getCitizenExperienceHandler().updateLevel();
                 worker.getInventoryCitizen().setStackInSlot(openSlot, tuple.getA());
 
@@ -254,10 +278,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
         if (citizenToGatherFrom == null)
         {
-            final List<Optional<AbstractEntityCitizen>> workers = buildingWorker.getAssignedEntities().stream()
-                                                                    .filter(e -> e.isPresent() && e.get().getCitizenData().getLevel() > 0)
-                                                                    .collect(Collectors.toList());
-            final Optional<AbstractEntityCitizen> citizen;
+            final List<AbstractEntityCitizen> workers = new ArrayList<>();
+            for (final Optional<AbstractEntityCitizen> citizen : buildingWorker.getAssignedEntities())
+            {
+                citizen.ifPresent(workers::add);
+            }
+
+            final AbstractEntityCitizen citizen;
             if (workers.size() > 1)
             {
                 citizen = workers.get(worker.getRandom().nextInt(workers.size()));
@@ -272,7 +299,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 citizen = workers.get(0);
             }
 
-            citizen.ifPresent(abstractEntityCitizen -> citizenToGatherFrom = abstractEntityCitizen.getCitizenData());
+            citizenToGatherFrom = citizen.getCitizenData();
             progressTicks = 0;
             return getState();
         }
@@ -298,8 +325,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         }
 
         progressTicks++;
-        final int maxDrain = Math.min(getOwnBuilding(BuildingEnchanter.class).getDailyDrain(), citizenToGatherFrom.getLevel());
-        if (progressTicks < MAX_PROGRESS_TICKS * maxDrain)
+        if (progressTicks < MAX_PROGRESS_TICKS)
         {
             final Vec3d start = worker.getPositionVector().add(0,2,0);
             final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
@@ -320,40 +346,39 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
             WorkerUtil.faceBlock(new BlockPos(goal), worker);
 
+            if (worker.getRandom().nextBoolean())
+            {
+                worker.swingArm(Hand.MAIN_HAND);
+            }
+            else
+            {
+                worker.swingArm(Hand.OFF_HAND);
+            }
+
             return getState();
         }
 
-        if (worker.getRandom().nextBoolean())
+        final int bookSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.BOOK);
+        if (bookSlot != -1)
         {
-            worker.swingArm(Hand.MAIN_HAND);
-        }
-        else
-        {
-            worker.swingArm(Hand.OFF_HAND);
-        }
+            final int size = citizenToGatherFrom.getInventory().getSlots();
+            final int attempts = getOwnBuilding().getBuildingLevel();
 
-        final int size = citizenToGatherFrom.getInventory().getSlots();
-        final int attempts = getOwnBuilding().getBuildingLevel();
-
-        for (int i = 0; i < attempts; i++)
-        {
-            int randomSlot = worker.getRandom().nextInt(size);
-            final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
-            if (!stack.isEmpty() && stack.isEnchantable())
+            for (int i = 0; i < attempts; i++)
             {
-                EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, 1, false);
-                break;
+                int randomSlot = worker.getRandom().nextInt(size);
+                final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
+                if (!stack.isEmpty() && stack.isEnchantable())
+                {
+                    EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, 1, false);
+                    break;
+                }
             }
-        }
 
-        worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, citizenToGatherFrom.getCitizenSkillHandler().drainExperience(maxDrain), worker.getCitizenData());
-        while (ExperienceUtils.getXPNeededForNextLevel(worker.getCitizenData().getJobModifier()) < worker.getCitizenData().getExperience())
-        {
-            worker.getCitizenData().levelUp();
+            worker.getInventoryCitizen().extractItem(bookSlot, 1, false);
+            worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
+            worker.getCitizenData().markDirty();
         }
-        worker.getCitizenExperienceHandler().updateLevel();
-        worker.getCitizenData().markDirty();
-
         resetDraining();
         return IDLE;
     }

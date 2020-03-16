@@ -356,7 +356,7 @@
   "com.minecolonies.command.rsreset.success": "After 1.618 Seconds it reinstantiated completely new.",
 
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
-  "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Determination: §f%s §2Creativity: §f%s\n§2Memory: §f%s §2Intelligence: §f%s",
+  "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
@@ -446,9 +446,9 @@
 
   "com.minecolonies.coremod.gui.citizen.skills": "Skills",
   "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
-  "com.minecolonies.coremod.gui.citizen.skills.memory": "Memory: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.knowledge": "Knowledge: %d",
   "com.minecolonies.coremod.gui.citizen.skills.creativity": "Creativity: %d",
-  "com.minecolonies.coremod.gui.citizen.skills.determination": "Determination: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.focus": "Focus: %d",
   "com.minecolonies.coremod.gui.citizen.skills.adaptability": "Adaptability: %d",
   "com.minecolonies.coremod.gui.citizen.skills.mana": "Mana: %d",
   "com.minecolonies.coremod.gui.citizen.skills.stamina": "Stamina: %d",

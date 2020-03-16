@@ -967,6 +967,20 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         this.markDirty();
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return job.getPrimarySkill();
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return job.getSecondarySkill();
+    }
+
     /**
      * Get the Vision bonus range for the building level
      *
