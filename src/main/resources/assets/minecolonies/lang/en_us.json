@@ -1326,6 +1326,21 @@
   "com.minecolonies.coremod.job.healer": "Healer",
   "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
   "com.minecolonies.coremod.gui.townhall.population.healers": "Healers: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d"
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d",
+
+  "com.minecolonies.coremod.gui.citizen.job.label": "Job: %s",
+  "com.minecolonies.coremod.gui.citizen.job.desc": "These skills are influenced by the workers job:",
+
+  "com.minecolonies.coremod.gui.citizen.job.skills.intelligence": "Intelligence:",
+  "com.minecolonies.coremod.gui.citizen.job.skills.knowledge": "Knowledge",
+  "com.minecolonies.coremod.gui.citizen.job.skills.creativity": "Creativity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.focus": "Focus",
+  "com.minecolonies.coremod.gui.citizen.job.skills.adaptability": "Adaptability",
+  "com.minecolonies.coremod.gui.citizen.job.skills.mana": "Mana",
+  "com.minecolonies.coremod.gui.citizen.job.skills.stamina": "Stamina",
+  "com.minecolonies.coremod.gui.citizen.job.skills.agility": "Agility",
+  "com.minecolonies.coremod.gui.citizen.job.skills.strength": "Strength",
+  "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics"
 }
 

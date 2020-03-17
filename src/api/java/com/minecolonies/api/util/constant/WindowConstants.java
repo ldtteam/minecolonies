@@ -1266,6 +1266,18 @@ public final class WindowConstants
     public static final String BUTTON_RIGHT_ARROW = "textures/gui/builderhut/builder_sketch_arrow_right_a.png";
 
     /**
+     * The job modifier page.
+     */
+    public static final String JOB_TITLE_LABEL = "jobLabel";
+    public static final String JOB_DESC_LABEL = "skillexplanation";
+    public static final String PRIMARY_SKILL_LABEL = "primary";
+    public static final String PRIMARY_SKILL_COM = "comp1";
+    public static final String PRIMARY_SKILL_ADV = "adverse1";
+    public static final String SECONDARY_SKILL_LABEL = "secondary";
+    public static final String SECONDARY_SKILL_COM = "comp2";
+    public static final String SECONDARY_SKILL_ADV = "adverse2";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

@@ -22,6 +22,16 @@ import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION
 public class CitizenExperienceHandler implements ICitizenExperienceHandler
 {
     /**
+     * The percentage share primary skills get.
+     */
+    public static final int PRIMARY_DEPENDENCY_SHARE = 10;
+
+    /**
+     * The percentage share secondary skills get.
+     */
+    public static final int SECONDARY_DEPENDENCY_SHARE = 5;
+
+    /**
      * The citizen assigned to this manager.
      */
     private final EntityCitizen citizen;
@@ -99,12 +109,12 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
 
         data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
-        data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / 10, data);
-        data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / 10, data);
+        data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
 
         data.getCitizenSkillHandler().addXpToSkill(secondary, localXp / 2.0, data);
-        data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / 20, data);
-        data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / 20, data);
+        data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+        data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
     }
 
     @Override

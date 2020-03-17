@@ -12,24 +12,24 @@
     <view id="happinessBar" size="120 11" pos="35 64"/>
     <label id="happinessLabel" size="30 11" color="black" pos="150 73"/>
     
-    <image id="deco2" size="73 16" pos="17 81"
+    <image id="deco2" size="73 16" pos="17 83"
         source="minecolonies:textures/gui/citizen/colonist_decor_down.png"/>
-    <label id="title" size="70 11" pos="20 88" color="black" textalign="MIDDLE"
+    <label id="title" size="70 11" pos="20 92" color="black" textalign="MIDDLE"
         label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
-    <group size="90 115" pos="21 97">
-        <label id="athletics" size="100% 11" color="black"/>
-        <label id="dexterity" size="100% 11" color="black"/>
-        <label id="strength" size="100% 11" color="black"/>
-        <label id="agility" size="100% 11" color="black"/>
-        <label id="stamina" size="100% 11" color="black"/>
-        <label id="mana" size="100% 11" color="black"/>
-        <label id="adaptability" size="100% 11" color="black"/>
-        <label id="focus" size="100% 11" color="black"/>
-        <label id="creativity" size="100% 11" color="black"/>
-        <label id="knowledge" size="100% 11" color="black"/>
-        <label id="intelligence" size="100% 11" color="black"/>
+    <group size="90 115" pos="29 105">
+        <label id="athletics" size="100% 9" color="black"/>
+        <label id="dexterity" size="100% 9" color="black"/>
+        <label id="strength" size="100% 9" color="black"/>
+        <label id="agility" size="100% 9" color="black"/>
+        <label id="stamina" size="100% 9" color="black"/>
+        <label id="mana" size="100% 9" color="black"/>
+        <label id="adaptability" size="100% 9" color="black"/>
+        <label id="focus" size="100% 9" color="black"/>
+        <label id="creativity" size="100% 9" color="black"/>
+        <label id="knowledge" size="100% 9" color="black"/>
+        <label id="intelligence" size="100% 9" color="black"/>
     </group>
-    <image id="deco3" size="73 16" pos="17 218"
+    <image id="deco3" size="73 16" pos="17 200"
         source="minecolonies:textures/gui/citizen/colonist_decor_up.png"/>
 
     <image id="deco4" size="15 49" pos="137 194"

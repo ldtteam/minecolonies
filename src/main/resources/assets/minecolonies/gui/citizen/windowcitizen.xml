@@ -31,6 +31,18 @@
 					<label id="modifier6" pos="45 154" size="136 11" color="black"/>
 					<image id="modifierImage6" size="11 11" pos="20 152" source="minecolonies:textures/gui/red_icon.png"/>
 				</view>
+                <view id="jobView" size="100% 100%">
+                    <label id="jobLabel" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
+                    <text id="skillexplanation" pos="30 44" size="150 30" color="black"/>
+
+                    <label id="primary" pos="45 74" size="136 11" color="black"/>
+                    <label id="comp1" pos="45 86" size="136 11" color="black"/>
+                    <label id="adverse1" pos="45 98" size="136 11" color="black"/>
+
+                    <label id="secondary" pos="45 124" size="136 11" color="black"/>
+                    <label id="comp2" pos="45 136" size="136 11" color="black"/>
+                    <label id="adverse2" pos="45 148" size="136 11" color="black"/>
+                </view>
 			</switch>
 
 			<buttonimage id="requestsTitle" size="80 48" pos="300 66" label="$(com.minecolonies.coremod.gui.citizen.requestTitle)"
