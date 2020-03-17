@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -90,6 +91,13 @@ public interface ICitizenSkillHandler
      * @return the job modifier.
      */
     int getJobModifier(@NotNull final ICitizenData data);
+
+    /**
+     * Get the job modifier from the building on the client side.
+     * @param workBuilding the building instance.
+     * @return the modifier.
+     */
+    int getJobModifier(@NotNull IBuildingView workBuilding);
 
     /**
      * Get the total xp that the citizen has.

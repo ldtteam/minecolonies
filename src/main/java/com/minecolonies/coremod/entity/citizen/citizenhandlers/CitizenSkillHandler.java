@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
@@ -233,6 +234,18 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final Skill primary = ((AbstractBuildingWorker) workBuilding).getPrimarySkill();
             final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
+            return (getLevel(primary) + getLevel(secondary))/4;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getJobModifier(@NotNull final IBuildingView workBuilding)
+    {
+        if (workBuilding instanceof AbstractBuildingWorker.View)
+        {
+            final Skill primary = ((AbstractBuildingWorker.View) workBuilding).getPrimarySkill();
+            final Skill secondary = ((AbstractBuildingWorker.View) workBuilding).getSecondarySkill();
             return (getLevel(primary) + getLevel(secondary))/4;
         }
         return 0;
