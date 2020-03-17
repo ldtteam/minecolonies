@@ -129,7 +129,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
             }
             else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
-                displayAtWorldTick = Integer.MAX_VALUE;
+                displayAtWorldTick = (int) (world.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
         }
     }

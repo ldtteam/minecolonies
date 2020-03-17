@@ -153,7 +153,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         super.registerTargets(
           new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
-          new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_PATROL, this::decide, 100),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, GUARD_TASK_INTERVAL),
