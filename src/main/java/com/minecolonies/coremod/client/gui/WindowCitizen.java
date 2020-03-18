@@ -509,7 +509,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
     {
-        windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
+        windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class)
+          .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
         windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
@@ -519,18 +520,30 @@ public class WindowCitizen extends AbstractWindowRequestTree
             final Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Label.class)
               .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
-            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " (" + PRIMARY_DEPENDENCY_SHARE + "% XP)");
-            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-" + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+
+            if (primary.getComplimentary() != null && primary.getAdverse() != null)
+            {
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+            }
 
             final Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Label.class)
               .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
-            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " (" + SECONDARY_DEPENDENCY_SHARE + "% XP)");
-            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-" + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+
+            if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
+            {
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+            }
         }
     }
 }
