@@ -94,20 +94,21 @@ public class CommandListColonies implements IMCCommand
         }
 
         final ITextComponent headerLine = new StringTextComponent(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
-        sender.sendMessage(headerLine);
+        context.getSource().sendFeedback(headerLine, true);
+
 
         for (final IColony colony : coloniesPage)
         {
-            sender.sendMessage(new StringTextComponent(String.format(
+            context.getSource().sendFeedback(new StringTextComponent(String.format(
               ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-              String.format(COMMAND_COLONY_INFO, colony.getID())))));
+              String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
             final ITextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
             teleport.setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
 
-            sender.sendMessage(teleport);
+            context.getSource().sendFeedback(teleport, true);
         }
 
         final ITextComponent prevButton = new StringTextComponent("click").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
@@ -119,7 +120,8 @@ public class CommandListColonies implements IMCCommand
 
         final ITextComponent beginLine = new StringTextComponent(PAGE_LINE);
         final ITextComponent endLine = new StringTextComponent(PAGE_LINE);
-        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new StringTextComponent(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        context.getSource()
+          .sendFeedback(beginLine.appendSibling(prevButton).appendSibling(new StringTextComponent(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine), true);
         return 1;
     }
 

@@ -14,8 +14,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.GameProfileArgument;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
@@ -30,20 +28,18 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
-        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseAddOfficerCommand.get())
+        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getCommon().canPlayerUseAddOfficerCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -57,15 +53,15 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             return 0;
         }
 
-        if (sender.getServer().getPlayerList().getPlayerByUUID(profile.getId()) == null)
+        if (context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId()) == null)
         {
             // could not find player with given name.
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile.getName());
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
         colony.getPermissions().addPlayer(profile, Rank.OFFICER);
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.addofficer.success", profile.getName(), colony.getName());
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.addofficer.success", profile.getName(), colony.getName()), true);
         return 1;
     }
 

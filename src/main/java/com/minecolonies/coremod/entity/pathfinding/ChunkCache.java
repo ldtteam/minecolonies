@@ -7,6 +7,7 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -50,7 +51,10 @@ public class ChunkCache implements IWorldReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
+                if (worldIn.getChunkProvider().isChunkLoaded(new ChunkPos(k, l)))
+                {
+                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
+                }
             }
         }
     }

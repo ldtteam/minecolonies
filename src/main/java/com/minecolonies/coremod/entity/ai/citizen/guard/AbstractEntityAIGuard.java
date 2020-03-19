@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
@@ -30,6 +31,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -118,9 +120,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private static final int SHOULD_SLEEP_INTERVAL = 200;
 
     /**
+     * Check target interval
+     */
+    private static final int CHECK_TARGET_INTERVAL = 10;
+
+    /**
+     * Search area for target interval
+     */
+    private static final int SEARCH_TARGET_INTERVAL = 40;
+
+    /**
      * Interval between guard task updates
      */
-    private static final int GUARD_TASK_INTERVAL = 20;
+    private static final int GUARD_TASK_INTERVAL = 100;
 
     /**
      * Interval between guard regen updates
@@ -153,13 +165,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         super.registerTargets(
           new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
+          new AITarget(GUARD_PATROL, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          new AITarget(GUARD_PATROL, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_FOLLOW, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          new AITarget(GUARD_FOLLOW, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_GUARD, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          new AITarget(GUARD_GUARD, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
           new AITarget(HELP_CITIZEN, this::helping, GUARD_TASK_INTERVAL)
         );
@@ -217,7 +235,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
-        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getJobModifier() * 0.5) + 10) == 1)
+        if (worker.getRandom().nextInt((int) (worker.getCitizenExperienceHandler().getLevel() * 0.5) + 20) == 1)
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
@@ -315,11 +333,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     public abstract IAIState getAttackState();
 
     /**
-     * Guard at a specific position.
-     *
-     * @return the next state to run into.
+     * Checks and attacks the target
+     * @return next state
      */
-    private IAIState guard()
+    private IAIState checkAndAttackTarget()
     {
         if (checkForTarget())
         {
@@ -329,7 +346,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
             return START_WORKING;
         }
+        return null;
+    }
 
+    /**
+     * Guard at a specific position.
+     *
+     * @return the next state to run into.
+     */
+    private IAIState guard()
+    {
         worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
         return GUARD_GUARD;
     }
@@ -341,15 +367,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState follow()
     {
-        if (checkForTarget())
-        {
-            if (hasTool())
-            {
-                return getAttackState();
-            }
-            return START_WORKING;
-        }
-
         worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
         this.world.getScoreboard().addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
 
@@ -385,15 +402,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState patrol()
     {
-        if (checkForTarget())
-        {
-            if (hasTool())
-            {
-                return getAttackState();
-            }
-            return START_WORKING;
-        }
-
         if (currentPatrolPoint == null)
         {
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(null);
@@ -576,8 +584,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return true;
         }
 
-        // Search a new target
-        target = getNearbyTarget();
         return target != null;
     }
 
@@ -714,7 +720,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return The next IAIState to go to.
      */
-    protected LivingEntity getNearbyTarget()
+    protected LivingEntity searchNearbyTarget()
     {
         final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (colony == null)
@@ -760,6 +766,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
+        target = targetEntity;
         return targetEntity;
     }
 
@@ -846,7 +853,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             case FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
             default:
-                return MAX_GUARD_DERIVATION;
+                return MAX_GUARD_DERIVATION + (buildingGuards.getGuardType() == ModGuardTypes.knight ? 20 : 0);
         }
     }
 
@@ -858,13 +865,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private AxisAlignedBB getSearchArea()
     {
         final IGuardBuilding building = getOwnBuilding();
+        final int buildingBonus = building.getBonusVision();
 
-        final double x1 = worker.getPosition().getX() + (building.getBonusVision() + DEFAULT_VISION);
-        final double x2 = worker.getPosition().getX() - (building.getBonusVision() + DEFAULT_VISION);
-        final double y1 = worker.getPosition().getY() + (Y_VISION / 2);
-        final double y2 = worker.getPosition().getY() - (Y_VISION * 2);
-        final double z1 = worker.getPosition().getZ() + (building.getBonusVision() + DEFAULT_VISION);
-        final double z2 = worker.getPosition().getZ() - (building.getBonusVision() + DEFAULT_VISION);
+        final Direction randomDirection = Direction.byIndex(worker.getRandom().nextInt(4) + 2);
+
+        final double x1 = worker.getPosition().getX() + (Math.max(buildingBonus * randomDirection.getXOffset() + DEFAULT_VISION, DEFAULT_VISION));
+        final double x2 = worker.getPosition().getX() + (Math.min(buildingBonus * randomDirection.getXOffset() - DEFAULT_VISION, -DEFAULT_VISION));
+        final double y1 = worker.getPosition().getY() + (Y_VISION >> 1);
+        final double y2 = worker.getPosition().getY() - (Y_VISION << 1);
+        final double z1 = worker.getPosition().getZ() + (Math.max(buildingBonus * randomDirection.getZOffset() + DEFAULT_VISION, DEFAULT_VISION));
+        final double z2 = worker.getPosition().getZ() + (Math.min(buildingBonus * randomDirection.getZOffset() - DEFAULT_VISION, -DEFAULT_VISION));
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }

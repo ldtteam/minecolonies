@@ -88,7 +88,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Vision range per building level.
      */
-    private static final int         VISION_RANGE_PER_LEVEL = 5;
+    private static final int VISION_RANGE_PER_LEVEL = 6;
 
     /**
      * Whether the guardType will be assigned manually.

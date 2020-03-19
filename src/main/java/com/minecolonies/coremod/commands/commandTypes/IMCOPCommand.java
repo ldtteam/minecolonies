@@ -18,6 +18,11 @@ public interface IMCOPCommand extends IMCCommand
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
+        if (context.getSource().hasPermissionLevel(OP_PERM_LEVEL))
+        {
+            return true;
+        }
+
         final Entity sender = context.getSource().getEntity();
         if (!(sender instanceof PlayerEntity))
         {

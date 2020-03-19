@@ -40,7 +40,8 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.coremod.MineColonies.*;
 
 /**
@@ -287,7 +288,7 @@ public final class ColonyManager implements IColonyManager
                 return building;
             }
         }
-        Log.getLogger().warn("Colony at place is null! " + w.getDimension().getType().getId());
+        Log.getLogger().warn("Colony at place is null! dim:" + w.getDimension().getType().getId() + " pos:" + pos);
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))

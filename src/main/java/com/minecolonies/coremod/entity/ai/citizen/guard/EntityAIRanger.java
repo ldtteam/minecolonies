@@ -4,18 +4,17 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -105,6 +104,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public IAIState getAttackState()
     {
+        strafingTime = 0;
+        tooCloseNumTicks = 0;
+        timeAtSameSpot = 0;
+        timeCanSee = 0;
+        fleeing = false;
+        movingToTarget = false;
         return GUARD_ATTACK_RANGED;
     }
 
@@ -148,23 +153,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     public boolean hasMainWeapon()
     {
         return !checkForToolOrWeapon(ToolType.BOW);
-    }
-
-    /**
-     * Get a target for the guard.
-     *
-     * @return The next IAIState to go to.
-     */
-    @Override
-    protected LivingEntity getNearbyTarget()
-    {
-        strafingTime = 0;
-        tooCloseNumTicks = 0;
-        timeAtSameSpot = 0;
-        timeCanSee = 0;
-        fleeing = false;
-        movingToTarget = false;
-        return super.getNearbyTarget();
     }
 
     @Override

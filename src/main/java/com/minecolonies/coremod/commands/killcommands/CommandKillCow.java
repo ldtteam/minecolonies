@@ -1,13 +1,10 @@
 package com.minecolonies.coremod.commands.killcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 
 public class CommandKillCow implements IMCOPCommand
@@ -31,7 +28,7 @@ public class CommandKillCow implements IMCOPCommand
             entity.remove();
             entitiesKilled++;
         });
-        sender.sendMessage(new StringTextComponent(entitiesKilled + " entities killed"));
+        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

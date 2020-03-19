@@ -151,7 +151,7 @@ public class EntityAISickTask extends Goal
     @Override
     public void tick()
     {
-        if (++delayTicks == TICKS_SECOND)
+        if (++delayTicks != TICKS_SECOND)
         {
             return;
         }
@@ -409,7 +409,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL))
+        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigator().noPath() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
         {
             return WAIT_FOR_CURE;
         }
