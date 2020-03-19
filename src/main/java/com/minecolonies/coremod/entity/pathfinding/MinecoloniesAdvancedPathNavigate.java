@@ -34,6 +34,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     private static final double PIRATE_SWIM_BONUS        = 30;
     public static final  double MIN_Y_DISTANCE           = 0.001;
+    public static final  int    MAX_SPEED_ALLOWED        = 100;
+
+    /**
+     * Amount of ticks before vanilla stuck handling is allowed to discard an existing path
+     */
+    private static final long MIN_KEEP_TIME = 100;
+
+    /**
+     * The world time when a path was added.
+     */
+    private long pathStartTime = 0;
 
     @Nullable
     private PathResult pathResult;
@@ -93,6 +104,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         this.destination = dest;
         this.originalDestination = dest;
         this.walkSpeed = speed;
+
+        if (speed > MAX_SPEED_ALLOWED)
+        {
+            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            return null;
+        }
+
 
         calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
@@ -235,6 +253,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void setSpeed(final double d)
     {
+        if (d > MAX_SPEED_ALLOWED)
+        {
+            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            return;
+        }
         walkSpeed = d;
     }
 
@@ -271,6 +294,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             this.currentPath = null;
             return false;
         }
+        pathStartTime = world.getWorldTime();
         return super.setPath(convertPath(path), speed);
     }
 
@@ -341,8 +365,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (!this.noPath())
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            final PathPointExtended pExNext = getPath().getCurrentPathLength() > this.getPath().getCurrentPathIndex() + 1 ?
+                                                (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex() + 1)
+                                                : null;
 
-            if (pEx.isOnLadder())
+            if (pEx.isOnLadder() && (pExNext != null && pEx.y != pExNext.y))
             {
                 handlePathPointOnLadder(pEx);
             }
@@ -498,6 +525,22 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         destination = null;
         super.clearPath();
+    }
+
+    /**
+     * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
+     *
+     * @param positionVec3
+     */
+    @Override
+    protected void checkForStuck(Vec3d positionVec3)
+    {
+        if (world.getWorldTime() - pathStartTime < MIN_KEEP_TIME)
+        {
+            return;
+        }
+
+        super.checkForStuck(positionVec3);
     }
 
     /**

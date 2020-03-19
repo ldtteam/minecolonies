@@ -33,7 +33,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     /**
      * The max length of the name.
      */
-    private static final int MAX_NAME_LENGTH = 100;
+    private static final int MAX_NAME_LENGTH = 200;
 
     /**
      * Resource suffix of GUI xml file.

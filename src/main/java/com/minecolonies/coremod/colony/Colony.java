@@ -864,6 +864,10 @@ public class Colony implements IColony
              */
             return;
         }
+        if (eventHandler != null)
+        {
+            MinecraftForge.EVENT_BUS.unregister(eventHandler);
+        }
 
         world = null;
     }

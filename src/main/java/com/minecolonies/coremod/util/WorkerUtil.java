@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
@@ -18,6 +19,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +32,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
@@ -45,12 +52,34 @@ public final class WorkerUtil
     /**
      * Placeholder text in a level sign.
      */
-    private static final String LEVEL_SIGN_TEXT = "{\"text\":\"level_placeholder\"}";
+    private static final String LEVEL_SIGN_TEXT      = "{\"text\":\"level_placeholder\"}";
     private static final String LEVEL_SIGN_FIRST_ROW = "Text1";
+
+    /**
+     * List of tools to test blocks against, used for finding right tool.
+     */
+    public static List<Tuple<ToolType, ItemStack>> tools;
 
     private WorkerUtil()
     {
         //Hide default constructor.
+    }
+
+    /**
+     * Gets or initializes the test tool list.
+     *
+     * @return
+     */
+    public static List<Tuple<ToolType, ItemStack>> getOrInitTestTools()
+    {
+        if (tools == null)
+        {
+            tools = new ArrayList<>();
+            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.WOODEN_SHOVEL)));
+            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.WOODEN_AXE)));
+            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.WOODEN_PICKAXE)));
+        }
+        return tools;
     }
 
     /**
@@ -67,8 +96,7 @@ public final class WorkerUtil
     }
 
     /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location.
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location.
      *
      * @param worker Worker to check
      * @param x      X-coordinate
@@ -92,8 +120,7 @@ public final class WorkerUtil
     }
 
     /**
-     * Attempt to move to XYZ.
-     * True when found and destination is set.
+     * Attempt to move to XYZ. True when found and destination is set.
      *
      * @param citizen     Citizen to move to XYZ.
      * @param destination Chunk coordinate of the distance.
@@ -129,15 +156,31 @@ public final class WorkerUtil
     }
 
     /**
-     * Get a Tooltype for a certain block.
-     * We need this because minecraft has a lot of blocks which have strange or no required tool.
+     * Get a Tooltype for a certain block. We need this because minecraft has a lot of blocks which have strange or no required tool.
      *
      * @param target the target block.
      * @return the toolType to use.
      */
     public static IToolType getBestToolForBlock(final Block target)
     {
-        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
+        String toolName = target.getHarvestTool(target.getDefaultState());
+        if (toolName == null)
+        {
+            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            {
+                if (tool.getSecond() != null && tool.getSecond().getItem() instanceof ItemTool)
+                {
+                    final ItemTool toolItem = (ItemTool) tool.getSecond().getItem();
+                    if (tool.getSecond().getDestroySpeed(target.getDefaultState()) >= toolItem.toolMaterial.getEfficiency())
+                    {
+                        toolName = tool.getFirst().getName();
+                        break;
+                    }
+                }
+            }
+        }
+
+        final IToolType toolType = ToolType.getToolType(toolName);
 
         if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
         {
@@ -151,8 +194,7 @@ public final class WorkerUtil
     }
 
     /**
-     * Get the correct havestlevel for a certain block.
-     * We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
+     * Get the correct havestlevel for a certain block. We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
      *
      * @param target the target block.
      * @return the required harvestLevel.
@@ -214,6 +256,7 @@ public final class WorkerUtil
 
     /**
      * Find the first level in a structure and return it.
+     *
      * @param structure the structure to scan.
      * @return the position of the sign.
      */
@@ -248,8 +291,9 @@ public final class WorkerUtil
 
     /**
      * Updated the level sign of a certain level in the world.
-     * @param world the world.
-     * @param level the level to update.
+     *
+     * @param world   the world.
+     * @param level   the level to update.
      * @param levelId the id of the level.
      */
     public static void updateLevelSign(final World world, final Level level, final int levelId)
@@ -268,7 +312,8 @@ public final class WorkerUtil
                 teLevelSign.signText[0] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + levelId));
                 teLevelSign.signText[1] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
-                teLevelSign.signText[2] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.signText[2] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(
+                  LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
                 teLevelSign.signText[3] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(""));
 
                 teLevelSign.markDirty();
@@ -279,6 +324,7 @@ public final class WorkerUtil
 
     /**
      * Check if there is any already composted land.
+     *
      * @return true if there is any.
      */
     public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
@@ -306,7 +352,8 @@ public final class WorkerUtil
 
     /**
      * Find the last ladder by iterating over the y pos in the world.
-     * @param pos the starting pos.
+     *
+     * @param pos   the starting pos.
      * @param world the world.
      * @return the y of the last one.
      */

@@ -11,7 +11,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
@@ -100,6 +99,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public IAIState getAttackState()
     {
+        strafingTime = 0;
+        tooCloseNumTicks = 0;
+        timeAtSameSpot = 0;
+        timeCanSee = 0;
+        fleeing = false;
+        movingToTarget = false;
         return GUARD_ATTACK_RANGED;
     }
 
@@ -143,23 +148,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     public boolean hasMainWeapon()
     {
         return !checkForToolOrWeapon(ToolType.BOW);
-    }
-
-    /**
-     * Get a target for the guard.
-     *
-     * @return The next IAIState to go to.
-     */
-    @Override
-    protected EntityLivingBase getNearbyTarget()
-    {
-        strafingTime = 0;
-        tooCloseNumTicks = 0;
-        timeAtSameSpot = 0;
-        timeCanSee = 0;
-        fleeing = false;
-        movingToTarget = false;
-        return super.getNearbyTarget();
     }
 
     @Override
