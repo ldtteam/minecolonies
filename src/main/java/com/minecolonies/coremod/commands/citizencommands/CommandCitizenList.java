@@ -11,7 +11,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -63,10 +62,10 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -87,10 +86,10 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
 
         final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
         final ITextComponent headerLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagetop", page, pageCount);
-        sender.sendMessage(headerLine);
+        context.getSource().sendFeedback(headerLine, true);
 
-        drawCitizens(sender, citizensPage);
-        drawPageSwitcher(sender, page, citizenCount, halfPage, colony.getID());
+        drawCitizens(context, citizensPage);
+        drawPageSwitcher(context, page, citizenCount, halfPage, colony.getID());
         return 1;
     }
 
@@ -110,18 +109,19 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         return citizensPage;
     }
 
-    private void drawCitizens(@NotNull final Entity sender, final List<ICitizenData> citizensPage)
+    private void drawCitizens(@NotNull final CommandContext<CommandSource> context, final List<ICitizenData> citizensPage)
     {
         for (final ICitizenData citizen : citizensPage)
         {
-            sender.sendMessage(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizen.getId(), citizen.getName())
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizen.getId(), citizen.getName())
                                  .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                   String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
+                                   String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
 
             citizen.getCitizenEntity().ifPresent(entityCitizen ->
             {
                 final BlockPos position = entityCitizen.getPosition();
-                sender.sendMessage(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.pos", position.getX(), position.getY(), position.getZ()));
+                context.getSource()
+                  .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.pos", position.getX(), position.getY(), position.getZ()), true);
             });
         }
     }
@@ -129,13 +129,12 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
     /**
      * Draws the page switcher at the bottom.
      *
-     * @param sender   the sender.
      * @param page     the page number.
      * @param count    number of citizens.
      * @param halfPage the halfPage.
      * @param colonyId the colony id.
      */
-    private static void drawPageSwitcher(@NotNull final Entity sender, final int page, final int count, final int halfPage, final int colonyId)
+    private static void drawPageSwitcher(@NotNull final CommandContext<CommandSource> context, final int page, final int count, final int halfPage, final int colonyId)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
@@ -152,10 +151,10 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final ITextComponent beginLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
         final ITextComponent endLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
 
-        sender.sendMessage(beginLine.appendSibling(prevButton)
+        context.getSource().sendFeedback(beginLine.appendSibling(prevButton)
                              .appendSibling(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
                              .appendSibling(nextButton)
-                             .appendSibling(endLine));
+                                           .appendSibling(endLine), true);
     }
 
     /**

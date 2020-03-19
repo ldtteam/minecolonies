@@ -32,10 +32,10 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -49,17 +49,17 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final PlayerEntity player = sender.getServer().getPlayerList().getPlayerByUUID(profile.getId());
+        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId());
         if (player == null)
         {
             // could not find player with given name.
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile.getName());
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
 
         colony.getPermissions().setOwner(player);
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName());
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName()), true);
         return 1;
     }
 

@@ -7,7 +7,6 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class CommandRaidAllTonight implements IMCOPCommand
 {
@@ -26,7 +25,7 @@ public class CommandRaidAllTonight implements IMCOPCommand
             colony.getRaiderManager().setWillRaidTonight(true);
         }
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.raidtonight");
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight"), true);
         return 1;
     }
 
