@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
@@ -116,6 +117,52 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
+    public void registerCitizen(final AbstractEntityCitizen citizen)
+    {
+        if (citizen.getCitizenId() == 0 || citizens.get(citizen.getCitizenId()) == null)
+        {
+            citizen.setDead();
+            return;
+        }
+
+        final ICitizenData data = citizens.get(citizen.getCitizenId());
+        final Optional<AbstractEntityCitizen> existingCitizen = data.getCitizenEntity();
+
+        if (!existingCitizen.isPresent())
+        {
+            data.setCitizenEntity(citizen);
+            citizen.setCitizenData(data);
+            return;
+        }
+
+        if (existingCitizen.get() == citizen)
+        {
+            return;
+        }
+
+        if (existingCitizen.get().isDead() || !existingCitizen.get().world.isBlockLoaded(existingCitizen.get().getPosition()))
+        {
+            existingCitizen.get().setDead();
+            data.setCitizenEntity(citizen);
+            citizen.setCitizenData(data);
+            return;
+        }
+
+        citizen.setDead();
+    }
+
+    @Override
+    public void unregisterCitizen(final AbstractEntityCitizen citizen)
+    {
+        final ICitizenData data = citizens.get(citizen.getCitizenId());
+        if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get() == citizen)
+        {
+            citizens.get(citizen.getCitizenId()).setCitizenEntity(null);
+        }
+    }
+
+
+    @Override
     public void sendPackets(
       @NotNull final Set<EntityPlayerMP> closeSubscribers,
       @NotNull final Set<EntityPlayerMP> newSubscribers)
@@ -145,7 +192,7 @@ public class CitizenManager implements ICitizenManager
             return data;
         }
 
-        final BlockPos spawnLocation = spawnPos != null ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
+        final BlockPos spawnLocation = spawnPos != null && !spawnPos.equals(BlockPos.ORIGIN) ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
         if (!world.isBlockLoaded(spawnLocation))
         {
             //  Chunk with TownHall Block is not loaded
@@ -186,9 +233,8 @@ public class CitizenManager implements ICitizenManager
             }
         }
         final EntityCitizen entity = new EntityCitizen(world);
-        citizenData.setCitizenEntity(entity);
 
-        entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
+        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.spawnEntity(entity);
@@ -483,7 +529,7 @@ public class CitizenManager implements ICitizenManager
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
         //  Every CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-        if (colony.hasTownHall() && colony.areAllColonyChunksLoaded())
+        if (colony.hasTownHall())
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
