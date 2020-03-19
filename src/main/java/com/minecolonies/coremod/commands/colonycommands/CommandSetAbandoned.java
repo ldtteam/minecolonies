@@ -33,16 +33,16 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         boolean addOfficer = false;
-        if (colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OFFICER
-              || colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OWNER)
+        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OFFICER
+                                 || colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OWNER))
         {
             addOfficer = true;
         }
@@ -54,7 +54,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
             colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), Rank.OFFICER);
         }
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName());
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName()), true);
         return 1;
     }
 
