@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -108,6 +109,20 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     public boolean canCraftComplexRecipes()
     {
         return true;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Mana;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Knowledge;
     }
 
     @Override
@@ -369,20 +384,6 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, HOSPITAL_DESC);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.CHARISMA;
         }
     }
 }

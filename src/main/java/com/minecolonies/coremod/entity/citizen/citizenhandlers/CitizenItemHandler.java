@@ -10,6 +10,8 @@ import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
@@ -330,5 +332,29 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 i.sendBreakAnimation(Hand.MAIN_HAND);
             });
         }
+    }
+
+    @Override
+    public double applyMending(final double xp)
+    {
+        double localXp = xp;
+
+        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(
+          Enchantments.MENDING));
+        if (toolSlot == -1)
+        {
+            return localXp;
+        }
+
+        final ItemStack tool = citizen.getInventoryCitizen().getStackInSlot(toolSlot);
+        if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
+        {
+            //2 xp to heal 1 dmg
+            final double dmgHealed = Math.min(localXp / 2, tool.getDamage());
+            localXp -= dmgHealed * 2;
+            tool.setDamage(tool.getDamage() - (int) Math.ceil(dmgHealed));
+        }
+
+        return localXp;
     }
 }

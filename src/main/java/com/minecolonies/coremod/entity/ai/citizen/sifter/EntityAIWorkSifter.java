@@ -74,8 +74,6 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
           new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance()
-                                                                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 
@@ -152,7 +150,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         }
 
         final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
-        if (progress > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
+        if (progress > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
         {
             progress = 0;
             if (check == SIFT)

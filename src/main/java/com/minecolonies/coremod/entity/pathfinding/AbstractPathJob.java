@@ -912,13 +912,13 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Check for headroom in the target space
-        if (!isPassable(pos.up(2)))
+        if (!isPassable(pos.up(2), false))
         {
             return -1;
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.pos.up(2)))
+        if (!isPassable(parent.pos.up(2), false))
         {
             return -1;
         }
@@ -957,7 +957,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             localPos = pos.up();
         }
 
-        if (!isPassable(pos.up()))
+        if (!isPassable(pos.up(), true))
         {
             return true;
         }
@@ -965,7 +965,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parent != null)
         {
             final BlockState hereState = world.getBlockState(localPos.down());
-            return hereState.getMaterial().isLiquid() && !isPassable(pos);
+            return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
         }
         return false;
     }
@@ -996,12 +996,12 @@ public abstract class AbstractPathJob implements Callable<Path>
         return true;
     }
 
-    protected boolean isPassable(final BlockPos pos)
+    protected boolean isPassable(final BlockPos pos, final boolean head)
     {
         final BlockState state = world.getBlockState(pos);
         if (!state.getMaterial().blocksMovement())
         {
-            return true;
+            return !head || !(state.getBlock() instanceof CarpetBlock);
         }
         return isPassable(state);
     }

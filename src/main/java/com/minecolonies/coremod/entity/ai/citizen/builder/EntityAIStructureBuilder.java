@@ -40,16 +40,6 @@ import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS
 public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
 {
     /**
-     * How often should intelligence factor into the builders skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should strength factor into the builders skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
      * over this y level the builder will be faster.
      */
     private static final int DEPTH_LEVEL_0 = 60;
@@ -127,8 +117,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
           new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100),
           new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                                  + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 

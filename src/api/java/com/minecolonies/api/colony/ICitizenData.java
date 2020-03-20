@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.Random;
 
 public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 {
@@ -168,30 +168,6 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     void serializeViewNetworkData(@NotNull PacketBuffer buf);
 
     /**
-     * Sets the levels of the citizen.
-     *
-     * @param lvl the new levels for the citizen.
-     */
-    void setLevel(int lvl);
-
-    /**
-     * Adds experiences of the citizen.
-     *
-     * @param xp the amount of xp to add.
-     */
-    void addExperience(double xp);
-
-    /**
-     * Levelup actions for the citizen, increases levels and notifies the Citizen's Job
-     */
-    void levelUp();
-
-    /**
-     * Returns the default chance to levelup
-     */
-    int getChanceToLevel();
-
-    /**
      * Getter for the saturation.
      *
      * @param extraSaturation the extra saturation
@@ -295,16 +271,10 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     ICitizenHappinessHandler getCitizenHappinessHandler();
 
     /**
-     * Try a random levels up.
+     * Get the citizen skill handler.
+     * @return the handler.
      */
-    void tryRandomLevelUp(Random random);
-
-    /**
-     * Try a random levels up.
-     *
-     * @param customChance set to 0 to not use, chance for levelup is 1/customChance
-     */
-    void tryRandomLevelUp(Random random, int customChance);
+    ICitizenSkillHandler getCitizenSkillHandler();
 
     /**
      * Schedule restart and cleanup.
@@ -329,41 +299,6 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     void setIsChild(boolean isChild);
 
     /**
-     * Set the strength of the citizen
-     *
-     * @param strength value to set
-     */
-    void setStrength(int strength);
-
-    /**
-     * Set the endurance of the citizen
-     *
-     * @param endurance value to set
-     */
-    void setEndurance(int endurance);
-
-    /**
-     * Set the charisma of the citizen
-     *
-     * @param charisma value to set
-     */
-    void setCharisma(int charisma);
-
-    /**
-     * Set the intelligence of the citizen
-     *
-     * @param intelligence value to set
-     */
-    void setIntelligence(int intelligence);
-
-    /**
-     * Set the dexterity of the citizen
-     *
-     * @param dexterity value to set
-     */
-    void setDexterity(int dexterity);
-
-    /**
      * Check if the citizen just ate.
      * @return true if so.
      */
@@ -374,19 +309,6 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
-
-    /**
-     * Drain experience from the worker.
-     * @param maxDrain the max to drain.
-     * @return the drained amount including a configured draining bonus.
-     */
-    double drainExperience(int maxDrain);
-
-    /**
-     * Directly spend a cetain number of experiment levels.
-     * @param levels the levels to spend.
-     */
-    void spendLevels(int levels);
 
     /**
      * Trigger the response on the server side.
@@ -406,4 +328,11 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param handler the new handler.
      */
     void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
+
+    /**
+     * Get the clean job modifier.
+     * Primary skill + secondary divided by 4.
+     * @return the int modifier.
+     */
+    int getJobModifier();
 }

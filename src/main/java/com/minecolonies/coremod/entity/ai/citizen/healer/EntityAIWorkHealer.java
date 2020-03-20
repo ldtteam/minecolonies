@@ -47,16 +47,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
     private static final double BASE_XP_GAIN = 5;
 
     /**
-     * How often should charisma factor into the cook's skill modifier.
-     */
-    private static final int CHARISMA_MULTIPLIER = 1;
-
-    /**
-     * How often should intelligence factor into the cook's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
      * Area the worker targets.
      */
     private AxisAlignedBB targetArea = null;
@@ -107,9 +97,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
           new AITarget(WANDER, this::wander, 20)
 
         );
-        //super.registerTargets(new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY));
-        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
-                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -484,7 +471,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
      */
     private boolean testRandomCureChance()
     {
-        return worker.getRandom().nextInt(60*60) <= Math.max(1, worker.getCitizenData().getLevel() / 10);
+        return worker.getRandom().nextInt(60*60) <= Math.max(1, worker.getCitizenData().getJobModifier() / 10);
     }
 
     /**

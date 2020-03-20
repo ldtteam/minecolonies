@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.util.StudyItem;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -126,6 +127,20 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public boolean canWorkDuringTheRain()
     {
         return true;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Intelligence;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Intelligence;
     }
 
     @NotNull
@@ -262,20 +277,6 @@ public class BuildingLibrary extends AbstractBuildingWorker
         public boolean hasEnoughWorkers()
         {
             return getWorkerId().size() >= getBuildingLevel() * 2;
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
         }
     }
 }

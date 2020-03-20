@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
@@ -89,6 +90,20 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return true;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Adaptability;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Knowledge;
+    }
+
     @Override
     public boolean canWorkDuringTheRain()
     {
@@ -156,20 +171,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         public Window getWindow()
         {
             return new WindowHutCook(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.CHARISMA;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.INTELLIGENCE;
         }
     }
 }

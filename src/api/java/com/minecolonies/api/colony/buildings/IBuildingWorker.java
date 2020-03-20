@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -177,17 +178,16 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
     boolean canCraftComplexRecipes();
 
     /**
-     * Available skills of the citizens.
+     * Primary skill getter.
+     * @return the primary skill.
      */
-    enum Skill
-    {
-        STRENGTH,
-        ENDURANCE,
-        CHARISMA,
-        INTELLIGENCE,
-        DEXTERITY,
-        PLACEHOLDER
-    }
+    @NotNull
+    Skill getPrimarySkill();
 
-
+    /**
+     * Secondary skill getter.
+     * @return the secondary skill.
+     */
+    @NotNull
+    Skill getSecondarySkill();
 }

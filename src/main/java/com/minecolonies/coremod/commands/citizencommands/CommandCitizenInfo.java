@@ -12,9 +12,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.CITIZENID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
@@ -87,18 +90,9 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
               workingPosition.getZ()), true);
         }
 
-        context.getSource()
-          .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.levelandage",
-          entityCitizen.getCitizenExperienceHandler().getLevel(),
-          entityCitizen.getGrowingAge(),
-          citizenData.getLevel()), true);
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.skills",
-          citizenData.getCharisma(),
-          citizenData.getDexterity(),
-          citizenData.getEndurance(),
-          citizenData.getIntelligence(),
-          citizenData.getStrength()), true);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.skills",
+          citizenData.getCitizenSkillHandler().getSkills().values().stream().map(Tuple::getA).toArray()), true);
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {
@@ -110,7 +104,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent(
               "com.minecolonies.command.citizeninfo.job",
               entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName()), true);
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.activity",
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.activity",
               entityCitizen.getDesiredActivity(),
               entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription()), true);
         }
