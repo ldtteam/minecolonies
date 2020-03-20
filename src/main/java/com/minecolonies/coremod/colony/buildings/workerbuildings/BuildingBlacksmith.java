@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
@@ -70,6 +71,20 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     public String getJobName()
     {
         return BLACKSMITH;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Strength;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Focus;
     }
 
     @Override
@@ -144,20 +159,6 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, BLACKSMITH);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
         }
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,8 +25,8 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.knight = new GuardType.Builder()
                                  .setJobTranslationKey("com.minecolonies.coremod.job.Knight")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.knight")
-                                 .setPrimarySkill(IBuildingWorker.Skill.STRENGTH)
-                                 .setSecondarySkill(IBuildingWorker.Skill.ENDURANCE)
+                                 .setPrimarySkill(Skill.Adaptability)
+                                 .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
                                  .setGuardJobProducer(JobKnight::new)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
@@ -34,8 +35,8 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.ranger = new GuardType.Builder()
                                  .setJobTranslationKey("com.minecolonies.coremod.job.Ranger")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.ranger")
-                                 .setPrimarySkill(IBuildingWorker.Skill.DEXTERITY)
-                                 .setSecondarySkill(IBuildingWorker.Skill.STRENGTH)
+                                 .setPrimarySkill(Skill.Agility)
+                                 .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
                                  .setGuardJobProducer(JobRanger::new)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)

@@ -166,7 +166,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                     final BlockPos pos = citizenDataView.getPosition();
                     rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(POSITION_LABEL, Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
-                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText("Level: " + citizenDataView.getLevel());
+                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText("Level: " + citizenDataView.getJobModifier());
                     WindowCitizen.createHealthBar(citizenDataView, rowPane.findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
                 }
             }

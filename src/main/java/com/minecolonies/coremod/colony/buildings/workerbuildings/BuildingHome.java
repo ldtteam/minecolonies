@@ -76,11 +76,6 @@ public class BuildingHome extends AbstractBuilding
     private int childCreationTimer;
 
     /**
-     * Defines how much child stats very from parents average(+ or -).
-     */
-    private static final int CHILD_STATS_VARIANCE = 3;
-
-    /**
      * Instantiates a new citizen hut.
      *
      * @param c the colony.
@@ -301,19 +296,8 @@ public class BuildingHome extends AbstractBuilding
 
             final Random rand = new Random();
 
-            // Inheriting stats from parents + some randomness. Capped by happiness in CitizenData setters.
-            final int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            final int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            final int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            final int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            final int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-
+            newCitizen.getCitizenSkillHandler().init(mom, dad, rand);
             newCitizen.setIsChild(true);
-            newCitizen.setStrength(str);
-            newCitizen.setCharisma(cha);
-            newCitizen.setDexterity(dex);
-            newCitizen.setEndurance(end);
-            newCitizen.setIntelligence(intelligence);
 
             // Assign citizen to a house
             if (assignCitizen(newCitizen))

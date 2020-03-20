@@ -87,7 +87,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 10),
           new AITarget(PREPARING, this::prepare, 1)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
 
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, LEATHER_LEVEL_RANGE, LEATHER_BUILDING_LEVEL_RANGE));
@@ -166,7 +165,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         final Map<IToolType, List<GuardGear>> correctArmor = new LinkedHashMap<>();
         for (final List<GuardGear> itemList : itemsNeeded)
         {
-            final int level = worker.getCitizenData().getLevel();
+            final int level = worker.getCitizenData().getJobModifier();
             for (final GuardGear item : itemList)
             {
                 /*
@@ -287,7 +286,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         {
             return COMBAT_SPEED;
         }
-        double levelAdjustment = worker.getCitizenData().getLevel() * SPEED_LEVEL_BONUS;
+        double levelAdjustment = worker.getCitizenData().getJobModifier() * SPEED_LEVEL_BONUS;
 
         if (getOwnBuilding() != null)
         {
@@ -307,7 +306,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         if (worker.getCitizenData() != null)
         {
-            final int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel());
+            final int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getJobModifier());
             return delay > PHYSICAL_ATTACK_DELAY_MIN ? PHYSICAL_ATTACK_DELAY_MIN : delay;
         }
         return PHYSICAL_ATTACK_DELAY_BASE;

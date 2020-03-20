@@ -155,12 +155,7 @@ public class BuyCitizenMessage implements IMessage
                 final double low = maxStat * (buyCitizenType.index - 1) / 4;
                 final Random rand = new Random();
 
-                data.setIntelligence((int) Math.round(rand.nextDouble() * (high - low) + low));
-                data.setEndurance((int) Math.round(rand.nextDouble() * (high - low) + low));
-                data.setDexterity((int) Math.round(rand.nextDouble() * (high - low) + low));
-                data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
-                data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
-
+                data.getCitizenSkillHandler().init((int) (rand.nextInt() * (high - low) + low));
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.progress.hireCitizen");
                 colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }

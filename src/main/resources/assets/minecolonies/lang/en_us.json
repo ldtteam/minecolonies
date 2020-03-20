@@ -356,8 +356,7 @@
   "com.minecolonies.command.rsreset.success": "After 1.618 Seconds it reinstantiated completely new.",
 
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
-  "com.minecolonies.command.citizeninfo.levelandage": "§2Level: §f%s §2Age: §f%s §2Experience: §f%s",
-  "com.minecolonies.command.citizeninfo.skills": "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s",
+  "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
@@ -443,11 +442,20 @@
   "com.minecolonies.coremod.job.fisherman": "Fisherman",
   "com.minecolonies.coremod.job.guard": "GuardTower",
 
-  "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
-
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a supply ship or supply camp!",
 
-  "com.minecolonies.coremod.gui.citizen.skills.endurance": "Endurance: %d",
+  "com.minecolonies.coremod.gui.citizen.skills": "Skills",
+  "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.knowledge": "Knowledge: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.creativity": "Creativity: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.focus": "Focus: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.adaptability": "Adaptability: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.mana": "Mana: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.stamina": "Stamina: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.agility": "Agility: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.strength": "Strength: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "Dexterity: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.athletics": "Athletics: %d",
 
   "com.minecolonies.coremod.gui.workerhuts.build": "Build Building",
   "com.minecolonies.coremod.gui.workerhuts.buildrepair": "Build Options",
@@ -516,8 +524,7 @@
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
   "com.minecolonies.coremod.gui.workerhuts.repair": "Repair",
-  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "Dexterity: %d",
-  "com.minecolonies.coremod.gui.citizen.skills.charisma": "Charisma: %d",
+
   "com.minecolonies.coremod.gui.workerhuts.upgrade": "Upgrade",
 
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "Visit Citizen Chests:",
@@ -533,12 +540,10 @@
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
-  "com.minecolonies.coremod.gui.citizen.skills": "Skills",
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
   "com.minecolonies.coremod.gui.warehouse.toblacksmith": "Deliver to Blacksmith:",
-  "com.minecolonies.coremod.gui.citizen.skills.strength": "Strength: %d",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisherman's Hut",
   "com.minecolonies.coremod.gui.workerhuts.workorderadded": "Construction added to build queue.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
@@ -1321,6 +1326,21 @@
   "com.minecolonies.coremod.job.healer": "Healer",
   "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
   "com.minecolonies.coremod.gui.townhall.population.healers": "Healers: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d"
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d",
+
+  "com.minecolonies.coremod.gui.citizen.job.label": "Job: %s",
+  "com.minecolonies.coremod.gui.citizen.job.desc": "These skills are influenced by the workers job:",
+
+  "com.minecolonies.coremod.gui.citizen.job.skills.intelligence": "Intelligence:",
+  "com.minecolonies.coremod.gui.citizen.job.skills.knowledge": "Knowledge",
+  "com.minecolonies.coremod.gui.citizen.job.skills.creativity": "Creativity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.focus": "Focus",
+  "com.minecolonies.coremod.gui.citizen.job.skills.adaptability": "Adaptability",
+  "com.minecolonies.coremod.gui.citizen.job.skills.mana": "Mana",
+  "com.minecolonies.coremod.gui.citizen.job.skills.stamina": "Stamina",
+  "com.minecolonies.coremod.gui.citizen.job.skills.agility": "Agility",
+  "com.minecolonies.coremod.gui.citizen.job.skills.strength": "Strength",
+  "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics"
 }
 

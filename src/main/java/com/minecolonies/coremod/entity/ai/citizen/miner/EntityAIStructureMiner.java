@@ -12,8 +12,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -136,9 +134,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
           new AITarget(MINER_MINING_NODE, this::executeNodeMining, STANDARD_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(
-          2 * worker.getCitizenData().getStrength()
-            + worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
     }
 

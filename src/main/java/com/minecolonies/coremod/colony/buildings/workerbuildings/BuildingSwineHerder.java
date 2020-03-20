@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
@@ -65,6 +66,20 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
 
     @NotNull
     @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Strength;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Athletics;
+    }
+
+    @NotNull
+    @Override
     public IJob createJob(final ICitizenData citizen)
     {
         return new JobSwineHerder(citizen);
@@ -96,20 +111,6 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
         }
     }
 }

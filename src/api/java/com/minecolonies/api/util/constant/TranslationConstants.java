@@ -20,16 +20,6 @@ public final class TranslationConstants
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                             = "block.minecolonies.blockhutfarmer.name";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH                = "com.minecolonies.coremod.gui.citizen.skills.strength";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA                = "com.minecolonies.coremod.gui.citizen.skills.charisma";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY               = "com.minecolonies.coremod.gui.citizen.skills.dexterity";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE               = "com.minecolonies.coremod.gui.citizen.skills.endurance";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE            = "com.minecolonies.coremod.gui.citizen.skills.intelligence";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER                         = "com.minecolonies.coremod.gui.scarecrow.user";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE                   = "com.minecolonies.coremod.gui.scarecrow.user.noone";

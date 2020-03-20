@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
@@ -131,6 +132,20 @@ public class BuildingSifter extends AbstractBuildingWorker
     public boolean canCraftComplexRecipes()
     {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Focus;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Strength;
     }
 
     /**
@@ -424,20 +439,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutSifter(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

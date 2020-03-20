@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
@@ -166,6 +167,20 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         return BUILDER;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Adaptability;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Athletics;
+    }
+
     @Override
     public void searchWorkOrder()
     {
@@ -253,20 +268,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         public Window getWindow()
         {
             return new WindowHutBuilder(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

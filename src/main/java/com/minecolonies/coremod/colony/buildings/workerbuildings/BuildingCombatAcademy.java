@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
@@ -163,6 +164,20 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         return "melee";
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Adaptability;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Stamina;
+    }
+
     @Override
     public int getMaxInhabitants()
     {
@@ -312,20 +327,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         public boolean hasEnoughWorkers()
         {
             return getWorkerId().size() >= getBuildingLevel();
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

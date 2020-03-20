@@ -143,7 +143,7 @@ public final class MinecoloniesPlacementHandlers
                 return blockState;
             }
 
-            final TileEntity entity = world.getTileEntity(pos);
+            TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
@@ -155,9 +155,11 @@ public final class MinecoloniesPlacementHandlers
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos);
                 }
+
+                entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    final BlockState newState = BlockMinecoloniesRack.getPlacementState(blockState, world.getTileEntity(pos), pos);
+                    final BlockState newState = BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
                     world.setBlockState(pos, newState);
                 }
             }
