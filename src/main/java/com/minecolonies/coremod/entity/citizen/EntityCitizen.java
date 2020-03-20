@@ -555,7 +555,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @NotNull
     public ICitizenData getCitizenData()
     {
         return citizenData;
@@ -1442,13 +1441,13 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setDead()
     {
-        if (citizenData != null)
+        if (isDead())
         {
-            citizenData.setLastPosition(getCurrentPosition());
-            citizenData.setCitizenEntity(null);
+            return;
         }
-        citizenColonyHandler.onCitizenRemoved();
         super.setDead();
+
+        citizenColonyHandler.onCitizenRemoved();
     }
 
     /**
