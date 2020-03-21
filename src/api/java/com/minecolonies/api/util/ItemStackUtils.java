@@ -737,7 +737,7 @@ public final class ItemStackUtils
             }
             else
             {
-                return true;
+                return !itemStack1.hasTagCompound() && !itemStack2.hasTagCompound();
             }
         }
         return false;
