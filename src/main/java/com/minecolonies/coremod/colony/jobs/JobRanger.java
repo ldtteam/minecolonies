@@ -49,7 +49,7 @@ public class JobRanger extends AbstractJobGuard
      * Custom Action on Levelup, increases Guard HP
      */
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp()
     {
         // Bonus Health for guards(gets reset upon Firing)
         if (getCitizen().getCitizenEntity().isPresent())
@@ -58,7 +58,7 @@ public class JobRanger extends AbstractJobGuard
 
             // +1 half heart every 5 level
             final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getLevel() / 5, AttributeModifier.Operation.ADDITION);
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 5, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

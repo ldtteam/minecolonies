@@ -134,7 +134,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           new AITarget(DUMPING, this::dump, TICKS_SECOND)
 
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 

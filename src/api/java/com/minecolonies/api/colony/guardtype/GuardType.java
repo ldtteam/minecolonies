@@ -1,28 +1,62 @@
 package com.minecolonies.api.colony.guardtype;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.function.Function;
 
+/**
+ * Guard type class.
+ */
 public class GuardType extends ForgeRegistryEntry<GuardType>
 {
-
+    /**
+     * Producer function.
+     */
     private final Function<ICitizenData, IJob> guardJobProducer;
-    private final String                       jobTranslationKey;
-    private final String                       buttonTranslationKey;
-    private final IBuildingWorker.Skill        primarySkill;
-    private final IBuildingWorker.Skill        secondarySkill;
-    private final String                       workerSoundName;
 
+    /**
+     * Job translation key.
+     */
+    private final String jobTranslationKey;
+
+    /**
+     * Button translation key.
+     */
+    private final String buttonTranslationKey;
+
+    /**
+     * Primary skill.
+     */
+    private final Skill primarySkill;
+
+    /**
+     * Secondary skill.
+     */
+    private final Skill secondarySkill;
+
+    /**
+     * Worker sound name.
+     */
+    private final String workerSoundName;
+
+    /**
+     * Constructor to create the type.
+     * @param guardJobProducer the producer.
+     * @param jobTranslationKey job translation key.
+     * @param buttonTranslationKey button translation ky.
+     * @param primarySkill primary skill.
+     * @param secondarySkill secondary skill.
+     * @param workerSoundName worker sound name.
+     */
     public GuardType(
       final Function<ICitizenData, IJob> guardJobProducer,
       final String jobTranslationKey,
       final String buttonTranslationKey,
-      final IBuildingWorker.Skill primarySkill, final IBuildingWorker.Skill secondarySkill, final String workerSoundName)
+      final Skill primarySkill, final Skill secondarySkill, final String workerSoundName)
     {
         super();
         this.guardJobProducer = guardJobProducer;
@@ -33,43 +67,70 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         this.workerSoundName = workerSoundName;
     }
 
+    /**
+     * Getter for the job producer.
+     * @return the producer.
+     */
     public Function<ICitizenData, IJob> getGuardJobProducer()
     {
         return guardJobProducer;
     }
 
+    /**
+     * Getter for the job translation key.
+     * @return the key.
+     */
     public String getJobTranslationKey()
     {
         return jobTranslationKey;
     }
 
+    /**
+     * Getter for the button translation key.
+     * @return the key.
+     */
     public String getButtonTranslationKey()
     {
         return buttonTranslationKey;
     }
 
-    public IBuildingWorker.Skill getPrimarySkill()
+    /**
+     * Getter for the primary key.
+     * @return the skill.
+     */
+    public Skill getPrimarySkill()
     {
         return primarySkill;
     }
 
-    public IBuildingWorker.Skill getSecondarySkill()
+    /**
+     * Getter for the secondary skill.
+     * @return the skill.
+     */
+    public Skill getSecondarySkill()
     {
         return secondarySkill;
     }
 
+    /**
+     * Getter for the worker sound name.
+     * @return the sound name.
+     */
     public String getWorkerSoundName()
     {
         return workerSoundName;
     }
 
+    /**
+     * The builder.
+     */
     public static class Builder
     {
         private Function<ICitizenData, IJob> guardJobProducer;
         private String                       jobTranslationKey;
         private String                       buttonTranslationKey;
-        private IBuildingWorker.Skill        primarySkill;
-        private IBuildingWorker.Skill        secondarySkill;
+        private Skill                        primarySkill;
+        private Skill                        secondarySkill;
         private String                       workerSoundName;
         private ResourceLocation             registryName;
 
@@ -91,13 +152,13 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
             return this;
         }
 
-        public Builder setPrimarySkill(final IBuildingWorker.Skill primarySkill)
+        public Builder setPrimarySkill(final Skill primarySkill)
         {
             this.primarySkill = primarySkill;
             return this;
         }
 
-        public Builder setSecondarySkill(final IBuildingWorker.Skill secondarySkill)
+        public Builder setSecondarySkill(final Skill secondarySkill)
         {
             this.secondarySkill = secondarySkill;
             return this;

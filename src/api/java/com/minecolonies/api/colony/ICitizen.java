@@ -29,48 +29,6 @@ public interface ICitizen
     boolean isFemale();
 
     /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    int getStrength();
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    int getEndurance();
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    int getCharisma();
-
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen Intelligence value.
-     */
-    int getIntelligence();
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    int getDexterity();
-
-    /**
-     * Entity experience getter.
-     *
-     * @return it's experience.
-     */
-    double getExperience();
-
-    /**
      * Getter for the saturation.
      *
      * @return the saturation.
@@ -83,13 +41,6 @@ public interface ICitizen
      * @return true if child
      */
     boolean isChild();
-
-    /**
-     * Returns the levels of the citizen.
-     *
-     * @return levels of the citizen.
-     */
-    int getLevel();
 
     /**
      * Get the inventory of the citizen.

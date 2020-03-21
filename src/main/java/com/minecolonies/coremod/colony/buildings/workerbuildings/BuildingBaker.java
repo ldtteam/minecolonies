@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
@@ -423,6 +424,20 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         return true;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Knowledge;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Dexterity;
+    }
+
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
@@ -455,20 +470,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         public Window getWindow()
         {
             return new WindowHutBaker(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.DEXTERITY;
         }
     }
 }

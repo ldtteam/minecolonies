@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.citizenhandlers;
+package com.minecolonies.coremod.entity.citizen;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.IColony;
@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -129,7 +128,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
             citizen.setFemale(citizen.getDataManager().get(DATA_IS_FEMALE) != 0);
             citizen.setIsChild(citizen.getDataManager().get(DATA_IS_CHILD));
-            citizen.getCitizenExperienceHandler().setLevel(citizen.getDataManager().get(DATA_LEVEL));
             citizen.setModelId(BipedModelType.valueOf(citizen.getDataManager().get(DATA_MODEL)));
             citizen.setTextureId(citizen.getDataManager().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getDataManager().get(DATA_RENDER_METADATA));

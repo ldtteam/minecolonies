@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -306,6 +307,20 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return FARMER;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Stamina;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Athletics;
+    }
+
     /**
      * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
@@ -590,20 +605,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 fields.add(pos);
             }
             amountOfFields = buf.readInt();
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.ENDURANCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.CHARISMA;
         }
 
         /**

@@ -17,6 +17,5 @@ public class EntityAIWorkStonemason extends AbstractEntityAICrafting<JobStonemas
     public EntityAIWorkStonemason(@NotNull final JobStonemason stonemason)
     {
         super(stonemason);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getStrength());
     }
 }

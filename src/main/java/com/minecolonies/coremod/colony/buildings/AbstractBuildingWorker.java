@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -308,7 +309,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         if (citizen != null)
         {
             citizen.setWorkBuilding(this);
-            citizen.getJob().onLevelUp(citizen.getLevel());
+            citizen.getJob().onLevelUp();
             colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;
@@ -489,6 +490,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(hiringMode.ordinal());
         buf.writeString(this.getJobName());
         buf.writeInt(getMaxInhabitants());
+        buf.writeInt(getPrimarySkill().ordinal());
+        buf.writeInt(getSecondarySkill().ordinal());
     }
 
     /**
@@ -578,6 +581,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private int maxInhabitants = 1;
 
         /**
+         * The primary skill.
+         */
+        private Skill primary = Skill.Intelligence;
+
+        /**
+         * The secondary skill.
+         */
+        private Skill secondary = Skill.Intelligence;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -636,6 +649,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.hiringMode = HiringMode.values()[buf.readInt()];
             this.jobName = buf.readString(32767);
             this.maxInhabitants = buf.readInt();
+            this.primary = Skill.values()[buf.readInt()];
+            this.secondary = Skill.values()[buf.readInt()];
         }
 
         /**
@@ -681,14 +696,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         @NotNull
         public Skill getPrimarySkill()
         {
-            return Skill.PLACEHOLDER;
+            return primary;
         }
 
         @Override
         @NotNull
         public Skill getSecondarySkill()
         {
-            return Skill.PLACEHOLDER;
+            return secondary;
         }
 
         /**

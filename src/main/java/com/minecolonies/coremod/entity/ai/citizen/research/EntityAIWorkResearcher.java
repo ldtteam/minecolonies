@@ -46,11 +46,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(STUDY, this::study, STANDARD_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
-                                                                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
-
         worker.setCanPickUpLoot(true);
-
     }
 
     @Override

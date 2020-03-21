@@ -1098,6 +1098,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             this.dataBackup = compound;
         }
 
+
         citizenDiseaseHandler.read(compound);
     }
 

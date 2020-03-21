@@ -15,8 +15,6 @@
                                  source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
                 </box>
             </list>
-            <label id="desc2" size="130 11" pos="30 180" label="$(com.minecolonies.gui.workerhuts.enchanter.daily)" color="black" textalign="MIDDLE"/>
-            <input id="qty" size="25 17" pos="80 195" maxlength="25"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

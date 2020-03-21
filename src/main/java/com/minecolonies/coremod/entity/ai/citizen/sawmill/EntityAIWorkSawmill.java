@@ -17,6 +17,5 @@ public class EntityAIWorkSawmill extends AbstractEntityAICrafting<JobSawmill>
     public EntityAIWorkSawmill(@NotNull final JobSawmill sawmill)
     {
         super(sawmill);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
     }
 }

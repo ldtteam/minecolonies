@@ -31,16 +31,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
 {
     /**
-     * How often should intelligence factor into the composter's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should intelligence factor into the composter's skill modifier.
-     */
-    private static final int DESTERITY_MULTIPLIER = 1;
-
-    /**
      * Base xp gain for the composter.
      */
     private static final double BASE_XP_GAIN = 1;
@@ -90,11 +80,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
           new AITarget(COMPOSTER_FILL, this::fillBarrels, 10),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels, 10)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
-                                                                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
-
         worker.setCanPickUpLoot(true);
-
     }
 
     /**
@@ -289,7 +275,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private double getLootMultiplier( final Random random)
     {
-        final int citizenLevel = worker.getCitizenData().getLevel();
+        final int citizenLevel = worker.getCitizenData().getJobModifier();
 
         final int diceResult = random.nextInt(100);
 
