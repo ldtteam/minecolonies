@@ -46,13 +46,6 @@ public interface IColony
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
-     * Returns whether the colony chunks are loaded
-     *
-     * @return true when loaded.
-     */
-    boolean areAllColonyChunksLoaded();
-
-    /**
      * Returns the position of the colony.
      *
      * @return pos of the colony.
