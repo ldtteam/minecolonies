@@ -20,36 +20,37 @@
   "minecolonies.config.commands.comment": "所有与殖民地命令相关设置",
   "minecolonies.config.disablecitizenvoices": "市民声音",
   "minecolonies.config.disablecitizenvoices.comment": "禁用市民的声音[默认: false]",
-  
+
   "minecolonies.config.diseasemodifier": "疾病指数",
   "minecolonies.config.diseasemodifier.comment": "疾病有多普遍 1 =非常常见，100 =非常罕见（默认值:5）",
   "minecolonies.config.diseases": "疾病",
   "minecolonies.config.diseases.comment": "可配置市民得的疾病、名字、罕见程度、以及治愈方法",
+
   "minecolonies.config.listofplantables": "花卉小屋的花",
   "minecolonies.config.listofplantables.comment": "花卉小屋可以种植的物品和物品标签",
-  
+
   "item.minecolonies.scepterlumberjack.name": "伐木工人权杖",
   "item.minecolonies.scepterlumberjack.usedstart": "第一坐标点确定",
   "item.minecolonies.scepterlumberjack.usedend": "第二坐标点确定",
   "item.minecolonies.scepterlumberjack.restrictiontoobig": "区域 &s 太大了. 伐木工最大工作范围是 %s 个方块",
   "item.minecolonies.scepterlumberjack.restrictionset": "伐木工人工作范围设置完成.大小 %s 个方块. 最大是 %s 个方块",
-  
+
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "限制 (开启)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "限制 (关闭)",
-  
+
   "minecolonies.config.names": "名称设置",
   "minecolonies.config.names.comment": "所有关于市民名称的相关配置",
-  
+
   "minecolonies.config.usemiddleinitial": "中间名首字母",
   "minecolonies.config.usemiddleinitial.comment": "市民应该有中间名首字母吗？",
-  
+
   "minecolonies.config.malefirstnames": "男性名字",
   "minecolonies.config.malefirstnames.comment": "用于殖民者的男性名字",
   "minecolonies.config.femalefirstnames": "女性名字",
   "minecolonies.config.femalefirstnames.comment": "用于殖民者的女性名字",
   "minecolonies.config.lastnames": "姓氏",
   "minecolonies.config.lastnames.comment": "用于殖民者的姓氏",
-  
+
   "minecolonies.config.initialcitizenamount": "初始市民数量",
   "minecolonies.config.initialcitizenamount.comment": "初始市民数量[默认值: 4]",
   "minecolonies.config.builderplaceconstructiontape": "施工围栏放置",
@@ -162,6 +163,7 @@
   "minecolonies.config.dobarbariansspawn.comment": "Whether or not to spawn barbarians. [默认值: true]",
   "minecolonies.config.barbarianhorddifficulty": "Barbarian Horde Difficulty",
   "minecolonies.config.barbarianhorddifficulty.comment": "The difficulty setting for barbarians. [默认值: 5]",
+
   "minecolonies.config.spawnbarbariansize": "Spawn Barbarian Size",
   "minecolonies.config.spawnbarbariansize.comment": "The spawn size of a barbarian horde. [默认值: 5]",
   "minecolonies.config.maxbarbariansize": "Max Barbarian Size",
@@ -224,6 +226,7 @@
   "minecolonies.config.creativeresolve.comment": "Should the request system creatively resolve (if possible) when the player is required to resolve a request. [默认值: false]",
   "minecolonies.config.canplayeruseresetcommand": "Can Player Use Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should the player be allowed to use the '/mc colony rs reset' command? [默认值: false]",
+
   "block.minecolonies.blockhutcitizen": "市民小屋",
   "block.minecolonies.blockhutshepherd": "牧羊人小屋",
   "block.minecolonies.blockhutswineherder": "养猪人小屋",
@@ -244,6 +247,7 @@
   "block.minecolonies.blockconstructiontape": "建筑胶带",
   "block.minecolonies.blockhutguardtower": "卫兵塔",
   "block.minecolonies.blockhutfield": "农场",
+
   "block.minecolonies.blockhutcitizen.name": "市民小屋",
   "block.minecolonies.blockhutshepherd.name": "牧羊人小屋",
   "block.minecolonies.blockhutswineherder.name": "养猪人小屋",
@@ -264,11 +268,12 @@
   "block.minecolonies.blockconstructiontape.name": "建筑胶带",
   "block.minecolonies.blockhutguardtower.name": "卫兵塔",
   "block.minecolonies.blockhutfield.name": "农场",
+
   "tile.blockhut.messagenopermission": "你没有权限在 %s 中打开小屋",
   "tile.blockhut.messagenopermissionplace": "你没有权限在 %s 中放置小屋",
   "tile.blockhut.messagetoofarfromtownhall": "你需要离市政厅更近一些!",
   "tile.blockhut.messagenotownhall": "你首先需要放置一个市政厅!",
-  
+
   "block.blockhuttownhall.messagemaxSize": "%d 已经达到最大大小",
   "block.blockhuttownhall.messagecolonistdead": "殖民者%s在 %d %d %d 死于%s！",
   "block.blockhuttownhall.messageinvalidworld": "你不能在这个世界类型里放置市政厅",
@@ -276,27 +281,28 @@
   "block.blockhuttownhall.messagetooclosetovillage": "太靠近现有的村庄",
   "block.blockhuttownhall.messagetooFar": "离你的殖民地太远了",
   "block.blockhuttownhall.messageworkerdead": "%s%s 在 %d %d %d 因 %s 死亡！",
-  
   "tile.blockhuttownhall.messageplacedalreadydel": "你已经放置了一个市政厅，如果要删除你的殖民地以开始新的请单击：",
   "tile.blockhuttownhall.messageplacedalreadyinfi": "你已经放置了一个市政厅，如果要删除你的殖民地以开始新的请单击[删除]，如果要开始新的殖民地但不删除旧的请单击[放弃]",
   "tile.blockhuttownhall.messageplacedalready": "你已经放置了一个市政厅，如果要创建一个新的，请远离现有的殖民地",
-  "tile.blockhuttownhall.abandonaddofficer": "如果要将自己添加为被遗弃殖民地的管理员以保留控制权，请单击：",																																	  
+  "tile.blockhuttownhall.abandonaddofficer": "如果要将自己添加为被遗弃殖民地的管理员以保留控制权，请单击：",
+																																		  
   "tile.blockhuttownhall.deletemessagelink": "[删除]",
   "tile.blockhuttownhall.abandonmessagelink": "[放弃]",
   "tile.blockhuttownhall.addofficermessagelink": "[添加为管理员]",
-  
+
   "item.minecolonies.ancienttome": "古籍",
   "item.minecolonies.chiefsword": "首领之剑",
   "item.minecolonies.scepterGuard": "卫兵权杖",
-  
+
   "entity.worker.inventoryfullchestfull": "请给我的建筑箱子腾出空间，我无法存放我的物品",
+
   "entity.builder.messagebuildstart": "开始建造 %s",
   "entity.builder.messagebuildcomplete": "结束建造 %s",
   "entity.builder.messagebuildtoohigh": "%s 太高了，请把建筑高度降低到 y=256 以下",
   "entity.builder.messagebuildtoolow": "%s 太低了，请把建筑高度提升到 y=0 以上",
   "entity.builder.messageneedmaterial": "我需要 %s (数量: %d)",
   "entity.builder.messagebuildernecessary": "需要一个 %d 级的建筑师小屋来建造或升级这个建筑",
-  
+
   "entity.miner.messageneedtools": "需要工具 %s!",
   "entity.miner.messageneedblockanditem": "我需要 %s!",
   "entity.miner.messageneedbettertools": "我需要更好的工具!",
@@ -311,17 +317,17 @@
   "death.attack.entity.chiefbarbarian": "%d 被一位伟大的首领驯化了！",
   "death.attack.entity.archerbarbarian": "%d 被野蛮人射手蹂躏致死",
   "entity.archerbarbarian": "野蛮人射手",
-  
+
   "entity.builder.messagenobuilder": "你需要一个建筑工人来建造或升级这个建筑",
   "entity.farmer.needseed": "我需要%s 来种植",
-  
+
   "entity.citizen.nojob": "有一份工作将会很棒",
   "entity.citizen.demandsjob": "我等了两个多星期才终于有了工作！我很难过！",
   "entity.citizen.nohouse": "我真的很想有个房子住",
   "entity.citizen.demandshouse": "我已经两个多星期没有房子住了！我真的很难过！",
   "entity.citizen.notool": "我有很多天找不到我的工具",
   "entity.citizen.demandstool": "因为少了那个工具，我有很长一段时间不能工作",
-  
+
   "com.minecolonies.command.notop": "必须是OP才能使用该命令",
   "com.minecolonies.command.whereami.nocolony": "没有殖民地在附近",
   "com.minecolonies.command.whereami.colonyclose": "你不在任何殖民地, 最近的殖民地离这里大约%.2f个方块",
@@ -348,10 +354,9 @@
   "com.minecolonies.command.loadbackup.success": "成功加载备份",
   "com.minecolonies.command.deleteable.success": "更改殖民地ID%s的可删除flag，它现在设置为%s",
   "com.minecolonies.command.rsreset.success": "After 1.618 Seconds it reinstantiated completely new.",
-  
+
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 名字: §f %s",
-  "com.minecolonies.command.citizeninfo.levelandage": "§2等级: §f%s §2年龄: §f%s §2经验: §f%s",
-  "com.minecolonies.command.citizeninfo.skills": "§2魅力: §f%s §2敏捷: §f%s §2耐力: §f%s\n§2智力: §f%s §2力量: §f%s",
+  "com.minecolonies.command.citizeninfo.skills": "§2运动: §f%s §2敏捷: §f%s §2力量: §f%s\n§2灵活: §f%s §2耐力: §f%s §2魔力: §f%s\n§2应变: §f%s §2专注: §f%s §2创造: §f%s\n§2学识: §f%s §2智力: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2工作: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2工作: §f失业",
   "com.minecolonies.command.citizeninfo.health": "§2生命: §f%s §2最大生命: §f%s",
@@ -371,12 +376,12 @@
   "com.minecolonies.command.citizenlist.next": "下一页 -> ",
   "com.minecolonies.command.citizenreload.success": "已更新市民实体 id %s ",
   "com.minecolonies.command.citizenspawn.success": "生成新的市民: %s",
-  
+
   "com.minecolonies.command.colonyidnotfound": "此维度中找不到id%s的殖民地！",
   "com.minecolonies.command.playernotfound": "找不到玩家 %s .",
   "com.minecolonies.command.notenabledinconfig": "此命令被禁用",
-  "com.minecolonies.command.resetsupply": "Successfully reset the supply camp and ship placement",
-  
+  "com.minecolonies.command.resetsupply": "成功重置补给营地和补给船位置",
+
   "com.minecolonies.coremod.status.worker.goingtohut": "回小屋",
   "com.minecolonies.coremod.status.herder.breeding": "饲育中",
   "com.minecolonies.coremod.status.herder.searching": "搜索中",
@@ -384,7 +389,7 @@
   "com.minecolonies.coremod.status.herder.butchering": "屠宰中",
   "com.minecolonies.coremod.status.cowboy.milking": "挤牛奶",
   "com.minecolonies.coremod.status.shepherd.shearing": "剪羊毛",
-  
+
   "com.minecolonies.coremod.gui.workerhuts.shepherdhut": "牧羊人小屋",
   "com.minecolonies.coremod.gui.workerhuts.swineherderhut": "养猪人小屋",
   "com.minecolonies.coremod.gui.workerhuts.cowboyhut": "牛仔小屋",
@@ -392,23 +397,23 @@
   "com.minecolonies.coremod.gui.workerhuts.homehut": "市民小屋",
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "建筑师小屋",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "伐木工小屋",
-  
+
   "com.minecolonies.coremod.gui.townhall.rename": "重命名殖民地",
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "挖掘等级",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "建筑类型:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "工人等级: %s",
-  "com.minecolonies.coremod.gui.warehouse.tohuards": "交付给卫兵:",						  
-  
+  "com.minecolonies.coremod.gui.warehouse.tohuards": "交付给卫兵:",
+
   "com.minecolonies.coremod.gui.buildtool.nodecoration": "没有装饰物",
   "com.minecolonies.coremod.gui.buildtool.hut": "小屋",
   "com.minecolonies.coremod.gui.buildtool.decoration": "装饰物",
   "com.minecolonies.coremod.gui.buildtool.nohut": "没有小屋",
   "com.minecolonies.coremod.gui.buildtool.nullhut": "没有小屋可用",
-  "com.minecolonies.coremod.gui.buildtool.nohutininventory": "在你的物品栏内找不到小屋。", 
+  "com.minecolonies.coremod.gui.buildtool.nohutininventory": "在你的物品栏内找不到小屋。",
   "com.minecolonies.coremod.gui.buildtool.hut.level": "等级 %s",
   "com.minecolonies.coremod.gui.buildtool.decorations": "装饰物",
   "com.minecolonies.coremod.gui.buildtool.scans": "我的结构图",
-  
+
   "com.minecolonies.coremod.job.lumberjack": "伐木工人",
   "com.minecolonies.coremod.job.swineherder": "养猪人",
   "com.minecolonies.coremod.job.shepherd": "牧羊人",
@@ -429,20 +434,37 @@
   "com.minecolonies.coremod.job.cook": "厨师",
   "com.minecolonies.coremod.job.bakery": "面包师",
   "com.minecolonies.coremod.job.researcher": "研究员",
+
+
   "com.minecolonies.coremod.job.deliveryman": "送货员",
   "com.minecolonies.coremod.job.farmer": "农民",
   "com.minecolonies.coremod.job.miner": "矿工",
   "com.minecolonies.coremod.job.fisherman": "渔民",
   "com.minecolonies.coremod.job.guard": "卫兵",
+
+  "com.minecolonies.coremod.error.supplychestalreadyplaced": "你已经放置了补给船或补给营地！",
+
+  "com.minecolonies.coremod.gui.citizen.skills": "技能",
   "com.minecolonies.coremod.gui.citizen.skills.intelligence": "智力: %d",
-  "com.minecolonies.coremod.error.supplychestalreadyplaced": "您已经放置了一艘补给船或补给营地！",
-  "com.minecolonies.coremod.gui.citizen.skills.endurance": "耐力: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.knowledge": "学识: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.creativity": "创造: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.focus": "专注: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.adaptability": "应变: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.mana": "魔力: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.stamina": "耐力: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.agility": "灵活: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.strength": "力量: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "敏捷: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.athletics": "运动: %d",
+
   "com.minecolonies.coremod.gui.workerhuts.build": "建造建筑",
   "com.minecolonies.coremod.gui.workerhuts.buildrepair": "建造选项",
   "com.minecolonies.coremod.gui.workerhuts.upgradeunavailable": "没有可用的升级",
   "com.minecolonies.coremod.gui.workerhuts.information": "信息",
+
   "com.minecolonies.coremod.gui.hiring.description": "选择一个工人来完成这项工作",
   "com.minecolonies.coremod.gui.assigning.description": "选择一个市民到这里居住",
+
   "com.minecolonies.coremod.gui.townhall.repair": "修理市政厅",
   "com.minecolonies.coremod.gui.townhall.mercenary": "雇佣雇佣兵",
   "com.minecolonies.coremod.gui.townhall.mercenaryhire": "雇佣",
@@ -453,6 +475,7 @@
   "com.minecolonies.coremod.gui.townhall.hirecitizen3": "使用一次招募包，会增加每次的购买价格",
   "com.minecolonies.coremod.gui.townhall.recall": "召回所有市民",
   "com.minecolonies.coremod.gui.townhall.recallone": "召回市民",
+
   "com.minecolonies.coremod.gui.townhall.addplayer": "添加玩家:",
   "com.minecolonies.coremod.gui.townhall.addblock": "添加方块/位置:",
   "com.minecolonies.coremod.gui.townhall.permissions": "权限",
@@ -479,10 +502,11 @@
   "com.minecolonies.coremod.gui.townhall.population.builders": "建筑工人: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.cooks": "厨师: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.rangers": "游侠: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.knights": "骑士: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.melees": "骑士: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.students": "学生: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.florists": "花艺师: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.enchanters": "附魔师: %d/%d",
+
   "com.minecolonies.coremod.gui.townhall.population.sifters": "筛子工人: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.crushers": "粉碎工人: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.sawmills": "木工师: %d/%d",
@@ -492,17 +516,20 @@
   "com.minecolonies.coremod.gui.townhall.population.smelterys": "冶炼工人: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.stonemasons": "石匠: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.blacksmiths": "铁匠: %d/%d",
+
   "com.minecolonies.coremod.gui.warehouse.tostonemason": "交付到石匠:",
   "com.minecolonies.coremod.workorderadded": "建筑请求创建完毕!",
   "com.minecolonies.coremod.gui.hiring.on": "手动",
+
   "com.minecolonies.coremod.gui.hiring.buttonhire": "雇佣",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "分配",
   "com.minecolonies.coremod.gui.workerhuts.repair": "修理",
-  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "敏捷: %d",
-  "com.minecolonies.coremod.gui.citizen.skills.charisma": "魅力: %d",
+
   "com.minecolonies.coremod.gui.workerhuts.upgrade": "升级",
+
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "访问市民箱子:",
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "生物攻击列表",
+
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "未就职者: %d",
   "com.minecolonies.coremod.gui.workerhuts.minernode": "节点",
   "com.minecolonies.coremod.gui.hiring.off": "自动",
@@ -510,13 +537,13 @@
   "com.minecolonies.coremod.gui.cowboy.collect": "收集牛奶",
   "com.minecolonies.coremod.gui.workerhuts.settings": "设定",
   "com.minecolonies.coremod.gui.workerhuts.farmer": "农民",
+
   "com.minecolonies.coremod.gui.townhall.build": "建造市政厅",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "建筑工作:",
-  "com.minecolonies.coremod.gui.citizen.skills": "技能",
+
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "等级",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "需要的资源",
   "com.minecolonies.coremod.gui.warehouse.toblacksmith": "交付给铁匠：",
-  "com.minecolonies.coremod.gui.citizen.skills.strength": "力量: %d",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "渔民小屋",
   "com.minecolonies.coremod.gui.workerhuts.workorderadded": "建筑物加入到了建筑队列.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "召回工人",
@@ -540,9 +567,11 @@
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "距离下一个殖民地 %d 方块远（太近了，去找一个新的）",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "远离中心 %d 方块",
   "com.minecolonies.coremod.gui.workerhuts.guardtower": "卫兵塔",
+
   "com.minecolonies.coremod.gui.workerhuts.university": "大学",
   "com.minecolonies.coremod.gui.workerhuts.bakery": "烘焙房",
   "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "配方",
+
   "com.minecolonies.coremod.gui.workerhuts.level0": "请建造小屋来雇用一名工人。",
   "com.minecolonies.coremod.job.guard.needweapon": "一把武器!",
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "卫兵-行动:",
@@ -584,14 +613,17 @@
   "com.minecolonies.coremod.warehouse.full": "仓库已满, 请升级或腾出空间。",
   "block.minecolonies.blockhutwarehouse": "仓库",
   "block.minecolonies.blockhutwarehouse.name": "仓库",
+
   "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "仓库",
   "block.minecolonies.blockhutdeliveryman": "送货员小屋",
   "block.minecolonies.blockhutdeliveryman.name": "送货员小屋",
+
   "com.minecolonies.coremod.gui.workerhuts.deliveryman": "送货员小屋",
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "取消建造",
   "com.minecolonies.coremod.gui.workerhuts.cancelupgrade": "取消升级",
   "com.minecolonies.coremod.gui.workerhuts.cancelrepair": "取消修理",
   "com.minecolonies.coremod.network.messages.schematicsavemassage.toobig": "结构文件太大，不能大于%s字节",
+
   "com.minecolonies.coremod.gui.structure.edit.title": "编辑结构图",
   "com.minecolonies.coremod.gui.structure.rename": "重命名结构图",
   "com.minecolonies.coremod.gui.structure.delete": "删除结构图",
@@ -599,22 +631,27 @@
   "com.minecolonies.coremod.gui.structure.delete.body": "是否要删除%s？",
   "com.minecolonies.coremod.gui.workerhuts.deliveryprio.static": "静态",
   "com.minecolonies.coremod.gui.workerhuts.deliveryprio.automatic": "自动",
-  "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s 不开心了, 因为一个雇佣兵偷走了 %s !",
+  "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s 不高兴了, 因为一个雇佣兵偷走了 %s !",
   "com.minecolonies.coremod.mercenary.stealbuilding": "一个雇佣兵刚刚在房子里偷了 %s !",
+
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "幸福指数",
   "com.minecolonies.coremod.gui.happiness.food": "食物指数",
+  "com.minecolonies.coremod.gui.happiness.health": "健康指数",
   "com.minecolonies.coremod.gui.happiness.damage": "攻击指数",
   "com.minecolonies.coremod.gui.happiness.house": "房屋指数",
   "com.minecolonies.coremod.gui.happiness.job": "工作指数",
   "com.minecolonies.coremod.gui.happiness.farms": "无农场指数",
   "com.minecolonies.coremod.gui.happiness.tools": "工具指数",
+
   "com.minecolonies.coremod.permission.no": "你没有权限在这个殖民地做这件事！",
   "com.minecolonies.coremod.gui.townhall.freeblocks": "无限制交互",
   "com.minecolonies.coremod.gui.townhall.add": "添加",
+
   "com.minecolonies.coremod.permission.access_huts": "访问界面",
   "com.minecolonies.coremod.permission.guards_attack": "战斗卫兵",
   "com.minecolonies.coremod.permission.place_huts": "放置小屋",
   "com.minecolonies.coremod.permission.break_huts": "破坏小屋",
+
   "com.minecolonies.coremod.permission.edit_permissions": "编辑权限",
   "com.minecolonies.coremod.permission.manage_huts": "管理小屋",
   "com.minecolonies.coremod.permission.receive_messages": "接收消息",
@@ -633,11 +670,14 @@
   "com.minecolonies.coremod.permission.attack_entity": "攻击实体",
   "com.minecolonies.coremod.permission.access_free_blocks": "访问无限制方块",
   "com.minecolonies.coremod.permission.explode": "爆炸",
+
   "com.minecolonies.coremod.permission.receive_messages_far_away": "远方的信息",
-  "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "保持殖民地加载",												
+  "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "保持殖民地加载",
+
   "item.supplycampdeployer.invalid": "需要一片至少 16×17 大的平坦地面，并且没有花和草",
-  "item.supplycampdeployer.invalid.solid_block_needed": "放置补给营地需要至少 16×17 的平坦地面，并且没有花和草。这些方块必须是实心的：%s",
-  "item.supplycampdeployer.invalid.air_block_needed": "放置补给营地需要至少 16×17 的平坦地面，并且没有花和草。这些方块必须是空的：%s",
+  "item.supplycampdeployer.invalid.water_block_needed": "放置补给船需要船下方有水，这些方块必须是水: %s.",
+  "item.supplycampdeployer.invalid.solid_block_needed": "放置补给营地需要平坦的地面。这些方块必须是实的: %s.",
+  "item.supplycampdeployer.invalid.air_block_needed": "放置补给营地或补给船，需要空气在地面或海平面以上。这些方块必须是空的: %s.",
   "item.supplycampdeployer.invalid.inside_existing_colony": "你不能把你的补给营地放在现有的殖民地附近",
   "item.minecolonies.supplychestdeployer": "补给船箱子",
   "item.minecolonies.supplycampdeployer": "补给营地箱子",
@@ -647,16 +687,20 @@
   "com.minecolonies.coremod.saturation.3": "我很饿, 我感觉工作效率很低",
   "com.minecolonies.coremod.saturation.5": "我饿了，工作效率也没那么高了",
   "com.minecolonies.coremod.saturation.7": "我已经吃饱了，但我很快就得再吃",
+
   "com.minecolonies.coremod.item.permissionscepter.setmode": "模式设置为 '%s'",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "你没有权限使用这个工具编辑方块",
   "com.minecolonies.coremod.item.permissionscepter.addblock.success": "添加方块类型 '%s'",
   "com.minecolonies.coremod.item.permissionscepter.addposition.success": "添加的位置'%d %d %d'",
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "移除了方块 '%s'",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "移除了位置 '%d %d %d'",
-  "block.blockHut.warehouse.limit": "仓库的数量被限制为每个殖民地1个.",
+  "tile.blockHut.warehouse.limit": "仓库的数量被限制为每个殖民地1个.",
+
   "com.minecolonies.coremod.gui.workerhuts.baker": "烘焙房",
-  "com.minecolonies.coremod.baker.nofurnace": "我的建筑里没有熔炉，请修理一下",
+  "com.minecolonies.coremod.bakery.nofurnace": "我的建筑里没有熔炉，请修理一下",
+
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "任务列表",
+
   "com.minecolonies.coremod.gui.townhall.housing": "住房分配模式:",
   "com.minecolonies.coremod.gui.townhall.movein": "市民可以搬入:",
   "com.minecolonies.coremod.gui.home.assign": "分配 %d 个市民",
@@ -665,6 +709,7 @@
   "block.minecolonies.blockcactustrapdoordoor": "仙人掌活板门",
   "block.minecolonies.blockcactusstair": "仙人掌楼梯",
   "block.minecolonies.blockcactusslab": "仙人掌台阶",
+
   "com.minecolonies.coremod.status.waitingForWork": "等待工作",
   "com.minecolonies.coremod.status.deciding": "决定",
   "com.minecolonies.coremod.status.sleeping": "让我睡觉",
@@ -699,16 +744,23 @@
   "block.minecolonies.blockhutbarrackstower.name": "兵营塔",
   "block.minecolonies.blockhutbarracks.name": "兵营",
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "兵营",
+  "com.minecolonies.coremod.gui.barracks.spieshire": "雇佣",
+  "com.minecolonies.coremod.gui.barracks.spies.desc": "在突袭期间，你可以在这里雇佣间谍，潜入敌人内部。这会让你知道敌人的位置，他们需要一些金子作为报酬。把金子放进兵营的物品栏里自动交付。",
+  "com.minecolonies.coremod.gui.workerhuts.spies": "雇佣间谍",
+
   "com.minecolonies.coremod.permission.teleport_to_colony": "传送至殖民地",
   "com.minecolonies.coremod.gui.hiring.buttonfire": "解雇",
   "com.minecolonies.coremod.worker.noupgrade": "没有可用的升级.",
   "com.minecolonies.coremod.worker.needbarracks": "请先升级兵营.",
   "com.minecolonies.coremod.gui.warehouse.upgrade": "升级存储",
+
   "com.minecolonies.coremod.gui.workerhuts.cook": "厨师",
   "block.minecolonies.blockhutcook": "餐厅",
   "block.minecolonies.blockhutcook.name": "餐厅",
+
   "com.minecolonies.coremod.ai.nochairs": "餐厅没有椅子，我没法吃东西！",
   "com.minecolonies.coremod.ai.norestaurant": "请建一个餐厅或者给我买点吃的!",
+																												  
   "com.minecolonies.coremod.ai.nowarehouse": "建一个仓库或把食物带给我，这样才能为我的顾客服务！",
   "com.minecolonies.coremod.ai.nofood": "我在仓库里没找到任何食物。",
   "com.minecolonies.coremod.status.cooking": "烹饪中",
@@ -717,7 +769,9 @@
   "com.minecolonies.coremod.status.idling": "空闲中",
   "com.minecolonies.coremod.status.mining": "采矿中",
   "com.minecolonies.coremod.status.smeltingdown": "冶炼中",
+
   "item.minecolonies.scepterpermission": "权限权杖",
+
   "com.minecolonies.coremod.request.delivery": "交付:",
   "com.minecolonies.coremod.request.food": "食物",
   "com.minecolonies.coremod.request.cookedfood": "熟食",
@@ -725,7 +779,9 @@
   "com.minecolonies.coremod.request.tool.pretype": "工具类别:",
   "com.minecolonies.coremod.request.tool.preminlevel": "最低级别:",
   "com.minecolonies.coremod.request.tool.premaxlevel": "最高级别:",
+
   "com.minecolonies.coremod.general.and": "和",
+
   "com.minecolonies.coremod.tooltype.none": "未知",
   "com.minecolonies.coremod.tooltype.pickaxe": "稿",
   "com.minecolonies.coremod.tooltype.shovel": "锹",
@@ -740,37 +796,48 @@
   "com.minecolonies.coremod.tooltype.leggings": "护腿",
   "com.minecolonies.coremod.tooltype.chestplate": "胸甲",
   "com.minecolonies.coremod.tooltype.boots": "靴子",
+
   "com.minecolonies.coremod.gui.citizen.requests": "打开请求:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "请求",
   "com.minecolonies.coremod.gui.citizen.requestscancel": "取消",
   "com.minecolonies.coremod.gui.citizen.requestsfulfill": "完成",
+
   "item.minecolonies.clipboard": "剪贴板",
+
   "com.minecolonies.coremod.item.clipboard.needcolony": "请Shift右击殖民地以注册你的剪贴板",
   "com.minecolonies.coremod.item.clipboard.registered": "已经注册到殖民地 %d",
   "com.minecolonies.coremod.buildings.warehouse": "仓库",
   "com.minecolonies.coremod.buildings.warehouse.name": "仓库",
+
   "block.minecolonies.blockpaperwall": "纸糊墙",
+
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "交付优先级:",
   "item.supplychestdeployer.invalid": "你必须把它放在一个合适的水源中",
   "item.supplychestdeployer.missing": "你是想欺骗我，而再次获得补给船吗？",
   "com.minecolonies.coremod.citizen.rename.same": "重命名失败：两个市民不允许有相同的名字！",
   "com.minecolonies.coremod.citizen.rename.notallowed": "重命名失败：不允许你重命名你的市民。",
+
   "com.minecolonies.coremod.request.smeltableore": "可熔炼矿石",
   "block.minecolonies.blockhutsmeltery": "金属冶炼厂",
   "block.minecolonies.blockhutsmeltery.name": "金属冶炼厂",
+
   "com.minecolonies.coremod.enteringcolony": "小心，你正在进入 %s 的殖民地",
   "com.minecolonies.coremod.leavingcolony": "再见，你正在离开 %s 的殖民地",
   "com.minecolonies.coremod.enteringcolonynotify": "小心, %s 刚刚进入 %s.",
   "com.minecolonies.coremod.leavingcolonynotify": "再见 %s 离开了 %s.",
+
   "com.minecolonies.coremod.mourning": "殖民地中有人死了，出于尊重，殖民地明天将哀悼 %s",
+
   "event.minecolonies.raidmessage1": "§4在 %s 附近发现神秘勇士",
   "event.minecolonies.raidmessage2": "§4市民报告称有袭击者正在接近 %s！",
   "event.minecolonies.raidmessage3": "§4系好安全带牛仔!今晚有一些该死的袭击者要来 %s!",
   "event.minecolonies.raidmessage4": "§4一大群袭击者正在接近 %s，他们并不是来闹着玩的！",
-  "event.minecolonies.raidmessage_p1": "§4在 %s 附近发现了神秘的水手，他们乘坐一艘小型单桅帆船，你应该考虑摧毁它。",
-  "event.minecolonies.raidmessage_p2": "§4市民报告说有海盗正接近 %s，他们带来了一艘船，最好把摧毁它！",
-  "event.minecolonies.raidmessage_p3": "§4同志们！今晚有一些该死的海盗会来到 %s，他们在这里航行，并攻击我们，直到我们摧毁他们的帆船！",
-  "event.minecolonies.raidmessage_p4": "§4一大群海盗正航行到 %s，他们不是来玩的！除非我们摧毁他们的大帆船，否则他们的巨浪会吞噬我们！",
+  "event.minecolonies.raidmessage_p1": "§4%s附近发现神秘水手，要来%s，他们乘坐一艘小型单桅帆船，你应该考虑摧毁它。",
+																																										
+  "event.minecolonies.raidmessage_p2": "§4市民报告%s有海盗要来%s，他们驶来了一艘船，最好摧毁它！",
+  "event.minecolonies.raidmessage_p3": "§4同志们！今晚%s有一些该死的海盗要来%s，他们在这里航行，并攻击我们，直到我们摧毁他们的船！",
+  "event.minecolonies.raidmessage_p4": "§4%s有一大群海盗要来%s，他们不是来玩的！除非我们摧毁他们的大船，否则他们的巨浪会吞噬我们！",
+
   "com.minecolonies.coremod.gui.workerhuts.toggleallon": "全部切换（开）",
   "com.minecolonies.coremod.gui.workerhuts.togglealloff": "全部切换（关）",
   "com.minecolonies.coremod.gui.recipe.remove": "删除",
@@ -781,7 +848,9 @@
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "重新种植（开）",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "重新种植（关）",
   "com.minecolonies.coremod.resolvers.crafter.public": "合成器",
+
   "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe": "你还没学会这个配方！",
+
   "com.minecolonies.coremod.gui.townhall.allies": "盟友:",
   "com.minecolonies.coremod.gui.townhall.feuds": "敌人:",
   "com.minecolonies.coremod.gui.townhall.tp": "你真的想传送到: %s [是]",
@@ -789,6 +858,7 @@
   "com.minecolonies.coremod.gui.townhall.toolow": "TH太低",
   "com.minecolonies.coremod.gui.recipe.full": "达到最高水平",
   "com.minecolonies.coremod.cook.full": "不能给工人食物，因为他们的物品栏已经满了",
+
   "block.minecolonies.blocktimberframe_oak_plain": "橡木普通木质框架",
   "block.minecolonies.blocktimberframe_oak_doublecrossed": "橡木十字木质框架",
   "block.minecolonies.blocktimberframe_oak_framed": "橡木镶边木质框架",
@@ -853,8 +923,10 @@
   "block.minecolonies.blockcactuspdoor": "仙人掌活板门",
   "item.minecolonies.cactusdoor": "仙人掌门",
   "block.minecolonies.blockcactusslab_half": "仙人掌台阶",
+
   "com.minecolonies.coremod.dimension.no": "你不能在其他维度放置殖民地（由配置文件决定）",
   "com.minecolonies.coremod.max.schematic.reached": "达到了 %d 方块的图纸尺寸上限",
+
   "com.minecolonies.coremod.max.schematic.quiteclose": "略接近",
   "com.minecolonies.coremod.max.schematic.quitefar": "略远离",
   "com.minecolonies.coremod.max.schematic.reallyfar": "非常远离",
@@ -863,8 +935,10 @@
   "com.minecolonies.coremod.barbarians.left": "只剩下 %d 个袭击者了！",
   "com.minecolonies.coremod.barbarians.killed": "你成功的保卫了你的殖民地！抵御了袭击者！",
   "com.minecolonies.coremod.gui.workerhuts.reposition": "复位",
+
   "com.minecolonies.coremod.tooclose": "离世界重生点太近，需要至少离 %d 方块远",
   "com.minecolonies.coremod.toofar": "离世界重生点太远，最高只能离 %d 方块远",
+
   "com.minecolonies.coremod.gui.scantool.showres": "显示资源",
   "com.minecolonies.coremod.gui.scantool.to": "到:",
   "com.minecolonies.coremod.gui.scantool.from": "从:",
@@ -873,35 +947,46 @@
   "com.minecolonies.coremod.gui.scantool.replace": "替换",
   "com.minecolonies.coremod.gui.scan.replace.title": "方块替换界面",
   "com.minecolonies.coremod.gui.scantool.select": "选择",
+
   "com.minecolonies.coremod.gui.townhall.guards": "卫兵数量:",
   "com.minecolonies.coremod.gui.townhall.house": "房屋数量:",
   "com.minecolonies.coremod.gui.townhall.saturation": "市民数量:",
   "com.minecolonies.coremod.gui.workerhuts.happiness": "幸福指数",
+
   "block.minecolonies.barrel_block": "桶",
   "item.minecolonies.compost": "堆肥",
   "block.minecolonies.blockhutcomposter": "堆肥小屋",
   "block.minecolonies.blockhutcomposter.name": "堆肥小屋",
+
   "com.minecolonies.gui.workerhuts.composter.compostables": "可堆肥物",
+
   "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "失业的",
   "com.minecolonies.coremod.gui.townhall.events": "事件",
   "com.minecolonies.coremod.gui.townhall.workorders": "工作顺序",
   "com.minecolonies.coremod.request.stacklist": "物品列表",
+
   "entity.composter.noitems": "请指定要堆肥的物品",
   "entity.barrel.working": "这个桶正在工作！",
+
   "com.minecolonies.coremod.status.fillingbarrels": "填充桶",
   "com.minecolonies.coremod.status.harvestingbarrels": "收获桶",
+
   "com.minecolonies.coremod.pvp.townhall.break.start": "注意！%s 开始破坏你的市政厅了！",
   "com.minecolonies.coremod.pvp.townhall.broke": "注意！！%s 破坏市政厅超过 %d%%% ！当破坏到 100%% 的时候就会被摧毁！",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "选择队伍颜色:",
   "block.minecolonies.blockhutlibrary": "图书馆",
   "block.minecolonies.blockhutlibrary.name": "图书馆",
+
   "com.minecolonies.coremod.gui.workerhuts.library": "图书馆",
+
   "item.minecolonies.resourcescroll": "资源卷轴",
   "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "无法找到指定的建筑工人，请Shift 右击一个已有的建筑师小屋",
+
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "配方",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "获得卫兵工具",
   "com.minecolonies.coremod.progress.supplies_placed": "§6 欢迎来到模拟殖民地。现在你已经有了补给，为何不找一个风水宝地放置市政厅来建设你的殖民地…即使离一个村庄很远。",
   "com.minecolonies.coremod.progress.colony_founded": "§6 新殖民地的消息传开了！如果你的市政厅周围有足够的空地，那么不久第一批殖民者将会加入你的新殖民地。（经验丰富的玩家可以在市政厅中关闭这些提示信息）",
+																																																																																									 
   "com.minecolonies.coremod.progress.first_citizen_spawned": "§6 第一个殖民者抵达了你的殖民地。你应该放置一个建筑师小屋来开始你的殖民地之旅",
   "com.minecolonies.coremod.progress.builder_placed": "§6 放置建筑师小屋是一个伟大的工作，但是这还不够，你需要打开它并点击“建造”按钮！不久你的 NPC 将会开始为村庄建设新的建筑",
   "com.minecolonies.coremod.progress.built_enqueued": "§6 在你的建筑工人工作期间，你可以在建造界面的第二页检查他需要的资源",
@@ -923,18 +1008,22 @@
   "com.minecolonies.coremod.progress.newchild": "§6 一个新的孩子现在幸福地生活在你的殖民地！",
   "com.minecolonies.coremod.progress.childgrow": "%s 长大了，现在想要一份工作",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 你的招募包被接受了，一个新市民来了！",
+
   "com.minecolonies.coremod.gui.townhall.printprogress": "输出帮助信息:",
   "com.minecolonies.coremod.gui.townhall.on": "开",
   "com.minecolonies.coremod.gui.townhall.off": "关",
+
   "com.minecolonies.coremod.gui.hiring.buttonpaused": "暂停",
   "com.minecolonies.coremod.gui.hiring.buttonunpaused": "取消暂停",
   "com.minecolonies.coremod.gui.hiring.restart": "重启",
   "com.minecolonies.coremod.gui.hiring.restartmessage": "重启市民 %s 的计划",
   "com.minecolonies.coremod.gui.hiring.restartmessagedone": "市民 %s 成功重启",
   "com.minecolonies.coremod.gui.townhall.buildinglevel": "建造等级",
+
   "com.minecolonies.coremod.gui.warehouse.sort": "排序",
   "com.minecolonies.coremod.gui.auto.hire.warning": "将建筑或殖民地的雇佣模式转换为手动模式，解雇该工人或雇佣另一名工人",
   "com.minecolonies.coremod.citizens.nospace": "<神秘之声> 殖民者无法到达你的殖民地，因为坐标X: %d Y: %d Z: %d 周围没有足够的空间",
+
   "entity.pirate": "海盗",
   "entity.archerpirate": "海盗弓箭手",
   "entity.minecolonies.pirate": "海盗",
@@ -946,14 +1035,17 @@
   "death.attack.entity.minecolonies.archerpirate": "%s 被海盗弓箭手蹂躏致死",
   "death.attack.entity.minecolonies.mercenary": "%s 被一个雇佣兵活活吃掉了!",
   "death.attack.slap": "%s 被一个雇佣兵活活打死了!",
+
   "item.minecolonies.pirate_hat": "海盗帽子",
   "item.minecolonies.pirate_top": "海盗上衣",
   "item.minecolonies.pirate_legs": "海盗裤子",
   "item.minecolonies.pirate_boots": "海盗鞋子",
+
   "item.minecolonies.pirate_cap": "海盗帽子",
   "item.minecolonies.pirate_chest": "海盗胸甲",
   "item.minecolonies.pirate_leggins": "海盗护腿",
   "item.minecolonies.pirate_shoes": "海盗靴子",
+
   "item.minecolonies.barbarianegg": "野蛮人刷怪蛋",
   "item.minecolonies.barbarcheregg": "野蛮人射手刷怪蛋",
   "item.minecolonies.barbchiefegg": "野蛮人首领刷怪蛋",
@@ -961,6 +1053,7 @@
   "item.minecolonies.piratearcheregg": "海盗弓箭手刷怪蛋",
   "item.minecolonies.piratecaptainegg": "海盗船长刷怪蛋",
   "item.minecolonies.mercegg": "雇佣兵刷怪蛋",
+
   "com.minecolonies.coremod.pirates.sailing.away": "一艘靠近 %s 的海盗船刚刚驶离去寻找另一名受害者",
   "com.minecolonies.coremod.cook.serve.player": "%s：先生，给你，拿着这些食物！",
   "block.minecolonies.blockhutarchery": "靶场",
@@ -968,12 +1061,15 @@
   "com.minecolonies.coremod.gui.workerhuts.archery": "靶场",
   "block.minecolonies.blockhutcombatacademy": "战斗研究所",
   "block.minecolonies.blockhutcombatacademy.name": "战斗研究所",
+
   "com.minecolonies.coremod.gui.workerhuts.combatacademy": "战斗研究所",
   "item.minecolonies.santa_hat": "圣诞帽",
+
   "com.minecolonies.coremod.gui.workerhuts.sawmill": "锯木厂",
   "block.minecolonies.blockhutsawmill": "锯木厂",
   "block.minecolonies.blockhutsawmill.name": "锯木厂",
   "com.minecolonies.coremod.recipe.unable": "无法存储蓝图。%s 没有空间再放置更多蓝图，或者蓝图与其专业不对应",
+																																																														
   "com.minecolonies.coremod.request.crafting": "合成",
   "entity.builder.messagebuilderstoofar": "没有足够近的建筑工人可以在此建筑中工作，在建造界面手动分配建筑工人或者将建筑位置靠近建筑工人",
   "com.minecolonies.coremod.bakery.norecipe": "请告诉我您要我在烘焙房准备的食物配方!",
@@ -982,15 +1078,19 @@
   "com.minecolonies.coremod.gui.workerhuts.composter": "堆肥小屋",
   "block.minecolonies.blockpostbox": "信箱",
   "block.minecolonies.blockpostbox.name": "信箱",
+
   "com.minecolonies.coremod.gui.citizen.stacks": "需要方块:",
   "com.minecolonies.coremod.gui.workerhuts.request": "需要",
+
   "com.minecolonies.coremod.gui.workerhuts.blacksmith": "铁匠铺",
   "com.minecolonies.coremod.gui.workerhuts.stonemason": "石匠小屋",
   "com.minecolonies.coremod.gui.workerhuts.smelter": "金属冶炼厂",
   "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "石材冶炼厂",
   "block.minecolonies.blockhutstonesmeltery": "石材冶炼厂",
   "block.minecolonies.blockhutstonesmeltery.name": "石材冶炼厂",
+
   "com.minecolonies.coremod.ai.wrongfood": "这个食物太生了难以入口！",
+
   "com.minecolonies.coremod.gui.homehut.current": "当前的家:",
   "com.minecolonies.coremod.gui.homehut.currently": "当前: %d 方块",
   "block.minecolonies.blockhutcrusher": "粉碎机",
@@ -999,6 +1099,7 @@
   "com.minecolonies.coremod.gui.workerhuts.crushersettings": "设置",
   "com.minecolonies.coremod.gui.workerhuts.save": "保存",
   "com.minecolonies.coremod.crusher.toomuch": "设置当前每日最大值为 %d",
+
   "block.blockHutTownHall.messageplacedalreadydel": "你已经放置了一个市政厅，如果要删除殖民地以开始新的请点击：",
   "block.blockHutTownHall.messageplacedalreadyinfi": "你已经放置了一个市政厅，如果要删除殖民地以开始新的请点击[删除]，如果要开始新的殖民地但不删除旧的请点击[放弃]",
   "block.blockHutTownHall.messageplacedalready": "你已经放置了一个市政厅",
@@ -1006,32 +1107,40 @@
   "block.blockHutTownHall.deletemessagelink": "[删除]",
   "block.blockHutTownHall.abandonmessagelink": "[放弃]",
   "block.blockHutTownHall.addofficermessagelink": "[添加为管理员]",
+
   "com.minecolonies.coremod.gui.shepherd.autodye": "随机羊染色:",
   "com.minecolonies.coremod.general.onbig": "开",
   "com.minecolonies.coremod.general.offbig": "关",
+
   "com.minecolonies.coremod.general.canttakeequipped": "您拥有的唯一盔甲是你身上穿的.如果您想给我,请把它放在您的物品栏中.",
+
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "每天限制",
   "block.minecolonies.blockhutsifter": "筛子",
   "block.minecolonies.blockhutsifter.name": "筛子",
+
   "com.minecolonies.coremod.gui.workerhuts.sifter": "筛子",
   "com.minecolonies.coremod.sifter.meshbroke": "我当前的筛网坏了，我又开始使用默认筛网了！",
   "com.minecolonies.coremod.gui.workerhuts.buy": "购买",
   "com.minecolonies.coremod.gui.workerhuts.meshsettings": "筛网设置",
   "com.minecolonies.coremod.sifter.toomuch": "设置当前每日最大值 %d",
   "com.minecolonies.coremod.gui.building.rename.title": "重命名建筑",
+
   "com.minecolonies.coremod.gui.buildinghiremode": "建筑雇佣模式:",
   "com.minecolonies.coremod.gui.hiringmode.default": "默认（殖民地覆盖）",
   "com.minecolonies.coremod.gui.hiringmode.auto": "自动",
   "com.minecolonies.coremod.gui.hiringmode.manual": "手动",
   "com.minecolonies.coremod.gui.name.tooLong": "我们将字符缩减为 \"%s\" 因为它超过了15个字符的限制",
+
   "block.minecolonies.decorationcontroller": "装饰控制",
   "com.minecolonies.coremod.gui.deco.namescan": "最终文件路径和文件名，无级别：",
   "com.minecolonies.coremod.gui.deco": "装饰名称：",
   "com.minecolonies.coremod.gui.deco.level": "装饰等级：",
+
   "com.minecolonies.coremod.gui.placement.warning": "我们建议使用建筑工具界面来放置建筑，以便能够调整放置的准确位置",
   "com.minecolonies.coremod.gui.placement.buildtool": "使用建筑工具",
   "com.minecolonies.coremod.gui.placement.direct": "仍然放置",
   "com.minecolonies.coremod.gui.townhall.population.childs": "儿童: %d",
+
   "block.minecolonies.composted_dirt": "堆肥土",
   "com.minecolonies.coremod.composted_dirt.player_use_message": "这个方块只有花卉小屋工作人员可以使用!",
   "com.minecolonies.coremod.job.florist": "花艺师",
@@ -1054,7 +1163,7 @@
   "com.minecolonies.gui.workerhuts.enchanter.daily": "每日经验吸收",
   "com.minecolonies.coremod.enchanter.nodrainingsset": "请分配一些可以让我从中吸取经验的工人！",
 
-  "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
+  "minecolonies.config.enchanterexperiencemultiplier": "附魔经验倍数",
   "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]",
 
   "minecolonies.config.enchantments": "附魔",
@@ -1160,8 +1269,8 @@
   "com.minecolonies.coremod.gui.chat.okay": "我尽量办到！",
   "com.minecolonies.coremod.gui.chat.ignore": "现在只能这样了！",
   "com.minecolonies.coremod.gui.chat.remindmelater": "请稍候提醒我！",
-
   "entity.fisherman.messagewatertoofar": "我的小屋似乎离水太远了，我找不到水来钓鱼！它的面积至少是7x7，和我的小屋一样高",
+																																																		   
   "com.minecolonies.coremod.furnaceuser.nofuel": "请告诉我熔炉里要用什么燃料！",
   "com.minecolonies.coremod.furnaceuser.noore": "请告诉我熔炉里要熔炼什么矿石！",
   "com.minecolonies.coremod.florist.noplantground": "我没有任何堆肥土可以种植！请修理或升级我的建筑！",
@@ -1217,5 +1326,20 @@
   "com.minecolonies.coremod.job.healer": "医生",
   "com.minecolonies.coremod.gui.workerhuts.healer": "医院",
   "com.minecolonies.coremod.gui.townhall.population.healers": "医生: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.researchers": "研究员: %d/%d"
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "研究员: %d/%d",
+
+  "com.minecolonies.coremod.gui.citizen.job.label": "工作: %s",
+  "com.minecolonies.coremod.gui.citizen.job.desc": "这些技能会被工人的工作影响：",
+
+  "com.minecolonies.coremod.gui.citizen.job.skills.intelligence": "智力:",
+  "com.minecolonies.coremod.gui.citizen.job.skills.knowledge": "学识",
+  "com.minecolonies.coremod.gui.citizen.job.skills.creativity": "创造",
+  "com.minecolonies.coremod.gui.citizen.job.skills.focus": "专注",
+  "com.minecolonies.coremod.gui.citizen.job.skills.adaptability": "应变",
+  "com.minecolonies.coremod.gui.citizen.job.skills.mana": "魔力",
+  "com.minecolonies.coremod.gui.citizen.job.skills.stamina": "耐力",
+  "com.minecolonies.coremod.gui.citizen.job.skills.agility": "灵活",
+  "com.minecolonies.coremod.gui.citizen.job.skills.strength": "力量",
+  "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "敏捷",
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "运动"
 }
