@@ -14,12 +14,20 @@
                 <image id="deco2" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_down.png" pos="36 40"/>
                 <label id="title" size="100% 11" pos="0 48" color="black" textalign="MIDDLE"
                     label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
-                <group size="80 55" pos="41 58">
-                    <label id="strength" size="100% 11" color="black"/>
-                    <label id="endurance" size="100% 11" color="black"/>
-                    <label id="charisma" size="100% 11" color="black"/>
-                    <label id="intelligence" size="100% 11" color="black"/>
-                    <label id="dexterity" size="100% 11" color="black"/>
+                <group size="90 115" pos="20 58">
+                    <label id="athletics" size="100% 9" color="black"/>
+                    <label id="dexterity" size="100% 9" color="black"/>
+                    <label id="strength" size="100% 9" color="black"/>
+                    <label id="agility" size="100% 9" color="black"/>
+                    <label id="stamina" size="100% 9" color="black"/>
+                </group>
+                <group size="90 115" pos="80 58">
+                    <label id="mana" size="100% 9" color="black"/>
+                    <label id="adaptability" size="100% 9" color="black"/>
+                    <label id="focus" size="100% 9" color="black"/>
+                    <label id="creativity" size="100% 9" color="black"/>
+                    <label id="knowledge" size="100% 9" color="black"/>
+                    <label id="intelligence" size="100% 9" color="black"/>
                 </group>
                 <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="36 112"/>
                 <buttonimage label="$(com.minecolonies.coremod.gui.townHall.recallOne)" id="recallone" pos="30 132" size="86 17"
