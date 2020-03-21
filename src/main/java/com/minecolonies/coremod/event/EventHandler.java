@@ -24,6 +24,7 @@ import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
+import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
@@ -61,6 +62,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -90,6 +92,17 @@ import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
  */
 public class EventHandler
 {
+    /**
+     * Adds our custom loot tables to vanilla tables.
+     *
+     * @param event
+     */
+    @SubscribeEvent
+    public static void onLootTableLoad(LootTableLoadEvent event)
+    {
+        SupplyLoot.getInstance().addLootToEvent(event);
+    }
+
     /**
      * On Entity join do this.
      *

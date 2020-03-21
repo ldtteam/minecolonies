@@ -26,6 +26,9 @@
   "minecolonies.config.diseases": "Diseases",
   "minecolonies.config.diseases.comment": "All diseases citizens can get. The name, how common it is, and all ingredients to cure it.",
 
+  "minecolonies.config.generatesupplyloot": "Supply loot",
+  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally [Default: true]",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the florist can plant.",
 

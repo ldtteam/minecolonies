@@ -262,10 +262,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
-        if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
-        {
-            this.goalSelector.addGoal(++priority, new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
-        }
+        this.goalSelector.addGoal(++priority,
+          new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
@@ -276,8 +274,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
-
-        citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
 
     /**
