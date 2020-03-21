@@ -729,11 +729,17 @@ public final class ItemStackUtils
               itemStack1.getItem() == itemStack2.getItem() &&
               (itemStack1.getItemDamage() == itemStack2.getItemDamage() || !matchMeta))
         {
+            if (!matchNBT)
+            {
+                // Not comparing nbt
+                return true;
+            }
+
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
             {
                 // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2) || !matchNBT;
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
             }
             else
             {
