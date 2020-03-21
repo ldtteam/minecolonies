@@ -984,13 +984,6 @@ public class Colony implements IColony
         return world.getGameTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
-    @Override
-    public boolean areAllColonyChunksLoaded()
-    {
-        final float distanceFromCenter = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
-        return getLoadedChunkCount() / (distanceFromCenter * distanceFromCenter) >= 0.9f;
-    }
-
     /**
      * Update the waypoints after worldTicks.
      */
