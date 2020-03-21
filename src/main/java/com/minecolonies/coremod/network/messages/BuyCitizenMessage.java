@@ -147,15 +147,7 @@ public class BuyCitizenMessage implements IMessage
                 colony.increaseBoughtCitizenCost();
 
                 final ICitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
-
-                // Never roll max happiness for buying citizens, so library has to be used.
-                final double maxStat = colony.getOverallHappiness() - 1;
-
-                final double high = maxStat * buyCitizenType.index / 4;
-                final double low = maxStat * (buyCitizenType.index - 1) / 4;
-                final Random rand = new Random();
-
-                data.getCitizenSkillHandler().init((int) (rand.nextInt() * (high - low) + low));
+                data.getCitizenSkillHandler().init(buyCitizenType.index * 10);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.progress.hireCitizen");
                 colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }
