@@ -120,7 +120,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              placementErrorList,
+              Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }
@@ -132,7 +134,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              placementErrorList,
+              Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }

@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -139,13 +138,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param size  the size.
      * @return true if so.
      */
-    public static boolean canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList)
+    public static boolean canShipBePlaced(
+      @NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList, final
+    PlayerEntity placer)
     {
         for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
             for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z), placementErrorList);
+                checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z), placementErrorList, placer);
             }
         }
 
@@ -169,10 +170,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param world the world.
      * @param pos   the first position.
      */
-    private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
+    private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
-        final boolean notInAnyColony = hasPlacePermission(world, pos);
+        final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
@@ -192,9 +193,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos   the first position.
      * @return true if no colony found.
      */
-    private static boolean hasPlacePermission(final World world, final BlockPos pos)
+    private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        return colony == null || colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.PLACE_BLOCKS);
+        return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);
     }
 }
