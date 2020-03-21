@@ -3,9 +3,12 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -169,7 +172,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
     {
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
-        final boolean notInAnyColony = notInAnyColony(world, pos);
+        final boolean notInAnyColony = hasPlacePermission(world, pos);
         if (!isWater)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
@@ -189,8 +192,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos   the first position.
      * @return true if no colony found.
      */
-    private static boolean notInAnyColony(final World world, final BlockPos pos)
+    private static boolean hasPlacePermission(final World world, final BlockPos pos)
     {
-        return !IColonyManager.getInstance().isCoordinateInAnyColony(world, pos);
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        return colony == null || colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.PLACE_BLOCKS);
     }
 }
