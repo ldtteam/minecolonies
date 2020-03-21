@@ -84,7 +84,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 10),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 100),
           new AITarget(PREPARING, this::prepare, 1)
         );
         worker.setCanPickUpLoot(true);
