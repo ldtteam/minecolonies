@@ -45,12 +45,13 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue luckyBlockChance;
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
-    public final ForgeConfigSpec.DoubleValue fisherSpongeChance;
-    public final ForgeConfigSpec.IntValue minThLevelToTeleport;
+    public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
+    public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
-    public final ForgeConfigSpec.DoubleValue foodModifier;
+    public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
-    public final ForgeConfigSpec.IntValue diseaseModifier;
+    public final ForgeConfigSpec.IntValue     diseaseModifier;
+    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -264,6 +265,7 @@ public class CommonConfiguration extends AbstractConfiguration
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
+        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
 
         swapToCategory(builder, "commands");
 
@@ -302,8 +304,8 @@ public class CommonConfiguration extends AbstractConfiguration
         spawnBarbarianSize = defineInteger(builder,  "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 20, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 3, 1, 10);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 1, 1, 30);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 5, 1, 10);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 3, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);

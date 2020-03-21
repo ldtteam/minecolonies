@@ -1223,8 +1223,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = ItemStackUtils.getMiningLevel(item, toolType);
-            if (level >= required && level < bestLevel
-                  && (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel)))
+
+            if (level > -1 && level >= required && level < bestLevel && ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel))
             {
                 bestSlot = i;
                 bestLevel = level;

@@ -22,12 +22,12 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -43,8 +43,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Predicate;
+
+import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.INSTANT_PLACEMENT;
+import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.PLACEMENT_NBT;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -198,26 +200,40 @@ public class BuildToolPasteMessage implements IMessage
         }
         else if( structureName.contains("supply") )
         {
-            if(player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
+            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get()
+                  && !isFreeInstantPlacementMH(player))
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
             }
-            final List<ItemStack> stacks = new ArrayList<>();
+
+            Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
             if(structureName.contains("supplyship"))
             {
-                stacks.add(new ItemStack(ModItems.supplyChest));
+                searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
             }
             if(structureName.contains("supplycamp"))
             {
-                stacks.add(new ItemStack(ModItems.supplyCamp));
+                searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
             }
 
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
-            player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
-            AdvancementTriggers.PLACE_SUPPLY.trigger(player);
-            if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
+            if (isFreeInstantPlacementMH(player))
             {
+                searchPredicate =
+                  searchPredicate.and(stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
+            }
+
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.inventory), searchPredicate);
+
+            if (slot != -1 && !ItemStackUtils.isEmpty(player.inventory.removeStackFromSlot(slot)))
+            {
+                if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
+                {
+                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
+                    player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+                    AdvancementTriggers.PLACE_SUPPLY.trigger(player);
+                }
+
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
             }
@@ -226,6 +242,17 @@ public class BuildToolPasteMessage implements IMessage
                 LanguageHandler.sendPlayerMessage(player, "item.supplyChestDeployer.missing");
             }
         }
+    }
+
+    /**
+     * Whether the itemstack used allows a free placement.
+     *
+     * @return
+     */
+    private boolean isFreeInstantPlacementMH(ServerPlayerEntity playerEntity)
+    {
+        final ItemStack mhItem = playerEntity.getHeldItemMainhand();
+        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
     }
 
     /**

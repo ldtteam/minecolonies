@@ -1835,37 +1835,35 @@ public class InventoryUtils
      * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
      * @param sourceHandler the source handler.
      * @param itemStackSelectionPredicate the predicate.
-     * @param amount the amount.
+     * @param amount the max amount to extract
      * @param targetHandler the target.
      * @param slot the slot to put it in.
      * @return true if succesful.
      */
-    public static boolean transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+    public static void transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
             final IItemHandler sourceHandler,
             final Predicate<ItemStack> itemStackSelectionPredicate,
             final int amount,
             final IItemHandler targetHandler, final int slot)
     {
         final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
-                itemStackSelectionPredicate.and(stack -> stack.getCount() >= amount)::test);
+          itemStackSelectionPredicate);
 
         if (desiredItemSlot == -1)
         {
-            return false;
+            return;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
         if (ItemStackUtils.isEmpty(returnStack))
         {
-            return false;
+            return;
         }
 
         final ItemStack insertResult = targetHandler.insertItem(slot, returnStack, false);
         if (!ItemStackUtils.isEmpty(insertResult))
         {
             sourceHandler.insertItem(desiredItemSlot, insertResult, false);
-            return false;
         }
-        return true;
     }
 
     /**
