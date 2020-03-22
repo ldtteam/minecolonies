@@ -169,4 +169,11 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         }
         this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
+
+    public void render(int x, int y, float z)
+    {
+        this.renderBackground();
+        super.render(x, y, z);
+        this.renderHoveredToolTip(x, y);
+    }
 }

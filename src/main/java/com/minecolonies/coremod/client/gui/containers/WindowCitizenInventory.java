@@ -29,6 +29,13 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
         this.ySize = 114 + this.inventoryRows * 18;
     }
 
+    public void render(int x, int y, float z)
+    {
+        this.renderBackground();
+        super.render(x, y, z);
+        this.renderHoveredToolTip(x, y);
+    }
+
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
