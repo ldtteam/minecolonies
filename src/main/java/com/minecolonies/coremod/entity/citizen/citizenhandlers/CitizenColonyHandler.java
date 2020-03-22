@@ -1,25 +1,19 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
@@ -47,7 +41,13 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     private IColony colony;
 
     /**
+     * Whether the entity is registered to the colony yet.
+     */
+    private boolean registered = false;
+
+    /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenColonyHandler(final EntityCitizen citizen)
@@ -67,55 +67,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getWorkBuilding();
     }
 
-    /**
-     * Assigns a citizen to a colony.
-     *
-     * @param c    the colony.
-     * @param data the data of the new citizen.
-     */
-    @Override
-    public void initEntityCitizenValues(@Nullable final IColony c, @Nullable final ICitizenData data)
-    {
-        if (c == null)
-        {
-            colony = null;
-            colonyId = 0;
-            citizen.setCitizenId(0);
-            citizen.setCitizenData(null);
-            citizen.setDead();
-            return;
-        }
-
-        colony = c;
-        colonyId = colony.getID();
-        citizen.setCitizenId(data.getId());
-        citizen.setCitizenData(data);
-        data.setCitizenEntity(citizen);
-
-        citizen.setIsChild(data.isChild());
-        citizen.setCustomNameTag(citizen.getCitizenData().getName());
-
-        citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());
-        citizen.setHealth((float) data.getHealth());
-
-        citizen.setFemale(citizen.getCitizenData().isFemale());
-        citizen.setTextureId(citizen.getCitizenData().getTextureId());
-
-        citizen.getDataManager().set(DATA_COLONY_ID, colonyId);
-        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
-        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
-        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
-        citizen.getDataManager().set(DATA_IS_ASLEEP, citizen.getCitizenData().isAsleep());
-        citizen.getDataManager().set(DATA_IS_CHILD, citizen.getCitizenData().isChild());
-        citizen.getDataManager().set(DATA_BED_POS, citizen.getCitizenData().getBedPos());
-
-        citizen.getCitizenExperienceHandler().updateLevel();
-
-        data.setLastPosition(citizen.getPosition());
-
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
-    }
-
     @Override
     @Nullable
     public IBuilding getHomeBuilding()
@@ -125,79 +76,38 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
+     * @param colonyID
+     * @param citizenID
      */
     @Override
-    public void updateColonyServer()
+    public void registerWithColony(final int colonyID, final int citizenID)
     {
-        if (colonyId == 0)
+        if (registered)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(citizen.getEntityWorld(), citizen.getPosition());
-            if (colony == null)
-            {
-                citizen.setDead();
-            }
-            else
-            {
-                this.colonyId = colony.getID();
-                handleNullColony();
-            }
             return;
         }
 
-        if (colony == null)
+        this.colonyId = colonyID;
+        citizen.setCitizenId(citizenID);
+
+        if (colonyId == 0 || citizen.getCitizenId() == 0)
         {
-            handleNullColony();
+            citizen.setDead();
+            return;
         }
-    }
 
-    /**
-     * Handles extreme cases like colony or citizen is null.
-     */
-    private void handleNullColony()
-    {
-        final IColony c = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.world);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.world);
 
-        if (c == null)
+        if (colony == null)
         {
             Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUniqueID(), colonyId));
             citizen.setDead();
             return;
         }
 
-        final ICitizenData data = c.getCitizenManager().getCitizen(citizen.getCitizenId());
-        if (data == null)
-        {
-            //  Citizen does not exist in the Colony
-            Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
-              citizen.getUniqueID(),
-              colonyId,
-              citizen.getCitizenId()));
-            citizen.setDead();
-            return;
-        }
-
-        final Optional<AbstractEntityCitizen> entityCitizenOptional = data.getCitizenEntity();
-        entityCitizenOptional.filter(entityCitizen -> !citizen.getUniqueID().equals(entityCitizen.getUniqueID()))
-          .ifPresent(entityCitizen -> handleExistingCitizen(data, entityCitizen));
-
-        initEntityCitizenValues(c, data);
-    }
-
-    private void handleExistingCitizen(@NotNull final ICitizenData data, @NotNull final AbstractEntityCitizen existingCitizen)
-    {
-        Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
-          citizen.getUniqueID(),
-          colonyId,
-          citizen.getCitizenId(),
-          existingCitizen.getUniqueID()));
-        if (existingCitizen.getUniqueID().equals(citizen.getUniqueID()))
-        {
-            data.setCitizenEntity(citizen);
-        }
-        else
-        {
-            citizen.setDead();
-        }
+        this.colony = colony;
+        colony.getCitizenManager().registerCitizen(citizen);
+        registered = true;
     }
 
     /**
@@ -232,6 +142,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     *
      * @return the double describing it.
      */
     @Override
@@ -241,8 +152,20 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                  : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel()));
     }
 
+    @Override
+    public void onCitizenRemoved()
+    {
+        if (citizen.getCitizenData() != null && registered && colony != null)
+        {
+            colony.getCitizenManager().unregisterCitizen(citizen);
+            citizen.getCitizenData().setLastPosition(citizen.getCurrentPosition());
+        }
+    }
+
+
     /**
      * Getter for the colony.
+     *
      * @return the colony of the citizen or null.
      */
     @Override
@@ -254,6 +177,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Getter for the colonz id.
+     *
      * @return the colony id.
      */
     @Override
@@ -264,6 +188,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Setter for the colony id.
+     *
      * @param colonyId the new colonyId.
      */
     @Override
@@ -273,16 +198,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     }
 
     /**
-     * Clears the colony of the citizen.
-     */
-    @Override
-    public void clearColony()
-    {
-        initEntityCitizenValues(null, null);
-    }
-
-    /**
      * Check if a citizen is at home.
+     *
      * @return true if so.
      */
     @Override
@@ -300,6 +217,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq((int) Math.floor(citizen.posX), (int)citizen. posY, (int) Math.floor(citizen.posZ)) <= RANGE_TO_BE_HOME;
+        return homePosition.distanceSq((int) Math.floor(citizen.posX), (int) citizen.posY, (int) Math.floor(citizen.posZ)) <= RANGE_TO_BE_HOME;
     }
 }

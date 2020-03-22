@@ -86,6 +86,16 @@ public interface ICitizenDataView extends ICitizen
     double getDamageModifier();
 
     /**
+     * @return current health.
+     */
+    double getHealth();
+
+    /**
+     * @return max health.
+     */
+    double getMaxHealth();
+
+    /**
      * @return returns the current modifier related to house.
      */
     double getHouseModifier();

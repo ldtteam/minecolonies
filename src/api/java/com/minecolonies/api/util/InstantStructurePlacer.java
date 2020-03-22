@@ -63,9 +63,9 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             structureWrapper.structure.setPlacementSettings(new PlacementSettings(mirror, BlockPosUtil.getRotationFromRotations(rotations)));
             structureWrapper.placeStructure(pos.subtract(structureWrapper.structure.getOffset()), complete);
         }
-        catch (final IllegalStateException e)
+        catch (final Exception e)
         {
-            Log.getLogger().warn("Could not load structure!", e);
+            Log.getLogger().warn("Could not load structure! name:" + name, e);
         }
     }
 
