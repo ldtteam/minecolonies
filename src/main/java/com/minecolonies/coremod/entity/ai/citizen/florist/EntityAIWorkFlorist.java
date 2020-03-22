@@ -32,16 +32,6 @@ import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
 public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 {
     /**
-     * How often should intelligence factor into the composter's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 1;
-
-    /**
-     * How often should intelligence factor into the composter's skill modifier.
-     */
-    private static final int CHARISMA_MULTIPLIER = 2;
-
-    /**
      * Max 2d distance the florist should be from the hut.
      */
     private static final long MAX_DISTANCE           = 50;
@@ -114,8 +104,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
           new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
           new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
-                                                                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -259,7 +247,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0,  MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenExperienceHandler().getLevel()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0,  MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
     }
 
     /**

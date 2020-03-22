@@ -12,6 +12,8 @@ import net.minecraft.entity.player.PlayerEntity;
  */
 public interface IMCCommand
 {
+    static final int OP_PERM_LEVEL = 4;
+
     /**
      * Builds the command, overwrite and add further arguments etc for nonsimple commands. When overwriting this make sure to check the preconditions.
      *
@@ -55,7 +57,7 @@ public interface IMCCommand
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
-        return context.getSource().getEntity() instanceof PlayerEntity;
+        return context.getSource().getEntity() instanceof PlayerEntity || context.getSource().hasPermissionLevel(OP_PERM_LEVEL);
     }
 
     /**

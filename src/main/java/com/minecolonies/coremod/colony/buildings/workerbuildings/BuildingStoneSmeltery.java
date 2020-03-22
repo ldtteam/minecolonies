@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.ldtteam.blockout.views.Window;
@@ -73,6 +74,20 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public String getJobName()
     {
         return STONE_SMELTERY;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Athletics;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Dexterity;
     }
 
     @Override
@@ -151,20 +166,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         public Window getWindow()
         {
             return new WindowHutStoneSmelter(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

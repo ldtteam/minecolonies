@@ -52,8 +52,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     public EntityAIWorkShepherd(@NotNull final JobShepherd job)
     {
         super(job);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
-
         super.registerTargets(
           new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
         );

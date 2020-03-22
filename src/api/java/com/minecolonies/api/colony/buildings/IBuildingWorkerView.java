@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,11 +42,19 @@ public interface IBuildingWorkerView extends IBuildingView
      */
     void switchIndex(int i, int j);
 
+    /**
+     * Primary skill getter.
+     * @return the primary skill.
+     */
     @NotNull
-    IBuildingWorker.Skill getPrimarySkill();
+    Skill getPrimarySkill();
 
+    /**
+     * Secondary skill getter.
+     * @return the secondary skill.
+     */
     @NotNull
-    IBuildingWorker.Skill getSecondarySkill();
+    Skill getSecondarySkill();
 
     /**
      * Remove a worker from the list.

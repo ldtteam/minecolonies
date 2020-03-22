@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
@@ -261,6 +262,20 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         return LUMBERJACK;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Strength;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Focus;
+    }
+
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
@@ -361,20 +376,6 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();
             shouldRestrict = buf.readBoolean();
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.CHARISMA;
         }
 
         @NotNull

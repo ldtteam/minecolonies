@@ -30,7 +30,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.EnumSet;
 
-import static com.minecolonies.api.util.ItemStackUtils.*;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -139,6 +140,11 @@ public class EntityAIEatTask extends Goal
         if (currentState != IDLE)
         {
             return true;
+        }
+
+        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
+        {
+            return false;
         }
 
         final ICitizenData citizenData = citizen.getCitizenData();

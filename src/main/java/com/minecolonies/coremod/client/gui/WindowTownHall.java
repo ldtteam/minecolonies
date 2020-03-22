@@ -883,7 +883,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         findPaneByID(CITIZEN_INFO).show();
         button.disable();
         final ICitizenDataView view = citizens.get(row);
-        WindowCitizen.createXpBar(view, this);
         WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText(

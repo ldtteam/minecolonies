@@ -262,12 +262,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
-        if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
-        {
-            this.goalSelector.addGoal(++priority, new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
-        }
-        this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
+        this.goalSelector.addGoal(++priority,
+          new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
+        this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
@@ -276,8 +274,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
-
-        citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
 
     /**
@@ -559,17 +555,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @Nullable
+    @NotNull
     public ICitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-        {
-            final ICitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
-            if (data != null)
-            {
-                citizenData = data;
-            }
-        }
         return citizenData;
     }
 
@@ -1094,7 +1082,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isServerWorld())
         {
-            citizenColonyHandler.updateColonyServer();
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
         }
 
         isDay = compound.getBoolean(TAG_DAY);
@@ -1109,6 +1097,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
+
 
         citizenDiseaseHandler.read(compound);
     }
@@ -1324,7 +1313,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenData(@Nullable final ICitizenData data)
     {
-        this.citizenData = data;
+        if (data != null)
+        {
+            this.citizenData = data;
+            data.initEntityValues();
+        }
     }
 
     /**
@@ -1438,7 +1431,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
-        citizenColonyHandler.updateColonyServer();
+        citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
 
         if (citizenData != null)
         {
@@ -1619,14 +1612,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         return new ContainerCitizenInventory(id, inv, buffer);
     }
 
+    /**
+     * Removes the entity from world.
+     */
     @Override
     public void remove()
     {
-        if (citizenData != null)
-        {
-            citizenData.setLastPosition(getCurrentPosition());
-            citizenData.setCitizenEntity(null);
-        }
+        citizenColonyHandler.onCitizenRemoved();
         super.remove();
     }
 

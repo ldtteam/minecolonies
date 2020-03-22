@@ -18,6 +18,5 @@ public class EntityAIWorkStoneSmeltery extends AbstractEntityAIRequestSmelter<Jo
     public EntityAIWorkStoneSmeltery(@NotNull final JobStoneSmeltery jobStoneSmeltery)
     {
         super(jobStoneSmeltery);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getCharisma());
     }
 }

@@ -9,8 +9,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -38,36 +36,36 @@ public class CommandColonyInfo implements IMCCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseShowColonyInfoCommand.get())
+        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getCommon().canPlayerUseShowColonyInfoCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
         final BlockPos position = colony.getCenter();
-        sender.sendMessage(new StringTextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+        context.getSource().sendFeedback(new StringTextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
         final String mayor = colony.getPermissions().getOwnerName();
-        sender.sendMessage(new StringTextComponent(MAYOR_TEXT + mayor));
-        sender.sendMessage(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()));
-        sender.sendMessage(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(new Style().setColor(
-          TextFormatting.GREEN)));
-        sender.sendMessage(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
-        sender.sendMessage(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()));
+        context.getSource().sendFeedback(new StringTextComponent(MAYOR_TEXT + mayor), true);
+        context.getSource()
+          .sendFeedback(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
+        context.getSource()
+          .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(new Style().setColor(
+            TextFormatting.GREEN)), true);
+        context.getSource().sendFeedback(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
+        context.getSource().sendFeedback(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
-            sender.sendMessage(new StringTextComponent(CANNOT_BE_RAIDED));
+            context.getSource().sendFeedback(new StringTextComponent(CANNOT_BE_RAIDED), true);
         }
 
         return 1;

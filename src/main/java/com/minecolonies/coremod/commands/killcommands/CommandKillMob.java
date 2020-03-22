@@ -30,7 +30,7 @@ public class CommandKillMob implements IMCOPCommand
                 entitiesKilled++;
             }
         });
-        sender.sendMessage(new StringTextComponent(entitiesKilled + " entities killed"));
+        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

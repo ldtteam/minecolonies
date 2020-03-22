@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.lib.BlueprintUtils;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -9,10 +13,6 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.placementhandlers.PlacementError;
-import com.ldtteam.structures.helpers.Settings;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,6 +28,16 @@ import java.util.Map;
  */
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
+    /**
+     * Placement key for item nbt
+     */
+    public static String PLACEMENT_NBT = "Placement";
+
+    /**
+     * Value for instant placed schematics.
+     */
+    public static String INSTANT_PLACEMENT = "instant";
+
     /**
      * Creates a window build tool for a specific structure.
      *
@@ -110,7 +120,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              placementErrorList,
+              Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }
@@ -122,7 +134,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              placementErrorList,
+              Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }

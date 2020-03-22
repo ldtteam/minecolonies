@@ -8,14 +8,6 @@ public interface ICitizenExperienceHandler
     void updateLevel();
 
     /**
-     * Set the skill modifier which defines how fast a citizen levels in a
-     * certain skill.
-     *
-     * @param modifier input modifier.
-     */
-    void setSkillModifier(int modifier);
-
-    /**
      * Add experience points to citizen.
      * Increases the citizen level if he has sufficient experience.
      * This will reset the experience.
@@ -34,16 +26,4 @@ public interface ICitizenExperienceHandler
      * Collect exp orbs around the entity.
      */
     void gatherXp();
-
-    /**
-     * Get the level of the citizen.
-     * @return the level.
-     */
-    int getLevel();
-
-    /**
-     * Setter for the level.
-     * @param level the level.
-     */
-    void setLevel(int level);
 }

@@ -37,16 +37,6 @@ import static com.minecolonies.api.util.constant.Constants.*;
 public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 {
     /**
-     * How often should charisma factor into the cook's skill modifier.
-     */
-    private static final int CHARISMA_MULTIPLIER = 2;
-
-    /**
-     * How often should intelligence factor into the cook's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 1;
-
-    /**
      * The amount of food which should be served to the worker.
      */
     public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
@@ -88,8 +78,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         super.registerTargets(
           new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
-                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 

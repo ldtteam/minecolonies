@@ -8,8 +8,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -26,11 +24,9 @@ public class CommandLoadBackup implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        BackUpHelper.loadColonyBackup(colonyId, sender.dimension.getId(), true, true);
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.loadbackup.success");
+        BackUpHelper.loadColonyBackup(colonyId, context.getSource().getWorld().dimension.getType().getId(), true, true);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.loadbackup.success"), true);
         return 1;
     }
 

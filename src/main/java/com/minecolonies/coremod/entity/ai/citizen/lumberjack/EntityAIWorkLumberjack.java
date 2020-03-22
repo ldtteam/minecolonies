@@ -131,16 +131,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private static final int WAIT_BEFORE_INCREMENT = 20;
 
     /**
-     * How often should strength factor into the lumberjacks skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 2;
-
-    /**
-     * How often should charisma factor into the lumberjacks skill modifier.
-     */
-    private static final int CHARISMA_MULTIPLIER = 1;
-
-    /**
      * Return to chest after half a stack.
      */
     private static final int MAX_BLOCKS_MINED = 32;
@@ -207,8 +197,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
           new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
           new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                                                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutSmelter;
@@ -91,6 +92,20 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         return SMELTERY_DESC;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Athletics;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Strength;
+    }
+
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
     public int ingotMultiplier(final int citizenLevel, final Random random)
     {
@@ -137,20 +152,6 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         public Window getWindow()
         {
             return new WindowHutSmelter(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.INTELLIGENCE;
         }
     }
 }

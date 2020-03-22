@@ -14,8 +14,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -36,28 +34,26 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
-        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
+        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         final boolean deleteBuildings = BoolArgumentType.getBool(context,DELETE_BUILDNGS_ARG);
 
         BackUpHelper.backupColonyData();
-        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, sender.dimension.getId());
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.delete.success", colony.getName());
+        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().dimension.getType().getId());
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.delete.success", colony.getName()), true);
         return 1;
     }
 
