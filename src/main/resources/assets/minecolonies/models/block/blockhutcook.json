@@ -5,7 +5,7 @@
 		"0": "minecolonies:blocks/oven_top",
 		"1": "minecolonies:blocks/oven_front",
 		"2": "minecolonies:blocks/cauldron_side",
-		"particle": "minecolonies:blocks/oven_top"
+		"particle": "minecolonies:blocks/cauldron_side"
 	},
 	"elements": [
 		{
