@@ -115,6 +115,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
+    @Override
     public void render(int x, int y, float z)
     {
         this.renderBackground();
