@@ -3,15 +3,12 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
-import com.minecolonies.coremod.network.messages.EnchanterQtySetMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,11 +39,6 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
     private static final String WORKER_NAME = "workerName";
 
     /**
-     * The quantity input.
-     */
-    private static final String QTY_INPUT = "qty";
-
-    /**
      * The actual list element of the workers.
      */
     private ScrollingList workerList;
@@ -60,11 +52,6 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
      * All buildings in the colony with worker.
      */
     private List<IBuildingView> allBuildings;
-
-    /**
-     * The quantity input textfield.
-     */
-    private TextField qtyInput;
 
     /**
      * Constructor for the window of the worker building.
@@ -86,8 +73,6 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
                                                    .filter(b -> b instanceof AbstractBuildingWorker.View && !(b instanceof BuildingEnchanter.View))
                                                    .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(), b2.getPosition())))
                                                    .collect(Collectors.toList());
-        qtyInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
-        qtyInput.setText(String.valueOf(building.getDailyDrain()));
         workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
         workerList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -119,28 +104,6 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onKeyTyped(final char ch, final int key)
-    {
-        if (Character.isAlphabetic(ch))
-        {
-            return false;
-        }
-
-        final boolean ret = super.onKeyTyped(ch, key);
-        try
-        {
-            Network.getNetwork().sendToServer(new EnchanterQtySetMessage(building, Integer.parseInt(qtyInput.getText())));
-        }
-        catch (final NumberFormatException ex)
-        {
-            /*
-             * Nothing to be done here.
-             */
-        }
-        return ret;
     }
 
     /**

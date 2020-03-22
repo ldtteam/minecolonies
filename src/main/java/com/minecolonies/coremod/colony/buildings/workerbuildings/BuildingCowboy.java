@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutCowboy;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -70,6 +71,20 @@ public class BuildingCowboy extends AbstractBuildingWorker
     public String getJobName()
     {
         return COWBOY;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Athletics;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Stamina;
     }
 
     /**
@@ -151,20 +166,6 @@ public class BuildingCowboy extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutCowboy(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
         }
 
         public void setMilkCows(final boolean milkCows)

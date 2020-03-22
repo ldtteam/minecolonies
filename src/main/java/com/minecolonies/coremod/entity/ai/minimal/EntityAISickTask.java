@@ -151,7 +151,7 @@ public class EntityAISickTask extends Goal
     @Override
     public void tick()
     {
-        if (++delayTicks == TICKS_SECOND)
+        if (++delayTicks != TICKS_SECOND)
         {
             return;
         }
@@ -302,12 +302,15 @@ public class EntityAISickTask extends Goal
     private void cure(final ICitizenData citizenData)
     {
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-        for (final ItemStack cure : disease.getCure())
+        if (disease != null)
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.isItemEqual(cure));
-            if (slot != -1)
+            for (final ItemStack cure : disease.getCure())
             {
-                citizenData.getInventory().extractItem(slot, 1, false);
+                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.isItemEqual(cure));
+                if (slot != -1)
+                {
+                    citizenData.getInventory().extractItem(slot, 1, false);
+                }
             }
         }
 
@@ -324,7 +327,7 @@ public class EntityAISickTask extends Goal
         citizenData.getCitizenHappinessHandler().setHealthModifier(true);
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
-        citizen.setHealth((float) citizenData.getMaxHealth());
+        citizen.setHealth(citizen.getMaxHealth());
         reset();
     }
 
@@ -406,7 +409,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL))
+        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigator().noPath() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
         {
             return WAIT_FOR_CURE;
         }

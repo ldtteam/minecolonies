@@ -26,16 +26,6 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
 {
     /**
-     * How often should strength factor into the knight's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 2;
-
-    /**
-     * How often should dexterity factor into the knight's skill modifier.
-     */
-    private static final int DEXTERITY_MULTIPLIER = 1;
-
-    /**
      * How many actions on one target are done per building level.
      */
     private static final int ACTIONS_PER_BUILDING_LEVEL = 5;
@@ -93,9 +83,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
           new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 1),
           new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, 1)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(
-          STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
     }
 
     /**

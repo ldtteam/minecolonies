@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
@@ -120,6 +121,20 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         return DELIVERYMAN;
     }
 
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Agility;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Adaptability;
+    }
+
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
@@ -166,20 +181,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

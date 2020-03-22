@@ -438,7 +438,7 @@ public class RaidManager implements IRaiderManager
         @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
         for (@NotNull final ICitizenData citizen : citizensList)
         {
-            levels += citizen.getLevel() / 5;
+            levels += citizen.getJobModifier() / 5;
         }
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())

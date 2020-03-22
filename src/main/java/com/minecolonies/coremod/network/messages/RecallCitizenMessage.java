@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -7,23 +8,19 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Recalls the citizen to the hut.
@@ -111,7 +108,6 @@ public class RecallCitizenMessage implements IMessage
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
                             citizenData.updateCitizenEntityIfNecessary();
-                            optionalEntityCitizen = citizenData.getCitizenEntity();
                         }
                         else
                         {
@@ -121,24 +117,9 @@ public class RecallCitizenMessage implements IMessage
                     }
                     else if (optionalEntityCitizen.get().getTicksExisted() == 0)
                     {
-                        final AbstractEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final List<AbstractEntityCitizen> list = ((ServerWorld) player.world).getEntities()
-                                                                   .filter(e -> e instanceof AbstractEntityCitizen)
-                          .filter(e -> e.equals(oldCitizen))
-                                                                   .map(e -> (AbstractEntityCitizen) e)
-                          .collect(Collectors.toList());
-
-                        if (list.isEmpty())
-                        {
-                            citizenData.setCitizenEntity(null);
-                            citizenData.updateCitizenEntityIfNecessary();
-                        }
-                        else
-                        {
-                            citizenData.setCitizenEntity(list.get(0));
-                        }
+                        citizenData.getCitizenEntity().ifPresent(Entity::remove);
+                        citizenData.updateCitizenEntityIfNecessary();
                     }
-
 
                     final BlockPos loc = building.getPosition();
                     if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))

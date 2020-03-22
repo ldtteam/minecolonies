@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -86,6 +87,16 @@ public interface ICitizenDataView extends ICitizen
     double getHealthmodifier();
 
     /**
+     * @return current health.
+     */
+    double getHealth();
+
+    /**
+     * @return max health.
+     */
+    double getMaxHealth();
+
+    /**
      * @return returns the current modifier related to damage.
      */
     double getDamageModifier();
@@ -135,4 +146,10 @@ public interface ICitizenDataView extends ICitizen
      * @return true if so.
      */
     boolean hasPendingInteractions();
+
+    /**
+     * Get an instance of the skill handler.
+     * @return the instance.
+     */
+    ICitizenSkillHandler getCitizenSkillHandler();
 }

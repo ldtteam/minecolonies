@@ -3,29 +3,26 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -235,8 +232,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
-                final IBuildingWorker.Skill primary = building.getPrimarySkill();
-                final IBuildingWorker.Skill secondary = building.getSecondarySkill();
+                final Skill primary = building.getPrimarySkill();
+                final Skill secondary = building.getSecondarySkill();
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
@@ -270,22 +267,32 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                @NotNull final String strength = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.STRENGTH),
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()));
-                @NotNull final String charisma = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.CHARISMA),
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()));
-                @NotNull final String dexterity = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.DEXTERITY),
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()));
-                @NotNull final String endurance = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.ENDURANCE),
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()));
-                @NotNull final String intelligence = createAttributeText(createColor(primary, secondary, IBuildingWorker.Skill.INTELLIGENCE),
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
+                StringBuilder attributes = new StringBuilder();
+                final String intermString = " | ";
 
-                //Creates the list of attributes for each citizen
-                @NotNull final String attributes = strength + " | " + charisma + " | " + dexterity + " | " + endurance + " | " + intelligence;
+                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
+                for (int i = 0; i < 5; i++)
+                {
+                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
+                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                    attributes.append(text).append(intermString);
+                }
+                attributes.delete(attributes.length() - intermString.length(), attributes.length());
+
+                StringBuilder attributes2 = new StringBuilder();
+                for (int i = 5; i < list.size(); i++)
+                {
+                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
+                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                    attributes2.append(text).append(intermString);
+                }
+                attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
         });
     }
@@ -295,7 +302,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         return color + text + TextFormatting.RESET.toString();
     }
 
-    private static String createColor(final IBuildingWorker.Skill primary, final IBuildingWorker.Skill secondary, final IBuildingWorker.Skill current)
+    private static String createColor(final Skill primary, final Skill secondary, final Skill current)
     {
         if (primary == current)
         {

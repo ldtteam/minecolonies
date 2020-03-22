@@ -17,6 +17,5 @@ public class EntityAIWorkBlacksmith extends AbstractEntityAICrafting<JobBlacksmi
     public EntityAIWorkBlacksmith(@NotNull final JobBlacksmith blacksmith)
     {
         super(blacksmith);
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
     }
 }

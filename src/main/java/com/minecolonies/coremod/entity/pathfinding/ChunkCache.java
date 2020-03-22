@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -9,8 +7,10 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.*;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.Biomes;
@@ -24,6 +24,8 @@ import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class ChunkCache implements IWorldReader
 {
@@ -49,19 +51,9 @@ public class ChunkCache implements IWorldReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
-            }
-        }
-
-        for (int i1 = posFromIn.getX() >> 4; i1 <= posToIn.getX() >> 4; ++i1)
-        {
-            for (int j1 = posFromIn.getZ() >> 4; j1 <= posToIn.getZ() >> 4; ++j1)
-            {
-                Chunk chunk = this.chunkArray[i1 - this.chunkX][j1 - this.chunkZ];
-
-                if (chunk != null && !chunk.isEmptyBetween(posFromIn.getY(), posToIn.getY()))
+                if (worldIn.getChunkProvider().isChunkLoaded(new ChunkPos(k, l)))
                 {
-                    this.empty = false;
+                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
                 }
             }
         }

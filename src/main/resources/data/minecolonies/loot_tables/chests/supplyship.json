@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.2
+            }
+          ],
+          "name": "minecolonies:supplychestdeployer",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Placement:\"instant\"}"
+            },
+            {
+              "function": "minecraft:set_name",
+              "name": "SupplyShip Chest - free"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -21,6 +21,10 @@ public class CommandWhoAmI implements IMCCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();
+        if (!(sender instanceof PlayerEntity))
+        {
+            return 0;
+        }
 
         final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), sender.getUniqueID());
 
