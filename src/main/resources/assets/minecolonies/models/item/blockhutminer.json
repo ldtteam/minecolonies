@@ -1,40 +1,42 @@
 {
   "parent": "minecolonies:block/blockhutminer",
-  "display": {
-    "gui": {
-      "rotation": [30, 220, 0],
-      "translation": [0, -1, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [30, 220, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "thirdperson_righthand": {
-      "rotation": [30, 220, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "firstperson_lefthand": {
-      "rotation": [30, 220, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "firstperson_righthand": {
-      "rotation": [30, 220, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "ground": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "fixed": {
-      "rotation": [0, 0, 0],
-      "translation": [0, -3, -2],
-      "scale": [0.5, 0.5, 0.5]
-    }
-  }
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [45, 45, 0],
+			"translation": [0, 1.5, 0],
+			"scale": [0.27, 0.27, 0.27]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [45, 45, 0],
+			"translation": [0, 1.5, 0],
+			"scale": [0.27, 0.27, 0.27]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 107, 0],
+			"translation": [1, 1.5, 0],
+			"scale": [0.3, 0.3, 0.3]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 107, 0],
+			"translation": [1, 1.5, 0],
+			"scale": [0.3, 0.3, 0.3]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [0, -2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"head": {
+			"translation": [0, 1.75, 0],
+			"scale": [1.03, 1.03, 1.03]
+		},
+		"fixed": {
+			"translation": [0, -3.25, -3.75],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
 }
