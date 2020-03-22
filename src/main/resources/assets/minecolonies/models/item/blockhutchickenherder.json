@@ -1,40 +1,41 @@
 {
   "parent": "minecolonies:block/blockhutchickenherder",
-  "display": {
-    "gui": {
-      "rotation": [30, 40, 0],
-      "translation": [0, -1, 0],
-      "scale": [0.8, 0.8, 0.8]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [30, 40, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.8, 0.8, 0.8]
-    },
-    "thirdperson_righthand": {
-      "rotation": [30, 40, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.8, 0.8, 0.8]
-    },
-    "firstperson_lefthand": {
-      "rotation": [30, 40, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "firstperson_righthand": {
-      "rotation": [30, 40, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "ground": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.3, 0.3, 0.3]
-    },
-    "fixed": {
-      "rotation": [0, 180, 45],
-      "translation": [-3, -3, -2],
-      "scale": [0.8, 0.8, 0.8]
-    }
-  }
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [25, 45, 0],
+			"translation": [1.25, 4, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [25, 45, 0],
+			"translation": [1.25, 4, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [1.75, 4.5, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, -145, 0],
+			"translation": [1.75, 4.5, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 45, 0],
+			"translation": [1, 2.5, 0],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"head": {
+			"translation": [0, 14.25, 1]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"translation": [0, 3.5, -0.5]
+		}
+	}
 }
