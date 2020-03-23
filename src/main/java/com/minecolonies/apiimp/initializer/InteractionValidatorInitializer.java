@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.tileentity.TileEntity;
@@ -28,13 +29,10 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
-import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
@@ -209,6 +207,8 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION),
+          citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
           citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);

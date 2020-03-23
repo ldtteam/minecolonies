@@ -304,6 +304,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Override
     protected void onException(final RuntimeException e)
     {
+        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
+
         try
         {
             final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
@@ -1549,4 +1551,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         worker.getCitizenData().restartDone();
         return INIT;
     }
+
+    /**
+     * The current exception timer
+     *
+     * @return
+     */
+    public int getExceptionTimer()
+    {
+        return exceptionTimer;
+    }
+
 }
