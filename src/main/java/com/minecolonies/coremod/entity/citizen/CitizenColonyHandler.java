@@ -185,7 +185,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (citizen.getCitizenData() != null && registered && colony != null)
         {
             colony.getCitizenManager().unregisterCitizen(citizen);
-            citizen.getCitizenData().setLastPosition(citizen.getCurrentPosition());
+            citizen.getCitizenData().setLastPosition(citizen.getPosition());
         }
     }
 
