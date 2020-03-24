@@ -160,6 +160,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     @Override
     public void render(final int mouseX, final int mouseY, final float partialTicks)
     {
+        this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
