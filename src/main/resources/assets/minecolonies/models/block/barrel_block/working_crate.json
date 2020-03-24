@@ -1,12 +1,12 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "minecolonies:block/oak_log",
-		"1": "minecolonies:block/glass",
-		"2": "minecolonies:block/stone",
-		"3": "minecolonies:block/oak_planks",
+		"0": "block/oak_log",
+		"1": "block/glass",
+		"2": "block/stone",
+		"3": "block/oak_planks",
 		"4": "minecolonies:blocks/barrel_block/compost",
-		"particle": "minecolonies:block/oak_log"
+		"particle": "block/oak_log"
 	},
 	"elements": [
 		{
