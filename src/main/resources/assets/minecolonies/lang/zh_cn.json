@@ -1196,7 +1196,7 @@
   "com.minecolonies.coremod.gui.townhall.population.healers": "医生: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.researchers": "研究员: %d/%d",
   "com.minecolonies.coremod.gui.citizen.job.label": "工作: %s",
-  "com.minecolonies.coremod.gui.citizen.job.desc": "这些技能会被工人的工作影响：",
+  "com.minecolonies.coremod.gui.citizen.job.desc": "这些技能会对本工作产生影响：",
   "com.minecolonies.coremod.gui.citizen.job.skills.intelligence": "智力:",
   "com.minecolonies.coremod.gui.citizen.job.skills.knowledge": "学识",
   "com.minecolonies.coremod.gui.citizen.job.skills.creativity": "创造",
