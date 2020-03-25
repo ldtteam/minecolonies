@@ -1344,9 +1344,6 @@
   "com.minecolonies.coremod.gui.citizen.job.skills.agility": "Agility",
   "com.minecolonies.coremod.gui.citizen.job.skills.strength": "Strength",
   "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
-  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics",
-
-  "com.minecolonies.coremod.gui.townhall.resetrequests": "Reset Request System",
-  "com.minecolonies.coremod.gui.townhall.reset": "Reset"
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics"
 }
 
