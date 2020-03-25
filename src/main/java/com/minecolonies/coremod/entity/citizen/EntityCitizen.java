@@ -22,10 +22,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -823,6 +820,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
         }
+        InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
         super.onDeath(damageSource);
     }
 
