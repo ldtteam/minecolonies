@@ -1151,7 +1151,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public final boolean holdEfficientTool(@NotNull final Block target, final BlockPos pos)
     {
-        final int bestSlot = getMostEfficientTool(target);
+        final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bestSlot);
@@ -1169,7 +1169,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDefaultState().getBlockHardness(world, pos));
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
@@ -1205,9 +1205,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-    protected int getMostEfficientTool(@NotNull final Block target)
+    protected int getMostEfficientTool(@NotNull final Block target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDefaultState().getBlockHardness(world, pos));
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
 
         if (toolType == ToolType.NONE)

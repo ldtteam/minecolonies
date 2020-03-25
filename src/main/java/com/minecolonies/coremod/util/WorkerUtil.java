@@ -174,22 +174,25 @@ public final class WorkerUtil
      * @param target the target block.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final Block target)
+    public static IToolType getBestToolForBlock(final Block target, float blockHardness)
     {
         final net.minecraftforge.common.ToolType forgeTool = target.getHarvestTool(target.getDefaultState());
 
         String toolName = "";
         if (forgeTool == null)
         {
-            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            if (blockHardness > 0f)
             {
-                if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
+                for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
                 {
-                    final ToolItem toolItem = (ToolItem) tool.getB().getItem();
-                    if (tool.getB().getDestroySpeed(target.getDefaultState()) >= toolItem.getTier().getEfficiency())
+                    if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
                     {
-                        toolName = tool.getA().getName();
-                        break;
+                        final ToolItem toolItem = (ToolItem) tool.getB().getItem();
+                        if (tool.getB().getDestroySpeed(target.getDefaultState()) >= toolItem.getTier().getEfficiency())
+                        {
+                            toolName = tool.getA().getName();
+                            break;
+                        }
                     }
                 }
             }
