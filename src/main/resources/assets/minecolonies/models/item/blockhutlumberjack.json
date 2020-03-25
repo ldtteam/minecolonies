@@ -1,40 +1,41 @@
 {
   "parent": "minecolonies:block/blockhutlumberjack",
-  "display": {
-    "gui": {
-      "rotation": [30, 50, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.7, 0.7, 0.7]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [30, 135, 0],
-      "translation": [0, 1, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "thirdperson_righthand": {
-      "rotation": [30, 135, 0],
-      "translation": [0, 1, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "firstperson_lefthand": {
-      "rotation": [30, 135, 0],
-      "translation": [0, 1, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "firstperson_righthand": {
-      "rotation": [30, 135, 0],
-      "translation": [0, 1, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "ground": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "fixed": {
-      "rotation": [0, 180, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    }
-  }
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [45, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [45, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 115, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 115, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, 145, 0],
+			"translation": [0.25, 0.75, 0],
+			"scale": [0.54, 0.54, 0.54]
+		},
+		"head": {
+			"translation": [0, 12.5, 0]
+		},
+		"fixed": {
+			"translation": [0, -0.5, 0.75],
+			"scale": [0.6, 0.6, 0.6]
+		}
+	}
 }
