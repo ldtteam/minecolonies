@@ -580,6 +580,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void setJob(final IJob job)
     {
+        if (this.job != null && job == null)
+        {
+            this.job.onRemoval();
+        }
         this.job = job;
 
         getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
