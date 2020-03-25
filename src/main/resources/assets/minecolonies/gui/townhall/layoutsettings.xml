@@ -24,6 +24,9 @@
                 </view>
             </dropdown>
             <buttonimage id="nextColor" size="14 15" pos="317 42" label="&gt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+
+            <label id="resetRequests" label="$(com.minecolonies.coremod.gui.townhall.resetrequests)" pos="210 102" size="148 11" textalign="MIDDLE" color="black"/>
+            <button id="toggleResetRequests" size="57 20" pos="250 115" label="$(com.minecolonies.coremod.gui.townhall.reset)"/>
         </view>
     </switch>
 </window>

@@ -121,6 +121,11 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_PRINT_PROGRESS= "togglePrintProgress";
 
     /**
+     * Reset the rs reset.
+     */
+    public static final String BUTTON_TOGGLE_RESET_RS = "toggleResetRequests";
+
+    /**
      * Id of the remove player button in the GUI..
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
@@ -1275,7 +1280,7 @@ public final class WindowConstants
     public static final String PRIMARY_SKILL_ADV = "adverse1";
     public static final String SECONDARY_SKILL_LABEL = "secondary";
     public static final String SECONDARY_SKILL_COM = "comp2";
-    public static final String SECONDARY_SKILL_ADV = "adverse2";
+    public static final String SECONDARY_SKILL_ADV  = "adverse2";
 
     /**
      * public constructor to hide implicit public one.

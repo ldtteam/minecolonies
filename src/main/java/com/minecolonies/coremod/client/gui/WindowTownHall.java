@@ -163,6 +163,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
+        registerButton(BUTTON_TOGGLE_RESET_RS, this::toggleRsRequest);
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
@@ -1048,6 +1049,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             toggle = false;
         }
         Network.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
+    }
+
+    private void toggleRsRequest()
+    {
+        Network.getNetwork().sendToServer(new ResetRequestSystemMessage(this.building.getColony()));
     }
 
     /**
