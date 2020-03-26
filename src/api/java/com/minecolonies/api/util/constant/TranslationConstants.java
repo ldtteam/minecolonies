@@ -302,21 +302,23 @@ public final class TranslationConstants
     @NonNls
     public static final     String PIRATES_SAILING_OFF_MESSAGE               = "com.minecolonies.coremod.pirates.sailing.away";
     @NonNls
-    public static final     String UNABLE_TO_ADD_RECIPE_MESSAGE              = "com.minecolonies.coremod.recipe.unable";
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE            = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final     String BAKER_HAS_NO_RECIPES                      = "com.minecolonies.coremod.bakery.norecipe";
+    public static final String BAKER_HAS_NO_RECIPES                    = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
-    public static final     String FERTLIZER                                 = "com.minecolonies.coremod.request.fertilizer";
+    public static final String FERTLIZER                               = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
-    public static final     String FURNACE_USER_NO_FUEL                      = "com.minecolonies.coremod.furnaceuser.nofuel";
+    public static final String FURNACE_USER_NO_FUEL                    = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
-    public static final     String PATIENT_FULL_INVENTORY                    = "com.minecolonies.coremod.healer.fullinv";
+    public static final String WORKER_AI_EXCEPTION                     = "com.minecolonies.coremod.worker.ai.exception";
     @NonNls
-    public static final     String FURNACE_USER_NO_ORE                      = "com.minecolonies.coremod.furnaceuser.noore";
+    public static final String PATIENT_FULL_INVENTORY                  = "com.minecolonies.coremod.healer.fullinv";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG    = "com.minecolonies.coremod.general.onbig";
+    public static final String FURNACE_USER_NO_ORE                     = "com.minecolonies.coremod.furnaceuser.noore";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG   = "com.minecolonies.coremod.general.offbig";
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG  = "com.minecolonies.coremod.general.onbig";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG = "com.minecolonies.coremod.general.offbig";
     @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX = "com.minecolonies.coremod.info.";
     @NonNls
