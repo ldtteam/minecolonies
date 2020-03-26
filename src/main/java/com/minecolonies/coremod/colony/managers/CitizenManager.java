@@ -200,7 +200,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         final BlockPos spawnLocation = spawnPos != null && !spawnPos.equals(BlockPos.ZERO) ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
-        if (!world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnPos.getX() >> 4, spawnPos.getZ() >> 4)))
+        if (!world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
         {
             //  Chunk with TownHall Block is not loaded
             return data;
