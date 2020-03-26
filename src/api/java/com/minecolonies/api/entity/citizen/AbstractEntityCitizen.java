@@ -201,7 +201,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
 
         final String textureBase = "textures/entity/" + model.getTextureBase() + (female ? "female" : "male");
         final int moddedTextureId = (textureId % model.getNumTextures()) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + ".png");
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
     /**
