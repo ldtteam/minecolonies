@@ -565,10 +565,8 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (colony.getWorld().isBlockLoaded(getLastPosition()))
-        {
-            colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
-        }
+
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
     }
 
     @Override

@@ -1373,7 +1373,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (citizenData.getSaturation() <= 0)
             {
-                this.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
+                if (this.getActivePotionEffect(Effects.SLOWNESS) == null)
+                {
+                    this.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
+                }
             }
             else
             {
