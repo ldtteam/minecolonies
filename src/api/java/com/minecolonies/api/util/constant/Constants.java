@@ -91,6 +91,16 @@ public final class Constants
     public static final String CRITERION_COLONY_POPULATION = "colony_population";
 
     /**
+     * Placement key for item nbt
+     */
+    public static String PLACEMENT_NBT = "Placement";
+
+    /**
+     * Value for instant placed schematics.
+     */
+    public static String INSTANT_PLACEMENT = "instant";
+
+    /**
      * The oredict entry of an ore.
      */
     public static final String ORE_STRING = "ore";
