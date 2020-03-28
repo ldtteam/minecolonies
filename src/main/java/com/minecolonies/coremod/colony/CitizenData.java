@@ -323,6 +323,7 @@ public class CitizenData implements ICitizenData
         female = rand.nextBoolean();
         paused = false;
         name = generateName(rand);
+        textureId = rand.nextInt(255);
 
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
