@@ -29,16 +29,6 @@ import java.util.Map;
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
     /**
-     * Placement key for item nbt
-     */
-    public static String PLACEMENT_NBT = "Placement";
-
-    /**
-     * Value for instant placed schematics.
-     */
-    public static String INSTANT_PLACEMENT = "instant";
-
-    /**
      * Creates a window build tool for a specific structure.
      *
      * @param pos           the position.
