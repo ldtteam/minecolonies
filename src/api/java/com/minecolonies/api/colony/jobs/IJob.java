@@ -222,4 +222,9 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @return the modifier of the job.
      */
     int getDiseaseModifier();
+
+    /**
+     * When job removed (death of citizen or job change).
+     */
+    void onRemoval();
 }
