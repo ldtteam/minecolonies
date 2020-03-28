@@ -340,6 +340,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public void setTextureId(final int textureId)
     {
         this.textureId = textureId;
+        dataManager.set(DATA_TEXTURE, textureId);
     }
 
     /**
