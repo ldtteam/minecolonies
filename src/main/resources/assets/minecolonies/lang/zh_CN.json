@@ -627,7 +627,7 @@
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "移除了位置 '%d %d %d'",
   "block.blockHut.warehouse.limit": "仓库的数量被限制为每个殖民地1个.",
   "com.minecolonies.coremod.gui.workerhuts.baker": "面包师",
-  "com.minecolonies.coremod.baker.nofurnace": "我的建筑内没有任何烤炉, 请修好它.",
+  "com.minecolonies.coremod.bakery.nofurnace": "我的建筑内没有任何烤炉, 请修好它.",
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "任务列表",
   "com.minecolonies.coremod.gui.townhall.housing": "住房分配模式:",
   "com.minecolonies.coremod.gui.townhall.movein": "Citizens can move in:",
@@ -1019,5 +1019,16 @@
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all flowers are disabled!",
   "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
-  "block.minecolonies.blockhutflorist": "Flower Shop"
+  "block.minecolonies.blockhutflorist": "Flower Shop",
+  "block.minecolonies.blockhutenchanter": "Enchanter",
+  "block.minecolonies.blockhutenchanter.name": "Enchanter",
+  "com.minecolonies.coremod.job.enchanter": "Enchanter",
+  "com.minecolonies.coremod.gui.workerhuts.enchanter": "Enchanter,",
+  "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather, Targets",
+  "com.minecolonies.gui.workerhuts.enchanter.daily": "Daily, XP drain",
+  "com.minecolonies.coremod.enchanter.nodrainingsset": "Please, configure some workers I can drain experience from to work!",
+  "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
+  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience does he get from a citizen than he drains) [Default: 2.0]",
+  "minecolonies.config.enchantments": "Enchantments",
+  "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter"
 }
