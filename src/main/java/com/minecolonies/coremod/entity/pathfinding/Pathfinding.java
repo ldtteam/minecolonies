@@ -49,12 +49,11 @@ public final class Pathfinding
     }
     
     /**
-     * Waits until all running pathfinding requests are finished
-     * Then stops all running threads in this thread pool
+     * Stops all running threads in this thread pool
      */
     public static void shutdown()
     {
-        getExecutor().shutdown();
+        getExecutor().shutdownNow();
         jobQueue.clear();
         executor = null;
     }

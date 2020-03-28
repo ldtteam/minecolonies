@@ -1344,6 +1344,8 @@
   "com.minecolonies.coremod.gui.citizen.job.skills.agility": "Agility",
   "com.minecolonies.coremod.gui.citizen.job.skills.strength": "Strength",
   "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
-  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics"
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics",
+
+  "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know."
 }
 

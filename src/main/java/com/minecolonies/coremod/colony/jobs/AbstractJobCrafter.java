@@ -301,4 +301,18 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
     {
         this.progress = progress;
     }
+
+    @Override
+    public void onRemoval()
+    {
+        cancelAssignedRequests();
+    }
+
+    private void cancelAssignedRequests()
+    {
+        for (final IToken<?> t : getTaskQueue())
+        {
+            getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
+        }
+    }
 }
