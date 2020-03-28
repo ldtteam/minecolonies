@@ -298,10 +298,7 @@ public class JobDeliveryman extends AbstractJob
     {
         if (!b && active)
         {
-            for (final IToken<?> t : getTaskQueue())
-            {
-                getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
-            }
+            cancelAssignedRequests();
         }
         else if (!active && b)
         {
@@ -311,6 +308,20 @@ public class JobDeliveryman extends AbstractJob
               .onColonyUpdate(request -> tokenList.contains(request.getId()));
         }
         this.active = b;
+    }
+
+    private void cancelAssignedRequests()
+    {
+        for (final IToken<?> t : getTaskQueue())
+        {
+            getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
+        }
+    }
+
+    @Override
+    public void onRemoval()
+    {
+        cancelAssignedRequests();
     }
 
     /**

@@ -89,7 +89,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @Override
     public String getJobName()
     {
-        return SMELTERY_DESC;
+        return "smelter";
     }
 
     @NotNull

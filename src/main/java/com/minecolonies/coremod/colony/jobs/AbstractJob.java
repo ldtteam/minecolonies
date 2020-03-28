@@ -438,4 +438,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         return 1;
     }
+
+    @Override
+    public void onRemoval()
+    {
+
+    }
 }
