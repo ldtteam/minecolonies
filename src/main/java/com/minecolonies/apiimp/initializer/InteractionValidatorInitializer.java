@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.tileentity.TileEntity;
@@ -28,13 +29,10 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
-import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
@@ -59,6 +57,8 @@ public class InteractionValidatorInitializer
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOSPITAL),
+          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && citizen.getColony().getBuildingManager().getBestHospital(citizen.getCitizenEntity().get()) == null );
 
         InteractionValidatorRegistry.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
@@ -162,13 +162,17 @@ public class InteractionValidatorInitializer
                                                                                 .stream()
                                                                                 .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems().getOrDefault(ORE_LIST, new ArrayList<>()).contains(storage)));
 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
+          citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
+
+
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
           citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());
@@ -202,12 +206,14 @@ public class InteractionValidatorInitializer
               return false;
           });
 
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION),
+          citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE );
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB);
+          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_JOB),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > COMPLAIN_DAYS_WITHOUT_JOB && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() <= DEMANDS_DAYS_WITHOUT_JOB);
+          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > COMPLAIN_DAYS_WITHOUT_JOB && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
     }

@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,15 +19,17 @@ import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
-import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.StringTextComponent;
@@ -35,10 +39,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
+import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
 
 /**
  * Window for the citizen.
@@ -129,10 +137,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar(citizen, this);
         createHappinessBar(citizen, this);
-        createXpBar(citizen, this);
         createSkillContent(citizen, this);
         updateHappiness(citizen, this);
 
+        if (citizen.getWorkBuilding() != null)
+        {
+            updateJobPage(citizen, this, colony);
+        }
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
         if (citizen.isFemale())
@@ -282,40 +293,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
-     * Creates the xp bar for each citizen.
-     * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
-     * Then creates an xp bar and fills it up with the available xp.
-     *
-     * @param citizen the citizen.
-     * @param window  the window to fill.
-     */
-    public static void createXpBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
-    {
-        //Calculates how much percent of the next level has been completed.
-        final double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(), citizen.getLevel());
-        window.findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
-
-        @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
-        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
-
-        if (experienceRatio > 0)
-        {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
-        }
-    }
-
-    /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      *
      * @param citizen pointer to the citizen data view
@@ -356,16 +333,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
-        window.findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
-        window.findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
-        window.findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
-        window.findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
+        for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+        {
+            final Label label = window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Label.class);
+            label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
+            label.setScale(0.8f);
+        }
     }
 
     @Override
@@ -492,8 +465,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
         int row = 1;
         final double[] levels =
           new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(),
-            citizen.getToolsModifiers()};
-        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
+            citizen.getToolsModifiers(), citizen.getHealthmodifier()};
+        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS, CMCG_HAPPINESS_HEALTH};
+
 
         window.findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         if (window.findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
@@ -520,7 +494,55 @@ public class WindowCitizen extends AbstractWindowRequestTree
             for (int i = row; i <= levels.length; i++)
             {
                 final Image image = window.findPaneOfTypeByID("modifierImage" + i, Image.class);
-                image.hide();
+                if (image != null)
+                {
+                    image.hide();
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the job page of the citizen.
+     * @param citizen the citizen.
+     * @param windowCitizen the window.
+     */
+    private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
+    {
+        windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class)
+          .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
+        windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+
+        final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
+
+        if (building instanceof AbstractBuildingWorker.View)
+        {
+            final Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
+            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Label.class)
+              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
+
+            if (primary.getComplimentary() != null && primary.getAdverse() != null)
+            {
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+            }
+
+            final Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
+            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Label.class)
+              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
+
+            if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
+            {
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Label.class)
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.ldtteam.structures.helpers.Structure;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -23,12 +22,12 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -44,8 +43,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
+import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -69,7 +70,6 @@ public class BuildToolPasteMessage implements IMessage
     private BlockPos                 pos;
     private boolean                  isHut;
     private boolean                  mirror;
-    private WindowBuildTool.FreeMode freeMode;
 
     /**
      * Empty constructor used when registering the 
@@ -95,8 +95,7 @@ public class BuildToolPasteMessage implements IMessage
       final String structureName,
       final String workOrderName, final BlockPos pos,
       final int rotation, final boolean isHut,
-      final Mirror mirror, final boolean complete,
-      final WindowBuildTool.FreeMode freeMode, final BlockState state)
+      final Mirror mirror, final boolean complete, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -106,7 +105,6 @@ public class BuildToolPasteMessage implements IMessage
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
         this.complete = complete;
-        this.freeMode = freeMode;
         this.state = state;
     }
 
@@ -130,12 +128,6 @@ public class BuildToolPasteMessage implements IMessage
         mirror = buf.readBoolean();
 
         complete = buf.readBoolean();
-
-        final int modeId = buf.readInt();
-        if(modeId >= 0)
-        {
-            freeMode = WindowBuildTool.FreeMode.values()[modeId];
-        }
 
         state = Block.getStateById(buf.readInt());
     }
@@ -162,15 +154,6 @@ public class BuildToolPasteMessage implements IMessage
         buf.writeBoolean(mirror);
 
         buf.writeBoolean(complete);
-
-        if(freeMode == null)
-        {
-            buf.writeInt(-1);
-        }
-        else
-        {
-            buf.writeInt(freeMode.ordinal());
-        }
 
         buf.writeInt(Block.getStateId(state));
     }
@@ -215,28 +198,42 @@ public class BuildToolPasteMessage implements IMessage
                   pos, Rotation.values()[rotation], mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
-        else if(freeMode !=  null )
+        else if( structureName.contains("supply") )
         {
-            if(player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
+            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get()
+                  && !isFreeInstantPlacementMH(player))
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
             }
-            final List<ItemStack> stacks = new ArrayList<>();
-            if(freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
+
+            Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
+            if(structureName.contains("supplyship"))
             {
-                stacks.add(new ItemStack(ModItems.supplyChest));
+                searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
             }
-            else if(freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
+            if(structureName.contains("supplycamp"))
             {
-                stacks.add(new ItemStack(ModItems.supplyCamp));
+                searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
             }
 
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
-            player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
-            AdvancementTriggers.PLACE_SUPPLY.trigger(player);
-            if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
+            if (isFreeInstantPlacementMH(player))
             {
+                searchPredicate =
+                  searchPredicate.and(stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
+            }
+
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.inventory), searchPredicate);
+
+            if (slot != -1 && !ItemStackUtils.isEmpty(player.inventory.removeStackFromSlot(slot)))
+            {
+                if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
+                {
+                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
+                    player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+                    AdvancementTriggers.PLACE_SUPPLY.trigger(player);
+                }
+
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
             }
@@ -245,6 +242,17 @@ public class BuildToolPasteMessage implements IMessage
                 LanguageHandler.sendPlayerMessage(player, "item.supplyChestDeployer.missing");
             }
         }
+    }
+
+    /**
+     * Whether the itemstack used allows a free placement.
+     *
+     * @return
+     */
+    private boolean isFreeInstantPlacementMH(ServerPlayerEntity playerEntity)
+    {
+        final ItemStack mhItem = playerEntity.getHeldItemMainhand();
+        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
     }
 
     /**

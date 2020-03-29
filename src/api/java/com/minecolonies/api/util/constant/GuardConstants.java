@@ -10,7 +10,7 @@ public final class GuardConstants
     /**
      * Default vision range.
      */
-    public static final int DEFAULT_VISION = 10;
+    public static final int DEFAULT_VISION = 16;
 
     /**
      * Range a guard should be within of GuardPos.

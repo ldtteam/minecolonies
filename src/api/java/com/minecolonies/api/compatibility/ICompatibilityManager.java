@@ -1,6 +1,7 @@
 package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Disease;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -40,8 +41,9 @@ public interface ICompatibilityManager
 
     /**
      * Method called to instantiate the requirements.
+     * @param serverSide if server side (true) or client side (false).
      */
-    void discover();
+    void discover(final boolean serverSide);
 
     /**
      * Gets the sapling matching a leave.
@@ -92,6 +94,19 @@ public interface ICompatibilityManager
      * @return the list of plantables.
      */
     List<ItemStorage> getCopyOfPlantables();
+
+    /**
+     * Get a random disease of the compat manager.
+     * @return a randomly chosen disease.
+     */
+    String getRandomDisease();
+
+    /**
+     * Get a disease by the ID.
+     * @param disease the id.
+     * @return the disease.
+     */
+    Disease getDisease(String disease);
 
     /**
      * Checks if a certain Block is an ore.

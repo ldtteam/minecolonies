@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +33,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * The name of the structure
      */
-    private static final String SUPPLY_CAMP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplycamp";
+    private static final String SUPPLY_CAMP_STRUCTURE_NAME = "supplycamp";
 
     /**
      * Offset south/west of the supply camp.
@@ -97,7 +97,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0, null);
+            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0);
             return;
         }
 
@@ -122,7 +122,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations, WindowBuildTool.FreeMode.SUPPLYCAMP);
+        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations);
     }
 
     /**
@@ -133,14 +133,18 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param size  the size.
      * @return true if so.
      */
-    @NotNull
-    public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList)
+    public static boolean canCampBePlaced(
+      @NotNull final World world,
+      @NotNull final BlockPos pos,
+      final BlockPos size,
+      @NotNull final List<PlacementError> placementErrorList,
+      final PlayerEntity placer)
     {
         for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
             for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z), placementErrorList);
+                checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z), placementErrorList, placer);
             }
         }
 
@@ -164,12 +168,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      *
      * @param world the world.
      * @param pos   the position.
-     * @return true if is water
      */
-    private static boolean checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
+    private static void checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
         final boolean isSolid = world.getBlockState(pos).getMaterial().isSolid();
-        final boolean notInAnyColony = notInAnyColony(world, pos);
+        final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isSolid)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_SOLID, pos);
@@ -180,7 +183,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
             placementErrorList.add(placementError);
         }
-        return isSolid && notInAnyColony;
     }
 
     /**
@@ -190,8 +192,9 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param pos   the position.
      * @return true if no colony found.
      */
-    private static boolean notInAnyColony(final World world, final BlockPos pos)
+    private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)
     {
-        return !IColonyManager.getInstance().isCoordinateInAnyColony(world, pos);
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);
     }
 }

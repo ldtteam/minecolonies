@@ -4,18 +4,17 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -105,6 +104,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public IAIState getAttackState()
     {
+        strafingTime = 0;
+        tooCloseNumTicks = 0;
+        timeAtSameSpot = 0;
+        timeCanSee = 0;
+        fleeing = false;
+        movingToTarget = false;
         return GUARD_ATTACK_RANGED;
     }
 
@@ -133,7 +138,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         // ~ +1 each three levels for a total of +15 from guard level
         if (worker.getCitizenData() != null)
         {
-            attackDist += (worker.getCitizenData().getLevel() / 50.0f) * 15;
+            attackDist += (worker.getCitizenData().getJobModifier() / 50.0f) * 15;
         }
 
         if (target != null)
@@ -148,23 +153,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     public boolean hasMainWeapon()
     {
         return !checkForToolOrWeapon(ToolType.BOW);
-    }
-
-    /**
-     * Get a target for the guard.
-     *
-     * @return The next IAIState to go to.
-     */
-    @Override
-    protected LivingEntity getNearbyTarget()
-    {
-        strafingTime = 0;
-        tooCloseNumTicks = 0;
-        timeAtSameSpot = 0;
-        timeCanSee = 0;
-        fleeing = false;
-        movingToTarget = false;
-        return super.getNearbyTarget();
     }
 
     @Override
@@ -340,6 +328,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 for (int i = 0; i < amountOfArrows; i++)
                 {
                     final ArrowEntity arrow = EntityType.ARROW.create(world);
+                    arrow.setShooter(worker);
                     arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
                     final double xVector = target.posX - worker.getPosX();
                     final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
@@ -362,7 +351,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         arrow.setKnockbackStrength(k);
                     }
 
-                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
 
                     arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
@@ -426,7 +415,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getJobModifier() / 2);
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;

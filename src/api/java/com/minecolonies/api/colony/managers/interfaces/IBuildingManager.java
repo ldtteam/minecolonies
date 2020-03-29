@@ -174,6 +174,13 @@ public interface IBuildingManager
     BlockPos getBestRestaurant(final AbstractEntityCitizen citizen);
 
     /**
+     * Calculate a good hospital for a certain citizen.
+     * @param citizen the citizen.
+     * @return the Position of it.
+     */
+    BlockPos getBestHospital(AbstractEntityCitizen citizen);
+
+    /**
      * Set the townhall building.
      * @param building the building to set.
      */
@@ -186,7 +193,7 @@ public interface IBuildingManager
 
     /**
      * Get a list of the warehouses in this colony.
-     * @return
+     * @return the warehouse.
      */
     List<IWareHouse> getWareHouses();
 }

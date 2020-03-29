@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
@@ -99,6 +100,20 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public String getJobName()
     {
         return COMPOSTER;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Stamina;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Athletics;
     }
 
     @Override
@@ -220,20 +235,6 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         public Window getWindow()
         {
             return new WindowHutComposter(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.DEXTERITY;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
         }
     }
 }

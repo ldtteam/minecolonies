@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
@@ -112,6 +113,20 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     public String getJobName()
     {
         return FLORIST;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Dexterity;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Agility;
     }
 
     @Override
@@ -246,20 +261,6 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         public Window getWindow()
         {
             return new WindowHutFlorist(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.CHARISMA;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.INTELLIGENCE;
         }
     }
 }

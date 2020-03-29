@@ -120,7 +120,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
           new AITarget(FARMER_PLANT, this::workAtField, 5),
           new AITarget(FARMER_HARVEST, this::workAtField, 5)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 
@@ -548,7 +547,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenExperienceHandler().getLevel() * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenData().getJobModifier() * DELAY_DIVIDER));
     }
 
     /**

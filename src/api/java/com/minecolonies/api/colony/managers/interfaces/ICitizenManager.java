@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,20 @@ import java.util.Set;
 
 public interface ICitizenManager
 {
+    /**
+     * Register a citizen entity with the colony
+     *
+     * @param citizen citizen to register
+     */
+    void registerCitizen(final AbstractEntityCitizen citizen);
+
+    /**
+     * Unregiters a citizen with the colony
+     *
+     * @param citizen citizen to unregister
+     */
+    void unregisterCitizen(final AbstractEntityCitizen citizen);
+
     /**
      * Read the citizens from nbt.
      * @param compound the compound to read it from.
@@ -187,4 +202,10 @@ public interface ICitizenManager
      * @param mourn boolean to indicate if citizen should mourn or not
      */
     void updateCitizenMourn(final boolean mourn);
+
+    /**
+     * Get a random citizen.
+     * @return the random citizen.
+     */
+    ICitizenData getRandomCitizen();
 }

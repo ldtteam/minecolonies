@@ -313,7 +313,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
     {
-        double cost = 1D;
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
         if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
@@ -413,23 +413,21 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             handleDebugOptions(currentNode);
 
-            if (isAtDestination(currentNode))
-            {
+            if (isAtDestination(currentNode)) {
                 bestNode = currentNode;
                 result.setPathReachesDestination(true);
                 break;
             }
 
             //  If this is the closest node to our destination, treat it as our best node
-            final double nodeResultScore = getNodeResultScore(currentNode);
-            if (nodeResultScore > bestNodeResultScore)
-            {
+            final double nodeResultScore =
+                    getNodeResultScore(currentNode);
+            if (nodeResultScore > bestNodeResultScore) {
                 bestNode = currentNode;
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ))
-            {
+            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) {
                 walkCurrentNode(currentNode);
             }
         }
@@ -914,13 +912,13 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Check for headroom in the target space
-        if (!isPassable(pos.up(2)))
+        if (!isPassable(pos.up(2), false))
         {
             return -1;
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.pos.up(2)))
+        if (!isPassable(parent.pos.up(2), false))
         {
             return -1;
         }
@@ -959,7 +957,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             localPos = pos.up();
         }
 
-        if (!isPassable(pos.up()))
+        if (!isPassable(pos.up(), true))
         {
             return true;
         }
@@ -967,7 +965,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parent != null)
         {
             final BlockState hereState = world.getBlockState(localPos.down());
-            return hereState.getMaterial().isLiquid() && !isPassable(pos);
+            return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
         }
         return false;
     }
@@ -991,19 +989,19 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid() && block.getBlock() != Blocks.SNOW;
+                return !block.getMaterial().isLiquid() &&  ( block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1);
             }
         }
 
         return true;
     }
 
-    protected boolean isPassable(final BlockPos pos)
+    protected boolean isPassable(final BlockPos pos, final boolean head)
     {
         final BlockState state = world.getBlockState(pos);
         if (!state.getMaterial().blocksMovement())
         {
-            return true;
+            return !head || !(state.getBlock() instanceof CarpetBlock);
         }
         return isPassable(state);
     }
@@ -1034,7 +1032,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.DROPABLE;
         }
 
-        if (blockState.getMaterial().isSolid() || blockState.getBlock() == Blocks.SNOW)
+        if (blockState.getMaterial().isSolid() || ( blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1))
         {
             return SurfaceType.WALKABLE;
         }

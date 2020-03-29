@@ -2,16 +2,12 @@ package com.minecolonies.coremod.commands.generalcommands;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.GameProfileArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stats.Stats;
 
@@ -38,12 +34,13 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             }
             else
             {
-                Log.getLogger().warn(LanguageHandler.format("com.minecolonies.command.playernotfound", username));
+                context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", username), true);
             }
             return 0;
         }
 
         player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 0);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.resetsupply"), true);
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.resetsupply");
         return 1;
     }

@@ -340,6 +340,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public void setTextureId(final int textureId)
     {
         this.textureId = textureId;
+        dataManager.set(DATA_TEXTURE, textureId);
     }
 
     /**
@@ -622,6 +623,13 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * @return the instance of the handler.
      */
     public abstract ICitizenStuckHandler getCitizenStuckHandler();
+
+    /**
+     * The Handler to check if the citizen is sick.
+     *
+     * @return the instance of the handler.
+     */
+    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
 
     /**
      * Check if the citizen can eat now by considering the state and the job tasks.

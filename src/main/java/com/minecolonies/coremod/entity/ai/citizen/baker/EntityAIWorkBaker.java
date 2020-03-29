@@ -39,16 +39,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_
 public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 {
     /**
-     * How often should intelligence factor into the bakery's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should dexterity factor into the bakery's skill modifier.
-     */
-    private static final int DEXTERITY_MULTIPLIER = 1;
-
-    /**
      * Times the dough needs to be kneaded.
      */
     private static final int KNEADING_TIME = 5;
@@ -123,9 +113,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
           new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven, HIT_DELAY),
           new AITarget(BAKER_FINISHING, this::finishing, HIT_DELAY)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(
-          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
     }
 
@@ -219,7 +206,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private int getRequiredProgressForKneading()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 
     /**
@@ -365,11 +352,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             if (stack.getItem() != Items.WHEAT)
             {
-                requestList.add(stack.getItemStack());
+                requestList.add(stack.getItemStack().copy());
             }
             else
             {
-                final ItemStack copy = stack.getItemStack();
+                final ItemStack copy = stack.getItemStack().copy();
                 copy.setCount(copy.getMaxStackSize());
                 requestList.add(copy);
             }
@@ -387,7 +374,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        {
 	            if (stack.getItem() != Items.WHEAT)
 	            {
-	                list.add(stack.getItemStack());
+	                list.add(stack.getItemStack().copy());
 	            }
 	            else
 	            {

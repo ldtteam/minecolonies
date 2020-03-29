@@ -588,25 +588,11 @@ public class Colony implements IColony
         // Permissions
         permissions.loadPermissions(compound);
 
-        if (compound.keySet().contains(TAG_CITIZEN_MANAGER))
-        {
-            citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
-        }
-        else
-        {
-            //Compatability with old version!
-            citizenManager.read(compound);
-        }
+        citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
+        buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
 
-        if (compound.keySet().contains(TAG_BUILDING_MANAGER))
-        {
-            buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
-        }
-        else
-        {
-            //Compatability with old version!
-            buildingManager.read(compound);
-        }
+        // Recalculate max after citizens and buildings are loaded.
+        citizenManager.calculateMaxCitizens();
 
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
@@ -998,13 +984,6 @@ public class Colony implements IColony
         return world.getGameTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
-    @Override
-    public boolean areAllColonyChunksLoaded()
-    {
-        final float distanceFromCenter = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
-        return getLoadedChunkCount() / (distanceFromCenter * distanceFromCenter) >= 0.9f;
-    }
-
     /**
      * Update the waypoints after worldTicks.
      */
@@ -1282,6 +1261,7 @@ public class Colony implements IColony
         if (building != null)
         {
             building.onUpgradeComplete(level);
+            citizenManager.calculateMaxCitizens();
             this.markDirty();
         }
     }

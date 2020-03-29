@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -24,12 +25,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -146,6 +149,20 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public boolean canCraftComplexRecipes()
     {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Stamina;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Strength;
     }
 
     /**
@@ -276,6 +293,36 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
+    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for(final IRecipeStorage storage : crusherRecipes.values())
+        {
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    {
+        for(final IRecipeStorage storage : crusherRecipes.values())
+        {
+            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if(storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.crusher;
@@ -368,20 +415,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutCrusher(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.STRENGTH;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.ENDURANCE;
         }
     }
 }

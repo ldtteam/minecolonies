@@ -22,10 +22,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -172,6 +169,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The citizen sleep handler.
      */
     private final ICitizenSleepHandler citizenSleepHandler;
+
+    /**
+     * The citizen sleep handler.
+     */
+    private final ICitizenDiseaseHandler citizenDiseaseHandler;
+
     /**
      * The path-result of trying to move away
      */
@@ -237,6 +240,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenStuckHandler = new CitizenStuckHandler(this);
+        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
+
         this.moveController = new MovementHandler(this);
         this.enablePersistence();
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
@@ -254,11 +259,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
-        if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
-        {
-            this.goalSelector.addGoal(++priority, new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
-        }
+        this.goalSelector.addGoal(++priority,
+          new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
+        this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
@@ -267,8 +271,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
-
-        citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
 
     /**
@@ -397,7 +399,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
 
-        if (citizenSleepHandler.isAsleep())
+        if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())
         {
             citizenSleepHandler.onWakeUp();
         }
@@ -550,17 +552,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @Nullable
+    @NotNull
     public ICitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-        {
-            final ICitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
-            if (data != null)
-            {
-                citizenData = data;
-            }
-        }
         return citizenData;
     }
 
@@ -652,6 +646,17 @@ public class EntityCitizen extends AbstractEntityCitizen
     public ICitizenStuckHandler getCitizenStuckHandler()
     {
         return citizenStuckHandler;
+    }
+
+    /**
+     * The Handler to check if a citizen is sick.
+     *
+     * @return the instance of the handler.
+     */
+    @Override
+    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
+    {
+        return citizenDiseaseHandler;
     }
 
     /**
@@ -814,6 +819,11 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
+            if (citizenData.getJob() != null)
+            {
+                citizenData.getJob().onRemoval();
+            }
         }
         super.onDeath(damageSource);
     }
@@ -1059,6 +1069,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         compound.putBoolean(TAG_DAY, isDay);
         compound.putBoolean(TAG_CHILD, child);
         compound.putBoolean(TAG_MOURNING, mourning);
+
+        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -1072,7 +1084,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isServerWorld())
         {
-            citizenColonyHandler.updateColonyServer();
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
         }
 
         isDay = compound.getBoolean(TAG_DAY);
@@ -1087,6 +1099,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
+
+
+        citizenDiseaseHandler.read(compound);
     }
 
     /**
@@ -1186,6 +1201,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             onPrimaryLivingUpdateTick();
         }
 
+        citizenDiseaseHandler.tick();
         if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
         {
             citizenStuckHandler.tick();
@@ -1299,7 +1315,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenData(@Nullable final ICitizenData data)
     {
-        this.citizenData = data;
+        if (data != null)
+        {
+            this.citizenData = data;
+            data.initEntityValues();
+        }
     }
 
     /**
@@ -1355,7 +1375,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (citizenData.getSaturation() <= 0)
             {
-                this.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
+                if (this.getActivePotionEffect(Effects.SLOWNESS) == null)
+                {
+                    this.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
+                }
             }
             else
             {
@@ -1413,7 +1436,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
-        citizenColonyHandler.updateColonyServer();
+        citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
 
         if (citizenData != null)
         {
@@ -1594,14 +1617,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         return new ContainerCitizenInventory(id, inv, buffer);
     }
 
+    /**
+     * Removes the entity from world.
+     */
     @Override
     public void remove()
     {
-        if (citizenData != null)
-        {
-            citizenData.setLastPosition(getCurrentPosition());
-            citizenData.setCitizenEntity(null);
-        }
+        citizenColonyHandler.onCitizenRemoved();
         super.remove();
     }
 

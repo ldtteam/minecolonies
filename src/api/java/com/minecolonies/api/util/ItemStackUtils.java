@@ -9,15 +9,15 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.*;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
+import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
@@ -693,15 +694,21 @@ public final class ItemStackUtils
               itemStack1.getItem() == itemStack2.getItem() &&
               (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
         {
+            if (!matchNBT)
+            {
+                // Not comparing nbt
+                return true;
+            }
+
             // Then sort on NBT
             if (itemStack1.hasTag() && itemStack2.hasTag())
             {
                 // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2) || !matchNBT;
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
             }
             else
             {
-                return true;
+                return !itemStack1.hasTag() && !itemStack2.hasTag();
             }
         }
         return false;

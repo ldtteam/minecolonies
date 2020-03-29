@@ -68,7 +68,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      * Set the current angler.
      * @param citizen
      */
-    public void setAngler(final EntityCitizen citizen, final int luck, final int lurespeed)
+    public void setAngler(final EntityCitizen citizen, final int luck, final int lureSpeed)
     {
         this.angler = citizen;
         float f = this.angler.rotationPitch;
@@ -90,7 +90,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
         this.luck = Math.max(0, luck);
-        this.lureSpeed = Math.max(0, lurespeed);
+        this.lureSpeed = Math.max(0, lureSpeed);
     }
 
     protected void registerData()
@@ -436,6 +436,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         {
             this.ticksCaughtDelay = MathHelper.nextInt(this.rand, 100, 600);
             this.ticksCaughtDelay -= this.lureSpeed * 20 * 5;
+            this.ticksCaughtDelay = Math.max(5, ticksCaughtDelay);
         }
     }
 

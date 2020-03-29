@@ -82,4 +82,12 @@ public class WindowField extends ContainerScreen<ContainerField>
         final int marginVertical = (height - ySize) / 2;
         blit(marginHorizontal, marginVertical, 0, 0, xSize, ySize);
     }
+
+    @Override
+    public void render(int x, int y, float z)
+    {
+        this.renderBackground();
+        super.render(x, y, z);
+        this.renderHoveredToolTip(x, y);
+    }
 }

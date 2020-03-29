@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -87,7 +88,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Vision range per building level.
      */
-    private static final int         VISION_RANGE_PER_LEVEL = 5;
+    private static final int VISION_RANGE_PER_LEVEL = 6;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -209,7 +210,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
-            colony.getCitizenManager().calculateMaxCitizens();
 
             // Set new home, since guards are housed at their workerbuilding.
             final IBuilding building = citizen.getHomeBuilding();
@@ -324,7 +324,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
         super.removeCitizen(citizen);
-        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override
@@ -966,6 +965,20 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         this.patrolTargets = new ArrayList<>();
         this.markDirty();
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return job.getPrimarySkill();
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return job.getSecondarySkill();
     }
 
     /**

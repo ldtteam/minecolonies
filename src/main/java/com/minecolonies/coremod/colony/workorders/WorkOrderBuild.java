@@ -69,7 +69,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
-        this.md5 = Structures.getMD5(this.structureName);
     }
 
     /**
@@ -164,7 +163,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public boolean isValid(@NotNull final IColony colony)
     {
-        return colony.getBuildingManager().getBuilding(buildingLocation) != null;
+        return super.isValid(colony) && colony.getBuildingManager().getBuilding(buildingLocation) != null;
     }
 
     @Override

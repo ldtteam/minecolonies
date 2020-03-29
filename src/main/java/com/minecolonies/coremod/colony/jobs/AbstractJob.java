@@ -9,12 +9,12 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -52,7 +52,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     /**
      * The priority assigned with every main AI job.
      */
-    private static final int TASK_PRIORITY = 3;
+    private static final int TASK_PRIORITY = 4;
 
     /**
      * Citizen connected with the job.
@@ -327,13 +327,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         return false;
     }
 
-    /**
-     * Levelup actions on citizen levelup, allows custom actions based on Jobs
-     */
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp()
     {
-        // Default does nothing
+
     }
 
     /**
@@ -421,11 +418,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         return (workerAI.get() != null && workerAI.get().getState() == AIWorkerState.IDLE);
     }
 
-    /**
-     * Reset the AI after eating at a restaurant
-     */
     @Override
-    public void resetAIAfterEating()
+    public void resetAI()
     {
         if (workerAI.get() != null)
         {
@@ -437,5 +431,17 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public boolean allowsAvoidance()
     {
         return true;
+    }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 1;
+    }
+
+    @Override
+    public void onRemoval()
+    {
+
     }
 }

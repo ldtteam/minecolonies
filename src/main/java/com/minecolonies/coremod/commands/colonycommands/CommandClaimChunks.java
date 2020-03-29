@@ -20,9 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.CommandConstants.CHUNKS_TO_CLAM_THRESHOLD;
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
-import static com.minecolonies.coremod.commands.CommandArgumentNames.ADD_ARG;
-import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
-import static com.minecolonies.coremod.commands.CommandArgumentNames.RANGE_ARG;
+import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
 public class CommandClaimChunks implements IMCOPCommand
 {
@@ -36,9 +34,14 @@ public class CommandClaimChunks implements IMCOPCommand
     {
         final Entity sender = context.getSource().getEntity();
 
+        if (!(sender instanceof PlayerEntity))
+        {
+            return 0;
+        }
+
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
@@ -69,7 +72,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.claimChunksInRange(colonyID, sender.dimension.getId(), add, sender.getPosition(), range, 0, sender.world);
+        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getWorld().dimension.getType().getId(), add, sender.getPosition(), range, 0, sender.world);
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
         return 1;
     }

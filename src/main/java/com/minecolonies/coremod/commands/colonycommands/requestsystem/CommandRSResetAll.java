@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class CommandRSResetAll implements IMCOPCommand
 {
@@ -19,13 +17,11 @@ public class CommandRSResetAll implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             colony.getRequestManager().reset();
         }
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rsreset.success");
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.rsreset.success"), true);
 
         return 1;
     }

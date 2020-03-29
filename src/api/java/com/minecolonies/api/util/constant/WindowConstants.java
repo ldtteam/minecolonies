@@ -1191,6 +1191,11 @@ public final class WindowConstants
     public static final String ATTRIBUTES_LABEL = "attributes";
 
     /**
+     * Id of the attributes label in the GUI.
+     */
+    public static final String ATTRIBUTES_LABEL2 = "attributes2";
+
+    /**
      * Link to the xml file of the window.
      */
     public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
@@ -1259,6 +1264,18 @@ public final class WindowConstants
     public static final int INITITAL_Y_OFFSET = 60;
     public static final int BUTTON_PADDING    = 10;
     public static final String BUTTON_RIGHT_ARROW = "textures/gui/builderhut/builder_sketch_arrow_right_a.png";
+
+    /**
+     * The job modifier page.
+     */
+    public static final String JOB_TITLE_LABEL = "jobLabel";
+    public static final String JOB_DESC_LABEL = "skillexplanation";
+    public static final String PRIMARY_SKILL_LABEL = "primary";
+    public static final String PRIMARY_SKILL_COM = "comp1";
+    public static final String PRIMARY_SKILL_ADV = "adverse1";
+    public static final String SECONDARY_SKILL_LABEL = "secondary";
+    public static final String SECONDARY_SKILL_COM = "comp2";
+    public static final String SECONDARY_SKILL_ADV = "adverse2";
 
     /**
      * public constructor to hide implicit public one.

@@ -20,16 +20,6 @@ public final class TranslationConstants
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                             = "block.minecolonies.blockhutfarmer.name";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH                = "com.minecolonies.coremod.gui.citizen.skills.strength";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA                = "com.minecolonies.coremod.gui.citizen.skills.charisma";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY               = "com.minecolonies.coremod.gui.citizen.skills.dexterity";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE               = "com.minecolonies.coremod.gui.citizen.skills.endurance";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE            = "com.minecolonies.coremod.gui.citizen.skills.intelligence";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER                         = "com.minecolonies.coremod.gui.scarecrow.user";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE                   = "com.minecolonies.coremod.gui.scarecrow.user.noone";
@@ -226,6 +216,8 @@ public final class TranslationConstants
     @NonNls
     public static final String SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY                           = "item.supplycampdeployer.invalid.solid_block_needed";
     @NonNls
+    public static final String SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY                           = "item.supplycampdeployer.invalid.water_block_needed";
+    @NonNls
     public static final String SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY                     = "item.supplycampdeployer.invalid.air_block_needed";
     @NonNls
     public static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY                       = "item.supplycampdeployer.invalid.inside_existing_colony";
@@ -288,6 +280,8 @@ public final class TranslationConstants
     @NonNls
     public static final String CMCG_HAPPINESS_FOOD                                                 = "com.minecolonies.coremod.gui.happiness.food";
     @NonNls
+    public static final String CMCG_HAPPINESS_HEALTH                                               = "com.minecolonies.coremod.gui.happiness.health";
+    @NonNls
     public static final String CMCG_HAPPINESS_DAMAGE                                               = "com.minecolonies.coremod.gui.happiness.damage";
     @NonNls
     public static final String CMCG_HAPPINESS_HOUSE                                                = "com.minecolonies.coremod.gui.happiness.house";
@@ -308,19 +302,23 @@ public final class TranslationConstants
     @NonNls
     public static final     String PIRATES_SAILING_OFF_MESSAGE               = "com.minecolonies.coremod.pirates.sailing.away";
     @NonNls
-    public static final     String UNABLE_TO_ADD_RECIPE_MESSAGE              = "com.minecolonies.coremod.recipe.unable";
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE            = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final     String BAKER_HAS_NO_RECIPES                      = "com.minecolonies.coremod.bakery.norecipe";
+    public static final String BAKER_HAS_NO_RECIPES                    = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
-    public static final     String FERTLIZER                                 = "com.minecolonies.coremod.request.fertilizer";
+    public static final String FERTLIZER                               = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
-    public static final     String FURNACE_USER_NO_FUEL                      = "com.minecolonies.coremod.furnaceuser.nofuel";
+    public static final String FURNACE_USER_NO_FUEL                    = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
-    public static final     String FURNACE_USER_NO_ORE                      = "com.minecolonies.coremod.furnaceuser.noore";
+    public static final String WORKER_AI_EXCEPTION                     = "com.minecolonies.coremod.worker.ai.exception";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG    = "com.minecolonies.coremod.general.onbig";
+    public static final String PATIENT_FULL_INVENTORY                  = "com.minecolonies.coremod.healer.fullinv";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG   = "com.minecolonies.coremod.general.offbig";
+    public static final String FURNACE_USER_NO_ORE                     = "com.minecolonies.coremod.furnaceuser.noore";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG  = "com.minecolonies.coremod.general.onbig";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG = "com.minecolonies.coremod.general.offbig";
     @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX = "com.minecolonies.coremod.info.";
     @NonNls
@@ -355,6 +353,8 @@ public final class TranslationConstants
     public static final String RAW_FOOD      = "com.minecolonies.coremod.ai.wrongfood";
     @NonNls
     public static final String NO_RESTAURANT = "com.minecolonies.coremod.ai.norestaurant";
+    @NonNls
+    public static final String NO_HOSPITAL = "com.minecolonies.coremod.ai.nohospital";
     @NonNls
     public static final String DEMANDS_HOUSE = "entity.citizen.demandshouse";
     @NonNls

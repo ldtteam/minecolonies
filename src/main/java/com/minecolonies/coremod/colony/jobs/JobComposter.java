@@ -51,4 +51,10 @@ public class JobComposter extends AbstractJob
     {
         return new EntityAIWorkComposter(this);
     }
+
+    @Override
+    public int getDiseaseModifier()
+    {
+        return 2;
+    }
 }

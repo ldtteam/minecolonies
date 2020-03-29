@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -81,13 +82,27 @@ public class BuildingUniversity extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return UNIVERSITY;
+        return "com.minecolonies.coremod.job.researcher";
     }
 
     @Override
     public boolean canWorkDuringTheRain()
     {
         return true;
+    }
+
+    @NotNull
+    @Override
+    public Skill getPrimarySkill()
+    {
+        return Skill.Knowledge;
+    }
+
+    @NotNull
+    @Override
+    public Skill getSecondarySkill()
+    {
+        return Skill.Mana;
     }
 
     @Override
@@ -208,20 +223,6 @@ public class BuildingUniversity extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutUniversity(this);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.CHARISMA;
         }
 
         @Override

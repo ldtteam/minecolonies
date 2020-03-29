@@ -9,8 +9,6 @@ public final class NbtTagConstants
     public static final String TAG_NAME                   = "name";
     public static final String TAG_DIMENSION              = "dimension";
     public static final String TAG_CENTER                 = "center";
-    public static final String TAG_MAX_CITIZENS           = "maxCitizens";
-    public static final String TAG_POTENTIAL_MAX_CITIZENS = "potentialMaxCitizens";
     public static final String TAG_BUILDINGS              = "buildings";
     public static final String TAG_BUILDING               = "building";
     public static final String TAG_BUILDINGS_CLAIM        = "buildingsClaim";
@@ -33,6 +31,7 @@ public final class NbtTagConstants
     public static final String TAG_PRIO_MODE              = "prioMode";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";
+    public static final String TAG_COLONY_MANAGER         = "colonymanager";
     public static final String TAG_UUID                   = "uuid";
     public static final String TAG_STATISTICS             = "statistics";
     public static final String TAG_MINER_STATISTICS       = "minerStatistics";
@@ -292,6 +291,11 @@ public final class NbtTagConstants
     public static final String TAG_BEDS = "beds";
 
     /**
+     * Patients tags.
+     */
+    public static final String TAG_PATIENTS = "patients";
+
+    /**
      * Var for first pos string.
      */
     public static final String FIRST_POS_STRING = "pos1";
@@ -356,11 +360,13 @@ public final class NbtTagConstants
      */
     public static final String TAG_FEMALE             = "female";
     public static final String TAG_TEXTURE            = "texture";
+    public static final String TAG_SKILL              = "skill";
     public static final String TAG_LEVEL              = "level";
     public static final String TAG_EXPERIENCE         = "experience";
     public static final String TAG_HEALTH             = "health";
     public static final String TAG_MAX_HEALTH         = "maxHealth";
     public static final String TAG_SKILLS             = "skills";
+    public static final String TAG_NEW_SKILLS         = "newSkills";
     public static final String TAG_SKILL_STRENGTH     = "strength";
     public static final String TAG_SKILL_STAMINA      = "endurance";
     public static final String TAG_SKILL_SPEED        = "charisma";

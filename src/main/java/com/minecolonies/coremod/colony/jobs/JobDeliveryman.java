@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJ
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.DeliverymanSounds;
@@ -74,14 +73,14 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void onLevelUp(final int newLevel)
+    public void onLevelUp()
     {
         if (getCitizen().getCitizenEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
               .setBaseValue(
-                BASE_MOVEMENT_SPEED + (newLevel > 50 ? 50 : newLevel) * BONUS_SPEED_PER_LEVEL);
+                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
         }
     }
 
@@ -299,10 +298,7 @@ public class JobDeliveryman extends AbstractJob
     {
         if (!b && active)
         {
-            for (final IToken<?> t : getTaskQueue())
-            {
-                getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
-            }
+            cancelAssignedRequests();
         }
         else if (!active && b)
         {
@@ -312,6 +308,20 @@ public class JobDeliveryman extends AbstractJob
               .onColonyUpdate(request -> tokenList.contains(request.getId()));
         }
         this.active = b;
+    }
+
+    private void cancelAssignedRequests()
+    {
+        for (final IToken<?> t : getTaskQueue())
+        {
+            getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
+        }
+    }
+
+    @Override
+    public void onRemoval()
+    {
+        cancelAssignedRequests();
     }
 
     /**

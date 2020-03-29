@@ -21,6 +21,14 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
 
+  "minecolonies.config.diseasemodifier": "Disease Modifier",
+  "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare. [Default: 5]",
+  "minecolonies.config.diseases": "Diseases",
+  "minecolonies.config.diseases.comment": "All diseases citizens can get. The name, how common it is, and all ingredients to cure it.",
+
+  "minecolonies.config.generatesupplyloot": "Supply loot",
+  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally [Default: true]",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the florist can plant.",
 
@@ -138,14 +146,12 @@
   "minecolonies.config.canplayerusedeletecolonycommand.comment": "Should the player be allowed to use the '/mc colony delete' command? [Default: true]",
   "minecolonies.config.numberofattemptsforsafttp": "Number of Attempts for Safe TP",
   "minecolonies.config.numberofattemptsforsafttp.comment": "Amount of attempts to find a save rtp. [Default: 4]",
-  "minecolonies.config.workingrangetownhall": "Working Range of Townhall",
-  "minecolonies.config.workingrangetownhall.comment": "Max distance a colony can claim a chunk from the center, 0 if disable maximum.  [Default: 0]",
   "minecolonies.config.workingrangetownhallchunks": "Working Range of Townhall in Chunks",
   "minecolonies.config.workingrangetownhallchunks.comment": "Colony size (radius in chunks around central colony chunk). Only for the static mode. [Default: 8]",
   "minecolonies.config.mintownhallpadding": "Minimum Townhall Padding",
-  "minecolonies.config.mintownhallpadding.comment": "The minimum distances between town halls for dynamic colony sizes (used as default initial claim too). [Default: 3]",
+  "minecolonies.config.mintownhallpadding.comment": "The default claim area for dynamic colonies (used as minimum distance too). [Default: 3]",
   "minecolonies.config.townhallpaddingchunk": "Townhall Padding in Chunks",
-  "minecolonies.config.townhallpaddingchunk.comment": "Padding between colonies in chunks. [Default: 1]",
+  "minecolonies.config.townhallpaddingchunk.comment": "Padding between colony claims in chunks, for Static claim mode only.. [Default: 1]",
   "minecolonies.config.restrictcolonyplacement": "Restrict Colony Placement",
   "minecolonies.config.restrictcolonyplacement.comment": "Should the min/max distance from spawn also affect colony placement? [Default: false]",
   "minecolonies.config.enabledynamiccolonysizes": "Enable Dynamic Colony Sizes",
@@ -353,8 +359,7 @@
   "com.minecolonies.command.rsreset.success": "After 1.618 Seconds it reinstantiated completely new.",
 
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
-  "com.minecolonies.command.citizeninfo.levelandage": "§2Level: §f%s §2Age: §f%s §2Experience: §f%s",
-  "com.minecolonies.command.citizeninfo.skills": "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s",
+  "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
@@ -440,11 +445,20 @@
   "com.minecolonies.coremod.job.fisherman": "Fisherman",
   "com.minecolonies.coremod.job.guard": "GuardTower",
 
-  "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
-
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a supply ship or supply camp!",
 
-  "com.minecolonies.coremod.gui.citizen.skills.endurance": "Endurance: %d",
+  "com.minecolonies.coremod.gui.citizen.skills": "Skills",
+  "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.knowledge": "Knowledge: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.creativity": "Creativity: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.focus": "Focus: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.adaptability": "Adaptability: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.mana": "Mana: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.stamina": "Stamina: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.agility": "Agility: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.strength": "Strength: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "Dexterity: %d",
+  "com.minecolonies.coremod.gui.citizen.skills.athletics": "Athletics: %d",
 
   "com.minecolonies.coremod.gui.workerhuts.build": "Build Building",
   "com.minecolonies.coremod.gui.workerhuts.buildrepair": "Build Options",
@@ -490,8 +504,8 @@
   "com.minecolonies.coremod.gui.townhall.population.composters": "Composters: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.builders": "Builders: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.cooks": "Cooks: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.rangers": "Rangers: %d/%d",
-  "com.minecolonies.coremod.gui.townhall.population.knights": "Knights: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.rangers": "Archers: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.melees": "Knights: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.students": "Students: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.florists": "Florists: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.enchanters": "Enchanters: %d/%d",
@@ -513,8 +527,7 @@
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
   "com.minecolonies.coremod.gui.workerhuts.repair": "Repair",
-  "com.minecolonies.coremod.gui.citizen.skills.dexterity": "Dexterity: %d",
-  "com.minecolonies.coremod.gui.citizen.skills.charisma": "Charisma: %d",
+
   "com.minecolonies.coremod.gui.workerhuts.upgrade": "Upgrade",
 
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "Visit Citizen Chests:",
@@ -530,12 +543,10 @@
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
-  "com.minecolonies.coremod.gui.citizen.skills": "Skills",
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
   "com.minecolonies.coremod.gui.warehouse.toblacksmith": "Deliver to Blacksmith:",
-  "com.minecolonies.coremod.gui.citizen.skills.strength": "Strength: %d",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisherman's Hut",
   "com.minecolonies.coremod.gui.workerhuts.workorderadded": "Construction added to build queue.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
@@ -628,6 +639,7 @@
 
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
   "com.minecolonies.coremod.gui.happiness.food": "Food Modifier",
+  "com.minecolonies.coremod.gui.happiness.health": "Health Modifier",
   "com.minecolonies.coremod.gui.happiness.damage": "Damage Modifier",
   "com.minecolonies.coremod.gui.happiness.house": "House Modifier",
   "com.minecolonies.coremod.gui.happiness.job": "Job Modifier",
@@ -666,9 +678,10 @@
   "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "Keep colony loaded",
 
   "item.supplycampdeployer.invalid": "Requiring a flat ground of at least 16*17 without grass or flowers on them.",
-  "item.supplycampdeployer.invalid.solid_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.",
-  "item.supplycampdeployer.invalid.air_block_needed": "Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be air: %s.",
-  "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your supply camp near an existing colony.",
+  "item.supplycampdeployer.invalid.water_block_needed": "Placing a supply ship requires water under the ship. These blocks must be water: %s.",
+  "item.supplycampdeployer.invalid.solid_block_needed": "Placing a supply camp requires flat solid ground. These blocks must be solid: %s.",
+  "item.supplycampdeployer.invalid.air_block_needed": "Placing a supply camp or ship requires air above the ground or sea level. These blocks must be air: %s.",
+  "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your supply camp or ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "SupplyShip Chest",
   "item.minecolonies.supplycampdeployer": "SupplyCamp Chest",
   "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall happiness:",
@@ -750,6 +763,7 @@
 
   "com.minecolonies.coremod.ai.nochairs": "Restaurant does not have any chairs for me to eat something!",
   "com.minecolonies.coremod.ai.norestaurant": "Please build a restaurant or get me something to eat!",
+  "com.minecolonies.coremod.ai.nohospital": "Please build a hospital I have the %s and need to be cured with: %s",
   "com.minecolonies.coremod.ai.nowarehouse": "Build a warehouse or bring me food to serve to my clients!",
   "com.minecolonies.coremod.ai.nofood": "I can't find any food in the warehouse.",
   "com.minecolonies.coremod.status.cooking": "Cooking",
@@ -1285,7 +1299,7 @@
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
-  "com.minecolonies.coremod.research.havetounlock": "Build a University to unlock this Building first!",
+  "com.minecolonies.coremod.research.havetounlock": "Build a University and research the Barracks to unlock this Building first!",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The builder is the heart of your colony, without it you wouldn't ever be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the builder, the builder at level 0 (no hut) is able to build one thing, their own hut.\n\n In order for your builder to build or upgrade a hut that isn't their own, their hut must be at least the same level as the other hut, e.g. their hut must be level 3 or above to build a level 3 hut.",
@@ -1308,6 +1322,30 @@
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
   "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a builder hut first by shift right clicking a builder hut!",
-  "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again"
+  "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again",
+  "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
+  "block.minecolonies.blockhuthospital": "Hospital",
+  "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!",
+  "com.minecolonies.coremod.job.healer": "Healer",
+  "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
+  "com.minecolonies.coremod.gui.townhall.population.healers": "Healers: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.researchers": "Researchers: %d/%d",
+
+  "com.minecolonies.coremod.gui.citizen.job.label": "Job: %s",
+  "com.minecolonies.coremod.gui.citizen.job.desc": "These skills are influenced by the workers job:",
+
+  "com.minecolonies.coremod.gui.citizen.job.skills.intelligence": "Intelligence:",
+  "com.minecolonies.coremod.gui.citizen.job.skills.knowledge": "Knowledge",
+  "com.minecolonies.coremod.gui.citizen.job.skills.creativity": "Creativity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.focus": "Focus",
+  "com.minecolonies.coremod.gui.citizen.job.skills.adaptability": "Adaptability",
+  "com.minecolonies.coremod.gui.citizen.job.skills.mana": "Mana",
+  "com.minecolonies.coremod.gui.citizen.job.skills.stamina": "Stamina",
+  "com.minecolonies.coremod.gui.citizen.job.skills.agility": "Agility",
+  "com.minecolonies.coremod.gui.citizen.job.skills.strength": "Strength",
+  "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
+  "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics",
+
+  "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know."
 }
 

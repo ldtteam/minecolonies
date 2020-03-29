@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
@@ -34,8 +33,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
@@ -112,16 +109,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private static final double CHANCE_NEW_POND = 0.05D;
 
     /**
-     * How often should intelligence factor into the fisherman's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should dexterity factor into the fisherman's skill modifier.
-     */
-    private static final int DEXTERITY_MULTIPLIER = 1;
-
-    /**
      * Time out fo fish again.
      */
     private static final int FISHING_TIMEOUT = 5;
@@ -134,10 +121,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Required level for sponge drop.
      */
-    private static final int LEVEL_FOR_SPONGE        = 4;
+    private static final int LEVEL_FOR_SPONGE   = 4;
 
-    @NotNull
-    private final        Random random               = new Random();
+    /**
+     * Per level lure speed.
+     */
+    private static final int LURE_SPEED_DIVIDER = 5;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -181,9 +170,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
           new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater, TICKS_SECOND),
           new AITarget(FISHERMAN_START_FISHING, this::doFishing, TICKS_SECOND)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(
-          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
     }
 
@@ -412,7 +398,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
             return START_WORKING;
         }
-        job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));
+        job.setWater(job.getPonds().get(worker.getRandom().nextInt(job.getPonds().size())));
 
         return FISHERMAN_CHECK_WATER;
     }
@@ -475,12 +461,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (caughtFish())
         {
             playCaughtFishSound();
-            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().fisherSpongeChance.get())
+            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().fisherSpongeChance.get())
             {
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.SPONGE));
             }
 
-            if (random.nextDouble() < CHANCE_NEW_POND)
+            if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
                 return FISHERMAN_SEARCHING_WATER;
@@ -547,7 +533,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
-            this.entityFishHook.setAngler((EntityCitizen) worker, EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()), worker.getCitizenExperienceHandler().getLevel() + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
+            this.entityFishHook.setAngler((EntityCitizen) worker, EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()), worker.getCitizenData().getJobModifier() / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
             world.addEntity(this.entityFishHook);
         }
 
@@ -578,7 +564,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        final double chance = random.nextInt(FISHING_DELAY) / (double) (worker.getCitizenExperienceHandler().getLevel() + 1);
+        final double chance = worker.getRandom().nextInt(FISHING_DELAY) / (double) (worker.getCitizenData().getJobModifier() + 1);
         return chance >= CHANCE;
     }
 

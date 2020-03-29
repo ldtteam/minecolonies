@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,6 +21,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
@@ -31,7 +34,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * StructureIterator name and location.
      */
-    private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/supplyship";
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "supplyship";
 
     /**
      * Offset south/west of the supply chest.
@@ -99,7 +102,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0, null);
+            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0);
             return;
         }
 
@@ -124,7 +127,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_SHIP_STRUCTURE_NAME, rotations, WindowBuildTool.FreeMode.SUPPLYSHIP);
+        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_SHIP_STRUCTURE_NAME, rotations);
     }
 
     /**
@@ -135,16 +138,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param size  the size.
      * @return true if so.
      */
-    public static boolean canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
+    public static boolean canShipBePlaced(
+      @NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList, final
+    PlayerEntity placer)
     {
         for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
             for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if (!checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z)))
-                {
-                    return false;
-                }
+                checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z), placementErrorList, placer);
             }
         }
 
@@ -154,11 +156,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             {
                 if (!world.isAirBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
                 {
-                    return false;
+                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY() + SCAN_HEIGHT, z));
+                    placementErrorList.add(placementError);
                 }
             }
         }
-        return true;
+        return placementErrorList.isEmpty();
     }
 
     /**
@@ -166,11 +169,21 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      *
      * @param world the world.
      * @param pos   the first position.
-     * @return true if is water
      */
-    private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos)
+    private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
-        return BlockUtils.isWater(world.getBlockState(pos)) && notInAnyColony(world, pos);
+        final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
+        final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
+        if (!isWater)
+        {
+            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
+            placementErrorList.add(placementError);
+        }
+        if (!notInAnyColony)
+        {
+            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
+            placementErrorList.add(placementError);
+        }
     }
 
     /**
@@ -180,8 +193,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos   the first position.
      * @return true if no colony found.
      */
-    private static boolean notInAnyColony(final World world, final BlockPos pos)
+    private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)
     {
-        return !IColonyManager.getInstance().isCoordinateInAnyColony(world, pos);
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);
     }
 }

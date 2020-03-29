@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -150,7 +151,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
      */
-    void onLevelUp(int newLevel);
+    void onLevelUp();
 
     /**
      * Get the CitizenData that this Job belongs to.
@@ -206,13 +207,24 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     boolean isIdling();
 
     /**
-     * Reset the AI after eating at a restaurant
+     * Reset the AI.
      */
-    void resetAIAfterEating();
+    void resetAI();
 
     /**
      * Method to check if the colony job allows avoidance.
      * @return true if so.
      */
     boolean allowsAvoidance();
+
+    /**
+     * Disease modifier of the job.
+     * @return the modifier of the job.
+     */
+    int getDiseaseModifier();
+
+    /**
+     * When job removed (death of citizen or job change).
+     */
+    void onRemoval();
 }

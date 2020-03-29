@@ -3,7 +3,7 @@
 
     <label size="100% 11" pos="0 20" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
     <list id="unemployed" size="100% 120" pos="60 40" align="TOP_MIDDLE">
-        <view size="100% 30">
+        <view size="100% 40">
             <label id="citizen" size="60 12" pos="0 4" textalign="MIDDLE_LEFT" color="yellow"/>
             <button id="done" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
             <button id="fire" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonFire)"/>
@@ -11,6 +11,7 @@
             <button id="restart" size="65 15" pos="245 2" label="$(com.minecolonies.coremod.gui.hiring.restart)"/>
 
             <label id="attributes" size="100% 12" pos="0 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
+            <label id="attributes2" size="100% 12" pos="0 28" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
         </view>
     </list>
     <label id="buildingHireMode" size="100% 11" pos="0 160" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>

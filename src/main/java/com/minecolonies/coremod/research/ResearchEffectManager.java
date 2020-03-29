@@ -27,7 +27,6 @@ public class ResearchEffectManager implements IResearchEffectManager
             return (W) effect;
         }
 
-        Log.getLogger().warn("Unable to retrieve Effect with id: " + effect + " from the ResearchEffectsMap!");
         return null;
     }
 

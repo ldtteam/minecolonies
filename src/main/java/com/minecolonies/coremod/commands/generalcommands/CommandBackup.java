@@ -5,8 +5,6 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class CommandBackup implements IMCOPCommand
 {
@@ -18,14 +16,13 @@ public class CommandBackup implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
         if (BackUpHelper.backupColonyData())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.backup.success");
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.success"), true);
         }
         else
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.backup.failed");
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.failed"), true);
         }
         return 1;
     }
