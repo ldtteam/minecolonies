@@ -69,7 +69,9 @@ configurations {
         transitive = false
     }
 
-    additionalMods {}
+    additionalMods {
+        transitive = false
+    }
 
     apiImplementation.extendsFrom contained
 }
