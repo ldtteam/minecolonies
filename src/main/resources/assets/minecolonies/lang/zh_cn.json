@@ -1208,4 +1208,5 @@
   "com.minecolonies.coremod.gui.citizen.job.skills.strength": "力量",
   "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "敏捷",
   "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "运动"
+  "com.minecolonies.coremod.worker.ai.exception": "我的AI系统发生了错误, 请检查最新的日志(或在服务器上与服务器所有者联系)，并让Minecolonies作者知道"
 }
