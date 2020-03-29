@@ -69,6 +69,8 @@ configurations {
         transitive = false
     }
 
+    additionalMods {}
+
     apiImplementation.extendsFrom contained
 }
 
@@ -77,6 +79,7 @@ dependencies {
 
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     contained fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
+    additionalMods "com.ldtteam:structurize:${config.structurize_version}"
     compile "com.ldtteam:datagenerators:0.1.34-ALPHA"
     
     implementation fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
@@ -166,37 +169,6 @@ minecraft {
     }
 }
 
-task devServerJar(type: Jar) {
-    group 'build'
-
-    from sourceSets.api.output
-    from sourceSets.main.output
-
-    from(configurations.contained.files) {
-        include '*'
-        into 'META-INF/libraries'
-    }
-
-    manifest {
-        attributes([
-                'ContainedDeps': configurations.contained.files.collect { it.name }.join(' '),
-                'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:dev-server",
-                'Timestamp': System.currentTimeMillis(),
-                "Specification-Title": "minecolonies",
-                "Specification-Vendor": "ldtteam",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${project.version}",
-                "Implementation-Vendor" :"ldtteam",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-
-    classifier = 'dev-server'
-}
-
-tasks.build.dependsOn devServerJar
-
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
@@ -243,6 +215,28 @@ task setupCIWorkspace {
     afterEvaluate {
         println "Setup"
     }
+}
+
+task buildModsZip(type: Zip) {
+    group "build"
+
+    baseName "mods"
+
+    afterEvaluate {
+        from(configurations.additionalMods.files) {
+            include '*'
+        }
+
+        from (tasks.jar.outputs) {
+            include '*'
+        }
+    }
+}
+
+tasks.build.dependsOn buildModsZip
+
+afterEvaluate {
+    tasks.buildModsZip.dependsOn tasks.reobfJar
 }
 
 curseforge {
