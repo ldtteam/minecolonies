@@ -1016,7 +1016,7 @@
   "com.minecolonies.coremod.gui.name.tooLong": "We reduced the string to \"%s\" since it exceeded the limit of 15 letters.",
   "block.minecolonies.decorationcontroller": "Prýðis-eftirlitsfólk",
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
-  "com.minecolonies.coremod.gui.deco": "Navn á prýði:",
+  "com.minecolonies.coremod.gui.deco.name": "Navn á prýði:",
   "com.minecolonies.coremod.gui.deco.level": "Prýðis-stig:",
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
