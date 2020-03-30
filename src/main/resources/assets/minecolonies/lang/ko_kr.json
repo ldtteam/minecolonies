@@ -1016,7 +1016,7 @@
   "com.minecolonies.coremod.gui.name.tooLong": "글자 제한 15 글자를 초과해 \"%s\" (으)로 문자열을 줄였습니다.",
   "block.minecolonies.decorationcontroller": "장식 제어 장치",
   "com.minecolonies.coremod.gui.deco.namescan": "마지막 파일 경로와 파일 이름, 레벨 없음:",
-  "com.minecolonies.coremod.gui.deco": "장식의 이름:",
+  "com.minecolonies.coremod.gui.deco.name": "장식의 이름:",
   "com.minecolonies.coremod.gui.deco.level": "장식의 레벨:",
   "com.minecolonies.coremod.gui.placement.warning": "건물을 배치하실 때 건물의 정확한 위치 조정이 가능한 건축 도구 GUI를 사용할 것을 추천합니다.",
   "com.minecolonies.coremod.gui.placement.buildtool": "건축 도구 사용하기",
