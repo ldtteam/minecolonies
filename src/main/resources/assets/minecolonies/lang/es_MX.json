@@ -1016,7 +1016,7 @@
   "com.minecolonies.coremod.gui.name.tooLong": "Hemos reducido la frase \"%s\" porque excedía el límite de 15 letras.",
   "block.minecolonies.decorationcontroller": "Controlador de decoración",
   "com.minecolonies.coremod.gui.deco.namescan": "Ruta final de archivo y nombre de archivo, sin nivel:",
-  "com.minecolonies.coremod.gui.deco": "El nombre de la decoración:",
+  "com.minecolonies.coremod.gui.deco.name": "El nombre de la decoración:",
   "com.minecolonies.coremod.gui.deco.level": "El nivel de la decoración:",
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
