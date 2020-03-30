@@ -1016,7 +1016,7 @@
   "com.minecolonies.coremod.gui.name.tooLong": "Me lyhensimme nimen \"%s\" koska siinä oli enemmän kuin 15 kirjainta.",
   "block.minecolonies.decorationcontroller": "Koristelu Ohjain",
   "com.minecolonies.coremod.gui.deco.namescan": "Lopullinen tiedoston polku ja nimi, ei tasoa:",
-  "com.minecolonies.coremod.gui.deco": "Koristelun nimi:",
+  "com.minecolonies.coremod.gui.deco.name": "Koristelun nimi:",
   "com.minecolonies.coremod.gui.deco.level": "Koristelun taso:",
   "com.minecolonies.coremod.gui.placement.warning": "Suosittelemme rakennustyökalun GUIta rakennuksen asettamiseen niin voit säätää tarkkan asettelupaikan.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Käytä Rakennustyökalua",
