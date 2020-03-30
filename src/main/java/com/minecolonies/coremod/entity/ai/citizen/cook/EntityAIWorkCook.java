@@ -174,6 +174,19 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
+            if (!citizenToServe.isEmpty())
+            {
+                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT);
+                if (foodSlot != -1)
+                {
+                    final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
+                    if (stack.getItem().isFood())
+                    {
+                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFood().getHealing() / 2.0);
+                    }
+                }
+            }
+
             removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();
