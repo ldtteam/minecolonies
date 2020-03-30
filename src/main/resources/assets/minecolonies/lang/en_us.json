@@ -1136,7 +1136,7 @@
 
   "block.minecolonies.decorationcontroller": "Decoration Controller",
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
-  "com.minecolonies.coremod.gui.deco": "The name of the decoration:",
+  "com.minecolonies.coremod.gui.deco.name": "The name of the decoration:",
   "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
 
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
