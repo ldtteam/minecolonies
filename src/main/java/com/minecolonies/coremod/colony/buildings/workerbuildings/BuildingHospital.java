@@ -350,7 +350,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 else if (entry.getValue() != 0 && !state.get(BedBlock.OCCUPIED))
                 {
                     final ICitizenData citizen = colony.getCitizenManager().getCitizen(entry.getValue());
-                    if (citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                    if (citizen != null && citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
                     {
                         setBedOccupation(entry.getKey(), true);
                     }
