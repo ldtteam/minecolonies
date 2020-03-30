@@ -118,7 +118,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
         com.ldtteam.structures.helpers.Structure structure = null;
         try
         {
-            structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName() + (controller.getLevel() + 1), new PlacementSettings());
+            structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings());
         }
         catch (final Exception e)
         {
@@ -162,7 +162,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.tooLong", name);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.toolong", name);
             }
 
             final String levelString = findPaneOfTypeByID(INPUT_LEVEL, TextField.class).getText();
