@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -389,6 +390,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         int size = 0;
 
         final List<BlockPos> fields = new ArrayList<>(getColony().getBuildingManager().getFields());
+        final List<BlockPos> cleanList = new ArrayList<>();
 
         for (@NotNull final BlockPos field : fields)
         {
@@ -401,37 +403,30 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     {
                         if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                         {
+                            cleanList.add(field);
                             size++;
                         }
                     }
                     else
                     {
                         size++;
+                        cleanList.add(field);
                     }
                 }
             }
         }
 
         buf.writeInt(size);
-        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
+        for (@NotNull final BlockPos field : cleanList)
         {
-            if (colony.getWorld().isAreaLoaded(field, 1))
+            buf.writeBlockPos(field);
+        }
+
+        for (final BlockPos pos : farmerFields)
+        {
+            if (!cleanList.contains(pos))
             {
-                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity)
-                {
-                    if (((ScarecrowTileEntity) scareCrow).isTaken())
-                    {
-                        if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
-                        {
-                            buf.writeBlockPos(field);
-                        }
-                    }
-                    else
-                    {
-                        buf.writeBlockPos(field);
-                    }
-                }
+                Log.getLogger().warn("Owning field not considered because not loaded: " + pos.toString());
             }
         }
 
