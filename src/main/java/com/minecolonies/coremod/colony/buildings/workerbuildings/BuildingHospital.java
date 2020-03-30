@@ -338,21 +338,31 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 {
                     setBedOccupation(entry.getKey(), false);
                 }
-                else if (entry.getValue() != 0 && state.get(BedBlock.OCCUPIED))
+                else if (entry.getValue() != 0)
                 {
                     final ICitizenData citizen = colony.getCitizenManager().getCitizen(entry.getValue());
-                    if (!citizen.isAsleep() || !citizen.getCitizenEntity().isPresent() || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
+                    if (citizen != null)
                     {
-                        setBedOccupation(entry.getKey(), false);
+                        if (state.get(BedBlock.OCCUPIED))
+                        {
+                            if (!citizen.isAsleep() || !citizen.getCitizenEntity().isPresent()
+                                  || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
+                            {
+                                setBedOccupation(entry.getKey(), false);
+                            }
+                            bedMap.put(entry.getKey(), 0);
+                        }
+                        else
+                        {
+                            if (citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                            {
+                                setBedOccupation(entry.getKey(), true);
+                            }
+                        }
                     }
-                    bedMap.put(entry.getKey(), 0);
-                }
-                else if (entry.getValue() != 0 && !state.get(BedBlock.OCCUPIED))
-                {
-                    final ICitizenData citizen = colony.getCitizenManager().getCitizen(entry.getValue());
-                    if (citizen != null && citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                    else
                     {
-                        setBedOccupation(entry.getKey(), true);
+                        bedMap.remove(entry.getKey());
                     }
                 }
             }
