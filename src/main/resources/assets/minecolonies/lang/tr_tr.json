@@ -1016,7 +1016,7 @@
   "com.minecolonies.coremod.gui.name.tooLong": "15 harften fazla olduğu için dizgiyi \"%s\" değerine indirdik.",
   "block.minecolonies.decorationcontroller": "Dekorasyon Kontrolcüsü",
   "com.minecolonies.coremod.gui.deco.namescan": "Son dosya yolu ve dosya adı, seviye yok:",
-  "com.minecolonies.coremod.gui.deco": "Dekorasyonun ismi:",
+  "com.minecolonies.coremod.gui.deco.name": "Dekorasyonun ismi:",
   "com.minecolonies.coremod.gui.deco.level": "Dekorasyonun seviyesi:",
   "com.minecolonies.coremod.gui.placement.warning": "Yerleşimin kesin konumunu ayarlayabilmek ve binayı yerleştirmek için inşa aracı menüsünü kullanmanızı öneririz.",
   "com.minecolonies.coremod.gui.placement.buildtool": "İnşa Aracı kullan",
