@@ -8,12 +8,10 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
-import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.container.ContainerField;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -26,15 +24,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -228,6 +222,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setName(final String name)
     {
         this.name = name;
+        markDirty();
     }
 
     /**
@@ -256,6 +251,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         this.lengthMinusX = searchNextBlock(0, position.west(), Direction.WEST, world);
         this.widthPlusZ = searchNextBlock(0, position.south(), Direction.SOUTH, world);
         this.widthMinusZ = searchNextBlock(0, position.north(), Direction.NORTH, world);
+        markDirty();
     }
 
     /**
@@ -331,6 +327,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
+        markDirty();
     }
 
     @Override
@@ -365,6 +362,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setFieldStage(final ScarecrowFieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
+        markDirty();
     }
 
     /**
@@ -387,6 +385,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setNeedsWork(final boolean needsWork)
     {
         this.doesNeedWork = needsWork;
+        markDirty();
     }
 
     /**
@@ -483,7 +482,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
      * @param ownerId the id of the citizen.
      */
     @Override
-    public void setOwner(@NotNull final int ownerId)
+    public void setOwner(final int ownerId)
     {
         this.ownerId = ownerId;
         if(colony != null)
@@ -498,6 +497,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
             }
         }
         setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
+        markDirty();
     }
 
     /**
@@ -521,6 +521,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
                 owner = tempColony.getCitizen(ownerId).getName();
             }
         }
+        markDirty();
     }
 
     /**
@@ -566,27 +567,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     }
 
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
-
-    @Override
-    public void onLoad()
-    {
-        super.onLoad();
-        final World world = getWorld();
-
-        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos)))
-        {
-            colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-            if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
-            {
-                @Nullable final Entity entity = EntityUtils.getPlayerByUUID(world, colony.getPermissions().getOwner());
-
-                if (entity instanceof PlayerEntity)
-                {
-                    colony.getBuildingManager().addNewField(this, pos, world);
-                }
-            }
-        }
-    }
 
     @Override
     public void read(final CompoundNBT compound)
@@ -647,10 +627,22 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         compound.putInt(TAG_WIDTH_MINUS, widthMinusZ);
         compound.putInt(TAG_OWNER, ownerId);
         compound.putString(TAG_NAME, name);
+        if (colony != null)
+        {
+            compound.putInt(TAG_COLONY_ID, colony.getID());
+        }
 
         return super.write(compound);
     }
 
+    /**
+     * Set the colony of the field.
+     * @param colony the colony to set.
+     */
+    public void setColony(final IColony colony)
+    {
+        this.colony = colony;
+    }
 
     //----------------------- Type Specific parameters -----------------------//
 
