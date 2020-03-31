@@ -10,6 +10,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
+import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
@@ -174,7 +175,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 damageToBeDealt *= 2;
             }
 
-            final DamageSource source = new EntityDamageSource(worker.getName(), worker);
+            final DamageSource source = new NamedDamageSource(worker.getName(), worker);
             if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
             {
                 source.setDamageBypassesArmor();
