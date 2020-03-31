@@ -563,7 +563,7 @@
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.east": "East",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.west": "West",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.UNUSED": "unused",
+  "com.minecolonies.coremod.gui.workerhuts.farmerhut.unused": "unused",
   "com.minecolonies.coremod.gui.scarecrow.user": "Field used by: %s",
   "com.minecolonies.coremod.gui.scarecrow.user.noone": "no-one",
   "com.minecolonies.coremod.gui.debugscreen.noclosecolony": "No close colony!",

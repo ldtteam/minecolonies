@@ -11,7 +11,6 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -331,8 +330,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             colonyId = compound.getInt(TAG_COLONY);
         }
-
-        updateColonyReferences();
         mirror = compound.getBoolean(TAG_MIRROR);
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
