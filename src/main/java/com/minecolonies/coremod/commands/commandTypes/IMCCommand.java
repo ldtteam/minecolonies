@@ -1,11 +1,16 @@
 package com.minecolonies.coremod.commands.commandTypes;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
@@ -52,6 +57,17 @@ public interface IMCCommand
         return onExecute(context);
     }
 
+    default ICommandCallbackBuilder<CommandSource> executePreConditionCheck() {
+        return executeCallback -> context -> {
+            if (!checkPreCondition(context))
+            {
+                return 0;
+            }
+
+            return executeCallback.run(context);
+        };
+    }
+
     /**
      * Preconditions to check before executing
      */
@@ -80,5 +96,10 @@ public interface IMCCommand
         }
 
         return player.getServer().getPlayerList().canSendCommands(player.getGameProfile());
+    }
+
+    interface ICommandCallbackBuilder<S> {
+
+        Command<S> then(final Command<CommandSource> executeCallback);
     }
 }

@@ -65,7 +65,8 @@ public class EntryPoint
                                               .addNode(new CommandCitizenKill().build())
                                               .addNode(new CommandCitizenList().build())
                                               .addNode(new CommandCitizenReload().build())
-                                              .addNode(new CommandCitizenSpawnNew().build());
+                                              .addNode(new CommandCitizenSpawnNew().build())
+                                              .addNode(new CommandCitizenTeleport().build());
 
         /**
          * Root minecolonies command tree, all subtrees are added here.

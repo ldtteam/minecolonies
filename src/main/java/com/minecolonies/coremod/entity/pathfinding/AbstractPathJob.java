@@ -659,6 +659,8 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected abstract double computeHeuristic(BlockPos pos);
 
+    protected double computeHeuristic(BlockPos pos, boolean isSwimming, boolean isP)
+
     /**
      * Return true if the given node is a viable final destination, and the path should generate to here.
      *
