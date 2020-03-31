@@ -25,6 +25,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -252,6 +253,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                                                           .filter(e -> e instanceof AbstractEntityCitizen)
                                                           .map(e -> (AbstractEntityCitizen) e)
           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
+          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
           .collect(Collectors.toList());
 
         final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
