@@ -21,9 +21,9 @@ import java.util.Optional;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
 /**
- * Teleports a chosen citizen to a chosen positoin..
+ * Forces a citizen to walk to a chosen position..
  */
-public class CommandCitizenTeleport implements IMCColonyOfficerCommand {
+public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand {
 
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -61,7 +61,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand {
         final BlockPos targetPos = targetLocation.getBlockPos(context.getSource());
 
         if (context.getSource().getWorld() == entityCitizen.world) {
-            entityCitizen.setLocationAndAngles(targetPos.getX(), targetPos.getY(), targetPos.getZ(), entityCitizen.getYaw(1F), entityCitizen.getPitch(1F));
+            entityCitizen.getNavigator().tryMoveToXYZ(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
         }
 
         return 1;
@@ -72,7 +72,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand {
      */
     @Override
     public String getName() {
-        return "teleport";
+        return "walk";
     }
 
     @Override
@@ -81,6 +81,6 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand {
                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
                         .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1))
                                 .then(IMCCommand.newArgument(POS_ARG, Vec3Argument.vec3())
-                                        .executes(this::checkPreConditionAndExecute))));
+                                        .executes(executePreConditionCheck().then(this::onExecute)))));
     }
 }
