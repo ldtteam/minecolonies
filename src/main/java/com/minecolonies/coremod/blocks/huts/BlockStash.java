@@ -43,7 +43,6 @@ public class BlockStash extends AbstractBlockHut<BlockStash>
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create();
-        building.getInventory()
         building.registryName =  this.getBuildingEntry().getRegistryName();
         return building;
     }
