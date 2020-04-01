@@ -53,9 +53,6 @@ public class BlockStash extends AbstractBlockHut<BlockStash>
             final Hand hand,
             final BlockRayTraceResult ray)
     {
-       /*
-        If the world is client, open the gui of the building
-         */
         if (worldIn.isRemote)
         {
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);

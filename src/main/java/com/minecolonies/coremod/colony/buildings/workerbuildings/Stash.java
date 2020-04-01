@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class used to manage the postbox building block.
+ * Class used to manage the stash building block.
  */
 public class Stash extends AbstractBuilding
 {

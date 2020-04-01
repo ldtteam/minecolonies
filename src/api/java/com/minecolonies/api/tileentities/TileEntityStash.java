@@ -30,6 +30,10 @@ public class TileEntityStash extends TileEntityColonyBuilding
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);
     }
 
+    /**
+     * Called when the inventory of the tileEntity it holds it's changed
+     * @param isEmpty
+     */
     private void buildingInventoryChanged(boolean isEmpty) {
         IBuildingContainer building = getBuilding();
         if (!isEmpty && building != null && !building.isPriorityStatic()) {
