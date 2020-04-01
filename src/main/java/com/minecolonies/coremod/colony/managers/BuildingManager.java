@@ -6,6 +6,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -349,7 +350,7 @@ public class BuildingManager implements IBuildingManager
                     building.setStyle(colony.getStyle());
                 }
 
-                if (world != null && !(building instanceof PostBox) && !(building instanceof Stash))
+                if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
 

@@ -10,13 +10,12 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -358,7 +357,7 @@ public class BuildToolPlaceMessage implements IMessage
             building.setRotation(rotation);
             building.setBuildingLevel(level);
 
-            if (!(building instanceof PostBox) && !(building instanceof Stash))
+            if (!(building instanceof IRSComponent))
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
