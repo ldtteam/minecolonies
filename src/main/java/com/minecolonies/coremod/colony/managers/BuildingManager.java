@@ -349,7 +349,7 @@ public class BuildingManager implements IBuildingManager
                     building.setStyle(colony.getStyle());
                 }
 
-                if (world != null && !(building instanceof PostBox))
+                if (world != null && !(building instanceof PostBox) && !(building instanceof Stash))
                 {
                     building.onPlacement();
 
