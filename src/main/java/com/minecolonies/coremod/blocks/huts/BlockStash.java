@@ -31,11 +31,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BlockStash extends AbstractBlockHut<BlockStash>
 {
-    private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
-    private static final VoxelShape SHAPE_EAST = Block.makeCuboidShape(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_WEST = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
-
     @NotNull
     @Override
     public String getName()
@@ -81,23 +76,5 @@ public class BlockStash extends AbstractBlockHut<BlockStash>
         final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create();
         building.registryName =  this.getBuildingEntry().getRegistryName();
         return building;
-    }
-
-    @NotNull
-    @Override
-    public VoxelShape getShape(
-      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
-    {
-        switch (state.get(FACING))
-        {
-            case NORTH:
-                return SHAPE_NORTH;
-            case SOUTH:
-                return SHAPE_SOUTH;
-            case EAST:
-                return SHAPE_EAST;
-            default:
-                return SHAPE_WEST;
-        }
     }
 }
