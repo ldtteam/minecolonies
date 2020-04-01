@@ -37,17 +37,10 @@ public class TileEntityStash extends TileEntityColonyBuilding
      */
     private void buildingInventoryChanged(boolean isEmpty)
     {
-        IBuildingContainer building = getBuilding();
+        IBuilding building = (IBuilding) getBuilding();
         if (!isEmpty && building != null && !building.isPriorityStatic())
         {
-            if (building instanceof IBuilding)
-            {
-                IBuilding iBuilding = (IBuilding) building;
-                if (!iBuilding.isBeingGathered())
-                {
-                    iBuilding.alterPickUpPriority(MAX_PRIO);
-                }
-            } else
+            if (!building.isBeingGathered())
             {
                 building.alterPickUpPriority(MAX_PRIO);
             }
