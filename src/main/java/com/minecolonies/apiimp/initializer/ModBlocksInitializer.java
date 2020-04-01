@@ -81,6 +81,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         ModBlocks.blockWayPoint = new BlockWaypoint().registerBlock(registry);
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
+        ModBlocks.blockStash = new BlockStash().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController().registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
@@ -142,6 +143,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
+        ModBlocks.blockStash.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
     }
