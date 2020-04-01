@@ -1,0 +1,221 @@
+{
+	"credit": "EnderDude124 made this model in Blockbench!",
+	"ambientocclusion": false,
+	"textures": {
+		"0": "minecolonies:blocks/stash",
+		"particle": "minecolonies:blocks/stash"
+	},
+	"elements": [
+		{
+			"name": "BasePlate",
+			"from": [0, 0, 7],
+			"to": [16, 1, 16],
+			"faces": {
+				"north": {"uv": [7, 10, 14, 10.5], "texture": "#0"},
+				"east": {"uv": [7, 10, 14, 10.5], "texture": "#0"},
+				"south": {"uv": [7, 10, 14, 10.5], "texture": "#0"},
+				"west": {"uv": [7, 10, 14, 10.5], "texture": "#0"},
+				"up": {"uv": [7, 5.5, 14, 10.5], "texture": "#0"},
+				"down": {"uv": [7, 5.5, 14, 10.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Body",
+			"from": [1, 1, 8],
+			"to": [15, 10, 15],
+			"faces": {
+				"north": {"uv": [0, 1, 6.5, 5], "texture": "#0"},
+				"east": {"uv": [0.5, 1, 4, 5], "texture": "#0"},
+				"south": {"uv": [0, 1, 6.5, 5], "texture": "#0"},
+				"west": {"uv": [2.5, 1, 6, 5], "texture": "#0"},
+				"up": {"uv": [7, 0, 14, 5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Lthing1",
+			"from": [1, 10, 8],
+			"to": [2, 14, 15],
+			"faces": {
+				"north": {"uv": [3, 5.5, 3.5, 7.5], "texture": "#0"},
+				"east": {"uv": [3, 5.5, 3.5, 7.5], "texture": "#0"},
+				"south": {"uv": [0, 6.5, 0.5, 8.5], "texture": "#0"},
+				"west": {"uv": [3, 0, 6, 2], "texture": "#0"},
+				"up": {"uv": [0.5, 0, 1, 5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Lthing2",
+			"from": [2, 14, 8],
+			"to": [5, 15, 15],
+			"faces": {
+				"north": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"east": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"south": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"west": {"uv": [3, 0, 6, 0.5], "texture": "#0"},
+				"up": {"uv": [3.5, 0, 5, 5], "texture": "#0"},
+				"down": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Rthing1",
+			"from": [14, 10, 8],
+			"to": [15, 14, 15],
+			"faces": {
+				"north": {"uv": [1, 8.5, 1.5, 10.5], "texture": "#0"},
+				"east": {"uv": [0.5, 0, 3.5, 2], "texture": "#0"},
+				"south": {"uv": [2, 7.5, 2.5, 9.5], "texture": "#0"},
+				"west": {"uv": [1, 8.5, 1.5, 10.5], "texture": "#0"},
+				"up": {"uv": [3.5, 0, 4, 5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Rthing2",
+			"from": [11, 14, 8],
+			"to": [14, 15, 15],
+			"faces": {
+				"north": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"east": {"uv": [0.5, 0, 6, 0.5], "texture": "#0"},
+				"south": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"west": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"up": {"uv": [0.5, 0, 2, 5], "texture": "#0"},
+				"down": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Top",
+			"from": [5, 15, 8],
+			"to": [11, 16, 15],
+			"faces": {
+				"north": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"},
+				"east": {"uv": [0.5, 0, 6, 0.5], "texture": "#0"},
+				"south": {"uv": [1, 7, 1.5, 7.5], "texture": "#0"},
+				"west": {"uv": [0.5, 0, 6, 0.5], "texture": "#0"},
+				"up": {"uv": [0.5, 0, 4.5, 5], "texture": "#0"},
+				"down": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "backfacelower",
+			"from": [2, 10, 13.75],
+			"to": [14, 14, 14.75],
+			"faces": {
+				"north": {"uv": [7.5, 1.5, 13.5, 3.496], "texture": "#0"},
+				"south": {"uv": [0.5, 0, 6, 2], "texture": "#0"}
+			}
+		},
+		{
+			"name": "backfaceupper",
+			"from": [5, 14, 13.75],
+			"to": [11, 15, 14.75],
+			"faces": {
+				"north": {"uv": [7.5, 0.5, 13.499, 3.497], "texture": "#0"},
+				"south": {"uv": [5.5, 0, 6, 0.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "frontface1",
+			"from": [10, 10, 8.25],
+			"to": [14, 11, 9.25],
+			"faces": {
+				"north": {"uv": [0.5, 1.5, 2.5, 2], "texture": "#0"},
+				"south": {"uv": [4, 1.5, 6, 2], "texture": "#0"},
+				"west": {"uv": [2, 1.5, 2.5, 2], "texture": "#0"},
+				"up": {"uv": [1.5, 0.5, 2, 1], "texture": "#0"}
+			}
+		},
+		{
+			"name": "frontface2",
+			"from": [2, 10, 8.25],
+			"to": [6, 11, 9.25],
+			"faces": {
+				"north": {"uv": [4, 1.5, 6, 2], "texture": "#0"},
+				"east": {"uv": [3, 1.5, 3.5, 2], "texture": "#0"},
+				"south": {"uv": [4, 1.5, 6, 2], "texture": "#0"},
+				"up": {"uv": [3.5, 0.5, 4, 1], "texture": "#0"}
+			}
+		},
+		{
+			"name": "frontface3",
+			"from": [11, 11, 8.25],
+			"to": [14, 14, 9.25],
+			"faces": {
+				"north": {"uv": [0.5, 0.5, 2, 2], "texture": "#0"},
+				"south": {"uv": [4.5, 0.5, 6, 2], "texture": "#0"},
+				"west": {"uv": [4.5, 0.5, 5, 2], "texture": "#0"}
+			}
+		},
+		{
+			"name": "frontface4",
+			"from": [2, 11, 8.25],
+			"to": [5, 14, 9.25],
+			"faces": {
+				"north": {"uv": [4.5, 0.5, 6, 2], "texture": "#0"},
+				"east": {"uv": [4.5, 0.5, 5, 2], "texture": "#0"},
+				"south": {"uv": [4.5, 0.5, 6, 2], "texture": "#0"}
+			}
+		},
+		{
+			"name": "frontface5",
+			"from": [5, 14, 8.25],
+			"to": [11, 15, 9.25],
+			"faces": {
+				"north": {"uv": [0.5, 0, 1, 0.5], "texture": "#0"},
+				"down": {"uv": [0.5, 0, 1, 0.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "SupportStickNW",
+			"from": [0.5, 1, 7.5],
+			"to": [1.5, 13, 8.5],
+			"faces": {
+				"north": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"east": {"uv": [3, 5.5, 3.5, 11.5], "texture": "#0"},
+				"south": {"uv": [2, 5.5, 2.5, 11.5], "texture": "#0"},
+				"west": {"uv": [1, 5.5, 1.5, 11.5], "texture": "#0"},
+				"up": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "SupportStickNE",
+			"from": [14.5, 1, 7.5],
+			"to": [15.5, 13, 8.5],
+			"faces": {
+				"north": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"east": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"south": {"uv": [2, 5.5, 2.5, 11.5], "texture": "#0"},
+				"west": {"uv": [2, 5.5, 2.5, 11.5], "texture": "#0"},
+				"up": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "SupportStickSW",
+			"from": [0.5, 1, 14.5],
+			"to": [1.5, 13, 15.5],
+			"faces": {
+				"north": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"east": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"south": {"uv": [2, 5.5, 2.5, 11.5], "texture": "#0"},
+				"west": {"uv": [1, 5.5, 1.5, 11.5], "texture": "#0"},
+				"up": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "SupportStickSE",
+			"from": [14.5, 1, 14.5],
+			"to": [15.5, 13, 15.5],
+			"faces": {
+				"north": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"east": {"uv": [0, 5.5, 0.5, 11.5], "texture": "#0"},
+				"south": {"uv": [2, 5.5, 2.5, 11.5], "texture": "#0"},
+				"west": {"uv": [1, 5.5, 1.5, 11.5], "texture": "#0"},
+				"up": {"uv": [1, 5.5, 1.5, 6], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [0, 1,
+		{
+			"name": "Top",
+			"origin": [8, 8, 8],
+			"children": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+		}, 14, 15, 16, 17]
+}
