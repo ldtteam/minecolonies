@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
@@ -88,7 +88,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * The list of the fields the farmer manages.
      */
-    private final List<BlockPos> farmerFields = new ArrayList<>();
+    private final Set<BlockPos> farmerFields = new HashSet<>();
 
     /**
      * The field the farmer is currently working on.
@@ -137,7 +137,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @NotNull
     public List<BlockPos> getFarmerFields()
     {
-        return Collections.unmodifiableList(farmerFields);
+        return new ArrayList<>(farmerFields);
     }
 
     /**
@@ -195,17 +195,18 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Nullable
     public BlockPos getFieldToWorkOn(final World world)
     {
-        Collections.shuffle(farmerFields);
+        final List<BlockPos> fields = new ArrayList<>(farmerFields);
+        Collections.shuffle(fields);
 
-        if (!farmerFields.isEmpty())
+        if (!fields.isEmpty())
         {
-            if (farmerFields.get(0).equals(lastField))
+            if (fields.get(0).equals(lastField))
             {
-                Collections.shuffle(farmerFields);
+                Collections.shuffle(fields);
             }
-            lastField = farmerFields.get(0);
+            lastField = fields.get(0);
         }
-        for (@NotNull final BlockPos field : farmerFields)
+        for (@NotNull final BlockPos field : fields)
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) scareCrow).needsWork())
@@ -389,6 +390,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         int size = 0;
 
         final List<BlockPos> fields = new ArrayList<>(getColony().getBuildingManager().getFields());
+        final List<BlockPos> cleanList = new ArrayList<>();
 
         for (@NotNull final BlockPos field : fields)
         {
@@ -401,37 +403,30 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     {
                         if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                         {
+                            cleanList.add(field);
                             size++;
                         }
                     }
                     else
                     {
                         size++;
+                        cleanList.add(field);
                     }
                 }
             }
         }
 
         buf.writeInt(size);
-        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
+        for (@NotNull final BlockPos field : cleanList)
         {
-            if (colony.getWorld().isAreaLoaded(field, 1))
+            buf.writeBlockPos(field);
+        }
+
+        for (final BlockPos pos : farmerFields)
+        {
+            if (!cleanList.contains(pos))
             {
-                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity)
-                {
-                    if (((ScarecrowTileEntity) scareCrow).isTaken())
-                    {
-                        if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
-                        {
-                            buf.writeBlockPos(field);
-                        }
-                    }
-                    else
-                    {
-                        buf.writeBlockPos(field);
-                    }
-                }
+                Log.getLogger().warn("Owning field not considered because not loaded: " + pos.toString());
             }
         }
 
@@ -476,6 +471,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
                                     getColony().getWorld().getBlockState(scarecrow.getPos()),
                                     getColony().getWorld().getBlockState(scarecrow.getPos()),
                                     BLOCK_UPDATE_FLAG);
+                    ((ScarecrowTileEntity) scarecrow).setTaken(true);
+                    if (getMainCitizen() != null)
+                    {
+                        ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen().getId());
+                    }
+                    ((ScarecrowTileEntity) scarecrow).setColony(colony);
                 }
                 else
                 {
