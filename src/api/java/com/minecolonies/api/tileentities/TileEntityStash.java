@@ -32,17 +32,23 @@ public class TileEntityStash extends TileEntityColonyBuilding
 
     /**
      * Called when the inventory of the tileEntity it holds it's changed
+     *
      * @param isEmpty
      */
-    private void buildingInventoryChanged(boolean isEmpty) {
+    private void buildingInventoryChanged(boolean isEmpty)
+    {
         IBuildingContainer building = getBuilding();
-        if (!isEmpty && building != null && !building.isPriorityStatic()) {
-            if (building instanceof IBuilding) {
+        if (!isEmpty && building != null && !building.isPriorityStatic())
+        {
+            if (building instanceof IBuilding)
+            {
                 IBuilding iBuilding = (IBuilding) building;
-                if (!iBuilding.isBeingGathered()) {
+                if (!iBuilding.isBeingGathered())
+                {
                     iBuilding.alterPickUpPriority(MAX_PRIO);
                 }
-            } else {
+            } else
+            {
                 building.alterPickUpPriority(MAX_PRIO);
             }
         }
@@ -51,14 +57,16 @@ public class TileEntityStash extends TileEntityColonyBuilding
     /**
      * An {@ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
      */
-    public class NotifyingRackInventory extends RackInventory {
+    public class NotifyingRackInventory extends RackInventory
+    {
         public NotifyingRackInventory(final int defaultSize)
         {
             super(defaultSize);
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot)
+        {
             super.onContentsChanged(slot);
             buildingInventoryChanged(isEmpty());
         }
