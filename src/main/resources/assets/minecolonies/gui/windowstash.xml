@@ -1,25 +1,4 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
-    <label id="name" size="90 11" pos="50 14" textalign="MIDDLE" color="red"/>
-
-    <label size="100 11" pos="30 145" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.buildPrio)"/>
-    <label id="type" size="27 11" pos="132 145" textalign="MIDDLE" color="black"/>
-
-    <buttonimage id="deliveryPrioState" size="64 17" pos="46 156" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
-    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 156" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="-"/>
-    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 156" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="+"/>
-
-    <buttonimage id="inventory" size="86 17" pos="52 210" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(container.inventory)"/>
 </window>

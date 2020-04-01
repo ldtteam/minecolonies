@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -263,7 +264,7 @@ public final class ModBuildingsInitializer
         ModBuildings.stash = new BuildingEntry.Builder()
                 .setBuildingBlock(ModBlocks.blockStash)
                 .setBuildingProducer(Stash::new)
-                .setBuildingViewProducer(() -> Stash.View::new)
+                .setBuildingViewProducer(() -> EmptyView::new)
                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STASH_ID))
                 .createBuildingEntry();
 
