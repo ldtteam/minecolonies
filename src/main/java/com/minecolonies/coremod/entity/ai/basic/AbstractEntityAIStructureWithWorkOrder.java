@@ -372,10 +372,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected boolean checkIfCanceled()
     {
-        if (job.getWorkOrder() == null && job.getStructure() != null)
+        if ((job.getWorkOrder() == null && job.getStructure() != null) || (currentStructure != null && currentStructure.isBluePrintMissing()))
         {
             super.resetTask();
             job.setStructure(null);
+            if (job.hasWorkOrder())
+            {
+                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+            }
             job.setWorkOrder(null);
             resetCurrentStructure();
             getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, StructureIterator.Stage.CLEAR);
