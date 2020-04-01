@@ -12,7 +12,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
 /**
- * Class which handles the tileEntity of our colonyBuildings.
+ * Class which handles the tileEntity for the Stash block.
  */
 
 public class TileEntityStash extends TileEntityColonyBuilding
@@ -32,10 +32,8 @@ public class TileEntityStash extends TileEntityColonyBuilding
 
     private void buildingInventoryChanged(boolean isEmpty) {
         IBuildingContainer building = getBuilding();
-        if (building != null && !building.isPriorityStatic()) {
-            if (isEmpty)
-                building.alterPickUpPriority(MAX_PRIO*-1);
-            else if (building instanceof IBuilding) {
+        if (!isEmpty && building != null && !building.isPriorityStatic()) {
+            if (building instanceof IBuilding) {
                 IBuilding iBuilding = (IBuilding) building;
                 if (!iBuilding.isBeingGathered()) {
                     iBuilding.alterPickUpPriority(MAX_PRIO);
@@ -46,6 +44,9 @@ public class TileEntityStash extends TileEntityColonyBuilding
         }
     }
 
+    /**
+     * An {@ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
+     */
     public class NotifyingRackInventory extends RackInventory {
         public NotifyingRackInventory(final int defaultSize)
         {
