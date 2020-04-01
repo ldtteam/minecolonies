@@ -95,8 +95,7 @@ public class EventHandler
     private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
 
     /**
-     * Event when the debug screen is opened. Event gets called by displayed
-     * text on the screen, we only need it when f3 is clicked.
+     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
@@ -267,11 +266,11 @@ public class EventHandler
             }
 
             // Add visiting/subscriber to colony we're logging into
-            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX,event.player.posY, event.player.posZ));
+            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX, event.player.posY, event.player.posZ));
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(),event.player.dimension);
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), event.player.dimension);
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(event.player);
@@ -351,8 +350,7 @@ public class EventHandler
     }
 
     /**
-     * Event when a block is broken.
-     * Event gets cancelled when there no permission to break a hut.
+     * Event when a block is broken. Event gets cancelled when there no permission to break a hut.
      *
      * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
@@ -376,7 +374,7 @@ public class EventHandler
             return;
         }
 
-        if (event.getState().getBlock() instanceof BlockMobSpawner)
+        if (event.getState().getBlock() instanceof BlockMobSpawner && event.getWorld().getTileEntity(event.getPos()) instanceof TileEntityMobSpawner)
         {
             final TileEntityMobSpawner spawner = (TileEntityMobSpawner) event.getWorld().getTileEntity(event.getPos());
 
@@ -390,9 +388,8 @@ public class EventHandler
     }
 
     /**
-     * Event when a player right clicks a block, or right clicks with an item.
-     * Event gets cancelled when player has no permission. Event gets cancelled
-     * when the player has no permission to place a hut, and tried it.
+     * Event when a player right clicks a block, or right clicks with an item. Event gets cancelled when player has no permission. Event gets cancelled when the player has no
+     * permission to place a hut, and tried it.
      *
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
@@ -555,8 +552,7 @@ public class EventHandler
     }
 
     /**
-     * Called when a player tries to place a AbstractBlockHut. Returns true if
-     * successful and false to cancel the block placement.
+     * Called when a player tries to place a AbstractBlockHut. Returns true if successful and false to cancel the block placement.
      *
      * @param world  The world the player is in
      * @param player The player
@@ -828,8 +824,7 @@ public class EventHandler
     }*/
 
     /**
-     * Gets called when world loads.
-     * Calls {@link ColonyManager#onWorldLoad(World)}
+     * Gets called when world loads. Calls {@link ColonyManager#onWorldLoad(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
@@ -850,8 +845,7 @@ public class EventHandler
     }
 
     /**
-     * Gets called when world unloads.
-     * Calls {@link ColonyManager#onWorldUnload(World)}
+     * Gets called when world unloads. Calls {@link ColonyManager#onWorldUnload(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
      */
