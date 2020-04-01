@@ -75,7 +75,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     /**
      * Additional render data.
      */
-    private String renderMetadata;
+    private String renderMetadata = "";
 
     /**
      * The gender, true if female.
