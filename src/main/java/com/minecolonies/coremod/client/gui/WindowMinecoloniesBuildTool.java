@@ -126,7 +126,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              Settings.instance.getActiveStructure().getSize(Rotation.NONE, Mirror.NONE),
               placementErrorList,
               Minecraft.getInstance().player))
             {
