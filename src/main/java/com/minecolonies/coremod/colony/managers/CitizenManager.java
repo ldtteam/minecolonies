@@ -185,25 +185,39 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCitizen(@Nullable final ICitizenData data, @Nullable final World world, final BlockPos spawnPos, final boolean force)
+    public ICitizenData spawnOrCreateCitizen(@Nullable final ICitizenData data, @NotNull final World world, final BlockPos spawnPos, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
             return data;
         }
 
-        final BlockPos spawnLocation = spawnPos != null && !spawnPos.equals(BlockPos.ORIGIN) ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
-        if (!world.isBlockLoaded(spawnLocation))
+        BlockPos spawnLocation = spawnPos;
+        if (spawnLocation == null || spawnLocation.equals(BlockPos.ORIGIN))
         {
-            //  Chunk with TownHall Block is not loaded
-            return data;
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, spawnLocation);
 
-        if (spawnPoint != null)
+        BlockPos calculatedSpawn = null;
+
+        if (world.isBlockLoaded(spawnLocation))
         {
-            return spawnCitizenOnPosition(data, world, force, spawnPoint);
+            calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+        }
+
+        if (calculatedSpawn == null)
+        {
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
+            if (world.isBlockLoaded(spawnLocation))
+            {
+                calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            }
+        }
+
+        if (calculatedSpawn != null)
+        {
+            return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
         }
         else
         {
