@@ -305,6 +305,10 @@ public class StandardRequestManager implements IStandardRequestManager
                 getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestOverruled(token);
                 return;
+            case FAILED:
+                getLogger().debug("Request failed: " + token + ". Notifying parent, children and requester...");
+                getRequestHandler().onRequestCancelled(token);
+                return;
             case CANCELLED:
                 getLogger().debug("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
