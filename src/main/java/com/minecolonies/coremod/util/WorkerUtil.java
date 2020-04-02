@@ -161,20 +161,23 @@ public final class WorkerUtil
      * @param target the target block.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final Block target)
+    public static IToolType getBestToolForBlock(final Block target, float blockHardness)
     {
         String toolName = target.getHarvestTool(target.getDefaultState());
         if (toolName == null)
         {
-            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            if (blockHardness > 0f)
             {
-                if (tool.getSecond() != null && tool.getSecond().getItem() instanceof ItemTool)
+                for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
                 {
-                    final ItemTool toolItem = (ItemTool) tool.getSecond().getItem();
-                    if (tool.getSecond().getDestroySpeed(target.getDefaultState()) >= toolItem.toolMaterial.getEfficiency())
+                    if (tool.getSecond() != null && tool.getSecond().getItem() instanceof ItemTool)
                     {
-                        toolName = tool.getFirst().getName();
-                        break;
+                        final ItemTool toolItem = (ItemTool) tool.getSecond().getItem();
+                        if (tool.getSecond().getDestroySpeed(target.getDefaultState()) >= toolItem.toolMaterial.getEfficiency())
+                        {
+                            toolName = tool.getFirst().getName();
+                            break;
+                        }
                     }
                 }
             }
