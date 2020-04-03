@@ -78,7 +78,9 @@ public class PostBox extends AbstractBuilding
         super.onRequestedRequestCancelled(manager, request);
         if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack)
         {
-            createRequest(new Stack(((Stack) request.getRequest()).getStack()), false);
+            final Stack req = new Stack(((Stack) request.getRequest()).getStack());
+            req.setCount(((Stack) request.getRequest()).getCount());
+            createRequest(req, false);
         }
     }
 
