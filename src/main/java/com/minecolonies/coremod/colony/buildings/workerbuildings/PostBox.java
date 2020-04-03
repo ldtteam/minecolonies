@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -82,6 +83,10 @@ public class PostBox extends AbstractBuilding
             req.setCount(((Stack) request.getRequest()).getCount());
             createRequest(req, false);
         }
+        Log.getLogger().error("------------------------------------------------------------");
+        Log.getLogger().error("----------------Something got cancelled!!!!!----------------");
+        Log.getLogger().error("------------------------------------------------------------");
+
     }
 
     /**
