@@ -174,6 +174,12 @@ public interface IBuildingManager
      */
     BlockPos getBestHospital(AbstractEntityCitizen citizen);
 
+    /**
+     * Returns a random building in the colony, matching the filter predicate.
+     *
+     * @param filterPredicate
+     * @return
+     */
     BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
 
     /**

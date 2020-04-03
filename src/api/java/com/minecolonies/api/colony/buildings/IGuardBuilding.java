@@ -77,6 +77,11 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      */
     int getOffenceBonus();
 
+    /**
+     * Called when a guard is at the current patrol point
+     *
+     * @param guard guard which arrived
+     */
     void arrivedAtPatrolPoint(AbstractEntityCitizen guard);
 
     /**
