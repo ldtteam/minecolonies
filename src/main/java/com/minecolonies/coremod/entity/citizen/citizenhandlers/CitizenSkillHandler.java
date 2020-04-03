@@ -143,7 +143,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public void addXpToSkill(final Skill skill, final double xp, final ICitizenData data)
     {
-        final Tuple<Integer, Double> tuple = skillMap.get(skill);
+        final Tuple<Integer, Double> tuple = skillMap.getOrDefault(skill, new Tuple<>(0, 0.0D));
         int level = tuple.getA();
         final double currentXp = tuple.getB();
 
