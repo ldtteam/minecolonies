@@ -88,7 +88,7 @@ public final class BlockPosUtil
      * @param def             the default position if none was found.
      * @return the BlockPos.
      */
-    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def)
+    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist)
     {
         final Random random = new Random();
 
@@ -102,8 +102,8 @@ public final class BlockPosUtil
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =
               new BlockPos(currentPosition)
-                .offset(direction.getA(), random.nextInt(LENGTH_RANGE))
-                .offset(direction.getB(), random.nextInt(LENGTH_RANGE))
+                .offset(direction.getA(), random.nextInt(LENGTH_RANGE) + minDist)
+                .offset(direction.getB(), random.nextInt(LENGTH_RANGE) + minDist)
                 .up(random.nextInt(UP_DOWN_RANGE))
                 .down(random.nextInt(UP_DOWN_RANGE));
 

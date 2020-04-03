@@ -26,13 +26,6 @@ public interface ICitizenAssignable extends ISchematicProvider
     void onDestroyed();
 
     /**
-     * On tick of the server.
-     *
-     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
-     */
-    void onServerTick(TickEvent.ServerTickEvent event);
-
-    /**
      * On tick of the colony.
      *
      * @param colony {@link TickEvent.WorldTickEvent}

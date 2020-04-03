@@ -719,7 +719,7 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK) + MineColonies.getConfig().getCommon().townHallPaddingChunk.get() * BLOCKS_PER_CHUNK;
+        return getConfig().getCommon().minTownHallPadding.get() * BLOCKS_PER_CHUNK;
     }
 
     @Override
