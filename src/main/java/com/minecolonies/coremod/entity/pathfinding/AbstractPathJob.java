@@ -309,9 +309,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
      * @param onPath     checks if the node is on a path.
+     * @param onRails    checks if the node is a rail block.
      * @return cost to move from the parent to the new position.
      */
-    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
+    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final boolean onRails, final BlockPos blockPos)
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
@@ -324,6 +325,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (onPath)
         {
             cost *= ON_PATH_COST;
+        }
+
+        if (onRails)
+        {
+            cost *= ON_RAIL_COST;
         }
 
         if (isSwimming)
@@ -594,6 +600,19 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
+            p.setOnRails(node.isOnRails());
+            if (p.isOnRails() && !node.parent.isOnRails())
+            {
+                p.setRailsEntry();
+            }
+            else if (!p.isOnRails() && points.length > pathLength + 1)
+            {
+                final PathPointExtended point = ((PathPointExtended) points[pathLength+1]);
+                if (point.isOnRails())
+                {
+                    point.setRailsExit();
+                }
+            }
 
             //  Climbing on a ladder?
             if (nextInPath != null && onALadder(node, nextInPath, pos))
@@ -719,8 +738,9 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.down()).getBlock());
+        final boolean onRails = world.getBlockState(pos).getBlock() instanceof AbstractRailBlock;
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, pos);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, onRails, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
@@ -728,6 +748,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (node == null)
         {
             node = createNode(parent, pos, nodeKey, isSwimming, heuristic, cost, score);
+            node.setOnRails(onRails);
         }
         else if (updateCurrentNode(parent, node, heuristic, cost, score))
         {

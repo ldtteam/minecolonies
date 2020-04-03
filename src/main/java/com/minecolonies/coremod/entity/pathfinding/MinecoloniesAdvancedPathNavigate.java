@@ -156,6 +156,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             return;
         }
+        if (handleRails(oldIndex))
+        {
+            return;
+        }
         super.tick();
 
         if (pathResult != null && noPath())
@@ -408,6 +412,35 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
         return false;
+    }
+
+    /**
+     * Handle rails navigation.
+     * @param oldIndex
+     * @return
+     */
+    private boolean handleRails(int oldIndex)
+    {
+        if (!this.noPath())
+        {
+            @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            final PathPointExtended pExNext = getPath().getCurrentPathLength() > this.getPath().getCurrentPathIndex() + 1
+                                                ? (PathPointExtended) this.getPath()
+                                                                        .getPathPointFromIndex(this.getPath()
+                                                                                                 .getCurrentPathIndex() + 1)
+                                                : null;
+
+            if (pEx.isOnRails() || pEx.isRailsExit())
+            {
+                return handlePathOnRails(pEx);
+            }
+        }
+        return false;
+    }
+
+    private boolean handlePathOnRails(final PathPointExtended pEx)
+    {
+
     }
 
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)
