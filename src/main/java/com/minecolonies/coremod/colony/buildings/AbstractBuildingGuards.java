@@ -21,6 +21,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
@@ -404,54 +405,125 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     //// ---- Abstract Methods ---- \\\\
 
     /**
+     * The guards which arrived at the patrol positions
+     */
+    private Set<AbstractEntityCitizen> arrivedAtPatrol = new HashSet<>();
+
+    /**
+     * The last patrol position
+     */
+    private BlockPos lastPatrolPoint;
+
+    /**
+     * The patrol waiting for others timeout
+     */
+    private int patrolTimer = 0;
+
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        if (patrolTimer > 0)
+        {
+            patrolTimer--;
+        }
+
+        if (!arrivedAtPatrol.isEmpty() && (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0))
+        {
+            // Next patrol point
+            startPatrolNext();
+        }
+    }
+
+    @Override
+    public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard)
+    {
+        // Start waiting timer for other guards
+        if (arrivedAtPatrol.isEmpty())
+        {
+            patrolTimer = 1;
+        }
+
+        arrivedAtPatrol.add(guard);
+
+        if (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0)
+        {
+            // Next patrol point
+            startPatrolNext();
+        }
+    }
+
+    /**
+     * Starts the patrol to the next point
+     */
+    private void startPatrolNext()
+    {
+        getNextPatrolTarget(true);
+
+        for (final ICitizenData curguard : getAssignedCitizen())
+        {
+            if (curguard.getCitizenEntity().isPresent())
+            {
+                ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+            }
+        }
+        arrivedAtPatrol.clear();
+    }
+
+    /**
      * Returns a patrolTarget to patrol to.
      *
-     * @param currentPatrolTarget previous target.
      * @return the position of the next target.
      */
     @Override
     @Nullable
-    public BlockPos getNextPatrolTarget(final BlockPos currentPatrolTarget)
+    public BlockPos getNextPatrolTarget(final boolean newTarget)
     {
-        if (!patrolManually)
+        if (!newTarget && lastPatrolPoint != null)
         {
-            if (currentPatrolTarget == null)
+            return lastPatrolPoint;
+        }
+
+        if (lastPatrolPoint == null)
+        {
+            lastPatrolPoint = getAssignedCitizen().get(0).getLastPosition();
+            return lastPatrolPoint;
+        }
+
+        if (!patrolManually || patrolTargets == null || patrolTargets.isEmpty())
+        {
+            BlockPos pos;
+            if (colony.getWorld().rand.nextBoolean())
             {
-                return getPosition();
+                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10);
             }
             else
             {
-                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getPosition());
-                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
-                {
-                    return getPosition();
-                }
-                return pos;
+                pos = colony.getBuildingManager().getRandomBuilding(b -> true);
             }
+
+            if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+            {
+                lastPatrolPoint = getPosition();
+                return lastPatrolPoint;
+            }
+            lastPatrolPoint = pos;
+            return lastPatrolPoint;
         }
 
-        if (patrolTargets == null || patrolTargets.isEmpty())
+        if (patrolTargets.contains(lastPatrolPoint))
         {
-            return null;
-        }
-
-        if (currentPatrolTarget == null)
-        {
-            return patrolTargets.get(0);
-        }
-
-        if (patrolTargets.contains(currentPatrolTarget))
-        {
-            int index = patrolTargets.indexOf(currentPatrolTarget) + 1;
+            int index = patrolTargets.indexOf(lastPatrolPoint) + 1;
 
             if (index >= patrolTargets.size())
             {
                 index = 0;
             }
 
-            return patrolTargets.get(index);
+            lastPatrolPoint = patrolTargets.get(index);
+            return lastPatrolPoint;
         }
-        return patrolTargets.get(0);
+        lastPatrolPoint = patrolTargets.get(0);
+        return lastPatrolPoint;
     }
 
     /**
@@ -913,8 +985,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (this.getColony().getWorld() != null)
         {
-            this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
-            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER,false,false));//no reason for particales
+            this.getColony()
+              .getWorld()
+              .getScoreboard()
+              .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
+            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
 
             if (followPlayer != null)
             {
@@ -1024,11 +1099,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         getColony().getPackageManager().getCloseSubscribers().forEach(player -> Network
-                                                                             .getNetwork()
-                                                                             .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
-                                                                                 getID(),
-                                                                                 new ArrayList<>(mobsToAttack.values())),
-                                                                               player));
+                                                                                  .getNetwork()
+                                                                                  .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
+                                                                                      getID(),
+                                                                                      new ArrayList<>(mobsToAttack.values())),
+                                                                                    player));
     }
 
     @Override

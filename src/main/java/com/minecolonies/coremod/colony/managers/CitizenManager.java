@@ -199,18 +199,32 @@ public class CitizenManager implements ICitizenManager
             return data;
         }
 
-        final BlockPos spawnLocation = spawnPos != null && !spawnPos.equals(BlockPos.ZERO) ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
-        if (!world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+        BlockPos spawnLocation = spawnPos;
+        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
         {
-            //  Chunk with TownHall Block is not loaded
-            return data;
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, spawnLocation);
 
-        if (spawnPoint != null)
+        BlockPos calculatedSpawn = null;
+
+        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
         {
-            return spawnCitizenOnPosition(data, world, force, spawnPoint);
+            calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+        }
+
+        if (calculatedSpawn == null)
+        {
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
+            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+            {
+                calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            }
+        }
+
+        if (calculatedSpawn != null)
+        {
+            return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
         }
         else
         {

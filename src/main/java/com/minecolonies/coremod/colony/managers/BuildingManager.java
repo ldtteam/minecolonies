@@ -33,11 +33,11 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -138,15 +138,6 @@ public class BuildingManager implements IBuildingManager
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);
-    }
-
-    @Override
-    public void tick(final TickEvent.ServerTickEvent event)
-    {
-        for (@NotNull final IBuilding b : buildings.values())
-        {
-            b.onServerTick(event);
-        }
     }
 
     @Override
@@ -489,6 +480,22 @@ public class BuildingManager implements IBuildingManager
             }
         }
         return goodHospital;
+    }
+
+    @Override
+    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate)
+    {
+        final List<IBuilding> allowedBuildings = new ArrayList<>();
+        for (final IBuilding building : buildings.values())
+        {
+            if (filterPredicate.test(building))
+            {
+                allowedBuildings.add(building);
+            }
+        }
+
+        Collections.shuffle(allowedBuildings);
+        return allowedBuildings.get(0).getPosition();
     }
 
     @Override

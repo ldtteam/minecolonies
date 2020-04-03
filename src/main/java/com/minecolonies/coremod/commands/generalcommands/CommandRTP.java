@@ -113,9 +113,7 @@ public class CommandRTP implements IMCCommand
             final IColony colony = IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
             if (colony != null
-                  && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * 32 + MineColonies.getConfig()
-                                                                                                                                                            .getCommon().townHallPadding
-                                                                                                                                                            .get())
+                  && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * 32)
             {
                 continue;
             }

@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,17 +71,6 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     {
         // EntityCitizen will detect the workplace is gone and fix up it's Entity properly
         assignedCitizen.clear();
-    }
-
-    /**
-     * On tick of the server.
-     *
-     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
-     */
-    @Override
-    public void onServerTick(final TickEvent.ServerTickEvent event)
-    {
-        // Can be overridden by other buildings.
     }
 
     /**
