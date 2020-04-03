@@ -50,7 +50,7 @@ public class CommandClaimChunks implements IMCOPCommand
 
         // Range
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);
-        if (range > MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * 2)
+        if (range > MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.toolarge", colonyID);
             return 0;
@@ -90,7 +90,7 @@ public class CommandClaimChunks implements IMCOPCommand
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(1))
+                         .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(1, 10))
                                  .then(IMCCommand.newArgument(ADD_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute))));
     }
 }
