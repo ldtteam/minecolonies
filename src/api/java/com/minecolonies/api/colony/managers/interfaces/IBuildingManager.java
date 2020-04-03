@@ -11,13 +11,13 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Interface for building managers.
@@ -35,12 +35,6 @@ public interface IBuildingManager
      * @param compound the compound.
      */
     void write(@NotNull final CompoundNBT compound);
-
-    /**
-     * Tick the buildings on server tick.
-     * @param event the event.
-     */
-    void tick(TickEvent.ServerTickEvent event);
 
     /**
      * Clear the isDirty of the buildings.
@@ -179,6 +173,8 @@ public interface IBuildingManager
      * @return the Position of it.
      */
     BlockPos getBestHospital(AbstractEntityCitizen citizen);
+
+    BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
 
     /**
      * Set the townhall building.

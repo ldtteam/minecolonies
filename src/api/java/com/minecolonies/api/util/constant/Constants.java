@@ -179,7 +179,7 @@ public final class Constants
     /**
      * The length range one patrolling operation can have on y.
      */
-    public static final int UP_DOWN_RANGE = 4;
+    public static final int UP_DOWN_RANGE = 3;
 
     /**
      * Max tries to find a position to path to.

@@ -57,12 +57,11 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
 
     /**
      * Returns a patrolTarget to patrol to.
-     *
-     * @param currentPatrolTarget previous target.
+     * @param newTarget whether to search a new target
      * @return the position of the next target.
      */
     @Nullable
-    BlockPos getNextPatrolTarget(BlockPos currentPatrolTarget);
+    BlockPos getNextPatrolTarget(final boolean newTarget);
 
     /**
      * Get an Defence bonus related to the building.
@@ -77,6 +76,8 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      * @return an Integer.
      */
     int getOffenceBonus();
+
+    void arrivedAtPatrolPoint(AbstractEntityCitizen guard);
 
     /**
      * Getter for the patrol distance the guard currently has.
