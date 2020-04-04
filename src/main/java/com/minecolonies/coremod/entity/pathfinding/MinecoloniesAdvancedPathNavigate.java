@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.MinecoloniesMinecart;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
@@ -15,8 +17,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -166,7 +166,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             return;
         }
-        if (handleRails(oldIndex))
+        if (handleRails())
         {
             return;
         }
@@ -245,7 +245,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else if (!pEx.isOnRails())
             {
-                if (ourEntity.ridingEntity instanceof AbstractMinecartEntity)
+                if (ourEntity.ridingEntity instanceof MinecoloniesMinecart)
                 {
                     final Entity entity = ourEntity.ridingEntity;
                     ourEntity.stopRiding();
@@ -256,7 +256,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ourEntity.stopRiding();
                 }
             }
-
+            else if ((Math.abs(pEx.x-entity.posX) > 5 || Math.abs(pEx.z-entity.posZ) > 5) && ourEntity.ridingEntity != null)
+            {
+                final Entity entity = ourEntity.ridingEntity;
+                ourEntity.stopRiding();
+                entity.remove();
+            }
         }
         return true;
     }
@@ -446,10 +451,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     /**
      * Handle rails navigation.
-     * @param oldIndex the index.
+     *
      * @return true if block.
      */
-    private boolean handleRails(int oldIndex)
+    private boolean handleRails()
     {
         if (!this.noPath())
         {
@@ -479,28 +484,33 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 RailShape railshape = blockstate.getBlock() instanceof AbstractRailBlock
                                         ? ((AbstractRailBlock) blockstate.getBlock()).getRailDirection(blockstate, world, blockPos, null)
                                         : RailShape.NORTH_SOUTH;
-                double d0 = 0.0D;
+                double yOffset = 0.0D;
                 if (railshape.isAscending())
                 {
-                    d0 = 0.5D;
+                    yOffset = 0.5D;
                 }
 
-                if (entity.ridingEntity instanceof AbstractMinecartEntity)
+                if (entity.ridingEntity instanceof MinecoloniesMinecart)
                 {
-                    ((AbstractMinecartEntity) entity.ridingEntity).setRollingDirection(1);
+                    ((MinecoloniesMinecart) entity.ridingEntity).setRollingDirection(1);
                 }
                 else
                 {
-                    AbstractMinecartEntity abstractminecartentity = AbstractMinecartEntity.create(world,
-                      (double) blockPos.getX() + 0.5D,
-                      (double) blockPos.getY() + 0.0625D + d0,
-                      (double) blockPos.getZ() + 0.5D,
-                      AbstractMinecartEntity.Type.RIDEABLE);
-                    world.addEntity(abstractminecartentity);
-                    abstractminecartentity.setRollingDirection(1);
-                    entity.startRiding(abstractminecartentity, true);
-                }
+                    MinecoloniesMinecart minecart = (MinecoloniesMinecart) ModEntities.MINECART.create(world);
+                    final double x = pEx.x + 0.5D;
+                    final double y = pEx.y + 0.625D + yOffset;
+                    final double z = pEx.z + 0.5D;
+                    minecart.setPosition(x, y, z);
+                    minecart.setMotion(Vec3d.ZERO);
+                    minecart.prevPosX = x;
+                    minecart.prevPosY = y;
+                    minecart.prevPosZ = z;
 
+
+                    world.addEntity(minecart);
+                    minecart.setRollingDirection(1);
+                    entity.startRiding(minecart, true);
+                }
                 spawnedPos = blockPos;
             }
         }
@@ -509,23 +519,23 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             spawnedPos = BlockPos.ZERO;
         }
 
-        if (entity.ridingEntity instanceof MinecartEntity && pExNext != null)
+        if (entity.ridingEntity instanceof MinecoloniesMinecart && pExNext != null)
         {
             final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
             final BlockPos blockPosNext = new BlockPos(pExNext.x, pExNext.y, pExNext.z);
-            switch(BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
+            switch (BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
             {
                 case EAST:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(-1*0.0078125D, 0.0D, 0.0D));
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(-1 * 0.0085D, 0.0D, 0.0D));
                     break;
                 case WEST:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0078125D, 0.0D, 0.0D));
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0085D, 0.0D, 0.0D));
                     break;
                 case NORTH:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, 0.0078125D));
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, 0.0085D));
                     break;
                 case SOUTH:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, -1*0.0078125D));
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, -1 * 0.0085D));
             }
             //todo add research branch civilian where we add using railcarts as an option to guard this.
         }
@@ -654,8 +664,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     /**
      * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
-     *
-     * @param positionVec3
      */
     @Override
     protected void checkForStuck(Vec3d positionVec3)
