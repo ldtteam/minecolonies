@@ -10,13 +10,18 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
+import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.pathfinding.WalkNodeProcessor;
+import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -52,6 +57,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * The world time when a path was added.
      */
     private long pathStartTime = 0;
+
+    /**
+     * Spawn pos of minecart.
+     */
+    private BlockPos spawnedPos = BlockPos.ZERO;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -226,7 +236,27 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // Auto dismount when trying to path.
         if (ourEntity.ridingEntity != null)
         {
-            ourEntity.stopRiding();
+            @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            if (pEx.isRailsExit())
+            {
+                final Entity entity = ourEntity.ridingEntity;
+                ourEntity.stopRiding();
+                entity.remove();
+            }
+            else if (!pEx.isOnRails())
+            {
+                if (ourEntity.ridingEntity instanceof AbstractMinecartEntity)
+                {
+                    final Entity entity = ourEntity.ridingEntity;
+                    ourEntity.stopRiding();
+                    entity.remove();
+                }
+                else
+                {
+                    ourEntity.stopRiding();
+                }
+            }
+
         }
         return true;
     }
@@ -416,8 +446,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     /**
      * Handle rails navigation.
-     * @param oldIndex
-     * @return
+     * @param oldIndex the index.
+     * @return true if block.
      */
     private boolean handleRails(int oldIndex)
     {
@@ -432,15 +462,74 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (pEx.isOnRails() || pEx.isRailsExit())
             {
-                return handlePathOnRails(pEx);
+                return handlePathOnRails(pEx, pExNext);
             }
         }
         return false;
     }
 
-    private boolean handlePathOnRails(final PathPointExtended pEx)
+    private boolean handlePathOnRails(final PathPointExtended pEx, final PathPointExtended pExNext)
     {
+        if (pEx.isRailsEntry())
+        {
+            final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
+            if (!spawnedPos.equals(blockPos))
+            {
+                final BlockState blockstate = world.getBlockState(blockPos);
+                RailShape railshape = blockstate.getBlock() instanceof AbstractRailBlock
+                                        ? ((AbstractRailBlock) blockstate.getBlock()).getRailDirection(blockstate, world, blockPos, null)
+                                        : RailShape.NORTH_SOUTH;
+                double d0 = 0.0D;
+                if (railshape.isAscending())
+                {
+                    d0 = 0.5D;
+                }
 
+                if (entity.ridingEntity instanceof AbstractMinecartEntity)
+                {
+                    ((AbstractMinecartEntity) entity.ridingEntity).setRollingDirection(1);
+                }
+                else
+                {
+                    AbstractMinecartEntity abstractminecartentity = AbstractMinecartEntity.create(world,
+                      (double) blockPos.getX() + 0.5D,
+                      (double) blockPos.getY() + 0.0625D + d0,
+                      (double) blockPos.getZ() + 0.5D,
+                      AbstractMinecartEntity.Type.RIDEABLE);
+                    world.addEntity(abstractminecartentity);
+                    abstractminecartentity.setRollingDirection(1);
+                    entity.startRiding(abstractminecartentity, true);
+                }
+
+                spawnedPos = blockPos;
+            }
+        }
+        else
+        {
+            spawnedPos = BlockPos.ZERO;
+        }
+
+        if (entity.ridingEntity instanceof MinecartEntity && pExNext != null)
+        {
+            final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
+            final BlockPos blockPosNext = new BlockPos(pExNext.x, pExNext.y, pExNext.z);
+            switch(BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
+            {
+                case EAST:
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(-1*0.0078125D, 0.0D, 0.0D));
+                    break;
+                case WEST:
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0078125D, 0.0D, 0.0D));
+                    break;
+                case NORTH:
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, 0.0078125D));
+                    break;
+                case SOUTH:
+                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, -1*0.0078125D));
+            }
+            //todo add research branch civilian where we add using railcarts as an option to guard this.
+        }
+        return false;
     }
 
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)

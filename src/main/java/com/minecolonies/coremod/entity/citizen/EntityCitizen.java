@@ -1179,7 +1179,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean startRiding(final Entity entity, final boolean force)
     {
-        if (entity instanceof SittingEntity)
+        if (entity instanceof SittingEntity || force)
         {
             return super.startRiding(entity, force);
         }
@@ -1625,6 +1625,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         citizenColonyHandler.onCitizenRemoved();
         super.remove();
+    }
+
+    /**
+     * A boolean check to test if the citizen can path on rails.
+     * @return true if so.
+     */
+    public boolean canPathOnRails()
+    {
+        return true;
     }
 
     /**

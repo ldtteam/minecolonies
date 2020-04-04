@@ -9,6 +9,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -64,6 +65,11 @@ public abstract class AbstractPathJob implements Callable<Path>
     private          boolean            allowJumpPointSearchTypeWalk = false;
     private          int                totalNodesAdded              = 0;
     private          int                totalNodesVisited            = 0;
+
+    /**
+     * If the citizen can path on rails.
+     */
+    private final boolean canPathOnRails;
 
     /**
      * Are there hard xz restrictions.
@@ -132,6 +138,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesPath = new HashSet<>();
         }
         this.entity = new WeakReference<>(entity);
+        this.canPathOnRails = entity instanceof EntityCitizen && ((EntityCitizen) entity).canPathOnRails();
     }
 
     /**
@@ -173,6 +180,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesPath = new HashSet<>();
         }
         this.entity = new WeakReference<>(entity);
+        this.canPathOnRails = entity instanceof EntityCitizen && ((EntityCitizen) entity).canPathOnRails();
     }
 
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
@@ -571,10 +579,15 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
         //  fudge that value later on for cutoff purposes
         int pathLength = 0;
+        int railsLength = 0;
         @Nullable Node node = targetNode;
         while (node.parent != null)
         {
             ++pathLength;
+            if (node.isOnRails())
+            {
+                ++railsLength;
+            }
             node = node.parent;
         }
 
@@ -600,17 +613,20 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
-            p.setOnRails(node.isOnRails());
-            if (p.isOnRails() && !node.parent.isOnRails())
+            if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
             {
-                p.setRailsEntry();
-            }
-            else if (!p.isOnRails() && points.length > pathLength + 1)
-            {
-                final PathPointExtended point = ((PathPointExtended) points[pathLength+1]);
-                if (point.isOnRails())
+                p.setOnRails(node.isOnRails());
+                if (p.isOnRails() && !node.parent.isOnRails())
                 {
-                    point.setRailsExit();
+                    p.setRailsEntry();
+                }
+                else if (p.isOnRails() && points.length > pathLength + 1)
+                {
+                    final PathPointExtended point = ((PathPointExtended) points[pathLength + 1]);
+                    if (!point.isOnRails())
+                    {
+                        point.setRailsExit();
+                    }
                 }
             }
 
@@ -738,7 +754,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.down()).getBlock());
-        final boolean onRails = world.getBlockState(pos).getBlock() instanceof AbstractRailBlock;
+        final boolean onRails = canPathOnRails && world.getBlockState(pos).getBlock() instanceof AbstractRailBlock;
         //  Cost may have changed due to a jump up or drop
         final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, onRails, pos);
         final double heuristic = computeHeuristic(pos);

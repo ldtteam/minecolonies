@@ -209,6 +209,8 @@
   "minecolonies.config.dynamictreeharvestsize.comment": "Harvest trunk-size for dynamic trees:1-8. [Default: 5]",
   "minecolonies.config.pathfindingdebugdraw": "Pathfinding Debug Draw",
   "minecolonies.config.pathfindingdebugdraw.comment": "Draw pathfinding paths (might be laggy). [Default: false]",
+  "minecolonies.config.minimumRailsToPath": "Minmum Rails",
+  "minecolonies.config.minimumRailsToPath.comment": "Minimum number of consecutive rails for citizens to use them. [Default: 5]",
   "minecolonies.config.pathfindingdebugverbosity": "Pathfinding Debug Verbosity",
   "minecolonies.config.pathfindingdebugverbosity.comment": "Verbosity of pathfinding. [Default: 0]",
   "minecolonies.config.pathfindingmaxthreadcount": "Pathfinding Max Thread Count",
