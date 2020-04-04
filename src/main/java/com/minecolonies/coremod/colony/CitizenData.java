@@ -323,6 +323,7 @@ public class CitizenData implements ICitizenData
         female = rand.nextBoolean();
         paused = false;
         name = generateName(rand);
+        textureId = rand.nextInt(255);
 
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
@@ -565,10 +566,8 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (colony.getWorld().isBlockLoaded(getLastPosition()))
-        {
-            colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
-        }
+
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
     }
 
     @Override
@@ -580,6 +579,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void setJob(final IJob job)
     {
+        if (this.job != null && job == null)
+        {
+            this.job.onRemoval();
+        }
         this.job = job;
 
         getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
