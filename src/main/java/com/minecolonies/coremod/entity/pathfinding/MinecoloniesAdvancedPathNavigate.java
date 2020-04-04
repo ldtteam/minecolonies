@@ -23,6 +23,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -256,7 +257,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ourEntity.stopRiding();
                 }
             }
-            else if ((Math.abs(pEx.x-entity.posX) > 5 || Math.abs(pEx.z-entity.posZ) > 5) && ourEntity.ridingEntity != null)
+            else if ((Math.abs(pEx.x - entity.posX) > 5 || Math.abs(pEx.z - entity.posZ) > 5) && ourEntity.ridingEntity != null)
             {
                 final Entity entity = ourEntity.ridingEntity;
                 ourEntity.stopRiding();
@@ -523,19 +524,25 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
             final BlockPos blockPosNext = new BlockPos(pExNext.x, pExNext.y, pExNext.z);
+            final Vec3d motion = entity.ridingEntity.getMotion();
+            double forward;
             switch (BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
             {
                 case EAST:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(-1 * 0.0085D, 0.0D, 0.0D));
+                    forward = Math.min(Math.max(motion.getX() - 1 * 0.01D, -1), 0);
+                    entity.ridingEntity.setMotion(motion.add(forward == -1 ? -1 : -1 * 0.01D, 0.0D, 0.0D));
                     break;
                 case WEST:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0085D, 0.0D, 0.0D));
+                    forward = Math.max(Math.min(motion.getX() + 0.01D, 1), 0);
+                    entity.ridingEntity.setMotion(motion.add(forward == 1 ? 1 : 0.01D, 0.0D, 0.0D));
                     break;
                 case NORTH:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, 0.0085D));
+                    forward = Math.max(Math.min(motion.getZ() + 0.01D, 1), 0);
+                    entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == 1 ? 1 : 0.01D));
                     break;
                 case SOUTH:
-                    entity.ridingEntity.setMotion(entity.ridingEntity.getMotion().add(0.0D, 0.0D, -1 * 0.0085D));
+                    forward = Math.min(Math.max(motion.getZ() - 1 * 0.01D, -1), 0);
+                    entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -1 * 0.01D));
             }
             //todo add research branch civilian where we add using railcarts as an option to guard this.
         }
@@ -614,7 +621,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (vec3d.squareDistanceTo(new Vec3d(ourEntity.posX, vec3d.y, ourEntity.posZ)) < 0.1
               && Math.abs(ourEntity.posY - vec3d.y) < 0.5)
         {
-            this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
+            this.getPath().incrementPathIndex();
             if (this.noPath())
             {
                 return true;
@@ -666,14 +673,48 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
      */
     @Override
-    protected void checkForStuck(Vec3d positionVec3)
+    protected void checkForStuck(@NotNull final Vec3d positionVec3)
     {
         if (world.getGameTime() - pathStartTime < MIN_KEEP_TIME)
         {
             return;
         }
 
-        super.checkForStuck(positionVec3);
+        if (this.totalTicks - this.ticksAtLastPos > 100)
+        {
+            if (positionVec3.squareDistanceTo(this.lastPosCheck) < 2.25D)
+            {
+                this.clearPath();
+            }
+
+            this.ticksAtLastPos = this.totalTicks;
+            this.lastPosCheck = positionVec3;
+        }
+
+        if (this.currentPath != null && !this.currentPath.isFinished())
+        {
+            Vec3d vec3d = this.currentPath.getCurrentPos();
+            if (vec3d.equals(this.timeoutCachedNode))
+            {
+                this.timeoutTimer += Util.milliTime() - this.lastTimeoutCheck;
+            }
+            else
+            {
+                this.timeoutCachedNode = vec3d;
+                double d0 = positionVec3.distanceTo(this.timeoutCachedNode);
+                this.timeoutLimit = (this.entity.getAIMoveSpeed() > 0.0F ? d0 / (double) this.entity.getAIMoveSpeed() * 1000.0D : 0.0D) * 25;
+            }
+
+            if (this.timeoutLimit > 0.0D && (double) this.timeoutTimer > this.timeoutLimit * 3.0D)
+            {
+                this.timeoutCachedNode = Vec3d.ZERO;
+                this.timeoutTimer = 0L;
+                this.timeoutLimit = 0.0D;
+                this.clearPath();
+            }
+
+            this.lastTimeoutCheck = Util.milliTime();
+        }
     }
 
     /**
