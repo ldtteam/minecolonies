@@ -201,8 +201,8 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
-        final int buffer = MineColonies.getConfig().getCommon().townHallPaddingChunk.get();
+        final int range = getConfig().getCommon().townHallPaddingChunk.get();
+        final int buffer = getConfig().getCommon().minTownHallPadding.get();
 
         claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }

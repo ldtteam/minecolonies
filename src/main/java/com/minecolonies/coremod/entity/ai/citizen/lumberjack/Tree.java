@@ -82,12 +82,12 @@ public class Tree
     /**
      * All wood blocks connected to the tree.
      */
-    private LinkedList<BlockPos> woodBlocks;
+    private LinkedList<BlockPos> woodBlocks = new LinkedList<>();
 
     /**
      * All leaves of the tree.
      */
-    private LinkedList<BlockPos> leaves;
+    private LinkedList<BlockPos> leaves = new LinkedList<>();
 
     /**
      * Is the tree a tree?

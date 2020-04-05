@@ -39,6 +39,6 @@ public class AdditionModifierResearchEffect extends AbstractResearchEffect<Doubl
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier.addition", this.getId(), effect * 100);
+        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier.addition", this.getId(), effect);
     }
 }

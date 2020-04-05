@@ -412,6 +412,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             currentNode.setCounterVisited(totalNodesVisited);
 
             handleDebugOptions(currentNode);
+            currentNode.setClosed();
 
             if (isAtDestination(currentNode)) {
                 bestNode = currentNode;
@@ -445,8 +446,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             addNodeToDebug(currentNode);
         }
-
-        currentNode.setClosed();
 
         if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
         {

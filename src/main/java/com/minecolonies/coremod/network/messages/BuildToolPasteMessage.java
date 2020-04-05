@@ -45,8 +45,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.INSTANT_PLACEMENT;
-import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.PLACEMENT_NBT;
+import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
+import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.

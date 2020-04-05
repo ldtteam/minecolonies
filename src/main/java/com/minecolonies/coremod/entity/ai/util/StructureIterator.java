@@ -96,7 +96,6 @@ public class StructureIterator
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    @Nullable
     private static Structure loadStructure(
                                                    @Nullable final World targetWorld,
                                                    @Nullable final BlockPos buildingLocation,
@@ -132,6 +131,15 @@ public class StructureIterator
             tempSchematic.setLocalPosition(blockProgress);
         }
         return tempSchematic;
+    }
+
+    /**
+     * Check if the blueprint is missing.
+     * @return true if so.
+     */
+    public boolean isBluePrintMissing()
+    {
+        return theStructure.isBluePrintMissing();
     }
 
     /**

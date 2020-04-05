@@ -77,7 +77,6 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.IntValue     workingRangeTownHallChunks;
     public final ForgeConfigSpec.IntValue     minTownHallPadding;
-    public final ForgeConfigSpec.IntValue     townHallPadding;
     public final ForgeConfigSpec.IntValue     townHallPaddingChunk;
     public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
     public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes;
@@ -285,11 +284,10 @@ public class CommonConfiguration extends AbstractConfiguration
 
 
         swapToCategory(builder, "claims");
-        
-        workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 8, 1, 50);
-        minTownHallPadding = defineInteger(builder, "mintownhallpadding", 3, 1, 200);
-        townHallPadding = defineInteger(builder, "townhallpadding", 20, 1, 20000);
-        townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 1, 1, 200);
+
+        workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 20, 1, 50);
+        minTownHallPadding = defineInteger(builder, "mintownhallpadding", 10, 1, 200);
+        townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 5, 1, 200);
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
         enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", true);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);

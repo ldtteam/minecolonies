@@ -25,6 +25,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -174,6 +175,19 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
+            if (!citizenToServe.isEmpty())
+            {
+                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT);
+                if (foodSlot != -1)
+                {
+                    final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
+                    if (stack.getItem().isFood())
+                    {
+                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFood().getHealing() / 2.0);
+                    }
+                }
+            }
+
             removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();
@@ -239,6 +253,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                                                           .filter(e -> e instanceof AbstractEntityCitizen)
                                                           .map(e -> (AbstractEntityCitizen) e)
           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
+          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
           .collect(Collectors.toList());
 
         final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
