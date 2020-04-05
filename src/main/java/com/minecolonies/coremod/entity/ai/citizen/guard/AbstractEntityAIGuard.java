@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
@@ -23,6 +24,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
@@ -30,7 +32,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -170,7 +171,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
-          new AITarget(GUARD_WAKE, this::wakeUpGuard, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
           new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_FOLLOW, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_FOLLOW, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
@@ -214,7 +215,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         else
         {
             worker.swingArm(Hand.OFF_HAND);
-            sleepingGuard.get().attackEntityFrom(new DamageSource("wakeywakey").setDamageBypassesArmor(), 1);
+            sleepingGuard.get().attackEntityFrom(new NamedDamageSource("wakeywakey", worker).setDamageBypassesArmor(), 1);
             sleepingGuard.get().setRevengeTarget(worker);
             return DECIDE;
         }
@@ -342,6 +343,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             if (hasTool())
             {
+                for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
+                {
+                    if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getRevengeTarget() == null)
+                    {
+                        citizen.getCitizenEntity().get().setRevengeTarget(target);
+                    }
+                }
                 return getAttackState();
             }
             return START_WORKING;
@@ -400,18 +408,32 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return the next patrol point to go to.
      */
-    private IAIState patrol()
+    public IAIState patrol()
     {
         if (currentPatrolPoint == null)
         {
-            currentPatrolPoint = buildingGuards.getNextPatrolTarget(null);
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
         }
 
-        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2) || worker.getCitizenStuckHandler().isStuck()))
+        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3) || worker.getCitizenStuckHandler().isStuck()))
         {
-            currentPatrolPoint = buildingGuards.getNextPatrolTarget(currentPatrolPoint);
+            buildingGuards.arrivedAtPatrolPoint(worker);
         }
         return GUARD_PATROL;
+    }
+
+    /**
+     * Sets the next patrol target, and moves to it if patrolling
+     *
+     * @param target
+     */
+    public void setNextPatrolTarget(final BlockPos target)
+    {
+        currentPatrolPoint = target;
+        if (getState() == GUARD_PATROL)
+        {
+            worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2);
+        }
     }
 
     @Override

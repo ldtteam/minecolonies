@@ -226,7 +226,7 @@ public class EventHandler
               .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
                 event.getNewChunkX(),
                 event.getNewChunkZ(),
-                MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get()), (ServerPlayerEntity) event.getEntity());
+                8), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
@@ -742,7 +742,7 @@ public class EventHandler
               && MineColonies.getConfig().getCommon().protectVillages.get()
               && ((ServerChunkProvider) world.getChunkProvider())
                    .getChunkGenerator()
-                   .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
+                   .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().minTownHallPadding.get() * BLOCKS_PER_CHUNK, false) != null)
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,

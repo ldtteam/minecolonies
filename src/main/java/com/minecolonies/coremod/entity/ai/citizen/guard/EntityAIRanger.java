@@ -459,6 +459,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public void moveInAttackPosition()
     {
-        worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 4), getCombatMovementSpeed());
+        worker.getNavigator()
+          .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
     }
 }
