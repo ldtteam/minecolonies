@@ -29,12 +29,12 @@ public final class PathingConstants
     /**
      * Cost improvement of paths - base 1.
      */
-    public static final double ON_PATH_COST = 0.5D;
+    public static final double ON_PATH_COST = 0.1D;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    public static final double SWIM_COST = 5D;
+    public static final double SWIM_COST = 15D;
 
     /**
      * Distance which is considered to be too close to a fence.

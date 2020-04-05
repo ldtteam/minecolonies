@@ -167,7 +167,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
 
         if (job.getMaxCraftingCount() == 0)
         {
-            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.CANCELLED);
+            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.FAILED);
             job.setMaxCraftingCount(0);
             job.setCraftCounter(0);
             setDelay(TICKS_20);

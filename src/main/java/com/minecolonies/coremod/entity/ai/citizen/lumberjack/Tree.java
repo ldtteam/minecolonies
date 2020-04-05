@@ -87,7 +87,7 @@ public class Tree
     /**
      * All leaves of the tree.
      */
-    private LinkedList<BlockPos> leaves;
+    private LinkedList<BlockPos> leaves = new LinkedList<>();
 
     /**
      * Is the tree a tree?
