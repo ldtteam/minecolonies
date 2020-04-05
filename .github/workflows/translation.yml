@@ -1,3 +1,8 @@
+name: Translation Rename
+on:
+  push:
+    branches:
+      - l10n_*
 jobs:
   build:
     runs-on: ubuntu-latest
