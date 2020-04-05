@@ -475,6 +475,11 @@ public class StandardRequestManager implements IStandardRequestManager
           CompoundNBT::getCompound,
           c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
+        if (dataStoreManager == null)
+        {
+            reset();
+        }
+
         updateIfRequired();
     }
 
