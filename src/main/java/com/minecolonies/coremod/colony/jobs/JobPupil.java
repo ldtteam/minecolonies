@@ -40,7 +40,7 @@ public class JobPupil extends AbstractJob
     @Override
     public BipedModelType getModel()
     {
-        return BipedModelType.STUDENT;
+        return BipedModelType.CHILD;
     }
 
     /**

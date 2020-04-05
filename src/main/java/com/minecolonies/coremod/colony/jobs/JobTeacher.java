@@ -41,7 +41,7 @@ public class JobTeacher extends AbstractJob
     @Override
     public BipedModelType getModel()
     {
-        return BipedModelType.STUDENT;
+        return BipedModelType.TEACHER;
     }
 
     /**
