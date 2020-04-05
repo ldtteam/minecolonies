@@ -217,7 +217,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         currentRequest = job.getCurrentTask();
 
-        if (currentRequest != null && currentRequest.getState() == RequestState.CANCELLED)
+        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
             currentRequest = null;
             incrementActionsDone();
