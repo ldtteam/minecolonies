@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -281,16 +282,6 @@ public class CitizenManager implements ICitizenManager
     {
         //Remove the Citizen
         citizens.remove(citizen.getId());
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
-        }
-
-        if (citizen.getHomeBuilding() != null)
-        {
-            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
-        }
 
         for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
