@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * Hut for the Stash.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockStash extends AbstractBlockHut<BlockStash>
+public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSComponentBlock
 {
     @NotNull
     @Override
