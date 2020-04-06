@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
@@ -492,6 +489,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getMaxInhabitants());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
+        buf.writeInt(getMaxInhabitants());
     }
 
     /**
@@ -651,6 +649,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.maxInhabitants = buf.readInt();
             this.primary = Skill.values()[buf.readInt()];
             this.secondary = Skill.values()[buf.readInt()];
+            this.maxInhabitants = buf.readInt();
         }
 
         /**
@@ -784,6 +783,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         public String getJobName()
         {
             return this.jobName;
+        }
+
+        /**
+         * Check if it is possible to assign the citizen to this building.
+         * @param citizenDataView the citizen to test.
+         * @return true if so.
+         */
+        public boolean canAssign(final ICitizenDataView citizenDataView)
+        {
+            return true;
         }
 
         /**

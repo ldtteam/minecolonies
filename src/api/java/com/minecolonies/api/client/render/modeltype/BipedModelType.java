@@ -30,7 +30,8 @@ public enum BipedModelType implements IModelType
     CRAFTER("crafter", 1),
     BLACKSMITH("blacksmith", 1),
     CHILD("child", 4),
-    HEALER("healer", 1);
+    HEALER("healer", 1),
+    TEACHER("teacher", 1);
 
     /**
      * String describing the citizen.
