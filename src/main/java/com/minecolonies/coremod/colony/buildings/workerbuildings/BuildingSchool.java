@@ -129,6 +129,10 @@ public class BuildingSchool extends AbstractBuildingWorker
     {
         if (citizen.isChild() || citizen.getJob() instanceof JobPupil)
         {
+            if (getAssignedCitizen().size() + 1 >= getMaxInhabitants() && !hasTeacher)
+            {
+                return false;
+            }
             return super.assignCitizen(citizen);
         }
         else if (hasTeacher)
