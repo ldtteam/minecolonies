@@ -364,7 +364,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() <= 6000)
+        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() <= NOON)
         {
             return DesiredActivity.WORK;
         }
