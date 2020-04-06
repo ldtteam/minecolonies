@@ -364,9 +364,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() <= NOON)
+        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
         {
-            return DesiredActivity.WORK;
+            if (world.getDayTime() <= NOON)
+            {
+                return DesiredActivity.WORK;
+            }
+            return DesiredActivity.IDLE;
         }
 
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
