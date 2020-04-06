@@ -165,6 +165,8 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
           citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PUPIL_NO_CARPET),
+          citizen -> citizen.getCitizenEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());

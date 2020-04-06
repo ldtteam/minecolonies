@@ -1356,6 +1356,9 @@
   "com.minecolonies.coremod.job.pupil": "Pupil",
   "com.minecolonies.coremod.job.teacher": "Teacher",
 
+  "com.minecolonies.coremod.gui.workerhuts.teacher": "Teacher",
   "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil",
-  "com.minecolonies.coremod.gui.townhall.population.pupils": "Pupils: %d/%d"
+  "com.minecolonies.coremod.gui.townhall.population.pupils": "Pupils: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.teachers": "Teachers: %d/%d",
+  "com.minecolonies.coremod.school.nocarpet": "I can't study because there is no place to sit in my School. Not that I care much. But my parents say the school has to be repaired because else I won't get any smarter..."
 }
