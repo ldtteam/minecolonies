@@ -252,4 +252,9 @@ public final class CitizenConstants
      * Disease tag,
      */
     public static final String TAG_DISEASE = "disease";
+
+    /**
+     * Noon day time.
+     */
+    public static final int NOON = 6000;
 }

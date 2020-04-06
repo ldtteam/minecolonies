@@ -36,22 +36,22 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     /**
      * The view of the current building.
      */
-    private final AbstractBuildingWorker.View building;
+    protected final AbstractBuildingWorker.View building;
 
     /**
      * The colony.
      */
-    private final IColonyView colony;
+    protected final IColonyView colony;
 
     /**
      * Contains all the citizens.
      */
-    private List<ICitizenDataView> citizens = new ArrayList<>();
+    protected List<ICitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Holder of a list element
      */
-    private final ScrollingList citizenList;
+    protected final ScrollingList citizenList;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -187,16 +187,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     /**
      * Clears and resets/updates all citizens.
      */
-    private void updateCitizens()
+    protected void updateCitizens()
     {
         citizens.clear();
-        citizens.addAll(colony.getCitizens().values());
-
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
+                     .filter(citizen -> (citizen.getWorkBuilding() == null)
                                           || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
@@ -237,7 +235,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (citizen.getWorkBuilding() == null)
+                if (citizen.getWorkBuilding() == null && building.canAssign(citizen))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
@@ -290,7 +288,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                 }
                 attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
@@ -302,7 +300,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         return color + text + TextFormatting.RESET.toString();
     }
 
-    private static String createColor(final Skill primary, final Skill secondary, final Skill current)
+    /**
+     * Create the color scheme.
+     * @param primary the primary skill.
+     * @param secondary the secondary skill.
+     * @param current the current skill to compare.
+     * @return the modifier string.
+     */
+    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
     {
         if (primary == current)
         {
