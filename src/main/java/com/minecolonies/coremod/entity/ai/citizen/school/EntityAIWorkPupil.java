@@ -37,7 +37,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     private static final int STUDY_TO_RECESS_RATIO = 10;
 
     /**
-     * To be requested by the teacher.
+     * To be consumed from the inv.
      */
     private final Predicate<ItemStack> PAPER = stack -> stack.getItem() == Items.PAPER;
 
@@ -79,6 +79,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         worker.setCanPickUpLoot(true);
     }
 
+    /**
+     * Decide between recess and studying.
+     * @return next state to go to.
+     */
     private IAIState decide()
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
@@ -99,6 +103,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         return STUDY;
     }
 
+    /**
+     * Run around a bit until it's time for studying again.
+     * @return next state to go to.
+     */
     private IAIState recess()
     {
         if (recessPos == null || worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
@@ -114,6 +122,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         return getState();
     }
 
+    /**
+     * Sit down a bit and study. If has paper consume it.
+     * @return next state to go to.
+     */
     private IAIState study()
     {
         if (studyPos == null)

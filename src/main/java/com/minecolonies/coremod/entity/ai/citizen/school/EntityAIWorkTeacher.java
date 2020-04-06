@@ -150,9 +150,9 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
             );
         }
 
-        pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, 1, pupilToTeach.getCitizenData());
+        pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, 1 * (1 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10), pupilToTeach.getCitizenData());
 
-        worker.getCitizenExperienceHandler().addExperience(0.1 * (1 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10));
+        worker.getCitizenExperienceHandler().addExperience(0.1);
         worker.decreaseSaturationForContinuousAction();
         incrementActionsDone();
 

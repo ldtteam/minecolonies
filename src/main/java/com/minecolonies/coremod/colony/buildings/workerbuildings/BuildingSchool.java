@@ -58,7 +58,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     private boolean hasTeacher = false;
 
     /**
-     * Map from beds to patients, 0 is empty.
+     * List of carpets to sit on.
      */
     @NotNull
     private final List<BlockPos> carpet = new ArrayList<>();
@@ -205,14 +205,14 @@ public class BuildingSchool extends AbstractBuildingWorker
         final CompoundNBT compound = super.serializeNBT();
         if (!carpet.isEmpty())
         {
-            @NotNull final ListNBT bedTagList = new ListNBT();
+            @NotNull final ListNBT carpetTagList = new ListNBT();
             for (@NotNull final BlockPos pos : carpet)
             {
-                final CompoundNBT bedCompound = new CompoundNBT();
-                BlockPosUtil.write(bedCompound, NbtTagConstants.TAG_POS, pos);
-                bedTagList.add(bedCompound);
+                final CompoundNBT carpetCompound = new CompoundNBT();
+                BlockPosUtil.write(carpetCompound, NbtTagConstants.TAG_POS, pos);
+                carpetTagList.add(carpetCompound);
             }
-            compound.put(TAG_CARPET, bedTagList);
+            compound.put(TAG_CARPET, carpetTagList);
         }
 
         return compound;
