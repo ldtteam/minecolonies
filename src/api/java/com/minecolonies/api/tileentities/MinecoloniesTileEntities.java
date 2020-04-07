@@ -30,4 +30,7 @@ public class MinecoloniesTileEntities
 
     @ObjectHolder("enchanter")
     public static TileEntityType<? extends TileEntityColonyBuilding> ENCHANTER;
+
+    @ObjectHolder("stash")
+    public static TileEntityType<?> STASH;
 }
