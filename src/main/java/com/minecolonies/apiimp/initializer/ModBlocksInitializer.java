@@ -75,6 +75,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter = new BlockHutEnchanter().registerBlock(registry);
         ModBlocks.blockHutUniversity = new BlockHutUniversity().registerBlock(registry);
         ModBlocks.blockHutHospital = new BlockHutHospital().registerBlock(registry);
+        ModBlocks.blockHutSchool = new BlockHutSchool().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
@@ -136,6 +137,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter.registerBlockItem(registry, properties);
         ModBlocks.blockHutUniversity.registerBlockItem(registry, properties);
         ModBlocks.blockHutHospital.registerBlockItem(registry, properties);
+        ModBlocks.blockHutSchool.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);

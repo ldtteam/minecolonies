@@ -262,11 +262,18 @@ public final class ModBuildingsInitializer
                                     .createBuildingEntry();
 
         ModBuildings.stash = new BuildingEntry.Builder()
-                .setBuildingBlock(ModBlocks.blockStash)
-                .setBuildingProducer(Stash::new)
-                .setBuildingViewProducer(() -> EmptyView::new)
-                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STASH_ID))
-                .createBuildingEntry();
+                                    .setBuildingBlock(ModBlocks.blockStash)
+                                    .setBuildingProducer(Stash::new)
+                                    .setBuildingViewProducer(() -> EmptyView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STASH_ID))
+                                    .createBuildingEntry();
+
+        ModBuildings.school = new BuildingEntry.Builder()
+                                  .setBuildingBlock(ModBlocks.blockHutSchool)
+                                  .setBuildingProducer(BuildingSchool::new)
+                                  .setBuildingViewProducer(() -> BuildingSchool.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SCHOOL_ID))
+                                  .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -303,5 +310,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.university);
         reg.register(ModBuildings.hospital);
         reg.register(ModBuildings.stash);
+        reg.register(ModBuildings.school);
     }
 }

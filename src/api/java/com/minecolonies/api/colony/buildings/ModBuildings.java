@@ -40,6 +40,7 @@ public final class ModBuildings
     public static final String        UNIVERSITY_ID     = "university";
     public static final String        HOSPITAL_ID       = "hospital";
     public static final String        STASH_ID        = "stash";
+    public static final String        SCHOOL_ID         = "school";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -76,6 +77,7 @@ public final class ModBuildings
     public static       BuildingEntry university;
     public static       BuildingEntry hospital;
     public static       BuildingEntry stash;
+    public static       BuildingEntry school;
 
     private ModBuildings()
     {

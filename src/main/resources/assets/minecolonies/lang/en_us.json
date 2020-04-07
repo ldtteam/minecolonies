@@ -1346,6 +1346,19 @@
   "com.minecolonies.coremod.gui.citizen.job.skills.dexterity": "Dexterity",
   "com.minecolonies.coremod.gui.citizen.job.skills.athletics": "Athletics",
 
-  "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know."
-}
+  "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know.",
+  "com.minecolonies.coremod.research.research.toomanyinprogress": "Too many in progress",
+  "com.minecolonies.coremod.research.research.notenoughresources": "Missing Resources",
+  "com.minecolonies.coremod.research.research.buildingleveltoolow": "Too low building level",
 
+  "com.minecolonies.coremod.gui.workerhuts.school": "School",
+  "block.minecolonies.blockhutschool": "School",
+  "com.minecolonies.coremod.job.pupil": "Pupil",
+  "com.minecolonies.coremod.job.teacher": "Teacher",
+
+  "com.minecolonies.coremod.gui.workerhuts.teacher": "Teacher",
+  "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil",
+  "com.minecolonies.coremod.gui.townhall.population.pupils": "Pupils: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.teachers": "Teachers: %d/%d",
+  "com.minecolonies.coremod.school.nocarpet": "I can't study because there is no place to sit in my School. Not that I care much. But my parents say the school has to be repaired because else I won't get any smarter..."
+}

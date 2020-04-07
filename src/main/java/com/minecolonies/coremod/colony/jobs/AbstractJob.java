@@ -128,7 +128,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         final CompoundNBT compound = new CompoundNBT();
 
         compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
-        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().filter(token -> getColony().getRequestManager().getRequestForToken(token) != null).map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
