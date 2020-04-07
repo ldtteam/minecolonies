@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -260,6 +261,13 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
                                     .createBuildingEntry();
 
+        ModBuildings.stash = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockStash)
+                                    .setBuildingProducer(Stash::new)
+                                    .setBuildingViewProducer(() -> EmptyView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STASH_ID))
+                                    .createBuildingEntry();
+
         ModBuildings.school = new BuildingEntry.Builder()
                                   .setBuildingBlock(ModBlocks.blockHutSchool)
                                   .setBuildingProducer(BuildingSchool::new)
@@ -301,6 +309,7 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.enchanter);
         reg.register(ModBuildings.university);
         reg.register(ModBuildings.hospital);
+        reg.register(ModBuildings.stash);
         reg.register(ModBuildings.school);
     }
 }

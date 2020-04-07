@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.block.Block;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the PostBox.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockPostBox extends AbstractBlockHut<BlockPostBox>
+public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSComponentBlock
 {
     private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
     private static final VoxelShape SHAPE_EAST = Block.makeCuboidShape(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
