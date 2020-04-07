@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -199,18 +200,32 @@ public class CitizenManager implements ICitizenManager
             return data;
         }
 
-        final BlockPos spawnLocation = spawnPos != null && !spawnPos.equals(BlockPos.ZERO) ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
-        if (!world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+        BlockPos spawnLocation = spawnPos;
+        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
         {
-            //  Chunk with TownHall Block is not loaded
-            return data;
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, spawnLocation);
 
-        if (spawnPoint != null)
+        BlockPos calculatedSpawn = null;
+
+        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
         {
-            return spawnCitizenOnPosition(data, world, force, spawnPoint);
+            calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+        }
+
+        if (calculatedSpawn == null)
+        {
+            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
+            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+            {
+                calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            }
+        }
+
+        if (calculatedSpawn != null)
+        {
+            return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
         }
         else
         {
@@ -281,16 +296,6 @@ public class CitizenManager implements ICitizenManager
     {
         //Remove the Citizen
         citizens.remove(citizen.getId());
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
-        }
-
-        if (citizen.getHomeBuilding() != null)
-        {
-            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
-        }
 
         for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {

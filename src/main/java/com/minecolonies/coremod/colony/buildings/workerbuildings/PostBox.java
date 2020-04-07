@@ -4,11 +4,14 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to manage the postbox building block.
  */
-public class PostBox extends AbstractBuilding
+public class PostBox extends AbstractBuilding implements IRSComponent
 {
     /**
      * Description of the block used to set this block.
@@ -68,6 +71,18 @@ public class PostBox extends AbstractBuilding
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.postBox;
+    }
+
+    @Override
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
+        super.onRequestedRequestCancelled(manager, request);
+        if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack)
+        {
+            final Stack req = new Stack(((Stack) request.getRequest()).getStack());
+            req.setCount(((Stack) request.getRequest()).getCount());
+            createRequest(req, false);
+        }
     }
 
     /**

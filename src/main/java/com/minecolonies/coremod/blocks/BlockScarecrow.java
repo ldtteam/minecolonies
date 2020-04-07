@@ -107,25 +107,21 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
+    public void onBlockAdded(final BlockState state, final World worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
     {
-        //Only work on server side.
+        super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
         if (worldIn.isRemote)
         {
             return;
         }
 
-        if (placer instanceof PlayerEntity)
+        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+        if (colony != null)
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-
-            if (colony != null)
+            final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
+            if (scareCrow != null)
             {
-                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
-                if (scareCrow != null)
-                {
-                    colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
-                }
+                colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
             }
         }
     }

@@ -191,7 +191,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
         if (storage == null)
         {
-            manager.updateRequestState(request.getId(), RequestState.CANCELLED);
+            manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
 

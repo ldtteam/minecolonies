@@ -41,6 +41,9 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.ENCHANTER = (TileEntityType<? extends TileEntityColonyBuilding>) TileEntityType.Builder.create(TileEntityEnchanter::new,
           ModBlocks.blockHutEnchanter).build(null).setRegistryName(Constants.MOD_ID, "enchanter");
 
+        MinecoloniesTileEntities.STASH = TileEntityType.Builder.create(TileEntityStash::new,
+          ModBlocks.blockStash).build(null).setRegistryName(Constants.MOD_ID, "stash");
+
 
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
@@ -50,6 +53,7 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.RACK,
           MinecoloniesTileEntities.WAREHOUSE,
           MinecoloniesTileEntities.COMPOSTED_DIRT,
-          MinecoloniesTileEntities.ENCHANTER);
+          MinecoloniesTileEntities.ENCHANTER,
+          MinecoloniesTileEntities.STASH);
     }
 }

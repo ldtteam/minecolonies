@@ -1136,6 +1136,11 @@ public final class WindowConstants
     public static final String BUTTON_REQUEST = "request";
 
     /**
+     * Stash constants.
+     */
+    public static final String WINDOW_STASH = ":gui/windowstash.xml";
+
+    /**
      * Id of the done button in the GUI.
      */
     public static final String BUTTON_DONE = "done";

@@ -6,6 +6,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -33,11 +34,11 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -138,15 +139,6 @@ public class BuildingManager implements IBuildingManager
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);
-    }
-
-    @Override
-    public void tick(final TickEvent.ServerTickEvent event)
-    {
-        for (@NotNull final IBuilding b : buildings.values())
-        {
-            b.onServerTick(event);
-        }
     }
 
     @Override
@@ -349,7 +341,7 @@ public class BuildingManager implements IBuildingManager
                     building.setStyle(colony.getStyle());
                 }
 
-                if (world != null && !(building instanceof PostBox))
+                if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
 
@@ -489,6 +481,22 @@ public class BuildingManager implements IBuildingManager
             }
         }
         return goodHospital;
+    }
+
+    @Override
+    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate)
+    {
+        final List<IBuilding> allowedBuildings = new ArrayList<>();
+        for (final IBuilding building : buildings.values())
+        {
+            if (filterPredicate.test(building))
+            {
+                allowedBuildings.add(building);
+            }
+        }
+
+        Collections.shuffle(allowedBuildings);
+        return allowedBuildings.get(0).getPosition();
     }
 
     @Override

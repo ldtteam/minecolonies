@@ -373,6 +373,8 @@ public final class TranslationConstants
     public static final String NORMAL_REQUEST                        = "com.minecolonies.requestsystem.playerresolver.normal";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY = "com.minecolonies.coremod.gui.workerhuts.university";
+    @NonNls
+    public static final String PUPIL_NO_CARPET = "com.minecolonies.coremod.school.nocarpet";
 
     private TranslationConstants()
     {
