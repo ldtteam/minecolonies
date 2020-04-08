@@ -363,7 +363,7 @@ public class CommonConfiguration extends AbstractConfiguration
                    ("minecraft:stone",
                      "minecraft:cobblestone"),
           s -> s instanceof String);
-        luckyOres = defineList(builder, "luckyblocks",
+        luckyOres = defineList(builder, "luckyores",
           Arrays.asList
                    ("minecraft:coal_ore!64",
                      "minecraft:iron_ore!32",
