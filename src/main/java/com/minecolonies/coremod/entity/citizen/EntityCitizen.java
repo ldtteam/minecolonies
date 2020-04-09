@@ -36,6 +36,7 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
@@ -1449,6 +1450,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
+
+        final MultiplierModifierResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+              .setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * effect.getEffect()));
+        }
     }
 
     @Override
@@ -1639,7 +1647,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public boolean canPathOnRails()
     {
-        return true;
+        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+        if (effect != null)
+        {
+            return effect.getEffect();
+        }
+        return false;
     }
 
     /**

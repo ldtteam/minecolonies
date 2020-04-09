@@ -21,7 +21,7 @@ public class ResearchInitializer
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)
     {
-        final GlobalResearch higherlearning = new GlobalResearch("higherlearning", "civilian", "Higher Learning", 1, new UnlockBuildingResearchEffect("School", true));
+        final GlobalResearch higherlearning = new GlobalResearch("higherlearning", "civilian", "Higher Learning", 1, new UnlockBuildingResearchEffect("school", true));
         higherlearning.setRequirement(new BuildingResearchRequirement(3, "citizen"));
         higherlearning.setOnlyChild(true);
 
@@ -105,7 +105,7 @@ public class ResearchInitializer
         scholarly.addChild(reflective);
         reflective.addChild(academic);
 
-        final GlobalResearch rails = new GlobalResearch("rails", "civilian", "Rails", 2, new UnlockBuildingResearchEffect("rails", true));
+        final GlobalResearch rails = new GlobalResearch("rails", "civilian", "Rails", 2, new UnlockAbilityResearchEffect("rails", true));
         rails.setRequirement(new BuildingResearchRequirement(3, "deliveryman"));
 
         final GlobalResearch nimble = new GlobalResearch("nimble", "civilian", "Nimble", 3, new MultiplierModifierResearchEffect("walking", 0.05));
