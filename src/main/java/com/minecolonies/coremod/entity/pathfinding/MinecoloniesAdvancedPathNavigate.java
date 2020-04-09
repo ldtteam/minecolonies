@@ -474,6 +474,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return false;
     }
 
+    /**
+     * Handle pathing on rails.
+     * @param pEx the current path point.
+     * @param pExNext the next path point.
+     * @return if go to next point.
+     */
     private boolean handlePathOnRails(final PathPointExtended pEx, final PathPointExtended pExNext)
     {
         if (pEx.isRailsEntry())
@@ -544,7 +550,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     forward = Math.min(Math.max(motion.getZ() - 1 * 0.01D, -1), 0);
                     entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -1 * 0.01D));
             }
-            //todo add research branch civilian where we add using railcarts as an option to guard this.
         }
         return false;
     }
