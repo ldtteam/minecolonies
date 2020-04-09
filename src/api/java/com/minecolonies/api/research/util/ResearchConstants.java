@@ -70,11 +70,11 @@ public final class ResearchConstants
     public static final String DOUBLE_ARROWS = "Double Arrows";
     public static final String BLOCK_ATTACKS = "Block Attacks";
 
-    public static final String TEACHING = "teaching";
-    public static final String GROWTH = "growth";
-    public static final String CAP = "cap";
-    public static final String RAILS = "rails";
-    public static final String WALKING = "walking";
+    public static final String TEACHING = "Teaching";
+    public static final String GROWTH = "Growth";
+    public static final String CAP = "Citizen-Cap";
+    public static final String RAILS = "Rails";
+    public static final String WALKING = "Walking";
 
     /**
      * Private constructor to hide implicit public one.

@@ -21,23 +21,23 @@ public class ResearchInitializer
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)
     {
-        final GlobalResearch higherlearning = new GlobalResearch("higherlearning", "civilian", "Higher Learning", 1, new UnlockBuildingResearchEffect("school", true));
+        final GlobalResearch higherlearning = new GlobalResearch("higherlearning", "civilian", "Higher Learning", 1, new UnlockBuildingResearchEffect("School", true));
         higherlearning.setRequirement(new BuildingResearchRequirement(3, "citizen"));
         higherlearning.setOnlyChild(true);
 
-        final GlobalResearch morebooks = new GlobalResearch("morebooks", "civilian", "More Books", 2, new MultiplierModifierResearchEffect("teaching", 0.05));
+        final GlobalResearch morebooks = new GlobalResearch("morebooks", "civilian", "More Books", 2, new MultiplierModifierResearchEffect("Teaching", 0.05));
         morebooks.setRequirement(new BuildingResearchRequirement(1, "school"));
 
-        final GlobalResearch bookworm = new GlobalResearch("bookworm", "civilian", "Bookworm", 3, new MultiplierModifierResearchEffect("teaching", 0.1));
+        final GlobalResearch bookworm = new GlobalResearch("bookworm", "civilian", "Bookworm", 3, new MultiplierModifierResearchEffect("Teaching", 0.1));
         bookworm.setRequirement(new BuildingResearchRequirement(3, "school"));
 
-        final GlobalResearch bachelor = new GlobalResearch("bachelor", "civilian", "Bachelor", 4, new MultiplierModifierResearchEffect("teaching", 0.25));
+        final GlobalResearch bachelor = new GlobalResearch("bachelor", "civilian", "Bachelor", 4, new MultiplierModifierResearchEffect("Teaching", 0.25));
         bachelor.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch master = new GlobalResearch("master", "civilian", "Master", 5, new MultiplierModifierResearchEffect("teaching", 0.50));
+        final GlobalResearch master = new GlobalResearch("master", "civilian", "Master", 5, new MultiplierModifierResearchEffect("Teaching", 0.50));
         master.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch phd = new GlobalResearch("phd", "civilian", "P.h.D", 6, new MultiplierModifierResearchEffect("teaching", 1));
+        final GlobalResearch phd = new GlobalResearch("phd", "civilian", "P.h.D", 6, new MultiplierModifierResearchEffect("Teaching", 1));
 
         higherlearning.addChild(morebooks);
         morebooks.addChild(bookworm);
@@ -45,19 +45,19 @@ public class ResearchInitializer
         bachelor.addChild(master);
         master.addChild(phd);
 
-        final GlobalResearch nurture = new GlobalResearch("nurture", "civilian", "Nurture", 2, new MultiplierModifierResearchEffect("growth", 0.05));
+        final GlobalResearch nurture = new GlobalResearch("nurture", "civilian", "Nurture", 2, new MultiplierModifierResearchEffect("Growth", 0.05));
         nurture.setRequirement(new BuildingResearchRequirement(1, "school"));
 
-        final GlobalResearch hormones = new GlobalResearch("hormones", "civilian", "Hormones", 3, new MultiplierModifierResearchEffect("growth", 0.1));
+        final GlobalResearch hormones = new GlobalResearch("hormones", "civilian", "Hormones", 3, new MultiplierModifierResearchEffect("Growth", 0.1));
         hormones.setRequirement(new BuildingResearchRequirement(3, "school"));
 
-        final GlobalResearch puberty = new GlobalResearch("puberty", "civilian", "Puberty", 4, new MultiplierModifierResearchEffect("growth", 0.25));
+        final GlobalResearch puberty = new GlobalResearch("puberty", "civilian", "Puberty", 4, new MultiplierModifierResearchEffect("Growth", 0.25));
         puberty.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch growth = new GlobalResearch("growth", "civilian", "Growth", 5, new MultiplierModifierResearchEffect("growth", 0.50));
+        final GlobalResearch growth = new GlobalResearch("growth", "civilian", "Growth", 5, new MultiplierModifierResearchEffect("Growth", 0.50));
         growth.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch beanstalk = new GlobalResearch("beanstalk", "civilian", "Beanstalk", 6, new MultiplierModifierResearchEffect("growth", 1));
+        final GlobalResearch beanstalk = new GlobalResearch("beanstalk", "civilian", "Beanstalk", 6, new MultiplierModifierResearchEffect("Growth", 1));
 
         higherlearning.addChild(nurture);
         nurture.addChild(hormones);
@@ -65,19 +65,19 @@ public class ResearchInitializer
         puberty.addChild(growth);
         growth.addChild(beanstalk);
 
-        final GlobalResearch keen = new GlobalResearch("keen", "civilian", "Keen", 1, new UnlockBuildingResearchEffect("library", true));
+        final GlobalResearch keen = new GlobalResearch("keen", "civilian", "Keen", 1, new UnlockBuildingResearchEffect("Library", true));
         keen.setRequirement(new BuildingResearchRequirement(3, "citizen"));
 
-        final GlobalResearch outpost = new GlobalResearch("outpost", "civilian", "Outpost", 2, new AdditionModifierResearchEffect("cap", 25));
+        final GlobalResearch outpost = new GlobalResearch("outpost", "civilian", "Outpost", 2, new AdditionModifierResearchEffect("Citizen-Cap", 25));
         outpost.setRequirement(new BuildingResearchRequirement(4, "citizen"));
 
-        final GlobalResearch hamlet = new GlobalResearch("hamlet", "civilian", "Hamlet", 3, new AdditionModifierResearchEffect("cap", 50));
+        final GlobalResearch hamlet = new GlobalResearch("hamlet", "civilian", "Hamlet", 3, new AdditionModifierResearchEffect("Citizen-Cap", 50));
         hamlet.setRequirement(new BuildingResearchRequirement(5, "citizen"));
 
-        final GlobalResearch village = new GlobalResearch("village", "civilian", "Village", 4, new AdditionModifierResearchEffect("cap", 75));
+        final GlobalResearch village = new GlobalResearch("village", "civilian", "Village", 4, new AdditionModifierResearchEffect("Citizen-Cap", 75));
         village.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch city = new GlobalResearch("city", "civilian", "City", 5, new AdditionModifierResearchEffect("cap", 200));
+        final GlobalResearch city = new GlobalResearch("city", "civilian", "City", 5, new AdditionModifierResearchEffect("Citizen-Cap", 200));
         city.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
         keen.addChild(outpost);
@@ -85,19 +85,19 @@ public class ResearchInitializer
         hamlet.addChild(village);
         village.addChild(city);
 
-        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "diligent", 2, new MultiplierModifierResearchEffect("leveling", 0.1));
+        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect("Leveling", 0.1));
         diligent.setRequirement(new BuildingResearchRequirement(2, "library"));
 
-        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "studious", 3, new MultiplierModifierResearchEffect("leveling", 0.25));
+        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect("Leveling", 0.25));
         studious.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "scholarly", 4, new MultiplierModifierResearchEffect("leveling", 0.5));
+        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect("Leveling", 0.5));
         scholarly.setRequirement(new BuildingResearchRequirement(4, "library"));
 
-        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "reflective", 5, new MultiplierModifierResearchEffect("leveling", 1.0));
+        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect("Leveling", 1.0));
         reflective.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "academic", 6, new MultiplierModifierResearchEffect("leveling", 2.0));
+        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect("Leveling", 2.0));
 
         keen.addChild(diligent);
         diligent.addChild(studious);
@@ -105,19 +105,19 @@ public class ResearchInitializer
         scholarly.addChild(reflective);
         reflective.addChild(academic);
 
-        final GlobalResearch rails = new GlobalResearch("rails", "civilian", "Rails", 2, new UnlockAbilityResearchEffect("rails", true));
+        final GlobalResearch rails = new GlobalResearch("rails", "civilian", "Rails", 2, new UnlockAbilityResearchEffect("Rails", true));
         rails.setRequirement(new BuildingResearchRequirement(3, "deliveryman"));
 
-        final GlobalResearch nimble = new GlobalResearch("nimble", "civilian", "Nimble", 3, new MultiplierModifierResearchEffect("walking", 0.05));
+        final GlobalResearch nimble = new GlobalResearch("nimble", "civilian", "Nimble", 3, new MultiplierModifierResearchEffect("Walking", 0.05));
         nimble.setRequirement(new BuildingResearchRequirement(3, "townhall"));
 
-        final GlobalResearch agile = new GlobalResearch("agile", "civilian", "Agile", 4, new MultiplierModifierResearchEffect("walking", 0.1));
+        final GlobalResearch agile = new GlobalResearch("agile", "civilian", "Agile", 4, new MultiplierModifierResearchEffect("Walking", 0.1));
         agile.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("walking", 0.25));
+        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("Walking", 0.25));
         swift.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
-        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("walking", 1.0));
+        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("Walking", 1.0));
 
         keen.addChild(rails);
         rails.addChild(nimble);

@@ -1647,6 +1647,16 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public boolean canPathOnRails()
     {
+        if (world.isRemote)
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+            final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+            if (effect != null)
+            {
+                return effect.getEffect();
+            }
+            return false;
+        }
         final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
         if (effect != null)
         {

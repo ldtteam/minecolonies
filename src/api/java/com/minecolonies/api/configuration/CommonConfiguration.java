@@ -870,7 +870,7 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
 
         this.morebooks = defineList(builder, "morebooks",
-          Collections.singletonList("minecraft:book*128"),
+          Collections.singletonList("minecraft:book*3"),
           s -> s instanceof String);
         this.bookworm = defineList(builder, "bookworm",
           Collections.singletonList("minecraft:bookshelf*6"),
