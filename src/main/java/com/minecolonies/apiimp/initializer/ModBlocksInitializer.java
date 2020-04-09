@@ -75,12 +75,14 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter = new BlockHutEnchanter().registerBlock(registry);
         ModBlocks.blockHutUniversity = new BlockHutUniversity().registerBlock(registry);
         ModBlocks.blockHutHospital = new BlockHutHospital().registerBlock(registry);
+        ModBlocks.blockHutSchool = new BlockHutSchool().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         ModBlocks.blockWayPoint = new BlockWaypoint().registerBlock(registry);
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
+        ModBlocks.blockStash = new BlockStash().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController().registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
@@ -135,6 +137,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter.registerBlockItem(registry, properties);
         ModBlocks.blockHutUniversity.registerBlockItem(registry, properties);
         ModBlocks.blockHutHospital.registerBlockItem(registry, properties);
+        ModBlocks.blockHutSchool.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
@@ -142,6 +145,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
+        ModBlocks.blockStash.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
     }

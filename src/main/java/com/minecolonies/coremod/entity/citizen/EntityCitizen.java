@@ -28,10 +28,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -365,6 +362,15 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
         {
             return DesiredActivity.WORK;
+        }
+
+        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
+        {
+            if (world.getDayTime() <= NOON)
+            {
+                return DesiredActivity.WORK;
+            }
+            return DesiredActivity.IDLE;
         }
 
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))

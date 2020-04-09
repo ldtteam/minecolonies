@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
+import com.google.common.collect.Lists;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -15,6 +16,8 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.ModEntities.*;
@@ -165,7 +168,7 @@ public final class PirateEventUtils
      */
     public static boolean canPlaceShipAt(final BlockPos pos, final Structure ship, final World world)
     {
-        return world.getBlockState(pos).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
+        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world,
           pos.add(-ship.getOffset().getX(), 0, -ship.getOffset().getZ()),
           pos.add(ship.getWidth() - 1, 0, ship.getLength() - 1).subtract(ship.getOffset()),
           0.6);
@@ -179,7 +182,8 @@ public final class PirateEventUtils
      * @param to    Second corner of search rectangle
      * @return true if enough water surface blocks are found
      */
-    public static boolean isSurfaceAreaMostlyWater(
+    public static boolean isSurfaceAreaMostlyMaterial(
+      @NotNull final List<Material> materials,
       @NotNull final World world,
       @NotNull final BlockPos from,
       @NotNull final BlockPos to,
@@ -188,9 +192,9 @@ public final class PirateEventUtils
         final int xDist = Math.abs(from.getX() - to.getX());
         final int zDist = Math.abs(from.getZ() - to.getZ());
 
-        int nonWaterBlocks = 0;
-        final int neededWaterBlocks = (int) (percentRequired * (xDist * zDist));
-        final int nonWaterBlockThreshold = (xDist * zDist) - neededWaterBlocks;
+        int wrongMaterialBlocks = 0;
+        final int neededMaterialBlocks = (int) (percentRequired * (xDist * zDist));
+        final int wrongMaterialBlockThreshold = (xDist * zDist) - neededMaterialBlocks;
 
         int xDir = 1;
         int zDir = 1;
@@ -210,11 +214,11 @@ public final class PirateEventUtils
             for (int z = 0; z < zDist; z++)
             {
                 // Count surface waterblocks
-                if (world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial() != Material.WATER || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
+                if (!materials.contains(world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial()) || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
                 {
-                    nonWaterBlocks++;
+                    wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
-                    if (nonWaterBlocks > nonWaterBlockThreshold)
+                    if (wrongMaterialBlocks > wrongMaterialBlockThreshold)
                     {
                         return false;
                     }
