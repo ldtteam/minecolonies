@@ -76,6 +76,12 @@ public final class ResearchConstants
     public static final String RAILS = "Rails";
     public static final String WALKING = "Walking";
 
+    public static final String HEALTH = "Health";
+    public static final String REGENERATION = "Regeneration";
+    public static final String SATLIMIT = "Healing Saturation Limit";
+    public static final String HAPPINESS = "Happiness";
+    public static final String SATURATION = "Saturation";
+
     /**
      * Private constructor to hide implicit public one.
      */
