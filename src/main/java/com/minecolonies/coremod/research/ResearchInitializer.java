@@ -77,7 +77,7 @@ public class ResearchInitializer
         final GlobalResearch village = new GlobalResearch("village", "civilian", "Village", 4, new AdditionModifierResearchEffect("Citizen-Cap", 75));
         village.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch city = new GlobalResearch("city", "civilian", "City", 5, new AdditionModifierResearchEffect("Citizen-Cap", 200));
+        final GlobalResearch city = new GlobalResearch("city", "civilian", "City", 5, new AdditionModifierResearchEffect("Citizen-Cap", 175));
         city.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
         keen.addChild(outpost);
@@ -171,19 +171,19 @@ public class ResearchInitializer
         bandages.addChild(compress);
         compress.addChild(cast);
 
-        final GlobalResearch resistance = new GlobalResearch("resistance", "civilian", "Resistance", 2, new AdditionModifierResearchEffect("Healing Saturation Limit", -1));
+        final GlobalResearch resistance = new GlobalResearch("resistance", "civilian", "Resistance", 2, new AdditionModifierResearchEffect("Healing Saturation Limit", -0.5));
         resistance.setRequirement(new BuildingResearchRequirement(2, "restaurant"));
 
-        final GlobalResearch resilience = new GlobalResearch("resilience", "civilian", "Resilience", 3, new AdditionModifierResearchEffect("Healing Saturation Limit", -2));
+        final GlobalResearch resilience = new GlobalResearch("resilience", "civilian", "Resilience", 3, new AdditionModifierResearchEffect("Healing Saturation Limit", -1.0));
         resilience.setRequirement(new BuildingResearchRequirement(3, "restaurant"));
 
-        final GlobalResearch vitality = new GlobalResearch("vitality", "civilian", "Vitality", 4, new AdditionModifierResearchEffect("Healing Saturation Limit", -3));
+        final GlobalResearch vitality = new GlobalResearch("vitality", "civilian", "Vitality", 4, new AdditionModifierResearchEffect("Healing Saturation Limit", -1.5));
         vitality.setRequirement(new BuildingResearchRequirement(4, "restaurant"));
 
-        final GlobalResearch fortitude = new GlobalResearch("fortitude", "civilian", "Fortitude", 5, new AdditionModifierResearchEffect("Healing Saturation Limit", -4));
+        final GlobalResearch fortitude = new GlobalResearch("fortitude", "civilian", "Fortitude", 5, new AdditionModifierResearchEffect("Healing Saturation Limit", -2.0));
         fortitude.setRequirement(new BuildingResearchRequirement(5, "restaurant"));
 
-        final GlobalResearch indefatigability = new GlobalResearch("indefatigability", "civilian", "Indefatigability", 6, new AdditionModifierResearchEffect("Healing Saturation Limit", -10));
+        final GlobalResearch indefatigability = new GlobalResearch("indefatigability", "civilian", "Indefatigability", 6, new AdditionModifierResearchEffect("Healing Saturation Limit", -5));
 
         stamina.addChild(resistance);
         resistance.addChild(resilience);

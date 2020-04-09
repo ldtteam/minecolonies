@@ -256,10 +256,20 @@ public class CitizenManager implements ICitizenManager
 
             if (getMaxCitizens() == getCitizens().size() && !force)
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "block.blockHutTownHall.messageMaxSize",
-                  colony.getName());
+                if (maxCitizensFromResearch() <= getCitizens().size())
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessagePlayerEntities(),
+                      "block.blockhuttownhall.messagemaxsize.research",
+                      colony.getName());
+                }
+                else
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessagePlayerEntities(),
+                      "block.blockhuttownhall.messagemaxsize.config",
+                      colony.getName());
+                }
             }
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
@@ -411,19 +421,28 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        double max = 10;
-        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
-        if (effect != null)
-        {
-            max = effect.getEffect();
-        }
-        return (int) Math.min(maxCitizens, Math.min(max, MineColonies.getConfig().getCommon().maxCitizenPerColony.get()));
+        return (int) Math.min(maxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getCommon().maxCitizenPerColony.get()));
     }
 
     @Override
     public int getPotentialMaxCitizens()
     {
-        return Math.min(potentialMaxCitizens, MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxCitizenPerColony.get());
+        return (int) Math.min(potentialMaxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getCommon().maxCitizenPerColony.get()));
+    }
+
+    /**
+     * Get the max citizens based on the research.
+     * @return the max.
+     */
+    private double maxCitizensFromResearch()
+    {
+        double max = 25;
+        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
+        if (effect != null)
+        {
+            max = effect.getEffect();
+        }
+        return max;
     }
 
     /**

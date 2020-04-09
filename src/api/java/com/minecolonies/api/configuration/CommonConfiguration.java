@@ -768,13 +768,13 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:bow*5"),
           s -> s instanceof String);
         multishot = defineList(builder, "multishot",
-          Collections.singletonList("minecraft:bow*10"),
+          Collections.singletonList("minecraft:bow*9"),
           s -> s instanceof String);
         rapidshot = defineList(builder, "rapidshot",
-          Collections.singletonList("minecraft:bow*25"),
+          Collections.singletonList("minecraft:bow*18"),
           s -> s instanceof String);
         masterbowman = defineList(builder, "masterbowman",
-          Collections.singletonList("minecraft:bow*64"),
+          Collections.singletonList("minecraft:bow*27"),
           s -> s instanceof String);
 
         avoidance = defineList(builder, "avoidance",
@@ -852,13 +852,13 @@ public class CommonConfiguration extends AbstractConfiguration
         this.avoid = defineList(builder, "avoid",
           Collections.singletonList("minecraft:emerald*8"),
           s -> s instanceof String);
-        this.evade = defineList(builder, "dodge",
+        this.evade = defineList(builder, "evade",
           Collections.singletonList("minecraft:emerald*16"),
           s -> s instanceof String);
-        this.flee = defineList(builder, "dodge",
+        this.flee = defineList(builder, "flee",
           Collections.singletonList("minecraft:emerald*32"),
           s -> s instanceof String);
-        this.hotfoot = defineList(builder, "dodge",
+        this.hotfoot = defineList(builder, "hotfoot",
           Collections.singletonList("minecraft:emerald*64"),
           s -> s instanceof String);
 
@@ -903,7 +903,7 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
 
         this.morebooks = defineList(builder, "morebooks",
-          Collections.singletonList("minecraft:book*3"),
+          Collections.singletonList("minecraft:book*6"),
           s -> s instanceof String);
         this.bookworm = defineList(builder, "bookworm",
           Collections.singletonList("minecraft:bookshelf*6"),
@@ -1012,7 +1012,7 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:golden_carrot*16"),
           s -> s instanceof String);
         this.compress = defineList(builder, "compress",
-          Collections.singletonList("minecraft:rabbit_foot*32"),
+          Collections.singletonList("minecraft:golden_carrot*32"),
           s -> s instanceof String);
         this.cast = defineList(builder, "cast",
           Collections.singletonList("minecraft:golden_carrot*64"),
@@ -1038,16 +1038,16 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:cake*1"),
           s -> s instanceof String);
         this.festival = defineList(builder, "festival",
-          Collections.singletonList("minecraft:cake*8"),
+          Collections.singletonList("minecraft:cake*9"),
           s -> s instanceof String);
         this.spectacle = defineList(builder, "spectacle",
-          Collections.singletonList("minecraft:cake*16"),
+          Collections.singletonList("minecraft:cake*18"),
           s -> s instanceof String);
         this.opera = defineList(builder, "opera",
-          Collections.singletonList("minecraft:cake*32"),
+          Collections.singletonList("minecraft:cake*27"),
           s -> s instanceof String);
         this.theater = defineList(builder, "theater",
-          Collections.singletonList("minecraft:cake*64"),
+          Collections.singletonList("minecraft:enchanted_golden_apple*16"),
           s -> s instanceof String);
 
         this.firstaid = defineList(builder, "firstaid",
