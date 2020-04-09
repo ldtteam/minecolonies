@@ -37,6 +37,11 @@ public final class PathingConstants
     public static final double ON_RAIL_COST = 0.01D;
 
     /**
+     * The rails exit cost.
+     */
+    public static final double RAILS_EXIT_COST = 5;
+
+    /**
      * Additional cost of swimming - base 1.
      */
     public static final double SWIM_COST = 15D;

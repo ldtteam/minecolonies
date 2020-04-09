@@ -62,7 +62,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     //  Job rules/configuration
     private          boolean            allowSwimming                = true;
     //  May be faster, but can produce strange results
-    private          boolean            allowJumpPointSearchTypeWalk = false;
+    private          boolean            allowJumpPointSearchTypeWalk;
     private          int                totalNodesAdded              = 0;
     private          int                totalNodesVisited            = 0;
 
@@ -318,9 +318,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param isSwimming true is the current node would require the citizen to swim.
      * @param onPath     checks if the node is on a path.
      * @param onRails    checks if the node is a rail block.
+     * @param railsExit the exit of the rails.
      * @return cost to move from the parent to the new position.
      */
-    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final boolean onRails, final BlockPos blockPos)
+    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final boolean onRails, final boolean railsExit, final BlockPos blockPos)
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
@@ -338,6 +339,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (onRails)
         {
             cost *= ON_RAIL_COST;
+        }
+
+        if (railsExit)
+        {
+            cost *= RAILS_EXIT_COST;
         }
 
         if (isSwimming)
@@ -755,8 +761,9 @@ public abstract class AbstractPathJob implements Callable<Path>
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.down()).getBlock());
         final boolean onRails = canPathOnRails && world.getBlockState(pos).getBlock() instanceof AbstractRailBlock;
+        final boolean railsExit = !onRails && parent != null && parent.isOnRails();
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, onRails, pos);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, onRails, railsExit, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
