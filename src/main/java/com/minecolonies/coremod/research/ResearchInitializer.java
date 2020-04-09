@@ -14,6 +14,151 @@ public class ResearchInitializer
      */
     public static void fillResearchTree(final IGlobalResearchTree researchTree)
     {
+        buildCombatTree(researchTree);
+
+        buildCivilianTree(researchTree);
+    }
+
+    private static void buildCivilianTree(final IGlobalResearchTree researchTree)
+    {
+        final GlobalResearch higherlearning = new GlobalResearch("higherlearning", "civilian", "Higher Learning", 1, new UnlockBuildingResearchEffect("School", true));
+        higherlearning.setRequirement(new BuildingResearchRequirement(3, "citizen"));
+        higherlearning.setOnlyChild(true);
+
+        final GlobalResearch morebooks = new GlobalResearch("morebooks", "civilian", "More Books", 2, new MultiplierModifierResearchEffect("teaching", 0.05));
+        morebooks.setRequirement(new BuildingResearchRequirement(1, "school"));
+
+        final GlobalResearch bookworm = new GlobalResearch("bookworm", "civilian", "Bookworm", 3, new MultiplierModifierResearchEffect("teaching", 0.1));
+        bookworm.setRequirement(new BuildingResearchRequirement(3, "school"));
+
+        final GlobalResearch bachelor = new GlobalResearch("bachelor", "civilian", "Bachelor", 4, new MultiplierModifierResearchEffect("teaching", 0.25));
+        bachelor.setRequirement(new BuildingResearchRequirement(3, "library"));
+
+        final GlobalResearch master = new GlobalResearch("master", "civilian", "Master", 5, new MultiplierModifierResearchEffect("teaching", 0.50));
+        master.setRequirement(new BuildingResearchRequirement(5, "library"));
+
+        final GlobalResearch phd = new GlobalResearch("phd", "civilian", "P.h.D", 6, new MultiplierModifierResearchEffect("teaching", 1));
+
+        higherlearning.addChild(morebooks);
+        morebooks.addChild(bookworm);
+        bookworm.addChild(bachelor);
+        bachelor.addChild(master);
+        master.addChild(phd);
+
+        final GlobalResearch nurture = new GlobalResearch("nurture", "civilian", "Nurture", 2, new MultiplierModifierResearchEffect("growth", 0.05));
+        nurture.setRequirement(new BuildingResearchRequirement(1, "school"));
+
+        final GlobalResearch hormones = new GlobalResearch("hormones", "civilian", "Hormones", 3, new MultiplierModifierResearchEffect("growth", 0.1));
+        hormones.setRequirement(new BuildingResearchRequirement(3, "school"));
+
+        final GlobalResearch puberty = new GlobalResearch("puberty", "civilian", "Puberty", 4, new MultiplierModifierResearchEffect("growth", 0.25));
+        puberty.setRequirement(new BuildingResearchRequirement(3, "library"));
+
+        final GlobalResearch growth = new GlobalResearch("growth", "civilian", "Growth", 5, new MultiplierModifierResearchEffect("growth", 0.50));
+        growth.setRequirement(new BuildingResearchRequirement(5, "library"));
+
+        final GlobalResearch beanstalk = new GlobalResearch("beanstalk", "civilian", "Beanstalk", 6, new MultiplierModifierResearchEffect("growth", 1));
+
+        higherlearning.addChild(nurture);
+        nurture.addChild(hormones);
+        hormones.addChild(puberty);
+        puberty.addChild(growth);
+        growth.addChild(beanstalk);
+
+        final GlobalResearch keen = new GlobalResearch("keen", "civilian", "Keen", 1, new UnlockBuildingResearchEffect("library", true));
+        keen.setRequirement(new BuildingResearchRequirement(3, "citizen"));
+
+        final GlobalResearch outpost = new GlobalResearch("outpost", "civilian", "Outpost", 2, new AdditionModifierResearchEffect("cap", 25));
+        outpost.setRequirement(new BuildingResearchRequirement(4, "citizen"));
+
+        final GlobalResearch hamlet = new GlobalResearch("hamlet", "civilian", "Hamlet", 3, new AdditionModifierResearchEffect("cap", 50));
+        hamlet.setRequirement(new BuildingResearchRequirement(5, "citizen"));
+
+        final GlobalResearch village = new GlobalResearch("village", "civilian", "Village", 4, new AdditionModifierResearchEffect("cap", 75));
+        village.setRequirement(new BuildingResearchRequirement(4, "townhall"));
+
+        final GlobalResearch city = new GlobalResearch("city", "civilian", "City", 5, new AdditionModifierResearchEffect("cap", 200));
+        city.setRequirement(new BuildingResearchRequirement(5, "townhall"));
+
+        keen.addChild(outpost);
+        outpost.addChild(hamlet);
+        hamlet.addChild(village);
+        village.addChild(city);
+
+        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "diligent", 2, new MultiplierModifierResearchEffect("leveling", 0.1));
+        diligent.setRequirement(new BuildingResearchRequirement(2, "library"));
+
+        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "studious", 3, new MultiplierModifierResearchEffect("leveling", 0.25));
+        studious.setRequirement(new BuildingResearchRequirement(3, "library"));
+
+        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "scholarly", 4, new MultiplierModifierResearchEffect("leveling", 0.5));
+        scholarly.setRequirement(new BuildingResearchRequirement(4, "library"));
+
+        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "reflective", 5, new MultiplierModifierResearchEffect("leveling", 1.0));
+        reflective.setRequirement(new BuildingResearchRequirement(5, "library"));
+
+        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "academic", 6, new MultiplierModifierResearchEffect("leveling", 2.0));
+
+        keen.addChild(diligent);
+        diligent.addChild(studious);
+        studious.addChild(scholarly);
+        scholarly.addChild(reflective);
+        reflective.addChild(academic);
+
+        final GlobalResearch rails = new GlobalResearch("rails", "civilian", "Rails", 2, new UnlockBuildingResearchEffect("rails", true));
+        rails.setRequirement(new BuildingResearchRequirement(3, "deliveryman"));
+
+        final GlobalResearch nimble = new GlobalResearch("nimble", "civilian", "Nimble", 3, new MultiplierModifierResearchEffect("walking", 0.05));
+        nimble.setRequirement(new BuildingResearchRequirement(3, "townhall"));
+
+        final GlobalResearch agile = new GlobalResearch("agile", "civilian", "Agile", 4, new MultiplierModifierResearchEffect("walking", 0.1));
+        agile.setRequirement(new BuildingResearchRequirement(4, "townhall"));
+
+        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("walking", 0.25));
+        swift.setRequirement(new BuildingResearchRequirement(5, "townhall"));
+
+        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("walking", 1.0));
+
+        keen.addChild(rails);
+        rails.addChild(nimble);
+        nimble.addChild(agile);
+        agile.addChild(swift);
+        swift.addChild(athlete);
+
+        researchTree.addResearch(rails.getBranch(), rails);
+        researchTree.addResearch(nimble.getBranch(), nimble);
+        researchTree.addResearch(agile.getBranch(), agile);
+        researchTree.addResearch(swift.getBranch(), swift);
+        researchTree.addResearch(athlete.getBranch(), athlete);
+
+        researchTree.addResearch(diligent.getBranch(), diligent);
+        researchTree.addResearch(studious.getBranch(), studious);
+        researchTree.addResearch(scholarly.getBranch(), scholarly);
+        researchTree.addResearch(reflective.getBranch(), reflective);
+        researchTree.addResearch(academic.getBranch(), academic);
+
+        researchTree.addResearch(keen.getBranch(), keen);
+        researchTree.addResearch(outpost.getBranch(), outpost);
+        researchTree.addResearch(hamlet.getBranch(), hamlet);
+        researchTree.addResearch(village.getBranch(), village);
+        researchTree.addResearch(city.getBranch(), city);
+
+        researchTree.addResearch(nurture.getBranch(), nurture);
+        researchTree.addResearch(hormones.getBranch(), hormones);
+        researchTree.addResearch(puberty.getBranch(), puberty);
+        researchTree.addResearch(growth.getBranch(), growth);
+        researchTree.addResearch(beanstalk.getBranch(), beanstalk);
+
+        researchTree.addResearch(higherlearning.getBranch(), higherlearning);
+        researchTree.addResearch(morebooks.getBranch(), morebooks);
+        researchTree.addResearch(bookworm.getBranch(), bookworm);
+        researchTree.addResearch(bachelor.getBranch(), bachelor);
+        researchTree.addResearch(master.getBranch(), master);
+        researchTree.addResearch(phd.getBranch(), phd);
+    }
+
+    private static void buildCombatTree(final IGlobalResearchTree researchTree)
+    {
         final GlobalResearch tacticTraining = new GlobalResearch("tactictraining", "combat", "Tactic Training", 1, new UnlockBuildingResearchEffect("Barracks", true));
         tacticTraining.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
 

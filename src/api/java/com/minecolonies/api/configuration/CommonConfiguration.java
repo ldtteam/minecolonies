@@ -224,6 +224,38 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> woundingshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> deadlyaim;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> higherlearning;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> morebooks;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bookworm;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bachelor;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> master;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> phd;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nurture;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hormones;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> puberty;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> growth;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> beanstalk;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> keen;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> outpost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hamlet;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> village;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> city;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diligent;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> studious;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> scholarly;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> reflective;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> academic;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rails;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nimble;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> agile;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> swift;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> athlete;
+
     /**
      * Builds common configuration.
      *
@@ -833,6 +865,90 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.deadlyaim = defineList(builder, "deadlyaim",
           Collections.singletonList("minecraft:flint*256"),
+          s -> s instanceof String);
+
+        this.higherlearning = defineList(builder, "higherlearning",
+          Collections.singletonList("minecraft:book*3"),
+          s -> s instanceof String);
+
+        this.morebooks = defineList(builder, "morebooks",
+          Collections.singletonList("minecraft:book*128"),
+          s -> s instanceof String);
+        this.bookworm = defineList(builder, "bookworm",
+          Collections.singletonList("minecraft:bookshelf*6"),
+          s -> s instanceof String);
+        this.bachelor = defineList(builder, "bachelor",
+          Collections.singletonList("minecraft:bookshelf*12"),
+          s -> s instanceof String);
+        this.master = defineList(builder, "master",
+          Collections.singletonList("minecraft:bookshelf*32"),
+          s -> s instanceof String);
+        this.phd = defineList(builder, "phd",
+          Collections.singletonList("minecraft:bookshelf*64"),
+          s -> s instanceof String);
+
+        this.nurture = defineList(builder, "nurture",
+          Collections.singletonList("minecraft:cooked_chicken*32"),
+          s -> s instanceof String);
+        this.hormones = defineList(builder, "hormones",
+          Collections.singletonList("minecraft:cooked_chicken*64"),
+          s -> s instanceof String);
+        this.puberty = defineList(builder, "puberty",
+          Collections.singletonList("minecraft:cooked_chicken*128"),
+          s -> s instanceof String);
+        this.growth = defineList(builder, "growth",
+          Collections.singletonList("minecraft:cooked_chicken*256"),
+          s -> s instanceof String);
+        this.beanstalk = defineList(builder, "beanstalk",
+          Collections.singletonList("minecraft:cooked_chicken*512"),
+          s -> s instanceof String);
+
+        this.keen = defineList(builder, "keen",
+          Collections.singletonList("minecraft:book*3"),
+          s -> s instanceof String);
+        this.outpost = defineList(builder, "outpost",
+          Collections.singletonList("minecraft:cooked_beef*64"),
+          s -> s instanceof String);
+        this.hamlet = defineList(builder, "hamlet",
+          Collections.singletonList("minecraft:cooked_beef*128"),
+          s -> s instanceof String);
+        this.village = defineList(builder, "village",
+          Collections.singletonList("minecraft:cooked_beef*256"),
+          s -> s instanceof String);
+        this.city = defineList(builder, "city",
+          Collections.singletonList("minecraft:cooked_beef*512"),
+          s -> s instanceof String);
+
+        this.diligent = defineList(builder, "diligent",
+          Collections.singletonList("minecraft:book*6"),
+          s -> s instanceof String);
+        this.studious = defineList(builder, "studious",
+          Collections.singletonList("minecraft:book*12"),
+          s -> s instanceof String);
+        this.scholarly = defineList(builder, "scholarly",
+          Collections.singletonList("minecraft:book*24"),
+          s -> s instanceof String);
+        this.reflective = defineList(builder, "reflective",
+          Collections.singletonList("minecraft:book*48"),
+          s -> s instanceof String);
+        this.academic = defineList(builder, "academic",
+          Collections.singletonList("minecraft:book*128"),
+          s -> s instanceof String);
+
+        this.rails = defineList(builder, "rails",
+          Collections.singletonList("minecraft:rail*64"),
+          s -> s instanceof String);
+        this.nimble = defineList(builder, "nimble",
+          Collections.singletonList("minecraft:rabbit_foot*1"),
+          s -> s instanceof String);
+        this.agile = defineList(builder, "agile",
+          Collections.singletonList("minecraft:rabbit_foot*10"),
+          s -> s instanceof String);
+        this.swift = defineList(builder, "swift",
+          Collections.singletonList("minecraft:rabbit_foot*32"),
+          s -> s instanceof String);
+        this.athlete = defineList(builder, "athlete",
+          Collections.singletonList("minecraft:rabbit_foot*64"),
           s -> s instanceof String);
 
         finishCategory(builder);
