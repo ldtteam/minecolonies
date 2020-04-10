@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -110,7 +111,7 @@ public class ChangeDeliveryPriorityMessage implements IMessage
             }
             final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
 
-            if (building instanceof AbstractBuildingWorker)
+            if (building instanceof AbstractBuildingWorker || building instanceof Stash)
             {
                 if (up)
                 {

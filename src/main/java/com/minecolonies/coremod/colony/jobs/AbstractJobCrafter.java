@@ -202,7 +202,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
 
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
-        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.CANCELLED);
+        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
     }
 
     /**
@@ -312,7 +312,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
     {
         for (final IToken<?> t : getTaskQueue())
         {
-            getColony().getRequestManager().updateRequestState(t,  RequestState.CANCELLED);
+            getColony().getRequestManager().updateRequestState(t,  RequestState.FAILED);
         }
     }
 }

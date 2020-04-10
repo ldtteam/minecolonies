@@ -4,7 +4,7 @@ import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
@@ -226,7 +226,7 @@ public class EventHandler
               .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
                 event.getNewChunkX(),
                 event.getNewChunkZ(),
-                MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get()), (ServerPlayerEntity) event.getEntity());
+                8), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
@@ -434,7 +434,7 @@ public class EventHandler
         if (event.getEntity() instanceof PlayerEntity && event.getItemStack().getItem() instanceof BlockItem)
         {
             final Block block = ((BlockItem) event.getItemStack().getItem()).getBlock().getBlock();
-            if (block instanceof AbstractBlockHut && block != ModBlocks.blockPostBox)
+            if (block instanceof AbstractBlockHut && !(block instanceof IRSComponentBlock))
             {
                 final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
                 if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
@@ -742,7 +742,7 @@ public class EventHandler
               && MineColonies.getConfig().getCommon().protectVillages.get()
               && ((ServerChunkProvider) world.getChunkProvider())
                    .getChunkGenerator()
-                   .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
+                   .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().minTownHallPadding.get() * BLOCKS_PER_CHUNK, false) != null)
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,

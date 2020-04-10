@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
@@ -141,7 +142,7 @@ public class EntityAICitizenChild extends Goal
             actionTimer -= MineColonies.getConfig().getCommon().updateRate.get();
         }
 
-        aiActiveTime += MineColonies.getConfig().getCommon().updateRate.get();
+        aiActiveTime += MineColonies.getConfig().getCommon().updateRate.get() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
 
         return false;
     }

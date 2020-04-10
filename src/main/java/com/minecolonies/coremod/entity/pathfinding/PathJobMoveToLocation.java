@@ -44,7 +44,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
 
         this.destination = new BlockPos(end);
 
-        startEndDist = start.distanceSq(end);
+        startEndDist = Math.sqrt(start.distanceSq(end));
     }
 
     /**
@@ -74,7 +74,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return destination.distanceSq(pos);
+        return Math.sqrt(destination.distanceSq(pos));
     }
 
     /**
@@ -106,6 +106,6 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     protected double getNodeResultScore(@NotNull final Node n)
     {
         //  For Result Score higher is better
-        return (startEndDist - destination.distanceSq(n.pos)) - 0.2 * n.getScore();
+        return (startEndDist - Math.sqrt(destination.distanceSq(n.pos))) - 0.2 * n.getScore();
     }
 }

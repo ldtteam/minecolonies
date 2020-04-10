@@ -39,7 +39,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             return 0;
         }
 
-        player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 0);
+        player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.resetsupply"), true);
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.resetsupply");
         return 1;

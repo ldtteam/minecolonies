@@ -70,7 +70,12 @@ public enum RequestState
     /**
      * State used to indicate that a request is cancelled overruled, yet processing is still continuing to ensure proper cleanup.
      */
-    FINALIZING;
+    FINALIZING,
+
+    /**
+     * State used to indicate a truly failed request.
+     */
+    FAILED;
 
     /**
      * Index list used to read and write from NBT

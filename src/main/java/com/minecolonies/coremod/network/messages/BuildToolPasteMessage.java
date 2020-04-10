@@ -11,13 +11,13 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
@@ -45,8 +45,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.INSTANT_PLACEMENT;
-import static com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool.PLACEMENT_NBT;
+import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
+import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -346,7 +346,7 @@ public class BuildToolPasteMessage implements IMessage
             building.setStyle(sn.getStyle());
             building.setRotation(rotation);
 
-            if (!(building instanceof PostBox))
+            if (!(building instanceof IRSComponent))
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);

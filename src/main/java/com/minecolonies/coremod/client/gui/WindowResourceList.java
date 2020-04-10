@@ -1,17 +1,16 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -20,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +106,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     {
         if (this.builder == null)
         {
-            Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.resourcescroll.nobuilder"));
+            Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"));
             close();
             return;
         }
@@ -117,7 +117,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.resourcescroll.null"));
+            Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"));
             close();
             return;
         }

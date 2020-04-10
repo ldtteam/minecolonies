@@ -1,7 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.util.MathUtils;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -68,16 +66,6 @@ public final class ColonyConstants
      * How often the colony updates day/nighttime in ticks.
      */
     public static final int UPDATE_DAYTIME_INTERVAL = 20;
-
-    /**
-     * Distance of when to add new subscribers.
-     */
-    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().workingRangeTownHallChunks.get() * 16 + 16D);
-
-    /**
-     * Distance of when to remove old subscribers.
-     */
-    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().workingRangeTownHallChunks.get() * 16 * 2D);
 
     /**
      * Size of a chunk.

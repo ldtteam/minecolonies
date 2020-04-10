@@ -16,6 +16,8 @@ import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,16 +30,6 @@ import java.util.Map;
  */
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
-    /**
-     * Placement key for item nbt
-     */
-    public static String PLACEMENT_NBT = "Placement";
-
-    /**
-     * Value for instant placed schematics.
-     */
-    public static String INSTANT_PLACEMENT = "instant";
-
     /**
      * Creates a window build tool for a specific structure.
      *
@@ -120,7 +112,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              Settings.instance.getActiveStructure().getSize(Rotation.NONE, Mirror.NONE),
               placementErrorList,
               Minecraft.getInstance().player))
             {
@@ -134,7 +126,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()),
+              Settings.instance.getActiveStructure().getSize(Rotation.NONE, Mirror.NONE),
               placementErrorList,
               Minecraft.getInstance().player))
             {

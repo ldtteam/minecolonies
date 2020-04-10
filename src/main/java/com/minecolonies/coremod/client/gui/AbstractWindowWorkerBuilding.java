@@ -170,7 +170,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      *
      * @param button the clicked button.
      */
-    private void hireClicked(@NotNull final Button button)
+    protected void hireClicked(@NotNull final Button button)
     {
         if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
         {
