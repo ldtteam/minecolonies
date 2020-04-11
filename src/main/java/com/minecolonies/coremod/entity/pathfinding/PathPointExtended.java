@@ -21,6 +21,13 @@ public class PathPointExtended extends PathPoint
     private Direction ladderFacing = Direction.DOWN;
 
     /**
+     * Rails params.
+     */
+    private boolean onRails;
+    private boolean railsEntry;
+    private boolean railsExit;
+
+    /**
      * Instantiates the pathPoint with a position.
      *
      * @param pos the position.
@@ -68,6 +75,58 @@ public class PathPointExtended extends PathPoint
     public void setLadderFacing(final Direction ladderFacing)
     {
         this.ladderFacing = ladderFacing;
+    }
+
+    /**
+     * Set if it is on rails.
+     * @param isOnRails
+     */
+    public void setOnRails(final boolean isOnRails)
+    {
+        this.onRails = isOnRails;
+    }
+
+    /**
+     * Set the rails entry.
+     */
+    public void setRailsEntry()
+    {
+        this.railsEntry = true;
+    }
+
+    /**
+     * Set the rails exit.
+     */
+    public void setRailsExit()
+    {
+        this.railsExit = true;
+    }
+
+    /**
+     * Whether this is on rails.
+     * @return true if so.
+     */
+    public boolean isOnRails()
+    {
+        return onRails;
+    }
+
+    /**
+     * Whether this is the rails entry.
+     * @return true if so.
+     */
+    public boolean isRailsEntry()
+    {
+        return railsEntry;
+    }
+
+    /**
+     * Whether this is the rails exit.
+     * @return true if so.
+     */
+    public boolean isRailsExit()
+    {
+        return railsExit;
     }
 
     @Override

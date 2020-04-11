@@ -70,6 +70,18 @@ public final class ResearchConstants
     public static final String DOUBLE_ARROWS = "Double Arrows";
     public static final String BLOCK_ATTACKS = "Block Attacks";
 
+    public static final String TEACHING = "Teaching";
+    public static final String GROWTH = "Growth";
+    public static final String CAP = "Citizen-Cap";
+    public static final String RAILS = "Rails";
+    public static final String WALKING = "Walking";
+
+    public static final String HEALTH = "Health";
+    public static final String REGENERATION = "Regeneration";
+    public static final String SATLIMIT = "Healing Saturation Limit";
+    public static final String HAPPINESS = "Happiness";
+    public static final String SATURATION = "Saturation";
+
     /**
      * Private constructor to hide implicit public one.
      */

@@ -209,6 +209,8 @@
   "minecolonies.config.dynamictreeharvestsize.comment": "Harvest trunk-size for dynamic trees:1-8. [Default: 5]",
   "minecolonies.config.pathfindingdebugdraw": "Pathfinding Debug Draw",
   "minecolonies.config.pathfindingdebugdraw.comment": "Draw pathfinding paths (might be laggy). [Default: false]",
+  "minecolonies.config.minimumRailsToPath": "Minmum Rails",
+  "minecolonies.config.minimumRailsToPath.comment": "Minimum number of consecutive rails for citizens to use them. [Default: 5]",
   "minecolonies.config.pathfindingdebugverbosity": "Pathfinding Debug Verbosity",
   "minecolonies.config.pathfindingdebugverbosity.comment": "Verbosity of pathfinding. [Default: 0]",
   "minecolonies.config.pathfindingmaxthreadcount": "Pathfinding Max Thread Count",
@@ -277,7 +279,9 @@
   "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
   "tile.blockhut.messagenotownhall": "You need to place a town hall first!",
 
-  "block.blockhuttownhall.messagemaxSize": "%d has reached max size",
+  "block.blockhuttownhall.messagemaxsize.config": "%d has reached max size. Edit the config file to be able to get more.",
+  "block.blockhuttownhall.messagemaxsize.research": "%d has reached max size. You can get more by researching in the university.",
+
   "block.blockhuttownhall.messagecolonistdead": "The colonist %s has died at %d %d %d of %s!",
   "block.blockhuttownhall.messageinvalidworld": "You can't place a town hall in this world type",
   "block.blockhuttownhall.messagetooclose": "Too close to existing town hall",
