@@ -1673,10 +1673,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (world.isRemote)
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
-            final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
-            if (effect != null)
+            if (colonyView != null)
             {
-                return effect.getEffect();
+                final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+                if (effect != null)
+                {
+                    return effect.getEffect();
+                }
             }
             return false;
         }
