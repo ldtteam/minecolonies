@@ -1,27 +1,24 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.ldtteam.blockout.controls.Image;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowTownHallColonyManage;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Hut for the town hall.
@@ -58,53 +55,54 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         return ModBuildings.townHall;
     }
 
+    /**
+     * Choose a different gui when no colony view, for colony overview and creation/deletion
+     *
+     * @param state
+     * @param worldIn
+     * @param pos
+     * @param player
+     * @param hand
+     * @param ray
+     * @return
+     */
     @Override
-    public void onBlockPlacedBy(
-      @NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    public ActionResultType onBlockActivated(
+      final BlockState state,
+      final World worldIn,
+      final BlockPos pos,
+      final PlayerEntity player,
+      final Hand hand,
+      final BlockRayTraceResult ray)
     {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+       /*
+        If the world is client, open the gui of the building
+         */
         if (worldIn.isRemote)
         {
-            return;
-        }
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
 
-        if (placer instanceof PlayerEntity)
-        {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, pos);
-            String style = Constants.DEFAULT_STYLE;
-            final TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if(tileEntity instanceof TileEntityColonyBuilding
-                 && !((AbstractTileEntityColonyBuilding) tileEntity).getStyle().isEmpty())
+            if (building != null
+                  && building.getColony() != null
+                  && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
-            }
-
-            if (colony == null || !IColonyManager.getInstance().isTooCloseToColony(worldIn, pos))
-            {
-                if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-                {
-                    final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
-
-                    if (ownedColony == null)
-                    {
-                        IColonyManager.getInstance().createColony(worldIn, pos, (PlayerEntity) placer, style);
-                    }
-                    else
-                    {
-                        ownedColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
-                    }
-                }
-                else
-                {
-                    IColonyManager.getInstance().createColony(worldIn, pos, (PlayerEntity) placer, style);
-                }
+                building.openGui(player.isShiftKeyDown());
             }
             else
             {
-                colony.setStyle(style);
-                colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
+                new WindowTownHallColonyManage(player, pos, worldIn).open();
             }
         }
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        return ActionResultType.SUCCESS;
     }
+
+    public static boolean canCreateColonyHere(World world, BlockPos pos, PlayerEntity placer)
+    {
+
+
+        return true;
+    }
+
+
+
 }

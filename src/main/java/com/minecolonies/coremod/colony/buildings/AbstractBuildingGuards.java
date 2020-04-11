@@ -78,7 +78,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The Bonus Health for each building level
      */
-    private static final int BONUS_HEALTH_PER_LEVEL = 2;
+    public static final int BONUS_HEALTH_PER_LEVEL = 2;
 
     /**
      * The health modifier which changes the HP
@@ -1015,7 +1015,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      *
      * @return the bonus health.
      */
-    private int getBonusHealth()
+    protected int getBonusHealth()
     {
         return getBuildingLevel() * BONUS_HEALTH_PER_LEVEL;
     }

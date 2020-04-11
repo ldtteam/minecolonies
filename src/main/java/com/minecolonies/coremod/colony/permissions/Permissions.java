@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.permissions;
 
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
@@ -9,11 +10,13 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Colony Permissions System.
@@ -187,6 +191,7 @@ public class Permissions implements IPermissions
         permissionMap.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
+        this.clearDirty();
         this.colony = colony;
     }
 
@@ -697,6 +702,36 @@ public class Permissions implements IPermissions
         }
         final GameProfile gameprofile = world.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
         //Check if the player already exists so that their rank isn't overridden
+
+        // Adds new subscribers
+        if (!world.isRemote() && gameprofile != null)
+        {
+            final ServerPlayerEntity playerEntity = (ServerPlayerEntity) world.getPlayerByUuid(gameprofile.getId());
+            if (playerEntity != null)
+            {
+                if (rank == Rank.OFFICER)
+                {
+                    colony.getPackageManager().addImportantColonyPlayer(playerEntity);
+                    colony.getPackageManager().updateSubscribers();
+                }
+                else
+                {
+                    // Check claim
+                    final Chunk chunk = world.getChunk(playerEntity.chunkCoordX, playerEntity.chunkCoordZ);
+
+                    final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                    if (colonyCap != null)
+                    {
+                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimension().getType().getId() == colony.getDimension())
+                        {
+                            colony.getPackageManager().addCloseSubscriber(playerEntity);
+                            colony.getPackageManager().updateSubscribers();
+                        }
+                    }
+                }
+            }
+        }
+
         return gameprofile != null && ownerUUID != gameprofile.getId() && addPlayer(gameprofile, rank);
     }
 
