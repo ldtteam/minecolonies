@@ -28,18 +28,23 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
+/**
+ * TownhallGUI for managing colony creation/deletion
+ */
 public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 {
-
     private static final String BUTTON_CLOSE  = "cancel";
     private static final String BUTTON_DELETE = "delete";
     private static final String BUTTON_CREATE = "create";
-
-    private final BlockPos pos;
+    private static final String TEXT_NEARBY   = "nearbycolony";
+    private static final String TEXT_OWN      = "owncolony";
+    private static final String TEXT_FEEDBACK = "creationpossible";
 
     /**
-     * Constructor for the skeleton class of the windows.
+     * Townhall position
      */
+    private final BlockPos pos;
+
     public WindowTownHallColonyManage(final PlayerEntity player, final BlockPos pos, final World world)
     {
         super(MOD_ID + TOWNHALL_COLONY_MANAGEMENT_GUI);
@@ -51,7 +56,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         if (existingColony != null)
         {
             // Colony here
-            findPaneOfTypeByID("nearbycolony", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.here",
+            findPaneOfTypeByID(TEXT_NEARBY, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.here",
               existingColony.getName(),
               existingColony.getPermissions().getOwnerName()));
         }
@@ -62,37 +67,37 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
             if (closeClonyID != 0)
             {
-                findPaneOfTypeByID("nearbycolony", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.near", closeClonyID));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.near", closeClonyID));
             }
             else
             {
                 // No close colony
-                findPaneOfTypeByID("nearbycolony", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.nonenearby"));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.nonenearby"));
             }
         }
 
         final IColony ownerColony = IColonyManager.getInstance().getIColonyByOwner(world, player);
         if (ownerColony != null)
         {
-            findPaneOfTypeByID("delete", ButtonImage.class).enable();
-            findPaneOfTypeByID("owncolony", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
+            findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
 
             if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
             {
-                findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
             }
             else
             {
-                findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existing"));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existing"));
             }
         }
         else
         {
-            findPaneOfTypeByID("owncolony", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.none"));
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.none"));
 
             if (existingColony != null || IColonyManager.getInstance().isTooCloseToColony(world, pos))
             {
-                findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.tooclose"));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.tooclose"));
             }
         }
 
@@ -101,20 +106,20 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
             if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
             {
-                findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
                   MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get()));
             }
             else if (spawnDistance > MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get())
             {
-                findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
                   MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get()));
             }
         }
 
-        if (findPaneOfTypeByID("creationpossible", Text.class).getTextContent().isEmpty())
+        if (findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).getTextContent().isEmpty())
         {
-            findPaneOfTypeByID("create", ButtonImage.class).enable();
-            findPaneOfTypeByID("creationpossible", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.allowed.create"));
+            findPaneOfTypeByID(BUTTON_CREATE, ButtonImage.class).enable();
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.allowed.create"));
         }
     }
 
@@ -147,7 +152,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     }
 
     /**
-     * Finds the first nearby colony in the range
+     * Finds the first nearby colony claim in the range
      *
      * @param world world to use
      * @param start start position

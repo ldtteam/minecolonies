@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Wrapper class for chunk pos and
+ * Wrapper class for chunk pos and colony cap data
  */
 public class ChunkCapData
 {

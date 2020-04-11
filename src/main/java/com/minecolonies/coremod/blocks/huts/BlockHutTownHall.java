@@ -95,14 +95,4 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         }
         return ActionResultType.SUCCESS;
     }
-
-    public static boolean canCreateColonyHere(World world, BlockPos pos, PlayerEntity placer)
-    {
-
-
-        return true;
-    }
-
-
-
 }

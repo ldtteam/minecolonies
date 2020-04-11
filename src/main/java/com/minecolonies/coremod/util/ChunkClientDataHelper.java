@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.util.Log;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class ChunkClientDataHelper
             final ChunkCapData chunkCapData = iterator.next();
             if (chunk.getPos().x == chunkCapData.x && chunk.getPos().z == chunkCapData.z)
             {
-                Log.getLogger().info("Loading cached data for chunk:" + chunk.getPos());
                 applyCap(chunkCapData, chunk);
                 iterator.remove();
             }
