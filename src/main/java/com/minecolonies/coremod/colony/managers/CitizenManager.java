@@ -25,6 +25,8 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -39,6 +41,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.research.util.ResearchConstants.CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.GROWTH;
 import static com.minecolonies.api.util.constant.ColonyConstants.HAPPINESS_FACTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.WELL_SATURATED_LIMIT;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -252,10 +256,20 @@ public class CitizenManager implements ICitizenManager
 
             if (getMaxCitizens() == getCitizens().size() && !force)
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "block.blockHutTownHall.messageMaxSize",
-                  colony.getName());
+                if (maxCitizensFromResearch() <= getCitizens().size())
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessagePlayerEntities(),
+                      "block.blockhuttownhall.messagemaxsize.research",
+                      colony.getName());
+                }
+                else
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessagePlayerEntities(),
+                      "block.blockhuttownhall.messagemaxsize.config",
+                      colony.getName());
+                }
             }
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
@@ -407,13 +421,28 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return Math.min(maxCitizens, MineColonies.getConfig().getCommon().maxCitizenPerColony.get());
+        return (int) Math.min(maxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getCommon().maxCitizenPerColony.get()));
     }
 
     @Override
     public int getPotentialMaxCitizens()
     {
-        return Math.min(potentialMaxCitizens, MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxCitizenPerColony.get());
+        return (int) Math.min(potentialMaxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getCommon().maxCitizenPerColony.get()));
+    }
+
+    /**
+     * Get the max citizens based on the research.
+     * @return the max.
+     */
+    private double maxCitizensFromResearch()
+    {
+        double max = 25;
+        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
+        if (effect != null)
+        {
+            max = effect.getEffect();
+        }
+        return max;
     }
 
     /**

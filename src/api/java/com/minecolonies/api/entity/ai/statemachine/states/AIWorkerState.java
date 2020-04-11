@@ -527,7 +527,14 @@ public enum AIWorkerState implements IAIState
 
     FREE_CURE(true),
 
-    CURE_PLAYER(true);
+    CURE_PLAYER(true),
+
+    /*
+### School related ###
+     */
+    TEACH(true),
+
+    RECESS(true);
 
     /**
      * Is it okay to eat.

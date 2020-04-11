@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to manage the postbox building block.
  */
-public class PostBox extends AbstractBuilding
+public class PostBox extends AbstractBuilding implements IRSComponent
 {
     /**
      * Description of the block used to set this block.

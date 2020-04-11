@@ -9,6 +9,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -61,9 +62,14 @@ public abstract class AbstractPathJob implements Callable<Path>
     //  Job rules/configuration
     private          boolean            allowSwimming                = true;
     //  May be faster, but can produce strange results
-    private          boolean            allowJumpPointSearchTypeWalk = false;
+    private          boolean            allowJumpPointSearchTypeWalk;
     private          int                totalNodesAdded              = 0;
     private          int                totalNodesVisited            = 0;
+
+    /**
+     * If the citizen can path on rails.
+     */
+    private final boolean canPathOnRails;
 
     /**
      * Are there hard xz restrictions.
@@ -132,6 +138,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesPath = new HashSet<>();
         }
         this.entity = new WeakReference<>(entity);
+        this.canPathOnRails = entity instanceof EntityCitizen && ((EntityCitizen) entity).canPathOnRails();
     }
 
     /**
@@ -173,6 +180,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesPath = new HashSet<>();
         }
         this.entity = new WeakReference<>(entity);
+        this.canPathOnRails = entity instanceof EntityCitizen && ((EntityCitizen) entity).canPathOnRails();
     }
 
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
@@ -309,9 +317,11 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
      * @param onPath     checks if the node is on a path.
+     * @param onRails    checks if the node is a rail block.
+     * @param railsExit the exit of the rails.
      * @return cost to move from the parent to the new position.
      */
-    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final BlockPos blockPos)
+    protected double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath, final boolean onRails, final boolean railsExit, final BlockPos blockPos)
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
@@ -324,6 +334,16 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (onPath)
         {
             cost *= ON_PATH_COST;
+        }
+
+        if (onRails)
+        {
+            cost *= ON_RAIL_COST;
+        }
+
+        if (railsExit)
+        {
+            cost *= RAILS_EXIT_COST;
         }
 
         if (isSwimming)
@@ -565,10 +585,15 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
         //  fudge that value later on for cutoff purposes
         int pathLength = 0;
+        int railsLength = 0;
         @Nullable Node node = targetNode;
         while (node.parent != null)
         {
             ++pathLength;
+            if (node.isOnRails())
+            {
+                ++railsLength;
+            }
             node = node.parent;
         }
 
@@ -594,6 +619,22 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
+            if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
+            {
+                p.setOnRails(node.isOnRails());
+                if (p.isOnRails() && !node.parent.isOnRails())
+                {
+                    p.setRailsEntry();
+                }
+                else if (p.isOnRails() && points.length > pathLength + 1)
+                {
+                    final PathPointExtended point = ((PathPointExtended) points[pathLength + 1]);
+                    if (!point.isOnRails())
+                    {
+                        point.setRailsExit();
+                    }
+                }
+            }
 
             //  Climbing on a ladder?
             if (nextInPath != null && onALadder(node, nextInPath, pos))
@@ -719,8 +760,10 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.down()).getBlock());
+        final boolean onRails = canPathOnRails && world.getBlockState(pos).getBlock() instanceof AbstractRailBlock;
+        final boolean railsExit = !onRails && parent != null && parent.isOnRails();
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, pos);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad, onRails, railsExit, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
@@ -728,6 +771,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (node == null)
         {
             node = createNode(parent, pos, nodeKey, isSwimming, heuristic, cost, score);
+            node.setOnRails(onRails);
         }
         else if (updateCurrentNode(parent, node, heuristic, cost, score))
         {
