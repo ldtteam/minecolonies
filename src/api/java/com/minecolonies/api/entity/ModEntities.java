@@ -3,6 +3,7 @@ package com.minecolonies.api.entity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.*;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -37,4 +38,7 @@ public class ModEntities
 
     @ObjectHolder("sittingentity")
     public static EntityType<?> SITTINGENTITY;
+
+    @ObjectHolder("minecart")
+    public static EntityType<AbstractMinecartEntity> MINECART;
 }

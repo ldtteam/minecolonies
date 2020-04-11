@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.item.ItemStack;
@@ -251,7 +252,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
+        if ((block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack) && (!(block instanceof AbstractSignBlock)))
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)

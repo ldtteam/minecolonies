@@ -35,11 +35,15 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
@@ -84,6 +88,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -920,8 +925,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null && getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
         {
-            int healAmount = 1;
-            if (citizenData.getSaturation() >= FULL_SATURATION)
+            double limitDecrease = 0;
+            final AdditionModifierResearchEffect satLimitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATLIMIT, AdditionModifierResearchEffect.class);
+            if (satLimitDecrease != null)
+            {
+                limitDecrease = satLimitDecrease.getEffect();
+            }
+
+            double healAmount = 1;
+            if (citizenData.getSaturation() >= FULL_SATURATION - limitDecrease)
             {
                 healAmount += 1;
             }
@@ -930,7 +942,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 healAmount = 0;
             }
 
-            heal(healAmount);
+            final AdditionModifierResearchEffect healEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(REGENERATION, AdditionModifierResearchEffect.class);
+            if (healEffect != null)
+            {
+                healAmount *= (1.0 + healEffect.getEffect());
+            }
+
+            heal((float) healAmount);
             citizenData.markDirty();
         }
     }
@@ -1185,7 +1203,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean startRiding(final Entity entity, final boolean force)
     {
-        if (entity instanceof SittingEntity)
+        if (entity instanceof SittingEntity || force)
         {
             return super.startRiding(entity, force);
         }
@@ -1449,6 +1467,19 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
+
+        final MultiplierModifierResearchEffect speedEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+        if (speedEffect != null)
+        {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+        }
+
+        final AdditionModifierResearchEffect healthEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
+        if (healthEffect != null)
+        {
+            final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
+            AttributeModifierUtils.addHealthModifier(this, healthModLevel);
+        }
     }
 
     @Override
@@ -1631,6 +1662,33 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         citizenColonyHandler.onCitizenRemoved();
         super.remove();
+    }
+
+    /**
+     * A boolean check to test if the citizen can path on rails.
+     * @return true if so.
+     */
+    public boolean canPathOnRails()
+    {
+        if (world.isRemote)
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+            if (colonyView != null)
+            {
+                final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+                if (effect != null)
+                {
+                    return effect.getEffect();
+                }
+            }
+            return false;
+        }
+        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+        if (effect != null)
+        {
+            return effect.getEffect();
+        }
+        return false;
     }
 
     /**

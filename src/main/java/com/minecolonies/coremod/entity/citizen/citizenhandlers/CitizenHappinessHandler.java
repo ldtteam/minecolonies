@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -24,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -445,6 +448,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         }
 
         double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier + healthModifier;
+
+        final AdditionModifierResearchEffect happinessIncrease = citizen.getColony().getResearchManager().getResearchEffects().getEffect(HAPPINESS, AdditionModifierResearchEffect.class);
+        if (happinessIncrease != null)
+        {
+            value *= (1.0 + happinessIncrease.getEffect());
+        }
+
         if (value > MAX_HAPPINESS)
         {
             value = MAX_HAPPINESS;
