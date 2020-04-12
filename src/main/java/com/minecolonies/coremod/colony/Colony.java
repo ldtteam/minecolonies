@@ -295,6 +295,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
+            this.dimensionId = world.getDimension().getType().getId();
             onWorldLoad(world);
             checkOrCreateTeam();
         }

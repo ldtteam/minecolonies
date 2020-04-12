@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -20,7 +19,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
@@ -121,34 +119,22 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_CREATE, ButtonImage.class).enable();
             findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.allowed.create"));
         }
+
+        registerButton(BUTTON_CLOSE, () -> close());
+        registerButton(BUTTON_CREATE, () -> onCreate());
+        registerButton(BUTTON_DELETE, () -> new WindowTownHallColonyDelete().open());
     }
 
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
+    /**
+     * On create button
+     */
+    public void onCreate()
     {
-        switch (button.getID())
-        {
-            case BUTTON_CLOSE:
-            {
-                close();
-                return;
-            }
-            case BUTTON_CREATE:
-            {
-                new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
-                Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player.getPosition(),
-                  SoundEvents.BLOCK_CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
-                Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
-                close();
-
-                return;
-            }
-            case BUTTON_DELETE:
-            {
-                new WindowTownHallColonyDelete().open();
-            }
-            default:
-        }
+        new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
+        Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player.getPosition(),
+          SoundEvents.BLOCK_CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
+        Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
+        close();
     }
 
     /**
