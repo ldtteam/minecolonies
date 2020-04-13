@@ -39,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -670,7 +671,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     public boolean isCrop(final Block block)
     {
-        return block instanceof IGrowable && block instanceof CropsBlock;
+        return block instanceof CropsBlock;
+    }
+
+    @Override
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FARMING, MultiplierModifierResearchEffect.class);
+        if (effect == null)
+        {
+            return drops;
+        }
+
+        final List<ItemStack> newDrops = new ArrayList<>();
+        for (final ItemStack stack: drops)
+        {
+            final ItemStack drop = stack.copy();
+            if (worker.getRandom().nextDouble() < effect.getEffect())
+            {
+                drop.setCount(drop.getCount() * 2);
+            }
+            newDrops.add(drop);
+        }
+
+        return newDrops;
     }
 
     /**
@@ -693,7 +717,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         final NonNullList<ItemStack> drops = NonNullList.create();
-        state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune));
+        state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune).withLuck(fortune).withParameter(LootParameters.TOOL, tool).withParameter(LootParameters.POSITION, pos));
         for (final ItemStack item : drops)
         {
             final ItemStack drop = item.copy();

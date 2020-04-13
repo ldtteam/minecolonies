@@ -56,7 +56,7 @@ public class ResearchInitializer
         fertilizer.addChild(magicCompost);
 
         final GlobalResearch hot = new GlobalResearch("hot", "technology", "Hot!", 1, new UnlockBuildingResearchEffect("Smeltery", true));
-        biodegradable.setRequirement(new BuildingResearchRequirement(2, "miner"));
+        hot.setRequirement(new BuildingResearchRequirement(2, "miner"));
 
         final GlobalResearch isthisredstone = new GlobalResearch("isthisredstone", "technology", "Is this Redstone?", 2, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1));
         bonemeal.setRequirement(new BuildingResearchRequirement(3, "miner"));
@@ -162,7 +162,7 @@ public class ResearchInitializer
         steelbracing.addChild(diamondcoated);
 
         final GlobalResearch ability = new GlobalResearch("ability", "technology", "Ability", 2, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.1));
-        ability.setRequirement(new BuildingResearchRequirement(1, "miner4"));
+        ability.setRequirement(new BuildingResearchRequirement(1, "miner"));
 
         final GlobalResearch skills = new GlobalResearch("skills", "technology", "Skills", 3, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.25));
         skills.setRequirement(new BuildingResearchRequirement(2, "miner5"));
@@ -182,7 +182,7 @@ public class ResearchInitializer
         seemsautomatic.addChild(madness);
 
         final GlobalResearch veinminer = new GlobalResearch("veinminer", "technology", "Veinminer", 2, new MultiplierModifierResearchEffect(MORE_ORES, 0.1));
-        veinminer.setRequirement(new BuildingResearchRequirement(1, "miner4"));
+        veinminer.setRequirement(new BuildingResearchRequirement(1, "miner"));
 
         final GlobalResearch goodveins = new GlobalResearch("goodveins", "technology", "Good Veins", 3, new MultiplierModifierResearchEffect(MORE_ORES, 0.25));
         goodveins.setRequirement(new BuildingResearchRequirement(2, "miner5"));

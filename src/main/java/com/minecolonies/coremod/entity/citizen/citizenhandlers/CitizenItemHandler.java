@@ -239,7 +239,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         final MultiplierModifierResearchEffect effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
-            chance = 0;
+            chance = effect.getEffect();
         }
 
         if (citizen.getRandom().nextDouble() < chance)

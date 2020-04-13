@@ -192,7 +192,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
 
             //create list for all item drops to be stored in
-            final List<ItemStack> localItems = new ArrayList<ItemStack>();
+            List<ItemStack> localItems = new ArrayList<ItemStack>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
             if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
@@ -206,6 +206,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             {
                 localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, tool));
             }
+
+            localItems = increaseBlockDrops(localItems);
 
             //add the drops to the citizen
             for (final ItemStack item : localItems)
@@ -233,6 +235,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
+    }
+
+    /**
+     * Potentially increase the blockdrops.
+     * To be overriden by the worker.
+     * @param drops the drops.
+     */
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        return drops;
     }
 
     /**

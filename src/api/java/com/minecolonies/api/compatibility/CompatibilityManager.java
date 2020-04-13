@@ -480,7 +480,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ItemStack getRandomLuckyOre(final double chanceBonus)
     {
-        if (random.nextInt(ONE_HUNDRED_PERCENT) <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get() * chanceBonus)
+        if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get() * chanceBonus)
         {
             return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
