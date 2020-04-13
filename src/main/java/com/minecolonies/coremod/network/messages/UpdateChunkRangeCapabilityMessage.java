@@ -2,11 +2,13 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.coremod.util.ChunkCapData;
+import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.LogicalSide;
@@ -28,7 +30,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     /**
      * The colonies tags to send over.
      */
-    private final List<Tuple<Tuple<Integer, Integer>, Integer>> colonies = new ArrayList<>();
+    private final List<ChunkCapData> caps = new ArrayList<>();
 
     /**
      * Empty constructor used when registering the
@@ -46,7 +48,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
      * @param zC    the z pos.
      * @param range the range.
      */
-    public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range)
+    public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
     {
         for (int x = -range; x <= range; x++)
         {
@@ -54,13 +56,13 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
             {
                 final int chunkX = xC + x;
                 final int chunkZ = zC + z;
-                if (world.isBlockLoaded(new BlockPos(chunkX * BLOCKS_PER_CHUNK, 0, chunkZ * BLOCKS_PER_CHUNK)))
+                if (!checkLoaded || world.isBlockLoaded(new BlockPos(chunkX * BLOCKS_PER_CHUNK, 0, chunkZ * BLOCKS_PER_CHUNK)))
                 {
                     final Chunk chunk = world.getChunk(chunkX, chunkZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
-                        colonies.add(new Tuple<>(new Tuple<>(chunkX, chunkZ), cap.getOwningColony()));
+                        caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getAllCloseColonies()));
                     }
                 }
             }
@@ -73,19 +75,17 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            colonies.add(new Tuple<>(new Tuple<>(buf.readInt(), buf.readInt()), buf.readInt()));
+            caps.add(ChunkCapData.fromBytes(buf));
         }
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeInt(colonies.size());
-        for (final Tuple<Tuple<Integer, Integer>, Integer> c : colonies)
+        buf.writeInt(caps.size());
+        for (final ChunkCapData c : caps)
         {
-            buf.writeInt(c.getA().getA());
-            buf.writeInt(c.getA().getB());
-            buf.writeInt(c.getB());
+            c.toBytes(buf);
         }
     }
 
@@ -100,15 +100,16 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ClientWorld world = Minecraft.getInstance().world;
-        for (final Tuple<Tuple<Integer, Integer>, Integer> c : colonies)
+        for (final ChunkCapData data : caps)
         {
-            final Chunk chunk = world.getChunk(c.getA().getA(), c.getA().getB());
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-            if (cap != null)
+            if (!world.getChunkProvider().isChunkLoaded(new ChunkPos(data.x, data.z)))
             {
-                cap.setOwningColony(c.getB(), chunk);
-                cap.addColony(c.getB(), chunk);
+                ChunkClientDataHelper.addCapData(data);
+                continue;
             }
+
+            final Chunk chunk = world.getChunk(data.x, data.z);
+            ChunkClientDataHelper.applyCap(data, chunk);
         }
     }
 }

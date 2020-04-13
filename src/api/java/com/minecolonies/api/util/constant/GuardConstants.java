@@ -110,7 +110,7 @@ public final class GuardConstants
     /**
      * Basic bonus hp for knights
      */
-    public static final int KNIGHT_HP_BONUS = 5;
+    public static final int KNIGHT_HP_BONUS = 15;
 
     /**
      * This knight's max distance for attacking.
