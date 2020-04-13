@@ -214,6 +214,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             }
         }
 
+        triggerMinedBlock(curBlockState);
+
         if (blockBreakAction == null)
         {
             //Break the block
@@ -231,6 +233,15 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
+    }
+
+    /**
+     * Trigger for miners if they want to do something specific per mined block.
+     * @param blockToMine the mined block.
+     */
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    {
+
     }
 
     /**

@@ -39,9 +39,9 @@ public class ResearchInitializer
          * unlock stonesmelter new UnlockBuildingResearchEffect("Stonesmelter", true)
          * less tool usage new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.5)
          * blockplace speed new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.1)
-         * todo more ores new MultiplierModifierResearchEffect(MORE_ORES, 0.1)
+         * more ores new MultiplierModifierResearchEffect(MORE_ORES, 0.1)
          * unlock work in rain new UnlockAbility(WORKING_IN_RAIN, true)
-         * todo effect for sleep less new MultiplierModifierResearchEffect(SLEEP_LESS, 0.5)
+         * effect for sleep less new MultiplierModifierResearchEffect(SLEEP_LESS, 0.5)
          */
     }
 
