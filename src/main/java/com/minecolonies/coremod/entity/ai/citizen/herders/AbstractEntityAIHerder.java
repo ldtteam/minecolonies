@@ -533,9 +533,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
         {
             worker.swingArm(Hand.MAIN_HAND);
             animal.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
-            worker.getHeldItemMainhand().damageItem(1, animal, (i) -> {
-                i.sendBreakAnimation(Hand.MAIN_HAND);
-            });
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             worker.decreaseSaturationForAction();
         }
     }

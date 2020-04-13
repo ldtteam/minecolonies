@@ -17,6 +17,32 @@ public class ResearchInitializer
         buildCombatTree(researchTree);
 
         buildCivilianTree(researchTree);
+
+        buildTechnologyTree(researchTree);
+    }
+
+    private static void buildTechnologyTree(final IGlobalResearchTree researchTree)
+    {
+        /*
+         * Unlock Composter new UnlockBuildingResearchEffect("Composter", true)
+         * Unlock Florist new UnlockBuildingResearchEffect("Florist", true)
+         * Farming bonus new MultiplierModifierResearchEffect(FARMING, 0.1)
+         * Unlock Smelter new UnlockBuildingResearchEffect("Smelter", true)
+         * Block break speed new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1)
+         * Unlock stonemason new UnlockBuildingResearchEffect("Stonemason", true)
+         * unlock crusher new UnlockBuildingResearchEffect("Crusher", true)
+         * unlock sawmill new UnlockBuildingResearchEffect("Sawmill", true)
+         * unlock siever new UnlockBuildingResearchEffect("Sifter", true)
+         * + minimum stock new MultiplierModifierResearchEffect(MINIMUM_STOCK, 0.5)
+         * + recipes new MultiplierModifierResearchEffect(RECIPES, 0.5)
+         * unlock blacksmith new UnlockBuildingResearchEffect("Blacksmith", true)
+         * unlock stonesmelter new UnlockBuildingResearchEffect("Stonesmelter", true)
+         * less tool usage new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.5)
+         * blockplace speed new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.1)
+         * todo more ores new MultiplierModifierResearchEffect(MORE_ORES, 0.1)
+         * unlock work in rain new UnlockAbility(WORKING_IN_RAIN, true)
+         * todo effect for sleep less new MultiplierModifierResearchEffect(SLEEP_LESS, 0.5)
+         */
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)

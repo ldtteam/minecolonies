@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARMOR_DURABILITY;
+import static com.minecolonies.api.research.util.ResearchConstants.TOOL_DURABILITY;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_PITCH_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
@@ -233,6 +234,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             return;
         }
+
+        double chance = 0;
+        final MultiplierModifierResearchEffect effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            chance = 0;
+        }
+
+        if (citizen.getRandom().nextDouble() < chance)
+        {
+            return;
+        }
+
         heldItem.damageItem(damage, citizen, (i) -> {
             i.sendBreakAnimation(Hand.MAIN_HAND);
         });

@@ -184,9 +184,10 @@ public interface ICompatibilityManager
 
     /**
      * Get a random lucky ore from a luckyblock.
+     * @param chanceBonus the chance bonus.
      * @return the lucky ore.
      */
-    ItemStack getRandomLuckyOre();
+    ItemStack getRandomLuckyOre(final double chanceBonus);
 
     /**
      * Get a random enchantment book for a certain building level.

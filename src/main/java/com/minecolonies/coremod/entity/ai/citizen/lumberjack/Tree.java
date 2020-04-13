@@ -174,6 +174,11 @@ public class Tree
      */
     public ItemStack calcSapling(final ServerWorld world)
     {
+        if (topLog == null)
+        {
+            return ItemStack.EMPTY;
+        }
+
         ItemStack sapling;
 
         // Try leaf directly above the tree base first
