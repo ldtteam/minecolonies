@@ -427,7 +427,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             patrolTimer--;
         }
 
-        if (!arrivedAtPatrol.isEmpty() && (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0))
+        if (patrolTimer <= 0)
         {
             // Next patrol point
             startPatrolNext();
@@ -458,6 +458,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private void startPatrolNext()
     {
         getNextPatrolTarget(true);
+        patrolTimer = 5;
 
         for (final ICitizenData curguard : getAssignedCitizen())
         {

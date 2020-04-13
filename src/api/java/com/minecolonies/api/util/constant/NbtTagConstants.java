@@ -426,6 +426,7 @@ public final class NbtTagConstants
     public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     public static final String TAG_IS_SLIME_TREE         = "slimeTree";
     public static final String TAG_DYNAMIC_TREE          = "dynamicTree";
+    public static final String TAG_SAPLING               = "treesapling";
     public static final String TAG_LOGS                  = "Logs";
     public static final String TAG_STUMPS                = "Stumps";
     public static final String TAG_TOP_LOG               = "topLog";
