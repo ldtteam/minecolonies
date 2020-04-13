@@ -101,7 +101,10 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void addStock()
     {
-        new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
+        if (!building.hasReachedLimit())
+        {
+            new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
+        }
     }
 
     @Override

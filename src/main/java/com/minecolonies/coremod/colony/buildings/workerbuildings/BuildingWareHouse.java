@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
@@ -11,7 +12,11 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
@@ -419,9 +424,71 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public void removeMinimumStock(final ItemStack itemStack)
     {
         minimumStock.remove(new ItemStorage(itemStack));
+
+        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+        final IToken<?> token = getMatchingRequest(itemStack, list);
+        if (token != null)
+        {
+            getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
+        }
+
         markDirty();;
     }
 
+    //todo: Request system has a problem with enchanted items atm, let's dig into this!
+
+    /**
+     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
+     * - If not: Check if there is a request for this already.
+     * -> If not: Create a request.
+     * - If so: Check if there is a request for this still.
+     * -> If so: cancel it.
+     */
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        super.onColonyTick(colony);
+        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        {
+            final ItemStack itemStack = entry.getKey().getItemStack().copy();
+            final int count = getTileEntity().getItemCount(stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
+            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
+            final IToken<?> request = getMatchingRequest(itemStack, list);
+            if (delta > 0)
+            {
+                if (request == null)
+                {
+                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
+                    final Stack stack = new Stack(itemStack);
+                    createRequest(stack, false);
+                }
+            }
+            else if (request != null)
+            {
+                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+            }
+        }
+    }
+
+    /**
+     * Check if the building is already requesting this stack.
+     * @param stack the stack to check.
+     * @return the token if so.
+     */
+    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
+    {
+        for (final IToken<?> token : list)
+        {
+            final IRequest<?> iRequest = colony.getRequestManager().getRequestForToken(token);
+            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().isItemEqual(stack))
+            {
+                return token;
+            }
+        }
+        return null;
+    }
     /**
      * BuildWarehouse View.
      */
