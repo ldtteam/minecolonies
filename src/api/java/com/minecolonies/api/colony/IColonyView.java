@@ -376,7 +376,7 @@ public interface IColonyView extends IColony
     @Override
     World getWorld();
 
-    @Nullable
+    @NotNull
     @Override
     IRequestManager getRequestManager();
 

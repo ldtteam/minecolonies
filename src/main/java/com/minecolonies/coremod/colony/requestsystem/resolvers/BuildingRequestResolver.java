@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -69,11 +70,11 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     {
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
-        if (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId()))
+        if (building instanceof BuildingWareHouse
+              || (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId())))
         {
             return false;
         }
-
 
         return tileEntities.stream()
           .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
