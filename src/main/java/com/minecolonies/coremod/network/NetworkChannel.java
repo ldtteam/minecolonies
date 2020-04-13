@@ -137,6 +137,8 @@ public class NetworkChannel
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
+        registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
+        registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
