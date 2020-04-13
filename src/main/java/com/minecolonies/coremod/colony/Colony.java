@@ -1109,7 +1109,7 @@ public class Colony implements IColony
         return world;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public IRequestManager getRequestManager()
     {
