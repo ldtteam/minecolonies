@@ -109,7 +109,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The task of the guard, following the {@link GuardTask} enum.
      */
-    private GuardTask task = GuardTask.GUARD;
+    private GuardTask task = GuardTask.PATROL;
 
     /**
      * The position at which the guard should guard at.
@@ -561,7 +561,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         /**
          * The {@link GuardTask} of the guard.
          */
-        private GuardTask task = GuardTask.GUARD;
+        private GuardTask task = GuardTask.PATROL;
 
         /**
          * Position the guard should guard.
