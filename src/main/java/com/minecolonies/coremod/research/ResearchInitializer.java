@@ -23,26 +23,244 @@ public class ResearchInitializer
 
     private static void buildTechnologyTree(final IGlobalResearchTree researchTree)
     {
-        /*
-         * Unlock Composter new UnlockBuildingResearchEffect("Composter", true)
-         * Unlock Florist new UnlockBuildingResearchEffect("Florist", true)
-         * Farming bonus new MultiplierModifierResearchEffect(FARMING, 0.1)
-         * Unlock Smelter new UnlockBuildingResearchEffect("Smelter", true)
-         * Block break speed new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1)
-         * Unlock stonemason new UnlockBuildingResearchEffect("Stonemason", true)
-         * unlock crusher new UnlockBuildingResearchEffect("Crusher", true)
-         * unlock sawmill new UnlockBuildingResearchEffect("Sawmill", true)
-         * unlock siever new UnlockBuildingResearchEffect("Sifter", true)
-         * + minimum stock new MultiplierModifierResearchEffect(MINIMUM_STOCK, 0.5)
-         * + recipes new MultiplierModifierResearchEffect(RECIPES, 0.5)
-         * unlock blacksmith new UnlockBuildingResearchEffect("Blacksmith", true)
-         * unlock stonesmelter new UnlockBuildingResearchEffect("Stonesmelter", true)
-         * less tool usage new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.5)
-         * blockplace speed new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.1)
-         * more ores new MultiplierModifierResearchEffect(MORE_ORES, 0.1)
-         * unlock work in rain new UnlockAbility(WORKING_IN_RAIN, true)
-         * effect for sleep less new MultiplierModifierResearchEffect(SLEEP_LESS, 0.5)
-         */
+        final GlobalResearch biodegradable = new GlobalResearch("biodegradable", "technology", "Biodegradable", 1, new UnlockBuildingResearchEffect("Composter", true));
+        biodegradable.setRequirement(new BuildingResearchRequirement(3, "farmer"));
+
+        final GlobalResearch flowerpower = new GlobalResearch("flowerpower", "technology", "Flower power", 2, new UnlockBuildingResearchEffect("Florist", true));
+        flowerpower.setRequirement(new BuildingResearchRequirement(3, "composter"));
+
+        //final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "civilian", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
+        //rainbowheaven.setRequirement(new BuildingResearchRequirement(3, "florist"));
+
+        biodegradable.addChild(flowerpower);
+        //flowerpower.addChild(rainbowheaven);
+
+        final GlobalResearch bonemeal = new GlobalResearch("bonemeal", "technology", "Bonemeal", 2, new MultiplierModifierResearchEffect(FARMING, 0.1));
+        bonemeal.setRequirement(new BuildingResearchRequirement(4, "farmer"));
+
+        final GlobalResearch dung = new GlobalResearch("dung", "technology", "Dung", 3, new MultiplierModifierResearchEffect(FARMING, 0.25));
+        dung.setRequirement(new BuildingResearchRequirement(4, "farmer"));
+
+        final GlobalResearch compost = new GlobalResearch("compost", "technology", "Compost", 4, new MultiplierModifierResearchEffect(FARMING, 0.5));
+        compost.setRequirement(new BuildingResearchRequirement(5, "farmer"));
+
+        final GlobalResearch fertilizer = new GlobalResearch("fertilizer", "technology", "Fertilizer", 5, new MultiplierModifierResearchEffect(FARMING, 0.75));
+        fertilizer.setRequirement(new BuildingResearchRequirement(5, "composter"));
+
+        final GlobalResearch magicCompost = new GlobalResearch("magiccompost", "technology", "Magic Compost", 6, new MultiplierModifierResearchEffect(FARMING, 2.0));
+
+        biodegradable.addChild(bonemeal);
+        bonemeal.addChild(dung);
+        dung.addChild(compost);
+        compost.addChild(fertilizer);
+        fertilizer.addChild(magicCompost);
+
+        final GlobalResearch hot = new GlobalResearch("hot", "technology", "Hot!", 1, new UnlockBuildingResearchEffect("Smeltery", true));
+        biodegradable.setRequirement(new BuildingResearchRequirement(2, "miner"));
+
+        final GlobalResearch isthisredstone = new GlobalResearch("isthisredstone", "technology", "Is this Redstone?", 2, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1));
+        bonemeal.setRequirement(new BuildingResearchRequirement(3, "miner"));
+
+        final GlobalResearch redstonepowered = new GlobalResearch("redstonepowered", "technology", "Redstone powered", 3, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.25));
+        dung.setRequirement(new BuildingResearchRequirement(4, "miner"));
+
+        final GlobalResearch heavymachinery = new GlobalResearch("heavymachinery", "technology", "Heavy Machinery", 4, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.5));
+        compost.setRequirement(new BuildingResearchRequirement(5, "miner"));
+
+        final GlobalResearch whatisthisspeed = new GlobalResearch("whatisthisspeed", "technology", "What is this speed?", 5, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 1.0));
+        fertilizer.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
+
+        final GlobalResearch lightning = new GlobalResearch("lightning", "technology", "Lightning", 6, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 2.0));
+
+        hot.addChild(isthisredstone);
+        isthisredstone.addChild(redstonepowered);
+        redstonepowered.addChild(heavymachinery);
+        heavymachinery.addChild(whatisthisspeed);
+        whatisthisspeed.addChild(lightning);
+
+        final GlobalResearch theflintstones = new GlobalResearch("theflintstones", "technology", "The Flintstones", 2, new UnlockBuildingResearchEffect("Stonemason", true));
+        theflintstones.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
+
+        final GlobalResearch rockingroll = new GlobalResearch("rockingroll", "technology", "Rocking Roll", 3, new UnlockBuildingResearchEffect("Crusher", true));
+        rockingroll.setRequirement(new BuildingResearchRequirement(1, "stonemason"));
+
+        hot.addChild(theflintstones);
+        theflintstones.addChild(rockingroll);
+
+        //final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("GlassBlower", true));
+        //thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
+
+        //hot.addChild(thoselungs);
+
+        final GlobalResearch woodwork = new GlobalResearch("woodwork", "technology", "Woodwork", 1, new UnlockBuildingResearchEffect("Sawmill", true));
+        woodwork.setRequirement(new BuildingResearchRequirement(3, "lumberjack"));
+
+        final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Siever", true));
+        sieving.setRequirement(new BuildingResearchRequirement(3, "fisherman"));
+
+        final GlobalResearch space = new GlobalResearch("space", "technology", "Space", 3, new MultiplierModifierResearchEffect(RECIPES, 0.5));
+        space.setRequirement(new BuildingResearchRequirement(3, "miner"));
+
+        final GlobalResearch capacity = new GlobalResearch("capacity", "technology", "Capacity", 4, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 1.0));
+        capacity.setRequirement(new BuildingResearchRequirement(4, "miner"));
+
+        final GlobalResearch fullstock = new GlobalResearch("fullstock", "technology", "Full Stock!", 5, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 2.0));
+        fullstock.setRequirement(new BuildingResearchRequirement(5, "miner"));
+
+        woodwork.addChild(sieving);
+        sieving.addChild(space);
+        space.addChild(capacity);
+        capacity.addChild(fullstock);
+
+        final GlobalResearch memoryaid = new GlobalResearch("memoryaid", "technology", "Memory Aid", 2, new MultiplierModifierResearchEffect(RECIPES, 0.25));
+        memoryaid.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
+
+        final GlobalResearch cheatsheet = new GlobalResearch("cheatsheet", "technology", "Cheat Sheet", 3, new MultiplierModifierResearchEffect(RECIPES, 0.5));
+        cheatsheet.setRequirement(new BuildingResearchRequirement(2, "sawmill"));
+
+        final GlobalResearch recipebook = new GlobalResearch("recipebook", "technology", "Recipe book", 4, new MultiplierModifierResearchEffect(RECIPES, 1.0));
+        recipebook.setRequirement(new BuildingResearchRequirement(3, "sawmill"));
+
+        final GlobalResearch rtm = new GlobalResearch("rtm", "technology", "RTM", 5, new MultiplierModifierResearchEffect(RECIPES, 2.0));
+        rtm.setRequirement(new BuildingResearchRequirement(4, "sawmill"));
+
+        final GlobalResearch rainman = new GlobalResearch("rainman", "technology", "Rainman", 6, new UnlockAbilityResearchEffect(WORKING_IN_RAIN, true));
+
+        woodwork.addChild(memoryaid);
+        memoryaid.addChild(cheatsheet);
+        cheatsheet.addChild(recipebook);
+        recipebook.addChild(rtm);
+        rtm.addChild(rainman);
+
+        //final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
+        //stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
+
+        //woodwork.addChild(stringwork);
+
+        final GlobalResearch hittingiron = new GlobalResearch("hittingiron", "technology", "Hitting Iron!", 1, new UnlockBuildingResearchEffect("Blacksmith", true));
+        hittingiron.setRequirement(new BuildingResearchRequirement(3, "miner"));
+
+        final GlobalResearch stonecake = new GlobalResearch("stonecake", "technology", "Stone Cake", 2, new UnlockBuildingResearchEffect("Stonesmeltery", true));
+        stonecake.setRequirement(new BuildingResearchRequirement(1, "blacksmith"));
+
+        final GlobalResearch hardened = new GlobalResearch("hardened", "technology", "Hardened", 3, new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.1));
+        hardened.setRequirement(new BuildingResearchRequirement(2, "blacksmith"));
+
+        final GlobalResearch reinforced = new GlobalResearch("reinforced", "technology", "Reinforced", 4, new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.25));
+        reinforced.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
+
+        final GlobalResearch steelbracing = new GlobalResearch("steelbracing", "technology", "Steel Bracing", 5, new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.5));
+        steelbracing.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
+
+        final GlobalResearch diamondcoated = new GlobalResearch("diamondcoated", "technology", "Diamond Coated", 6, new MultiplierModifierResearchEffect(TOOL_DURABILITY, 0.9));
+        steelbracing.setRequirement(new BuildingResearchRequirement(5, "blacksmith"));
+
+        hittingiron.addChild(stonecake);
+        stonecake.addChild(hardened);
+        hardened.addChild(reinforced);
+        reinforced.addChild(steelbracing);
+        steelbracing.addChild(diamondcoated);
+
+        final GlobalResearch ability = new GlobalResearch("ability", "technology", "Ability", 2, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.1));
+        ability.setRequirement(new BuildingResearchRequirement(1, "miner4"));
+
+        final GlobalResearch skills = new GlobalResearch("skills", "technology", "Skills", 3, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.25));
+        skills.setRequirement(new BuildingResearchRequirement(2, "miner5"));
+
+        final GlobalResearch tools = new GlobalResearch("tools", "technology", "Tools", 4, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.5));
+        tools.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
+
+        final GlobalResearch seemsautomatic = new GlobalResearch("seemsautomatic", "technology", "Seems automatic", 5, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 1.0));
+        seemsautomatic.setRequirement(new BuildingResearchRequirement(5, "blacksmith"));
+
+        final GlobalResearch madness = new GlobalResearch("madness", "technology", "Madness!", 6, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 2.0));
+
+        hittingiron.addChild(ability);
+        ability.addChild(skills);
+        skills.addChild(tools);
+        tools.addChild(seemsautomatic);
+        seemsautomatic.addChild(madness);
+
+        final GlobalResearch veinminer = new GlobalResearch("veinminer", "technology", "Veinminer", 2, new MultiplierModifierResearchEffect(MORE_ORES, 0.1));
+        veinminer.setRequirement(new BuildingResearchRequirement(1, "miner4"));
+
+        final GlobalResearch goodveins = new GlobalResearch("goodveins", "technology", "Good Veins", 3, new MultiplierModifierResearchEffect(MORE_ORES, 0.25));
+        goodveins.setRequirement(new BuildingResearchRequirement(2, "miner5"));
+
+        final GlobalResearch richveins = new GlobalResearch("richveins", "technology", "Rich Veins", 4, new MultiplierModifierResearchEffect(MORE_ORES, 0.5));
+        richveins.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
+
+        final GlobalResearch amazingveins = new GlobalResearch("amazingveins", "technology", "Amazing Veins", 5, new MultiplierModifierResearchEffect(MORE_ORES, 1.0));
+        amazingveins.setRequirement(new BuildingResearchRequirement(5, "blacksmith"));
+
+        final GlobalResearch motherlode = new GlobalResearch("motherlode", "technology", "Motherlode", 6, new MultiplierModifierResearchEffect(MORE_ORES, 2.0));
+
+        hittingiron.addChild(veinminer);
+        veinminer.addChild(goodveins);
+        goodveins.addChild(richveins);
+        richveins.addChild(amazingveins);
+        amazingveins.addChild(motherlode);
+
+        //final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect("Mechanist", true));
+        //whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
+
+        //hittingiron.addChild(whatyaneed);
+
+        //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
+        //researchTree.addResearch(stringwork.getBranch(), stringwork);
+        //researchTree.addResearch(thoselungs.getBranch(), thoselungs);
+        //researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
+
+        researchTree.addResearch(veinminer.getBranch(), veinminer);
+        researchTree.addResearch(goodveins.getBranch(), goodveins);
+        researchTree.addResearch(richveins.getBranch(), richveins);
+        researchTree.addResearch(amazingveins.getBranch(), amazingveins);
+        researchTree.addResearch(motherlode.getBranch(), motherlode);
+
+        researchTree.addResearch(ability.getBranch(), ability);
+        researchTree.addResearch(skills.getBranch(), skills);
+        researchTree.addResearch(tools.getBranch(), tools);
+        researchTree.addResearch(seemsautomatic.getBranch(), seemsautomatic);
+        researchTree.addResearch(madness.getBranch(), madness);
+
+        researchTree.addResearch(hittingiron.getBranch(), hittingiron);
+        researchTree.addResearch(stonecake.getBranch(), stonecake);
+        researchTree.addResearch(hardened.getBranch(), hardened);
+        researchTree.addResearch(reinforced.getBranch(), reinforced);
+        researchTree.addResearch(steelbracing.getBranch(), steelbracing);
+        researchTree.addResearch(diamondcoated.getBranch(), diamondcoated);
+
+        researchTree.addResearch(memoryaid.getBranch(), memoryaid);
+        researchTree.addResearch(cheatsheet.getBranch(), cheatsheet);
+        researchTree.addResearch(recipebook.getBranch(), recipebook);
+        researchTree.addResearch(rtm.getBranch(), rtm);
+        researchTree.addResearch(rainman.getBranch(), rainman);
+
+        researchTree.addResearch(woodwork.getBranch(), woodwork);
+        researchTree.addResearch(sieving.getBranch(), sieving);
+        researchTree.addResearch(space.getBranch(), space);
+        researchTree.addResearch(capacity.getBranch(), capacity);
+        researchTree.addResearch(fullstock.getBranch(), fullstock);
+
+        researchTree.addResearch(theflintstones.getBranch(), theflintstones);
+        researchTree.addResearch(rockingroll.getBranch(), rockingroll);
+
+        researchTree.addResearch(hot.getBranch(), hot);
+        researchTree.addResearch(isthisredstone.getBranch(), isthisredstone);
+        researchTree.addResearch(redstonepowered.getBranch(), redstonepowered);
+        researchTree.addResearch(heavymachinery.getBranch(), heavymachinery);
+        researchTree.addResearch(whatisthisspeed.getBranch(), whatisthisspeed);
+        researchTree.addResearch(lightning.getBranch(), lightning);
+
+        researchTree.addResearch(biodegradable.getBranch(), biodegradable);
+        researchTree.addResearch(flowerpower.getBranch(), flowerpower);
+
+        researchTree.addResearch(bonemeal.getBranch(), bonemeal);
+        researchTree.addResearch(dung.getBranch(), dung);
+        researchTree.addResearch(compost.getBranch(), compost);
+        researchTree.addResearch(fertilizer.getBranch(), fertilizer);
+        researchTree.addResearch(magicCompost.getBranch(), magicCompost);
+
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)
@@ -471,7 +689,8 @@ public class ResearchInitializer
         evade.addChild(flee);
         flee.addChild(hotFoot);
 
-        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new AdditionModifierResearchEffect(NONE, 0));
+        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new AdditionModifierResearchEffect(SLEEP_LESS, 0.5));
+        accuracy.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
         accuracy.setOnlyChild(true);
 
         final GlobalResearch quickDraw = new GlobalResearch("quickdraw", "combat", "Quick Draw", 2, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
