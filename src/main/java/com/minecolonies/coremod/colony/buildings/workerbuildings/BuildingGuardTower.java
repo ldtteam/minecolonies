@@ -70,7 +70,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     @Override
     protected int getBonusHealth()
     {
-        return BONUS_HP_SINGLE_GUARD + getBuildingLevel() * BONUS_HEALTH_PER_LEVEL;
+        return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();
     }
 
     @Override
