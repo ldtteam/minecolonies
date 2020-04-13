@@ -340,7 +340,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> dung;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> compost;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fertilizer;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> magicCompost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> magiccompost;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightning;
 
     /**
@@ -1231,13 +1231,13 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:string*64"),
           s -> s instanceof String);
         this.space = defineList(builder, "space",
-          Collections.singletonList("minecolonies:rack*16"),
+          Collections.singletonList("minecolonies:blockminecoloniesrack*16"),
           s -> s instanceof String);
         this.capacity = defineList(builder, "capacity",
-          Collections.singletonList("minecolonies:rack*32"),
+          Collections.singletonList("minecolonies:blockminecoloniesrack*32"),
           s -> s instanceof String);
         this.fullstock = defineList(builder, "fullstock",
-          Collections.singletonList("minecolonies:rack*64"),
+          Collections.singletonList("minecolonies:blockminecoloniesrack*64"),
           s -> s instanceof String);
 
         this.theflintstones = defineList(builder, "theflintstones",
@@ -1262,7 +1262,7 @@ public class CommonConfiguration extends AbstractConfiguration
         this.whatisthisspeed = defineList(builder, "whatisthisspeed",
           Collections.singletonList("minecraft:redstone*1024"),
           s -> s instanceof String);
-        this.lightning = defineList(builder, "whatisthisspeed",
+        this.lightning = defineList(builder, "lightning",
           Collections.singletonList("minecraft:redstone*2048"),
           s -> s instanceof String);
 
@@ -1285,8 +1285,8 @@ public class CommonConfiguration extends AbstractConfiguration
         this.fertilizer = defineList(builder, "fertilizer",
           Collections.singletonList("minecraft:wheat_seeds*512"),
           s -> s instanceof String);
-        this.magicCompost = defineList(builder, "magicCompost",
-          Collections.singletonList("minecraft:wheat_seeds*2014"),
+        this.magiccompost = defineList(builder, "magiccompost",
+          Collections.singletonList("minecraft:wheat_seeds*2048"),
           s -> s instanceof String);
 
         finishCategory(builder);

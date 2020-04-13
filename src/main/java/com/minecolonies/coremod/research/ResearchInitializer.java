@@ -98,7 +98,7 @@ public class ResearchInitializer
         final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Siever", true));
         sieving.setRequirement(new BuildingResearchRequirement(3, "fisherman"));
 
-        final GlobalResearch space = new GlobalResearch("space", "technology", "Space", 3, new MultiplierModifierResearchEffect(RECIPES, 0.5));
+        final GlobalResearch space = new GlobalResearch("space", "technology", "Space", 3, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 0.5));
         space.setRequirement(new BuildingResearchRequirement(3, "miner"));
 
         final GlobalResearch capacity = new GlobalResearch("capacity", "technology", "Capacity", 4, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 1.0));
@@ -689,7 +689,7 @@ public class ResearchInitializer
         evade.addChild(flee);
         flee.addChild(hotFoot);
 
-        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new AdditionModifierResearchEffect(SLEEP_LESS, 0.5));
+        final GlobalResearch accuracy = new GlobalResearch("accuracy", "combat", "Accuracy", 1, new MultiplierModifierResearchEffect(SLEEP_LESS, 0.5));
         accuracy.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
         accuracy.setOnlyChild(true);
 
