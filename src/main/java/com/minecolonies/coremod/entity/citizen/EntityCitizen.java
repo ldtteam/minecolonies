@@ -48,6 +48,7 @@ import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -260,7 +261,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
         this.goalSelector.addGoal(++priority,
-          new EntityAICitizenAvoidEntity(this, MobEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
+          new EntityAICitizenAvoidEntity(this, MonsterEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
