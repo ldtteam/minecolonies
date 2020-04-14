@@ -93,6 +93,9 @@ public class NetworkChannel
         registerMessage(++idx, LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage::new);
         registerMessage(++idx, LumberjackRestrictionToggleMessage.class, LumberjackRestrictionToggleMessage::new);
         registerMessage(++idx, LumberjackScepterMessage.class, LumberjackScepterMessage::new);
+        registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
+        registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
+        registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
 
         registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
         registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);
@@ -134,6 +137,8 @@ public class NetworkChannel
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
+        registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
+        registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

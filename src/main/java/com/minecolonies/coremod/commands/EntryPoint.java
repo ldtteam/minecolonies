@@ -30,7 +30,7 @@ public class EntryPoint
                                            .addNode(new CommandKillAnimal().build())
                                            .addNode(new CommandKillChicken().build())
                                            .addNode(new CommandKillCow().build())
-                                           .addNode(new CommandKillMob().build())
+                                           .addNode(new CommandKillMonster().build())
                                            .addNode(new CommandKillPig().build())
                                            .addNode(new CommandKillRaider().build())
                                            .addNode(new CommandKillSheep().build());

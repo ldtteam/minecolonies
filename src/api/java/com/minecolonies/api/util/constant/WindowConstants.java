@@ -579,6 +579,9 @@ public final class WindowConstants
     public static final String RESOURCE_ID                 = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
     public static final String RESOURCE_ICON               = "resourceIcon";
+    public static final String STOCK_ADD                   = "addStock";
+    public static final String STOCK_REMOVE                = "removeStock";
+    public static final String QUANTITY_LABEL              = "resourceQty";
 
     /**
      * Window resource list gui file.
@@ -1239,6 +1242,16 @@ public final class WindowConstants
      * String of the suggest building GUI.
      */
     public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
+
+    /**
+     * String of the Townhall colony management GUI.
+     */
+    public static final String TOWNHALL_COLONY_MANAGEMENT_GUI = ":gui/townhall/windowcolonymanagement.xml";
+
+    /**
+     * String of the Townhall colony delete GUI.
+     */
+    public static final String TOWNHALL_COLONY_DELETE_GUI = ":gui/townhall/windowcolonymanagementdelete.xml";
 
     /**
      * Interaction suffix.
