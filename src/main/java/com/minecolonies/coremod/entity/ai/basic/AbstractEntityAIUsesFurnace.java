@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -188,12 +189,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         if(amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)
         {
-            needsCurrently = this::isSmeltable;
+            needsCurrently = new Tuple<>(this::isSmeltable,STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
         else if(amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
         {
-            needsCurrently = getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel;
+            needsCurrently = new Tuple<>(getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel,STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 

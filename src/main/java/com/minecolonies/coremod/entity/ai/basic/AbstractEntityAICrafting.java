@@ -11,6 +11,8 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -176,7 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = predicate;
+                    needsCurrently = new Tuple<>(predicate, Constants.STACKSIZE);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;

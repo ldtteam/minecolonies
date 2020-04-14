@@ -136,49 +136,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
-        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>();
-        final List<BuildingBuilderResource> neededItemStackList = new ArrayList<>();
+        final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 
         for (final BuildingBuilderResource stack : building.getNeededResources().values())
         {
 
-            // This change creates a more detailed neededItemsList. basically if in the schematic MAterial is needed > as Stacksize it generates more entries as long as the needed amount is bigger than the stacksize
-            // for instance a building needs 220 Cobblestone it will make not 1 entry like before. it will make ( 64 + &4 + 64 +  28 ) > 4 entries in the list.
-            // need to implement a BuildingBuilderRessource copy system so the stack amount is changeable. it is tackled in the trytotransfer function but this is only a fallback if anything slips.
-            // so it is WIP but works already. You can see it if You build the birch town hall... now it doesnt take AGES to build large structures.
-            if(stack.getAmount() > stack.getItemStack().getMaxStackSize()) // we have an amount of more than one stack
-            {
-                int newStackValue = 1; // intermediate value for calculation
-                int oldStackValue = stack.getAmount();  // for restore purpose
-                do{ // runs as long as the stack value is bigger than stack size
-                    newStackValue = stack.getAmount() - stack.getItemStack().getMaxStackSize(); // gets the diff  of needed amount
-
-                    stack.setAmount(stack.getItemStack().getMaxStackSize()); // set the to be putted value to stacksize
-
-                    neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true)); // add it
-                    neededItemStackList.add(stack);
-                    stack.setAmount(newStackValue); // set new value to rest value from calculation
-                }
-                while(stack.getAmount() > stack.getItemStack().getMaxStackSize());
-                if(stack.getAmount() > 0) // check if the amount is still above 0
-                {
-                    neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true)); // add the rest which is smaller than stacksize
-                    neededItemStackList.add(stack);
-                    //Log.getLogger().info("Added " +stack.getAmount() + " of " + stack.getName()+" to the stack ");
-                }
-                stack.setAmount(oldStackValue); // restore the old value... due reruns it changes the list weirdly.
-
-            }else{
-                //Log.getLogger().info("Amount  of " + stack.getName() + "is "+ stack.getAmount());
-                neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
-                neededItemStackList.add(stack);
-                //Log.getLogger().info("Added " +stack.getAmount() + " of " + stack.getName()+" to the stack ");
-            }
-
-
-
-            //Log.getLogger().info("size of neeedet item list : "+ neededItemsList.size());
-            //Log.getLogger().info("Add stack :" + stack.getItemStack().toString());
+            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true),stack.getAmount()));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
@@ -188,8 +151,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         needsCurrently = neededItemsList.get(pickUpCount);
-        needsCurrentlyStack = neededItemStackList.get(pickUpCount); // adding the stack too
-
         pickUpCount++;
 
         if (currentStructure == null)
@@ -199,37 +160,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
         {
-            //Log.getLogger().info("Check if item is decoration and now is not decoration time");
-            needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
-            //Log.getLogger().info( needsCurrently.toString());
-
+            needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
         }
 
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), needsCurrently))
+        if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
-            // here still needs to be work done. Here the implementation follows to calculate all items
-            // which equals the needed item in the inventory of the worker follows.
-            // at the moment we dump the inventory after each step anyway. so it is not needed.
-            // the change enables that the builder can pickup more than only one stack.
-            // This part is unfinished and may be removed entierly later...
-            // get the amount in Inventory and compares it to the needed amount.
-//            int amount = needsCurrently.and(stack -> ItemStack.getSize(stack));
-//
-//            int otheramount = 0;
-//            int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), needsCurrently);
-//            if (slot != -1) {
-//                ItemStack myStack = worker.getInventoryCitizen().getStackInSlot(slot);
-//                otheramount = myStack.getCount();
-//            }
-//            Log.getLogger().info("But has "+ otheramount +" already in local inventory ");
-            //return getState();
-            return GATHERING_REQUIRED_MATERIALS;
-
-
-        }
-        else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
-        {
-            //Log.getLogger().info("return pickup stuff, need to get it from Storage");
             return GATHERING_REQUIRED_MATERIALS;
         }
 

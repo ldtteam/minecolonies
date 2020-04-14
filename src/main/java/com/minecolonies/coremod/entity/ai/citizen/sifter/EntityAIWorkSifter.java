@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
@@ -97,7 +98,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         {
             if (InventoryUtils.hasItemInProvider(sifterBuilding, predicate))
             {
-                needsCurrently = predicate;
+                needsCurrently = new Tuple<>(predicate,STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
 

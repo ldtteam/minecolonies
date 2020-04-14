@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
@@ -314,7 +315,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                 {
                     if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(cure)) < cure.getCount())
                     {
-                        needsCurrently = stack -> stack.isItemEqual(cure);
+                        needsCurrently = new Tuple<>(stack -> stack.isItemEqual(cure),1);
                         return GATHERING_REQUIRED_MATERIALS;
                     }
                 }
