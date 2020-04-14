@@ -14,7 +14,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,10 +52,6 @@ public class FMLEventHandler
             IColonyManager.getInstance().getIColonyByOwner(((ServerPlayerEntity) event.getPlayer()).getServerWorld(), event.getPlayer());
             //ColonyManager.syncAllColoniesAchievements();
         }
-        else
-        {
-            IColonyManager.getInstance().resetColonyViews();
-        }
     }
 
     /**
@@ -77,7 +73,7 @@ public class FMLEventHandler
     }
     
     @SubscribeEvent
-    public static void onServerStopped(final FMLServerStoppedEvent event)
+    public static void onServerStopped(final FMLServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }

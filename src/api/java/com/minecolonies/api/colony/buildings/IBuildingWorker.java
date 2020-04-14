@@ -21,17 +21,6 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
     int WOOD_HUT_LEVEL = 0;
 
     /**
-     * Check if an additional recipe can be added.
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel the building level.
-     * @return true if so.
-     */
-    static boolean canBuildingCanLearnMoreRecipes(int buildingLevel, int learnedRecipes)
-    {
-        return Math.pow(2, buildingLevel) >= (learnedRecipes + 1);
-    }
-
-    /**
      * The abstract method which creates a job for the building.
      *
      * @param citizen the citizen to take the job.

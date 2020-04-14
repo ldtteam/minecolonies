@@ -347,7 +347,7 @@ public interface IColony
     /**
      * Returns the colonies current state.
      *
-     * @return
+     * @return the state.
      */
     ColonyState getState();
 }

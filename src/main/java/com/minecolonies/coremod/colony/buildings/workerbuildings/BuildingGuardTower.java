@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -21,10 +20,11 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     /**
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
-    private static final String SCHEMATIC_NAME = "guardtower";
-    private static final int    DEFENCE_BONUS  = 5;
-    private static final int    OFFENCE_BONUS  = 0;
-    private static final int    MAX_LEVEL      = 5;
+    private static final String SCHEMATIC_NAME        = "guardtower";
+    private static final int    DEFENCE_BONUS         = 5;
+    private static final int    OFFENCE_BONUS         = 0;
+    private static final int    MAX_LEVEL             = 5;
+    private static final int    BONUS_HP_SINGLE_GUARD = 20;
 
     /**
      * The abstract constructor of the building.
@@ -65,6 +65,12 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     public int getClaimRadius(final int newLevel)
     {
         return Math.max(0, newLevel - 1);
+    }
+
+    @Override
+    protected int getBonusHealth()
+    {
+        return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();
     }
 
     @Override

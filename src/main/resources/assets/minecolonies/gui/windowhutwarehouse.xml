@@ -22,6 +22,24 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.warehouse.sort)"/>
         </view>
+        <view>
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+                   label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
+            <list id="resources" size="170 100" pos="13 50">
+                <box size="100% 17" linewidth="2">
+                    <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+                    <label id="resourceName" size="90 12" pos="20 1" color="black"/>
+                    <label id="resourceQty" size="12 12" pos="115 1" color="black"/>
+
+                    <buttonimage label="X" id="removeStock" pos="130 1" size="29 15"
+                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+                </box>
+            </list>
+            <buttonimage id="addStock" size="86 17" pos="50 160" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                         label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
+        </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>

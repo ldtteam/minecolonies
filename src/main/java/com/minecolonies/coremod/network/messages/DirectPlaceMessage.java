@@ -5,19 +5,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.util.*;
-
-import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -101,10 +97,10 @@ public class DirectPlaceMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final ServerPlayerEntity player = ctxIn.getSender();
         final World world = player.getEntityWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if (( IColonyManager.getInstance().getIColonyByOwner(world, player) ==  null && colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
+        if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             player.getEntityWorld().setBlockState(pos, state);
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), stack);
