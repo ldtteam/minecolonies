@@ -798,7 +798,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    private Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
+    protected Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
     {
         return getDataStore().getOpenRequestsByRequestableType();
     }

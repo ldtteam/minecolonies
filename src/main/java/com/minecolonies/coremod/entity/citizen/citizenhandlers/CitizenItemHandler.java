@@ -26,11 +26,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import static com.minecolonies.api.research.util.ResearchConstants.ARMOR_DURABILITY;
+import static com.minecolonies.api.research.util.ResearchConstants.TOOL_DURABILITY;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_PITCH_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
@@ -237,6 +234,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             return;
         }
+
+        double chance = 0;
+        final MultiplierModifierResearchEffect effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            chance = effect.getEffect();
+        }
+
+        if (citizen.getRandom().nextDouble() < chance)
+        {
+            return;
+        }
+
         heldItem.damageItem(damage, citizen, (i) -> {
             i.sendBreakAnimation(Hand.MAIN_HAND);
         });
@@ -255,24 +265,16 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        @NotNull final List<ItemEntity> retList = new ArrayList<>();
-        //I know streams look better but they are flawed in type erasure
-        for (final Object o :
+        for (final ItemEntity item :
           CompatibilityUtils.getWorldFromCitizen(citizen).
                                              getEntitiesWithinAABB(ItemEntity.class,
                                                new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
-            if (o instanceof ItemEntity)
+            if (item != null && citizen.canPickUpLoot())
             {
-                retList.add((ItemEntity) o);
+                tryPickupItemEntity(item);
             }
         }
-
-        retList.stream()
-          .filter(Objects::nonNull)
-          .filter(item -> item.isAlive())
-          .filter(item -> citizen.canPickUpLoot())
-          .forEach(this::tryPickupItemEntity);
     }
 
     /**

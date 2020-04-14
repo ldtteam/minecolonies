@@ -1,16 +1,15 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false"
-        lightbox="true" xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+        lightbox="true" xsi:noNamespaceSchemaLocation="file:../../../../java/com/ldtteam/blockout/blockOut.xsd">
     <label size="100% 11" pos="0 25" textalign="TOP_MIDDLE" color="white"
-           label="$(com.minecolonies.coremod.gui.scan.replace.title)"/>
+           label="$(com.minecolonies.coremod.gui.scan.select.title)"/>
+
     <input id="name" size="150 18" pos="135 40" maxlength="25"/>
 
-    <itemicon id="resourceIconFrom" size="17 17" pos="0 1"/>
-    <label id="resourceNameFrom" size="140 12" pos="30 4" color="white"/>
+    <itemicon id="resourceIcon" size="17 17" pos="70 1"/>
+    <label id="resourceName" size="140 12" pos="100 4" color="white"/>
 
-    <label id="to" label="->" size="140 12" pos="170 4" color="white"/>
-
-    <itemicon id="resourceIconTo" size="17 17" pos="210 1"/>
-    <label id="resourceNameTo" size="140 12" pos="240 4" color="white"/>
+    <input id="qty" size="25 14" pos="200 2" maxlength="25"/>
+    <label label="$(com.minecolonies.coremod.gui.scan.select.stack)" size="50 12" pos="235 4" />
 
     <list id="resources" size="300 120" pos="60 65">
         <box size="100% 17" linewidth="2">

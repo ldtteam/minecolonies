@@ -4,10 +4,10 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.util.text.StringTextComponent;
 
-public class CommandKillMob implements IMCOPCommand
+public class CommandKillMonster implements IMCOPCommand
 {
     private int entitiesKilled = 0;
 
@@ -24,7 +24,7 @@ public class CommandKillMob implements IMCOPCommand
 
         context.getSource().getServer().getWorld(sender.dimension).getEntities().forEach(entity ->
         {
-            if (entity instanceof MobEntity)
+            if (entity instanceof MonsterEntity)
             {
                 entity.remove();
                 entitiesKilled++;
@@ -40,6 +40,6 @@ public class CommandKillMob implements IMCOPCommand
     @Override
     public String getName()
     {
-        return "mob";
+        return "monster";
     }
 }

@@ -105,7 +105,7 @@ public final class ColonyManager implements IColonyManager
 
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getFormattedText());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
+        colony.getPermissions().setOwner(player);
 
         colony.getPackageManager().addImportantColonyPlayer((ServerPlayerEntity) player);
         colony.getPackageManager().addCloseSubscriber((ServerPlayerEntity) player);
@@ -172,10 +172,7 @@ public final class ColonyManager implements IColonyManager
         final World world = colony.getWorld();
         try
         {
-            if (!MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-            {
-                ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
-            }
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -222,11 +219,20 @@ public final class ColonyManager implements IColonyManager
 
             cap.deleteColony(id);
             BackUpHelper.markColonyDeleted(colony.getID(),colony.getDimension());
-            Log.getLogger().info("Done with " + id);
+            Log.getLogger().info("Successfully deleted colony: " + id);
         }
         catch (final RuntimeException e)
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
+        }
+    }
+
+    @Override
+    public void removeColonyView(final int id, final int dimension)
+    {
+        if (colonyViews.containsKey(dimension))
+        {
+            colonyViews.get(dimension).remove(id);
         }
     }
 

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,6 +55,16 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
+        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        {
+            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
+            final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
+            if (building.isPresent() && building.get() instanceof BuildingWareHouse)
+            {
+                return false;
+            }
+        }
+
         if (!manager.getColony().getWorld().isRemote)
         {
             if (!isRequestChainValid(manager, requestToCheck))

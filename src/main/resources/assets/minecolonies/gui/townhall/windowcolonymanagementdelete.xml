@@ -1,0 +1,18 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" size="190 133"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="100% 100%"/>
+
+    <buttonimage id="close" size="14 15" pos="165 5"
+                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+
+    <text id="text" size="150 45" pos="15 25" color="black"/>
+
+    <buttonimage id="confirm" size="86 17" pos="50 80" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.colony.delete.confirm)"/>
+
+    <buttonimage id="cancel" size="86 17" pos="50 100" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.colony.delete.cancel)"/>
+</window>

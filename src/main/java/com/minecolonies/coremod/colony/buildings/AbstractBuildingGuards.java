@@ -109,7 +109,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The task of the guard, following the {@link GuardTask} enum.
      */
-    private GuardTask task = GuardTask.GUARD;
+    private GuardTask task = GuardTask.PATROL;
 
     /**
      * The position at which the guard should guard at.
@@ -427,7 +427,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             patrolTimer--;
         }
 
-        if (!arrivedAtPatrol.isEmpty() && (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0))
+        if (patrolTimer <= 0)
         {
             // Next patrol point
             startPatrolNext();
@@ -458,6 +458,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private void startPatrolNext()
     {
         getNextPatrolTarget(true);
+        patrolTimer = 5;
 
         for (final ICitizenData curguard : getAssignedCitizen())
         {
@@ -561,7 +562,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         /**
          * The {@link GuardTask} of the guard.
          */
-        private GuardTask task = GuardTask.GUARD;
+        private GuardTask task = GuardTask.PATROL;
 
         /**
          * Position the guard should guard.
@@ -1015,7 +1016,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      *
      * @return the bonus health.
      */
-    private int getBonusHealth()
+    protected int getBonusHealth()
     {
         return getBuildingLevel() * BONUS_HEALTH_PER_LEVEL;
     }

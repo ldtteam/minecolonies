@@ -828,10 +828,16 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        this.world = w;
-        // Register a new event handler
-        eventHandler = new ColonyPermissionEventHandler(this);
-        MinecraftForge.EVENT_BUS.register(eventHandler);
+        if (w.getDimension().getType().getId() == dimensionId)
+        {
+            this.world = w;
+            // Register a new event handler
+            if (eventHandler == null)
+            {
+                eventHandler = new ColonyPermissionEventHandler(this);
+                MinecraftForge.EVENT_BUS.register(eventHandler);
+            }
+        }
     }
 
     /**
@@ -1109,7 +1115,7 @@ public class Colony implements IColony
         return world;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public IRequestManager getRequestManager()
     {

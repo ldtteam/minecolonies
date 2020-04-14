@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -52,6 +52,14 @@ public interface IColonyManager
      * @param dimension  the dimension.
      */
     void deleteColonyByDimension(int id, boolean canDestroy, int dimension);
+
+    /**
+     * Removes a colony view
+     *
+     * @param id
+     * @param dimension
+     */
+    void removeColonyView(int id, int dimension);
 
     /**
      * Get Colony by UUID.
