@@ -1035,12 +1035,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         alreadyKept.clear();
         slotAt = 0;
-        // we dump anyway and repick. for now disable it.
-        //collect items that are nice to have if they are available
-        //Log.getLogger().info("Before itemsNiceToHave in AbstractEntityAiBasic.java");
-        //this.itemsNiceToHave().forEach(this::isInHut);
-        //Log.getLogger().info("After itemsNiceToHave in AbstractEntityAiBasic.java");
-        // we dumped the inventory, reset actions done
+         this.itemsNiceToHave().forEach(this::isInHut);
+         // we dumped the inventory, reset actions done
         this.clearActionsDone();
         if (!getOwnBuilding().isPriorityStatic())
         {
@@ -1112,8 +1108,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump))
         {
-            final int amount = stackToDump.getCount();
-            //final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept, true);
+            final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept, true);
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
