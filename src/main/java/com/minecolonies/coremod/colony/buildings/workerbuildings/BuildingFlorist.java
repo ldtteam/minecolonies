@@ -17,7 +17,9 @@ import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,6 +28,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -63,16 +66,6 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
      * Tag to store the plant ground list.
      */
     private static final String TAG_PLANTGROUND = "plantGround";
-
-    /**
-     * Name to filter the list for.
-     */
-    private static final String FLOWER_NAME    = "flower";
-
-    /**
-     * The basic flower metadata for level 1.
-     */
-    private static final int BASIC_FLOWER_META = 0;
 
     /**
      * List of registered barrels.
@@ -238,6 +231,18 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
             default:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables();
         }
+    }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Florist", UnlockBuildingResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            return;
+        }
+        super.requestUpgrade(player, builder);
     }
 
     /**

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
@@ -17,6 +18,7 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionRe
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -33,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
@@ -907,6 +910,25 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
     {
         return IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata);
+    }
+
+    @Override
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    {
+        super.triggerMinedBlock(blockToMine);
+
+        double chance = 1;
+        final MultiplierModifierResearchEffect
+          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MORE_ORES, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            chance += effect.getEffect();
+        }
+
+        if ( IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
+        {
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance), worker.getInventoryCitizen());
+        }
     }
 
     @Override
