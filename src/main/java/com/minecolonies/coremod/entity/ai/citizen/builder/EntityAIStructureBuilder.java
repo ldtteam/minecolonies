@@ -80,7 +80,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int ACTIONS_UNTIL_DUMP = 1024;
+    private static final int ACTIONS_UNTIL_DUMP = 4096;
 
     /**
      * Min distance from placing block.
@@ -229,7 +229,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
         else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
         {
-            Log.getLogger().info("return pickup stuff, need to get it from Storage");
+            //Log.getLogger().info("return pickup stuff, need to get it from Storage");
             return GATHERING_REQUIRED_MATERIALS;
         }
 
