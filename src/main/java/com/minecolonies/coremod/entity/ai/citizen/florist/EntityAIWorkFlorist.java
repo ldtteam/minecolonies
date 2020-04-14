@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
@@ -133,7 +135,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_COMPOST);
             if (amountOfCompostInBuilding > 0)
             {
-                needsCurrently = IS_COMPOST;
+                needsCurrently = new Tuple<>(IS_COMPOST,STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             else

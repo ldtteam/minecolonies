@@ -136,7 +136,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
                 if (numberOfBooksInBuilding > 0)
                 {
-                    needsCurrently = IS_BOOK;
+                    needsCurrently = new com.minecolonies.api.util.Tuple<>(IS_BOOK,1);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.BOOK, 1));
@@ -158,7 +158,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfAncientTomes > 0)
             {
-                needsCurrently = IS_ANCIENT_TOME;
+                needsCurrently = new com.minecolonies.api.util.Tuple<>(IS_ANCIENT_TOME,1);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1));

@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -273,7 +274,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 return START_WORKING;
             }
 
-            needsCurrently = ItemStackUtils.CAN_EAT;
+            needsCurrently = new Tuple<>(ItemStackUtils.CAN_EAT,STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
         return START_WORKING;

@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -100,7 +101,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = predicate;
+                    needsCurrently = new Tuple<>(predicate,STACKSIZE);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 else
@@ -342,7 +343,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
         {
-            needsCurrently = FurnaceTileEntity::isFuel;
+            needsCurrently = new Tuple<>(FurnaceTileEntity::isFuel,STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 

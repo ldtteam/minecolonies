@@ -48,6 +48,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +123,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * What he currently might be needing.
      */
-    protected Predicate<ItemStack> needsCurrently = null;
+    protected Tuple<Predicate<ItemStack>, Integer> needsCurrently = null;
 
     /**
      * What he currently might be needing but as full information.
@@ -239,7 +240,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             if (walkTo == null)
             {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
+                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently.getA());
                 if (pos == null)
                 {
                     return getStateAfterPickUp();
@@ -253,7 +254,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return getState();
             }
             // modified for debug and added the Stack itself as a workaround to get the "real Stacksize"
-            if(tryTransferFromPosToWorker(walkTo, needsCurrently, needsCurrentlyStack))
+            if(tryTransferFromPosToWorker(walkTo, needsCurrently))
             {
                 // success
             }else{
@@ -1472,12 +1473,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param pos       the position to transfer it from.
      * @param predicate the predicate to evaluate.
-     * @param stackInfo the actual stack of the predicate to get the needed value
      * @return true if succesful.
      */
 
     // modified to reflect the actual stack amount to transfer.  WIP
-    private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate, @NotNull final BuildingBuilderResource stackInfo)
+    private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)
@@ -1485,23 +1485,45 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return false;
         }
 
-        // Filter out if Size to pick is bigger than stacksize
-
-        int insertAmount =0;
-        if(stackInfo.getAmount() > stackInfo.getItemStack().getMaxStackSize())
+        int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),predicate.getA());
+        int amount = 0;
+        if(predicate.getB() > existingAmount) {
+            amount = predicate.getB() - existingAmount;
+        }
+        else
         {
-            insertAmount = stackInfo.getItemStack().getMaxStackSize();
-        }else{
-            insertAmount = stackInfo.getAmount();
+            return true; // has already needed transfers...
         }
 
-        // change from always put a full stack to the actual needed amount.
-        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-          entity,
-          predicate,
-          //Constants.STACKSIZE,
-          insertAmount,
-          worker.getInventoryCitizen());
+        do{
+            int transferamount = 0;
+
+            if(amount > STACKSIZE)
+            {
+                transferamount =  STACKSIZE;
+            }
+            else
+            {
+                transferamount = amount;
+            }
+
+            amount -= transferamount;
+
+            if(!InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(entity, predicate.getA(),transferamount,worker.getInventoryCitizen()))
+            {
+                return false; // couldn't transfer
+            }
+        }while(amount > 0);
+
+        if(predicate.getB() > STACKSIZE)
+        {
+            amount = STACKSIZE;
+        }
+        else
+        {
+            amount = predicate.getB();
+        }
+        return true;
     }
 
     /**

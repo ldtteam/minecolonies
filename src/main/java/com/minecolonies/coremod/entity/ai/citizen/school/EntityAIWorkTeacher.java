@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
@@ -90,7 +91,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
 
         if (paperInInv == 0 && paperInBuilding > 0)
         {
-            needsCurrently = PAPER;
+            needsCurrently = new Tuple<>(PAPER,PAPER_TO_REQUEST);
             return GATHERING_REQUIRED_MATERIALS;
         }
 
