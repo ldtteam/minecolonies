@@ -108,8 +108,8 @@ public class Configurations
         public int spawnBarbarianSize = 5;
 
         @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
-        @Config.Comment("The max size of a barbarian horde. [Default: 20]")
-        public int maxBarbarianSize = 20;
+        @Config.Comment("The max size of a barbarian horde. [Default: 60]")
+        public int maxBarbarianSize = 60;
 
         @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles. [Default: true]")
         public boolean doBarbariansBreakThroughWalls = true;
@@ -120,9 +120,8 @@ public class Configurations
         @Config.Comment("The minimum number of nights between raids. [Default: 1]")
         public int minimumNumberOfNightsBetweenRaids = 1;
 
-        // TODO: change to true over time
         @Config.Comment("Should Mobs attack citizens? [Default: false")
-        public boolean mobAttackCitizens = false;
+        public boolean mobAttackCitizens = true;
 
         @Config.Comment("Should Citizens call guards for help when attacked? default:true")
         public boolean citizenCallForHelp = true;

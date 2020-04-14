@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
@@ -114,7 +115,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
 
-        if (colony == null)
+        if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;
         }

@@ -302,6 +302,12 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     }
 
     @Override
+    public BlockPos getCurrentProxy()
+    {
+        return currentProxy;
+    }
+
+    @Override
     public void reset()
     {
         this.target = null;

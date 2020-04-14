@@ -78,20 +78,6 @@ public interface ICitizen
     double getSaturation();
 
     /**
-     * Health getter.
-     *
-     * @return citizen Dexterity value
-     */
-    double getHealth();
-
-    /**
-     * Max health getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    double getMaxHealth();
-
-    /**
      * Check if the entity is a child
      *
      * @return true if child

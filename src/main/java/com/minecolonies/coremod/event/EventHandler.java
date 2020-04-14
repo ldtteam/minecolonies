@@ -30,6 +30,7 @@ import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessa
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -41,6 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -73,8 +75,10 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
+import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.client.particles.SleepingParticle.SLEEPING_TEXTURE;
@@ -91,8 +95,7 @@ public class EventHandler
     private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
 
     /**
-     * Event when the debug screen is opened. Event gets called by displayed
-     * text on the screen, we only need it when f3 is clicked.
+     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
@@ -263,11 +266,11 @@ public class EventHandler
             }
 
             // Add visiting/subscriber to colony we're logging into
-            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX,event.player.posY, event.player.posZ));
+            final Chunk chunk = event.player.world.getChunk(new BlockPos(event.player.posX, event.player.posY, event.player.posZ));
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(),event.player.dimension);
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), event.player.dimension);
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(event.player);
@@ -347,8 +350,7 @@ public class EventHandler
     }
 
     /**
-     * Event when a block is broken.
-     * Event gets cancelled when there no permission to break a hut.
+     * Event when a block is broken. Event gets cancelled when there no permission to break a hut.
      *
      * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
@@ -369,13 +371,25 @@ public class EventHandler
             itemstack.setTagCompound(compound);
 
             event.setCanceled(true);
+            return;
+        }
+
+        if (event.getState().getBlock() instanceof BlockMobSpawner && event.getWorld().getTileEntity(event.getPos()) instanceof TileEntityMobSpawner)
+        {
+            final TileEntityMobSpawner spawner = (TileEntityMobSpawner) event.getWorld().getTileEntity(event.getPos());
+
+            final IColony colony = IColonyManager.getInstance()
+                                     .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInteger(TAG_COLONY_ID), event.getWorld().provider.getDimension());
+            if (colony != null)
+            {
+                colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInteger(TAG_EVENT_ID), spawner);
+            }
         }
     }
 
     /**
-     * Event when a player right clicks a block, or right clicks with an item.
-     * Event gets cancelled when player has no permission. Event gets cancelled
-     * when the player has no permission to place a hut, and tried it.
+     * Event when a player right clicks a block, or right clicks with an item. Event gets cancelled when player has no permission. Event gets cancelled when the player has no
+     * permission to place a hut, and tried it.
      *
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
@@ -538,8 +552,7 @@ public class EventHandler
     }
 
     /**
-     * Called when a player tries to place a AbstractBlockHut. Returns true if
-     * successful and false to cancel the block placement.
+     * Called when a player tries to place a AbstractBlockHut. Returns true if successful and false to cancel the block placement.
      *
      * @param world  The world the player is in
      * @param player The player
@@ -811,8 +824,7 @@ public class EventHandler
     }*/
 
     /**
-     * Gets called when world loads.
-     * Calls {@link ColonyManager#onWorldLoad(World)}
+     * Gets called when world loads. Calls {@link ColonyManager#onWorldLoad(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
@@ -833,8 +845,7 @@ public class EventHandler
     }
 
     /**
-     * Gets called when world unloads.
-     * Calls {@link ColonyManager#onWorldUnload(World)}
+     * Gets called when world unloads. Calls {@link ColonyManager#onWorldUnload(World)}
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
      */

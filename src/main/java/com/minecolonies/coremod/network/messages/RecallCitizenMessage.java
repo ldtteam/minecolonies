@@ -12,16 +12,14 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Recalls the citizen to the hut.
@@ -101,7 +99,6 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
                             citizenData.updateCitizenEntityIfNecessary();
-                            optionalEntityCitizen = citizenData.getCitizenEntity();
                         }
                         else
                         {
@@ -111,32 +108,12 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     }
                     else if (optionalEntityCitizen.get().getTicksExisted() == 0)
                     {
-                        final AbstractEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final ICitizenData oldCitizenData = oldCitizen.getCitizenData();
-
-                        if (oldCitizenData != null)
-                        {
-
-                            final List<AbstractEntityCitizen> list = new ArrayList<>(player.getServerWorld()
-                                                                                       .getEntities(AbstractEntityCitizen.class,
-                                                                                         entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
-                                                                                                            && entityCitizen.getCitizenData().getId() == oldCitizenData.getId()));
-
-                            if (list.isEmpty())
-                            {
-                                citizenData.setCitizenEntity(null);
-                                citizenData.updateCitizenEntityIfNecessary();
-                            }
-                            else
-                            {
-                                citizenData.setCitizenEntity(list.get(0));
-                            }
-                        }
+                        citizenData.getCitizenEntity().ifPresent(Entity::setDead);
+                        citizenData.updateCitizenEntityIfNecessary();
                     }
 
-
                     final BlockPos loc = building.getPosition();
-                    if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
+                    if (citizenData.getCitizenEntity().isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }

@@ -17,7 +17,6 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModItems;
@@ -62,7 +61,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -245,10 +243,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.tasks.addTask(priority, new EntityAISwimming(this));
-        if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
-        {
-            this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
-        }
+        this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.tasks.addTask(++priority, new EntityAIEatTask(this));
         this.tasks.addTask(++priority, new EntityAISleep(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
@@ -258,8 +253,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
         this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
-
-        citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
 
     /**
@@ -356,15 +349,15 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
-        {
-            return DesiredActivity.MOURN;
-        }
-
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world).isEmpty()))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
             return DesiredActivity.SLEEP;
+        }
+
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
+        {
+            return DesiredActivity.MOURN;
         }
 
         return null;
@@ -562,17 +555,8 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @Nullable
     public ICitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-        {
-            final ICitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
-            if (data != null)
-            {
-                citizenData = data;
-            }
-        }
         return citizenData;
     }
 
@@ -751,7 +735,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenItemHandler.updateArmorDamage(damageInc);
         if (citizenData != null)
         {
-            getCitizenData().getCitizenHappinessHandler().setDamageModifier();
+            getCitizenData().getCitizenHappinessHandler().updateDamageModifier();
         }
 
         return result;
@@ -771,18 +755,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
             {
-                boolean isBarbarianClose = false;
-                for (final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
-                {
-                    if (MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
-                    {
-                        isBarbarianClose = true;
-                        break;
-                    }
-                }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !isBarbarianClose)
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !citizenColonyHandler.getColony().getRaiderManager().isRaided())
                     {
                         penalty = CITIZEN_KILL_PENALTY;
                         break;
@@ -1032,7 +1007,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isServerWorld())
         {
-            citizenColonyHandler.updateColonyServer();
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
         }
 
         isDay = compound.getBoolean(TAG_DAY);
@@ -1260,7 +1235,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenData(@Nullable final ICitizenData data)
     {
-        this.citizenData = data;
+        if (data != null)
+        {
+            this.citizenData = data;
+            data.initEntityValues();
+        }
     }
 
     /**
@@ -1368,10 +1347,11 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
         citizenItemHandler.pickupItems();
-        citizenColonyHandler.updateColonyServer();
+        citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
 
         if (citizenData != null)
         {
+            citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
     }
@@ -1456,6 +1436,18 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenItemHandler.entityDropItem(itemstack);
             }
         }
+    }
+
+    @Override
+    public void setDead()
+    {
+        if (isDead())
+        {
+            return;
+        }
+        super.setDead();
+
+        citizenColonyHandler.onCitizenRemoved();
     }
 
     /**

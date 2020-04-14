@@ -3,12 +3,10 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -41,15 +39,6 @@ public class PathJobFindTree extends AbstractPathJob
      * The Colony the tree is in.
      */
     private final IColony colony;
-
-    private BlockPos startRestriction = null;
-    private BlockPos endRestriction = null;
-
-    public void setAreaRestriction(final BlockPos start, final BlockPos end)
-    {
-        this.startRestriction = start;
-        this.endRestriction = end;
-    }
 
     /**
      * AbstractPathJob constructor.

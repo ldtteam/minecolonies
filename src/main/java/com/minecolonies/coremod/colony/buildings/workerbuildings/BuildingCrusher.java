@@ -25,12 +25,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -280,6 +282,36 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             ByteBufUtils.writeItemStack(buf, storage.getItemStack());
         }
+    }
+
+    @Override
+    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for (final IRecipeStorage storage : crusherRecipes.values())
+        {
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    {
+        for (final IRecipeStorage storage : crusherRecipes.values())
+        {
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

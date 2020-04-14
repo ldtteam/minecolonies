@@ -1,39 +1,46 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianHorde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
+import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
 
+/**
+ * Handles spawning hostile raid events.
+ */
 public class RaidManager implements IRaiderManager
 {
+    /**
+     * Spawn modifier to decrease the spawn-rate.
+     */
+    public static final double SPAWN_MODIFIER = 1.5;
+
     /**
      * Whether there will be a raid in this colony tonight.
      */
@@ -50,14 +57,14 @@ public class RaidManager implements IRaiderManager
     private boolean haveBarbEvents = true;
 
     /**
+     * The amount of nights since the last raid.
+     */
+    private int nightsSinceLastRaid = 0;
+
+    /**
      * Last raider spawnpoints.
      */
     private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
-
-    /**
-     * A map of schematics which should despawn after some time.
-     */
-    private final Map<BlockPos, Tuple<String, Long>> schematicMap = new HashMap<>();
 
     /**
      * The colony of the manager.
@@ -65,9 +72,19 @@ public class RaidManager implements IRaiderManager
     private final Colony colony;
 
     /**
-     * List of raiders registered to the colony.
+     * Whether the spies are currently active, active spies mark enemies with glow.
      */
-    private final List<UUID> horde = new ArrayList<>();
+    private boolean spiesEnabled;
+
+    /**
+     * The last building position for raiders to walk to
+     */
+    private BlockPos lastBuilding;
+
+    /**
+     * The time the last building pos was used.
+     */
+    private int buildingPosUsage = 0;
 
     /**
      * Creates the RaidManager for a colony.
@@ -122,6 +139,104 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
+    public boolean areSpiesEnabled()
+    {
+        return spiesEnabled;
+    }
+
+    @Override
+    public void setSpiesEnabled(final boolean enabled)
+    {
+        if (spiesEnabled != enabled)
+        {
+            colony.markDirty();
+        }
+        spiesEnabled = enabled;
+    }
+
+    @Override
+    public void raiderEvent()
+    {
+        if (colony.getWorld() == null || !canRaid())
+        {
+            return;
+        }
+
+        int amount = calcBarbarianAmount();
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        // Splits into multiple raids if too large
+        final int raidCount = Math.max(1, amount / BIG_HORDE_SIZE);
+
+        final Set<BlockPos> spawnPoints = new HashSet<>();
+
+        for (int i = 0; i < raidCount; i++)
+        {
+            final BlockPos targetSpawnPoint = calculateSpawnLocation();
+            if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > Configurations.gameplay.maxYForBarbarians)
+            {
+                return;
+            }
+
+            spawnPoints.add(targetSpawnPoint);
+        }
+
+        amount = (int) Math.ceil((float) amount / spawnPoints.size());
+
+        for (final BlockPos targetSpawnPoint : spawnPoints)
+        {
+            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "Horde Spawn Point: " + targetSpawnPoint);
+            }
+
+            if (PirateEventUtils.canSpawnPirateEventAt(colony, targetSpawnPoint, amount))
+            {
+                final PirateRaidEvent event = new PirateRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                colony.getEventManager().addEvent(event);
+            }
+            else
+            {
+                final BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setHorde(new BarbarianHorde(amount));
+                colony.getEventManager().addEvent(event);
+            }
+            addRaiderSpawnPoint(targetSpawnPoint);
+        }
+        colony.markDirty();
+    }
+
+    /**
+     * Calculate a random spawn point along the colony's border
+     *
+     * @return Returns the random blockPos
+     */
+    @Override
+    public BlockPos calculateSpawnLocation()
+    {
+        final Random random = colony.getWorld().rand;
+        final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
+          random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
+          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
+
+        if (pos.equals(colony.getCenter()))
+        {
+            Log.getLogger().info("Spawning at colony center: " + colony.getCenter().getX() + " " + colony.getCenter().getZ());
+            return colony.getCenter();
+        }
+
+        return BlockPosUtil.findLand(pos, colony.getWorld());
+    }
+
+    @Override
     public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
     {
         final BlockPos center = colony.getCenter();
@@ -159,13 +274,8 @@ public class RaidManager implements IRaiderManager
               = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
         }
 
-        if (thePos.equals(center))
-        {
-            return center;
-        }
-
         int radius = DEFAULT_SPAWN_RADIUS;
-        while (world.isAreaLoaded(thePos, radius))
+        while (radius < MAX_SPAWN_RADIUS && world.isAreaLoaded(thePos, radius))
         {
             radius += DEFAULT_SPAWN_RADIUS;
         }
@@ -189,78 +299,16 @@ public class RaidManager implements IRaiderManager
         return new ArrayList<>(lastSpawnPoints);
     }
 
-    @Override
-    public void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider)
-    {
-        this.horde.add(raider.getUniqueID());
-    }
-
-    @Override
-    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
-    {
-        for (final UUID uuid : new ArrayList<>(horde))
-        {
-            final Entity raiderEntity = world.getEntityFromUuid(uuid);
-            if (raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
-            {
-                horde.remove(uuid);
-            }
-        }
-
-        sendHordeMessage();
-    }
-
-    private void sendHordeMessage()
-    {
-        if (horde.isEmpty())
-        {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
-        }
-        else if (horde.size() <= SMALL_HORDE_SIZE)
-        {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ONLY_X_BARBARIANS_LEFT_MESSAGE, horde.size());
-        }
-    }
-
     /**
-     * Updates the pirates ship sailing away.
+     * Returns the colonies babarian level
      *
-     * @param colony the colony being ticked.
+     * @return
      */
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
+    public int calcBarbarianAmount()
     {
-        for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
-        {
-            if (entry.getKey().equals(BlockPos.ORIGIN))
-            {
-                schematicMap.remove(entry.getKey());
-            }
-            else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < colony.getWorld()
-                                                                                                                                                              .getWorldTime())
-            {
-                // Load the backup from before spawning
-                try
-                {
-                    InstantStructurePlacer.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + this.colony.getID() + this.colony.getDimension() + entry.getKey(),
-                      entry.getKey(),
-                      0,
-                      Mirror.NONE,
-                      true);
-                }
-                catch (final NullPointerException | ArrayIndexOutOfBoundsException e)
-                {
-                    Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
-                }
-
-                schematicMap.remove(entry.getKey());
-                LanguageHandler.sendPlayersMessage(
-                  colony.getImportantMessageEntityPlayers(),
-                  PIRATES_SAILING_OFF_MESSAGE, colony.getName());
-                return;
-            }
-        }
+        return Math.min(Configurations.gameplay.maxBarbarianSize,
+          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
     }
 
     /**
@@ -277,70 +325,166 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world)
+    public boolean isRaided()
     {
-        final List<AbstractEntityMinecoloniesMob> raiders = new ArrayList<>();
-        for (final UUID uuid : new ArrayList<>(horde))
+        for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            final Entity raider = world.getEntityFromUuid(uuid);
-            if (!(raider instanceof AbstractEntityMinecoloniesMob) || !raider.isEntityAlive())
+            if (event instanceof IColonyRaidEvent && event.getStatus() == EventStatus.PROGRESSING)
             {
-                horde.remove(uuid);
-                sendHordeMessage();
-            }
-            else
-            {
-                raiders.add((AbstractEntityMinecoloniesMob) raider);
+                return true;
             }
         }
-        return raiders;
+        return false;
     }
 
     @Override
-    public void registerRaiderOriginSchematic(final String schematicName, final BlockPos position, final long worldTime)
+    public void onNightFall()
     {
-        schematicMap.put(position, new Tuple<>(schematicName, worldTime));
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        if (compound.hasKey(TAG_RAID_MANAGER))
+        if (!isRaided())
         {
-            schematicMap.clear();
-            final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
-            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
-            schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
-                                  .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS),
-                                    raiderTagCompound -> new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
+            nightsSinceLastRaid++;
+        }
+        else
+        {
+            nightsSinceLastRaid = 0;
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public int getNightsSinceLastRaid()
     {
-        final NBTTagCompound raiderCompound = new NBTTagCompound();
-        @NotNull final NBTTagList raiderTagList = schematicMap.entrySet().stream()
-                                                    .map(this::writeMapEntryToNBT)
-                                                    .collect(NBTUtils.toNBTTagList());
+        return nightsSinceLastRaid;
+    }
 
-        raiderCompound.setTag(TAG_SCHEMATIC_LIST, raiderTagList);
-        compound.setTag(TAG_RAID_MANAGER, raiderCompound);
+    @Override
+    public void setNightsSinceLastRaid(final int nightsSinceLastRaid)
+    {
+        this.nightsSinceLastRaid = nightsSinceLastRaid;
+    }
+
+    @Override
+    public void tryToRaidColony(final IColony colony)
+    {
+        if (canRaid() && isItTimeToRaid())
+        {
+            raiderEvent();
+        }
     }
 
     /**
-     * Writes the map entry to NBT of the schematic map.
-     *
-     * @param entry the entry to write to NBT.
-     * @return an NBTTAGCompound
+     * Checks if a raid is possible
      */
-    private NBTTagCompound writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
+    @Override
+    public boolean canRaid()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
-        compound.setString(TAG_NAME, entry.getValue().getFirst());
-        compound.setLong(TAG_TIME, entry.getValue().getSecond());
+        return colony.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL
+                 && Configurations.gameplay.doBarbariansSpawn
+                 && colony.getRaiderManager().canHaveRaiderEvents()
+                 && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
+    }
 
-        return compound;
+    @Override
+    public boolean isItTimeToRaid()
+    {
+        if (colony.getCitizenManager().getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
+        {
+            return false;
+        }
+
+        if (colony.getWorld().isDaytime() && !colony.getRaiderManager().hasRaidBeenCalculated())
+        {
+            colony.getRaiderManager().setHasRaidBeenCalculated(true);
+            if (!colony.getRaiderManager().willRaidTonight())
+            {
+                final boolean raid = raidThisNight(colony.getWorld(), colony);
+                if (Configurations.gameplay.enableInDevelopmentFeatures)
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getImportantMessageEntityPlayers(),
+                      "Will raid tonight: " + raid);
+                }
+                colony.getRaiderManager().setWillRaidTonight(raid);
+            }
+            return false;
+        }
+        else if (colony.getRaiderManager().willRaidTonight() && !colony.getWorld().isDaytime() && colony.getRaiderManager().hasRaidBeenCalculated())
+        {
+            colony.getRaiderManager().setHasRaidBeenCalculated(false);
+            colony.getRaiderManager().setWillRaidTonight(false);
+            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "Night reached: raiding");
+            }
+            return true;
+        }
+        else if (!colony.getWorld().isDaytime() && colony.getRaiderManager().hasRaidBeenCalculated())
+        {
+            colony.getRaiderManager().setHasRaidBeenCalculated(false);
+        }
+
+        return false;
+    }
+
+    /**
+     * Takes a colony and spits out that colony's RaidLevel.
+     *
+     * @return an int describing the raid level
+     */
+    public int getColonyRaidLevel()
+    {
+        int levels = 0;
+        @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
+        for (@NotNull final ICitizenData citizen : citizensList)
+        {
+            levels += citizen.getLevel() / 5;
+        }
+
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            levels += building.getBuildingLevel();
+        }
+
+        levels += citizensList.size();
+
+        return levels;
+    }
+
+    /**
+     * Returns whether a raid should happen depending on the Config
+     *
+     * @param world The world in which the raid is possibly happening (Used to get a random number easily)
+     * @return Boolean value on whether to act this night
+     */
+    private static boolean raidThisNight(final World world, final IColony colony)
+    {
+        return colony.getRaiderManager().getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
+                 && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+    }
+
+    @Override
+    @NotNull
+    public BlockPos getRandomBuilding()
+    {
+        buildingPosUsage++;
+        if (buildingPosUsage > 3 || lastBuilding == null)
+        {
+            buildingPosUsage = 0;
+            final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
+            final Object[] buildingArray = buildingList.toArray();
+            if (buildingArray.length != 0)
+            {
+                final int rand = colony.getWorld().rand.nextInt(buildingArray.length);
+                final IBuilding building = (IBuilding) buildingArray[rand];
+                lastBuilding = building.getPosition();
+            }
+            else
+            {
+                lastBuilding = colony.getCenter();
+            }
+        }
+
+        return lastBuilding;
     }
 }
