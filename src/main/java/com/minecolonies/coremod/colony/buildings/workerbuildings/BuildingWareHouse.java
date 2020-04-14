@@ -29,6 +29,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
@@ -50,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
@@ -294,7 +296,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             buf.writeItemStack(entry.getKey().getItemStack());
             buf.writeInt(entry.getValue());
         }
-        buf.writeBoolean(minimumStock.size() >= getBuildingLevel() * STOCK_PER_LEVEL);
+        buf.writeBoolean(minimumStock.size() >= minimumStockSize());
     }
 
     @Override
@@ -410,11 +412,27 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     public void addMinimumStock(final ItemStack itemStack, final int quantity)
     {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < getBuildingLevel() * STOCK_PER_LEVEL)
+        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
         {
             minimumStock.put(new ItemStorage(itemStack), quantity);
             markDirty();
         }
+    }
+
+    /**
+     * Calculate the minimum stock size.
+     * @return the size.
+     */
+    private int minimumStockSize()
+    {
+        double increase = 1;
+        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            increase = 1 + effect.getEffect();
+        }
+
+        return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
 
     /**
@@ -434,8 +452,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         markDirty();;
     }
-
-    //todo: Request system has a problem with enchanted items atm, let's dig into this!
 
     /**
      * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)

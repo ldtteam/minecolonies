@@ -69,6 +69,7 @@ public final class ResearchConstants
     public static final String SHIELD_USAGE  = "Shield Usage";
     public static final String DOUBLE_ARROWS = "Double Arrows";
     public static final String BLOCK_ATTACKS = "Block Attacks";
+    public static final String SLEEP_LESS    = "Sleep Less";
 
     public static final String TEACHING = "Teaching";
     public static final String GROWTH = "Growth";
@@ -81,6 +82,15 @@ public final class ResearchConstants
     public static final String SATLIMIT = "Healing Saturation Limit";
     public static final String HAPPINESS = "Happiness";
     public static final String SATURATION = "Saturation";
+
+    public static final String FARMING = "Farming";
+    public static final String BLOCK_BREAK_SPEED = "Block Break Speed";
+    public static final String MINIMUM_STOCK = "Minimum Stock";
+    public static final String RECIPES = "Recipes";
+    public static final String BLOCK_PLACE_SPEED = "Block Place Speed";
+    public static final String MORE_ORES = "More Ores";
+    public static final String WORKING_IN_RAIN = "Working in Rain";
+    public static final String TOOL_DURABILITY = "Tool Durability";
 
     /**
      * Private constructor to hide implicit public one.
