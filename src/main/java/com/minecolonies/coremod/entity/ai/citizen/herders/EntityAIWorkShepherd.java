@@ -146,9 +146,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
 
             dyeSheepChance(sheep);
 
-            worker.getHeldItemMainhand().damageItem(1, worker, (i) -> {
-                i.sendBreakAnimation(Hand.MAIN_HAND);
-            });
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
 
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_SHEEP);
 

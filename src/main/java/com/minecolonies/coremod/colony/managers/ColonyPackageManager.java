@@ -139,7 +139,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      */
     public void updateColonyViews()
     {
-        if (!closeSubscribers.isEmpty())
+        if (!closeSubscribers.isEmpty() || !newSubscribers.isEmpty())
         {
             //  Send each type of update packet as appropriate:
             //      - To close Subscribers if the data changes
@@ -160,7 +160,10 @@ public class ColonyPackageManager implements IColonyPackageManager
             sendSchematicsPackets();
         }
 
-        isDirty = false;
+        if (newSubscribers.isEmpty())
+        {
+            isDirty = false;
+        }
         colony.getPermissions().clearDirty();
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
@@ -252,6 +255,8 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void addImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
     {
         importantColonyPlayers.add(subscriber);
+        newSubscribers.add(subscriber);
+        updateSubscribers();
     }
 
     /**
@@ -261,6 +266,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void removeImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
     {
         importantColonyPlayers.remove(subscriber);
+        newSubscribers.remove(subscriber);
     }
 
     /**

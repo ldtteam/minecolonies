@@ -216,6 +216,11 @@ public class EntityAISickTask extends Goal
 
         if (hospital instanceof BuildingHospital)
         {
+            if (usedBed != null && !((BuildingHospital) hospital).getBedList().contains(usedBed))
+            {
+                usedBed = null;
+            }
+
             if (usedBed == null)
             {
                 for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())

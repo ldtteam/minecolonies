@@ -531,6 +531,8 @@
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
   "com.minecolonies.coremod.gui.workerhuts.repair": "Repair",
+  "com.minecolonies.coremod.gui.nobuilding": "This block is missing its respective building, try restarting or loading a backup!",
+  "com.minecolonies.coremod.gui.nocolony": "This block's building is missing its colony, try restarting or loading a backup!",
 
   "com.minecolonies.coremod.gui.workerhuts.upgrade": "Upgrade",
 
@@ -1148,6 +1150,25 @@
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d/%d",
 
+  "com.minecolonies.coremod.gui.colony.here": "You are inside %s owned by %s",
+  "com.minecolonies.coremod.gui.colony.near": "Colony with ID %d is nearby.",
+  "com.minecolonies.coremod.gui.colony.nonenearby": "No nearby clony found.",
+  "com.minecolonies.coremod.gui.colony.none": "You do not currently own a colony",
+  "com.minecolonies.coremod.gui.colony.own": "You own an existing colony at %s",
+  "com.minecolonies.coremod.gui.colony.delete": "Delete own colony",
+  "com.minecolonies.coremod.gui.colony.delete.sure": "§lDo you really want to delete your own colony?",
+  "com.minecolonies.coremod.gui.colony.delete.notfound": "You currently do not own a colony to delete!",
+  "com.minecolonies.coremod.gui.colony.delete.confirm": "§4Yes delete!",
+  "com.minecolonies.coremod.gui.colony.delete.success": "Successfully deleted your colony!",
+  "com.minecolonies.coremod.gui.colony.delete.cancel": "§2Don't delete!",
+  "com.minecolonies.coremod.gui.colony.create": "Create new colony",
+  "com.minecolonies.coremod.gui.colony.create.notileentity": "§l§4Missing tileentity for the Townhall block, try placing it down again!",
+  "com.minecolonies.coremod.gui.colony.create.failed": "§l§4Colony creation failed, try somewhere else again!",
+  "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
+  "com.minecolonies.coremod.gui.colony.denied.existingandabandon": "§4There is an existing colony you own, delete or abandon it before creating a new one.",
+  "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4There is an existing colony too close.",
+  "com.minecolonies.coremod.gui.colony.allowed.create": "§2You are able to create a new colony here",
+
   "block.minecolonies.composted_dirt": "Composted Dirt",
   "com.minecolonies.coremod.composted_dirt.player_use_message": "This block can be only used by the Florist worker!",
   "com.minecolonies.coremod.job.florist": "Florist",
@@ -1364,5 +1385,10 @@
   "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil",
   "com.minecolonies.coremod.gui.townhall.population.pupils": "Pupils: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.teachers": "Teachers: %d/%d",
-  "com.minecolonies.coremod.school.nocarpet": "I can't study because there is no place to sit in my School. Not that I care much. But my parents say the school has to be repaired because else I won't get any smarter..."
+  "com.minecolonies.coremod.school.nocarpet": "I can't study because there is no place to sit in my School. Not that I care much. But my parents say the school has to be repaired because else I won't get any smarter...",
+  "com.minecolonies.coremod.gui.warehouse.stock": "Minimum Stock:",
+  "com.minecolonies.coremod.gui.warehouse.add": "Add",
+  "com.minecolonies.coremod.gui.scan.select.stack": "Stack(s)",
+  "com.minecolonies.coremod.gui.scan.select.title": "Stack Selection GUI",
+  "com.minecolonies.coremod.gui.warehouse.limitreached": "Limit Reached"
 }
