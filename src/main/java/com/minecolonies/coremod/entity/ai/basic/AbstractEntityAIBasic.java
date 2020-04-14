@@ -1012,7 +1012,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getPosition(), DEFAULT_RANGE_FOR_DELAY))
         {
-           return INVENTORY_FULL;
+            return INVENTORY_FULL;
         }
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
@@ -1034,8 +1034,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         alreadyKept.clear();
         slotAt = 0;
-         this.itemsNiceToHave().forEach(this::isInHut);
-         // we dumped the inventory, reset actions done
+        this.itemsNiceToHave().forEach(this::isInHut);
+        // we dumped the inventory, reset actions done
         this.clearActionsDone();
         if (!getOwnBuilding().isPriorityStatic())
         {
@@ -1476,7 +1476,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if succesful.
      */
 
-    // modified to reflect the actual stack amount to transfer.  WIP
     private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {
         final TileEntity entity = world.getTileEntity(pos);
