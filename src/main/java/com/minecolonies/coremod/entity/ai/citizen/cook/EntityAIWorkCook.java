@@ -46,7 +46,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * Delay between each serving.
      */
-    private static final int SERVE_DELAY          = 30;
+    private static final int SERVE_DELAY = 30;
 
     /**
      * Level at which the cook should give some food to the player.
@@ -69,8 +69,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     private AxisAlignedBB range = null;
 
     /**
-     * Constructor for the Cook.
-     * Defines the tasks the cook executes.
+     * Constructor for the Cook. Defines the tasks the cook executes.
      *
      * @param job a cook job to use.
      */
@@ -91,14 +90,15 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
     /**
      * Very simple action, cook straightly extract it from the furnace.
+     *
      * @param furnace the furnace to retrieve from.
      */
     @Override
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-                new InvWrapper(furnace), RESULT_SLOT,
-                worker.getInventoryCitizen());
+          new InvWrapper(furnace), RESULT_SLOT,
+          worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -112,7 +112,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     @Override
     protected boolean reachedMaxToKeep()
     {
-        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD)
+                 > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 
     @Override
@@ -126,15 +127,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
     /**
      * Serve food to customer
-     *
-     * If no customer, transition to START_WORKING.
-     * If we need to walk to the customer, repeat this state with tiny delay.
-     * If the customer has a full inventory, report and remove customer, delay and repeat this state.
-     * If we have food, then COOK_SERVE.
-     * If no food in the building, transition to START_WORKING.
-     * If we were able to get the stored food, then COOK_SERVE.
-     * If food is no longer available, delay and transition to START_WORKING.
-     * Otherwise, give the customer some food, then delay and repeat this state.
+     * <p>
+     * If no customer, transition to START_WORKING. If we need to walk to the customer, repeat this state with tiny delay. If the customer has a full inventory, report and remove
+     * customer, delay and repeat this state. If we have food, then COOK_SERVE. If no food in the building, transition to START_WORKING. If we were able to get the stored food,
+     * then COOK_SERVE. If food is no longer available, delay and transition to START_WORKING. Otherwise, give the customer some food, then delay and repeat this state.
      *
      * @return next IAIState
      */
@@ -194,10 +190,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return getState();
         }
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                worker.getInventoryCitizen(),
-                ItemStackUtils.CAN_EAT,
-                getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
-                );
+          worker.getInventoryCitizen(),
+          ItemStackUtils.CAN_EAT,
+          getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
+        );
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -232,12 +228,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     }
 
     /**
-     * Checks if the cook has anything important to do before going to the default furnace user jobs.
-     * First calculate the building range if not cached yet.
-     * Then check for citizens around the building.
-     * If no citizen around switch to default jobs.
-     * If citizens around check if food in inventory, if not, switch to gather job.
-     * If food in inventory switch to serve job.
+     * Checks if the cook has anything important to do before going to the default furnace user jobs. First calculate the building range if not cached yet. Then check for citizens
+     * around the building. If no citizen around switch to default jobs. If citizens around check if food in inventory, if not, switch to gather job. If food in inventory switch to
+     * serve job.
+     *
      * @return the next IAIState to transfer to.
      */
     @Override
@@ -250,12 +244,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<AbstractEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
-          .stream()
+                                                          .stream()
                                                           .filter(e -> e instanceof AbstractEntityCitizen)
                                                           .map(e -> (AbstractEntityCitizen) e)
-          .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
-          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
-          .collect(Collectors.toList());
+                                                          .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
+                                                          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
+                                                          .collect(Collectors.toList());
 
         final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
           range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
@@ -274,7 +268,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 return START_WORKING;
             }
 
-            needsCurrently = new Tuple<>(ItemStackUtils.CAN_EAT,STACKSIZE);
+            needsCurrently = new Tuple<>(ItemStackUtils.CAN_EAT, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
         return START_WORKING;

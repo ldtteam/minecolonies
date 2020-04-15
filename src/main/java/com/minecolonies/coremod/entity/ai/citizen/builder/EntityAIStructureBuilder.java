@@ -37,8 +37,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
 
 /**
- * AI class for the builder.
- * Manages building and repairing buildings.
+ * AI class for the builder. Manages building and repairing buildings.
  */
 public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
 {
@@ -100,7 +99,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Building level to purge mobs at the build site.
      */
-    private static final int LEVEL_TO_PURGE_MOBS    = 4;
+    private static final int LEVEL_TO_PURGE_MOBS = 4;
 
     /**
      * The id in the list of the last picked up item.
@@ -131,6 +130,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
     /**
      * State to pick up material before going back to work.
+     *
      * @return the next state to go to.
      */
     public IAIState pickUpMaterial()
@@ -141,7 +141,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         for (final BuildingBuilderResource stack : building.getNeededResources().values())
         {
 
-            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true),stack.getAmount()));
+            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount()));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
