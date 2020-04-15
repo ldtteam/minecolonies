@@ -1390,5 +1390,6 @@
   "com.minecolonies.coremod.gui.warehouse.add": "Add",
   "com.minecolonies.coremod.gui.scan.select.stack": "Stack(s)",
   "com.minecolonies.coremod.gui.scan.select.title": "Stack Selection GUI",
-  "com.minecolonies.coremod.gui.warehouse.limitreached": "Limit Reached"
+  "com.minecolonies.coremod.gui.warehouse.limitreached": "Limit Reached",
+  "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!"
 }

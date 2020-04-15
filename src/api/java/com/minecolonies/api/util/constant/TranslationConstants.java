@@ -375,6 +375,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY = "com.minecolonies.coremod.gui.workerhuts.university";
     @NonNls
     public static final String PUPIL_NO_CARPET = "com.minecolonies.coremod.school.nocarpet";
+    @NonNls
+    public static final String OUT_OF_COLONY = "com.minecolonies.coremod.workorder.outofcolony";
 
     private TranslationConstants()
     {
