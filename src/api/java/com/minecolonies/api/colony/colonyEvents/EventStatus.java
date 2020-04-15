@@ -7,6 +7,7 @@ public enum EventStatus
 {
     STARTING,
     PROGRESSING,
+    WAITING,
     DONE,
     CANCELED;
 }
