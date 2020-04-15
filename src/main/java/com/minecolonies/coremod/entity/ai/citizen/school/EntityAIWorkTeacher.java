@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
@@ -17,6 +16,7 @@ import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -24,10 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
                 if (numberOfBooksInBuilding > 0)
                 {
-                    needsCurrently = new com.minecolonies.api.util.Tuple<>(IS_BOOK, 1);
+                    needsCurrently = new Tuple<>(IS_BOOK, 1);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.BOOK, 1));
@@ -156,7 +156,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfAncientTomes > 0)
             {
-                needsCurrently = new com.minecolonies.api.util.Tuple<>(IS_ANCIENT_TOME, 1);
+                needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1));
