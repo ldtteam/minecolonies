@@ -38,6 +38,7 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -1178,6 +1179,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
+        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WORKING_IN_RAIN, UnlockAbilityResearchEffect.class);
+        if (effect != null)
+        {
+            return effect.getEffect();
+        }
+
         return MineColonies.getConfig().getCommon().workersAlwaysWorkInRain.get() ||
                  (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
     }

@@ -15,7 +15,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +26,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -173,6 +176,18 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.stoneMason;
+    }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonemason", UnlockBuildingResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            return;
+        }
+        super.requestUpgrade(player, builder);
     }
 
     /**

@@ -24,13 +24,14 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionRe
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
@@ -38,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -668,7 +671,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     public boolean isCrop(final Block block)
     {
-        return block instanceof IGrowable && block instanceof CropsBlock;
+        return block instanceof CropsBlock;
+    }
+
+    @Override
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FARMING, MultiplierModifierResearchEffect.class);
+        if (effect == null)
+        {
+            return drops;
+        }
+
+        final List<ItemStack> newDrops = new ArrayList<>();
+        for (final ItemStack stack: drops)
+        {
+            final ItemStack drop = stack.copy();
+            if (worker.getRandom().nextDouble() < effect.getEffect())
+            {
+                drop.setCount(drop.getCount() * 2);
+            }
+            newDrops.add(drop);
+        }
+
+        return newDrops;
     }
 
     /**
@@ -682,11 +708,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final BlockState state = world.getBlockState(pos);
-        NonNullList<ItemStack> drops = NonNullList.create();
-        state.getDrops(new LootContext.Builder((ServerWorld) world));
+
+        double chance = 0;
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FARMING, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            chance = effect.getEffect();
+        }
+
+        final NonNullList<ItemStack> drops = NonNullList.create();
+        state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune).withLuck(fortune).withParameter(LootParameters.TOOL, tool).withParameter(LootParameters.POSITION, pos));
         for (final ItemStack item : drops)
         {
-            InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), item);
+            final ItemStack drop = item.copy();
+            if (worker.getRandom().nextDouble() < chance)
+            {
+                drop.setCount(drop.getCount() * 2);
+            }
+            InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), drop);
         }
 
         if (state.getBlock() instanceof CropsBlock)
