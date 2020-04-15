@@ -425,12 +425,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (patrolTimer > 0)
         {
             patrolTimer--;
-        }
-
-        if (patrolTimer <= 0)
-        {
-            // Next patrol point
-            startPatrolNext();
+            if (patrolTimer <= 0 && !getAssignedCitizen().isEmpty())
+            {
+                // Next patrol point
+                startPatrolNext();
+            }
         }
     }
 
