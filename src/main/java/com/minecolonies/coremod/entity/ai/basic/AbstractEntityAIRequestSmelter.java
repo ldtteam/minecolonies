@@ -65,10 +65,9 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     /**
-     * Get the furnace which has finished smeltables.
-     * For this check each furnace which has been registered to the building.
-     * Check if the furnace is turned off and has something in the result slot
-     * or check if the furnace has more than x results.
+     * Get the furnace which has finished smeltables. For this check each furnace which has been registered to the building. Check if the furnace is turned off and has something in
+     * the result slot or check if the furnace has more than x results.
+     *
      * @return the position of the furnace.
      */
     private BlockPos getPositionOfOvenToRetrieveFrom()
@@ -94,14 +93,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
-        for(final ItemStorage inputStorage : input)
+        for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
             if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = new Tuple<>(predicate,STACKSIZE);
+                    needsCurrently = new Tuple<>(predicate, STACKSIZE);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 else
@@ -129,10 +128,9 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     /**
-     * Retrieve ready bars from the furnaces.
-     * If no position has been set return.
-     * Else navigate to the position of the furnace.
-     * On arrival execute the extract method of the specialized worker.
+     * Retrieve ready bars from the furnaces. If no position has been set return. Else navigate to the position of the furnace. On arrival execute the extract method of the
+     * specialized worker.
+     *
      * @return the next state to go to.
      */
     private IAIState retrieveSmeltableFromFurnace()
@@ -174,6 +172,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
     /**
      * Very simple action, straightly extract it from the furnace.
+     *
      * @param furnace the furnace to retrieve from.
      */
     private void extractFromFurnace(final FurnaceTileEntity furnace)
@@ -187,6 +186,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
     /**
      * Checks if the worker has enough fuel and/or smeltable to start smelting.
+     *
      * @param amountOfFuel the total amount of fuel.
      * @return START_USING_FURNACE if enough, else check for additional worker specific jobs.
      */
@@ -196,9 +196,9 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if( entity instanceof FurnaceTileEntity )
+            if (entity instanceof FurnaceTileEntity)
             {
-                if ( !((FurnaceTileEntity) entity).isBurning() )
+                if (!((FurnaceTileEntity) entity).isBurning())
                 {
                     final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                     if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
@@ -212,7 +212,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
             else
             {
-                if ( !(world.getBlockState(pos).getBlock() instanceof FurnaceBlock) )
+                if (!(world.getBlockState(pos).getBlock() instanceof FurnaceBlock))
                 {
                     ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(pos);
                 }
@@ -224,15 +224,17 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
     /**
      * Smelt the smeltable after the required items are in the inv.
+     *
      * @return the next state to go to.
      */
     private IAIState fillUpFurnace()
     {
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            if ( worker.getCitizenData() != null )
+            if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData()
+                  .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -256,7 +258,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
-            final Predicate<ItemStack> smeltable  = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
+            final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
             if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable)
                   && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
@@ -275,7 +277,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
         else
         {
-            if ( !(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock) )
+            if (!(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock))
             {
                 ((AbstractBuildingSmelterCrafter) getOwnBuilding()).removeFromFurnaces(walkTo);
             }
@@ -306,7 +308,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return super.craft();
         }
 
-        if(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
+        if (getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -317,9 +319,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if (((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces().isEmpty())
         {
-            if ( worker.getCitizenData() != null )
+            if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData()
+                  .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -341,9 +344,9 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE));
         }
 
-        if(amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
+        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
         {
-            needsCurrently = new Tuple<>(FurnaceTileEntity::isFuel,STACKSIZE);
+            needsCurrently = new Tuple<>(FurnaceTileEntity::isFuel, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 

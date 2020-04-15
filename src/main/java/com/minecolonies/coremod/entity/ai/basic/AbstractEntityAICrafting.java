@@ -47,7 +47,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * Times the product needs to be hit.
      */
-    private static final int                                HITTING_TIME = 3;
+    private static final int HITTING_TIME = 3;
 
     /**
      * The current request that is being crafted;
@@ -82,6 +82,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Main method to decide on what to do.
+     *
      * @return the next state to go to.
      */
     protected IAIState decide()
@@ -117,6 +118,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Query the IRecipeStorage of the first request in the queue.
+     *
      * @return the next state to go to.
      */
     private IAIState getRecipe()
@@ -151,6 +153,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Query the required items to take them in the inventory to craft.
+     *
      * @return the next state to go to.
      */
     private IAIState queryItems()
@@ -166,12 +169,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Check for all items of the required recipe.
+     *
      * @return the next state to go to.
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
-        for(final ItemStorage inputStorage : input)
+        for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) < inputStorage.getAmount())
@@ -192,6 +196,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * The actual crafting logic.
+     *
      * @return the next state to go to.
      */
     protected IAIState craft()
@@ -213,7 +218,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         job.setProgress(job.getProgress() + 1);
 
-        worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        worker.setHeldItem(Hand.MAIN_HAND,
+          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
@@ -287,7 +293,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
         {
             job.finishRequest(true);
-            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
+            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             currentRequest = null;
         }
 
