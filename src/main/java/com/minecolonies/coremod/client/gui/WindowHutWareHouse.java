@@ -3,8 +3,13 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
@@ -21,12 +26,19 @@ import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
@@ -37,9 +49,26 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
     /**
+     * List of all item stacks in the game.
+     */
+    private final List<Tuple<ITextComponent, Integer>> allItems = new ArrayList<Tuple<ITextComponent, Integer>>();
+
+    /**
+     * Resource scrolling list.
+     */
+    private final ScrollingList stackList;
+    /**
+     * The filter for the resource list.
+     */
+    private       String        filter = "";
+
+    public static final String LIST_ALLINVENTORY = "allinventory";
+
+    private final        BuildingWareHouse.View building;
+    /**
      * Required building level for sorting.
      */
-    private static final int BUILDING_LEVEL_FOR_SORTING = 3;
+    private static final int                    BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
      * Limit reached label.
@@ -64,10 +93,11 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     public WindowHutWareHouse(final BuildingWareHouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
+        this.building = building;
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-
+        this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
         {
             allowMoreStorageUpgrades = true;
@@ -85,6 +115,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
     /**
      * Remove the stock.
+     *
      * @param button the button.
      */
     private void removeStock(final Button button)
@@ -118,7 +149,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         updateResourcePane();
         updateStockList();
-
+        updateResources();
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
@@ -184,8 +215,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 break;
         }
 
-        //position the addResource Button to the right
-
         resourceLabel.setLabelText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
@@ -210,7 +239,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer> > tempRes = new ArrayList<>(building.getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -245,6 +274,112 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
+    }
+
+    /**
+     * Update the item list.
+     */
+    private void updateResources()
+    {
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
+        List<Tuple<ITextComponent, Integer>> transfer = new ArrayList<>();
+
+        final List<BlockPos> containerList = building.getContainerList();
+        List<ItemStack> items = new ArrayList<>();
+        int count = containerList.size();
+        World world = building.getColony().getWorld();
+
+        for (int s = 0; s < count; s++)
+        {
+            final TileEntity rack = world.getTileEntity(containerList.get(s));
+            if (rack instanceof TileEntityRack)
+            {
+
+                int allSlots = ((AbstractTileEntityRack) rack).getInventory().getSlots();
+                for (int i = 0; i < allSlots; i++)
+                {
+                    if (!((AbstractTileEntityRack) rack).getInventory().getStackInSlot(i).isEmpty())
+                    {
+                        items.add(((AbstractTileEntityRack) rack).getInventory().getStackInSlot(i));
+                    }
+                }
+            }
+        }
+
+        final Map<ITextComponent, Integer> map = new HashMap<>();
+        if (items != null)
+        {
+            for (int r = 0; r < items.size(); r++)
+            {
+                final ItemStack storage = items.get(r);
+                int amount = storage.getCount();
+                if (map.containsKey(storage.getDisplayName()))
+                {
+                    amount += map.remove(storage.getDisplayName());
+                }
+                map.put(storage.getDisplayName(), amount);
+            }
+            for (Map.Entry<ITextComponent, Integer> entry : map.entrySet())
+            {
+                transfer.add(new Tuple<>(entry.getKey(), entry.getValue()));
+            }
+        }
+
+        allItems.clear();
+        allItems.addAll(transfer);
+        updateResourceList();
+    }
+
+    /**
+     * Updates the resource list in the GUI with the info we need.
+     */
+    private void updateResourceList()
+    {
+        stackList.enable();
+
+        //Creates a dataProvider for the unemployed stackList.
+        stackList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return allItems.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Tuple<ITextComponent, Integer> resource = allItems.get(index);
+                final Label resourceLabel = rowPane.findPaneOfTypeByID("ressName", Label.class);
+                resourceLabel.setLabelText(resource.getA().getFormattedText());
+                final Label qtys = rowPane.findPaneOfTypeByID("qtys", Label.class);
+                qtys.setLabelText(resource.getB().toString());
+            }
+        });
+    }
+
+    /**
+     * Get the list of blocks which should be added.
+     *
+     * @param filterPredicate the predicate to filter all blocks for.
+     * @return an immutable list of blocks.
+     */
+    private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
+    {
+        if (filter.isEmpty())
+        {
+            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
+        }
+        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**

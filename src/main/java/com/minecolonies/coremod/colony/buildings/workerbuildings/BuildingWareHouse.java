@@ -21,6 +21,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -31,6 +32,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import com.minecolonies.coremod.util.SortingUtils;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ContainerBlock;
@@ -43,6 +45,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -72,12 +75,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The storage tag for the storage capacity.
      */
-    private static final String TAG_STORAGE  = "tagStorage";
+    private static final String TAG_STORAGE = "tagStorage";
 
     /**
      * Minimum stock it can hold per level.
      */
-    private static final int STOCK_PER_LEVEL   = 5;
+    private static final int STOCK_PER_LEVEL = 5;
 
     /**
      * The minimum stock tag.
@@ -175,7 +178,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     private void checkForRegisteredDeliverymen()
     {
-        for (final Vec3d pos: new ArrayList<>(registeredDeliverymen))
+        for (final Vec3d pos : new ArrayList<>(registeredDeliverymen))
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
@@ -248,7 +251,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         compound.putInt(TAG_STORAGE, storageUpgrade);
 
         @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final CompoundNBT compoundNBT = new CompoundNBT();
             entry.getKey().getItemStack().write(compoundNBT);
@@ -297,6 +300,11 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             buf.writeInt(entry.getValue());
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
+        buf.writeInt(containerList.size());
+        for (int i = 0; i < containerList.size(); i++)
+        {
+            buf.writeBlockPos(containerList.get(i));
+        }
     }
 
     @Override
@@ -319,9 +327,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Handles the chest placement.
-     *  @param pos   at pos.
-     * @param chest the entity.
-     * @param world the world.
+     *
+     * @param pos            at pos.
+     * @param chest          the entity.
+     * @param world          the world.
      * @param tileEntityData the rack te data.
      */
     public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
@@ -365,7 +374,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -407,8 +416,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Add the minimum stock of the warehouse to this building.
+     *
      * @param itemStack the itemStack to add.
-     * @param quantity the quantity.
+     * @param quantity  the quantity.
      */
     public void addMinimumStock(final ItemStack itemStack, final int quantity)
     {
@@ -421,6 +431,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Calculate the minimum stock size.
+     *
      * @return the size.
      */
     private int minimumStockSize()
@@ -437,6 +448,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Remove the minimum stock.
+     *
      * @param itemStack the stack to remove.
      */
     public void removeMinimumStock(final ItemStack itemStack)
@@ -450,15 +462,13 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
 
-        markDirty();;
+        markDirty();
+        ;
     }
 
     /**
-     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
-     * - If not: Check if there is a request for this already.
-     * -> If not: Create a request.
-     * - If so: Check if there is a request for this still.
-     * -> If so: cancel it.
+     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine) - If not: Check if there is a request for this already. -> If not:
+     * Create a request. - If so: Check if there is a request for this still. -> If so: cancel it.
      */
     @Override
     public void onColonyTick(final IColony colony)
@@ -490,6 +500,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Check if the building is already requesting this stack.
+     *
      * @param stack the stack to check.
      * @return the token if so.
      */
@@ -505,6 +516,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
         return null;
     }
+
     /**
      * BuildWarehouse View.
      */
@@ -524,6 +536,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
          * If the warehouse reached the minimum stock limit.
          */
         private boolean reachedLimit = false;
+
+        private List<BlockPos> storageracks = new ArrayList<>();
 
         /**
          * Instantiate the warehouse view.
@@ -551,11 +565,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             minimumStock.clear();
             allowUpgrade = buf.readBoolean();
             final int size = buf.readInt();
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
             }
             reachedLimit = buf.readBoolean();
+            final int racks = buf.readInt();
+            for (int i = 0; i < racks; i++)
+            {
+                storageracks.add(buf.readBlockPos());
+            }
         }
 
         /**
@@ -570,6 +589,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         /**
          * The minimum stock.
+         *
          * @return the stock.
          */
         public List<Tuple<ItemStorage, Integer>> getStock()
@@ -577,8 +597,14 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             return minimumStock;
         }
 
+        public List<BlockPos> getContainerList()
+        {
+            return storageracks;
+        }
+
         /**
          * Check if the warehouse has reached the limit.
+         *
          * @return true if so.
          */
         public boolean hasReachedLimit()
