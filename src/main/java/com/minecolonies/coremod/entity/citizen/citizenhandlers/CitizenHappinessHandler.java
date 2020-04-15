@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
