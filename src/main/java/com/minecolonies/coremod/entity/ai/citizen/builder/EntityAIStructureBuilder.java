@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -138,11 +139,48 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
+        boolean ONLY_64 = false;
 
-        for (final BuildingBuilderResource stack : building.getNeededResources().values())
+        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
+        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
         {
+            ONLY_64 = true;
+        }
+        else
+        {
+            int stackCount = 0;
 
-            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount()));
+            for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+            {
+                int amount = stack.getAmount();
+                do
+                {
+                    stackCount++;
+                    amount = amount - stack.getItemStack().getMaxStackSize();
+                }
+                while (amount > 0);
+            }
+            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
+            {
+                ONLY_64 = true;
+            }
+            else
+            {
+                ONLY_64 = false;
+            }
+        }
+
+        for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+        {
+            int amount = stack.getAmount();
+            if (ONLY_64)
+            {
+                if (amount > Constants.STACKSIZE)
+                {
+                    amount = Constants.STACKSIZE;
+                }
+            }
+            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
