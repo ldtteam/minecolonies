@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
@@ -12,10 +13,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -49,18 +46,27 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
     /**
-     * List of all item stacks in the game.
+     * List of all item stacks in the warehouse.
      */
-    private final List<Tuple<ITextComponent, Integer>> allItems = new ArrayList<Tuple<ITextComponent, Integer>>();
+    List<ItemStorage> allItems = new ArrayList<>();
 
     /**
      * Resource scrolling list.
      */
-    private final ScrollingList stackList;
+    private final       ScrollingList stackList;
     /**
      * The filter for the resource list.
      */
-    private       String        filter = "";
+    private             String        filter          = "";
+    /**
+     * The sortDescriptor so how we want to sort
+     */
+    public static final int           NO_SORT         = 0;
+    public static final int           ASC_SORT        = 1;
+    public static final int           DESC_SORT       = 2;
+    public static final int           COUNT_ASC_SORT  = 3;
+    public static final int           COUNT_DESC_SORT = 4;
+    int sortDescriptor = 0;
 
     public static final String LIST_ALLINVENTORY = "allinventory";
 
@@ -96,6 +102,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         this.building = building;
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
+        registerButton("sortStorageFilter", this::setSortFlag);
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
@@ -136,6 +143,37 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         {
             new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
         }
+    }
+
+    void setSortFlag()
+    {
+        sortDescriptor++;
+        if (sortDescriptor > 4)
+        {
+            sortDescriptor = NO_SORT;
+        }
+        switch (sortDescriptor)
+        {
+            case NO_SORT:
+                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("v^");
+                break;
+            case ASC_SORT:
+                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("A^");
+                break;
+            case DESC_SORT:
+                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("Av");
+                break;
+            case COUNT_ASC_SORT:
+                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("1^");
+                break;
+            case COUNT_DESC_SORT:
+                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("1v");
+                break;
+            default:
+                break;
+        }
+
+        updateResources();
     }
 
     @Override
@@ -281,9 +319,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void updateResources()
     {
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
-        List<Tuple<ITextComponent, Integer>> transfer = new ArrayList<>();
-
+        List<ItemStorage> filterItems = new ArrayList<>();
         final List<BlockPos> containerList = building.getContainerList();
         List<ItemStack> items = new ArrayList<>();
         int count = containerList.size();
@@ -306,27 +342,71 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             }
         }
 
-        final Map<ITextComponent, Integer> map = new HashMap<>();
-        if (items != null)
+        Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
+        storedItems.clear();
+
+        for (final ItemStack currentItem : items)
         {
-            for (int r = 0; r < items.size(); r++)
+            final ItemStorage currentStorage = new ItemStorage(currentItem, currentItem.getCount(), false);
+
+            if (storedItems.containsKey(currentStorage))
             {
-                final ItemStack storage = items.get(r);
-                int amount = storage.getCount();
-                if (map.containsKey(storage.getDisplayName()))
-                {
-                    amount += map.remove(storage.getDisplayName());
-                }
-                map.put(storage.getDisplayName(), amount);
+                final ItemStorage existing = storedItems.get(currentStorage);
+                existing.setAmount(existing.getAmount() + currentStorage.getAmount());
             }
-            for (Map.Entry<ITextComponent, Integer> entry : map.entrySet())
+            else
             {
-                transfer.add(new Tuple<>(entry.getKey(), entry.getValue()));
+                storedItems.put(currentStorage, currentStorage);
             }
         }
 
+        filterItems.clear();
+        for (ItemStorage entry : storedItems.keySet())
+        {
+            filterItems.add(entry);
+        }
+
+        final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
+                                                                  || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                  || stack.getItemStack()
+                                                                       .getDisplayName()
+                                                                       .getFormattedText()
+                                                                       .toLowerCase(Locale.US)
+                                                                       .contains(filter.toLowerCase(Locale.US));
+
         allItems.clear();
-        allItems.addAll(transfer);
+        if (filter.isEmpty())
+        {
+            allItems.addAll(filterItems);
+        }
+        else
+        {
+            allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
+        }
+
+        Comparator<ItemStorage> compareByName =
+          (ItemStorage o1, ItemStorage o2) -> o1.getItemStack().getDisplayName().getFormattedText().compareTo(o2.getItemStack().getDisplayName().getFormattedText());
+        Comparator<ItemStorage> compareByCount = (ItemStorage o1, ItemStorage o2) -> o1.getAmount() - o2.getAmount();
+        switch (sortDescriptor)
+        {
+            case NO_SORT:
+                break;
+            case ASC_SORT:
+                Collections.sort(allItems, compareByName);
+                break;
+            case DESC_SORT:
+                Collections.sort(allItems, compareByName.reversed());
+                break;
+            case COUNT_ASC_SORT:
+                Collections.sort(allItems, compareByCount);
+                break;
+            case COUNT_DESC_SORT:
+                Collections.sort(allItems, compareByCount.reversed());
+                break;
+            default:
+                break;
+        }
+
         updateResourceList();
     }
 
@@ -358,28 +438,23 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Tuple<ITextComponent, Integer> resource = allItems.get(index);
+                ItemStorage resource = allItems.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID("ressName", Label.class);
-                resourceLabel.setLabelText(resource.getA().getFormattedText());
+                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
                 final Label qtys = rowPane.findPaneOfTypeByID("qtys", Label.class);
-                qtys.setLabelText(resource.getB().toString());
+                qtys.setLabelText(Integer.toString(resource.getAmount()));
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource.getItemStack());
             }
         });
     }
 
-    /**
-     * Get the list of blocks which should be added.
-     *
-     * @param filterPredicate the predicate to filter all blocks for.
-     * @return an immutable list of blocks.
-     */
-    private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
+    @Override
+    public boolean onKeyTyped(final char ch, final int key)
     {
-        if (filter.isEmpty())
-        {
-            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
-        }
-        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        final boolean result = super.onKeyTyped(ch, key);
+        filter = findPaneOfTypeByID("names", TextField.class).getText();
+        updateResources();
+        return result;
     }
 
     /**
