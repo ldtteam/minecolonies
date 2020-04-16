@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.network.messages.BuildingHiringModeMessage;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -40,6 +41,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
@@ -249,7 +251,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canRecipeBeAdded(final IToken ignored)
     {
-        return IBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
+        return hasSpaceForMoreRecipes();
+    }
+
+    /**
+     * Check if the worker has more space for recipes.
+     * @return true if so.
+     */
+    private boolean hasSpaceForMoreRecipes()
+    {
+        double increase = 1;
+        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            increase = 1 + effect.getEffect();
+        }
+        return Math.pow(2, getBuildingLevel()) * increase > getRecipes().size() + 1;
     }
 
     /**
@@ -490,6 +507,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
+        buf.writeBoolean(hasSpaceForMoreRecipes());
     }
 
     /**
@@ -589,6 +607,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private Skill secondary = Skill.Intelligence;
 
         /**
+         * If the building can add more recipes.
+         */
+        private boolean canAddMoreRecipes;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -650,6 +673,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.primary = Skill.values()[buf.readInt()];
             this.secondary = Skill.values()[buf.readInt()];
             this.maxInhabitants = buf.readInt();
+            this.canAddMoreRecipes = buf.readBoolean();
         }
 
         /**
@@ -751,7 +775,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         @Override
         public boolean canRecipeBeAdded()
         {
-            return IBuildingWorker.canBuildingCanLearnMoreRecipes(getBuildingLevel(), getRecipes().size());
+            return canAddMoreRecipes;
         }
 
         /**

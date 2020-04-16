@@ -24,6 +24,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -44,6 +45,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
+import static com.minecolonies.api.research.util.ResearchConstants.RAILS;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;

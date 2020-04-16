@@ -146,6 +146,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
     public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
     public final ForgeConfigSpec.IntValue pathfindingMaxNodes;
+    public final ForgeConfigSpec.IntValue minimumRailsToPath;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
@@ -222,6 +223,126 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> woundingshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> deadlyaim;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> higherlearning;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> morebooks;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bookworm;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bachelor;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> master;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> phd;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nurture;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hormones;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> puberty;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> growth;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> beanstalk;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> keen;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> outpost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hamlet;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> village;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> city;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diligent;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> studious;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> scholarly;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> reflective;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> academic;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rails;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nimble;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> agile;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> swift;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> athlete;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> stamina;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> resistance;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> resilience;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> vitality;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fortitude;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> indefatigability;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bandaid;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> healingcream;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bandages;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> compress;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> cast;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> gourmand;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> gorger;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> stuffer;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> epicure;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> glutton;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> circus;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> festival;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spectacle;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> opera;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> theater;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> firstaid;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> firstaid2;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> livesaver;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> livesaver2;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel2;
+
+    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
+    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
+    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
+    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> veinminer;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> goodveins;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> richveins;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> amazingveins;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> motherlode;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ability;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> skills;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> tools;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> seemsautomatic;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> madness;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hittingiron;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> stonecake;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hardened;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> reinforced;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelbracing;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondcoated;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> memoryaid;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> cheatsheet;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> recipebook;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rtm;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainman;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> woodwork;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sieving;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> space;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> capacity;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fullstock;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> theflintstones;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rockingroll;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hot;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> isthisredstone;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> redstonepowered;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> heavymachinery;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatisthisspeed;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> biodegradable;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> flowerpower;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> bonemeal;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> dung;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> compost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fertilizer;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> magiccompost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightning;
+
     /**
      * Builds common configuration.
      *
@@ -238,7 +359,7 @@ public class CommonConfiguration extends AbstractConfiguration
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 50, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 75, 4, 500);
         builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
         limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
@@ -350,20 +471,40 @@ public class CommonConfiguration extends AbstractConfiguration
         listOfCompostableItems = defineList(builder, "listOfCompostableItems",
           Arrays.asList
                    ("minecraft:rotten_flesh",
-                     "minecraft:tallgrass",
                      "minecraft:brown_mushroom",
                      "minecraft:red_mushroom",
-                     "minecraft:rose_bush",
                      "minecraft:feather",
+                     "minecraft:pumpkin",
+                     "minecraft:carved_pumpkin",
+                     "minecraft:grass",
+                     "minecraft:tall_grass",
+                     "minecraft:fern",
+                     "minecraft:large_fern",
+                     "minecraft:kelp",
+                     "minecraft:seagrass",
+                     "minecraft:cactus",
+                     "minecraft:sugar_cane",
+                     "minecraft:vine",
+                     "minecraft:cocoa_beans",
+                     "minecraft:lily_pad",
+                     "minecraft:sea_pickle",
+                     "minecraft:wheat",
+                     "minecraft:brown_mushroom_block",
+                     "minecraft:red_mushroom_block",
+                     "minecraft:mushroom_stem",
+                     "minecraft:cake",
+                     "minecraft:rabbit_foot",
+                     "minecraft:fermented_spider_eye",
                      "saplings",
-                     "small_flowers"),
+                     "flowers",
+                     "leaves"),
           s -> s instanceof String);
         luckyBlocks = defineList(builder, "luckyblocks",
           Arrays.asList
                    ("minecraft:stone",
                      "minecraft:cobblestone"),
           s -> s instanceof String);
-        luckyOres = defineList(builder, "luckyblocks",
+        luckyOres = defineList(builder, "luckyores",
           Arrays.asList
                    ("minecraft:coal_ore!64",
                      "minecraft:iron_ore!32",
@@ -656,6 +797,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "pathfinding");
 
+        minimumRailsToPath = defineInteger(builder,  "minimumrailstopath", 5, 5, 100);
         pathfindingDebugDraw = defineBoolean(builder,  "pathfindingdebugdraw", false);
         pathfindingDebugVerbosity = defineInteger(builder,  "pathfindingdebugverbosity", 0, 0, 10);
         pathfindingMaxThreadCount = defineInteger(builder,  "pathfindingmaxthreadcount", 2, 1, 10);
@@ -701,13 +843,13 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:bow*5"),
           s -> s instanceof String);
         multishot = defineList(builder, "multishot",
-          Collections.singletonList("minecraft:bow*10"),
+          Collections.singletonList("minecraft:bow*9"),
           s -> s instanceof String);
         rapidshot = defineList(builder, "rapidshot",
-          Collections.singletonList("minecraft:bow*25"),
+          Collections.singletonList("minecraft:bow*18"),
           s -> s instanceof String);
         masterbowman = defineList(builder, "masterbowman",
-          Collections.singletonList("minecraft:bow*64"),
+          Collections.singletonList("minecraft:bow*27"),
           s -> s instanceof String);
 
         avoidance = defineList(builder, "avoidance",
@@ -785,18 +927,18 @@ public class CommonConfiguration extends AbstractConfiguration
         this.avoid = defineList(builder, "avoid",
           Collections.singletonList("minecraft:emerald*8"),
           s -> s instanceof String);
-        this.evade = defineList(builder, "dodge",
+        this.evade = defineList(builder, "evade",
           Collections.singletonList("minecraft:emerald*16"),
           s -> s instanceof String);
-        this.flee = defineList(builder, "dodge",
+        this.flee = defineList(builder, "flee",
           Collections.singletonList("minecraft:emerald*32"),
           s -> s instanceof String);
-        this.hotfoot = defineList(builder, "dodge",
+        this.hotfoot = defineList(builder, "hotfoot",
           Collections.singletonList("minecraft:emerald*64"),
           s -> s instanceof String);
 
         this.accuracy = defineList(builder, "accuracy",
-          Collections.singletonList("minecraft:iron_ingot*1"),
+          Collections.singletonList("minecraft:iron_ingot*16"),
           s -> s instanceof String);
 
         this.quickdraw = defineList(builder, "quickdraw",
@@ -829,6 +971,322 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.deadlyaim = defineList(builder, "deadlyaim",
           Collections.singletonList("minecraft:flint*256"),
+          s -> s instanceof String);
+
+        this.higherlearning = defineList(builder, "higherlearning",
+          Collections.singletonList("minecraft:book*3"),
+          s -> s instanceof String);
+
+        this.morebooks = defineList(builder, "morebooks",
+          Collections.singletonList("minecraft:book*6"),
+          s -> s instanceof String);
+        this.bookworm = defineList(builder, "bookworm",
+          Collections.singletonList("minecraft:bookshelf*6"),
+          s -> s instanceof String);
+        this.bachelor = defineList(builder, "bachelor",
+          Collections.singletonList("minecraft:bookshelf*12"),
+          s -> s instanceof String);
+        this.master = defineList(builder, "master",
+          Collections.singletonList("minecraft:bookshelf*32"),
+          s -> s instanceof String);
+        this.phd = defineList(builder, "phd",
+          Collections.singletonList("minecraft:bookshelf*64"),
+          s -> s instanceof String);
+
+        this.nurture = defineList(builder, "nurture",
+          Collections.singletonList("minecraft:cooked_chicken*32"),
+          s -> s instanceof String);
+        this.hormones = defineList(builder, "hormones",
+          Collections.singletonList("minecraft:cooked_chicken*64"),
+          s -> s instanceof String);
+        this.puberty = defineList(builder, "puberty",
+          Collections.singletonList("minecraft:cooked_chicken*128"),
+          s -> s instanceof String);
+        this.growth = defineList(builder, "growth",
+          Collections.singletonList("minecraft:cooked_chicken*256"),
+          s -> s instanceof String);
+        this.beanstalk = defineList(builder, "beanstalk",
+          Collections.singletonList("minecraft:cooked_chicken*512"),
+          s -> s instanceof String);
+
+        this.keen = defineList(builder, "keen",
+          Collections.singletonList("minecraft:book*3"),
+          s -> s instanceof String);
+        this.outpost = defineList(builder, "outpost",
+          Collections.singletonList("minecraft:cooked_beef*64"),
+          s -> s instanceof String);
+        this.hamlet = defineList(builder, "hamlet",
+          Collections.singletonList("minecraft:cooked_beef*128"),
+          s -> s instanceof String);
+        this.village = defineList(builder, "village",
+          Collections.singletonList("minecraft:cooked_beef*256"),
+          s -> s instanceof String);
+        this.city = defineList(builder, "city",
+          Collections.singletonList("minecraft:cooked_beef*512"),
+          s -> s instanceof String);
+
+        this.diligent = defineList(builder, "diligent",
+          Collections.singletonList("minecraft:book*6"),
+          s -> s instanceof String);
+        this.studious = defineList(builder, "studious",
+          Collections.singletonList("minecraft:book*12"),
+          s -> s instanceof String);
+        this.scholarly = defineList(builder, "scholarly",
+          Collections.singletonList("minecraft:book*24"),
+          s -> s instanceof String);
+        this.reflective = defineList(builder, "reflective",
+          Collections.singletonList("minecraft:book*48"),
+          s -> s instanceof String);
+        this.academic = defineList(builder, "academic",
+          Collections.singletonList("minecraft:book*128"),
+          s -> s instanceof String);
+
+        this.rails = defineList(builder, "rails",
+          Collections.singletonList("minecraft:rail*64"),
+          s -> s instanceof String);
+        this.nimble = defineList(builder, "nimble",
+          Collections.singletonList("minecraft:rabbit_foot*1"),
+          s -> s instanceof String);
+        this.agile = defineList(builder, "agile",
+          Collections.singletonList("minecraft:rabbit_foot*10"),
+          s -> s instanceof String);
+        this.swift = defineList(builder, "swift",
+          Collections.singletonList("minecraft:rabbit_foot*32"),
+          s -> s instanceof String);
+        this.athlete = defineList(builder, "athlete",
+          Collections.singletonList("minecraft:rabbit_foot*64"),
+          s -> s instanceof String);
+
+        this.stamina = defineList(builder, "stamina",
+          Collections.singletonList("minecraft:carrot*1"),
+          s -> s instanceof String);
+
+        this.resistance = defineList(builder, "resistance",
+          Collections.singletonList("minecraft:golden_apple*1"),
+          s -> s instanceof String);
+        this.resilience = defineList(builder, "resilience",
+          Collections.singletonList("minecraft:golden_apple*8"),
+          s -> s instanceof String);
+        this.vitality = defineList(builder, "vitality",
+          Collections.singletonList("minecraft:golden_apple*16"),
+          s -> s instanceof String);
+        this.fortitude = defineList(builder, "fortitude",
+          Collections.singletonList("minecraft:golden_apple*32"),
+          s -> s instanceof String);
+        this.indefatigability = defineList(builder, "indefatigability",
+          Collections.singletonList("minecraft:golden_apple*64"),
+          s -> s instanceof String);
+
+        this.bandaid = defineList(builder, "bandaid",
+          Collections.singletonList("minecraft:golden_carrot*1"),
+          s -> s instanceof String);
+        this.healingcream = defineList(builder, "healingcream",
+          Collections.singletonList("minecraft:golden_carrot*8"),
+          s -> s instanceof String);
+        this.bandages = defineList(builder, "bandages",
+          Collections.singletonList("minecraft:golden_carrot*16"),
+          s -> s instanceof String);
+        this.compress = defineList(builder, "compress",
+          Collections.singletonList("minecraft:golden_carrot*32"),
+          s -> s instanceof String);
+        this.cast = defineList(builder, "cast",
+          Collections.singletonList("minecraft:golden_carrot*64"),
+          s -> s instanceof String);
+
+        this.gourmand = defineList(builder, "gourmand",
+          Collections.singletonList("minecraft:cookie*32"),
+          s -> s instanceof String);
+        this.gorger = defineList(builder, "gorger",
+          Collections.singletonList("minecraft:cookie*64"),
+          s -> s instanceof String);
+        this.stuffer = defineList(builder, "stuffer",
+          Collections.singletonList("minecraft:cookie*128"),
+          s -> s instanceof String);
+        this.epicure = defineList(builder, "epicure",
+          Collections.singletonList("minecraft:cookie*256"),
+          s -> s instanceof String);
+        this.glutton = defineList(builder, "glutton",
+          Collections.singletonList("minecraft:cookie*512"),
+          s -> s instanceof String);
+
+        this.circus = defineList(builder, "circus",
+          Collections.singletonList("minecraft:cake*1"),
+          s -> s instanceof String);
+        this.festival = defineList(builder, "festival",
+          Collections.singletonList("minecraft:cake*9"),
+          s -> s instanceof String);
+        this.spectacle = defineList(builder, "spectacle",
+          Collections.singletonList("minecraft:cake*18"),
+          s -> s instanceof String);
+        this.opera = defineList(builder, "opera",
+          Collections.singletonList("minecraft:cake*27"),
+          s -> s instanceof String);
+        this.theater = defineList(builder, "theater",
+          Collections.singletonList("minecraft:enchanted_golden_apple*16"),
+          s -> s instanceof String);
+
+        this.firstaid = defineList(builder, "firstaid",
+          Collections.singletonList("minecraft:hay_block*8"),
+          s -> s instanceof String);
+        this.firstaid2 = defineList(builder, "firstaid2",
+          Collections.singletonList("minecraft:hay_block*16"),
+          s -> s instanceof String);
+        this.livesaver = defineList(builder, "livesaver",
+          Collections.singletonList("minecraft:hay_block*32"),
+          s -> s instanceof String);
+        this.livesaver2 = defineList(builder, "livesaver2",
+          Collections.singletonList("minecraft:hay_block*64"),
+          s -> s instanceof String);
+        this.guardianangel = defineList(builder, "guardianangel",
+          Collections.singletonList("minecraft:hay_block*128"),
+          s -> s instanceof String);
+        this.guardianangel2 = defineList(builder, "guardianangel2",
+          Collections.singletonList("minecraft:hay_block*256"),
+          s -> s instanceof String);
+
+        //whatyaneed = defineList(builder, "whatyaneed",
+        //          Collections.singletonList("minecraft:anvil*10"),
+        //          s -> s instanceof String);
+        //stringwork = defineList(builder, "stringwork",
+        //          Collections.singletonList("minecraft:oak_log*64"),
+        //          s -> s instanceof String);
+        //thoselungs = defineList(builder, "thoselungs",
+        //          Collections.singletonList("minecraft:64*glass"),
+        //          s -> s instanceof String);
+        //rainbowheaven = defineList(builder, "rainbowheaven",
+        //          Collections.singletonList("minecraft:poppy*64"),
+        //          s -> s instanceof String);
+
+        this.veinminer = defineList(builder, "veinminer",
+          Collections.singletonList("minecraft:iron_ore*32"),
+          s -> s instanceof String);
+        this.goodveins = defineList(builder, "goodveins",
+          Collections.singletonList("minecraft:iron_ore*64"),
+          s -> s instanceof String);
+        this.richveins = defineList(builder, "richveins",
+          Collections.singletonList("minecraft:gold_ore*32"),
+          s -> s instanceof String);
+        this.amazingveins = defineList(builder, "amazingveins",
+          Collections.singletonList("minecraft:gold_ore*64"),
+          s -> s instanceof String);
+        this.motherlode = defineList(builder, "motherlode",
+          Collections.singletonList("minecraft:diamond_ore*64"),
+          s -> s instanceof String);
+
+        this.ability = defineList(builder, "ability",
+          Collections.singletonList("minecraft:iron_ingot*64"),
+          s -> s instanceof String);
+        this.skills = defineList(builder, "skills",
+          Collections.singletonList("minecraft:iron_ingot*128"),
+          s -> s instanceof String);
+        this.tools = defineList(builder, "tools",
+          Collections.singletonList("minecraft:iron_ingot*256"),
+          s -> s instanceof String);
+        this.seemsautomatic = defineList(builder, "seemsautomatic",
+          Collections.singletonList("minecraft:iron_ingot*512"),
+          s -> s instanceof String);
+        this.madness = defineList(builder, "madness",
+          Collections.singletonList("minecraft:iron_ingot*1024"),
+          s -> s instanceof String);
+
+        this.hittingiron = defineList(builder, "hittingiron",
+          Collections.singletonList("minecraft:anvil*1"),
+          s -> s instanceof String);
+        this.stonecake = defineList(builder, "stonecake",
+          Collections.singletonList("minecraft:chiseled_stone_bricks*64"),
+          s -> s instanceof String);
+        this.hardened = defineList(builder, "hardened",
+          Collections.singletonList("minecraft:diamond*16"),
+          s -> s instanceof String);
+        this.reinforced = defineList(builder, "reinforced",
+          Collections.singletonList("minecraft:diamond*32"),
+          s -> s instanceof String);
+        this.steelbracing = defineList(builder, "steelbracing",
+          Collections.singletonList("minecraft:diamond*64"),
+          s -> s instanceof String);
+        this.diamondcoated = defineList(builder, "diamondcoated",
+          Collections.singletonList("minecraft:diamond*128"),
+          s -> s instanceof String);
+
+        this.memoryaid = defineList(builder, "memoryaid",
+          Collections.singletonList("minecraft:paper*32"),
+          s -> s instanceof String);
+        this.cheatsheet = defineList(builder, "cheatsheet",
+          Collections.singletonList("minecraft:paper*64"),
+          s -> s instanceof String);
+        this.recipebook = defineList(builder, "recipebook",
+          Collections.singletonList("minecraft:paper*128"),
+          s -> s instanceof String);
+        this.rtm = defineList(builder, "rtm",
+          Collections.singletonList("minecraft:paper*256"),
+          s -> s instanceof String);
+        this.rainman = defineList(builder, "rainman",
+          Collections.singletonList("minecraft:salmon_bucket*27"),
+          s -> s instanceof String);
+
+        this.woodwork = defineList(builder, "woodwork",
+          Collections.singletonList("minecraft:oak_planks*64"),
+          s -> s instanceof String);
+        this.sieving = defineList(builder, "sieving",
+          Collections.singletonList("minecraft:string*64"),
+          s -> s instanceof String);
+        this.space = defineList(builder, "space",
+          Collections.singletonList("minecolonies:blockminecoloniesrack*16"),
+          s -> s instanceof String);
+        this.capacity = defineList(builder, "capacity",
+          Collections.singletonList("minecolonies:blockminecoloniesrack*32"),
+          s -> s instanceof String);
+        this.fullstock = defineList(builder, "fullstock",
+          Collections.singletonList("minecolonies:blockminecoloniesrack*64"),
+          s -> s instanceof String);
+
+        this.theflintstones = defineList(builder, "theflintstones",
+          Collections.singletonList("minecraft:stone_bricks*64"),
+          s -> s instanceof String);
+        this.rockingroll = defineList(builder, "rockingroll",
+          Collections.singletonList("minecraft:stone*64"),
+          s -> s instanceof String);
+
+        this.hot = defineList(builder, "hot",
+          Collections.singletonList("minecraft:lava_bucket*4"),
+          s -> s instanceof String);
+        this.isthisredstone = defineList(builder, "isthisredstone",
+          Collections.singletonList("minecraft:redstone*128"),
+          s -> s instanceof String);
+        this.redstonepowered = defineList(builder, "redstonepowered",
+          Collections.singletonList("minecraft:redstone*256"),
+          s -> s instanceof String);
+        this.heavymachinery = defineList(builder, "heavymachinery",
+          Collections.singletonList("minecraft:redstone*512"),
+          s -> s instanceof String);
+        this.whatisthisspeed = defineList(builder, "whatisthisspeed",
+          Collections.singletonList("minecraft:redstone*1024"),
+          s -> s instanceof String);
+        this.lightning = defineList(builder, "lightning",
+          Collections.singletonList("minecraft:redstone*2048"),
+          s -> s instanceof String);
+
+        this.biodegradable = defineList(builder, "biodegradable",
+          Collections.singletonList("minecraft:bone_meal*64"),
+          s -> s instanceof String);
+        this.flowerpower = defineList(builder, "flowerpower",
+          Collections.singletonList("minecolonies:compost*64"),
+          s -> s instanceof String);
+
+        this.bonemeal = defineList(builder, "bonemeal",
+          Collections.singletonList("minecraft:wheat_seeds*64"),
+          s -> s instanceof String);
+        this.dung = defineList(builder, "dung",
+          Collections.singletonList("minecraft:wheat_seeds*128"),
+          s -> s instanceof String);
+        this.compost = defineList(builder, "compost",
+          Collections.singletonList("minecraft:wheat_seeds*256"),
+          s -> s instanceof String);
+        this.fertilizer = defineList(builder, "fertilizer",
+          Collections.singletonList("minecraft:wheat_seeds*512"),
+          s -> s instanceof String);
+        this.magiccompost = defineList(builder, "magiccompost",
+          Collections.singletonList("minecraft:wheat_seeds*2048"),
           s -> s instanceof String);
 
         finishCategory(builder);

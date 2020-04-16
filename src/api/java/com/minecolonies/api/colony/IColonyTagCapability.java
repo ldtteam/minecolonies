@@ -80,6 +80,13 @@ public interface IColonyTagCapability
     void removeBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk);
 
     /**
+     * Sets all close colonies.
+     *
+     * @param colonies
+     */
+    void setCloseColonies(final List<Integer> colonies);
+
+    /**
      * Get the claiming buildings map.
      *
      * @return the entire map.
@@ -97,7 +104,7 @@ public interface IColonyTagCapability
         /**
          * The set of all close colonies. Only relevant in non dynamic claiming.
          */
-        private final Set<Integer> colonies = new HashSet<>();
+        private Set<Integer> colonies = new HashSet<>();
 
         /**
          * The colony owning the chunk. 0 If none.
@@ -125,6 +132,12 @@ public interface IColonyTagCapability
                 this.owningColony = 0;
             }
             chunk.markDirty();
+        }
+
+        @Override
+        public void setCloseColonies(final List<Integer> colonies)
+        {
+            this.colonies = new HashSet<>(colonies);
         }
 
         @Override

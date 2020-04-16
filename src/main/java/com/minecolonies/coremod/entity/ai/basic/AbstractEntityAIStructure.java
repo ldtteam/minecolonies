@@ -23,6 +23,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -50,6 +51,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 
@@ -491,9 +493,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemStack);
-                        itemStack.damageItem(1, worker, (i) -> {
-                            i.sendBreakAnimation(Hand.MAIN_HAND);
-                    });
+                        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                     }
                 }
             }
@@ -661,7 +661,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER));
+            double decrease = 1;
+            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_PLACE_SPEED, MultiplierModifierResearchEffect.class);
+            if (effect != null)
+            {
+                decrease = 1 - effect.getEffect();
+            }
+
+            setDelay((int) ((MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER)) * decrease));
         }
 
         return true;

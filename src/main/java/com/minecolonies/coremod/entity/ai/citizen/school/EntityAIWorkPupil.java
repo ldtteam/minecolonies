@@ -15,6 +15,7 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
 
@@ -184,7 +186,14 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         if (slot != -1)
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
-            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, 25, worker.getCitizenData());
+            double bonus = 25.0;
+            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+            if (effect != null)
+            {
+                bonus *= (1 + effect.getEffect());
+            }
+
+            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, bonus, worker.getCitizenData());
         }
 
         worker.decreaseSaturationForContinuousAction();

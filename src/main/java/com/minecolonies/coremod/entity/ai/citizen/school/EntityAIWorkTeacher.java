@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS;
+import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
@@ -150,7 +153,14 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
             );
         }
 
-        pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, 1 * (1 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10), pupilToTeach.getCitizenData());
+        double xp = 1.0 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            xp *= (1 + effect.getEffect());
+        }
+
+        pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());
 
         worker.getCitizenExperienceHandler().addExperience(0.1);
         worker.decreaseSaturationForContinuousAction();

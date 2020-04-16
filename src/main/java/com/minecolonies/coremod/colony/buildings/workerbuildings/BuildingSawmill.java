@@ -18,12 +18,15 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,6 +154,18 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.sawmill;
+    }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Sawmill", UnlockBuildingResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            return;
+        }
+        super.requestUpgrade(player, builder);
     }
 
     /**

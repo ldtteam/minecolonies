@@ -55,6 +55,7 @@ public interface ILocalResearch
      * Tick the research to execute it.
      * @param effects the research effects class which holds the information of the colony.
      * @param tree the research tree which holds the currently explored tree.
+     * @return true if effective.
      */
-    void research(IResearchEffectManager effects, ILocalResearchTree tree);
+    boolean research(IResearchEffectManager effects, ILocalResearchTree tree);
 }
