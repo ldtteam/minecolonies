@@ -207,16 +207,28 @@ public class InteractionValidatorInitializer
               }
               return false;
           });
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION), citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
 
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_HOUSE), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION),
-          citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOUSE),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() > COMPLAIN_DAYS_WITHOUT_HOUSE && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutHouse() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_JOB), citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_JOB),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() > COMPLAIN_DAYS_WITHOUT_JOB && ( citizen.getCitizenHappinessHandler()).getNumberOfDaysWithoutJob() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_DEMANDS_DAYS);
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_TOOL), citizen -> ( citizen.getCitizenHappinessHandler()).getMaxOpenToolDays() > NO_TOOLS_COMPLAINS_DAYS);
-    }
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS + "homelessness"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("homelessness").getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + "homelessness"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("homelessness").getDays() > COMPLAIN_DAYS_WITHOUT_HOUSE
+                       && ( citizen.getCitizenHappinessHandler()).getModifier("homelessness").getDays() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS + "homelessness"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("unemployment").getDays() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + "homelessness"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("unemployment").getDays() > COMPLAIN_DAYS_WITHOUT_JOB
+                       && ( citizen.getCitizenHappinessHandler()).getModifier("unemployment").getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS + "idleatjob"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("idleatjob").getDays() > IDLE_AT_JOB_DEMANDS_DAYS);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + "idleatjob"),
+          citizen -> citizen.getCitizenHappinessHandler().getModifier("idleatjob").getDays() > IDLE_AT_JOB_COMPLAINS_DAYS
+                       && citizen.getCitizenHappinessHandler().getModifier("idleatjob").getDays() <= IDLE_AT_JOB_DEMANDS_DAYS);
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + "slepttonight"),
+          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier("slepttonight").getDays() <= 0);
+        }
 }

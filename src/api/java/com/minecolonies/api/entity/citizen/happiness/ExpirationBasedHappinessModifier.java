@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.happiness;
+package com.minecolonies.api.entity.citizen.happiness;
 
 import net.minecraft.nbt.CompoundNBT;
 
@@ -22,10 +22,16 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     private final int period;
 
     /**
+     * If this should give a penalty if not active.
+     */
+    private boolean inverted;
+
+    /**
      * Create an instance of the happiness modifier.
      *
      * @param id     its string id.
      * @param weight its weight.
+     * @param period the period.
      */
     public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period)
     {
@@ -33,14 +39,39 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
         this.period = period;
     }
 
+    /**
+     * Create an instance of the happiness modifier.
+     *
+     * @param id     its string id.
+     * @param weight its weight.
+     * @param period the period.
+     * @param inverted if inverted.
+     */
+    public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period, final boolean inverted)
+    {
+        this(id, weight, supplier, period);
+        this.inverted = inverted;
+    }
+
     @Override
     public double getFactor()
     {
-        if (days > 0)
+        if (inverted)
         {
+            if (days > 0)
+            {
+                return 1;
+            }
             return super.getFactor();
         }
-        return 1;
+        else
+        {
+            if (days > 0)
+            {
+                return super.getFactor();
+            }
+            return 1;
+        }
     }
 
     @Override
@@ -57,6 +88,12 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
         {
             days--;
         }
+    }
+
+    @Override
+    public int getDays()
+    {
+        return days;
     }
 
     @Override

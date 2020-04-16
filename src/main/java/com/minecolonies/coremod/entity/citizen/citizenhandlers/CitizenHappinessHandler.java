@@ -1,626 +1,236 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
-import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.FieldDataModifier;
+import com.minecolonies.api.entity.citizen.happiness.*;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
-import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobPupil;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Handler for the citizens happiness.
- * This keeps all the modifiers related to the citizen.
- *
- * @author kevin
- *
+ * The new happiness handler for the citizen.
  */
 public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
     /**
-     * The citizen assigned to this manager.
+     * Storage tag for the handler.
      */
-    private final ICitizenData citizen;
+    private static final String TAG_HAPPINESS = "happinessHandler";
 
     /**
-     * holds the base happiness value.
+     * The different happiness factor.
      */
-    private double baseHappiness;
+    public Map<String, IHappinessModifier> happinessFactors = new HashMap<>();
 
     /**
-     * holds the modifier for food.
-     */
-    private double foodModifier;
-
-    /**
-     * holds the modifier for health.
-     */
-    private double healthModifier;
-
-    /**
-     * holds the modifier for damage.
-     */
-    private double damageModifier;
-
-    /**
-     * holds the modifier for house.
-     */
-    private double houseModifier;
-
-    /**
-     * holds the numbers of days without a house.
-     */
-    private int numberOfDaysWithoutHouse;
-
-    /**
-     * holds the modifier for job.
-     */
-    private double jobModifier;
-
-    /**
-     * holds the numbers of days without a job.
-     */
-    private int numberOfDaysWithoutJob;
-
-    /**
-     * holds the modifier for farms that the farmer can't farm.
-     */
-    private double farmerModifier;
-
-    /**
-     * holds an indicator of the farmer has no fields to farm
-     */
-    private boolean hasNoFields;
-
-    /**
-     * holds an array of all the fields the farmer has assigned to them.
-     */
-    private final Map<BlockPos, FieldDataModifier> fieldModifier = new HashMap<BlockPos, FieldDataModifier>();
-
-    /**
-     * holds an indicator citizen needing a tool
-     */
-    private final Map<IToolType, Integer> needsTool = new HashMap<IToolType, Integer>();
-
-    /**
-     * holds the modifier for citizen not having a tool.
-     */
-    private double noToolModifier;
-
-    /**
-     * Constructor for the experience handler.
+     * Create a new instance of the citizen happiness handler.
      *
-     * @param citizen
-     *            the citizen owning the handler.
+     * @param data the data to handle.
      */
-    public CitizenHappinessHandler(final ICitizenData citizen)
+    public CitizenHappinessHandler(final ICitizenData data)
     {
-        this.citizen = citizen;
-        baseHappiness = BASE_HAPPINESS;
-        foodModifier = 0;
-        damageModifier = 0;
-        houseModifier = 0;
-        numberOfDaysWithoutHouse = 0;
-        jobModifier = 0;
-        numberOfDaysWithoutJob = 0;
-        farmerModifier = 0;
-        hasNoFields = false;
-        needsTool.clear();
+        add(new TimeBasedHappinessModifier("homelessness", 4.0, () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
+        add(new TimeBasedHappinessModifier("unemployment", 2.0, () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0), new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
+        add(new TimeBasedHappinessModifier("health", 2.0, () -> data.getCitizenEntity().isPresent() ? (data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
+        add(new TimeBasedHappinessModifier("idleatjob", 1.0, () -> data.isIdleAtJob() ? 0.5 : 1.0, new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
+
+        add(new StaticHappinessModifier("school", 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
+        add(new StaticHappinessModifier("security", 2.0, () -> getGuardFactor(data.getColony())));
+        add(new StaticHappinessModifier("social", 2.0, () -> getSocialModifier(data.getColony())));
+        add(new StaticHappinessModifier("saturation", 1.0, () -> data.getSaturation() / 10.0));
+
+        add(new ExpirationBasedHappinessModifier("damage", 1.0, () -> 0.0, 1));
+        add(new ExpirationBasedHappinessModifier("death", 2.0, () -> 0.0, 3));
+        add(new ExpirationBasedHappinessModifier("raidwithoutdeath", 1.0, () -> 2.0, 3));
+        add(new ExpirationBasedHappinessModifier("slepttonight", 2.0, () -> 0.0, 3, true));
     }
 
     /**
-     * This function applies eating adjust to the base hapiness for
-     * the citizen.
-     *
-     * @param eatFood true or false indicate citizen was unable to eat
+     * Create an empty happiness handler for the client side.
      */
-    @Override
-    public void setFoodModifier(final boolean eatFood)
+    public CitizenHappinessHandler()
     {
-        if (!eatFood)
-        {
-            if (citizen.getSaturation() < CitizenConstants.LOW_SATURATION)
-            {
-                foodModifier = FOOD_MODIFIER_MAX;
-            }
-            else
-            {
-                foodModifier = FOOD_MODIFIER_MIN;
-            }
-        }
-        else
-        {
-            foodModifier = 0;
-        }
-        citizen.markDirty();
+        add(new ClientHappinessModifier("homelessness", 4.0));
+        add(new ClientHappinessModifier("unemployment", 2.0));
+        add(new ClientHappinessModifier("health", 2.0));
+        add(new ClientHappinessModifier("idleatjob", 1.0));
+
+        add(new ClientHappinessModifier("school", 1.0));
+        add(new ClientHappinessModifier("security", 2.0));
+        add(new ClientHappinessModifier("social", 2.0));
+        add(new ClientHappinessModifier("saturation", 1.0));
+
+        add(new ClientHappinessModifier("damage", 1.0));
+        add(new ClientHappinessModifier("death", 2.0));
+        add(new ClientHappinessModifier("raidwithoutdeath", 1.0));
+        add(new ClientHappinessModifier("slepttonight", 2.0));
     }
 
     @Override
-    public void setHealthModifier(final boolean isHealthy)
+    public void resetModifier(final String name)
     {
-        if (!isHealthy)
+        if (happinessFactors.containsKey(name))
         {
-            healthModifier = HEALTH_MODIFIER_MAX;
+            happinessFactors.get(name).reset();
         }
-        else
-        {
-            healthModifier = 0;
-        }
-        citizen.markDirty();
-    }
-
-    /**
-     * Called once a day to update the citizens daily happiness
-     * modifiers.
-     *
-     * @param hasHouse  boolean if the citizen is assigned to a house
-     * @param hasJob boolean to indicate if citizen has a job
-     */
-    @Override
-    public void processDailyHappiness(final boolean hasHouse, final boolean hasJob)
-    {
-        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
-            return;
-
-        processDailyHappinessForHomeData(hasHouse);
-        processDailyHappinessForJobData(hasJob);
-        processDailyHappinessForFarmData();
-        processDailyHappinessForToolData();
-
-        citizen.markDirty();
-    }
-
-    private void processDailyHappinessForHomeData(final boolean hasHouse)
-    {
-        if (!hasHouse && !citizen.isChild())
-        {
-            numberOfDaysWithoutHouse++;
-            if (numberOfDaysWithoutHouse > DEMANDS_DAYS_WITHOUT_HOUSE)
-            {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_HOUSE), ChatPriority.CHITCHAT));
-            }
-            else if (numberOfDaysWithoutHouse > COMPLAIN_DAYS_WITHOUT_HOUSE)
-            {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOUSE), ChatPriority.CHITCHAT));
-            }
-        }
-        else
-        {
-            numberOfDaysWithoutHouse = 0;
-        }
-        setHomeModifier(hasHouse);
-    }
-
-    private void processDailyHappinessForJobData(final boolean hasJob)
-    {
-        if (!hasJob && !citizen.isChild())
-        {
-            numberOfDaysWithoutJob++;
-            if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
-            {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_JOB), ChatPriority.CHITCHAT));
-            }
-            else if (numberOfDaysWithoutJob > COMPLAIN_DAYS_WITHOUT_JOB)
-            {
-                citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_JOB), ChatPriority.CHITCHAT));
-            }
-        }
-        else
-        {
-            numberOfDaysWithoutJob = 0;
-        }
-        setJobModifier(hasJob);
-    }
-
-    private void processDailyHappinessForFarmData()
-    {
-        farmerModifier = 0;
-        hasNoFields = true;
-        for (final FieldDataModifier field : fieldModifier.values())
-        {
-            if (field.isCanFarm())
-            {
-                farmerModifier += FIELD_MODIFIER_POSITIVE;
-                hasNoFields = false;
-            }
-            else
-            {
-                field.increaseInactiveDays();
-                if (field.getInactiveDays() < NO_FIELDS_COMPLAINS_DAYS)
-                {
-                    farmerModifier += FIELD_MODIFIER_MIN;
-                }
-                else
-                {
-                    farmerModifier += (((double) field.getInactiveDays() / FIELD_MAX_DAYS_MODIFIER) * FIELD_MODIFIER_MAX) + FIELD_MODIFIER_MIN;
-                }
-            }
-        }
-
-        if (hasNoFields && citizen.getJob() instanceof JobFarmer)
-        {
-            farmerModifier = NO_FIELD_MODIFIER;
-        }
-    }
-
-    private void processDailyHappinessForToolData()
-    {
-        noToolModifier = 0;
-        final int maxToolOpenDays = getMaxOpenToolDays();
-        if (maxToolOpenDays > NO_TOOLS_DEMANDS_DAYS)
-        {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS_TOOL), ChatPriority.CHITCHAT));
-        }
-        else if (maxToolOpenDays > NO_TOOLS_COMPLAINS_DAYS)
-        {
-            citizen.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_TOOL), ChatPriority.CHITCHAT));
-        }
-        noToolModifier += (((double) maxToolOpenDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
     }
 
     @Override
-    public int getMaxOpenToolDays()
+    public IHappinessModifier getModifier(final String name)
     {
-        int maxOpenDays = 0;
-        for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
-        {
-            final int numDays = entry.getValue() + 1;
-            if (numDays > maxOpenDays)
-            {
-                maxOpenDays = numDays;
-            }
-            final IToolType toolType = entry.getKey();
-            needsTool.put(toolType, numDays);
-        }
-        return maxOpenDays;
+        return happinessFactors.get(name);
     }
 
-    /**
-     * this function applies adjust to happiness.
-     * This would mean the citizen is full.
-     */
     @Override
-    public void setSaturated()
+    public void processDailyHappiness(final ICitizenData citizenData)
     {
-        foodModifier = FOOD_MODIFIER_POSITIVE;
-    }
-
-    /**
-     * set the Damage modifier on the citizens happiness
-     * depending on how hurt they are.
-     */
-    @Override
-    public void updateDamageModifier()
-    {
-        final Optional<AbstractEntityCitizen> entityCitizen = citizen.getCitizenEntity();
-        if (entityCitizen.isPresent())
+        for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
-            final double prevDamageModifier = damageModifier;
-            if (health < DAMAGE_LOWEST_POINT)
+            happinessModifier.dayEnd();
+            if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(NO + happinessModifier.getId())))
             {
-                damageModifier = DAMAGE_MODIFIER_MAX;
+                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
-            else if (health < DAMAGE_MEDIUM_POINT)
+            if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(DEMANDS + happinessModifier.getId())))
             {
-                damageModifier = DAMAGE_MODIFIER_MID;
-            }
-            else if (health < DAMAGE_HIGHEST_POINT)
-            {
-                damageModifier = DAMAGE_MODIFIER_MIN;
-            }
-            else
-            {
-                damageModifier = 0;
-            }
-
-            if (prevDamageModifier != damageModifier)
-            {
-                citizen.markDirty();
+                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
     }
 
-    /**
-     * Called to set if the farmer can farm a specific field.
-     *
-     * @param pos
-     *            position of the scarecrow block
-     * @param canFarm
-     *            boolean to indicate if the field can be farmed
-     */
-    @Override
-    public void setNoFieldForFarmerModifier(final BlockPos pos, final boolean canFarm)
-    {
-        FieldDataModifier field = fieldModifier.get(pos);
-        if (field == null)
-        {
-            field = new FieldDataModifier();
-            fieldModifier.put(pos, field);
-        }
-
-        field.isCanFarm(canFarm);
-        citizen.markDirty();
-    }
-
-    /**
-     * Indicates the farmer has not fields to farm.
-     */
-    @Override
-    public void setNoFieldsToFarm()
-    {
-        hasNoFields = true;
-    }
-
-    /**
-     * Call this function to add a tool type that is needed by the citizen.
-     * If citizen gets its tool, then passing in false will remove it from the needed tools.
-     *
-     * @param toolType Tooltype to indicate
-     * @param needs indicate if the tool type is needed
-     */
-    @Override
-    public void setNeedsATool(@NotNull final IToolType toolType, final boolean needs)
-    {
-        if (needs)
-        {
-            if (!needsTool.containsKey(toolType))
-            {
-                needsTool.put(toolType, 0);
-            }
-        }
-        else
-        {
-            needsTool.remove(toolType);
-        }
-        citizen.markDirty();
-    }
-
-    /**
-     * @param hasHouse
-     * indicate the citizen has an assigned house
-     */
-    @Override
-    public void setHomeModifier(final boolean hasHouse)
-    {
-        if (hasHouse)
-        {
-            houseModifier = HOUSE_MODIFIER_POSITIVE;
-        }
-        else
-        {
-            houseModifier = (MAX_HOUSE_PENALTY * ((double) numberOfDaysWithoutHouse / MAX_DAYS_WITHOUT_HOUSE)) * -1;
-        }
-        citizen.markDirty();
-    }
-
-    /**
-     * Called to set if the citizen has a job or not.
-     *
-     * @param hasJob
-     *            boolean to indicate if the citizen has a job
-     */
-    @Override
-    public void setJobModifier(final boolean hasJob)
-    {
-        if (hasJob)
-        {
-            jobModifier = JOB_MODIFIER_POSITIVE;
-        }
-        else
-        {
-            jobModifier = (MAX_JOB_PENALTY * ((double) numberOfDaysWithoutHouse / MAX_DAYS_WITHOUT_JOB)) * -1;
-        }
-        citizen.markDirty();
-    }
-
-    /**
-     * @return current citizens overall happiness
-     */
     @Override
     public double getHappiness()
     {
-        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+        double total = 0.0;
+        double totalWeight = 0.0;
+        for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            return citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().get();
+            total += happinessModifier.getFactor() * happinessModifier.getWeight();
+            totalWeight += happinessModifier.getWeight();
         }
 
-        double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier + healthModifier;
-
-        final AdditionModifierResearchEffect happinessIncrease = citizen.getColony().getResearchManager().getResearchEffects().getEffect(HAPPINESS, AdditionModifierResearchEffect.class);
-        if (happinessIncrease != null)
-        {
-            value *= (1.0 + happinessIncrease.getEffect());
-        }
-
-        if (value > MAX_HAPPINESS)
-        {
-            value = MAX_HAPPINESS;
-        }
-        else if (value < MIN_HAPPINESS)
-        {
-            value = MIN_HAPPINESS;
-        }
-
-        return value;
+        return 10.0 * ( total / totalWeight );
     }
 
-    /**
-     * @return current food modifier for happiness
-     */
-    @Override
-    public double getFoodModifier()
-    {
-        return foodModifier;
-    }
-
-    /**
-     * @return current damage modifier for happiness
-     */
-    @Override
-    public double getDamageModifier()
-    {
-        return damageModifier;
-    }
-
-    /**
-     * @return current house modifier for happiness
-     */
-    @Override
-    public double getHouseModifier()
-    {
-        return houseModifier;
-    }
-
-    /**
-     * Store the level to nbt.
-     *
-     * @param compound  compound to use.
-     */
-    @Override
-    public void write(final CompoundNBT compound)
-    {
-        @NotNull final CompoundNBT taskCompound = new CompoundNBT();
-        taskCompound.putDouble(NbtTagConstants.TAG_BASE, baseHappiness);
-        taskCompound.putDouble(NbtTagConstants.TAG_FOOD, foodModifier);
-        taskCompound.putDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
-        taskCompound.putDouble(NbtTagConstants.TAG_HEALTH, healthModifier);
-        taskCompound.putDouble(NbtTagConstants.TAG_HOUSE, houseModifier);
-        taskCompound.putInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE, numberOfDaysWithoutHouse);
-
-        taskCompound.putDouble(NbtTagConstants.TAG_JOB, jobModifier);
-        taskCompound.putInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB, numberOfDaysWithoutJob);
-        taskCompound.putBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS, hasNoFields);
-
-        @NotNull final ListNBT fieldsTagList = new ListNBT();
-        for (final Map.Entry<BlockPos, FieldDataModifier> entry : fieldModifier.entrySet())
-        {
-            final BlockPos pos = entry.getKey();
-            final FieldDataModifier field = entry.getValue();
-            @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
-            fieldCompound.putInt(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
-            fieldCompound.putBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
-
-            @NotNull final ListNBT containerTagList = new ListNBT();
-            containerTagList.add(NBTUtil.writeBlockPos(pos));
-            fieldCompound.put(NbtTagConstants.TAG_ID, containerTagList);
-
-            fieldsTagList.add(fieldCompound);
-        }
-        taskCompound.put(NbtTagConstants.TAG_FIELDS, fieldsTagList);
-
-        @NotNull final ListNBT noToolsTagList = new ListNBT();
-        for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
-        {
-            final IToolType toolType = entry.getKey();
-            final int numDays = entry.getValue();
-            @NotNull final CompoundNBT noToolsCompound = new CompoundNBT();
-            noToolsCompound.putInt(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS, numDays);
-            noToolsCompound.putString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE, toolType.getName());
-
-            noToolsTagList.add(noToolsCompound);
-        }
-        taskCompound.put(NbtTagConstants.TAG_FIELDS, fieldsTagList);
-
-        compound.put(NbtTagConstants.TAG_HAPPINESS_NAME, taskCompound);
-    }
-
-    /**
-     * Reads in Happiness data from the NBT file.
-     *
-     * @param compound pointer to NBT fields
-     */
     @Override
     public void read(final CompoundNBT compound)
     {
-        final CompoundNBT tagCompound = compound.getCompound(NbtTagConstants.TAG_HAPPINESS_NAME);
-        baseHappiness = tagCompound.getDouble(NbtTagConstants.TAG_BASE);
-        foodModifier = tagCompound.getDouble(NbtTagConstants.TAG_FOOD);
-        healthModifier = tagCompound.getDouble(NbtTagConstants.TAG_HEALTH);
-        damageModifier = tagCompound.getDouble(NbtTagConstants.TAG_DAMAGE);
-        houseModifier = tagCompound.getDouble(NbtTagConstants.TAG_HOUSE);
-        numberOfDaysWithoutHouse = tagCompound.getInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE);
-
-        jobModifier = tagCompound.getDouble(NbtTagConstants.TAG_JOB);
-        numberOfDaysWithoutJob = tagCompound.getInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB);
-        hasNoFields = tagCompound.getBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS);
-
-        final ListNBT fieldTagList = tagCompound.getList(NbtTagConstants.TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.size(); ++i)
+        final CompoundNBT tag = compound.getCompound(TAG_HAPPINESS);
+        for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            final FieldDataModifier field = new FieldDataModifier();
-            final CompoundNBT containerCompound = fieldTagList.getCompound(i);
-            field.setInactiveDays(containerCompound.getInt(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE));
-            field.isCanFarm(containerCompound.getBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM));
+            if (tag.contains(happinessModifier.getId()))
+            {
+                happinessModifier.read(tag.getCompound(happinessModifier.getId()));
+            }
+        }
+    }
 
-            final ListNBT blockPosTagList = containerCompound.getList(NbtTagConstants.TAG_ID, Constants.NBT.TAG_COMPOUND);
-            final CompoundNBT blockPoCompound = blockPosTagList.getCompound(0);
-            final BlockPos pos = NBTUtil.readBlockPos(blockPoCompound);
-            fieldModifier.put(pos, field);
+    @Override
+    public void write(final CompoundNBT compound)
+    {
+        final CompoundNBT tag = new CompoundNBT();
+
+        for (final IHappinessModifier happinessModifier : happinessFactors.values())
+        {
+            final CompoundNBT compoundNbt = new CompoundNBT();
+            happinessModifier.write(compoundNbt);
+            tag.put(happinessModifier.getId(), compoundNbt);
         }
 
-        final ListNBT noToolsTagList = tagCompound.getList(NbtTagConstants.TAG_NO_TOOLS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < noToolsTagList.size(); ++i)
-        {
-            final CompoundNBT containerCompound = noToolsTagList.getCompound(i);
-            final int numDays = containerCompound.getInt(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS);
-            final IToolType toolType = ToolType.getToolType(containerCompound.getString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE));
-            needsTool.put(toolType, numDays);
-        }
+        compound.put(TAG_HAPPINESS, tag);
+    }
 
-        if (baseHappiness == 0)
-        {
-            baseHappiness = BASE_HAPPINESS;
-        }
+    @Override
+    public List<String> getModifiers()
+    {
+        return new ArrayList<>(happinessFactors.keySet());
     }
 
     /**
-     * Write to the incoming variable all the related data to modifiers.
-     * 
-     * @param buf  buffer to witch values of the modifiers will be written to.
+     * Add the modifier to the handler.
+     *
+     * @param modifier the modifier.
      */
-    @Override
-    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
+    private void add(final IHappinessModifier modifier)
     {
-        buf.writeDouble(getFoodModifier());
-        buf.writeDouble(getDamageModifier());
-        buf.writeDouble(getHouseModifier());
-        buf.writeDouble(jobModifier);
-        buf.writeDouble(farmerModifier);
-        buf.writeDouble(noToolModifier);
-        buf.writeDouble(healthModifier);
+        this.happinessFactors.put(modifier.getId(), modifier);
     }
 
-    @Override
-    public int getNumberOfDaysWithoutHouse()
+    /**
+     * Get the social modifier for the colony.
+     *
+     * @param colony the colony.
+     * @return true if so.
+     */
+    private double getSocialModifier(final IColony colony)
     {
-        return numberOfDaysWithoutHouse;
+        final double total = colony.getCitizenManager().getCitizens().size();
+        double unemployment = 0;
+        double homelessness = 0;
+        double sickPeople = 0;
+        double hungryPeople = 0;
+
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+        {
+            if (!citizen.isChild() && citizen.getJob() == null)
+            {
+                unemployment++;
+            }
+
+            if (citizen.getHomeBuilding() == null)
+            {
+                homelessness++;
+            }
+
+            if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+            {
+                sickPeople++;
+            }
+
+            if (citizen.getSaturation() <= 1)
+            {
+                hungryPeople++;
+            }
+        }
+
+        return (total - (unemployment + homelessness + sickPeople + hungryPeople)) / total;
     }
 
-    @Override
-    public int getNumberOfDaysWithoutJob()
+    /**
+     * Get the guard security happiness modifier from the colony.
+     *
+     * @param colony the colony.
+     * @return true if so.
+     */
+    private double getGuardFactor(final IColony colony)
     {
-        return numberOfDaysWithoutJob;
+        double guards = 1;
+        double workers = 1;
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+        {
+            if (citizen.getJob() instanceof AbstractJobGuard)
+            {
+                guards += citizen.getJobModifier();
+            }
+            else
+            {
+                workers += citizen.getJobModifier();
+            }
+        }
+        return guards / workers;
     }
 }

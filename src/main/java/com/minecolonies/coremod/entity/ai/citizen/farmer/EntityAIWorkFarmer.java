@@ -14,7 +14,6 @@ import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -24,7 +23,6 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionRe
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
@@ -192,9 +190,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
-            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm();
+            worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
+        worker.getCitizenData().setIdleAtJob(false);
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
         if (building.getCurrentField() == null && building.getFieldToWorkOn(world) == null)
@@ -314,10 +313,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()), ChatPriority.BLOCKING, new TranslationTextComponent(NO_SEED_SET), currentField.getPos()));
             buildingFarmer.setCurrentField(null);
-            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
+            worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
-        worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true); 
+        worker.getCitizenData().setIdleAtJob(false);
 
         final ItemStack seeds = currentField.getSeed().copy();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
@@ -759,12 +758,4 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return worker;
     }
-
-    @Override 
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
-    { 
-        final boolean needTool = super.checkForToolOrWeapon(toolType); 
-        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType, needTool); 
-        return needTool; 
-    } 
 }

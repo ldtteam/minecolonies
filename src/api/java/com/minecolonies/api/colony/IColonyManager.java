@@ -396,17 +396,6 @@ public interface IColonyManager
     void handleColonyViewRemoveWorkOrderMessage(int colonyId, int workOrderId, int dim);
 
     /**
-     * Handle a message about the hapiness.
-     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
-     *
-     * @param colonyId Id of the colony.
-     * @param data     Datas about the hapiness
-     * @param dim      the dimension.
-     */
-    void handleHappinessDataMessage(int colonyId, HappinessData data, int dim);
-
-    /**
      * Whether or not a new schematic have been downloaded.
      *
      * @return True if a new schematic have been received.

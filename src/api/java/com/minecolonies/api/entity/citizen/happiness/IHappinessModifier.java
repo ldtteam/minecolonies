@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.happiness;
+package com.minecolonies.api.entity.citizen.happiness;
 
 import net.minecraft.nbt.CompoundNBT;
 
@@ -50,11 +50,6 @@ public interface IHappinessModifier
     void reset();
 
     /**
-     * Trigger interactions if necessary.
-     */
-    void triggerInteractions();
-
-    /**
      * Get the lang string of the happiness factor.
      * @return the lang string.
      */
@@ -62,4 +57,10 @@ public interface IHappinessModifier
     {
         return "com.minecolonies.coremod.happiness.factor." + getId();
     }
+
+    /**
+     * Get the days this is active.
+     * @return the days.
+     */
+    int getDays();
 }

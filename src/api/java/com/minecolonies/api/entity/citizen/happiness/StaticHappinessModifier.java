@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.happiness;
+package com.minecolonies.api.entity.citizen.happiness;
 
 import java.util.function.DoubleSupplier;
 

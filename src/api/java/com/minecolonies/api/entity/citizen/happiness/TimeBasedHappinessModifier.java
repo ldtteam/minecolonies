@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.happiness;
+package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
@@ -57,6 +57,12 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     public void reset()
     {
         this.days = 0;
+    }
+
+    @Override
+    public int getDays()
+    {
+        return days;
     }
 
     @Override

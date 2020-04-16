@@ -44,6 +44,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
 
@@ -461,43 +462,43 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        int row = 1;
-        final double[] levels =
-          new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(),
-            citizen.getToolsModifiers(), citizen.getHealthmodifier()};
-        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS, CMCG_HAPPINESS_HEALTH};
-
-
-        window.findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        if (window.findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
+        final View pane = window.findPaneOfTypeByID("happinessModifierView", View.class);
+        window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
+        int yPos = 62;
+        for (final String name: citizen.getHappinessHandler().getModifiers())
         {
-            window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
+            final double value = citizen.getHappinessHandler().getModifier(name).getFactor();
 
-            for (int i = 0; i < levels.length; i++)
-            {
-                final Image image = window.findPaneOfTypeByID("modifierImage" + row, Image.class);
-                if (levels[i] < 0)
-                {
-                    window.findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
-                    image.setImage(RED_ICON);
-                    row++;
-                }
-                else if (levels[i] > 0)
-                {
-                    window.findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
-                    image.setImage(GREEN_ICON);
-                    row++;
-                }
-            }
+            final Image image = new Image();
+            image.setSize(11, 11);
+            image.setPosition(25, yPos);
 
-            for (int i = row; i <= levels.length; i++)
+            final Label label = new Label();
+            label.setSize(136,11);
+            label.setPosition(50, yPos);
+            label.setColor(BLACK);
+            label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
+
+            if (value > 1.0)
             {
-                final Image image = window.findPaneOfTypeByID("modifierImage" + i, Image.class);
-                if (image != null)
-                {
-                    image.hide();
-                }
+                image.setImage(GREEN_ICON);
             }
+            else if (value == 1)
+            {
+                image.setImage(BLUE_ICON);
+            }
+            else if (value > 0.75)
+            {
+                image.setImage(YELLOW_ICON);
+            }
+            else
+            {
+                image.setImage(RED_ICON);
+            }
+            pane.addChild(image);
+            pane.addChild(label);
+
+            yPos+=12;
         }
     }
 

@@ -1,6 +1,8 @@
-package com.minecolonies.coremod.entity.citizen.happiness;
+package com.minecolonies.api.entity.citizen.happiness;
 
 import net.minecraft.nbt.CompoundNBT;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
 
 /**
  * Abstract happiness modifier implementation.
@@ -43,7 +45,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     @Override
     public void write(final CompoundNBT compoundNBT)
     {
-
+        compoundNBT.putDouble(TAG_VALUE, getFactor());
     }
 
     @Override
@@ -59,9 +61,9 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void triggerInteractions()
+    public int getDays()
     {
-
+        return 0;
     }
 
     @Override
