@@ -647,15 +647,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Retrieves the previously thrown fishingRod.
      * If the fishingRod still has a hook connected to it, destroy the hook object.
      */
-    public void retrieveRod()
+    private void retrieveRod()
     {
-        if(entityFishHook != null) {
-            worker.swingArm(worker.getActiveHand());
-            final int i = entityFishHook.getDamage();
-            entityFishHook.remove();
-            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
-            entityFishHook = null;
-        }
+        worker.swingArm(worker.getActiveHand());
+        final int i = entityFishHook.getDamage();
+        entityFishHook.remove();
+        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
+        entityFishHook = null;
     }
 
     /**

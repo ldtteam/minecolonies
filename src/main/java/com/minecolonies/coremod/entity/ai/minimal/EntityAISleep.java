@@ -8,8 +8,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
 import net.minecraft.block.BedBlock;
@@ -162,13 +160,6 @@ public class EntityAISleep extends Goal
         // Go home
         if (!citizen.getCitizenColonyHandler().isAtHome())
         {
-            AbstractJob job = (AbstractJob) citizen.getCitizenData().getJob();
-            if(job.getName() != null) {
-                if (job.getName().contains("Fisherman")) {
-                    EntityAIWorkFisherman fishJob = (EntityAIWorkFisherman) citizen.getCitizenData().getJob().getWorkerAI();
-                    fishJob.retrieveRod();
-                }
-            }
             goHome();
             return;
         }
