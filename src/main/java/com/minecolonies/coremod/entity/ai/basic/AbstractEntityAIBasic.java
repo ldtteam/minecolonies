@@ -247,7 +247,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return getState();
             }
 
-            tryTransferFromPosToWorker(walkTo, needsCurrently);
+            tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently);
         }
 
         return getStateAfterPickUp();
@@ -1436,7 +1436,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if succesful.
      */
 
-    private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
+    private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)
