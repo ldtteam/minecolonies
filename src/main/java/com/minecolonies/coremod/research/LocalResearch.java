@@ -52,7 +52,7 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
-    public void research(final IResearchEffectManager effects, final ILocalResearchTree tree)
+    public boolean research(final IResearchEffectManager effects, final ILocalResearchTree tree)
     {
         if (state == ResearchState.IN_PROGRESS)
         {
@@ -62,8 +62,10 @@ public class LocalResearch implements ILocalResearch
                 state = ResearchState.FINISHED;
                 effects.applyEffect(IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffect());
                 tree.finishResearch(this.id);
+                return true;
             }
         }
+        return false;
     }
 
     @Override
