@@ -49,7 +49,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new TimeBasedHappinessModifier("idleatjob", 1.0, () -> data.isIdleAtJob() ? 0.5 : 1.0, new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
 
         add(new StaticHappinessModifier("school", 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
-        add(new StaticHappinessModifier("security", 2.0, () -> getGuardFactor(data.getColony())));
+        add(new StaticHappinessModifier("security", 5.0, () -> getGuardFactor(data.getColony())));
         add(new StaticHappinessModifier("social", 2.0, () -> getSocialModifier(data.getColony())));
         add(new StaticHappinessModifier("saturation", 1.0, () -> data.getSaturation() / 10.0));
 
