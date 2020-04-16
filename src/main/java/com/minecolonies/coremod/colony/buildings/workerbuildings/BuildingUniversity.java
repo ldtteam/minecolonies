@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -8,10 +9,12 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
+import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,6 +32,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
 
 /**
  * Creates a new building for the university.
@@ -197,7 +201,10 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
-            colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree());
+            if (colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), RESEARCH_CONCLUDED + random.nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+            }
             this.markDirty();
             i++;
         }
