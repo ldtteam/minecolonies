@@ -175,9 +175,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             int amount = stack.getAmount();
             if (ONLY_64)
             {
-                if (amount > Constants.STACKSIZE)
+                if (amount > stack.getItemStack().getMaxStackSize())
                 {
-                    amount = Constants.STACKSIZE;
+                    amount = stack.getItemStack().getMaxStackSize();
                 }
             }
             neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
