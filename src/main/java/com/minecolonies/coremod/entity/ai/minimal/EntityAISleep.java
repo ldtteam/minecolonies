@@ -9,6 +9,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
@@ -163,8 +164,8 @@ public class EntityAISleep extends Goal
         if (!citizen.getCitizenColonyHandler().isAtHome())
         {
             AbstractJob job = (AbstractJob) citizen.getCitizenData().getJob();
-            if(job.getName() != null) {
-                if (job.getName().contains("Fisherman")) {
+            if(job != null) {
+                if (job instanceof JobFisherman) {
                     EntityAIWorkFisherman fishJob = (EntityAIWorkFisherman) citizen.getCitizenData().getJob().getWorkerAI();
                     fishJob.retrieveRod();
                 }
