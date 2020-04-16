@@ -762,6 +762,7 @@
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
   "com.minecolonies.coremod.gui.warehouse.upgrade": "Upgrade Storage",
+  "com.minecolonies.coremod.gui.warehouse.allinventory": "Stored Items",
 
   "com.minecolonies.coremod.gui.workerhuts.cook": "Cook",
   "block.minecolonies.blockhutcook": "Restaurant",

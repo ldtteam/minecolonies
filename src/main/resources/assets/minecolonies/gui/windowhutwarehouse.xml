@@ -24,22 +24,18 @@
         </view>
         <view id="storageActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="gui.citizen.availablestacks"/>
+            <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.warehouse.allinventory)"/>
             <input id="names" size="132 18" pos="20 30" maxlength="25"/>
             <buttonimage id="sortStorageFilter" size="14 15" pos="158 31" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                          label="v^"/>
-            <list id="allinventory" size="157 136" pos="20 55">
+            <list id="allinventory" size="157 156" pos="20 55">
                 <box size="100% 18" linewidth="2">
                     <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
                     <label id="ressName" size="100 12" pos="20 1" color="black"/>
                     <label id="qtys" size="25 18" pos="117 1" color="black"/>
                 </box>
             </list>
-
-            <buttonimage id="inventory" size="86 17" pos="50 210" textcolor="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                         label="$(container.inventory)"/>
         </view>
         <view>
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>

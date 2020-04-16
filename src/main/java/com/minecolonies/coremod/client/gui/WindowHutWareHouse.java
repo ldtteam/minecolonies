@@ -22,6 +22,7 @@ import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
@@ -443,7 +444,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
                 final Label qtys = rowPane.findPaneOfTypeByID("qtys", Label.class);
                 qtys.setLabelText(Integer.toString(resource.getAmount()));
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource.getItemStack());
+                Item imagesrc = resource.getItemStack().getItem();
+                ItemStack image = new ItemStack(imagesrc, 1);
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
             }
         });
     }
