@@ -16,6 +16,7 @@ import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -77,6 +78,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
 
     /**
      * Decide what to do next.
+     *
      * @return the next state to go to.
      */
     private IAIState decide()
@@ -90,11 +92,13 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
 
         if (paperInInv == 0 && paperInBuilding > 0)
         {
-            needsCurrently = PAPER;
+            needsCurrently = new Tuple<>(PAPER, PAPER_TO_REQUEST);
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        final List<? extends AbstractEntityCitizen> pupils = world.getEntitiesWithinAABB(ModEntities.CITIZEN, getTargetableArea(), cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
+        final List<? extends AbstractEntityCitizen> pupils = world.getEntitiesWithinAABB(ModEntities.CITIZEN,
+          getTargetableArea(),
+          cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
             pupilToTeach = pupils.get(worker.getRandom().nextInt(pupils.size()));
@@ -103,7 +107,6 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
 
         return START_WORKING;
     }
-
 
     private IAIState teach()
     {
@@ -154,7 +157,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
         }
 
         double xp = 1.0 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
-        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect =
+          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             xp *= (1 + effect.getEffect());
@@ -182,7 +186,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
      */
     private void requestPaper()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
+        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+          q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.PAPER, PAPER_TO_REQUEST)));
         }
@@ -201,7 +206,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
      */
     private AxisAlignedBB getTargetableArea()
     {
-        if(targetArea == null)
+        if (targetArea == null)
         {
             targetArea = getOwnBuilding().getTargetableArea(world);
         }

@@ -166,6 +166,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+
+    }
+
     /**
      * On setting down the building.
      */

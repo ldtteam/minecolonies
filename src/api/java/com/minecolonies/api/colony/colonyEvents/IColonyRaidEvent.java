@@ -5,4 +5,8 @@ package com.minecolonies.api.colony.colonyEvents;
  */
 public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
 {
+    /**
+     * Set that a citizen was killed in a raid.
+     */
+    void setKilledCitizenInRaid();
 }

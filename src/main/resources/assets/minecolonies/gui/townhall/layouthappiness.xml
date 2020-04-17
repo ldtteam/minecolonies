@@ -2,15 +2,8 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
         
     <switch id="switchpageHappiness" size="100% 100%">
-        <view>
-            <label id="guards" label="$(com.minecolonies.coremod.gui.townHall.guards)" pos="25 82" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
-            <image id="guardsLevel" size="11 11" pos="160 82" source="minecolonies:textures/gui/red_icon.png"/>
+        <view id="happinesspage">
 
-            <label id="house" label="$(com.minecolonies.coremod.gui.townHall.house)" pos="25 104" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
-            <image id="houseLevel" size="11 11" pos="160 104" source="minecolonies:textures/gui/red_icon.png"/>
-
-            <label id="saturation" label="$(com.minecolonies.coremod.gui.townHall.saturation)" pos="25 126" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
-            <image id="saturationLevel" size="11 11" pos="160 126" source="minecolonies:textures/gui/red_icon.png"/>
         </view>
     </switch>
 </window>

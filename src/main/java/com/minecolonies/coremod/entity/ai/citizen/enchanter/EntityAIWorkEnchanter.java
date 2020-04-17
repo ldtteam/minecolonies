@@ -24,10 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     /**
      * Minimum mana requirement per level.
      */
-    private static final int MANA_REQ_PER_LEVEL    = 10;
+    private static final int MANA_REQ_PER_LEVEL = 10;
 
     /**
      * The citizen entity to gather from.
@@ -80,14 +80,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     private ICitizenData citizenToGatherFrom = null;
 
     /**
-     * Variable to check if the draining is in progress.
-     * And at which tick it is.
+     * Variable to check if the draining is in progress. And at which tick it is.
      */
     private int progressTicks = 0;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -95,18 +93,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     {
         super(job);
         super.registerTargets(
-            new AITarget(IDLE, START_WORKING, TICKS_SECOND),
-            new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-            new AITarget(DECIDE, this::decide, TICKS_SECOND),
-            new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
-            new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
+          new AITarget(IDLE, START_WORKING, TICKS_SECOND),
+          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
+          new AITarget(DECIDE, this::decide, TICKS_SECOND),
+          new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
+          new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
 
     /**
-     * Decide method of the enchanter.
-     * Check if everything is alright to work and then decide between gathering and draining and actually enchanting.
+     * Decide method of the enchanter. Check if everything is alright to work and then decide between gathering and draining and actually enchanting.
      *
      * @return the next state to go to.
      */
@@ -123,9 +120,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
-                if ( worker.getCitizenData() != null )
+                if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                    worker.getCitizenData()
+                      .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }
@@ -136,7 +134,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
                 if (numberOfBooksInBuilding > 0)
                 {
-                    needsCurrently = IS_BOOK;
+                    needsCurrently = new Tuple<>(IS_BOOK, 1);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.BOOK, 1));
@@ -158,7 +156,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfAncientTomes > 0)
             {
-                needsCurrently = IS_ANCIENT_TOME;
+                needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1));
@@ -175,9 +173,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     }
 
     /**
-     * Actually do the enchanting.
-     * Making some great effects for some time and then apply a random enchantment.
-     * Reduce own levels depending on the found enchantment.
+     * Actually do the enchanting. Making some great effects for some time and then apply a random enchantment. Reduce own levels depending on the found enchantment.
+     *
      * @return the next state to go to.
      */
     private IAIState enchant()
@@ -250,10 +247,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     }
 
     /**
-     * Gather experience from a worker.
-     * Go to the hut of the worker.
-     * Wait for the worker.
-     * Drain, and then return to work building.
+     * Gather experience from a worker. Go to the hut of the worker. Wait for the worker. Drain, and then return to work building.
+     *
      * @return next state to go to.
      */
     private IAIState gatherAndDrain()
@@ -327,7 +322,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            final Vec3d start = worker.getPositionVector().add(0,2,0);
+            final Vec3d start = worker.getPositionVector().add(0, 2, 0);
             final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
@@ -335,7 +330,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 start,
                 goal,
                 ParticleTypes.ENCHANT,
-                progressTicks%MAX_PROGRESS_TICKS,
+                progressTicks % MAX_PROGRESS_TICKS,
                 MAX_PROGRESS_TICKS), worker);
 
             Network.getNetwork().sendToTrackingEntity(

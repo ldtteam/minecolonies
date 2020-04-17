@@ -328,13 +328,6 @@
   "entity.builder.messagenobuilder": "You need a builder in order to build or upgrade this building.",
   "entity.farmer.needseed": "I need %s to plant.",
 
-  "entity.citizen.nojob": "Having a job would really be great.",
-  "entity.citizen.demandsjob": "I am waiting for more than two weeks to finally have a job! I am getting very upset!",
-  "entity.citizen.nohouse": "I'd really like a house to live in.",
-  "entity.citizen.demandshouse": "I don't have a house for more than 2 weeks, I'm getting really upset!",
-  "entity.citizen.notool": "I'm missing a tool for some days.",
-  "entity.citizen.demandstool": "I can't work for quite a while because of that missing tool!",
-
   "com.minecolonies.command.notop": "Must be OP to use the command",
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony, the closest colony is approx %.2f blocks away.",
@@ -957,9 +950,6 @@
   "com.minecolonies.coremod.gui.scan.replace.title": "Block Replacement GUI",
   "com.minecolonies.coremod.gui.scantool.select": "Select",
 
-  "com.minecolonies.coremod.gui.townhall.guards": "Number of guards:",
-  "com.minecolonies.coremod.gui.townhall.house": "Number of houses:",
-  "com.minecolonies.coremod.gui.townhall.saturation": "Saturation of citizens:",
   "com.minecolonies.coremod.gui.workerhuts.happiness": "Happiness",
 
   "block.minecolonies.barrel_block": "Barrel",
@@ -1395,5 +1385,28 @@
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
 
-  "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!"
+  "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
+
+  "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
+  "com.minecolonies.coremod.entity.citizen.demands.unemployment": "I am waiting for more than two weeks to finally have a job! I am getting very upset!",
+  "com.minecolonies.coremod.entity.citizen.no.homelessness": "I'd really like a house to live in.",
+  "com.minecolonies.coremod.entity.citizen.demands.homelessness": "I don't have a house for more than 2 weeks, I'm getting really upset!",
+  "com.minecolonies.coremod.entity.citizen.no.idleatjob": "I'm idle at my job because of missing items, please take care of that!",
+  "com.minecolonies.coremod.entity.citizen.demands.idleatjob": "I'm unable to work for more than two weeks already! Do something!",
+  "com.minecolonies.coremod.entity.citizen.no.slepttonight": "I didn't have enough time to go to sleep in the last three days!",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Homelessness",
+  "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
+  "com.minecolonies.coremod.gui.townhall.happiness.health": "Health",
+  "com.minecolonies.coremod.gui.townhall.happiness.idleatjob": "Idling as a Worker",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.school": "Kids in School",
+  "com.minecolonies.coremod.gui.townhall.happiness.security": "Guards in Colony",
+  "com.minecolonies.coremod.gui.townhall.happiness.social": "Social factor",
+  "com.minecolonies.coremod.gui.townhall.happiness.saturation": "Hunger",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.damage": "Damage",
+  "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
+  "com.minecolonies.coremod.gui.townhall.happiness.raidwithoutdeath": "Raids without Deaths",
+  "com.minecolonies.coremod.gui.townhall.happiness.slepttonight": "Getting Sleep"
 }
