@@ -430,6 +430,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
+            building.cancelAllRequestsOfCitizen(citizen);
         }
 
         colony.getCitizenManager().calculateMaxCitizens();
