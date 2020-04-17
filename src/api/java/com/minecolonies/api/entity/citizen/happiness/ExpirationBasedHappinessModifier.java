@@ -7,7 +7,9 @@ import java.util.function.DoubleSupplier;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAY;
 
 /**
- * The time based happiness modifier.
+ * The Expiration based happiness modifier.
+ * These modifiers are invoked for a limited period of time and have a happiness buff or boost for this time on the happiness.
+ * This can also be inverted resulting in a buff or boost if this modifier is not invoked regularly.
  */
 public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
 {
@@ -32,6 +34,7 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
      * @param id     its string id.
      * @param weight its weight.
      * @param period the period.
+     * @param supplier the supplier to get the factor.
      */
     public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period)
     {
@@ -41,10 +44,10 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
 
     /**
      * Create an instance of the happiness modifier.
-     *
-     * @param id     its string id.
+     * @param id its string id.
      * @param weight its weight.
      * @param period the period.
+     * @param supplier the supplier to get the factor.
      * @param inverted if inverted.
      */
     public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period, final boolean inverted)

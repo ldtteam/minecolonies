@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -442,6 +443,19 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.bakery;
+    }
+
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
+        {
+            for (final BakingProduct product : task.getValue())
+            {
+                this.addToTasks(task.getKey(), product);
+            }
+        }
     }
 
     /**
