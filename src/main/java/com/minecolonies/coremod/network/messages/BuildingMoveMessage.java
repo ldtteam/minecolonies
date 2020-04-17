@@ -216,6 +216,11 @@ public class BuildingMoveMessage implements IMessage
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
+            for (final ICitizenData citizenData : oldBuilding.getAssignedCitizen())
+            {
+                oldBuilding.cancelAllRequestsOfCitizen(citizenData);
+            }
+
             world.destroyBlock(oldBuildingId, false);
             world.destroyBlock(buildPos, true);
 
