@@ -317,10 +317,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 new TranslationTextComponent(NO_SEED_SET),
                 currentField.getPos()));
             buildingFarmer.setCurrentField(null);
+<<<<<<< HEAD
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
         worker.getCitizenData().setIdleAtJob(false);
+=======
+            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false);
+            return PREPARING;
+        }
+        worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true);
+>>>>>>> 1.15
 
         final ItemStack seeds = currentField.getSeed().copy();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
@@ -767,4 +774,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return worker;
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
+    {
+        final boolean needTool = super.checkForToolOrWeapon(toolType);
+        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType, needTool);
+        return needTool;
+    }
+>>>>>>> 1.15
 }
