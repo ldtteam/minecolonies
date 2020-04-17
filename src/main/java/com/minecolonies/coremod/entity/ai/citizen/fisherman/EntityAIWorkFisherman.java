@@ -473,7 +473,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             return FISHERMAN_WALKING_TO_WATER;
         }
-
         return throwOrRetrieveHook();
     }
 
@@ -514,6 +513,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
                 retrieveRod();
                 return FISHERMAN_WALKING_TO_WATER;
             }
+            this.entityFishHook.setInUse();
         }
         return getState();
     }

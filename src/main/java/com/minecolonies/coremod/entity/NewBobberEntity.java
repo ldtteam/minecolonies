@@ -42,7 +42,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private              boolean                   inGround;
     private              int                       ticksInGround;
     private              EntityCitizen             angler;
-    private              int                       tickRemove;
+    private              int                       tickRemove = 100;
     private              int                       ticksInAir;
     private              int                       ticksCatchable;
     private              int                       ticksCaughtDelay;
@@ -147,7 +147,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
 
         super.tick();
-        ++this.tickRemove;
+
+        if(!this.world.isRemote()) {
+            if (--this.tickRemove <= 0) {
+                this.remove();
+                return;
+            }
+        }
 
         if (this.angler == null)
         {
@@ -165,12 +171,6 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
         else if (this.world.isRemote || !this.shouldStopFishing())
         {
-            if(this.tickRemove >= 100) {
-                if(this.angler.getCitizenStatusHandler().getStatus() == Status.SLEEPING){
-                    this.remove();
-                    return;
-                }
-            }
 
             if (this.inGround)
             {
@@ -584,6 +584,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         return readyToCatch;
     }
+
+    public void setInUse() { this.tickRemove = 100; }
 
     enum State
     {
