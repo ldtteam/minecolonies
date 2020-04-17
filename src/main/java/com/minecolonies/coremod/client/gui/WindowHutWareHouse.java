@@ -54,23 +54,43 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     /**
      * Resource scrolling list.
      */
-    private final       ScrollingList stackList;
+    private final ScrollingList stackList;
     /**
      * The filter for the resource list.
      */
-    private             String        filter          = "";
+    private       String        filter = "";
+
+    /**
+     * No Sorting stage. how it comes from Database so it gets feeded
+     */
+    public static final int NO_SORT         = 0;
+    /**
+     * Name Ascending
+     */
+    public static final int ASC_SORT        = 1;
+    /**
+     * Name Descending
+     */
+    public static final int DESC_SORT       = 2;
+    /**
+     * Itemcount Ascending
+     */
+    public static final int COUNT_ASC_SORT  = 3;
+    /**
+     * Itemcount Descending
+     */
+    public static final int COUNT_DESC_SORT = 4;
     /**
      * The sortDescriptor so how we want to sort
      */
-    public static final int           NO_SORT         = 0;
-    public static final int           ASC_SORT        = 1;
-    public static final int           DESC_SORT       = 2;
-    public static final int           COUNT_ASC_SORT  = 3;
-    public static final int           COUNT_DESC_SORT = 4;
     int sortDescriptor = 0;
-
-    public static final String LIST_ALLINVENTORY = "allinventory";
-
+    /**
+     * The Stringdefine for the GUI page
+     */
+    public static final  String                 LIST_ALLINVENTORY          = "allinventory";
+    /**
+     * The Warehouse view
+     */
     private final        BuildingWareHouse.View building;
     /**
      * Required building level for sorting.
@@ -146,7 +166,11 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         }
     }
 
-    void setSortFlag()
+    /**
+     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages 0 - 4 NO_SORT         0   No Sorting, like wysiwyg ASC_SORT        1   Name Ascending
+     * DESC_SORT       2   Name Descending COUNT_ASC_SORT  3   Itemcount Ascending COUNT_DESC_SORT 4   Itemcount Descending
+     **/
+    private void setSortFlag()
     {
         sortDescriptor++;
         if (sortDescriptor > 4)
