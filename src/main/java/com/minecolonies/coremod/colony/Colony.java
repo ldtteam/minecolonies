@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -111,11 +110,6 @@ public class Colony implements IColony
     private final ICitizenManager citizenManager = new CitizenManager(this);
 
     /**
-     * Colony happiness manager.
-     */
-    private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
-
-    /**
      * Barbarian manager of the colony.
      */
     private final IRaiderManager raidManager = new RaidManager(this);
@@ -221,11 +215,6 @@ public class Colony implements IColony
      * List of players attacking the colony.
      */
     private final List<AttackingPlayer> attackingPlayers = new ArrayList<>();
-
-    /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData happinessData = new HappinessData();
 
     /**
      * The colonies state machine
@@ -440,7 +429,6 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
-            happinessData.processDeathModifiers();
             if (mourning)
             {
                 mourning = false;
@@ -599,15 +587,6 @@ public class Colony implements IColony
             progressManager.read(compound);
         }
 
-        if (compound.keySet().contains(TAG_HAPPINESS_MODIFIER))
-        {
-            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
-        }
-        else
-        {
-            colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
-        }
-
         eventManager.readFromNBT(compound);
 
         if (compound.keySet().contains(TAG_RESEARCH))
@@ -647,7 +626,6 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        happinessData.read(compound);
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
@@ -740,8 +718,6 @@ public class Colony implements IColony
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.putDouble(TAG_HAPPINESS_MODIFIER, d));
-
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
         workManager.write(workManagerCompound);
@@ -783,7 +759,6 @@ public class Colony implements IColony
         }
         compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        happinessData.write(compound);
         compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.putBoolean(TAG_MOVE_IN, moveIn);
@@ -943,17 +918,6 @@ public class Colony implements IColony
     {
         freeBlocks.remove(block);
         markDirty();
-    }
-
-    /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    @Override
-    public HappinessData getHappinessData()
-    {
-        return happinessData;
     }
 
     /**
@@ -1294,16 +1258,15 @@ public class Colony implements IColony
     {
         if (citizenManager.getCitizens().size() <= 0)
         {
-            return (HappinessData.MAX_HAPPINESS + HappinessData.MIN_HAPPINESS) / 2.0;
+            return 0.0;
         }
 
-        double happinesSum = 0;
+        double happinessSum = 0;
         for (final ICitizenData citizen : citizenManager.getCitizens())
         {
-            happinesSum += citizen.getCitizenHappinessHandler().getHappiness();
+            happinessSum += citizen.getCitizenHappinessHandler().getHappiness();
         }
-        final double happinessAverage = happinesSum / citizenManager.getCitizens().size();
-        return Math.min(happinessAverage + happinessData.getTotalHappinessModifier(), HappinessData.MAX_HAPPINESS);
+        return happinessSum / citizenManager.getCitizens().size();
     }
 
     /**
@@ -1370,17 +1333,6 @@ public class Colony implements IColony
     public ICitizenManager getCitizenManager()
     {
         return citizenManager;
-    }
-
-    /**
-     * Get the colony happiness manager.
-     *
-     * @return the colony happiness manager.
-     */
-    @Override
-    public IColonyHappinessManager getColonyHappinessManager()
-    {
-        return colonyHappinessManager;
     }
 
     /**

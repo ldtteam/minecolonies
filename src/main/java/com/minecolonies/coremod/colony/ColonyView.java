@@ -30,7 +30,6 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -69,10 +68,6 @@ public final class ColonyView implements IColonyView
     //  Citizenry
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens      = new HashMap<>();
-    /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData                  happinessData = new HappinessData();
     private       String                         name          = "Unknown";
     private       int                            dimensionId;
 
@@ -959,18 +954,6 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update the happiness values for a colony
-     * @param happinessData The new values for happiness
-     * @return null == no response.
-     */
-    @Override
-    public IMessage handleHappinessDataMessage(final HappinessData happinessData)
-    {
-        this.happinessData.setValues(happinessData);
-        return null;
-    }
-
-    /**
      * Update a players permissions.
      *
      * @param player player username.
@@ -1177,17 +1160,6 @@ public final class ColonyView implements IColonyView
         return null;
     }
 
-    /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    @Override
-    public HappinessData getHappinessData()
-    {
-        return happinessData;
-    }
-
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
@@ -1332,12 +1304,6 @@ public final class ColonyView implements IColonyView
 
     @Override
     public ICitizenManager getCitizenManager()
-    {
-        return null;
-    }
-
-    @Override
-    public IColonyHappinessManager getColonyHappinessManager()
     {
         return null;
     }

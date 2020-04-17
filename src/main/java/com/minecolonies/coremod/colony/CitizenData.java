@@ -24,7 +24,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -45,7 +44,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.research.util.ResearchConstants.RAILS;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -188,6 +186,11 @@ public class CitizenData implements ICitizenData
      * The citizen chat options on the server side.
      */
     private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+
+    /**
+     * If idle at job.
+     */
+    private boolean idle;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -635,7 +638,6 @@ public class CitizenData implements ICitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
 
-        citizenHappinessHandler.serializeViewNetworkData(buf);
         buf.writeCompoundTag(citizenSkillHandler.write());
 
         buf.writeString((job != null) ? job.getName() : "");
@@ -661,6 +663,10 @@ public class CitizenData implements ICitizenData
         {
             buf.writeInt(0);
         }
+
+        final CompoundNBT happinessCompound = new CompoundNBT();
+        citizenHappinessHandler.write(happinessCompound);
+        buf.writeCompoundTag(happinessCompound);
     }
 
     @Override
@@ -817,6 +823,8 @@ public class CitizenData implements ICitizenData
             nbtTagCompound.put("job", jobCompound);
         }
 
+        citizenHappinessHandler.write(nbtTagCompound);
+
         nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
         nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.OFF_HAND));
@@ -825,8 +833,6 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_ASLEEP, isAsleep);
         nbtTagCompound.putBoolean(TAG_JUST_ATE, justAte);
 
-        citizenHappinessHandler.write(nbtTagCompound);
-
         @NotNull final ListNBT chatTagList = new ListNBT();
         for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
@@ -834,7 +840,10 @@ public class CitizenData implements ICitizenData
             chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
             chatTagList.add(chatOptionCompound);
         }
+
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
+        nbtTagCompound.putBoolean(TAG_IDLE, idle);
+
         return nbtTagCompound;
     }
 
@@ -895,7 +904,8 @@ public class CitizenData implements ICitizenData
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }
-        citizenHappinessHandler.read(nbtTagCompound);
+
+        this.citizenHappinessHandler.read(nbtTagCompound);
 
         if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
         {
@@ -920,6 +930,8 @@ public class CitizenData implements ICitizenData
                 citizenSkillHandler.incrementLevel(secondary, entry.getValue() / 4);
             }
         }
+
+        this.idle = nbtTagCompound.getBoolean(TAG_IDLE);
     }
 
     @Override
@@ -984,6 +996,18 @@ public class CitizenData implements ICitizenData
     public int getJobModifier()
     {
         return getCitizenSkillHandler().getJobModifier(this);
+    }
+
+    @Override
+    public boolean isIdleAtJob()
+    {
+        return this.idle;
+    }
+
+    @Override
+    public void setIdleAtJob(final boolean idle)
+    {
+        this.idle = idle;
     }
 
     // --------------------------- Request Handling --------------------------- //
