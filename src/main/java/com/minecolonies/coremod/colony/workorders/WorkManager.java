@@ -244,7 +244,7 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof WorkOrderBuildDecoration)
+        if (order instanceof WorkOrderBuildDecoration && !(order instanceof WorkOrderBuildMiner))
         {
             for (final IWorkOrder or : workOrders.values())
             {
