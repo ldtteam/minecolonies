@@ -91,10 +91,10 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition),
-          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget),
-          new AITarget(ARCHER_CHECK_SHOT, this::checkShot),
-          new AITarget(ARCHER_SHOOT, this::shoot)
+          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, 1),
+          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, 1),
+          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, 1),
+          new AITarget(ARCHER_SHOOT, this::shoot, 1)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
@@ -156,7 +156,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     protected IAIState shoot()
     {
         setDelay(STANDARD_DELAY);
-        if (currentShootingTarget == null)
+        if (currentShootingTarget == null || !isSetup())
         {
             return START_WORKING;
         }

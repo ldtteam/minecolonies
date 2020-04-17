@@ -14,13 +14,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -55,7 +55,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
 
         super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, this::shearSheep)
+          new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
         );
     }
 

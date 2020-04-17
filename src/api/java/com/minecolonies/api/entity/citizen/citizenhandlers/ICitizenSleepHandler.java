@@ -23,8 +23,9 @@ public interface ICitizenSleepHandler
      * Attempts a sleep interaction with the citizen and the given bed.
      *
      * @param bedLocation The possible location to sleep.
+     * @return if successful.
      */
-    void trySleep(BlockPos bedLocation);
+    boolean trySleep(BlockPos bedLocation);
 
     /**
      * Called when the citizen wakes up.

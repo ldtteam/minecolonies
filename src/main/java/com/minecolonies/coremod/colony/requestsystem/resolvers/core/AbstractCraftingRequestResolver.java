@@ -8,13 +8,10 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
@@ -205,10 +202,8 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             final ItemStack requestStack,
             final int count)
     {
-        final int recipeExecutionsCount = count / requestStack.getCount();
-        final ItemStack copy = requestStack.copy();
-        copy.setCount(1);
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(copy, recipeExecutionsCount)));
+        final int recipeExecutionsCount = (int) Math.ceil( (double) count / requestStack.getCount());
+        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount)));
     }
 
     protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count);

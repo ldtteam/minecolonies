@@ -209,7 +209,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
-            colony.getCitizenManager().calculateMaxCitizens();
 
             // Set new home, since guards are housed at their workerbuilding.
             final IBuilding building = citizen.getHomeBuilding();
@@ -324,7 +323,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
         super.removeCitizen(citizen);
-        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override
@@ -725,6 +723,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         this.job = job;
         for (final ICitizenData citizen : getAssignedCitizen())
         {
+            cancelAllRequestsOfCitizen(citizen);
             citizen.setJob(createJob(citizen));
         }
         this.markDirty();

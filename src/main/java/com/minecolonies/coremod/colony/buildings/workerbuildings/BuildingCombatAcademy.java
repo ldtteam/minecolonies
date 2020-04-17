@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.CarvedPumpkinBlock;
 import net.minecraft.block.HayBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -80,7 +81,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.PUMPKIN && world.getBlockState(pos.down()).getBlock() instanceof HayBlock)
+        if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.down()).getBlock() instanceof HayBlock)
         {
             fightingPos.add(pos.down());
         }
