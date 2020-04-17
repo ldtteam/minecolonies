@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -41,6 +42,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private              boolean                   inGround;
     private              int                       ticksInGround;
     private              EntityCitizen             angler;
+    private              int                       tickRemove;
     private              int                       ticksInAir;
     private              int                       ticksCatchable;
     private              int                       ticksCaughtDelay;
@@ -143,7 +145,10 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     public void tick()
     {
+
         super.tick();
+        ++this.tickRemove;
+
         if (this.angler == null)
         {
             if (world.isRemote)
@@ -160,6 +165,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
         else if (this.world.isRemote || !this.shouldStopFishing())
         {
+            if(this.tickRemove >= 100) {
+                if(this.angler.getCitizenStatusHandler().getStatus() == Status.SLEEPING){
+                    this.remove();
+                    return;
+                }
+            }
+
             if (this.inGround)
             {
                 ++this.ticksInGround;
