@@ -38,7 +38,6 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -90,7 +89,6 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -371,15 +369,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
-        {
-            if (world.getDayTime() <= NOON)
-            {
-                return DesiredActivity.WORK;
-            }
-            return DesiredActivity.IDLE;
-        }
-
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
@@ -389,6 +378,15 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
         {
             return DesiredActivity.MOURN;
+        }
+
+        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
+        {
+            if (world.getDayTime() <= NOON)
+            {
+                return DesiredActivity.WORK;
+            }
+            return DesiredActivity.IDLE;
         }
 
         return null;
