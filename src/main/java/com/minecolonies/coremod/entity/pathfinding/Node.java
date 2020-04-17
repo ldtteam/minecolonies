@@ -82,6 +82,11 @@ public class Node implements Comparable<Node>
     private boolean swimming = false;
 
     /**
+     * If is on rails.
+     */
+    private boolean isOnRails = false;
+
+    /**
      * Create initial Node.
      *
      * @param pos       coordinates of node.
@@ -332,5 +337,23 @@ public class Node implements Comparable<Node>
     public void setCounterAdded(final int counterAdded)
     {
         this.counterAdded = counterAdded;
+    }
+
+    /**
+     * Setup rails params.
+     * @param isOnRails if on rails.
+     */
+    public void setOnRails(final boolean isOnRails)
+    {
+        this.isOnRails = isOnRails;
+    }
+
+    /**
+     * Check if is on rails.
+     * @return true if so.
+     */
+    public boolean isOnRails()
+    {
+        return isOnRails;
     }
 }

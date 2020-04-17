@@ -26,7 +26,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -346,7 +345,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
         else
         {
-            job.setTree(new Tree(world, pathResult.treeLocation), (ServerWorld) world);
+            job.setTree(new Tree(world, pathResult.treeLocation));
 
             // Check if tree creation was successful
             if (job.getTree().isTree())
@@ -355,7 +354,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             else
             {
-                job.setTree(null, (ServerWorld) world);
+                job.setTree(null);
             }
         }
         pathResult = null;
@@ -420,7 +419,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             else
             {
-                job.setTree(null, (ServerWorld) world);
+                job.setTree(null);
                 checkedInHut = false;
             }
             incrementActionsDoneAndDecSaturation();
@@ -541,7 +540,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (plantSapling(job.getTree().getLocation()))
         {
-            job.setTree(null, (ServerWorld) world);
+            job.setTree(null);
             checkedInHut = false;
         }
     }
@@ -634,7 +633,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
         {
-            isInHut(job.getSapling());
+            isInHut(job.getTree().getSapling());
             checkedInHut = true;
         }
 
@@ -745,13 +744,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return false;
         }
 
-        if (ItemStackUtils.isEmpty(job.getSapling()))
+        if (ItemStackUtils.isEmpty(job.getTree().getSapling()))
         {
             return true;
         }
         else
         {
-            return job.getSapling().isItemEqual(stack);
+            return job.getTree().getSapling().isItemEqual(stack);
         }
     }
 

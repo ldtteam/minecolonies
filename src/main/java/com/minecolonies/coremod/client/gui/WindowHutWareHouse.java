@@ -1,6 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
@@ -10,13 +15,18 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.network.messages.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
@@ -32,9 +42,19 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     private static final int BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
+     * Limit reached label.
+     */
+    private static final String LABEL_LIMIT_REACHED = "com.minecolonies.coremod.gui.warehouse.limitreached";
+
+    /**
      * Allow more upgrades of the storage.
      */
     private boolean allowMoreStorageUpgrades = false;
+
+    /**
+     * Resource scrolling list.
+     */
+    private final ScrollingList resourceList;
 
     /**
      * Constructor for window warehouse hut.
@@ -46,9 +66,44 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
+        resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
+
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
         {
             allowMoreStorageUpgrades = true;
+        }
+        registerButton(STOCK_ADD, this::addStock);
+        if (building.hasReachedLimit())
+        {
+            final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
+            button.setLabel(LanguageHandler.format(LABEL_LIMIT_REACHED));
+            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
+        }
+
+        registerButton(STOCK_REMOVE, this::removeStock);
+    }
+
+    /**
+     * Remove the stock.
+     * @param button the button.
+     */
+    private void removeStock(final Button button)
+    {
+        final int row = resourceList.getListElementIndexByPane(button);
+        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
+        building.getStock().remove(row);
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(tuple.getA().getItemStack(), building.getColony().getID(), building.getID()));
+        updateStockList();
+    }
+
+    /**
+     * Add the stock.
+     */
+    private void addStock()
+    {
+        if (!building.hasReachedLimit())
+        {
+            new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
         }
     }
 
@@ -62,6 +117,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         super.onOpened();
 
         updateResourcePane();
+        updateStockList();
 
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
@@ -141,10 +197,54 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             resourceMissingLabel.setLabelText("");
         }
 
-        neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
+        neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
         findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
+    }
+
+    /**
+     * Updates the resource list in the GUI with the info we need.
+     */
+    private void updateStockList()
+    {
+        resourceList.enable();
+        resourceList.show();
+        final List<Tuple<ItemStorage, Integer> > tempRes = new ArrayList<>(building.getStock());
+
+        //Creates a dataProvider for the unemployed resourceList.
+        resourceList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return tempRes.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
+                resource.setCount(resource.getMaxStackSize());
+
+                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+                resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
+
+                final Label quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Label.class);
+                quantityLabel.setLabelText(String.valueOf(tempRes.get(index).getB()));
+
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
+            }
+        });
     }
 
     /**

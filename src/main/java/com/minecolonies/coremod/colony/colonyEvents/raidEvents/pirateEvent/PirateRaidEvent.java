@@ -220,6 +220,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             if (spawnerCount <= 0)
             {
                 daysToGo = 1;
+                status = EventStatus.WAITING;
             }
         }
     }

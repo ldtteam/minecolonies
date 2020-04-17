@@ -30,6 +30,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -1092,7 +1093,7 @@ public final class ColonyView implements IColonyView
         return world;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public IRequestManager getRequestManager()
     {
@@ -1300,6 +1301,7 @@ public final class ColonyView implements IColonyView
 
     }
 
+    @NotNull
     @Override
     public List<PlayerEntity> getImportantMessageEntityPlayers()
     {

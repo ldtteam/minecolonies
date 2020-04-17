@@ -27,6 +27,9 @@ public class PermissionsView implements IPermissions
     private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
     private       Rank               userRank    = Rank.NEUTRAL;
 
+    private UUID   colonyOwner;
+    private String ownerName = "";
+
     /**
      * Getter for the user rank.
      * @return the rank.
@@ -176,6 +179,13 @@ public class PermissionsView implements IPermissions
     @Override
     public Map.Entry<UUID, Player> getOwnerEntry()
     {
+        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
+        {
+            if (entry.getValue().getRank().equals(Rank.OWNER))
+            {
+                return entry;
+            }
+        }
         return null;
     }
 
@@ -194,7 +204,19 @@ public class PermissionsView implements IPermissions
     @Override
     public UUID getOwner()
     {
-        return null;
+        if (colonyOwner == null)
+        {
+            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            if (owner != null)
+            {
+                colonyOwner = owner.getKey();
+            }
+            else
+            {
+                restoreOwnerIfNull();
+            }
+        }
+        return colonyOwner;
     }
 
     /**
@@ -214,6 +236,10 @@ public class PermissionsView implements IPermissions
             final UUID id = PacketUtils.readUUID(buf);
             final String name = buf.readString(32767);
             final Rank rank = Rank.valueOf(buf.readString(32767));
+            if (rank == Rank.OWNER)
+            {
+                colonyOwner = id;
+            }
 
             players.put(id, new Player(id, name, rank));
         }
@@ -277,7 +303,15 @@ public class PermissionsView implements IPermissions
     @Override
     public String getOwnerName()
     {
-        return null;
+        if (ownerName.isEmpty())
+        {
+            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            if (owner != null)
+            {
+                ownerName = owner.getValue().getName();
+            }
+        }
+        return ownerName;
     }
 
     @Override

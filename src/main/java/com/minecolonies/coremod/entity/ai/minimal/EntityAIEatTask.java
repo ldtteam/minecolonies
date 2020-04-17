@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
@@ -30,6 +31,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.EnumSet;
 
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
@@ -251,7 +253,15 @@ public class EntityAIEatTask extends Goal
 
 
         final Food itemFood = stack.getItem().getFood();
-        citizenData.increaseSaturation(itemFood.getHealing() / 2.0);
+
+        double satIncrease = itemFood.getHealing();
+        final AdditionModifierResearchEffect satLimitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
+        if (satLimitDecrease != null)
+        {
+            satIncrease *= (1.0 + satLimitDecrease.getEffect());
+        }
+
+        citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();

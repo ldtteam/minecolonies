@@ -100,7 +100,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Set of all possible diseases.
      */
-    private final Map<String, Disease> diseases = new HashMap();
+    private final Map<String, Disease> diseases = new HashMap<>();
 
     /**
      * List of diseases including the random factor.
@@ -236,7 +236,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock))
+        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
         {
             return true;
         }
@@ -478,9 +478,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getRandomLuckyOre()
+    public ItemStack getRandomLuckyOre(final double chanceBonus)
     {
-        if (random.nextInt(ONE_HUNDRED_PERCENT) <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get())
+        if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get() * chanceBonus)
         {
             return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }

@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,6 +15,7 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import net.minecraft.entity.*;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -100,6 +102,13 @@ public class EntityInitializer
                                       .size(0F, 0.5F)
                                       .build(Constants.MOD_ID + ":sittingentity")
                                       .setRegistryName("sittingentity");
+
+        ModEntities.MINECART = (EntityType<AbstractMinecartEntity>) EntityType.Builder.create(MinecoloniesMinecart::new, EntityClassification.MISC)
+                                      .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                      .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                      .size(0.98F, 0.7F)
+                                      .build(Constants.MOD_ID + ":mcminecart")
+                                      .setRegistryName("mcminecart");
     }
 
     @SubscribeEvent
@@ -115,6 +124,7 @@ public class EntityInitializer
             ModEntities.BARBARIAN,
             ModEntities.CHIEFBARBARIAN,
             ModEntities.FISHHOOK,
-            ModEntities.SITTINGENTITY);
+            ModEntities.SITTINGENTITY,
+            ModEntities.MINECART);
     }
 }

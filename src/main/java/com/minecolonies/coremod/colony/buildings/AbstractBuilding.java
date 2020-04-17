@@ -318,7 +318,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        if (workOrderBuildBuilding.getID() != 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        }
         markDirty();
     }
 
@@ -798,7 +801,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    private Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
+    protected Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
     {
         return getDataStore().getOpenRequestsByRequestableType();
     }
