@@ -51,6 +51,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public static final String TAG_DAYS_LEFT     = "pirateDaysLeft";
     public static final String TAG_SPAWNER_COUNT = "spawnerCount";
     public static final String TAG_SHIPSIZE      = "shipSize";
+    public static final String TAG_KILLED        = "killed";
 
     /**
      * The max distance for spawning pirates when the ship is unloaded
@@ -111,6 +112,11 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
      * Entities which are to be respawned in a loaded chunk.
      */
     private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
+
+    /**
+     * If a citizen was killed during the raid.
+     */
+    private boolean killedCitizenInRaid = false;
 
     /**
      * Create a new Pirate raid event.
@@ -363,6 +369,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         compound.putInt(TAG_SPAWNER_COUNT, spawnerCount);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
+        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
         return compound;
     }
 
@@ -375,6 +382,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         spawnerCount = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
+        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
     }
 
     /**
@@ -389,5 +397,11 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
         raidEvent.readFromNBT(compound);
         return raidEvent;
+    }
+
+    @Override
+    public void setKilledCitizenInRaid()
+    {
+        killedCitizenInRaid = true;
     }
 }

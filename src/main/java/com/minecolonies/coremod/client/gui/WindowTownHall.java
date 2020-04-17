@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
-import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 
 /**
  * Window for the town hall.
@@ -789,26 +792,53 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void updateHappiness()
     {
-        final HappinessData happiness = building.getColony().getHappinessData();
-        final String[] imagesIds = new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL};
-        final int[] levels = new int[] {happiness.getGuards(), happiness.getHousing(), happiness.getSaturation()};
-        for (int i = 0; i < imagesIds.length; i++)
+        final Map<String, Double> happinessMap = new HashMap<>();
+
+        for (final ICitizenDataView data : building.getColony().getCitizens().values())
         {
-            final Image image = findPaneOfTypeByID(imagesIds[i], Image.class);
-            switch (levels[i])
+            for (final String modifier : data.getHappinessHandler().getModifiers())
             {
-                case HappinessData.INCREASE:
-                    image.setImage(GREEN_ICON);
-                    break;
-                case HappinessData.STABLE:
-                    image.setImage(YELLOW_ICON);
-                    break;
-                case HappinessData.DECREASE:
-                    image.setImage(RED_ICON);
-                    break;
-                default:
-                    throw new IllegalStateException(imagesIds[i] + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
+                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor());
             }
+        }
+
+        //todo citizen own happiness GUI
+
+        final View pane = findPaneOfTypeByID("happinesspage", View.class);
+        int yPos = 62;
+        for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
+        {
+            final double value = entry.getValue() / citizens.size();
+            final Image image = new Image();
+            image.setSize(11, 11);
+            image.setPosition(25, yPos);
+
+            final Label label = new Label();
+            label.setSize(136,11);
+            label.setPosition(50, yPos);
+            label.setColor(BLACK);
+            label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
+
+            if (value > 1.0)
+            {
+                image.setImage(GREEN_ICON);
+            }
+            else if (value == 1)
+            {
+                image.setImage(BLUE_ICON);
+            }
+            else if (value > 0.75)
+            {
+                image.setImage(YELLOW_ICON);
+            }
+            else
+            {
+                image.setImage(RED_ICON);
+            }
+            pane.addChild(image);
+            pane.addChild(label);
+
+            yPos+=12;
         }
     }
 
@@ -1113,9 +1143,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             case PAGE_CITIZENS:
                 updateCitizens();
                 window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
-                break;
-            case PAGE_HAPPINESS:
-                updateHappiness();
                 break;
             case PAGE_WORKORDER:
                 updateWorkOrders();

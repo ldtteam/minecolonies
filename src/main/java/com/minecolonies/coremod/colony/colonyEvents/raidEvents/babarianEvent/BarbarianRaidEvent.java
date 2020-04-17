@@ -32,6 +32,7 @@ import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
+import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
  * Barbarian raid event for the colony, triggers a horde of barbarians which spawn and attack the colony.
@@ -96,6 +97,11 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     private EventStatus status = EventStatus.STARTING;
 
     /**
+     * If a citizen was killed during the raid.
+     */
+    private boolean killedCitizenInRaid = false;
+
+    /**
      * Days the event can last, to make sure it eventually despawns.
      */
     private int daysToGo = 3;
@@ -126,6 +132,12 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         entities.addAll(chiefs.keySet());
         entities.addAll(barbarians.keySet());
         return entities;
+    }
+
+    @Override
+    public void setKilledCitizenInRaid()
+    {
+        killedCitizenInRaid = true;
     }
 
     @Override
@@ -350,6 +362,10 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         if (total == 0)
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+            if (!this.killedCitizenInRaid)
+            {
+                colony.getCitizenManager().updateModifier("raidwithoutdeath");
+            }
         }
         else if (total > 0 && total <= SMALL_HORDE_SIZE)
         {
@@ -365,6 +381,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);
+        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
         return compound;
     }
 
@@ -376,6 +393,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
+        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
     }
 
     /**

@@ -61,7 +61,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
         registerMessage(++idx, GuardMobAttackListMessage.class, GuardMobAttackListMessage::new);
-        registerMessage(++idx, HappinessDataMessage.class, HappinessDataMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
