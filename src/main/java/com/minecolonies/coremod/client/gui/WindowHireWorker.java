@@ -235,11 +235,19 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (citizen.getWorkBuilding() == null && building.canAssign(citizen))
+                if (citizen.getWorkBuilding() == null && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
                     isPaused.off();
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
+                }
+                else if ((building.getWorkerId().size() >= building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
+                    isPaused.off();
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
                 else
                 {
