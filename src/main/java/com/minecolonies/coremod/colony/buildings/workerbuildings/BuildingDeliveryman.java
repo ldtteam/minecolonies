@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
@@ -151,6 +152,13 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
+    }
+
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        this.setBuildingToDeliver(((IBuildingDeliveryman) oldBuilding).getBuildingToDeliver());
     }
 
     /**

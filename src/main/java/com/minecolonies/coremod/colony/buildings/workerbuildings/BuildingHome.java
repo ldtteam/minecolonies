@@ -515,6 +515,18 @@ public class BuildingHome extends AbstractBuilding
         this.childCreationTimer = childCreationInterval;
     }
 
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
+        for (final ICitizenData citizen : residents)
+        {
+            citizen.setHomeBuilding(this);
+            this.assignCitizen(citizen);
+        }
+    }
+
     /**
      * The view of the citizen hut.
      */
