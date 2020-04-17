@@ -414,6 +414,10 @@ public class TileEntityRack extends AbstractTileEntityRack
         updateItemStorage();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
+        if (compound.contains(TAG_POS))
+        {
+            this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
+        }
     }
 
     @NotNull
@@ -445,6 +449,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putBoolean(TAG_MAIN, main);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
+        BlockPosUtil.write(compound, TAG_POS, buildingPos);
         return compound;
     }
 
