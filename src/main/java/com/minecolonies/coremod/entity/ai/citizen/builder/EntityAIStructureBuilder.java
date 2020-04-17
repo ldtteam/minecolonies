@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -24,18 +25,21 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Tuple;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
 
 /**
- * AI class for the builder.
- * Manages building and repairing buildings.
+ * AI class for the builder. Manages building and repairing buildings.
  */
 public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
 {
@@ -77,7 +81,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int ACTIONS_UNTIL_DUMP = 1024;
+    private static final int ACTIONS_UNTIL_DUMP = 4096;
 
     /**
      * Min distance from placing block.
@@ -97,7 +101,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Building level to purge mobs at the build site.
      */
-    private static final int LEVEL_TO_PURGE_MOBS    = 4;
+    private static final int LEVEL_TO_PURGE_MOBS = 4;
 
     /**
      * The id in the list of the last picked up item.
@@ -128,15 +132,50 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
     /**
      * State to pick up material before going back to work.
+     *
      * @return the next state to go to.
      */
     public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
-        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>();
-        for (final BuildingBuilderResource stack : building.getNeededResources().values())
+        final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
+        boolean only_64 = false;
+
+        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
+        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
         {
-            neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
+            only_64 = true;
+        }
+        else
+        {
+            int stackCount = 0;
+
+            for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+            {
+                int amount = stack.getAmount();
+                while (amount > 0)
+                {
+                    stackCount++;
+                    amount = amount - stack.getItemStack().getMaxStackSize();
+                }
+            }
+            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
+            {
+                only_64 = true;
+            }
+        }
+
+        for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+        {
+            int amount = stack.getAmount();
+            if (only_64)
+            {
+                if (amount > stack.getItemStack().getMaxStackSize())
+                {
+                    amount = stack.getItemStack().getMaxStackSize();
+                }
+            }
+            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
@@ -155,14 +194,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
         {
-            needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
+            needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
         }
 
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), needsCurrently))
-        {
-            return getState();
-        }
-        else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
+        if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
             return GATHERING_REQUIRED_MATERIALS;
         }
