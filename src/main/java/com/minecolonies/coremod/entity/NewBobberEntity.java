@@ -148,8 +148,10 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
         super.tick();
 
-        if(!this.world.isRemote()) {
-            if (--this.tickRemove <= 0) {
+        if(!this.world.isRemote())
+        {
+            if (--this.tickRemove <= 0)
+            {
                 this.remove();
                 return;
             }

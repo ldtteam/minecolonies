@@ -78,17 +78,15 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        // Check North/East/South/West blocks
-        // North = z-1
-        // South = z+1
-        // East = x + 1
-        // West = x - 1
-
-        if(!isWater(n.pos)) {
-            if (n.pos.getX() == n.parent.pos.getX()) {
+        if(!isWater(n.pos))
+        {
+            if (n.pos.getX() == n.parent.pos.getX())
+            {
                 final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
                 return isWater(n.pos.add(0, -1, dz)) || isWater(n.pos.add(-1, -1, 0)) || isWater(n.pos.add(1, -1, 0));
-            } else {
+            }
+            else
+            {
                 final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
                 return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, -1)) || isWater(n.pos.add(0, -1, 1));
             }
