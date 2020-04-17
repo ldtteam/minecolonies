@@ -27,11 +27,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
     /**
-     * Storage tag for the handler.
-     */
-    private static final String TAG_HAPPINESS = "happinessHandler";
-
-    /**
      * The different happiness factor.
      */
     public Map<String, IHappinessModifier> happinessFactors = new HashMap<>();
@@ -43,20 +38,20 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public CitizenHappinessHandler(final ICitizenData data)
     {
-        add(new TimeBasedHappinessModifier("homelessness", 4.0, () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
-        add(new TimeBasedHappinessModifier("unemployment", 2.0, () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0), new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
-        add(new TimeBasedHappinessModifier("health", 2.0, () -> data.getCitizenEntity().isPresent() ? (data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
-        add(new TimeBasedHappinessModifier("idleatjob", 1.0, () -> data.isIdleAtJob() ? 0.5 : 1.0, new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
+        add(new TimeBasedHappinessModifier(HOMELESSNESS, 4.0, () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
+        add(new TimeBasedHappinessModifier(UNEMPLOYMENT, 2.0, () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0), new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
+        add(new TimeBasedHappinessModifier(HEALTH, 2.0, () -> data.getCitizenEntity().isPresent() ? (data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
+        add(new TimeBasedHappinessModifier(IDLEATJOB, 1.0, () -> data.isIdleAtJob() ? 0.5 : 1.0, new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
 
-        add(new StaticHappinessModifier("school", 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
-        add(new StaticHappinessModifier("security", 5.0, () -> getGuardFactor(data.getColony())));
-        add(new StaticHappinessModifier("social", 2.0, () -> getSocialModifier(data.getColony())));
-        add(new StaticHappinessModifier("saturation", 1.0, () -> data.getSaturation() / 10.0));
+        add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
+        add(new StaticHappinessModifier(SECURITY, 5.0, () -> getGuardFactor(data.getColony())));
+        add(new StaticHappinessModifier(SOCIAL, 2.0, () -> getSocialModifier(data.getColony())));
+        add(new StaticHappinessModifier(SATURATION, 1.0, () -> data.getSaturation() / 10.0));
 
-        add(new ExpirationBasedHappinessModifier("damage", 1.0, () -> 0.0, 1));
-        add(new ExpirationBasedHappinessModifier("death", 2.0, () -> 0.0, 3));
-        add(new ExpirationBasedHappinessModifier("raidwithoutdeath", 1.0, () -> 2.0, 3));
-        add(new ExpirationBasedHappinessModifier("slepttonight", 2.0, () -> 0.0, 3, true));
+        add(new ExpirationBasedHappinessModifier(DAMAGE, 1.0, () -> 0.0, 1));
+        add(new ExpirationBasedHappinessModifier(DEATH, 2.0, () -> 0.0, 3));
+        add(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, () -> 2.0, 3));
+        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 2.0, () -> 0.0, 3, true));
     }
 
     /**
@@ -64,20 +59,20 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public CitizenHappinessHandler()
     {
-        add(new ClientHappinessModifier("homelessness", 4.0));
-        add(new ClientHappinessModifier("unemployment", 2.0));
-        add(new ClientHappinessModifier("health", 2.0));
-        add(new ClientHappinessModifier("idleatjob", 1.0));
+        add(new ClientHappinessModifier(HOMELESSNESS, 4.0));
+        add(new ClientHappinessModifier(UNEMPLOYMENT, 2.0));
+        add(new ClientHappinessModifier(HEALTH, 2.0));
+        add(new ClientHappinessModifier(IDLEATJOB, 1.0));
 
-        add(new ClientHappinessModifier("school", 1.0));
-        add(new ClientHappinessModifier("security", 2.0));
-        add(new ClientHappinessModifier("social", 2.0));
-        add(new ClientHappinessModifier("saturation", 1.0));
+        add(new ClientHappinessModifier(SCHOOL, 1.0));
+        add(new ClientHappinessModifier(SECURITY, 2.0));
+        add(new ClientHappinessModifier(SOCIAL, 2.0));
+        add(new ClientHappinessModifier(SATURATION, 1.0));
 
-        add(new ClientHappinessModifier("damage", 1.0));
-        add(new ClientHappinessModifier("death", 2.0));
-        add(new ClientHappinessModifier("raidwithoutdeath", 1.0));
-        add(new ClientHappinessModifier("slepttonight", 2.0));
+        add(new ClientHappinessModifier(DAMAGE, 1.0));
+        add(new ClientHappinessModifier(DEATH, 2.0));
+        add(new ClientHappinessModifier(RAIDWITHOUTDEATH, 1.0));
+        add(new ClientHappinessModifier(SLEPTTONIGHT, 2.0));
     }
 
     @Override
@@ -90,6 +85,8 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
+
+
     public IHappinessModifier getModifier(final String name)
     {
         return happinessFactors.get(name);

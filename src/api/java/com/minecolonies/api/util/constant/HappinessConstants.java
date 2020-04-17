@@ -32,6 +32,28 @@ public final class HappinessConstants
     public static final int IDLE_AT_JOB_DEMANDS_DAYS   = 14;
 
     /**
+     * Storage tag for the handler.
+     */
+    public static final String TAG_HAPPINESS = "happinessHandler";
+
+    //todo add remainign constants here
+    /**
+     * Happiness modifiers
+     */
+    public static final String HOMELESSNESS = "homelessness";
+    public static final String UNEMPLOYMENT = "unemployment";
+    public static final String HEALTH = "health";
+    public static final String IDLEATJOB = "idleatjob";
+    public static final String SCHOOL = "school";
+    public static final String SECURITY = "security";
+    public static final String SOCIAL = "social";
+    public static final String SATURATION = "saturation";
+    public static final String DAMAGE = "damage";
+    public static final String DEATH = "death";
+    public static final String RAIDWITHOUTDEATH = "raidwithoutdeath";
+    public static final String SLEPTTONIGHT = "slepttonight";
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private HappinessConstants()
