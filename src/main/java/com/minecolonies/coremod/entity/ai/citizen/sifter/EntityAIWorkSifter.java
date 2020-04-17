@@ -17,6 +17,7 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -61,8 +62,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     protected int progress = 0;
 
     /**
-     * Constructor for the sifter.
-     * Defines the tasks the cook executes.
+     * Constructor for the sifter. Defines the tasks the cook executes.
      *
      * @param job a sifter job to use.
      */
@@ -97,7 +97,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         {
             if (InventoryUtils.hasItemInProvider(sifterBuilding, predicate))
             {
-                needsCurrently = predicate;
+                needsCurrently = new Tuple<>(predicate, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
 
