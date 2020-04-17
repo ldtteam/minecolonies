@@ -666,12 +666,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
-
-    @Override 
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
-    { 
-        final boolean needTool = super.checkForToolOrWeapon(toolType); 
-        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType,needTool); 
-        return needTool; 
-    } 
 }

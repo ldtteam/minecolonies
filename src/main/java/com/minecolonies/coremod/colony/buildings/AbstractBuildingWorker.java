@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -559,6 +560,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean canCraftComplexRecipes()
     {
         return false;
+    }
+
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        final List<ICitizenData> workers = oldBuilding.getAssignedCitizen();
+        for (final ICitizenData citizen : workers)
+        {
+            citizen.setWorkBuilding(null);
+            citizen.setWorkBuilding(this);
+            this.assignCitizen(citizen);
+        }
     }
 
     /**

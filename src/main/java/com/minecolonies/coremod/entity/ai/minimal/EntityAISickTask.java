@@ -329,7 +329,6 @@ public class EntityAISickTask extends Goal
             citizen.getCitizenData().setBedPos(BlockPos.ZERO);
         }
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-        citizenData.getCitizenHappinessHandler().setHealthModifier(true);
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
         citizen.setHealth(citizen.getMaxHealth());
@@ -478,7 +477,6 @@ public class EntityAISickTask extends Goal
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.isItemEqual(cure));
             if (slot == -1)
             {
-                citizenData.getCitizenHappinessHandler().setHealthModifier(false);
                 if (citizen.getCitizenDiseaseHandler().isSick())
                 {
                     return GO_TO_HUT;

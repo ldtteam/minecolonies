@@ -69,6 +69,11 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     boolean isMatchingBlock(@NotNull Block block);
 
     /**
+     * When the building is repositioned.
+     */
+    void onBuildingMove(final IBuilding oldBuilding);
+
+    /**
      * Destroys the block.
      * Calls {@link #onDestroyed()}.
      */

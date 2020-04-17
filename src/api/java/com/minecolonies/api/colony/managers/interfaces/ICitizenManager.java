@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The interface of the citizen manager.
+ */
 public interface ICitizenManager
 {
     /**
@@ -208,4 +211,10 @@ public interface ICitizenManager
      * @return the random citizen.
      */
     ICitizenData getRandomCitizen();
+
+    /**
+     * Update a modifier for all citizens.
+     * @param id the name of it.
+     */
+    void updateModifier(final String id);
 }

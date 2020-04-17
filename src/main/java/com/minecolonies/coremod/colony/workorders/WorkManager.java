@@ -244,7 +244,7 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof WorkOrderBuildDecoration)
+        if (order instanceof WorkOrderBuildDecoration && !(order instanceof WorkOrderBuildMiner))
         {
             for (final IWorkOrder or : workOrders.values())
             {
@@ -259,7 +259,7 @@ public class WorkManager implements IWorkManager
                     }
                 }
             }
-            if (!isWorkOrderWithinColony((WorkOrderBuildDecoration) order))
+            if (!readingFromNbt && !isWorkOrderWithinColony((WorkOrderBuildDecoration) order))
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), OUT_OF_COLONY, ((WorkOrderBuildDecoration) order).getName(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getX(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getZ());
                 return;

@@ -483,7 +483,6 @@ public class EntityAIEatTask extends Goal
 
         if (slot == -1)
         {
-            citizenData.getCitizenHappinessHandler().setFoodModifier(false);
             if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < HIGH_SATURATION)
             {
                 return GO_TO_HUT;
