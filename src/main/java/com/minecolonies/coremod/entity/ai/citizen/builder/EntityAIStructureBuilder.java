@@ -139,12 +139,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
-        boolean ONLY_64 = false;
+        boolean only_64 = false;
 
         Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
         if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
         {
-            ONLY_64 = true;
+            only_64 = true;
         }
         else
         {
@@ -153,27 +153,22 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             for (final BuildingBuilderResource stack : neededRessourcesMap.values())
             {
                 int amount = stack.getAmount();
-                do
+                while (amount > 0)
                 {
                     stackCount++;
                     amount = amount - stack.getItemStack().getMaxStackSize();
                 }
-                while (amount > 0);
             }
             if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
             {
-                ONLY_64 = true;
-            }
-            else
-            {
-                ONLY_64 = false;
+                only_64 = true;
             }
         }
 
         for (final BuildingBuilderResource stack : neededRessourcesMap.values())
         {
             int amount = stack.getAmount();
-            if (ONLY_64)
+            if (only_64)
             {
                 if (amount > stack.getItemStack().getMaxStackSize())
                 {
