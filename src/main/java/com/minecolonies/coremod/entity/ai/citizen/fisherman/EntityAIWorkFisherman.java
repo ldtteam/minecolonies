@@ -649,7 +649,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void retrieveRod()
     {
-        if(entityFishHook != null) {
+        if(entityFishHook != null)
+        {
             worker.swingArm(worker.getActiveHand());
             final int i = entityFishHook.getDamage();
             entityFishHook.remove();

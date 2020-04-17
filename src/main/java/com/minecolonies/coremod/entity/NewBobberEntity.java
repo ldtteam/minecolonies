@@ -147,7 +147,6 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
 
         super.tick();
-
         if(!this.world.isRemote())
         {
             if (--this.tickRemove <= 0)
@@ -587,7 +586,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         return readyToCatch;
     }
 
-    public void setInUse() { this.tickRemove = 100; }
+    /**
+     * Sets tickRemove to 100 ticks to prevent bobber from staying in the water when Fisherman is not fishing.
+     */
+    public void setInUse()
+    {
+        this.tickRemove = 100;
+    }
 
     enum State
     {
