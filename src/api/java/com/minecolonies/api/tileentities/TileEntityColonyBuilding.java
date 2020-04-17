@@ -455,6 +455,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                        .map(world::getTileEntity)
                                        .collect(Collectors.toSet()));
                     providers.removeIf(Objects::isNull);
+                    providers.removeIf(p -> p instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) p).pos.equals(pos));
                 }
 
                 final List<IItemHandler> handlers = providers.stream()
