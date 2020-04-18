@@ -5,5 +5,5 @@
                 label="$(container.inventory)"/>
     <buttonimage id="allinventory" size="17 17" pos="138 214" textcolor="black"
                  source="minecolonies:textures/gui/chest.png"
-                 label="AI"/>
+                 label=""/>
 </window>

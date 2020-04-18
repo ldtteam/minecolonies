@@ -8,7 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.WindowConstants;
+
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
+import com.minecolonies.api.util.constant.WindowConstants;
 /**
  * Window for a hut name entry.
  */
@@ -59,7 +59,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     public WindowHutAllInventory(final IBuildingView b)
     {
-        super(Constants.MOD_ID + WindowConstants.HUT_ALL_INVENTORY_SUFFIX);
+        super(Constants.MOD_ID + HUT_ALL_INVENTORY_SUFFIX);
         this.building = b;
         registerButton(BUTTON_SORT, this::setSortFlag);
         this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
