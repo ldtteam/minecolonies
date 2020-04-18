@@ -1061,38 +1061,31 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
+        final Collection<IRequestResolver<?>> resolvers = getResolvers();
 
-        if (citizenIdsWithRequests.isEmpty())
+        for (final IRequestResolver<?> resolver : resolvers)
         {
-            final Collection<IRequestResolver<?>> resolvers = getResolvers();
+            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
 
-            for (final IRequestResolver<?> resolver :
-              resolvers)
+            final List<IRequest<? extends IDeliverable>> deliverableRequests =
+              requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+                .stream()
+                .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                .collect(Collectors.toList());
+
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
+
+            if (target == null)
             {
-                final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
-
-                final List<IRequest<? extends IDeliverable>> deliverableRequests =
-                  requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
-                    .stream()
-                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
-                    .collect(Collectors.toList());
-
-                final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
-
-                if (target == null)
-                {
-                    continue;
-                }
-
-                getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
-                return;
+                continue;
             }
 
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
             return;
         }
 
+        final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
         for (final int citizenId : citizenIdsWithRequests)
         {
             final ICitizenData data = getColony().getCitizenManager().getCitizen(citizenId);

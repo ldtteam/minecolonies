@@ -505,6 +505,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
         return null;
     }
+
     /**
      * BuildWarehouse View.
      */
