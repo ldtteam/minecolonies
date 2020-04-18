@@ -300,13 +300,6 @@ public interface IColonyView extends IColony
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull PacketBuffer buf);
 
     /**
-     * Update the happiness values for a colony
-     * @param happinessData The new values for happiness
-     * @return null == no response.
-     */
-    IMessage handleHappinessDataMessage(HappinessData happinessData);
-
-    /**
      * Update a players permissions.
      *
      * @param player player username.
@@ -395,13 +388,6 @@ public interface IColonyView extends IColony
 
     @Override
     void addVisitingPlayer(PlayerEntity player);
-
-    /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    HappinessData getHappinessData();
 
     /**
      * Get a list of all barb spawn positions in the colony view.

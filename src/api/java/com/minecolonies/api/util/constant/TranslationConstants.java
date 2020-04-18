@@ -356,25 +356,21 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_HOSPITAL = "com.minecolonies.coremod.ai.nohospital";
     @NonNls
-    public static final String DEMANDS_HOUSE = "entity.citizen.demandshouse";
-    @NonNls
-    public static final String NO_HOUSE      = "entity.citizen.nohouse";
-    @NonNls
-    public static final String DEMANDS_JOB   = "entity.citizen.demandsjob";
-    @NonNls
-    public static final String NO_JOB        = "entity.citizen.nojob";
-    @NonNls
-    public static final String DEMANDS_TOOL  = "entity.citizen.demandstool";
-    @NonNls
-    public static final String NO_TOOL       = "entity.citizen.notool";
-    @NonNls
     public static final String ASYNC_REQUEST = "com.minecolonies.requestsystem.playerresolver.async";
     @NonNls
-    public static final String NORMAL_REQUEST                        = "com.minecolonies.requestsystem.playerresolver.normal";
+    public static final String NORMAL_REQUEST = "com.minecolonies.requestsystem.playerresolver.normal";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY = "com.minecolonies.coremod.gui.workerhuts.university";
     @NonNls
     public static final String PUPIL_NO_CARPET = "com.minecolonies.coremod.school.nocarpet";
+    @NonNls
+    public static final String RESEARCH_CONCLUDED = "com.minecolonies.coremod.university.researchconcluded.";
+    @NonNls
+    public static final String OUT_OF_COLONY = "com.minecolonies.coremod.workorder.outofcolony";
+    @NonNls
+    public static final String NO = "com.minecolonies.coremod.entity.citizen.no.";
+    @NonNls
+    public static final String DEMANDS = "com.minecolonies.coremod.entity.citizen.demands.";
 
     private TranslationConstants()
     {

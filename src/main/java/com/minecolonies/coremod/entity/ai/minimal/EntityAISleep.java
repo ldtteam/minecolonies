@@ -230,6 +230,7 @@ public class EntityAISleep extends Goal
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
+                citizen.getCitizenData().getCitizenHappinessHandler().resetModifier("slepttonight");
             }
         }
     }

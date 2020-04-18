@@ -1,23 +1,35 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
+import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Handles work orders for a colony.
@@ -232,7 +244,7 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof WorkOrderBuildDecoration)
+        if (order instanceof WorkOrderBuildDecoration && !(order instanceof WorkOrderBuildMiner))
         {
             for (final IWorkOrder or : workOrders.values())
             {
@@ -247,7 +259,13 @@ public class WorkManager implements IWorkManager
                     }
                 }
             }
+            if (!readingFromNbt && !isWorkOrderWithinColony((WorkOrderBuildDecoration) order))
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), OUT_OF_COLONY, ((WorkOrderBuildDecoration) order).getName(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getX(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getZ());
+                return;
+            }
         }
+
 
         if (order.getID() == 0)
         {
@@ -273,6 +291,46 @@ public class WorkManager implements IWorkManager
 
         workOrders.put(order.getID(), order);
         order.onAdded(colony, readingFromNbt);
+    }
+
+    /**
+     * Check if the workOrder is within a colony.
+     * @param order the workorder to check.
+     * @return true if so.
+     */
+    private boolean isWorkOrderWithinColony(final WorkOrderBuildDecoration order)
+    {
+        final World world = colony.getWorld();
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+          = ColonyUtils.calculateCorners(order.getBuildingLocation(), world,
+          new Structure(world, order.getStructureName(), new PlacementSettings()), order.getRotation(world), order.isMirrored());
+
+        Set<ChunkPos> chunks = new HashSet<>();
+        final int minX = Math.min(corners.getA().getA(), corners.getA().getB());
+        final int maxX = Math.max(corners.getA().getA(), corners.getA().getB());
+
+        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB());
+        final int maxZ = Math.max(corners.getB().getA(), corners.getB().getB());
+
+        for (int x = minX; x < maxX; x++)
+        {
+            for (int z = minZ; z < maxZ; z++)
+            {
+                final int chunkX = x >> 4;
+                final int chunkZ = z >> 4;
+                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                if (!chunks.contains(pos))
+                {
+                    chunks.add(pos);
+                    final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                    if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

@@ -1,142 +1,56 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+/**
+ * The citizen happiness handler interface.
+ */
 public interface ICitizenHappinessHandler
 {
     /**
-     * This function applies eating adjust to the base hapiness for
-     * the citizen.
-     *
-     * @param eatFood true or false indicate citizen was unable to eat
+     * Reset a modifier.
+     * @param name the name of the modifier.
      */
-    void setFoodModifier(boolean eatFood);
+    void resetModifier(final String name);
 
     /**
-     * Called once a day to update the citizens daily happiness
-     * modifiers.
-     *
-     * @param hasHouse  boolean if the citizen is assigned to a house
-     * @param hasJob boolean to indicate if citizen has a job
+     * Get a modifier by the name.
+     * @param name the name of the modifier to return.
+     * @return the modifier.
      */
-    void processDailyHappiness(boolean hasHouse, boolean hasJob);
+    IHappinessModifier getModifier(String name);
 
     /**
-     * this function applies adjust to happiness.
-     * This would mean the citizen is full.
+     * Process the happiness factors daily.
+     * @param citizenData the citizen to process it for.
      */
-    void setSaturated();
+    void processDailyHappiness(final ICitizenData citizenData);
 
     /**
-     * set the Damage modifier on the citizens happiness
-     * depending on how hurt they are.
-     */
-    void updateDamageModifier();
-
-    /**
-     * Called to set if the farmer can farm a specific field.
-     *
-     * @param pos
-     *            position of the scarecrow block
-     * @param canFarm
-     *            boolean to indicate if the field can be farmed
-     */
-    void setNoFieldForFarmerModifier(BlockPos pos, boolean canFarm);
-
-    /**
-     * Indicates the farmer has not fields to farm.
-     */
-    void setNoFieldsToFarm();
-
-    /**
-     * Call this function to add a tool type that is needed by the citizen.
-     * If citizen gets its tool, then passing in false will remove it from the needed tools.
-     *
-     * @param toolType Tooltype to indicate
-     * @param needs indicate if the tool type is needed
-     */
-    void setNeedsATool(@NotNull IToolType toolType, boolean needs);
-
-    /**
-     * @param hasHouse
-     *            indicate the citizen has an assigned house
-     */
-    void setHomeModifier(boolean hasHouse);
-
-    /**
-     * Called to set if the citizen has a job or not.
-     *
-     * @param hasJob
-     *            boolean to indicate if the citizen has a job
-     */
-    void setJobModifier(boolean hasJob);
-
-    /**
-     * @return current citizens overall happiness
+     * Get the computed happiness of the citizen.
+     * @return the happiness.
      */
     double getHappiness();
 
     /**
-     * @return current food modifier for happiness
-     */
-    double getFoodModifier();
-
-    /**
-     * @return current damage modifier for happiness
-     */
-    double getDamageModifier();
-
-    /**
-     * @return current house modifier for happiness
-     */
-    double getHouseModifier();
-
-    /**
-     * Store the level to nbt.
-     *
-     * @param compound  compound to use.
-     */
-    void write(CompoundNBT compound);
-
-    /**
-     * Reads in Happiness data from the NBT file.
-     *
-     * @param compound pointer to NBT fields
+     * Read the handler from NBT.
+     * @param compound the compound to read it from.
      */
     void read(CompoundNBT compound);
 
     /**
-     * Write to the incoming variable all the related data to modifiers.
-     *
-     * @param buf  buffer to witch values of the modifiers will be written to.
+     * Write the handler to NBT.
+     * @param compound the compound to write it to.
      */
-    void serializeViewNetworkData(@NotNull PacketBuffer buf);
+    void write(CompoundNBT compound);
 
     /**
-     * Get the current number of days without a house.
-     * @return the number.
+     * Get a list of all modifiers.
+     * @return the list.
      */
-    int getNumberOfDaysWithoutHouse();
-
-    /**
-     * Get the number of days without a job.
-     * @return the number.
-     */
-    int getNumberOfDaysWithoutJob();
-
-    /**
-     * get the max open tool days.
-     * @return the max open days.
-     */
-    int getMaxOpenToolDays();
-
-    /**
-     * Set the health modifier for happiness.
-     * @param b false if not given.
-     */
-    void setHealthModifier(boolean b);
+    List<String> getModifiers();
 }

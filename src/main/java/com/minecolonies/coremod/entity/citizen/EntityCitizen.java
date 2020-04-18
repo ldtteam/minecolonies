@@ -4,10 +4,11 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -39,7 +40,6 @@ import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
@@ -788,7 +788,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenItemHandler.updateArmorDamage(damageInc);
             if (citizenData != null)
             {
-                getCitizenData().getCitizenHappinessHandler().updateDamageModifier();
+                getCitizenData().getCitizenHappinessHandler().getModifier("damage").reset();
             }
         }
 
@@ -804,24 +804,22 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void onDeath(@NotNull final DamageSource damageSource)
     {
         currentlyFleeing = false;
-        double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
         {
-            if (damageSource.getTrueSource() instanceof PlayerEntity && !world.isRemote)
+            for (final IColonyEvent event : citizenColonyHandler.getColony().getEventManager().getEvents().values())
             {
-                for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
+                if (event instanceof IColonyRaidEvent)
                 {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !citizenColonyHandler.getColony().getRaiderManager().isRaided())
-                    {
-                        penalty = CITIZEN_KILL_PENALTY;
-                        break;
-                    }
+                    ((IColonyRaidEvent) event).setKilledCitizenInRaid();
                 }
             }
 
             citizenExperienceHandler.dropExperience();
             this.remove();
-            citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty, citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+            {
+                citizenColonyHandler.getColony().getCitizenManager().updateModifier("death");
+            }
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
@@ -1415,11 +1413,6 @@ public class EntityCitizen extends AbstractEntityCitizen
                 this.removePotionEffect(Effects.SLOWNESS);
             }
 
-            if (citizenData.getSaturation() >= HIGH_SATURATION)
-            {
-                citizenData.getCitizenHappinessHandler().setSaturated();
-            }
-
             if ((distanceWalkedModified + 1.0) % ACTIONS_EACH_BLOCKS_WALKED == 0)
             {
                 decreaseSaturationForAction();
@@ -1470,7 +1463,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (citizenData != null)
         {
-            citizenData.getCitizenHappinessHandler().updateDamageModifier();
             citizenData.setLastPosition(getPosition());
         }
 

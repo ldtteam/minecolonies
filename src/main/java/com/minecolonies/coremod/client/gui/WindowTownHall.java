@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
-import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -18,6 +20,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -48,6 +51,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 
 /**
  * Window for the town hall.
@@ -568,50 +572,57 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void createAndSetStatistics()
     {
-        final int citizensSize = townHall.getColony().getCitizens().size();
-
-        final Map<String, Integer> jobCountMap = new HashMap<>();
-        for (@NotNull final ICitizenDataView citizen : citizens)
-        {
-            if (citizen.isChild())
-            {
-                jobCountMap.put("child", jobCountMap.get("child") == null ? 1 : (jobCountMap.get("child") + 1));
-            }
-            else
-            {
-                final String[] splitString = citizen.getJob().split("\\.");
-                final int length = splitString.length;
-                final String job = splitString[length - 1].toLowerCase(Locale.ENGLISH);
-                jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
-            }
-		}
-
-        final Map<String, Integer> jobMaxCountMap = new HashMap<>();
-        for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
-        {
-            if (building instanceof AbstractBuildingWorker.View)
-            {
-                String jobName = LanguageHandler.format(((AbstractBuildingWorker.View) building).getJobName()).toLowerCase(Locale.ENGLISH);
-                if (building instanceof AbstractBuildingGuards.View)
-                {
-                    final String[] splitString = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey().split("\\.");
-                    final int length = splitString.length;
-                    jobName = LanguageHandler.format(splitString[length - 1].toLowerCase(Locale.ENGLISH));
-                }
-                if (jobCountMap.get(jobName) == null)
-                {
-                    jobCountMap.put(jobName, 0);
-                }
-                final int maxInhabitants = ((AbstractBuildingWorker.View) building).getMaxInhabitants();
-                jobMaxCountMap.put(jobName, jobMaxCountMap.get(jobName) == null ? maxInhabitants : (jobMaxCountMap.get(jobName) + maxInhabitants));
-            }
-        }
-
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
+        final int citizensSize = townHall.getColony().getCitizens().size();
+
+        final String numberOfCitizens = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens", citizensSize, townHall.getColony().getCitizenCount());
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+
+        int children = 0;
+        int inSchool = 0;
+        for (@NotNull final ICitizenDataView citizen : citizens)
+        {
+            if (citizen.isChild())
+            {
+                children++;
+                if (citizen.getWorkBuilding() != null)
+                {
+                    inSchool++;
+                }
+            }
+		}
+
+        int totalWorkers = 0;
+        final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
+
+        if (children != 0)
+        {
+            jobMaxCountMap.put("com.minecolonies.coremod.job.pupil", new Tuple<>(inSchool, children));
+        }
+        for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
+        {
+            if (building instanceof AbstractBuildingWorker.View)
+            {
+                int max = ((AbstractBuildingWorker.View) building).getMaxInhabitants();
+                int workers = ((AbstractBuildingWorker.View) building).getWorkerId().size();
+
+                String jobName = ((AbstractBuildingWorker.View) building).getJobName().toLowerCase(Locale.ENGLISH);
+                if (building instanceof AbstractBuildingGuards.View)
+                {
+                    jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();
+                }
+
+                final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
+                jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+                totalWorkers += workers;
+            }
+        }
+
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -619,31 +630,20 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             return;
         }
 
-        final String numberOfCitizens =
-          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-            citizensSize, townHall.getColony().getCitizenCount());
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
-
-        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
-        final String numberOfUnemployed = LanguageHandler.format(
-          "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
-        jobCountMap.remove("");
-
-        final int maxJobs = jobCountMap.size();
-        final int preJobsHeaders = 1;
+        final int maxJobs = jobMaxCountMap.size();
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return maxJobs + preJobsHeaders;
+                return maxJobs;
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                if (jobCountMap.isEmpty())
+                if (jobMaxCountMap.isEmpty())
                 {
                     return;
                 }
@@ -654,18 +654,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 {
                     label.setLabelText(numberOfUnemployed);
                 }
-                if (index < preJobsHeaders)
-                {
-                    return;
-                }
 
-                final Map.Entry<String, Integer> entry = jobCountMap.entrySet().iterator().next();
-                final String job = entry.getKey();
-                final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
-                final String numberOfWorkers = LanguageHandler.format(
-					"com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue(), jobMaxCountMap.get(job));
+                final Map.Entry<String, Tuple<Integer, Integer>> entry = jobMaxCountMap.entrySet().iterator().next();
+                final String job = LanguageHandler.format(entry.getKey());
+                final String numberOfWorkers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
                 label.setLabelText(numberOfWorkers);
-                jobCountMap.remove(entry.getKey());
+                jobMaxCountMap.remove(entry.getKey());
             }
         });
     }
@@ -789,26 +783,53 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void updateHappiness()
     {
-        final HappinessData happiness = building.getColony().getHappinessData();
-        final String[] imagesIds = new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL};
-        final int[] levels = new int[] {happiness.getGuards(), happiness.getHousing(), happiness.getSaturation()};
-        for (int i = 0; i < imagesIds.length; i++)
+        final Map<String, Double> happinessMap = new HashMap<>();
+
+        for (final ICitizenDataView data : building.getColony().getCitizens().values())
         {
-            final Image image = findPaneOfTypeByID(imagesIds[i], Image.class);
-            switch (levels[i])
+            for (final String modifier : data.getHappinessHandler().getModifiers())
             {
-                case HappinessData.INCREASE:
-                    image.setImage(GREEN_ICON);
-                    break;
-                case HappinessData.STABLE:
-                    image.setImage(YELLOW_ICON);
-                    break;
-                case HappinessData.DECREASE:
-                    image.setImage(RED_ICON);
-                    break;
-                default:
-                    throw new IllegalStateException(imagesIds[i] + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
+                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor());
             }
+        }
+
+        //todo citizen own happiness GUI
+
+        final View pane = findPaneOfTypeByID("happinesspage", View.class);
+        int yPos = 62;
+        for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
+        {
+            final double value = entry.getValue() / citizens.size();
+            final Image image = new Image();
+            image.setSize(11, 11);
+            image.setPosition(25, yPos);
+
+            final Label label = new Label();
+            label.setSize(136,11);
+            label.setPosition(50, yPos);
+            label.setColor(BLACK);
+            label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
+
+            if (value > 1.0)
+            {
+                image.setImage(GREEN_ICON);
+            }
+            else if (value == 1)
+            {
+                image.setImage(BLUE_ICON);
+            }
+            else if (value > 0.75)
+            {
+                image.setImage(YELLOW_ICON);
+            }
+            else
+            {
+                image.setImage(RED_ICON);
+            }
+            pane.addChild(image);
+            pane.addChild(label);
+
+            yPos+=12;
         }
     }
 
@@ -1113,9 +1134,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             case PAGE_CITIZENS:
                 updateCitizens();
                 window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
-                break;
-            case PAGE_HAPPINESS:
-                updateHappiness();
                 break;
             case PAGE_WORKORDER:
                 updateWorkOrders();

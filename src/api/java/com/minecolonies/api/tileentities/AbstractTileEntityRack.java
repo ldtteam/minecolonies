@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -43,6 +44,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      * set by the warehouse building upon being built
      */
     protected boolean inWarehouse = false;
+
+    /**
+     * Pos of the owning building.
+     */
+    protected BlockPos buildingPos = BlockPos.ZERO;
 
     /**
      * The inventory of the tileEntity.
@@ -106,14 +112,27 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     private void updateWarehouseIfAvailable(final ItemStack stack)
     {
-        if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+        if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote)
         {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-            if (colony != null && colony.getRequestManager() != null)
+            if (inWarehouse || !buildingPos.equals(BlockPos.ZERO))
             {
-                colony.getRequestManager().onColonyUpdate(request ->
-                                                            request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
-
+                if ( IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+                {
+                    final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                    if (inWarehouse && colony != null && colony.getRequestManager() != null)
+                    {
+                        colony.getRequestManager().onColonyUpdate(request ->
+                                                                    request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+                    }
+                    else if (!buildingPos.equals(BlockPos.ZERO))
+                    {
+                        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                        if (building != null)
+                        {
+                            building.overruleNextOpenRequestWithStack(stack);
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,6 +150,15 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public abstract boolean hasItemStack(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
     public abstract void upgradeItemStorage();
+
+    /**
+     * Set the building pos it belongs to.
+     * @param pos the pos of the building.
+     */
+    public void setBuildingPos(final BlockPos pos)
+    {
+        this.buildingPos = pos;
+    }
 
     /* Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.
