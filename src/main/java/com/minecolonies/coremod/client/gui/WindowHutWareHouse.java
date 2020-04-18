@@ -356,13 +356,11 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             if (rack instanceof TileEntityRack)
             {
 
-                int allSlots = ((AbstractTileEntityRack) rack).getInventory().getSlots();
-                for (int i = 0; i < allSlots; i++)
+                Map<ItemStorage, Integer> storage = ((TileEntityRack) rack).getAllContent();
+
+                for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
                 {
-                    if (!((AbstractTileEntityRack) rack).getInventory().getStackInSlot(i).isEmpty())
-                    {
-                        items.add(((AbstractTileEntityRack) rack).getInventory().getStackInSlot(i));
-                    }
+                    items.add(new ItemStorage(entry.getKey().getItemStack(), entry.getValue(), false).getItemStack());
                 }
             }
         }
