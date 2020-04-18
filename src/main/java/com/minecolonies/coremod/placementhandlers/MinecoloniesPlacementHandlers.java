@@ -19,13 +19,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -71,6 +69,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockSolidSubstitutionPlacementHandler());
+        PlacementHandlers.handlers.add(new FencePlacementHandler());
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
@@ -429,6 +428,57 @@ public final class MinecoloniesPlacementHandlers
             }
             itemList.removeIf(ItemStackUtils::isEmpty);
 
+            return itemList;
+        }
+    }
+
+    public static class FencePlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+        {
+            return BlockTags.FENCES.contains(blockState.getBlock());
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos,
+          final PlacementSettings settings)
+        {
+            if (world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            BlockState northState = world.getBlockState(pos.north());
+            BlockState eastState = world.getBlockState(pos.east());
+            BlockState southState = world.getBlockState(pos.south());
+            BlockState westState = world.getBlockState(pos.west());
+            final BlockState fence = blockState
+              .with(FenceBlock.NORTH, ((FenceBlock) blockState.getBlock()).func_220111_a(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
+              .with(FenceBlock.EAST, ((FenceBlock) blockState.getBlock()).func_220111_a(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
+              .with(FenceBlock.SOUTH, ((FenceBlock) blockState.getBlock()).func_220111_a(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
+              .with(FenceBlock.WEST, ((FenceBlock) blockState.getBlock()).func_220111_a(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
+
+            if (!world.setBlockState(pos, fence, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            itemList.removeIf(ItemStackUtils::isEmpty);
             return itemList;
         }
     }

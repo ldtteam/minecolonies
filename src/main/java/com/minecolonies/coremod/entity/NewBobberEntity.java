@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -41,6 +42,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private              boolean                   inGround;
     private              int                       ticksInGround;
     private              EntityCitizen             angler;
+    private              int                       tickRemove = 100;
     private              int                       ticksInAir;
     private              int                       ticksCatchable;
     private              int                       ticksCaughtDelay;
@@ -143,7 +145,17 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     public void tick()
     {
+
         super.tick();
+        if(!this.world.isRemote())
+        {
+            if (--this.tickRemove <= 0)
+            {
+                this.remove();
+                return;
+            }
+        }
+
         if (this.angler == null)
         {
             if (world.isRemote)
@@ -160,6 +172,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
         else if (this.world.isRemote || !this.shouldStopFishing())
         {
+
             if (this.inGround)
             {
                 ++this.ticksInGround;
@@ -571,6 +584,14 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     public boolean isReadyToCatch()
     {
         return readyToCatch;
+    }
+
+    /**
+     * Sets tickRemove to 100 ticks to prevent bobber from staying in the water when Fisherman is not fishing.
+     */
+    public void setInUse()
+    {
+        this.tickRemove = 100;
     }
 
     enum State
