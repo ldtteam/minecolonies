@@ -1,6 +1,9 @@
 <window inherit="minecolonies:gui/layouthuts/layouthutpageactionswoinv.xml">
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionswoinv.xml"/>
-    <buttonimage id="inventory" size="86 17" pos="52 214" textcolor="black"
+    <buttonimage id="inventory" size="86 17" pos="42 214" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                 label="$(container.inventory)"/>
+    <buttonimage id="allinventory" size="14 15" pos="158 214" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                 label="AI"/>
 </window>

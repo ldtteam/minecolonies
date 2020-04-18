@@ -300,11 +300,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             buf.writeInt(entry.getValue());
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
-        buf.writeInt(containerList.size());
-        for (int i = 0; i < containerList.size(); i++)
-        {
-            buf.writeBlockPos(containerList.get(i));
-        }
     }
 
     @Override
@@ -570,11 +565,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                 minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
             }
             reachedLimit = buf.readBoolean();
-            final int racks = buf.readInt();
-            for (int i = 0; i < racks; i++)
-            {
-                storageracks.add(buf.readBlockPos());
-            }
         }
 
         /**
@@ -595,11 +585,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         public List<Tuple<ItemStorage, Integer>> getStock()
         {
             return minimumStock;
-        }
-
-        public List<BlockPos> getContainerList()
-        {
-            return storageracks;
         }
 
         /**

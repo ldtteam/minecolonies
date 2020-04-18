@@ -46,48 +46,9 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
  */
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
-    /**
-     * List of all item stacks in the warehouse.
-     */
-    List<ItemStorage> allItems = new ArrayList<>();
 
-    /**
-     * Resource scrolling list.
-     */
-    private final ScrollingList stackList;
-    /**
-     * The filter for the resource list.
-     */
-    private       String        filter = "";
 
-    /**
-     * No Sorting stage. how it comes from Database so it gets feeded
-     */
-    public static final int NO_SORT         = 0;
-    /**
-     * Name Ascending
-     */
-    public static final int ASC_SORT        = 1;
-    /**
-     * Name Descending
-     */
-    public static final int DESC_SORT       = 2;
-    /**
-     * Itemcount Ascending
-     */
-    public static final int COUNT_ASC_SORT  = 3;
-    /**
-     * Itemcount Descending
-     */
-    public static final int COUNT_DESC_SORT = 4;
-    /**
-     * The sortDescriptor so how we want to sort
-     */
-    int sortDescriptor = 0;
-    /**
-     * The Stringdefine for the GUI page
-     */
-    public static final  String                 LIST_ALLINVENTORY          = "allinventory";
+
     /**
      * The Warehouse view
      */
@@ -123,9 +84,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         this.building = building;
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
-        registerButton("sortStorageFilter", this::setSortFlag);
+
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
+
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
         {
             allowMoreStorageUpgrades = true;
@@ -166,40 +127,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         }
     }
 
-    /**
-     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages 0 - 4 NO_SORT         0   No Sorting, like wysiwyg ASC_SORT        1   Name Ascending
-     * DESC_SORT       2   Name Descending COUNT_ASC_SORT  3   Itemcount Ascending COUNT_DESC_SORT 4   Itemcount Descending
-     **/
-    private void setSortFlag()
-    {
-        sortDescriptor++;
-        if (sortDescriptor > 4)
-        {
-            sortDescriptor = NO_SORT;
-        }
-        switch (sortDescriptor)
-        {
-            case NO_SORT:
-                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("v^");
-                break;
-            case ASC_SORT:
-                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("A^");
-                break;
-            case DESC_SORT:
-                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("Av");
-                break;
-            case COUNT_ASC_SORT:
-                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("1^");
-                break;
-            case COUNT_DESC_SORT:
-                findPaneOfTypeByID("sortStorageFilter", ButtonImage.class).setLabel("1v");
-                break;
-            default:
-                break;
-        }
 
-        updateResources();
-    }
 
     @Override
     public void onOpened()
@@ -212,7 +140,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         updateResourcePane();
         updateStockList();
-        updateResources();
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
@@ -337,149 +264,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
-    }
-
-    /**
-     * Update the item list.
-     */
-    private void updateResources()
-    {
-        List<ItemStorage> filterItems = new ArrayList<>();
-        final List<BlockPos> containerList = building.getContainerList();
-        List<ItemStack> items = new ArrayList<>();
-        int count = containerList.size();
-        World world = building.getColony().getWorld();
-
-        for (int s = 0; s < count; s++)
-        {
-            final TileEntity rack = world.getTileEntity(containerList.get(s));
-            if (rack instanceof TileEntityRack)
-            {
-
-                Map<ItemStorage, Integer> storage = ((TileEntityRack) rack).getAllContent();
-
-                for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
-                {
-                    items.add(new ItemStorage(entry.getKey().getItemStack(), entry.getValue(), false).getItemStack());
-                }
-            }
-        }
-
-        Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
-        storedItems.clear();
-
-        for (final ItemStack currentItem : items)
-        {
-            final ItemStorage currentStorage = new ItemStorage(currentItem, currentItem.getCount(), false);
-
-            if (storedItems.containsKey(currentStorage))
-            {
-                final ItemStorage existing = storedItems.get(currentStorage);
-                existing.setAmount(existing.getAmount() + currentStorage.getAmount());
-            }
-            else
-            {
-                storedItems.put(currentStorage, currentStorage);
-            }
-        }
-
-        filterItems.clear();
-        for (ItemStorage entry : storedItems.keySet())
-        {
-            filterItems.add(entry);
-        }
-
-        final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
-                                                                  || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                  || stack.getItemStack()
-                                                                       .getDisplayName()
-                                                                       .getFormattedText()
-                                                                       .toLowerCase(Locale.US)
-                                                                       .contains(filter.toLowerCase(Locale.US));
-
-        allItems.clear();
-        if (filter.isEmpty())
-        {
-            allItems.addAll(filterItems);
-        }
-        else
-        {
-            allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
-        }
-
-        Comparator<ItemStorage> compareByName =
-          (ItemStorage o1, ItemStorage o2) -> o1.getItemStack().getDisplayName().getFormattedText().compareTo(o2.getItemStack().getDisplayName().getFormattedText());
-        Comparator<ItemStorage> compareByCount = (ItemStorage o1, ItemStorage o2) -> o1.getAmount() - o2.getAmount();
-        switch (sortDescriptor)
-        {
-            case NO_SORT:
-                break;
-            case ASC_SORT:
-                Collections.sort(allItems, compareByName);
-                break;
-            case DESC_SORT:
-                Collections.sort(allItems, compareByName.reversed());
-                break;
-            case COUNT_ASC_SORT:
-                Collections.sort(allItems, compareByCount);
-                break;
-            case COUNT_DESC_SORT:
-                Collections.sort(allItems, compareByCount.reversed());
-                break;
-            default:
-                break;
-        }
-
-        updateResourceList();
-    }
-
-    /**
-     * Updates the resource list in the GUI with the info we need.
-     */
-    private void updateResourceList()
-    {
-        stackList.enable();
-
-        //Creates a dataProvider for the unemployed stackList.
-        stackList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
-            @Override
-            public int getElementCount()
-            {
-                return allItems.size();
-            }
-
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
-             */
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                ItemStorage resource = allItems.get(index);
-                final Label resourceLabel = rowPane.findPaneOfTypeByID("ressName", Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
-                final Label qtys = rowPane.findPaneOfTypeByID("qtys", Label.class);
-                qtys.setLabelText(Integer.toString(resource.getAmount()));
-                Item imagesrc = resource.getItemStack().getItem();
-                ItemStack image = new ItemStack(imagesrc, 1);
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
-            }
-        });
-    }
-
-    @Override
-    public boolean onKeyTyped(final char ch, final int key)
-    {
-        final boolean result = super.onKeyTyped(ch, key);
-        filter = findPaneOfTypeByID("names", TextField.class).getText();
-        updateResources();
-        return result;
     }
 
     /**
