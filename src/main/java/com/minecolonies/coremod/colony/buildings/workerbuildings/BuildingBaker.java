@@ -3,14 +3,18 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
@@ -30,6 +34,7 @@ import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -266,6 +271,40 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         checkFurnaces();
     }
 
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        if (!super.canRecipeBeAdded(token))
+        {
+            return false;
+        }
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (storage == null)
+        {
+            return false;
+        }
+
+        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
+        {
+            if (recipe.getPrimaryOutput().isItemEqual(storage.getPrimaryOutput()))
+            {
+                return false;
+            }
+        }
+
+        boolean hasWheat = false;
+        for (final ItemStorage input : storage.getCleanedInput())
+        {
+            if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
+            {
+                hasWheat = true;
+            }
+        }
+
+        return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
+    }
+
     /**
      * Checks the furnaces of the bakery if they're ready.
      */
@@ -456,6 +495,32 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 this.addToTasks(task.getKey(), product);
             }
         }
+    }
+
+    /**
+     * Get the recipe for an itemstorage.
+     * @param itemStorage the storage.
+     * @return the recipe.
+     */
+    public IRecipeStorage getRecipeForItemStack(final ItemStorage itemStorage)
+    {
+        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
+        {
+            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
+            {
+                return recipe;
+            }
+        }
+
+        for (final IToken token : getRecipes())
+        {
+            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
+            {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     /**
