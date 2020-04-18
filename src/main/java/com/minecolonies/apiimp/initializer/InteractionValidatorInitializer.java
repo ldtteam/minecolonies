@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -229,6 +230,6 @@ public class InteractionValidatorInitializer
                        && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() <= IDLE_AT_JOB_DEMANDS_DAYS);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + SLEPTTONIGHT),
-          citizen -> ( citizen.getCitizenHappinessHandler()).getModifier(SLEPTTONIGHT).getDays() <= 0);
+          citizen ->  !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);
         }
 }

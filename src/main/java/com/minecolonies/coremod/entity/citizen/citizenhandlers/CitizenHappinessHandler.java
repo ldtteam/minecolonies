@@ -51,7 +51,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new ExpirationBasedHappinessModifier(DAMAGE, 1.0, () -> 0.0, 1));
         add(new ExpirationBasedHappinessModifier(DEATH, 2.0, () -> 0.0, 3));
         add(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, () -> 2.0, 3));
-        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 2.0, () -> 0.0, 3, true));
+        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 2.0, () -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0, 3, true));
     }
 
     /**
