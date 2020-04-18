@@ -471,6 +471,11 @@ public class StandardRequestManager implements IStandardRequestManager
           NBTTagCompound::getCompoundTag,
           c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
+        if (dataStoreManager == null)
+        {
+            reset();
+        }
+
         updateIfRequired();
     }
 
