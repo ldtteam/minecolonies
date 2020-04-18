@@ -17,6 +17,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -274,7 +275,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        if (!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
         {
             return false;
         }
