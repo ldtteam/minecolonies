@@ -743,7 +743,8 @@ public final class ItemStackUtils
             }
             else
             {
-                return !itemStack1.hasTagCompound() && !itemStack2.hasTagCompound();
+                return (!itemStack1.hasTagCompound() || itemStack1.getTagCompound().isEmpty())
+                         && (!itemStack2.hasTagCompound() || itemStack2.getTagCompound().isEmpty());
             }
         }
         return false;
