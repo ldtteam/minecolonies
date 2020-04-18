@@ -139,17 +139,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
-<<<<<<< HEAD
-        boolean ONLY_64 = false;
-
-        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
-        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-        {
-            ONLY_64 = true;
-        }
-        else
-        {
-=======
         boolean only_64 = false;
 
         Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
@@ -159,56 +148,31 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
         else
         {
->>>>>>> 1.15
             int stackCount = 0;
 
             for (final BuildingBuilderResource stack : neededRessourcesMap.values())
             {
                 int amount = stack.getAmount();
-<<<<<<< HEAD
-                do
-=======
                 while (amount > 0)
->>>>>>> 1.15
                 {
                     stackCount++;
                     amount = amount - stack.getItemStack().getMaxStackSize();
                 }
-<<<<<<< HEAD
-                while (amount > 0);
-            }
-            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-            {
-                ONLY_64 = true;
-            }
-            else
-            {
-                ONLY_64 = false;
-=======
             }
             if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
             {
                 only_64 = true;
->>>>>>> 1.15
             }
         }
 
         for (final BuildingBuilderResource stack : neededRessourcesMap.values())
         {
             int amount = stack.getAmount();
-<<<<<<< HEAD
-            if (ONLY_64)
-            {
-                if (amount > Constants.STACKSIZE)
-                {
-                    amount = Constants.STACKSIZE;
-=======
             if (only_64)
             {
                 if (amount > stack.getItemStack().getMaxStackSize())
                 {
                     amount = stack.getItemStack().getMaxStackSize();
->>>>>>> 1.15
                 }
             }
             neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));

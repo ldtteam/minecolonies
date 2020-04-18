@@ -1438,11 +1438,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if succesful.
      */
 
-<<<<<<< HEAD
-    private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
-=======
+
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
->>>>>>> 1.15
     {
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)
