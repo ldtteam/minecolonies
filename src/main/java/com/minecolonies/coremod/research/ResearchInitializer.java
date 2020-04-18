@@ -416,16 +416,16 @@ public class ResearchInitializer
         compress.addChild(cast);
 
         final GlobalResearch resistance = new GlobalResearch("resistance", "civilian", "Resistance", 2, new AdditionModifierResearchEffect("Healing Saturation Limit", -0.5));
-        resistance.setRequirement(new BuildingResearchRequirement(2, "restaurant"));
+        resistance.setRequirement(new BuildingResearchRequirement(2, "cook"));
 
         final GlobalResearch resilience = new GlobalResearch("resilience", "civilian", "Resilience", 3, new AdditionModifierResearchEffect("Healing Saturation Limit", -1.0));
-        resilience.setRequirement(new BuildingResearchRequirement(3, "restaurant"));
+        resilience.setRequirement(new BuildingResearchRequirement(3, "cook"));
 
         final GlobalResearch vitality = new GlobalResearch("vitality", "civilian", "Vitality", 4, new AdditionModifierResearchEffect("Healing Saturation Limit", -1.5));
-        vitality.setRequirement(new BuildingResearchRequirement(4, "restaurant"));
+        vitality.setRequirement(new BuildingResearchRequirement(4, "cook"));
 
         final GlobalResearch fortitude = new GlobalResearch("fortitude", "civilian", "Fortitude", 5, new AdditionModifierResearchEffect("Healing Saturation Limit", -2.0));
-        fortitude.setRequirement(new BuildingResearchRequirement(5, "restaurant"));
+        fortitude.setRequirement(new BuildingResearchRequirement(5, "cook"));
 
         final GlobalResearch indefatigability = new GlobalResearch("indefatigability", "civilian", "Indefatigability", 6, new AdditionModifierResearchEffect("Healing Saturation Limit", -5));
 
@@ -436,16 +436,16 @@ public class ResearchInitializer
         fortitude.addChild(indefatigability);
 
         final GlobalResearch circus = new GlobalResearch("circus", "civilian", "Circus", 2, new MultiplierModifierResearchEffect("Happiness", 0.05));
-        circus.setRequirement(new BuildingResearchRequirement(2, "restaurant"));
+        circus.setRequirement(new BuildingResearchRequirement(2, "cook"));
 
         final GlobalResearch festival = new GlobalResearch("festival", "civilian", "Festival", 3, new MultiplierModifierResearchEffect("Happiness", 0.1));
-        festival.setRequirement(new BuildingResearchRequirement(3, "restaurant"));
+        festival.setRequirement(new BuildingResearchRequirement(3, "cook"));
 
         final GlobalResearch spectacle = new GlobalResearch("spectacle", "civilian", "Spectacle", 4, new MultiplierModifierResearchEffect("Happiness", 0.15));
-        spectacle.setRequirement(new BuildingResearchRequirement(4, "restaurant"));
+        spectacle.setRequirement(new BuildingResearchRequirement(4, "cook"));
 
         final GlobalResearch opera = new GlobalResearch("opera", "civilian", "Opera", 5, new MultiplierModifierResearchEffect("Happiness", 0.2));
-        opera.setRequirement(new BuildingResearchRequirement(5, "restaurant"));
+        opera.setRequirement(new BuildingResearchRequirement(5, "cook"));
 
         final GlobalResearch theater = new GlobalResearch("theater", "civilian", "Theater", 6, new MultiplierModifierResearchEffect("Happiness", 0.5));
 
@@ -456,16 +456,16 @@ public class ResearchInitializer
         opera.addChild(theater);
 
         final GlobalResearch gourmand = new GlobalResearch("gourmand", "civilian", "Gourmand", 2, new MultiplierModifierResearchEffect("Saturation", 0.1));
-        gourmand.setRequirement(new BuildingResearchRequirement(2, "restaurant"));
+        gourmand.setRequirement(new BuildingResearchRequirement(2, "cook"));
 
         final GlobalResearch gorger = new GlobalResearch("gorger", "civilian", "Gorger", 3, new MultiplierModifierResearchEffect("Saturation", 0.25));
-        gorger.setRequirement(new BuildingResearchRequirement(3, "restaurant"));
+        gorger.setRequirement(new BuildingResearchRequirement(3, "cook"));
 
         final GlobalResearch stuffer = new GlobalResearch("stuffer", "civilian", "Stuffer", 4, new MultiplierModifierResearchEffect("Saturation", 0.5));
-        stuffer.setRequirement(new BuildingResearchRequirement(4, "restaurant"));
+        stuffer.setRequirement(new BuildingResearchRequirement(4, "cook"));
 
         final GlobalResearch epicure = new GlobalResearch("epicure", "civilian", "Epicure", 5, new MultiplierModifierResearchEffect("Saturation", 1.0));
-        epicure.setRequirement(new BuildingResearchRequirement(5, "restaurant"));
+        epicure.setRequirement(new BuildingResearchRequirement(5, "cook"));
 
         final GlobalResearch glutton = new GlobalResearch("glutton", "civilian", "Glutton", 6, new MultiplierModifierResearchEffect("Saturation", 2.0));
 

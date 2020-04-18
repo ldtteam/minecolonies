@@ -21,10 +21,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
@@ -219,6 +216,11 @@ public class BuildingMoveMessage implements IMessage
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
+            for (final ICitizenData citizenData : oldBuilding.getAssignedCitizen())
+            {
+                oldBuilding.cancelAllRequestsOfCitizen(citizenData);
+            }
+
             world.destroyBlock(oldBuildingId, false);
             world.destroyBlock(buildPos, true);
 
@@ -271,47 +273,7 @@ public class BuildingMoveMessage implements IMessage
             }
 
             building.setBuildingLevel(oldBuilding.getBuildingLevel());
-
-            if (oldBuilding instanceof AbstractBuildingWorker)
-            {
-                final List<ICitizenData> workers = oldBuilding.getAssignedCitizen();
-                for (final ICitizenData citizen : workers)
-                {
-                    citizen.setWorkBuilding(null);
-                    citizen.setWorkBuilding((IBuildingWorker) building);
-                    building.assignCitizen(citizen);
-                }
-            }
-
-            if (oldBuilding instanceof BuildingBaker)
-            {
-                for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
-                {
-                    for (final BakingProduct product : task.getValue())
-                    {
-                        ((BuildingBaker) building).addToTasks(task.getKey(), product);
-                    }
-                }
-            }
-            else if (oldBuilding instanceof BuildingDeliveryman)
-            {
-                ((IBuildingDeliveryman) building).setBuildingToDeliver(((IBuildingDeliveryman) oldBuilding).getBuildingToDeliver());
-            }
-
-            if (oldBuilding instanceof BuildingHome)
-            {
-                final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
-                for (final ICitizenData citizen : residents)
-                {
-                    citizen.setHomeBuilding(building);
-                    building.assignCitizen(citizen);
-                }
-            }
-
-            if (building instanceof BuildingTownHall)
-            {
-                colony.getBuildingManager().setTownHall((BuildingTownHall) building);
-            }
+            building.onBuildingMove(oldBuilding);
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);

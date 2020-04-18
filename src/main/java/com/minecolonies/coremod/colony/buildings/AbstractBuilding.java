@@ -166,6 +166,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+
+    }
+
     /**
      * On setting down the building.
      */
@@ -318,7 +324,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        if (workOrderBuildBuilding.getID() != 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        }
         markDirty();
     }
 

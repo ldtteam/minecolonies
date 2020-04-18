@@ -219,6 +219,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
+            // Start timeout to not be stuck with an old patrol target
+            patrolTimer = 5;
 
             return true;
         }
@@ -422,15 +424,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void onColonyTick(final IColony colony)
     {
-        if (patrolTimer > 0)
+        if (patrolTimer > 0 && task == GuardTask.PATROL)
         {
             patrolTimer--;
-        }
-
-        if (patrolTimer <= 0)
-        {
-            // Next patrol point
-            startPatrolNext();
+            if (patrolTimer <= 0 && !getAssignedCitizen().isEmpty())
+            {
+                // Next patrol point
+                startPatrolNext();
+            }
         }
     }
 

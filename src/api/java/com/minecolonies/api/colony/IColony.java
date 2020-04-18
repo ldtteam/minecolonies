@@ -41,8 +41,6 @@ public interface IColony
     @NotNull
     IWorkManager getWorkManager();
 
-    HappinessData getHappinessData();
-
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
@@ -206,8 +204,6 @@ public interface IColony
     IBuildingManager getBuildingManager();
 
     ICitizenManager getCitizenManager();
-
-    IColonyHappinessManager getColonyHappinessManager();
 
     IRaiderManager getRaiderManager();
 

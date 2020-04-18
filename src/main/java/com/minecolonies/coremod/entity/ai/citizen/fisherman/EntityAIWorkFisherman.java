@@ -473,7 +473,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             return FISHERMAN_WALKING_TO_WATER;
         }
-
         return throwOrRetrieveHook();
     }
 
@@ -514,6 +513,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
                 retrieveRod();
                 return FISHERMAN_WALKING_TO_WATER;
             }
+            this.entityFishHook.setInUse();
         }
         return getState();
     }
@@ -649,11 +649,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void retrieveRod()
     {
-        worker.swingArm(worker.getActiveHand());
-        final int i = entityFishHook.getDamage();
-        entityFishHook.remove();
-        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
-        entityFishHook = null;
+        if(entityFishHook != null)
+        {
+            worker.swingArm(worker.getActiveHand());
+            final int i = entityFishHook.getDamage();
+            entityFishHook.remove();
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
+            entityFishHook = null;
+        }
     }
 
     /**
@@ -666,12 +669,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
-
-    @Override 
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
-    { 
-        final boolean needTool = super.checkForToolOrWeapon(toolType); 
-        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType,needTool); 
-        return needTool; 
-    } 
 }

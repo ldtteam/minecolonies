@@ -102,6 +102,7 @@ public final class NbtTagConstants
     public static final String TAG_TRAIL           = "Trail";
     public static final String TAG_TYPE            = "Type";
     public static final String TAG_MERCENARY_TIME       = "mercenaryUseTime";
+    public static final String TAG_IDLE            = "idle";
 
     /**
      * Tag used to store the containers to NBT.

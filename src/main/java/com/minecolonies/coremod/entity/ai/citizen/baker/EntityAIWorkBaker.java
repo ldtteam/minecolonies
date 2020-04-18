@@ -488,6 +488,15 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private IAIState createNewProduct()
     {
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        {
+            if ( worker.getCitizenData() != null )
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_RECIPES), ChatPriority.BLOCKING));
+            }
+            return START_WORKING;
+        }
+
         progress = 0;
         final BuildingBaker building = getOwnBuilding();
         currentRecipe++;

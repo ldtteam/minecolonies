@@ -1,18 +1,14 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -24,9 +20,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.coremod.network.messages.HappinessDataMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -42,9 +36,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
-import static com.minecolonies.api.research.util.ResearchConstants.GROWTH;
-import static com.minecolonies.api.util.constant.ColonyConstants.HAPPINESS_FACTOR;
-import static com.minecolonies.api.util.constant.ColonyConstants.WELL_SATURATED_LIMIT;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 
@@ -191,8 +182,6 @@ public class CitizenManager implements ICitizenManager
                     }
                 }
             }
-
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new HappinessDataMessage(colony, colony.getHappinessData()), player));
         }
     }
 
@@ -468,91 +457,21 @@ public class CitizenManager implements ICitizenManager
         this.potentialMaxCitizens = newPotentialMax;
     }
 
-    // TODO: why isnt this in the happiness manager?
+    @Override
+    public void updateModifier(final String id)
+    {
+        for (final ICitizenData citizenData : citizens.values())
+        {
+            citizenData.getCitizenHappinessHandler().getModifier(id).reset();
+        }
+    }
+
     @Override
     public void checkCitizensForHappiness()
     {
-        int guards = 1;
-        int housing = 0;
-        int workers = 1;
-        boolean hasJob = false;
-        boolean hasHouse = false;
-        double saturation = 0;
-        for (final ICitizenData citizen : getCitizens())
+        for (final ICitizenData citizenData : citizens.values())
         {
-            hasJob = false;
-            hasHouse = false;
-            final IBuildingWorker buildingWorker = citizen.getWorkBuilding();
-            if (buildingWorker != null)
-            {
-                hasJob = true;
-                if (buildingWorker instanceof AbstractBuildingGuards)
-                {
-                    guards += buildingWorker.getBuildingLevel();
-                }
-                else
-                {
-                    workers += buildingWorker.getBuildingLevel();
-                }
-            }
-
-            final IBuilding home = citizen.getHomeBuilding();
-            if (home != null)
-            {
-                hasHouse = true;
-                housing += home.getBuildingLevel();
-            }
-
-            if (citizen.getCitizenEntity().isPresent())
-            {
-                citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob);
-            }
-            saturation += citizen.getSaturation();
-        }
-
-        final int averageHousing = housing / Math.max(1, getCitizens().size());
-
-        if (averageHousing > 1)
-        {
-            colony.getHappinessData().setHousing(HappinessData.INCREASE);
-        }
-        else if (averageHousing < 1)
-        {
-            colony.getHappinessData().setHousing(HappinessData.DECREASE);
-        }
-        else
-        {
-            colony.getHappinessData().setHousing(HappinessData.STABLE);
-        }
-
-        final int averageSaturation = (int) (saturation / getCitizens().size());
-        if (averageSaturation < WELL_SATURATED_LIMIT)
-        {
-            colony.getHappinessData().setSaturation(HappinessData.DECREASE);
-        }
-        else if (averageSaturation > WELL_SATURATED_LIMIT)
-        {
-            colony.getHappinessData().setSaturation(HappinessData.INCREASE);
-        }
-        else
-        {
-            colony.getHappinessData().setSaturation(HappinessData.STABLE);
-        }
-
-        final int relation = workers / guards;
-
-        if (relation > 1)
-        {
-            colony.getHappinessData().setHousingModifier(relation * HAPPINESS_FACTOR);
-            colony.getHappinessData().setGuards(HappinessData.DECREASE);
-        }
-        else if (relation < 1)
-        {
-            colony.getHappinessData().setGuards(HappinessData.INCREASE);
-        }
-        else
-        {
-            colony.getHappinessData().setGuards(HappinessData.STABLE);
+            citizenData.getCitizenHappinessHandler().processDailyHappiness(citizenData);
         }
     }
 

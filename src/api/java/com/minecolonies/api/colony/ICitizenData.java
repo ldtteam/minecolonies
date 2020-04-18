@@ -335,4 +335,16 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @return the int modifier.
      */
     int getJobModifier();
+
+    /**
+     * If is idle at job.
+     * @return true if so.
+     */
+    boolean isIdleAtJob();
+
+    /**
+     * Set idle at job.
+     * @param idle true if so.
+     */
+    void setIdleAtJob(final boolean idle);
 }

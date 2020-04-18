@@ -24,7 +24,6 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionRe
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
@@ -191,9 +190,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
-            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm();
+            worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
+        worker.getCitizenData().setIdleAtJob(false);
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
         if (building.getCurrentField() == null && building.getFieldToWorkOn(world) == null)
@@ -317,10 +317,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 new TranslationTextComponent(NO_SEED_SET),
                 currentField.getPos()));
             buildingFarmer.setCurrentField(null);
+<<<<<<< HEAD
             worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false);
             return PREPARING;
         }
         worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true);
+=======
+            worker.getCitizenData().setIdleAtJob(true);
+            return PREPARING;
+        }
+        worker.getCitizenData().setIdleAtJob(false);
+>>>>>>> 1.15
 
         final ItemStack seeds = currentField.getSeed().copy();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
@@ -767,6 +774,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return worker;
     }
+<<<<<<< HEAD
 
     @Override
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
@@ -775,4 +783,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType, needTool);
         return needTool;
     }
+=======
+>>>>>>> 1.15
 }

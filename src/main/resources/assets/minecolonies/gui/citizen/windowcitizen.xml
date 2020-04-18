@@ -13,23 +13,6 @@
 				<view id="happinessModifierView" size="100% 100%">
 					<label id="happinessModifier" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
 
-					<label id="modifier1" pos="45 54" size="136 11" color="black"/>
-					<image id="modifierImage1" size="11 11" pos="20 52" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier2"  pos="45 74" size="136 11" color="black"/>
-					<image id="modifierImage2" size="11 11" pos="20 72" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier3" pos="45 94" size="136 11" color="black"/>
-					<image id="modifierImage3" size="11 11" pos="20 92" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier4" pos="45 114" size="136 11" color="black"/>
-					<image id="modifierImage4" size="11 11" pos="20 112" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier5" pos="45 134" size="136 11" color="black"/>
-					<image id="modifierImage5" size="11 11" pos="20 132" source="minecolonies:textures/gui/red_icon.png"/>
-					
-					<label id="modifier6" pos="45 154" size="136 11" color="black"/>
-					<image id="modifierImage6" size="11 11" pos="20 152" source="minecolonies:textures/gui/red_icon.png"/>
 				</view>
                 <view id="jobView" size="100% 100%">
                     <label id="jobLabel" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
