@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.BuildingUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -18,6 +24,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public abstract class AbstractSchematicProvider implements ISchematicProvider
 {
     /**
+     * The Colony for this schematic Provider
+     */
+    private final IColony colony;
+
+    /**
      * The location of the building.
      */
     private final BlockPos location;
@@ -26,11 +37,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      * The level of the building.
      */
     private int buildingLevel = 0;
-
-    /**
-     * The rotation of the building.
-     */
-    private int rotation = 0;
 
     /**
      * The mirror of the building.
@@ -60,9 +66,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      */
     private boolean dirty = false;
 
-    public AbstractSchematicProvider(final BlockPos pos)
+    public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
-        location = pos;
+        this.location = pos;
+        this.colony = colony;
     }
 
     @Override
@@ -89,7 +96,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         }
 
         compound.putInt(TAG_SCHEMATIC_LEVEL, buildingLevel);
-        compound.putInt(TAG_ROTATION, rotation);
         compound.putString(TAG_STYLE, style);
 
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
@@ -109,7 +115,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     {
         buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
 
-        rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
         deserializerStructureInformationFrom(compound);
@@ -238,18 +243,43 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public int getRotation()
     {
-        return rotation;
-    }
+        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel));
+        try
+        {
+            final Structure structure = new Structure(colony.getWorld(), structureName.toString(), new PlacementSettings());
 
-    /**
-     * Sets the rotation of the current building.
-     *
-     * @param rotation integer value of the rotation.
-     */
-    @Override
-    public void setRotation(final int rotation)
-    {
-        this.rotation = rotation;
+            final Blueprint blueprint = structure.getBluePrint();
+
+            if (blueprint != null)
+            {
+                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset().getA()).getState();
+                if (structureState != null)
+                {
+                    if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
+                    {
+                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
+                        return 0;
+                    }
+
+                    final int structureRotation = structureState.get(AbstractBlockHut.FACING).getHorizontalIndex();
+                    final int worldRotation = colony.getWorld().getBlockState(this.location).get(AbstractBlockHut.FACING).getHorizontalIndex();
+
+                    if (structureRotation <= worldRotation)
+                    {
+                        return worldRotation - structureRotation;
+                    }
+                    return 4 - worldRotation - structureRotation;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
+
+            return  0;
+        }
+
+        return 0;
     }
 
     /**
