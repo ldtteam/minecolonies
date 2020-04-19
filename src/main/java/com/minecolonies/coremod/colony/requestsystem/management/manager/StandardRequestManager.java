@@ -20,10 +20,11 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
 import net.minecraft.nbt.CompoundNBT;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -388,18 +389,20 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public IDataStoreManager getDataStoreManager()
-    {
+    public IDataStoreManager getDataStoreManager() {
         return dataStoreManager;
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
+        this.reset(UpdateType.RESET);
+    }
+
+    private void reset(UpdateType type) {
         setup();
 
         version = -1;
-        getUpdateHandler().handleUpdate();
+        getUpdateHandler().handleUpdate(UpdateType.RESET);
     }
 
     /**
@@ -592,7 +595,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         if (version < updateHandler.getCurrentVersion())
         {
-            reset();
+            reset(UpdateType.DATA_LOAD);
         }
     }
 
