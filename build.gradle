@@ -316,12 +316,23 @@ task("createChangelog") {
     }
 }
 
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             groupId = project.group
 
-            from components.java
+            artifact reobfArtifact
             artifact packageJavadoc
             artifact sourceJar
             artifact apiJar
