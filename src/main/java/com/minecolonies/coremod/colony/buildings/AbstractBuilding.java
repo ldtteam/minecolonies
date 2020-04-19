@@ -774,6 +774,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     protected void writeRequestSystemToNBT(final CompoundNBT compound)
     {
+        compound.put(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(requester));
         compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
