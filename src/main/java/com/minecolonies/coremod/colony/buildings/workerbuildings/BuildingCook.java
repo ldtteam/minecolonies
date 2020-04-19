@@ -74,21 +74,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Minimum stock it can hold per level.
-     */
-    private static final int STOCK_PER_LEVEL   = 5;
-
-    /**
-     * The minimum stock.
-     */
-    private final Map<ItemStorage, Integer> minimumStock = new HashMap<>();
-
-    /**
-     * The minimum stock tag.
-     */
-    private static final String TAG_MINIMUM_STOCK = "minstock";
-
-    /**
      * Instantiates a new cook building.
      *
      * @param c the colony.
@@ -133,39 +118,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     public boolean canCraftComplexRecipes()
     {
         return true;
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        super.deserializeNBT(compound);
-
-        minimumStock.clear();
-
-        final ListNBT minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < minimumStockTagList.size(); i++)
-        {
-            final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
-            minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
-        }
-    }
-
-    @Override
-    public CompoundNBT serializeNBT()
-    {
-        final CompoundNBT compound = super.serializeNBT();
-
-        @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
-        {
-            final CompoundNBT compoundNBT = new CompoundNBT();
-            entry.getKey().getItemStack().write(compoundNBT);
-            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
-            minimumStockTagList.add(compoundNBT);
-        }
-        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
-
-        return compound;
     }
 
     @Override
@@ -327,130 +279,11 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return ModBuildings.cook;
     }
 
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(minimumStock.size());
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            buf.writeItemStack(entry.getKey().getItemStack());
-            buf.writeInt(entry.getValue());
-        }
-        buf.writeBoolean(minimumStock.size() >= minimumStockSize());
-    }
-
-    /**
-     * Calculate the minimum stock size.
-     * @return the size.
-     */
-    private int minimumStockSize()
-    {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
-
-        return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
-    }
-
-    @Override
-    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            if (request.getRequest() instanceof Stack && ((Stack) request.getRequest()).getStack().isItemEqual(entry.getKey().getItemStack()))
-            {
-                return true;
-            }
-        }
-        return super.isMinimumStockRequest(request);
-    }
-
-    /**
-     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
-     * - If not: Check if there is a request for this already.
-     * -> If not: Create a request.
-     * - If so: Check if there is a request for this still.
-     * -> If so: cancel it.
-     */
-    @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        super.onColonyTick(colony);
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(com.minecolonies.api.colony.requestsystem.requestable.Stack.class), new ArrayList<>());
-
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
-            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
-            final IToken<?> request = getMatchingRequest(itemStack, list);
-            if (delta > 0)
-            {
-                if (request == null)
-                {
-                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                    final com.minecolonies.api.colony.requestsystem.requestable.Stack stack = new Stack(itemStack);
-                    createRequest(getMainCitizen(), stack, true);
-                }
-            }
-            else if (request != null)
-            {
-                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
-            }
-        }
-    }
-
-    /**
-     * Add the minimum stock of the warehouse to this building.
-     * @param itemStack the itemStack to add.
-     * @param quantity the quantity.
-     */
-    public void addMinimumStock(final ItemStack itemStack, final int quantity)
-    {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
-        {
-            minimumStock.put(new ItemStorage(itemStack), quantity);
-            markDirty();
-        }
-    }
-
-    /**
-     * Check if the building is already requesting this stack.
-     * @param stack the stack to check.
-     * @return the token if so.
-     */
-    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
-    {
-        for (final IToken<?> token : list)
-        {
-            final IRequest<?> iRequest = colony.getRequestManager().getRequestForToken(token);
-            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().isItemEqual(stack))
-            {
-                return token;
-            }
-        }
-        return null;
-    }
-
     /**
      * BuildingCook View.
      */
     public static class View extends AbstractFilterableListsView
     {
-        /**
-         * The minimum stock.
-         */
-        private final List<com.minecolonies.api.util.Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
-
-        /**
-         * If the warehouse reached the minimum stock limit.
-         */
-        private boolean reachedLimit = false;
-
         /**
          * Instantiate the cook view.
          *
@@ -467,38 +300,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         public Window getWindow()
         {
             return new WindowHutCook(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-
-            minimumStock.clear();
-            final int size = buf.readInt();
-            for(int i = 0; i < size; i++)
-            {
-                minimumStock.add(new com.minecolonies.api.util.Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
-            }
-            reachedLimit = buf.readBoolean();
-        }
-
-        /**
-         * The minimum stock.
-         * @return the stock.
-         */
-        public List<com.minecolonies.api.util.Tuple<ItemStorage, Integer>> getStock()
-        {
-            return minimumStock;
-        }
-
-        /**
-         * Check if the warehouse has reached the limit.
-         * @return true if so.
-         */
-        public boolean hasReachedLimit()
-        {
-            return reachedLimit;
         }
     }
 }

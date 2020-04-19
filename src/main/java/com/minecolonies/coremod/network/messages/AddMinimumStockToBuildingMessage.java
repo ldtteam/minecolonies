@@ -110,16 +110,12 @@ public class AddMinimumStockToBuildingMessage implements IMessage
         }
 
         final IBuilding theBuilding = colony.getBuildingManager().getBuilding(building);
-        if (theBuilding instanceof BuildingWareHouse)
+        if (theBuilding == null)
         {
-            ((BuildingWareHouse) theBuilding).addMinimumStock(itemStack, quantity);
+            Log.getLogger().warn("AddMinimumStock Message building is null");
             return;
         }
-        else if (theBuilding instanceof BuildingCook)
-        {
-            ((BuildingCook) theBuilding).addMinimumStock(itemStack, quantity);
-            return;
-        }
-        Log.getLogger().warn("AddMinimumStock Message doesn't have a warehouse at position: " + building.toString());
+
+        theBuilding.addMinimumStock(itemStack, quantity);
     }
 }
