@@ -244,7 +244,7 @@ public final class CitizenConstants
     public static final int CHANCE_TO_DUMP_50 = 16;
 
     /**
-     * Chance to dump, if < this then dump else not.
+     * Chance to dump, if lower then this then dump else not.
      */
     public static final int CHANCE_TO_DUMP = 8;
 

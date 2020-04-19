@@ -107,7 +107,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The minimum stock.
      */
-    private Map<ItemStorage, Integer> minimumStock = new HashMap<>();
+    private final Map<ItemStorage, Integer> minimumStock = new HashMap<>();
 
     /**
      * Instantiates a new warehouse building.
@@ -221,8 +221,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
-            {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
@@ -450,15 +449,15 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
 
-        markDirty();;
+        markDirty();
     }
 
     /**
      * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
      * - If not: Check if there is a request for this already.
-     * -> If not: Create a request.
+     * - If not: Create a request.
      * - If so: Check if there is a request for this still.
-     * -> If so: cancel it.
+     * - If so: cancel it.
      */
     @Override
     public void onColonyTick(final IColony colony)
@@ -518,7 +517,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         /**
          * The minimum stock.
          */
-        private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+        private final List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
 
         /**
          * If the warehouse reached the minimum stock limit.

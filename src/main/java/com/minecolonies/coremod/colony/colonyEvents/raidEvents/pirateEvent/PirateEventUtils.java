@@ -175,7 +175,7 @@ public final class PirateEventUtils
     }
 
     /**
-     * Returns true when most parts of the given area are water, > 90%
+     * Returns true when most parts of the given area are water, more then 90%
      *
      * @param world Blockacces to use
      * @param from  First corner of search rectangle
