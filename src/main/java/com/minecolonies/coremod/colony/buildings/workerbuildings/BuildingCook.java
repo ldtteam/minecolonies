@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -22,7 +23,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -56,7 +56,6 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Class of the cook building.
@@ -82,7 +81,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     /**
      * The minimum stock.
      */
-    private Map<ItemStorage, Integer> minimumStock = new HashMap<>();
+    private final Map<ItemStorage, Integer> minimumStock = new HashMap<>();
 
     /**
      * The minimum stock tag.
@@ -239,21 +238,20 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
-    {
-       if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
-       {
-           return false;
-       }
+    public boolean canRecipeBeAdded(final IToken token) {
+        if (true)
+            return true;
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
-        {
+        if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size())) {
             return false;
         }
 
-        for (final ItemStorage input : storage.getCleanedInput())
-        {
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (storage == null) {
+            return false;
+        }
+
+        for (final ItemStorage input : storage.getCleanedInput()) {
             if (Tags.Items.CROPS_WHEAT.contains(input.getItem()))
             {
                 return false;
@@ -445,7 +443,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         /**
          * The minimum stock.
          */
-        private List<com.minecolonies.api.util.Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+        private final List<com.minecolonies.api.util.Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
 
         /**
          * If the warehouse reached the minimum stock limit.
