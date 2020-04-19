@@ -1,5 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
+        size="190 244"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
