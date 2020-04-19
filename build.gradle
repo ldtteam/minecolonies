@@ -8,6 +8,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
     }
 }
 
@@ -203,6 +204,17 @@ javadoc {
     source += sourceSets.api.allSource
 }
 
+task packageJavadoc(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+    from sourceSets.api.allJava
+}
+
 idea {
     module {
         inheritOutputDirs = true
@@ -307,8 +319,8 @@ publishing {
             groupId = project.group
 
             from components.java
-            artifact javadocJar
-            artifact sourcesJar
+            artifact packageJavadoc
+            artifact sourceJar
             artifact apiJar
 
             pom {
