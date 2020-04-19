@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * An Empty implementation of {@IBuildingView}. Currently used for Stash.
+ * An Empty implementation of {@link IBuildingView}. Currently used for Stash.
  */
 public class EmptyView extends AbstractBuildingView
 {

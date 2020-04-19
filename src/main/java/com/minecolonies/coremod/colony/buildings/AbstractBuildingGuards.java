@@ -409,7 +409,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The guards which arrived at the patrol positions
      */
-    private Set<AbstractEntityCitizen> arrivedAtPatrol = new HashSet<>();
+    private final Set<AbstractEntityCitizen> arrivedAtPatrol = new HashSet<>();
 
     /**
      * The last patrol position
@@ -1071,8 +1071,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     /**
      * Populates the mobs list from the ForgeRegistries.
-     *
-     * @return the list of MobEntrys to attack.
      */
     @Override
     public void calculateMobs()
