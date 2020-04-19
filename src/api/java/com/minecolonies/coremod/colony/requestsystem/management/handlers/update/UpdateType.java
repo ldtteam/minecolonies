@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers.update;
 
-public enum UpdateType {
+/**
+ * Update types (reset, or onLoad).
+ */
+public enum UpdateType
+{
     RESET,
     DATA_LOAD
 }

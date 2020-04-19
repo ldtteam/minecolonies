@@ -17,9 +17,9 @@ public class UpdateHandler implements IUpdateHandler
 {
     @VisibleForTesting
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
-            new InitialUpdate(),
-            new CraftingUpdate(),
-            new ResetRSToFixBuildingId()
+      new InitialUpdate(),
+      new CraftingUpdate(),
+      new ResetRSToFixBuildingId()
     );
 
     private final IStandardRequestManager manager;
@@ -33,20 +33,23 @@ public class UpdateHandler implements IUpdateHandler
     }
 
     @Override
-    public void handleUpdate(final UpdateType type) {
-        if (manager.getColony().isRemote()) {
+    public void handleUpdate(final UpdateType type)
+    {
+        if (manager.getColony().isRemote())
+        {
             return;
         }
 
         UPDATE_STEPS.stream()
-                .filter(s -> s.updatesToVersion() > manager.getCurrentVersion())
-                .sorted(Comparator.comparing(IUpdateStep::updatesToVersion))
-                .forEachOrdered(s ->
-                {
-                    manager.setCurrentVersion(s.updatesToVersion());
-                    s.update(manager);
-                });
+          .filter(s -> s.updatesToVersion() > manager.getCurrentVersion())
+          .sorted(Comparator.comparing(IUpdateStep::updatesToVersion))
+          .forEachOrdered(s ->
+          {
+              manager.setCurrentVersion(s.updatesToVersion());
+              s.update(manager);
+          });
     }
+
     @Override
     public int getCurrentVersion()
     {

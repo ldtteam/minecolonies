@@ -47,15 +47,15 @@ import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 public class StandardRequestManager implements IStandardRequestManager
 {
     ////---------------------------NBTTags-------------------------\\\\
-    private static final String NBT_DATASTORE = "DataStores";
-    private static final String NBT_ID_REQUEST_IDENTITIES = "RequestIdentitiesStoreId";
-    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES = "RequestResolverIdentitiesStoreId";
-    private static final String NBT_ID_PROVIDER_ASSIGNMENTS = "ProviderAssignmentsStoreId";
+    private static final String NBT_DATASTORE                       = "DataStores";
+    private static final String NBT_ID_REQUEST_IDENTITIES           = "RequestIdentitiesStoreId";
+    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES  = "RequestResolverIdentitiesStoreId";
+    private static final String NBT_ID_PROVIDER_ASSIGNMENTS         = "ProviderAssignmentsStoreId";
     private static final String NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS = "RequestResolverAssignmentsStoreId";
     private static final String NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS = "RequestableTypeAssignmentsStoreId";
-    private static final String NBT_ID_PLAYER                        = "PlayerRequestResolverId";
-    private static final String NBT_ID_RETRYING                      = "RetryingRequestResolverId";
-    private static final String NBT_VERSION = "Version";
+    private static final String NBT_ID_PLAYER                       = "PlayerRequestResolverId";
+    private static final String NBT_ID_RETRYING                     = "RetryingRequestResolverId";
+    private static final String NBT_VERSION                         = "Version";
     ////---------------------------NBTTags-------------------------\\\\
 
     private IToken<?> requestIdentitiesDataStoreId;
@@ -191,6 +191,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     /**
      * Check if the request manager is dirty.
+     *
      * @return true if so.
      */
     @Override
@@ -389,16 +390,19 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public IDataStoreManager getDataStoreManager() {
+    public IDataStoreManager getDataStoreManager()
+    {
         return dataStoreManager;
     }
 
     @Override
-    public void reset() {
+    public void reset()
+    {
         this.reset(UpdateType.RESET);
     }
 
-    private void reset(UpdateType type) {
+    private void reset(UpdateType type)
+    {
         setup();
 
         version = -1;
@@ -486,7 +490,11 @@ public class StandardRequestManager implements IStandardRequestManager
         updateIfRequired();
     }
 
-    private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final CompoundNBT nbt, @NotNull final String key, @NotNull final BiFunction<CompoundNBT, String, T> extractor, @NotNull final Consumer<T> valueConsumer)
+    private <T> void executeDeserializationStepOrMarkForUpdate(
+      @NotNull final CompoundNBT nbt,
+      @NotNull final String key,
+      @NotNull final BiFunction<CompoundNBT, String, T> extractor,
+      @NotNull final Consumer<T> valueConsumer)
     {
         if (!nbt.keySet().contains(key))
         {
@@ -495,9 +503,9 @@ public class StandardRequestManager implements IStandardRequestManager
         }
 
         T base;
-        try {
+        try
+        {
             base = extractor.apply(nbt, key);
-
         }
         catch (Exception ex)
         {
