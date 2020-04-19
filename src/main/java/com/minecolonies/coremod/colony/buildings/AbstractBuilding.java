@@ -584,7 +584,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 {
                     itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
                     final Stack stack = new Stack(itemStack);
-                    createRequest(stack, false);
+                    if (getMainCitizen() != null)
+                    {
+                        getMainCitizen().createRequestAsync(stack);
+                    }
+                    else
+                    {
+                        createRequest(stack, false);
+                    }
                 }
             }
             else if (request != null)

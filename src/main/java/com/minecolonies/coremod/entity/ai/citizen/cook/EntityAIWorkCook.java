@@ -339,7 +339,19 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return QUERY_ITEMS;
         }
 
+        if (getOwnBuilding().getFirstFullFillableRecipe(job.getCurrentTask().getRequest().getStack()) == null)
+        {
+            job.finishRequest(false);
+            return START_WORKING;
+        }
+
         return GET_RECIPE;
+    }
+
+    @Override
+    public IAIState ifItemNotAvailable()
+    {
+        return START_WORKING;
     }
 
     /**
