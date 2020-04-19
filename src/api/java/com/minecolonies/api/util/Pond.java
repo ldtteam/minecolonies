@@ -40,10 +40,11 @@ public final class Pond
     }
 
     /**
-     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20).
-     *  @param world The world the player is in.
-     * @param water The coordinate to check.
-     * @param width which has to be water.
+     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).
+     *
+     * @param world  The world the player is in.
+     * @param water  The coordinate to check.
+     * @param width  which has to be water.
      * @param length which has to be water.
      */
     public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final int width, final int length)

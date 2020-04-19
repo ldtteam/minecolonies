@@ -258,7 +258,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (currentBakingProduct != null)
         {
-        	final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+        	final IRecipeStorage storage = getOwnBuilding().getRecipeForItemStack(new ItemStorage(currentBakingProduct.getEndProduct()));
 
         	if (currentBakingProduct.getState() == ProductState.UNCRAFTED)
 	        {
@@ -342,21 +342,23 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Craft a new product from a given Storage.
      *
-     * @param storage the given storage.
+     * @param recipeStorage the given storage.
      * @return the next state to transit to.
      */
-    private IAIState craftNewProduct(final IRecipeStorage storage)
+    private IAIState craftNewProduct(final IRecipeStorage recipeStorage)
     {
         final List<ItemStack> requestList = new ArrayList<>();
-        for (final ItemStorage stack : storage.getCleanedInput())
+        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
         {
-            if (stack.getItem() != Items.WHEAT)
+            if (itemStorage.getItem() != Items.WHEAT)
             {
-                requestList.add(stack.getItemStack().copy());
+                final ItemStack copy = itemStorage.getItemStack().copy();
+                copy.setCount(itemStorage.getAmount());
+                requestList.add(copy);
             }
             else
             {
-                final ItemStack copy = stack.getItemStack().copy();
+                final ItemStack copy = itemStorage.getItemStack().copy();
                 copy.setCount(copy.getMaxStackSize());
                 requestList.add(copy);
             }
@@ -365,20 +367,23 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
 
         final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
-        if (storage.canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
+        if (recipeStorage.canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
         {
             final List<ItemStack> list = new ArrayList<>();
 
 	        ItemStack copy = null;
-	        for (final ItemStorage stack : storage.getCleanedInput())
+	        for (final ItemStorage stack : recipeStorage.getCleanedInput())
 	        {
 	            if (stack.getItem() != Items.WHEAT)
 	            {
-	                list.add(stack.getItemStack().copy());
+                    final ItemStack tempStack = stack.getItemStack().copy();
+                    tempStack.setCount(stack.getAmount());
+                    list.add(tempStack);
 	            }
 	            else
 	            {
 	                copy = stack.getItemStack().copy();
+	                copy.setCount(stack.getAmount());
 	            }
 	        }
 
@@ -506,15 +511,14 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         final ItemStorage itemStorage = building.getCopyOfAllowedItems().get("recipes").get(currentRecipe);
-        final IRecipeStorage recipeStorage =
-          BakerRecipes.getRecipes().stream().filter(recipe -> recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack())).findFirst().orElse(null);
+        final IRecipeStorage recipeStorage = building.getRecipeForItemStack(itemStorage);
         if (recipeStorage == null)
         {
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return IDLE;
         }
 
-        final BakingProduct bakingProduct = new BakingProduct(recipeStorage.getPrimaryOutput().copy(), BakerRecipes.getRecipes().indexOf(recipeStorage));
+        final BakingProduct bakingProduct = new BakingProduct(recipeStorage.getPrimaryOutput().copy());
         building.addToTasks(bakingProduct.getState(), bakingProduct);
         currentBakingProduct = bakingProduct;
         return getState();

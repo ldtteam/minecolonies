@@ -12,26 +12,20 @@ public class BakingProduct
     private static final String TAG_STATE = "state";
 
     /**
-     * Recipe id of the product.
-     */
-    private static final String TAG_RECIPE_ID = "recipeId";
-
-    /**
      * Baking progress of the bread.
      */
     private static final int FINISHED_BAKING_PROGRESS = 10;
+
     /**
      * The end product of the BakingProduct.
      */
     private final ItemStack endProduct;
-    /**
-     * The recipe id of the product.
-     */
-    private final int recipeId;
+
     /**
      * Current state of the product, intantiated at uncrafted.
      */
     private ProductState state = ProductState.UNCRAFTED;
+
     /**
      * The baking progress of the product.
      */
@@ -41,12 +35,10 @@ public class BakingProduct
      * Instantiates the BakingProduct, requires the end product of it.
      *
      * @param endProduct the product when finished.
-     * @param recipeId   the id of the used recipe for this product.
      */
-    public BakingProduct(@NotNull final ItemStack endProduct, final int recipeId)
+    public BakingProduct(@NotNull final ItemStack endProduct)
     {
         this.endProduct = endProduct;
-        this.recipeId = recipeId;
     }
 
     /**
@@ -60,8 +52,7 @@ public class BakingProduct
         if (productCompound.keySet().contains(TAG_STATE))
         {
             final ProductState state = ProductState.values()[productCompound.getInt(TAG_STATE)];
-            final int recipeId = productCompound.getInt(TAG_RECIPE_ID);
-            final BakingProduct bakingProduct = new BakingProduct(ItemStack.read(productCompound), recipeId);
+            final BakingProduct bakingProduct = new BakingProduct(ItemStack.read(productCompound));
             bakingProduct.setState(state);
             return bakingProduct;
         }
@@ -138,16 +129,6 @@ public class BakingProduct
     }
 
     /**
-     * Getter for the recipe id of the product.
-     *
-     * @return the id.
-     */
-    public int getRecipeId()
-    {
-        return recipeId;
-    }
-
-    /**
      * Write the BakingProduct to NBT.
      *
      * @param productCompound the compound to write it to.
@@ -155,7 +136,6 @@ public class BakingProduct
     public void write(final CompoundNBT productCompound)
     {
         productCompound.putInt(TAG_STATE, state.ordinal());
-        productCompound.putInt(TAG_RECIPE_ID, recipeId);
         endProduct.write(productCompound);
     }
 
@@ -164,7 +144,6 @@ public class BakingProduct
     {
         int result = state.hashCode();
         result = 31 * result + endProduct.write(new CompoundNBT()).hashCode();
-        result = 31 * result + recipeId;
         return result;
     }
 
@@ -182,15 +161,11 @@ public class BakingProduct
 
         final BakingProduct bakingProduct = (BakingProduct) o;
 
-        if (recipeId != bakingProduct.recipeId)
-        {
-            return false;
-        }
         if (state != bakingProduct.state)
         {
             return false;
         }
-        return endProduct.equals(bakingProduct.endProduct);
+        return endProduct.isItemEqual(bakingProduct.endProduct);
     }
 }
 
