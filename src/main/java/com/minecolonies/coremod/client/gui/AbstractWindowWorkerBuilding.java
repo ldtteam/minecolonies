@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.IBuilding;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -165,8 +164,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     /**
      * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) => Contract someone.
-     * Else => Fire the current worker.
+     * If there is no worker (worker.Id == 0) then Contract someone.
+     * Else then Fire the current worker.
      *
      * @param button the clicked button.
      */
