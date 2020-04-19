@@ -238,20 +238,21 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token) {
-        if (true)
-            return true;
-
-        if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size())) {
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
+        {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null) {
+        if (storage == null)
+        {
             return false;
         }
 
-        for (final ItemStorage input : storage.getCleanedInput()) {
+        for (final ItemStorage input : storage.getCleanedInput())
+        {
             if (Tags.Items.CROPS_WHEAT.contains(input.getItem()))
             {
                 return false;
