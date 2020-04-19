@@ -30,8 +30,6 @@ public interface ITickRateStateMachine<S extends IState> extends IStateMachine<I
 
     /**
      * Returns the current rate the statemachine is beeing ticked at.
-     *
-     * @return the tickrate
      */
     void setTickRate(final int tickRate);
 }
