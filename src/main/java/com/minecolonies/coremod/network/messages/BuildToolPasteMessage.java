@@ -344,7 +344,6 @@ public class BuildToolPasteMessage implements IMessage
             }
 
             building.setStyle(sn.getStyle());
-            building.setRotation(rotation);
 
             if (!(building instanceof IRSComponent))
             {

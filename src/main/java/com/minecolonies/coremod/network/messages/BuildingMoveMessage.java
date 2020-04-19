@@ -266,7 +266,6 @@ public class BuildingMoveMessage implements IMessage
                 building.getTileEntity().setColony(colony);
             }
             building.setStyle(sn.getStyle());
-            building.setRotation(rotation);
             if (mirror)
             {
                 building.invertMirror();
