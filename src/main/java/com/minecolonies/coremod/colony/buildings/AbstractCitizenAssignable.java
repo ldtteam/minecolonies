@@ -38,9 +38,9 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * @param pos
      * @param colony
      */
-    public AbstractCitizenAssignable(final BlockPos pos, final IColony colony)
+    public AbstractCitizenAssignable(final BlockPos pos, @NotNull final IColony colony)
     {
-        super(pos);
+        super(pos, colony);
         this.colony = colony;
     }
 

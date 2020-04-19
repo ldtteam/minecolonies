@@ -219,7 +219,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (placer instanceof PlayerEntity && tileEntity instanceof AbstractTileEntityColonyBuilding)
+        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
             @NotNull final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
