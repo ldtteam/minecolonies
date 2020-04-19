@@ -7,12 +7,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,15 +48,12 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
 
     @Override
     @Nullable
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.getRequester() instanceof BuildingBasedRequester)
-        {
-            final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token) {
+        final IRequest<?> request = manager.getRequestForToken(token);
+        if (Objects.requireNonNull(request).getRequester() instanceof IBuildingBasedRequester) {
+            final IBuildingBasedRequester requester = (IBuildingBasedRequester) request.getRequester();
             final ILocation requesterLocation = requester.getLocation();
-            if (requesterLocation.equals(getLocation()))
-            {
+            if (requesterLocation.equals(getLocation())) {
                 return requester.getBuilding(manager, token);
             }
         }

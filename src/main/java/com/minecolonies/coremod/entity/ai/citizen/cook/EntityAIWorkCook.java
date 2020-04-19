@@ -26,10 +26,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -474,11 +474,18 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
 
-                if (job.getCraftCounter() >= job.getMaxCraftingCount())
-                {
+                if (job.getCraftCounter() >= job.getMaxCraftingCount()) {
                     incrementActionsDone();
                     currentRecipeStorage = null;
                     resetValues();
+
+                    if (inventoryNeedsDump()) {
+                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null) {
+                            job.finishRequest(true);
+                            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+                            currentRequest = null;
+                        }
+                    }
                 }
                 else
                 {

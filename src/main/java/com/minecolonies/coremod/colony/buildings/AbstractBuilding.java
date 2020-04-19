@@ -1195,8 +1195,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getId()));
 
         return queue
-                 .stream()
-                 .filter(request -> validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
+                .stream()
+                .filter(request -> request.getState() == RequestState.IN_PROGRESS && validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
                  .findFirst()
                  .orElse(null);
     }
