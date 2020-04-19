@@ -175,7 +175,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
                                                                ((this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
                                                                    || this.getOwnBuilding()
                                                                         .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
@@ -217,7 +217,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private IAIState getNeededItem()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-        setDelay(STANDARD_DELAY);
 
         if (walkTo == null && walkToBuilding())
         {
@@ -243,7 +242,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (walkToBlock(walkTo) && !worker.getCitizenStuckHandler().isStuck())
             {
-                setDelay(2);
                 return getState();
             }
 

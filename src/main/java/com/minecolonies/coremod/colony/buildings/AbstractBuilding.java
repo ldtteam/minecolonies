@@ -46,6 +46,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -219,6 +220,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
+        final ListNBT list = new ListNBT();
+        for (final IRequestResolver requestResolver : getResolvers())
+        {
+            list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
+        }
+        compound.put(TAG_RESOLVER, list);
         compound.putString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
@@ -1342,6 +1349,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public boolean requiresCompleteRequestFulfillment()
     {
         return true;
+    }
+
+    /**
+     * Check if this is a minimum stock request.
+     * @param request the request to check.
+     * @return true if so.
+     */
+    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
+    {
+        return false;
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

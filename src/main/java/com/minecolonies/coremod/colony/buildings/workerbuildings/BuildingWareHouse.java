@@ -469,7 +469,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = getTileEntity().getItemCount(stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
+            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
             final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
             final IToken<?> request = getMatchingRequest(itemStack, list);
             if (delta > 0)

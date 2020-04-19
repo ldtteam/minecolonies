@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -19,6 +20,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -54,6 +56,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Class of the cook building.
@@ -181,8 +184,8 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     {
         final Collection<IRequestResolver<?>> supers =
           super.createResolvers().stream()
-            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver)).collect(
-            Collectors.toList());
+            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
+            .collect(Collectors.toList());
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
@@ -288,6 +291,11 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             return 0;
         }
 
+        if (inventory && minimumStock.containsKey(new ItemStorage(stack)))
+        {
+            return stack.getCount();
+        }
+
         if (ISFOOD.test(stack) && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
         {
             final ItemStorage kept = new ItemStorage(stack);
@@ -349,6 +357,19 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
 
+    @Override
+    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        {
+            if (request.getRequest() instanceof Stack && ((Stack) request.getRequest()).getStack().isItemEqual(entry.getKey().getItemStack()))
+            {
+                return true;
+            }
+        }
+        return super.isMinimumStockRequest(request);
+    }
+
     /**
      * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
      * - If not: Check if there is a request for this already.
@@ -365,7 +386,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = getTileEntity().getItemCount(stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
+            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
             final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
             final IToken<?> request = getMatchingRequest(itemStack, list);
             if (delta > 0)

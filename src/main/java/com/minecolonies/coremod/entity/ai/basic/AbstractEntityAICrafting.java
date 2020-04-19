@@ -135,7 +135,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
@@ -160,7 +159,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         if (currentRecipeStorage == null)
         {
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 

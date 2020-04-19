@@ -41,7 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -208,7 +207,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 worker.getNavigator().clearPath();
                 removeFromQueue();
             }
-            setDelay(2);
             return getState();
         }
 
@@ -230,7 +228,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             }
 
             removeFromQueue();
-            setDelay(SERVE_DELAY);
             return getState();
         }
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
@@ -250,7 +247,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
         removeFromQueue();
 
-        setDelay(SERVE_DELAY);
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
         return START_WORKING;
@@ -316,6 +312,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return GATHERING_REQUIRED_MATERIALS;
         }
 
+        //todo add to the building a .isMinimumStockRequest to not solve it in the buildingBasedResolver
         if (job.getTaskQueue().isEmpty())
         {
             return START_WORKING;
@@ -364,7 +361,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
@@ -389,7 +385,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         if (currentRecipeStorage == null)
         {
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
@@ -536,6 +531,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         return new Food(STACKSIZE);
     }
+
+
 
     /**
      * Get the required progress to execute a recipe.

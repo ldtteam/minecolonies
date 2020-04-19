@@ -72,7 +72,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         if (building instanceof BuildingWareHouse
-              || building instanceof BuildingCook
+              || (building instanceof BuildingCook && building.isMinimumStockRequest(request))
               || (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId())))
         {
             return false;
