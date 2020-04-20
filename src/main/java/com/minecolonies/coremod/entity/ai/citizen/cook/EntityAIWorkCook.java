@@ -348,12 +348,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         return GET_RECIPE;
     }
 
-    @Override
-    public IAIState ifItemNotAvailable()
-    {
-        return START_WORKING;
-    }
-
     /**
      * Query the IRecipeStorage of the first request in the queue.
      *
