@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Alignment;
-import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
@@ -598,11 +596,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
         int totalWorkers = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
-
-        if (children != 0)
-        {
-            jobMaxCountMap.put("com.minecolonies.coremod.job.pupil", new Tuple<>(inSchool, children));
-        }
         for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
         {
             if (building instanceof AbstractBuildingWorker.View)
@@ -623,6 +616,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers);
+        final String numberOfKids = LanguageHandler.format("com.minecolonies.coremod.gui.townhall.population.childs", children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -631,35 +625,41 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         final int maxJobs = jobMaxCountMap.size();
+        final List<Map.Entry<String, Tuple<Integer, Integer>>> theList = new ArrayList<>(jobMaxCountMap.entrySet());
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return maxJobs;
+                return maxJobs + 2;
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                if (jobMaxCountMap.isEmpty())
-                {
-                    return;
-                }
-
                 final Label label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Label.class);
                 // preJobsHeaders = number of all unemployed citizens
-                if (index == 0)
-                {
-                    label.setLabelText(numberOfUnemployed);
-                }
 
-                final Map.Entry<String, Tuple<Integer, Integer>> entry = jobMaxCountMap.entrySet().iterator().next();
-                final String job = LanguageHandler.format(entry.getKey());
-                final String numberOfWorkers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
-                label.setLabelText(numberOfWorkers);
-                jobMaxCountMap.remove(entry.getKey());
+                if (index < theList.size())
+                {
+                    final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
+                    final String job = LanguageHandler.format(entry.getKey());
+                    final String numberOfWorkers =
+                      LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
+                    label.setLabelText(numberOfWorkers);
+                }
+                else
+                {
+                    if (index == maxJobs + 1)
+                    {
+                        label.setLabelText(numberOfUnemployed);
+                    }
+                    else
+                    {
+                        label.setLabelText(numberOfKids);
+                    }
+                }
             }
         });
     }
