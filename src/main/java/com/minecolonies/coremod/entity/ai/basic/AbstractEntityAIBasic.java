@@ -346,7 +346,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check if we need to dump the worker inventory.
      * <p>
-     * This will also ask the implementing ai if we need to dump on custom reasons. {@see wantInventoryDumped}
+     * This will also ask the implementing ai if we need to dump on custom reasons. {see wantInventoryDumped}
      *
      * @return true if we need to dump the inventory.
      */
