@@ -132,6 +132,18 @@ public class ResearchInitializer
         recipebook.addChild(rtm);
         rtm.addChild(rainman);
 
+        final GlobalResearch deeppockets = new GlobalResearch("deeppockets", "technology", "Deep Pockets", 4, new AdditionModifierResearchEffect(INV_SLOTS, 9));
+        deeppockets.setRequirement(new BuildingResearchRequirement(4, "library"));
+
+        final GlobalResearch loaded = new GlobalResearch("loaded", "technology", "Loaded", 5, new AdditionModifierResearchEffect(INV_SLOTS, 18));
+        loaded.setRequirement(new BuildingResearchRequirement(5, "library"));
+
+        final GlobalResearch heavilyloaded = new GlobalResearch("heavilyloaded", "technology", "Heavily Loaded", 6, new AdditionModifierResearchEffect(INV_SLOTS, 27));
+
+        recipebook.addChild(deeppockets);
+        deeppockets.addChild(loaded);
+        loaded.addChild(heavilyloaded);
+
         //final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
         //stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
 
@@ -210,6 +222,10 @@ public class ResearchInitializer
         //researchTree.addResearch(stringwork.getBranch(), stringwork);
         //researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         //researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
+
+        researchTree.addResearch(deeppockets.getBranch(), deeppockets);
+        researchTree.addResearch(loaded.getBranch(), loaded);
+        researchTree.addResearch(heavilyloaded.getBranch(), heavilyloaded);
 
         researchTree.addResearch(veinminer.getBranch(), veinminer);
         researchTree.addResearch(goodveins.getBranch(), goodveins);
