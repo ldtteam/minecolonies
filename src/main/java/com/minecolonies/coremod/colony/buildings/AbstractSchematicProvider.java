@@ -62,6 +62,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     private int cornerZ2;
 
     /**
+     * Cached rotation.
+     */
+    public int cachedRotation = -1;
+
+    /**
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
@@ -243,6 +248,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public int getRotation()
     {
+        if (cachedRotation > 0)
+        {
+            return cachedRotation;
+        }
+
         final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel));
         try
         {
@@ -266,9 +276,13 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
                     if (structureRotation <= worldRotation)
                     {
-                        return worldRotation - structureRotation;
+                        cachedRotation = worldRotation - structureRotation;;
                     }
-                    return 4 - worldRotation - structureRotation;
+                    else
+                    {
+                        cachedRotation = 4 + worldRotation - structureRotation;
+                    }
+                    return cachedRotation;
                 }
             }
         }
