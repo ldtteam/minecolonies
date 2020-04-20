@@ -24,7 +24,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 import com.minecolonies.api.util.constant.WindowConstants;
+
 /**
  * Window for a hut name entry.
  */
@@ -133,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     items.add(new ItemStorage(entry.getKey().getItemStack(), entry.getValue(), false).getItemStack());
                 }
             }
-            if (rack instanceof ChestTileEntity)
+            else if (rack instanceof ChestTileEntity)
             {
                 final int size = ((ChestTileEntity) rack).getSizeInventory();
                 for (int slot = 0; slot < size; slot++)
@@ -142,9 +144,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         items.add(stack.copy());
-
                     }
-
                 }
             }
         }
