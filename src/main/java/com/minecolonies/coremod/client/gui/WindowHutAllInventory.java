@@ -6,12 +6,14 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -114,6 +116,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         List<ItemStorage> filterItems = new ArrayList<>();
         final List<BlockPos> containerList = building.getContainerList();
+
         List<ItemStack> items = new ArrayList<>();
         int count = containerList.size();
         World world = building.getColony().getWorld();
@@ -128,6 +131,20 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
                 {
                     items.add(new ItemStorage(entry.getKey().getItemStack(), entry.getValue(), false).getItemStack());
+                }
+            }
+            if (rack instanceof ChestTileEntity)
+            {
+                final int size = ((ChestTileEntity) rack).getSizeInventory();
+                for (int slot = 0; slot < size; slot++)
+                {
+                    final ItemStack stack = ((ChestTileEntity) rack).getStackInSlot(slot);
+                    if (!ItemStackUtils.isEmpty(stack))
+                    {
+                        items.add(stack.copy());
+
+                    }
+
                 }
             }
         }
