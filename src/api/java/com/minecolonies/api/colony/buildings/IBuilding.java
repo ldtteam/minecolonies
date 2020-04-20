@@ -303,4 +303,17 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @return true if so.
      */
     boolean requiresCompleteRequestFulfillment();
+
+    /**
+     * Remove the minimum stock.
+     * @param itemStack the stack to remove.
+     */
+    void removeMinimumStock(final ItemStack itemStack);
+
+    /**
+     * Add the minimum stock of the warehouse to this building.
+     * @param itemStack the itemStack to add.
+     * @param quantity the quantity.
+     */
+    void addMinimumStock(final ItemStack itemStack, final int quantity);
 }

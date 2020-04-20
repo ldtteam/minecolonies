@@ -12,11 +12,14 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.network.PacketBuffer;
@@ -24,6 +27,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,6 +126,16 @@ public abstract class AbstractBuildingView implements IBuildingView
      * The claim radius.
      */
     private int claimRadius = 0;
+
+    /**
+     * The minimum stock.
+     */
+    private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+
+    /**
+     * If the building reached the minimum stock limit.
+     */
+    private boolean reachedLimit = false;
 
     /**
      * Creates a building view.
@@ -374,6 +388,32 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
 
         loadRequestSystemFromNBT(buf.readCompoundTag());
+
+        minimumStock.clear();
+        final int size = buf.readInt();
+        for(int i = 0; i < size; i++)
+        {
+            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
+        }
+        reachedLimit = buf.readBoolean();
+    }
+
+    /**
+     * The minimum stock.
+     * @return the stock.
+     */
+    public List<Tuple<ItemStorage, Integer>> getStock()
+    {
+        return minimumStock;
+    }
+
+    /**
+     * Check if the warehouse has reached the limit.
+     * @return true if so.
+     */
+    public boolean hasReachedLimit()
+    {
+        return reachedLimit;
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)
@@ -392,7 +432,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         return getDataStore().getOpenRequestsByCitizen();
     }
 
-    private Map<IToken<?>, Integer> getCitizensByRequest()
+    protected Map<IToken<?>, Integer> getCitizensByRequest()
     {
         return getDataStore().getCitizensByRequest();
     }
@@ -515,7 +555,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
-                return new StringTextComponent("<UNKNOWN>");
+                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() :this.getCustomName() );
             }
 
             return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
