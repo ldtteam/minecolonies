@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BUILDER_INV_SLOTS;
+import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
 
 /**
@@ -353,7 +353,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         if (citizen != null && citizen.getColony() != null)
         {
             final AbstractResearchEffect<Double> researchEffect =
-              citizen.getColony().getResearchManager().getResearchEffects().getEffect(BUILDER_INV_SLOTS, AbstractResearchEffect.class);
+              citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
             if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
             {
                 resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));

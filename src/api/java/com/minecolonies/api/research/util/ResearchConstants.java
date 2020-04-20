@@ -91,7 +91,7 @@ public final class ResearchConstants
     public static final String MORE_ORES = "More Ores";
     public static final String WORKING_IN_RAIN = "Working in Rain";
     public static final String TOOL_DURABILITY = "Tool Durability";
-    public static final String BUILDER_INV_SLOTS = "Builder Inv Slots";
+    public static final String INV_SLOTS       = "Citizen Inv Slots";
 
     /**
      * Private constructor to hide implicit public one.
