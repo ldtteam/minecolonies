@@ -133,9 +133,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
         {
             final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
             blit(i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(i,
-              j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
-              textureOffset, (this.xSize * SIZE_MULTIPLIER) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(i, j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1, 0, textureOffset, (this.xSize * SIZE_MULTIPLIER) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
     }
 
