@@ -581,19 +581,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;
-        int inSchool = 0;
-        for (@NotNull final ICitizenDataView citizen : citizens)
-        {
-            if (citizen.isChild())
-            {
-                children++;
-                if (citizen.getWorkBuilding() != null)
-                {
-                    inSchool++;
-                }
-            }
-		}
-
         int totalWorkers = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
