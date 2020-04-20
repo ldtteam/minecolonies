@@ -435,7 +435,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @NotNull final Direction side)
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {

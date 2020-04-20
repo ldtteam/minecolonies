@@ -27,7 +27,7 @@ public class Configuration
 
     /**
      * Builds configuration tree.
-     *
+     */
     public Configuration()
     {
         final Pair<CommonConfiguration, ForgeConfigSpec> com = new ForgeConfigSpec.Builder().configure(builder -> new CommonConfiguration(builder));

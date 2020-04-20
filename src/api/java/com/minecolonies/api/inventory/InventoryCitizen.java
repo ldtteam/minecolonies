@@ -18,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.BUILDER_INV_SLOTS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
+
 /**
  * Basic inventory for the citizens.
  */
@@ -147,13 +150,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public int getSlots()
     {
-        final AbstractResearchEffect<Double> researchEffect = citizen.getColony().getResearchManager().getResearchEffects().getEffect("builder inv slots", AbstractResearchEffect.class);
-        if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
-        {
-            resizeInventory(this.mainInventory.size(), (int) (this.mainInventory.size() + researchEffect.getEffect()));
-            return this.mainInventory.size() - ARMOR_SIZE;
-        }
-
         return this.mainInventory.size() - ARMOR_SIZE;
     }
 
@@ -164,7 +160,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     private void resizeInventory(final int size, final int futureSize)
     {
-        if (size > futureSize)
+        if (size < futureSize)
         {
             final NonNullList<ItemStack> inv = NonNullList.withSize(futureSize, ItemStackUtils.EMPTY);
 
@@ -354,6 +350,20 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public ListNBT write(final ListNBT nbtTagList)
     {
+        if (citizen != null && citizen.getColony() != null)
+        {
+            final AbstractResearchEffect<Double> researchEffect =
+              citizen.getColony().getResearchManager().getResearchEffects().getEffect(BUILDER_INV_SLOTS, AbstractResearchEffect.class);
+            if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
+            {
+                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));
+            }
+        }
+
+        final CompoundNBT sizeNbt = new CompoundNBT();
+        sizeNbt.putInt(TAG_SIZE, this.mainInventory.size());
+        nbtTagList.add(sizeNbt);
+
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
@@ -375,17 +385,15 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public void read(final ListNBT nbtTagList)
     {
-        final AbstractResearchEffect<Double> researchEffect = citizen.getColony().getResearchManager().getResearchEffects().getEffect("builder inv slots", AbstractResearchEffect.class);
-        if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
+        if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
         {
-            this.mainInventory = NonNullList.withSize((int) (this.mainInventory.size() + researchEffect.getEffect()), ItemStackUtils.EMPTY);
+            this.mainInventory = NonNullList.withSize(nbtTagList.getCompound(0).getInt(TAG_SIZE), ItemStackUtils.EMPTY);
         }
 
-        this.mainInventory.clear();
-
-        for (int i = 0; i < nbtTagList.size(); ++i)
+        for (int i = 1; i < nbtTagList.size(); ++i)
         {
             final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
+
             final int j = compoundNBT.getByte("Slot") & 255;
             final ItemStack itemstack = ItemStack.read(compoundNBT);
 
