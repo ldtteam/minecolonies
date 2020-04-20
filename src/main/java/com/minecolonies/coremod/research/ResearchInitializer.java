@@ -177,7 +177,7 @@ public class ResearchInitializer
         ability.setRequirement(new BuildingResearchRequirement(1, "miner"));
 
         final GlobalResearch skills = new GlobalResearch("skills", "technology", "Skills", 3, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.25));
-        skills.setRequirement(new BuildingResearchRequirement(2, "miner5"));
+        skills.setRequirement(new BuildingResearchRequirement(2, "miner"));
 
         final GlobalResearch tools = new GlobalResearch("tools", "technology", "Tools", 4, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.5));
         tools.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
@@ -197,7 +197,7 @@ public class ResearchInitializer
         veinminer.setRequirement(new BuildingResearchRequirement(1, "miner"));
 
         final GlobalResearch goodveins = new GlobalResearch("goodveins", "technology", "Good Veins", 3, new MultiplierModifierResearchEffect(MORE_ORES, 0.25));
-        goodveins.setRequirement(new BuildingResearchRequirement(2, "miner5"));
+        goodveins.setRequirement(new BuildingResearchRequirement(2, "miner"));
 
         final GlobalResearch richveins = new GlobalResearch("richveins", "technology", "Rich Veins", 4, new MultiplierModifierResearchEffect(MORE_ORES, 0.5));
         richveins.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
