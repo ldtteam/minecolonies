@@ -103,7 +103,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     {
         if (!building.hasReachedLimit())
         {
-            new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
+            new WindowSelectRes(this, building.getColony().getID(), building.getID(), stack -> true).open();
         }
     }
 

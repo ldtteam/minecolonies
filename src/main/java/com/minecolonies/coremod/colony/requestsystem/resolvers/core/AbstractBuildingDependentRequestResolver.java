@@ -4,10 +4,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,24 +42,6 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
         }
 
         return false;
-    }
-
-    @Override
-    @Nullable
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.getRequester() instanceof BuildingBasedRequester)
-        {
-            final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-            final ILocation requesterLocation = requester.getLocation();
-            if (requesterLocation.equals(getLocation()))
-            {
-                return requester.getBuilding(manager, token);
-            }
-        }
-
-        return Optional.empty();
     }
 
     public abstract boolean canResolveForBuilding(@NotNull final IRequestManager manager, final @NotNull IRequest<? extends R> request, final @NotNull AbstractBuilding building);

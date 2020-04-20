@@ -20,6 +20,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -39,6 +40,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
@@ -46,6 +48,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -56,6 +59,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,6 +67,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.*;
@@ -103,6 +108,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * The custom name of the building, empty by default.
      */
     private String customName = "";
+
+    /**
+     * Minimum stock it can hold per level.
+     */
+    private static final int STOCK_PER_LEVEL   = 5;
+
+    /**
+     * The minimum stock.
+     */
+    protected final Map<ItemStorage, Integer> minimumStock = new HashMap<>();
+
+    /**
+     * The minimum stock tag.
+     */
+    private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
      * Constructor for a AbstractBuilding.
@@ -213,16 +233,40 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
+
+        minimumStock.clear();
+        final ListNBT minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < minimumStockTagList.size(); i++)
+        {
+            final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
+            minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
+        }
     }
 
     @Override
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
+        final ListNBT list = new ListNBT();
+        for (final IRequestResolver requestResolver : getResolvers())
+        {
+            list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
+        }
+        compound.put(TAG_RESOLVER, list);
         compound.putString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
+
+        @NotNull final ListNBT minimumStockTagList = new ListNBT();
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
+        {
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            entry.getKey().getItemStack().write(compoundNBT);
+            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
+            minimumStockTagList.add(compoundNBT);
+        }
+        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
         return compound;
     }
 
@@ -464,6 +508,132 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeCompoundTag(requestSystemCompound);
+
+        buf.writeInt(minimumStock.size());
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        {
+            buf.writeItemStack(entry.getKey().getItemStack());
+            buf.writeInt(entry.getValue());
+        }
+        buf.writeBoolean(minimumStock.size() >= minimumStockSize());
+    }
+
+    /**
+     * Calculate the minimum stock size.
+     * @return the size.
+     */
+    private int minimumStockSize()
+    {
+        double increase = 1;
+        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            increase = 1 + effect.getEffect();
+        }
+
+        return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
+    }
+
+    @Override
+    public void addMinimumStock(final ItemStack itemStack, final int quantity)
+    {
+        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
+        {
+            minimumStock.put(new ItemStorage(itemStack), quantity);
+            markDirty();
+        }
+    }
+
+    @Override
+    public void removeMinimumStock(final ItemStack itemStack)
+    {
+        minimumStock.remove(new ItemStorage(itemStack));
+
+        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+        final IToken<?> token = getMatchingRequest(itemStack, list);
+        if (token != null)
+        {
+            getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
+        }
+
+        markDirty();;
+    }
+
+    /**
+     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
+     * - If not: Check if there is a request for this already.
+     * -> If not: Create a request.
+     * - If so: Check if there is a request for this still.
+     * -> If so: cancel it.
+     */
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        super.onColonyTick(colony);
+        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        {
+            final ItemStack itemStack = entry.getKey().getItemStack().copy();
+            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
+            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
+            final IToken<?> request = getMatchingRequest(itemStack, list);
+            if (delta > 0)
+            {
+                if (request == null)
+                {
+                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
+                    final Stack stack = new Stack(itemStack);
+                    if (getMainCitizen() != null)
+                    {
+                        getMainCitizen().createRequestAsync(stack);
+                    }
+                    else
+                    {
+                        createRequest(stack, false);
+                    }
+                }
+            }
+            else if (request != null)
+            {
+                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+            }
+        }
+    }
+
+    /**
+     * Check if the building is already requesting this stack.
+     * @param stack the stack to check.
+     * @return the token if so.
+     */
+    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
+    {
+        for (final IToken<?> token : list)
+        {
+            final IRequest<?> iRequest = colony.getRequestManager().getRequestForToken(token);
+            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().isItemEqual(stack))
+            {
+                return token;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * If an incoming request is a minimum stock request.
+     * @param request the request to check.
+     * @return true if so.
+     */
+    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        {
+            if (request.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack && ((Stack) request.getRequest()).getStack().isItemEqual(entry.getKey().getItemStack()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -767,6 +937,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     protected void writeRequestSystemToNBT(final CompoundNBT compound)
     {
+        compound.put(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(requester));
         compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
@@ -1061,38 +1232,31 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
+        final Collection<IRequestResolver<?>> resolvers = getResolvers();
 
-        if (citizenIdsWithRequests.isEmpty())
+        for (final IRequestResolver<?> resolver : resolvers)
         {
-            final Collection<IRequestResolver<?>> resolvers = getResolvers();
+            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
 
-            for (final IRequestResolver<?> resolver :
-              resolvers)
+            final List<IRequest<? extends IDeliverable>> deliverableRequests =
+              requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+                .stream()
+                .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                .collect(Collectors.toList());
+
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
+
+            if (target == null)
             {
-                final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
-
-                final List<IRequest<? extends IDeliverable>> deliverableRequests =
-                  requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
-                    .stream()
-                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
-                    .collect(Collectors.toList());
-
-                final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
-
-                if (target == null)
-                {
-                    continue;
-                }
-
-                getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
-                return;
+                continue;
             }
 
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
             return;
         }
 
+        final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
         for (final int citizenId : citizenIdsWithRequests)
         {
             final ICitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
@@ -1194,8 +1358,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getId()));
 
         return queue
-                 .stream()
-                 .filter(request -> validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
+                .stream()
+                .filter(request -> request.getState() == RequestState.IN_PROGRESS && validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
                  .findFirst()
                  .orElse(null);
     }

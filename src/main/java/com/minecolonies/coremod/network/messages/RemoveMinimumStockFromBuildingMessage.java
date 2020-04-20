@@ -95,17 +95,17 @@ public class RemoveMinimumStockFromBuildingMessage implements IMessage
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
-            Log.getLogger().warn("AddMinimumStock Message colony is null");
+            Log.getLogger().warn("RemoveMinimumStock Message colony is null");
             return;
         }
 
         final IBuilding theBuilding = colony.getBuildingManager().getBuilding(building);
-        if (!(theBuilding instanceof BuildingWareHouse))
+        if (theBuilding == null)
         {
-            Log.getLogger().warn("AddMinimumStock Message doesn't have a warehouse at position: " + building.toString());
+            Log.getLogger().warn("RemoveMinimumStock Message building is null");
             return;
         }
 
-        ((BuildingWareHouse) theBuilding).removeMinimumStock(itemStack);
+        theBuilding.removeMinimumStock(itemStack);
     }
 }

@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -109,12 +110,12 @@ public class AddMinimumStockToBuildingMessage implements IMessage
         }
 
         final IBuilding theBuilding = colony.getBuildingManager().getBuilding(building);
-        if (!(theBuilding instanceof BuildingWareHouse))
+        if (theBuilding == null)
         {
-            Log.getLogger().warn("AddMinimumStock Message doesn't have a warehouse at position: " + building.toString());
+            Log.getLogger().warn("AddMinimumStock Message building is null");
             return;
         }
 
-        ((BuildingWareHouse) theBuilding).addMinimumStock(itemStack, quantity);
+        theBuilding.addMinimumStock(itemStack, quantity);
     }
 }

@@ -14,7 +14,6 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
-import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
