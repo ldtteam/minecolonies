@@ -16,6 +16,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
@@ -430,12 +431,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 }
                 if (!sameInWorld && !MineColonies.getConfig().getCommon().builderInfiniteResources.get())
                 {
-                    final List<ItemStack> requiredItems =
-                      handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
                     {
+                        for (final ToolType toolType : ToolType.values())
+                        {
+                            if (ItemStackUtils.isTool(stack, toolType))
+                            {
+                                if (checkForToolOrWeapon(toolType))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
                         itemList.add(this.getTotalAmount(stack));
                     }
 
