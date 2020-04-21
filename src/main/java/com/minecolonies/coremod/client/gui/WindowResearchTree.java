@@ -83,7 +83,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, button.getID());
         if (research != null &&
               building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
-              (building.getBuildingLevel() > research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
+              (building.getBuildingLevel() >= research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
               research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
