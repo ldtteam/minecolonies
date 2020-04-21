@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
@@ -359,14 +358,15 @@ public class RequestHandler implements IRequestHandler
             currentChildren.forEach(this::onRequestCancelledDirectly);
         }
 
+        final IRequestResolver<?> resolver = manager.getResolverHandler().getResolverForRequest(token);
         //Notify the resolver.
-        manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestBeingCancelled(manager, request);
+        resolver.onAssignedRequestBeingCancelled(manager, request);
 
         //This will notify everyone :D
         manager.updateRequestState(token, RequestState.COMPLETED);
 
         //Cancellation complete
-        manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestCancelled(manager, request);
+        resolver.onAssignedRequestCancelled(manager, request);
     }
 
     /**

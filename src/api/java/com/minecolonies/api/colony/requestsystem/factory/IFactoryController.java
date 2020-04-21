@@ -2,8 +2,9 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.network.PacketBuffer;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**

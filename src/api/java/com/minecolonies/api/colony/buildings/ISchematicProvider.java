@@ -63,13 +63,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     int getRotation();
 
     /**
-     * Sets the rotation of the current building.
-     *
-     * @param rotation integer value of the rotation.
-     */
-    void setRotation(int rotation);
-
-    /**
      * Returns the style of the current building.
      *
      * @return String representation of the current building-style

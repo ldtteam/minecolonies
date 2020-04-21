@@ -371,8 +371,6 @@ public final class MinecoloniesPlacementHandlers
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
-        private static final Direction[] DIRS = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
-
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
         {
@@ -404,6 +402,7 @@ public final class MinecoloniesPlacementHandlers
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                    blockState.getBlock().onBlockPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
                 }
                 catch (final Exception ex)
                 {

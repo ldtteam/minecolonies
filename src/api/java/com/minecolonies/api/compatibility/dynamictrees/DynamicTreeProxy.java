@@ -59,7 +59,7 @@ public class DynamicTreeProxy
      * Get the list of Drops from a Dynamic leaf
      *
      * @param leaf The leaf to check
-     * @return NonNullList<ItemStack> Drops
+     * @return {@link NonNullList} of {@link ItemStack} Drops
      */
     protected NonNullList<ItemStack> getDropsForLeaf(
       final IWorld world,

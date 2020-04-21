@@ -389,6 +389,10 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof ShieldItem;
         }
+        else if (ToolType.FLINT_N_STEEL.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof FlintAndSteelItem;
+        }
         return isATool;
     }
 

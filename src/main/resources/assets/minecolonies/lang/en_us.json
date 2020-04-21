@@ -1111,7 +1111,7 @@
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
-  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
 
   "com.minecolonies.coremod.gui.colony.here": "You are inside %s owned by %s",
   "com.minecolonies.coremod.gui.colony.near": "Colony with ID %d is nearby.",
@@ -1287,7 +1287,7 @@
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
-  "com.minecolonies.coremod.research.havetounlock": "Build a University and research the Barracks to unlock this Building first!",
+  "com.minecolonies.coremod.research.havetounlock": "Build a University and research to unlock this Building!",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The builder is the heart of your colony, without it you wouldn't ever be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the builder, the builder at level 0 (no hut) is able to build one thing, their own hut.\n\n In order for your builder to build or upgrade a hut that isn't their own, their hut must be at least the same level as the other hut, e.g. their hut must be level 3 or above to build a level 3 hut.",

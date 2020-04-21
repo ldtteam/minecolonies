@@ -429,7 +429,7 @@ public class CitizenManager implements ICitizenManager
         final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
         if (effect != null)
         {
-            max = effect.getEffect();
+            max += effect.getEffect();
         }
         return max;
     }

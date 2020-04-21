@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -135,7 +134,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
@@ -160,7 +158,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         if (currentRecipeStorage == null)
         {
-            setDelay(TICKS_20);
             return START_WORKING;
         }
 
@@ -255,6 +252,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                     incrementActionsDone();
                     currentRecipeStorage = null;
                     resetValues();
+
+                    if (inventoryNeedsDump())
+                    {
+                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
+                        {
+                            job.finishRequest(true);
+                            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+                            currentRequest = null;
+                        }
+                    }
                 }
                 else
                 {

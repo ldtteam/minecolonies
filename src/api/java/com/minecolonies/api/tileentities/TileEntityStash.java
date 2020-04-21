@@ -2,11 +2,8 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.items.ItemStackHandler;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
@@ -49,7 +46,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
     }
 
     /**
-     * An {@ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
+     * An {@link ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
      */
     public class NotifyingRackInventory extends RackInventory
     {

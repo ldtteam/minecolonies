@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
@@ -12,12 +11,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -30,7 +24,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import com.minecolonies.coremod.util.SortingUtils;
 import net.minecraft.block.AbstractSignBlock;
@@ -54,8 +47,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
-import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Class of the warehouse building.
@@ -106,11 +97,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * Storage upgrade level.
      */
     private int storageUpgrade = 0;
-
-    /**
-     * The minimum stock.
-     */
-    private Map<ItemStorage, Integer> minimumStock = new HashMap<>();
 
     /**
      * Instantiates a new warehouse building.
@@ -218,24 +204,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         super.deserializeNBT(compound);
 
         registeredDeliverymen.clear();
-        minimumStock.clear();
 
         final ListNBT deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
-            {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
         storageUpgrade = compound.getInt(TAG_STORAGE);
-        final ListNBT minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < minimumStockTagList.size(); i++)
-        {
-            final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
-            minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
-        }
     }
 
     @Override
@@ -293,13 +271,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         super.serializeToView(buf);
         buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
-        buf.writeInt(minimumStock.size());
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            buf.writeItemStack(entry.getKey().getItemStack());
-            buf.writeInt(entry.getValue());
-        }
-        buf.writeBoolean(minimumStock.size() >= minimumStockSize());
     }
 
     @Override
@@ -556,8 +527,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-
-            minimumStock.clear();
             allowUpgrade = buf.readBoolean();
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)

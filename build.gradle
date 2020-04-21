@@ -1,3 +1,7 @@
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+
 
 buildscript {
     repositories {
@@ -7,6 +11,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
     }
 }
 
@@ -28,6 +33,7 @@ repositories {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
@@ -201,6 +207,17 @@ javadoc {
     source += sourceSets.api.allSource
 }
 
+task packageJavadoc(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+    from sourceSets.api.allJava
+}
+
 idea {
     module {
         inheritOutputDirs = true
@@ -296,5 +313,113 @@ task("createChangelog") {
         }
 
         out.close()
+    }
+}
+
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+
+            artifact reobfArtifact
+            artifact packageJavadoc
+            artifact sourceJar
+            artifact apiJar
+
+            pom {
+                url = 'https://github.com/ldtteam/Minecolonies'
+                licenses {
+                    license {
+                        name = 'GNU GENERAL PUBLIC LICENSE Version 3'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'OrionDevelopment'
+                        name = 'Marc Hermans'
+                        email = 'marc.hermans@ldtteam.com'
+                    }
+                    developer {
+                        id = 'Raycoms'
+                        name= 'Ray Neiheiser'
+                        email = 'ray.neiheiser@ldtteam.com'
+                    }
+                }
+                contributors {
+                    contributor {
+                        id = 'ldtteam'
+                        name = 'Let\'s Develop Together - Team'
+                        email = 'info@ldtteam.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/ldtteam/minecolonies.git'
+                    developerConnection = 'scm:git:ssh://github.com/ldtteam/minecolonies.git'
+                    url = 'https://github.com/ldtteam/Minecolonies'
+                }
+            }
+
+            //Replace all deobf dependencies with normal jar references.
+            pom.withXml { xmlProvider ->
+                final Element document = xmlProvider.asElement()
+
+                //Remove all deobf deps.
+                final NodeList groupIdNodes = document.getElementsByTagName("groupId")
+                groupIdNodes.each { groupIdNodeObject ->
+                    final Node groupIdNode = (Node) groupIdNodeObject
+                    final String groupId = groupIdNode.getFirstChild().getTextContent().trim()
+                    groupIdNode.setTextContent(groupId.replace("deobf.", ""))
+                }
+
+                //Remove MC Forge.
+                final NodeList dependencies = document.getElementsByTagName("dependency")
+                final List<Node> dependencyCache = new ArrayList<>()
+                dependencies.each { dep -> dependencyCache.add(dep) }
+
+                dependencyCache.each {dependencyNode ->
+                    final Element dependencyElement = (Element) dependencyNode
+
+                    final NodeList groupIdNodesInDependency = dependencyElement.getElementsByTagName("groupId")
+                    groupIdNodesInDependency.each {groupIdNodeInDep ->
+                        final String groupId = groupIdNodeInDep.getFirstChild().getTextContent().trim()
+                        if (groupId == "net.minecraftforge")
+                        {
+                            final NodeList artifactIdNodesInDependency = dependencyElement.getElementsByTagName("artifactId")
+                            artifactIdNodesInDependency.each { artifactIdNodeInDep ->
+                                final String artifactId = artifactIdNodeInDep.getFirstChild().getTextContent().trim()
+                                if (artifactId == "forge")
+                                {
+                                    dependencyNode.getParentNode().removeChild(dependencyNode)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+//Notify artifactory of what to publish.
+artifactory {
+    publish {
+        defaults {
+            publications('maven')
+            publishBuildInfo = true   //Publish build-info to Artifactory (true by default)
+            publishArtifacts = true   //Publish artifacts to Artifactory (true by default)
+            publishPom = true   //Publish generated POM files to Artifactory (true by default).
+        }
     }
 }
