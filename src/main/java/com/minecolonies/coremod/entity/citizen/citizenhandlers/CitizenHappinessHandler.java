@@ -120,7 +120,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             totalWeight += happinessModifier.getWeight();
         }
 
-        return 10.0 * ( total / totalWeight );
+        return Math.min(10.0 * ( total / totalWeight ), 10);
     }
 
     @Override
@@ -228,6 +228,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 workers += citizen.getJobModifier();
             }
         }
-        return guards / workers;
+        return Math.min(guards / workers, 2);
     }
 }
