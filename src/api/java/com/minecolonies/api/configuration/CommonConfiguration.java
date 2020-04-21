@@ -828,16 +828,16 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:iron_block*6"),
           s -> s instanceof String);
         squiretraining = defineList(builder, "squiretraining",
-          Collections.singletonList("minecraft:shield*5"),
+          Collections.singletonList("minecraft:shield*4"),
           s -> s instanceof String);
         knighttraining = defineList(builder, "knighttraining",
-          Collections.singletonList("minecraft:shield*10"),
+          Collections.singletonList("minecraft:shield*8"),
           s -> s instanceof String);
         captaintraining = defineList(builder, "captaintraining",
-          Collections.singletonList("minecraft:shield*25"),
+          Collections.singletonList("minecraft:shield*16"),
           s -> s instanceof String);
         captainoftheguard = defineList(builder, "captainoftheguard",
-          Collections.singletonList("minecraft:shield*64"),
+          Collections.singletonList("minecraft:shield*27"),
           s -> s instanceof String);
 
         improvedbows = defineList(builder, "improvedbows",
