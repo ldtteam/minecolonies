@@ -10,10 +10,12 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -29,6 +31,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -43,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 
 /**
  * The abstract citizen entity.
@@ -173,7 +175,11 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @Override
     public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final Hand hand)
     {
-        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
+        if (!(player instanceof ClientPlayerEntity))
+        {
+            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), EventType.INTERACTION, this.getCitizenData());
+        }
+
         return super.applyPlayerInteraction(player, vec, hand);
     }
 

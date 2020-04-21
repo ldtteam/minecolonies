@@ -77,4 +77,46 @@ public final class ModJobs
     {
         throw new IllegalStateException("Tried to initialize: ModJobs but this is a Utility class.");
     }
+
+    /**
+     * Get a list of all jobs.
+     * @return the list.
+     */
+    public static JobEntry[] getJobs()
+    {
+        return new JobEntry[]
+                 {
+                   builder,
+                   delivery,
+                   miner,
+                   lumberjack,
+                   farmer,
+                   fisherman,
+                   baker,
+                   cook,
+                   shepherd,
+                   cowboy,
+                   swineHerder,
+                   chickenHerder,
+                   smelter,
+                   ranger,
+                   knight,
+                   composter,
+                   student,
+                   archer,
+                   composter,
+                   sawmill,
+                   blacksmith,
+                   stoneMason,
+                   stoneSmeltery,
+                   crusher,
+                   sifter,
+                   florist,
+                   enchanter,
+                   researcher,
+                   healer,
+                   pupil,
+                   teacher
+                 };
+    }
 }

@@ -1,10 +1,8 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.sounds.AbstractWorkerSounds;
-import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.sounds.EventType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -12,18 +10,16 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Random;
+
+import static com.minecolonies.api.sounds.ModSoundEvents.SOUND_EVENTS;
 
 /**
  * Utilities for playing sounds.
  */
 public final class SoundUtils
 {
-    /**
-     * Guard tower job literal.
-     */
-    private static final String GUARD_TOWER = "GuardTower";
-
     /**
      * Get a random between 1 and 100.
      */
@@ -60,12 +56,6 @@ public final class SoundUtils
     private static final double PITCH_MULTIPLIER = 0.4D;
 
     /**
-     * in average 1 minute to the next sound which are 20 ticks the second * 60
-     * seconds * 1 minute.
-     */
-    private static final int CHANCE_TO_PLAY_SOUND = 20 * 60 * 2;
-
-    /**
      * Private constructor to hide the implicit public one.
      */
     private SoundUtils()
@@ -76,41 +66,55 @@ public final class SoundUtils
     }
 
     /**
-     * Plays a random sound for a certain citizen.
-     *
-     * @param worldIn    the world to play the sound in.
-     * @param citizen    the citizen to play the sound for.
-     * @param saturation the saturation of the citizen.
+     * Play a random sound at the citizen.
+     * @param worldIn the world to play it in.
+     * @param pos the pos to play it at.
+     * @param citizen the citizen to play it for.
      */
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-    public static void playRandomSound(@NotNull final World worldIn, @NotNull final AbstractEntityCitizen citizen, final double saturation)
+    public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
-        if (1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))
+        final double v = rand.nextDouble();
+        if (v <= 0.1)
         {
-            String prefix = "";
-
-            if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
+            if (citizen.getSaturation() < 2)
             {
-                prefix = citizen.getCitizenColonyHandler().getWorkBuilding().getJobName();
+                playSoundAtCitizenWith(worldIn, pos, EventType.SATURATION_LOW, citizen);
             }
-
-            if (citizen.isChild())
+            else
             {
-                prefix = "child";
+                playSoundAtCitizenWith(worldIn, pos, EventType.SATURATION_HIGH, citizen);
             }
-
-            if (GUARD_TOWER.equals(prefix) && citizen.getCitizenColonyHandler().getWorkBuilding() instanceof IGuardBuilding)
+        }
+        else if (v <= 0.2)
+        {
+            if (citizen.getCitizenHappinessHandler().getHappiness() < 5)
             {
-                prefix = ((IGuardBuilding) citizen.getCitizenColonyHandler().getWorkBuilding()).getGuardType().getWorkerSoundName();
+                playSoundAtCitizenWith(worldIn, pos, EventType.UNHAPPY, citizen);
             }
-
-            for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
+            else
             {
-                if (sounds.getWorkerString().equals(prefix))
-                {
-                    sounds.playSound(worldIn, citizen.getPosition(), citizen.isFemale(), saturation);
-                }
+                playSoundAtCitizenWith(worldIn, pos, EventType.HAPPY, citizen);
             }
+        }
+        else if (v <= 0.3)
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.GENERAL, citizen);
+        }
+        else if (v <= 0.4 && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.SICKNESS, citizen);
+        }
+        else if (v <= 0.5 && (citizen.getHomeBuilding() == null || citizen.getHomeBuilding().getBuildingLevel() <= 2))
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.BAD_HOUSING, citizen);
+        }
+        else if (v <= 0.6 && worldIn.isRaining())
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.BAD_WEATHER, citizen);
+        }
+        else
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen);
         }
     }
 
@@ -136,17 +140,34 @@ public final class SoundUtils
      *
      * @param worldIn  the world to play the sound in.
      * @param position position to play the sound at.
-     * @param event    sound to play.
-     * @param chance   chance in percent.
+     * @param type    sound to play.
+     * @param citizenData the citizen.
      */
-    public static void playSoundAtCitizenWithChance(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final SoundEvent event, final int chance)
+    public static void playSoundAtCitizenWith(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final EventType type, @NotNull final ICitizenData citizenData)
     {
-        if (event == null || MinecoloniesAPIProxy.getInstance().getConfig().getCommon().disableCitizenVoices.get())
+        if (citizenData == null)
         {
             return;
         }
 
-        if (chance > rand.nextInt(ONE_HUNDRED))
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().disableCitizenVoices.get())
+        {
+            return;
+        }
+
+        final Map<EventType, Tuple<SoundEvent, SoundEvent>> map;
+        if (citizenData.getJob() != null)
+        {
+            map = SOUND_EVENTS.get(citizenData.getJob().getJobRegistryEntry().getRegistryName());
+        }
+        else
+        {
+            map = SOUND_EVENTS.get(citizenData.isChild() ? "child" : "citizen");
+        }
+
+        final SoundEvent event = citizenData.isFemale() ? map.get(type).getB() : map.get(type).getA();
+
+        if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
         {
             worldIn.playSound(null,
               position,
@@ -154,42 +175,6 @@ public final class SoundUtils
               SoundCategory.NEUTRAL,
               (float) VOLUME,
               (float) PITCH);
-        }
-    }
-
-    /**
-     * Play an interaction sound with chance at the citizen.
-     *  @param world    the world.
-     * @param position the position.
-     * @param chance   the chance.
-     * @param citizen  the citizen.
-     */
-    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final AbstractEntityCitizen citizen)
-    {
-        if (chance > rand.nextInt(ONE_HUNDRED))
-        {
-            String prefix = "";
-
-            if (citizen instanceof AbstractEntityCitizen)
-            {
-                if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
-                {
-                    prefix = citizen.getCitizenColonyHandler().getWorkBuilding().getJobName();
-                }
-
-                if (GUARD_TOWER.equals(prefix) && citizen.getCitizenColonyHandler().getWorkBuilding() instanceof IGuardBuilding)
-                {
-                    prefix = ((IGuardBuilding) citizen.getCitizenColonyHandler().getWorkBuilding()).getGuardType().getWorkerSoundName();
-                }
-            }
-
-            for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
-            {
-                if (sounds.getWorkerString().equals(prefix))
-                {
-                    sounds.playInteractionSound(world, citizen.getPosition(), citizen.isFemale());
-                }
-            }
         }
     }
 
@@ -202,5 +187,4 @@ public final class SoundUtils
     {
         return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
-
 }

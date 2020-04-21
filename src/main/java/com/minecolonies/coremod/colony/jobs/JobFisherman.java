@@ -5,14 +5,12 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -170,36 +168,6 @@ public class JobFisherman extends AbstractJob
     public AbstractAISkeleton<JobFisherman> generateAI()
     {
         return new EntityAIWorkFisherman(this);
-    }
-
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     *
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
-        }
-        return null;
-    }
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     *
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
-        }
-        return null;
     }
 
     @Override
