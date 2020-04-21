@@ -16,21 +16,21 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
+import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,11 +52,6 @@ import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
  */
 public class BuildToolPasteMessage implements IMessage
 {
-    /**
-     * Height of the chest in the supplyship to be placed.
-     */
-    private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
-
     /**
      * The state at the offset position.
      */
@@ -282,7 +276,8 @@ public class BuildToolPasteMessage implements IMessage
 
         final String hut = sn.getSection();
 
-        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockhut" + hut));
+        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
+        final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
