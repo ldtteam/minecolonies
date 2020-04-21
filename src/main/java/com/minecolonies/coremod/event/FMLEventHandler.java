@@ -54,18 +54,6 @@ public class FMLEventHandler
         }
     }
 
-    /**
-     * Called when registering sounds,
-     * we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public static void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
-    {
-        ModSoundEvents.registerSounds(event.getRegistry());
-    }
-
     @SubscribeEvent
     public static void onServerStarting(final FMLServerStartingEvent event)
     {

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.SOUND_EVENTS;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Utilities for playing sounds.
@@ -73,7 +74,7 @@ public final class SoundUtils
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
-        final double v = rand.nextDouble();
+        final double v = rand.nextDouble() * TICKS_SECOND;
         if (v <= 0.1)
         {
             if (citizen.getSaturation() < 2)
@@ -112,7 +113,7 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.BAD_WEATHER, citizen);
         }
-        else
+        else if (v <= 1.0)
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen);
         }
@@ -143,7 +144,7 @@ public final class SoundUtils
      * @param type    sound to play.
      * @param citizenData the citizen.
      */
-    public static void playSoundAtCitizenWith(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final EventType type, @NotNull final ICitizenData citizenData)
+    public static void playSoundAtCitizenWith(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final EventType type, @Nullable final ICitizenData citizenData)
     {
         if (citizenData == null)
         {
@@ -158,7 +159,7 @@ public final class SoundUtils
         final Map<EventType, Tuple<SoundEvent, SoundEvent>> map;
         if (citizenData.getJob() != null)
         {
-            map = SOUND_EVENTS.get(citizenData.getJob().getJobRegistryEntry().getRegistryName());
+            map = SOUND_EVENTS.get(citizenData.getJob().getJobRegistryEntry().getRegistryName().getPath());
         }
         else
         {

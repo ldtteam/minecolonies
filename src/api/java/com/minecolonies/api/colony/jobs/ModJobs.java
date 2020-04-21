@@ -101,7 +101,6 @@ public final class ModJobs
                    smelter,
                    ranger,
                    knight,
-                   composter,
                    student,
                    archer,
                    composter,
