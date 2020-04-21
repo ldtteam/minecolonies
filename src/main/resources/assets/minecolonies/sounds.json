@@ -209,18 +209,13 @@
       }
     ]
   },
-  "mob.citizen.child.laugh1": {
+  "mob.citizen.child.laugh": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/citizen/child/laugh1",
         "stream": false
-      }
-    ]
-  },
-  "mob.citizen.child.laugh2": {
-    "category": "neutral",
-    "sounds": [
+      },
       {
         "name": "minecolonies:mob/citizen/child/laugh2",
         "stream": false
