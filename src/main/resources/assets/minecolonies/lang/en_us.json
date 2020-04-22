@@ -390,6 +390,7 @@
   "com.minecolonies.coremod.status.cowboy.milking": "Milking",
   "com.minecolonies.coremod.status.shepherd.shearing": "Shearing",
 
+  "com.minecolonies.coremod.gui.allinventory": "All Items",
   "com.minecolonies.coremod.gui.workerhuts.shepherdhut": "Shepherd's Hut",
   "com.minecolonies.coremod.gui.workerhuts.swineherderhut": "SwineHerder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.cowboyhut": "Cowboy's Hut",
@@ -726,6 +727,7 @@
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
   "com.minecolonies.coremod.gui.warehouse.upgrade": "Upgrade Storage",
+  "com.minecolonies.coremod.gui.warehouse.allinventory": "Stored Items",
 
   "com.minecolonies.coremod.gui.workerhuts.cook": "Cook",
   "block.minecolonies.blockhutcook": "Restaurant",
@@ -1285,7 +1287,7 @@
   "com.minecolonies.coremod.research.alreadystarted": "Research already started, please refresh the User Interface",
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
-  "com.minecolonies.coremod.research.havetounlock": "Build a University and research the Barracks to unlock this Building first!",
+  "com.minecolonies.coremod.research.havetounlock": "Build a University and research to unlock this Building!",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The builder is the heart of your colony, without it you wouldn't ever be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the builder, the builder at level 0 (no hut) is able to build one thing, their own hut.\n\n In order for your builder to build or upgrade a hut that isn't their own, their hut must be at least the same level as the other hut, e.g. their hut must be level 3 or above to build a level 3 hut.",

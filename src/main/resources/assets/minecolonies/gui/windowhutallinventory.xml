@@ -1,0 +1,18 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        size="190 244"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
+    <input id="names" size="132 18" pos="20 30" maxlength="25"/>
+    <buttonimage id="sortStorageFilter" size="14 15" pos="158 31" textcolor="black"
+                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                     label="v^"/>
+    <list id="allinventorylist" size="157 156" pos="20 55">
+        <box size="100% 18" linewidth="2">
+            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <label id="ressourceStackName" size="100 12" pos="20 1" color="black"/>
+            <label id="quantities" size="25 18" pos="117 1" color="black"/>
+        </box>
+    </list>
+</window>
