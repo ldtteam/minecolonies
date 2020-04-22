@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
@@ -18,7 +17,6 @@ import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -257,38 +255,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         this.nameTag = nameTag;
     }
 
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     *
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        return null;
-    }
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     *
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        return null;
-    }
-
-    /**
-     * Override this to let the worker return a hostile move away sound.
-     *
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getMoveAwaySound()
-    {
-        return null;
-    }
 
     /**
      * Override this to implement Job specific death achievements.

@@ -16,5 +16,6 @@ public final class BarbarianSounds
      */
     private BarbarianSounds()
     {
+
     }
 }

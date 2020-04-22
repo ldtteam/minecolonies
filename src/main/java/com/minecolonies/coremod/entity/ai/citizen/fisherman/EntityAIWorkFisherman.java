@@ -6,11 +6,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
-import com.minecolonies.api.sounds.FishermanSounds;
+import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
@@ -28,7 +27,6 @@ import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -218,11 +216,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playNeedRodSound()
     {
-        if (worker != null)
-        {
-            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
-        }
+        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.MISSING_EQUIPMENT, worker.getCitizenData());
     }
 
     /**
@@ -481,11 +475,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playCaughtFishSound()
     {
-        if (worker != null)
-        {
-            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
-        }
+        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.SUCCESS, worker.getCitizenData());
     }
 
     /**
