@@ -4,12 +4,9 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.sounds.BuilderSounds;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The job of the builder.
@@ -52,38 +49,5 @@ public class JobBuilder extends AbstractJobStructure
     public AbstractAISkeleton<JobBuilder> generateAI()
     {
         return new EntityAIStructureBuilder(this);
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BuilderSounds.Female.offToBed : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BuilderSounds.Female.badWeather : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getMoveAwaySound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BuilderSounds.Female.hostile : null;
-        }
-        return null;
     }
 }

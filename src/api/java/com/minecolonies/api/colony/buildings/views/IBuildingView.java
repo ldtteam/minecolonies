@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -43,6 +44,13 @@ public interface IBuildingView extends IRequester
      * @return AbstractBuilding current level.
      */
     int getBuildingLevel();
+
+    /**
+     * Get the BlockPos of the Containers.
+     *
+     * @return List<BlockPos>containerList.
+     */
+    List<BlockPos> getContainerList();
 
     /**
      * Get the max level of the building.

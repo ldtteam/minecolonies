@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.research.IResearchRequirement;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -33,7 +34,20 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        return colony.getBuildingManager().getBuildings().values().stream().anyMatch(b -> b.getBuildingLevel() >= this.buildingLevel && b.getSchematicName().equalsIgnoreCase(this.building));
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            int sum = 0;
+            if (building.getSchematicName().equalsIgnoreCase(this.building))
+            {
+                sum += building.getBuildingLevel();
+
+                if (sum >= this.buildingLevel)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
