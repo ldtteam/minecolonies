@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -11,7 +11,6 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -26,9 +25,9 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     /**
      * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      */
-    protected final B          building;
-    private final   Label      title;
-    private final   Button     buttonBuild;
+    protected final B      building;
+    private final   Label  title;
+    private final   Button buttonBuild;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -45,11 +44,12 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
         registerButton(BUTTON_INFO, this::infoClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_EDIT_NAME, this::editName);
+        registerButton(BUTTON_ALLINVENTORY, this::allInventoryClicked);
+
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
-
         if (buttonInfo != null)
         {
             buttonInfo.setVisible(I18n.hasKey(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
@@ -75,13 +75,22 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     }
 
     /**
+     * Action when allInventory button is clicked.
+     */
+    private void allInventoryClicked()
+    {
+        @NotNull final WindowHutAllInventory window = new WindowHutAllInventory(building, this);
+        window.open();
+    }
+
+    /**
      * Action when build button is clicked.
      */
     private void buildClicked()
     {
         final String buttonLabel = buttonBuild.getLabel();
-        if(buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"))
-                || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade")))
+        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"))
+              || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade")))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ZERO));
         }

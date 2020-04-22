@@ -19,7 +19,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.network.PacketBuffer;
@@ -39,9 +38,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING
 import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
- * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
- * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
- * Mutable operations on a View result in a message to the server to perform the operation.
+ * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
+ * client-friendly form. Mutable operations on a View result in a message to the server to perform the operation.
  */
 public abstract class AbstractBuildingView implements IBuildingView
 {
@@ -128,12 +126,18 @@ public abstract class AbstractBuildingView implements IBuildingView
     private int claimRadius = 0;
 
     /**
+     * The BlockPos list of all Containers
+     */
+
+    private List<BlockPos> containerlist = new ArrayList<>();
+
+    /**
      * The minimum stock.
      */
     private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
 
     /**
-     * If the building reached the minimum stock limit.
+     * If the stock limit was reached.
      */
     private boolean reachedLimit = false;
 
@@ -231,6 +235,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Getter for the custom building name.
+     *
      * @return the name.
      */
     @Override
@@ -285,6 +290,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Check if the building is current being built.
+     *
      * @return true if so.
      */
     @Override
@@ -295,6 +301,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Check if the building is currently being repaired.
+     *
      * @return true if so.
      */
     @Override
@@ -305,6 +312,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Get the claim radius for the building.
+     *
      * @return the radius.
      */
     @Override
@@ -314,8 +322,16 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Open the associated BlockOut window for this building.
-     * If the player is sneaking open the inventory else open the GUI directly.
+     * Returns the Container List
+     */
+    @Override
+    public List<BlockPos> getContainerList()
+    {
+        return containerlist;
+    }
+
+    /**
+     * Open the associated BlockOut window for this building. If the player is sneaking open the inventory else open the GUI directly.
      *
      * @param shouldOpenInv if the player is sneaking.
      */
@@ -386,7 +402,11 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
-
+        final int racks = buf.readInt();
+        for (int i = 0; i < racks; i++)
+        {
+            containerlist.add(buf.readBlockPos());
+        }
         loadRequestSystemFromNBT(buf.readCompoundTag());
 
         minimumStock.clear();
@@ -608,8 +628,8 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Setter for the custom name.
-     * Sets the name on the client side and sends it to the server.
+     * Setter for the custom name. Sets the name on the client side and sends it to the server.
+     *
      * @param name the new name.
      */
     @Override

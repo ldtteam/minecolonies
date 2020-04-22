@@ -33,9 +33,5 @@
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
     <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
-    <buttonimage id="inventory" size="86 17" pos="52 214" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                label="$(container.inventory)"/>
-
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 </window>
