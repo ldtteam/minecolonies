@@ -1150,6 +1150,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
+                    this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
                 }
             }
         }
@@ -1460,6 +1461,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
         if (citizenData != null)
         {

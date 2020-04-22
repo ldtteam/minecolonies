@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.BlockState;
@@ -256,6 +257,11 @@ public class EntityAIWalkToRandomHuts extends Goal
     {
         // Try reseting the target first
         totalStuckTime++;
+
+        if (!world.isBlockPresent(entity.getPosition()))
+        {
+            Log.getLogger().warn("Raider was still active at" + entity.getPosition() + " despite chunk not beeing loaded");
+        }
 
         if (trySkipAheadOnPath())
         {

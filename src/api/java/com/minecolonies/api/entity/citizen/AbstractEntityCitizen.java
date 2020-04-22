@@ -285,6 +285,8 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = pathNavigate;
             this.pathNavigate.setCanSwim(true);
+            this.pathNavigate.getPathingOptions().setEnterDoors(true);
+            this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
             this.navigator.getNodeProcessor().setCanOpenDoors(true);
         }
         return pathNavigate;

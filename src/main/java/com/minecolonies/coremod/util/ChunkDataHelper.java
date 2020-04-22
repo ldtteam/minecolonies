@@ -440,7 +440,7 @@ public final class ChunkDataHelper
      */
     public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }
@@ -505,7 +505,7 @@ public final class ChunkDataHelper
       final BlockPos buildingPos,
       final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }
