@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.jobs.registry;
+package com.minecolonies.api.colony.jobs.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;

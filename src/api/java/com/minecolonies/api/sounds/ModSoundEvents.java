@@ -1,11 +1,13 @@
 package com.minecolonies.api.sounds;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.HashMap;
@@ -38,19 +40,24 @@ public final class ModSoundEvents
      */
     public static void registerSounds(final IForgeRegistry<SoundEvent> registry)
     {
-        for (final JobEntry job : ModJobs.getJobs())
-        {
-            final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = new HashMap<>();
-            for (final EventType soundEvents : EventType.values())
-            {
-                final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US));
-                final SoundEvent femaleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US));
 
-                registry.register(maleSoundEvent);
-                registry.register(femaleSoundEvent);
-                map.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
+        for (final JobEntry job : IJobRegistry.getInstance().getValues())
+        {
+            if (job.getRegistryName().getNamespace().equals(Constants.MOD_ID) && !job.getRegistryName().getPath().equals("placeholder"))
+            {
+                final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = new HashMap<>();
+                for (final EventType soundEvents : EventType.values())
+                {
+                    final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US));
+                    final SoundEvent femaleSoundEvent =
+                      ModSoundEvents.getSoundID("mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US));
+
+                    registry.register(maleSoundEvent);
+                    registry.register(femaleSoundEvent);
+                    map.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
+                }
+                SOUND_EVENTS.put(job.getRegistryName().getPath(), map);
             }
-            SOUND_EVENTS.put(job.getRegistryName().getPath(), map);
         }
 
         final Map<EventType, Tuple<SoundEvent, SoundEvent>> citizenMap = new HashMap<>();

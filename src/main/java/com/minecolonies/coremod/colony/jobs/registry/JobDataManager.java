@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundNBT;
