@@ -79,7 +79,7 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
      */
     private void allInventoryClicked()
     {
-        @NotNull final WindowHutAllInventory window = new WindowHutAllInventory(building);
+        @NotNull final WindowHutAllInventory window = new WindowHutAllInventory(building, this);
         window.open();
     }
 

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -57,17 +58,34 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     private final IBuildingView building;
 
     /**
+     * The previous window.
+     */
+    private final Window prev;
+
+    /**
      * Constructor for a hut rename entry window.
      *
      * @param b {@link AbstractBuilding}
+     * @param prev the previous window.
      */
-    public WindowHutAllInventory(final IBuildingView b)
+    public WindowHutAllInventory(final IBuildingView b, final Window prev)
     {
         super(Constants.MOD_ID + HUT_ALL_INVENTORY_SUFFIX);
         this.building = b;
         registerButton(BUTTON_SORT, this::setSortFlag);
+        registerButton(BUTTON_BACK, this::back);
         this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
         updateResources();
+        this.prev = prev;
+    }
+
+    /**
+     * On prev clicked.
+     */
+    private void back()
+    {
+        this.close();
+        this.prev.open();
     }
 
     @Override
@@ -116,15 +134,13 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        List<ItemStorage> filterItems = new ArrayList<>();
         final List<BlockPos> containerList = building.getContainerList();
 
-        List<ItemStack> items = new ArrayList<>();
-        int count = containerList.size();
-        World world = building.getColony().getWorld();
-        for (int s = 0; s < count; s++)
+        final List<ItemStack> items = new ArrayList<>();
+        final World world = building.getColony().getWorld();
+        for (BlockPos blockPos : containerList)
         {
-            final TileEntity rack = world.getTileEntity(containerList.get(s));
+            final TileEntity rack = world.getTileEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
 
@@ -149,9 +165,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             }
         }
 
-        Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
-        storedItems.clear();
-
+        final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
         for (final ItemStack currentItem : items)
         {
             final ItemStorage currentStorage = new ItemStorage(currentItem, currentItem.getCount(), false);
@@ -167,12 +181,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             }
         }
 
-        filterItems.clear();
-        for (ItemStorage entry : storedItems.keySet())
-        {
-            filterItems.add(entry);
-        }
-
+        final List<ItemStorage> filterItems = new ArrayList<>(storedItems.keySet());
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
                                                                   || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || stack.getItemStack()
@@ -191,24 +200,23 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        Comparator<ItemStorage> compareByName =
-          (ItemStorage o1, ItemStorage o2) -> o1.getItemStack().getDisplayName().getFormattedText().compareTo(o2.getItemStack().getDisplayName().getFormattedText());
-        Comparator<ItemStorage> compareByCount = (ItemStorage o1, ItemStorage o2) -> o1.getAmount() - o2.getAmount();
+        final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getDisplayName().getFormattedText());
+        final Comparator<ItemStorage> compareByCount = Comparator.comparingInt(ItemStorage::getAmount);
         switch (sortDescriptor)
         {
             case NO_SORT:
                 break;
             case ASC_SORT:
-                Collections.sort(allItems, compareByName);
+                allItems.sort(compareByName);
                 break;
             case DESC_SORT:
-                Collections.sort(allItems, compareByName.reversed());
+                allItems.sort(compareByName.reversed());
                 break;
             case COUNT_ASC_SORT:
-                Collections.sort(allItems, compareByCount);
+                allItems.sort(compareByCount);
                 break;
             case COUNT_DESC_SORT:
-                Collections.sort(allItems, compareByCount.reversed());
+                allItems.sort(compareByCount.reversed());
                 break;
             default:
                 break;
@@ -245,12 +253,13 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                ItemStorage resource = allItems.get(index);
+                final ItemStorage resource = allItems.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
+                final String name = resource.getItemStack().getDisplayName().getFormattedText();
+                resourceLabel.setLabelText(name.substring(0, Math.min(17, name.length())));
                 final Label qtys = rowPane.findPaneOfTypeByID("quantities", Label.class);
                 qtys.setLabelText(Integer.toString(resource.getAmount()));
-                Item imagesrc = resource.getItemStack().getItem();
+                final Item imagesrc = resource.getItemStack().getItem();
                 ItemStack image = new ItemStack(imagesrc, 1);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
             }

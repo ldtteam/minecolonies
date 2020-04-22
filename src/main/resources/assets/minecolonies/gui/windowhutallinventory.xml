@@ -11,8 +11,11 @@
     <list id="allinventorylist" size="157 156" pos="20 55">
         <box size="100% 18" linewidth="2">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
-            <label id="ressourceStackName" size="100 12" pos="20 1" color="black"/>
+            <label id="ressourceStackName" size="100 12" pos="20 3" color="black"/>
             <label id="quantities" size="25 18" pos="117 1" color="black"/>
         </box>
     </list>
+    <buttonimage id="back" size="86 17" pos="50 215" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.back)"/>
 </window>

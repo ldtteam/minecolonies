@@ -1379,5 +1379,6 @@
   "com.minecolonies.coremod.gui.townhall.happiness.damage": "Damage",
   "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
   "com.minecolonies.coremod.gui.townhall.happiness.raidwithoutdeath": "Raids without Deaths",
-  "com.minecolonies.coremod.gui.townhall.happiness.slepttonight": "Getting Sleep"
+  "com.minecolonies.coremod.gui.townhall.happiness.slepttonight": "Getting Sleep",
+  "com.minecolonies.coremod.gui.back": "Back"
 }
