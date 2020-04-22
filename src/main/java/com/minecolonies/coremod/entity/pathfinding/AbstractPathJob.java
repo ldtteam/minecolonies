@@ -328,33 +328,33 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
             //  Tax the cost for jumping, dropping
-            cost *= pathingOptions.JUMP_DROP_COST * Math.abs(dPos.getY());
+            cost *= pathingOptions.jumpDropCost * Math.abs(dPos.getY());
         }
 
         if (onPath)
         {
-            cost *= pathingOptions.ON_PATH_COST;
+            cost *= pathingOptions.onPathCost;
         }
 
         if (onRails)
         {
-            cost *= pathingOptions.ON_RAIL_COST;
+            cost *= pathingOptions.onRailCost;
         }
 
         if (railsExit)
         {
-            cost *= pathingOptions.RAILS_EXIT_COST;
+            cost *= pathingOptions.railsExitCost;
         }
 
         if (isSwimming)
         {
             if (swimStart)
             {
-                cost *= pathingOptions.SWIM_COST_ENTER;
+                cost *= pathingOptions.swimCostEnter;
             }
             else
             {
-                cost *= pathingOptions.SWIM_COST;
+                cost *= pathingOptions.swimCost;
             }
         }
 

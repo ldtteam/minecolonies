@@ -8,32 +8,32 @@ public class PathingOptions
     /**
      * Additional cost of jumping and dropping - base 1.
      */
-    public double JUMP_DROP_COST = 2.0D;
+    public double jumpDropCost = 2.0D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    public double ON_PATH_COST = 0.1D;
+    public double onPathCost = 0.1D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    public double ON_RAIL_COST = 0.01D;
+    public double onRailCost = 0.01D;
 
     /**
      * The rails exit cost.
      */
-    public double RAILS_EXIT_COST = 5;
+    public double railsExitCost = 5;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    public double SWIM_COST = 1.5D;
+    public double swimCost = 1.5D;
 
     /**
      * Additional cost enter entering water
      */
-    public double SWIM_COST_ENTER = 25D;
+    public double swimCostEnter = 25D;
 
     /**
      * Whether to use minecart rail pathing
@@ -97,37 +97,37 @@ public class PathingOptions
 
     public PathingOptions withStartSwimCost(final double startSwimCost)
     {
-        SWIM_COST_ENTER = startSwimCost;
+        swimCostEnter = startSwimCost;
         return this;
     }
 
     public PathingOptions withSwimCost(final double swimCost)
     {
-        SWIM_COST = swimCost;
+        this.swimCost = swimCost;
         return this;
     }
 
     public PathingOptions withJumpDropCost(final double jumpDropCost)
     {
-        JUMP_DROP_COST = jumpDropCost;
+        this.jumpDropCost = jumpDropCost;
         return this;
     }
 
     public PathingOptions withOnPathCost(final double onPathCost)
     {
-        ON_PATH_COST = onPathCost;
+        this.onPathCost = onPathCost;
         return this;
     }
 
     public PathingOptions withOnRailCost(final double onRailCost)
     {
-        ON_RAIL_COST = onRailCost;
+        this.onRailCost = onRailCost;
         return this;
     }
 
     public PathingOptions withRailExitCost(final double railExitCost)
     {
-        RAILS_EXIT_COST = railExitCost;
+        railsExitCost = railExitCost;
         return this;
     }
 }
