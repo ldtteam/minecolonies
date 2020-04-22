@@ -6,13 +6,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,27 +108,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param nameTag The name tag to display.
      */
     void setNameTag(String nameTag);
-
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getBedTimeSound();
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getBadWeatherSound();
-
-    /**
-     * Override this to let the worker return a hostile move away sound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getMoveAwaySound();
 
     /**
      * Override this to implement Job specific death achievements.

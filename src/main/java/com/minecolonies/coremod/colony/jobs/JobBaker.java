@@ -4,12 +4,9 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.sounds.BakerSounds;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
 
@@ -69,39 +66,6 @@ public class JobBaker extends AbstractJob
     public AbstractAISkeleton<JobBaker> generateAI()
     {
         return new EntityAIWorkBaker(this);
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getMoveAwaySound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BakerSounds.Female.hostile : null;
-        }
-        return null;
     }
 }
 

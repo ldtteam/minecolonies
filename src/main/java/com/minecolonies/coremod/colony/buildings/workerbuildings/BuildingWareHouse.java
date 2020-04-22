@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Class of the warehouse building.
@@ -62,7 +64,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The storage tag for the storage capacity.
      */
-    private static final String TAG_STORAGE  = "tagStorage";
+    private static final String TAG_STORAGE = "tagStorage";
 
     /**
      * The list of deliverymen registered to this building.
@@ -150,7 +152,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     private void checkForRegisteredDeliverymen()
     {
-        for (final Vec3d pos: new ArrayList<>(registeredDeliverymen))
+        for (final Vec3d pos : new ArrayList<>(registeredDeliverymen))
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
@@ -268,9 +270,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Handles the chest placement.
-     *  @param pos   at pos.
-     * @param chest the entity.
-     * @param world the world.
+     *
+     * @param pos            at pos.
+     * @param chest          the entity.
+     * @param world          the world.
      * @param tileEntityData the rack te data.
      */
     public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
@@ -314,7 +317,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

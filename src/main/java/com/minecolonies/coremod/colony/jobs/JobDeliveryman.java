@@ -12,16 +12,13 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.sounds.DeliverymanSounds;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -139,38 +136,6 @@ public class JobDeliveryman extends AbstractJob
     public AbstractAISkeleton<JobDeliveryman> generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
-    }
-
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.badWeather : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getMoveAwaySound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.hostile : null;
-        }
-        return null;
     }
 
     private IRequestSystemDeliveryManJobDataStore getDataStore()
