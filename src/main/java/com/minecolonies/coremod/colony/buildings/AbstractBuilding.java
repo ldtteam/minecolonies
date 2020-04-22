@@ -49,6 +49,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -75,8 +76,8 @@ import static com.minecolonies.api.util.constant.Suppression.*;
 /**
  * Base building class, has all the foundation for what a building stores and does.
  * <p>
- * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
- * to their views and blocks.
+ * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses to their views and
+ * blocks.
  */
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
 public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
@@ -140,6 +141,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Getter for the custom name of a building.
+     *
      * @return the custom name.
      */
     @Override
@@ -161,8 +163,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Executed every time when citizen finish inventory cleanup called after citizen got paused.
-     * Use for cleaning a state only.
+     * Executed every time when citizen finish inventory cleanup called after citizen got paused. Use for cleaning a state only.
      */
     @Override
     public void onCleanUp(final ICitizenData citizen)
@@ -173,8 +174,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Executed when RestartCitizenMessage is called and worker is paused.
-     * Use for reseting, onCleanUp is called before this
+     * Executed when RestartCitizenMessage is called and worker is paused. Use for reseting, onCleanUp is called before this
      */
     @Override
     public void onRestart(final ICitizenData citizen)
@@ -258,21 +258,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
 
-        @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
-        {
-            final CompoundNBT compoundNBT = new CompoundNBT();
-            entry.getKey().getItemStack().write(compoundNBT);
-            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
-            minimumStockTagList.add(compoundNBT);
-        }
-        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
         return compound;
     }
 
     /**
-     * Destroys the block.
-     * Calls {@link #onDestroyed()}.
+     * Destroys the block. Calls {@link #onDestroyed()}.
      */
     @Override
     public final void destroy()
@@ -352,17 +342,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (!builder.equals(BlockPos.ZERO))
         {
-             final IBuilding building =  colony.getBuildingManager().getBuilding(builder);
-             if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
-             {
-                 workOrderBuildBuilding.setClaimedBy(builder);
-             }
-             else
-             {
-                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                   "entity.builder.messageBuilderNecessary", Integer.toString(level));
-                 return;
-             }
+            final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+            if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
+            {
+                workOrderBuildBuilding.setClaimedBy(builder);
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  "entity.builder.messageBuilderNecessary", Integer.toString(level));
+                return;
+            }
         }
 
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
@@ -472,11 +462,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Serializes to view.
-     * Sends 3 integers.
-     * 1) hashcode of the name of the class.
-     * 2) building level.
-     * 3) max building level.
+     * Serializes to view. Sends 3 integers. 1) hashcode of the name of the class. 2) building level. 3) max building level.
      *
      * @param buf PacketBuffer to write to.
      */
@@ -507,6 +493,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(resolver.getId()));
         }
         buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
+        buf.writeInt(containerList.size());
+        for (int i = 0; i < containerList.size(); i++)
+        {
+            buf.writeBlockPos(containerList.get(i));
+        }
         buf.writeCompoundTag(requestSystemCompound);
 
         buf.writeInt(minimumStock.size());
@@ -649,6 +640,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Set the custom building name of the building.
+     *
      * @param name the name to set.
      */
     @Override
@@ -660,6 +652,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Check if the building should be gathered by the dman.
+     *
      * @return true if so.
      */
     @Override
@@ -682,7 +675,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Requests an upgrade for the current building.
      *
-     * @param player the requesting player.
+     * @param player  the requesting player.
      * @param builder the assigned builder.
      */
     @Override
@@ -700,6 +693,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Requests a repair for the current building.
+     *
      * @param builder
      * @param builder the assigned builder.
      */
@@ -777,8 +771,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Called upon completion of an upgrade process.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
+     * Called upon completion of an upgrade process. We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param newLevel The new level.
      */
@@ -818,8 +811,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
     /**
-     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
+     * Just to be sure.
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
@@ -873,9 +866,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -1046,8 +1038,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Internal method used to register a new Request to the request maps.
-     * Helper method.
+     * Internal method used to register a new Request to the request maps. Helper method.
      *
      * @param citizenId    The id of the citizen.
      * @param requestToken The {@link IToken} that is used to represent the request.
@@ -1218,8 +1209,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Overrule the next open request with a give stack.
      * <p>
-     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here
-     * out of performance reasons.
+     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here out of performance reasons.
      *
      * @param stack the stack.
      */

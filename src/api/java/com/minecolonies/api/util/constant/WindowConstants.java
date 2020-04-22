@@ -518,16 +518,50 @@ public final class WindowConstants
     public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
 
     /**
+     *  Window all Items list gui file.
+     */
+    public static final String HUT_ALL_INVENTORY_SUFFIX = ":gui/windowhutallinventory.xml";
+    /**
+     * No Sorting stage. how it comes from Database so it gets feeded
+     */
+    public static final int NO_SORT         = 0;
+    /**
+     * Name Ascending
+     */
+    public static final int ASC_SORT        = 1;
+    /**
+     * Name Descending
+     */
+    public static final int DESC_SORT       = 2;
+    /**
+     * Itemcount Ascending
+     */
+    public static final int COUNT_ASC_SORT  = 3;
+    /**
+     * Itemcount Descending
+     */
+    public static final int COUNT_DESC_SORT = 4;
+    /**
+     * The Stringdefine for the GUI page
+     */
+    public static final String LIST_ALLINVENTORY          = "allinventorylist";
+    /**
+     *  The Sort Button
+     */
+     public static final String BUTTON_SORT = "sortStorageFilter";
+
+    /**
      * Window resource list gui file.
      */
     public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 
-    public static final String BUTTON_BUILD        = "build";
-    public static final String BUTTON_REPAIR       = "repair";
-    public static final String BUTTON_INVENTORY    = "inventory";
-    public static final String LABEL_BUILDING_NAME = "name";
-    public static final String BUTTON_PREVPAGE     = "prevPage";
-    public static final String BUTTON_NEXTPAGE     = "nextPage";
+    public static final String BUTTON_BUILD             = "build";
+    public static final String BUTTON_REPAIR            = "repair";
+    public static final String BUTTON_INVENTORY         = "inventory";
+    public static final String BUTTON_ALLINVENTORY      = "allinventory";
+    public static final String LABEL_BUILDING_NAME      = "name";
+    public static final String BUTTON_PREVPAGE          = "prevPage";
+    public static final String BUTTON_NEXTPAGE          = "nextPage";
 
     /**
      * The GuardTower GUI file.
@@ -1097,7 +1131,8 @@ public final class WindowConstants
     public static final String PRIMARY_SKILL_ADV = "adverse1";
     public static final String SECONDARY_SKILL_LABEL = "secondary";
     public static final String SECONDARY_SKILL_COM = "comp2";
-    public static final String SECONDARY_SKILL_ADV = "adverse2";
+    public static final String SECONDARY_SKILL_ADV    = "adverse2";
+
 
     /**
      * public constructor to hide implicit public one.
