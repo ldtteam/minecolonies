@@ -12,11 +12,10 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
@@ -25,7 +24,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
-import com.minecolonies.coremod.util.SortingUtils;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ContainerBlock;
@@ -38,7 +36,6 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Class of the warehouse building.
@@ -67,16 +65,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * The storage tag for the storage capacity.
      */
     private static final String TAG_STORAGE = "tagStorage";
-
-    /**
-     * Minimum stock it can hold per level.
-     */
-    private static final int STOCK_PER_LEVEL = 5;
-
-    /**
-     * The minimum stock tag.
-     */
-    private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
      * The list of deliverymen registered to this building.
@@ -227,17 +215,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
         compound.put(TAG_DELIVERYMAN, levelTagList);
         compound.putInt(TAG_STORAGE, storageUpgrade);
-
-        @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            final CompoundNBT compoundNBT = new CompoundNBT();
-            entry.getKey().getItemStack().write(compoundNBT);
-            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
-            minimumStockTagList.add(compoundNBT);
-        }
-        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
-
         return compound;
     }
 
@@ -381,109 +358,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     /**
-     * Add the minimum stock of the warehouse to this building.
-     *
-     * @param itemStack the itemStack to add.
-     * @param quantity  the quantity.
-     */
-    public void addMinimumStock(final ItemStack itemStack, final int quantity)
-    {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
-        {
-            minimumStock.put(new ItemStorage(itemStack), quantity);
-            markDirty();
-        }
-    }
-
-    /**
-     * Calculate the minimum stock size.
-     *
-     * @return the size.
-     */
-    private int minimumStockSize()
-    {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
-
-        return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
-    }
-
-    /**
-     * Remove the minimum stock.
-     *
-     * @param itemStack the stack to remove.
-     */
-    public void removeMinimumStock(final ItemStack itemStack)
-    {
-        minimumStock.remove(new ItemStorage(itemStack));
-
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
-        final IToken<?> token = getMatchingRequest(itemStack, list);
-        if (token != null)
-        {
-            getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
-        }
-
-        markDirty();
-        ;
-    }
-
-    /**
-     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine) - If not: Check if there is a request for this already. -> If not:
-     * Create a request. - If so: Check if there is a request for this still. -> If so: cancel it.
-     */
-    @Override
-    public void onColonyTick(final IColony colony)
-    {
-        super.onColonyTick(colony);
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
-
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = getTileEntity().getItemCount(stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
-            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
-            final IToken<?> request = getMatchingRequest(itemStack, list);
-            if (delta > 0)
-            {
-                if (request == null)
-                {
-                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                    final Stack stack = new Stack(itemStack);
-                    createRequest(stack, false);
-                }
-            }
-            else if (request != null)
-            {
-                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
-            }
-        }
-    }
-
-    /**
-     * Check if the building is already requesting this stack.
-     *
-     * @param stack the stack to check.
-     * @return the token if so.
-     */
-    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
-    {
-        for (final IToken<?> token : list)
-        {
-            final IRequest<?> iRequest = colony.getRequestManager().getRequestForToken(token);
-            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().isItemEqual(stack))
-            {
-                return token;
-            }
-        }
-        return null;
-    }
-
-    /**
      * BuildWarehouse View.
      */
     public static class View extends AbstractBuildingView
@@ -492,18 +366,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
          * Should the building allow further storage upgrades.
          */
         private boolean allowUpgrade = true;
-
-        /**
-         * The minimum stock.
-         */
-        private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
-
-        /**
-         * If the warehouse reached the minimum stock limit.
-         */
-        private boolean reachedLimit = false;
-
-        private List<BlockPos> storageracks = new ArrayList<>();
 
         /**
          * Instantiate the warehouse view.
@@ -528,12 +390,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             super.deserialize(buf);
             allowUpgrade = buf.readBoolean();
-            final int size = buf.readInt();
-            for (int i = 0; i < size; i++)
-            {
-                minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
-            }
-            reachedLimit = buf.readBoolean();
         }
 
         /**
@@ -544,26 +400,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         public boolean canUpgradeStorage()
         {
             return allowUpgrade;
-        }
-
-        /**
-         * The minimum stock.
-         *
-         * @return the stock.
-         */
-        public List<Tuple<ItemStorage, Integer>> getStock()
-        {
-            return minimumStock;
-        }
-
-        /**
-         * Check if the warehouse has reached the limit.
-         *
-         * @return true if so.
-         */
-        public boolean hasReachedLimit()
-        {
-            return reachedLimit;
         }
     }
 }

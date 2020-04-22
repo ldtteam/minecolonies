@@ -261,8 +261,11 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     public boolean onKeyTyped(final char ch, final int key)
     {
         final boolean result = super.onKeyTyped(ch, key);
-        filter = findPaneOfTypeByID("names", TextField.class).getText();
-        updateResources();
+        if (result)
+        {
+            filter = findPaneOfTypeByID("names", TextField.class).getText();
+            updateResources();
+        }
         return result;
     }
 }

@@ -19,7 +19,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.network.PacketBuffer;
@@ -131,6 +130,16 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
 
     private List<BlockPos> containerlist = new ArrayList<>();
+
+    /**
+     * The minimum stock.
+     */
+    private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+
+    /**
+     * If the stock limit was reached.
+     */
+    private boolean reachedLimit = false;
 
     /**
      * Creates a building view.
