@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -144,18 +143,6 @@ public final class RaiderMobUtils
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
         {
-            if (BlockPosUtil.getDistanceSquared2D(spawnLocation, colony.getCenter()) < 90)
-            {
-                Log.getLogger().warn("Trying to spawn entity:" + entityToSpawn.getName() + " too close to colony center:" + colony.getCenter());
-            }
-
-            if (colony.hasTownHall() && BlockPosUtil.getDistanceSquared2D(spawnLocation, colony.getBuildingManager().getTownHall().getPosition()) < 90)
-            {
-                Log.getLogger().warn("Trying to spawn entity:" + entityToSpawn.getName() + " too close to colony center:" + colony.getCenter());
-            }
-
-
-
             final int x = spawnLocation.getX();
             final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
             final int z = spawnLocation.getZ();
