@@ -51,6 +51,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public static final String TAG_DAYS_LEFT     = "pirateDaysLeft";
     public static final String TAG_SPAWNER_COUNT = "spawnerCount";
     public static final String TAG_SHIPSIZE      = "shipSize";
+    public static final String TAG_SHIPROTATION  = "shipRotation";
     public static final String TAG_KILLED        = "killed";
 
     /**
@@ -119,6 +120,11 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     private boolean killedCitizenInRaid = false;
 
     /**
+     * Rotation of the ship to spawn
+     */
+    private int shipRotation = 0;
+
+    /**
      * Create a new Pirate raid event.
      */
     public PirateRaidEvent(@NotNull final IColony colony)
@@ -136,14 +142,14 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
 
         final Structure structure =
           new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(0), colony.getWorld(), spawnPoint, Mirror.NONE);
+        structure.rotate(BlockPosUtil.getRotationFromRotations(shipRotation), colony.getWorld(), spawnPoint, Mirror.NONE);
 
         if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure, colony.getWorld()))
         {
             spawnPoint = spawnPoint.down();
         }
 
-        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, id))
+        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, id, shipRotation))
         {
             // Pirate event not successfully started.
             status = EventStatus.CANCELED;
@@ -179,9 +185,15 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         // Spawns landing troops.
         if (pirates.size() < spawnerCount * 2)
         {
-            final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint.add(0, 0, -2), colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
+                // Find nice position on the ship
+                if (spawnPos.distanceSq(spawnPoint) < 25)
+                {
+                    spawnPos = PirateEventUtils.findSpawnPosOnShip(spawnPos, colony.getWorld(), 3);
+                }
+
                 for (final EntityType mobType : shipSize.pirates)
                 {
                     RaiderMobUtils.spawn(mobType, 1, spawnPos, colony.getWorld(), colony, id);
@@ -304,6 +316,16 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         this.shipSize = shipSize;
     }
 
+    /**
+     * Sets the ships rotation
+     *
+     * @param shipRotation
+     */
+    public void setShipRotation(final int shipRotation)
+    {
+        this.shipRotation = shipRotation;
+    }
+
     @Override
     public void setColony(@NotNull final IColony colony)
     {
@@ -370,6 +392,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
         compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
+        compound.putInt(TAG_SHIPROTATION, shipRotation);
         return compound;
     }
 
@@ -383,6 +406,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
+        shipRotation = compound.getInt(TAG_SHIPROTATION);
     }
 
     /**

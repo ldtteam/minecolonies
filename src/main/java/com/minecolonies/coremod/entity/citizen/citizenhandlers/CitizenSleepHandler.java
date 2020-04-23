@@ -5,8 +5,8 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BedBlock;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.Pose;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
@@ -103,7 +103,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean trySleep(final BlockPos bedLocation)
     {
-        final BlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
+        final BlockState state = citizen.world.isBlockPresent(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
 
         if (!isBed)
@@ -220,7 +220,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = citizen.world.isBlockPresent(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
         final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 
@@ -244,7 +244,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = citizen.world.isBlockPresent(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
         final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 

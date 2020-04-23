@@ -162,6 +162,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
+            newNavigator.getPathingOptions().withJumpDropCost(1.1D);
         }
         return newNavigator;
     }

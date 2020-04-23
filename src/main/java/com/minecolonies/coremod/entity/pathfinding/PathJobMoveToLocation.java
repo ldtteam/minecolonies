@@ -105,7 +105,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        //  For Result Score higher is better
-        return (startEndDist - Math.sqrt(destination.distanceSq(n.pos))) - 0.2 * n.getScore();
+        //  For Result Score lower is better
+        return destination.distanceSq(n.pos);
     }
 }

@@ -968,7 +968,7 @@ public class Colony implements IColony
             if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                if (world.isBlockLoaded(key))
+                if (world.isBlockPresent(key))
                 {
                     @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
                     final Block worldBlock = world.getBlockState(key).getBlock();
