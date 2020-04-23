@@ -277,8 +277,8 @@ public final class ModBuildingsInitializer
 
         ModBuildings.glassblower = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutGlassblower)
-                                .setBuildingProducer(BuildingSchool::new)
-                                .setBuildingViewProducer(() -> BuildingSchool.View::new)
+                                .setBuildingProducer(BuildingGlassblower::new)
+                                .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                 .createBuildingEntry();
 

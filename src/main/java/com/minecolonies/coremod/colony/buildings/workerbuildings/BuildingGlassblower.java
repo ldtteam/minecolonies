@@ -11,20 +11,18 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
+import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
+import com.minecolonies.coremod.colony.jobs.JobGlassblower;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.GlazedTerracottaBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -32,14 +30,14 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
- * Class of the glassblowernothi building.
+ * Class of the glassblower building.
  */
 public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String STONE_SMELTERY = "stonesmeltery";
+    private static final String GLASS_BLOWER = "glassblower";
 
     /**
      * Instantiates a new stone smeltery building.
@@ -56,7 +54,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public String getSchematicName()
     {
-        return STONE_SMELTERY;
+        return GLASS_BLOWER;
     }
 
     @Override
@@ -69,14 +67,14 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public IJob createJob(final ICitizenData citizen)
     {
-        return new JobStoneSmeltery(citizen);
+        return new JobGlassblower(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return STONE_SMELTERY;
+        return GLASS_BLOWER;
     }
 
     @NotNull
@@ -115,6 +113,9 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
     }
 
+    //todo allow any recipe for glass
+    //todo add some way to accept all sand -> glass recipes.
+
     /**
      * Method to check if the stack is craftable for the smeltery.
      *
@@ -127,30 +128,28 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         if (item instanceof BlockItem)
         {
             final Block block = ((BlockItem) item).getBlock();
-            if (block.isIn(BlockTags.STONE_BRICKS) ||
-                    block == Blocks.STONE         ||
-                    block == Blocks.STONE_BRICKS  ||
-                    block == Blocks.SMOOTH_STONE  ||
-                    block instanceof GlazedTerracottaBlock)
-            {
-
-                return true;
-            }
+            return block.getDefaultState().getMaterial() == Material.GLASS;
         }
 
-        return item == Items.BRICK || item == Items.COAL || item == Items.CHARCOAL;
+        return false;
     }
 
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
-        return ModBuildings.stoneSmelter;
+        return ModBuildings.glassblower;
     }
 
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonesmelter", UnlockBuildingResearchEffect.class);
+        super.requestUpgrade(player, builder);
+        //todo change.
+        if (true)
+        {
+            return;
+        }
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Glassblower", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -180,7 +179,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutStoneSmelter(this);
+            return new WindowHutGlassblower(this);
         }
     }
 }
