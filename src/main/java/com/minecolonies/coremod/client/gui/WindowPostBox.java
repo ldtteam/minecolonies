@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
@@ -48,6 +48,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
 
     /**
      * Create the postBox GUI.
+     * @param buildingView the building view.
      */
     public WindowPostBox(final AbstractBuildingView buildingView)
     {

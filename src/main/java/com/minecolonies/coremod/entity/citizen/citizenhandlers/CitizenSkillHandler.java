@@ -24,7 +24,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL_MAP;
 
 /**
  * The citizen skill handler of the citizen.

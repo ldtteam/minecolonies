@@ -47,6 +47,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
      * @param xC    the x pos.
      * @param zC    the z pos.
      * @param range the range.
+     * @param checkLoaded if it already was checked if loaded.
      */
     public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
     {
@@ -56,7 +57,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
             {
                 final int chunkX = xC + x;
                 final int chunkZ = zC + z;
-                if (!checkLoaded || world.isBlockLoaded(new BlockPos(chunkX * BLOCKS_PER_CHUNK, 0, chunkZ * BLOCKS_PER_CHUNK)))
+                if (!checkLoaded || world.isBlockPresent(new BlockPos(chunkX * BLOCKS_PER_CHUNK, 0, chunkZ * BLOCKS_PER_CHUNK)))
                 {
                     final Chunk chunk = world.getChunk(chunkX, chunkZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);

@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Class of the crafter job.
  */
-public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>, J extends AbstractJobCrafter<AI, J>> extends AbstractJob
+public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J extends AbstractJobCrafter<AI, J>> extends AbstractJob
 {
     /**
      * The Token of the data store which belongs to this job.
@@ -156,7 +156,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
 
     /**
      * Returns the {@link IRequest} of the current Task.
-     *
+     * @param <R> the request type.
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)

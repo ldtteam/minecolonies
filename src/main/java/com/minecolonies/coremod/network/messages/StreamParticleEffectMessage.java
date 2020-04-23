@@ -66,6 +66,8 @@ public class StreamParticleEffectMessage implements IMessage
      * @param start the starting position.
      * @param end the end position.
      * @param type the particle type.
+     * @param maxStage the max stage of the stream
+     * @param stage the current stage.
      */
     public StreamParticleEffectMessage(final Vec3d start, final Vec3d end, final BasicParticleType type, final int stage, final int maxStage)
     {

@@ -46,12 +46,14 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Executed every time when citizen finish inventory cleanup called after citizen got paused.
      * Use for cleaning a state only.
+     * @param citizen cleanup for citizen.
      */
     void onCleanUp(ICitizenData citizen);
 
     /**
      * Executed when RestartCitizenMessage is called and worker is paused.
      * Use for reseting, onCleanUp is called before this
+     * @param citizen the citizen assigned to the building.
      */
     void onRestart(ICitizenData citizen);
 
@@ -70,6 +72,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * When the building is repositioned.
+     * @param oldBuilding the moved building.
      */
     void onBuildingMove(final IBuilding oldBuilding);
 
@@ -84,7 +87,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.
-     *
+     * @param newLevel the new level of the building.
      * @return true if so.
      */
     boolean canBeBuiltByBuilder(int newLevel);
@@ -108,6 +111,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
+     * @param buildingLevel the building level.
      * @return the radius.
      */
     int getClaimRadius(int buildingLevel);
@@ -159,7 +163,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Requests a repair for the current building.
-     * @param builder
      * @param builder the assigned builder.
      */
     void requestRepair(BlockPos builder);
@@ -303,4 +306,17 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @return true if so.
      */
     boolean requiresCompleteRequestFulfillment();
+
+    /**
+     * Remove the minimum stock.
+     * @param itemStack the stack to remove.
+     */
+    void removeMinimumStock(final ItemStack itemStack);
+
+    /**
+     * Add the minimum stock of the warehouse to this building.
+     * @param itemStack the itemStack to add.
+     * @param quantity the quantity.
+     */
+    void addMinimumStock(final ItemStack itemStack, final int quantity);
 }

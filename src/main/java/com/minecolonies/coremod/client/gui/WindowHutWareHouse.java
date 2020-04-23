@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
@@ -36,10 +36,17 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
  */
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
+
+
+
+    /**
+     * The Warehouse view
+     */
+    private final        BuildingWareHouse.View building;
     /**
      * Required building level for sorting.
      */
-    private static final int BUILDING_LEVEL_FOR_SORTING = 3;
+    private static final int                    BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
      * Limit reached label.
@@ -64,8 +71,10 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     public WindowHutWareHouse(final BuildingWareHouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
+        this.building = building;
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
+
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
 
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
@@ -85,6 +94,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
     /**
      * Remove the stock.
+     *
      * @param button the button.
      */
     private void removeStock(final Button button)
@@ -103,9 +113,11 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     {
         if (!building.hasReachedLimit())
         {
-            new WindowSelectRes(this, building.getColony().getID(), building.getID()).open();
+            new WindowSelectRes(this, building.getColony().getID(), building.getID(), stack -> true).open();
         }
     }
+
+
 
     @Override
     public void onOpened()
@@ -118,7 +130,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         updateResourcePane();
         updateStockList();
-
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
@@ -184,8 +195,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 break;
         }
 
-        //position the addResource Button to the right
-
         resourceLabel.setLabelText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
@@ -210,7 +219,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer> > tempRes = new ArrayList<>(building.getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()

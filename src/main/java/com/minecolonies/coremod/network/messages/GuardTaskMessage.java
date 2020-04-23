@@ -56,6 +56,7 @@ public class GuardTaskMessage implements IMessage
      * @param patrollingMode the new patrolling mode.
      * @param retrieval      the new retrievel mode.
      * @param task           the new task.
+     * @param tightGrouping  true if tight grouping is enabled.
      */
     public GuardTaskMessage(
                              @NotNull final AbstractBuildingGuards.View building,

@@ -84,7 +84,7 @@ public class EventManager implements IEventManager
     /**
      * Increments the id, and returns the taken id.
      *
-     * @return
+     * @return the next event Id.
      */
     @Override
     public int getAndTakeNextEventID()
@@ -102,8 +102,8 @@ public class EventManager implements IEventManager
     /**
      * Registers an entity with the given event.
      *
-     * @param entity
-     * @param eventID
+     * @param entity the entity to register.
+     * @param eventID the event id to register it to.
      */
     @Override
     public void registerEntity(@NotNull final Entity entity, final int eventID)
@@ -120,8 +120,8 @@ public class EventManager implements IEventManager
     /**
      * Unregisters an entity with the given event
      *
-     * @param entity
-     * @param eventID
+     * @param entity the entity.
+     * @param eventID the id of th eevent.
      */
     @Override
     public void unregisterEntity(@NotNull final Entity entity, final int eventID)
@@ -136,8 +136,8 @@ public class EventManager implements IEventManager
     /**
      * Triggers on entity death(killed by player/environment) of an entity
      *
-     * @param entity
-     * @param eventID
+     * @param entity the entity.
+     * @param eventID the id of the event.
      */
     @Override
     public void onEntityDeath(final LivingEntity entity, final int eventID)
@@ -171,8 +171,8 @@ public class EventManager implements IEventManager
     /**
      * Gets an event by its ID
      *
-     * @param ID
-     * @return
+     * @param ID the id of the event.
+     * @return the event or null.
      */
     @Override
     public IColonyEvent getEventByID(final int ID)

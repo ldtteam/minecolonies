@@ -88,7 +88,7 @@ public class EventHandler
     /**
      * Adds our custom loot tables to vanilla tables.
      *
-     * @param event
+     * @param event the event.
      */
     @SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event)
@@ -179,6 +179,7 @@ public class EventHandler
 
     /**
      * Called when a chunk gets loaded for some reason.
+     * @param event the event.
      */
     @SubscribeEvent
     public static void onChunkLoad(@NotNull final ChunkEvent.Load event)
@@ -198,6 +199,7 @@ public class EventHandler
 
     /**
      * Called when a chunk gets unloaded
+     * @param event the event.
      */
     @SubscribeEvent
     public static void onChunkUnLoad(final ChunkEvent.Unload event)
@@ -217,6 +219,12 @@ public class EventHandler
     public static void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
     {
         final Entity entity = event.getEntity();
+        final BlockPos pos = entity.getPosition();
+
+        if (pos.equals(BlockPos.ZERO))
+        {
+            return;
+        }
 
         //  Add nearby players
         if (entity instanceof ServerPlayerEntity)
@@ -361,7 +369,7 @@ public class EventHandler
     /**
      * Event called on player block breaks.
      *
-     * @param event
+     * @param event the event.
      */
     @SubscribeEvent
     public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)

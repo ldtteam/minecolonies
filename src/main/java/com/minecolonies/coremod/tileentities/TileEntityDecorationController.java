@@ -6,13 +6,13 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
 public class TileEntityDecorationController extends TileEntity
 {

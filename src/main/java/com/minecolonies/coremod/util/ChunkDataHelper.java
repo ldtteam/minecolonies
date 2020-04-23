@@ -117,6 +117,8 @@ public final class ChunkDataHelper
 
     /**
      * Called when a chunk is unloaded
+     * @param world the world it is unloading in.
+     * @param chunk the chunk that is unloading.
      */
     public static void unloadChunk(final Chunk chunk, final World world)
     {
@@ -436,11 +438,12 @@ public final class ChunkDataHelper
      * @param pos   the position.
      * @param add   if add or delete.
      * @param id    the id.
+     * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */
     public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }
@@ -495,6 +498,7 @@ public final class ChunkDataHelper
      * @param add   if add or delete.
      * @param id    the id.
      * @param buildingPos the building pos.
+     * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */
     public static boolean loadChunkAndAddData(
@@ -505,7 +509,7 @@ public final class ChunkDataHelper
       final BlockPos buildingPos,
       final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }

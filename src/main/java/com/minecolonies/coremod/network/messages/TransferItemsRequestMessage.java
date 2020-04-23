@@ -11,10 +11,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -68,7 +65,8 @@ public class TransferItemsRequestMessage implements IMessage
      *
      * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
-     * @param quantity  of item needed to be transfered
+     * @param quantity  of item needed to be transferred
+     * @param attemptResolve if resolving attempt.
      */
     public TransferItemsRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
     {

@@ -113,10 +113,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     @Override
     public int getClaimRadius(final int newLevel)
     {
-        if (newLevel + 1 < MineColonies.getConfig().getCommon().minTownHallPadding.get())
-        {
-            return MineColonies.getConfig().getCommon().minTownHallPadding.get();
-        }
         return newLevel + 1;
     }
 

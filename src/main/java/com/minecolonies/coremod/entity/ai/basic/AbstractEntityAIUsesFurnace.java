@@ -30,7 +30,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
  *
- * @param <J>
+ * @param <J> the job it is for.
  */
 public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
@@ -58,10 +58,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(IDLE, START_WORKING, STANDARD_DELAY),
           new AITarget(START_WORKING, this::startWorking, TICKS_SECOND),
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY));
     }
 
     @Override
@@ -133,7 +133,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         if (walkToBuilding())
         {
-            setDelay(2);
             return getState();
         }
 
@@ -256,7 +255,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected IAIState checkForAdditionalJobs()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
-        setDelay(WAIT_AFTER_REQUEST);
         return START_WORKING;
     }
 
@@ -299,7 +297,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         if (walkToBlock(walkTo))
         {
-            setDelay(2);
             return getState();
         }
 
@@ -315,7 +312,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         extractFromFurnace((FurnaceTileEntity) entity);
         incrementActionsDoneAndDecSaturation();
-        setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
 
@@ -333,20 +329,17 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                 worker.getCitizenData()
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
-            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
         if (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE)
         {
             walkTo = null;
-            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
         if (walkToBlock(walkTo))
         {
-            setDelay(2);
             return getState();
         }
 
@@ -372,7 +365,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             }
         }
         walkTo = null;
-        setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
 

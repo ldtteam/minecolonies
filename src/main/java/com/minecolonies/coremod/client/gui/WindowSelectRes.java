@@ -17,6 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -45,7 +46,12 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
     /**
      * The building position.
      */
-    private final BlockPos building;
+    private final BlockPos             building;
+
+    /**
+     * Predicate to test for.
+     */
+    private final Predicate<ItemStack> test;
 
     /**
      * The filter string.
@@ -66,8 +72,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
      * Create a selection window with the origin window as input.
      * @param origin the origin.
      * @param colonyId the colony id.
+     * @param building the building position.
+     * @param test the testing predicate for the selector.
      */
-    public WindowSelectRes(final Window origin, final int colonyId, final BlockPos building)
+    public WindowSelectRes(final Window origin, final int colonyId, final BlockPos building, final Predicate<ItemStack> test)
     {
         super("minecolonies:gui/windowselectres.xml");
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
@@ -80,6 +88,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
         this.findPaneOfTypeByID("resourceName", Label.class).setLabelText(new ItemStack(Items.AIR).getDisplayName().getUnformattedComponentText());
         this.colonyId = colonyId;
         this.building = building;
+        this.test = test;
     }
 
     /**
@@ -141,8 +150,8 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
         this.allItems.clear();
         this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
                                                                  .map(ItemStack::new)
-                                                                 .filter((stack) -> (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
-                                                                                                                .contains(this.filter.toLowerCase(Locale.US))))
+                                                                 .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
+                                                                                                                .contains(this.filter.toLowerCase(Locale.US)))))
                                                                  .collect(Collectors.toList())));
         this.updateResourceList();
     }

@@ -142,6 +142,7 @@ public final class Compatibility
 
     /**
      * Check if dynamic tree's is present
+     * @return the dynamic trees.
      */
     public static boolean isDynTreePresent()
     {
@@ -160,6 +161,8 @@ public final class Compatibility
 
     /**
      * Check if block is a Dynamic tree
+     * @param block the block to check.
+     * @return true if so.
      */
     public static boolean isDynamicBlock(final Block block)
     {
@@ -168,6 +171,8 @@ public final class Compatibility
 
     /**
      * Check if block is a Dynamic Leaf
+     * @param block the block to check.
+     * @return true if so.
      */
     public static boolean isDynamicLeaf(final Block block)
     {
@@ -193,6 +198,7 @@ public final class Compatibility
      * @param blockState Blockstate of the Leaf
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
+     * @return           the list of drops
      */
     public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
@@ -230,6 +236,7 @@ public final class Compatibility
      * Check wether the item is a dynamic Sapling
      *
      * @param item Item to check
+     * @return true if so.
      */
     public static boolean isDynamicTreeSapling(final Item item)
     {
@@ -252,6 +259,7 @@ public final class Compatibility
      *
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
+     * @param world the world to check.
      * @return true when same family
      */
     public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IWorld world)

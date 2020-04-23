@@ -12,10 +12,9 @@ import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

@@ -9,7 +9,6 @@ import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.List;
 import java.util.Set;
 
 public interface IWareHouse extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding

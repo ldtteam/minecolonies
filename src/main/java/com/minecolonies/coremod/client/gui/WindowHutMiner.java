@@ -1,21 +1,20 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.coremod.MineColonies;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.MinerSetLevelMessage;
 import net.minecraft.util.Tuple;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for the miner hut.

@@ -116,7 +116,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !existingCitizen.get().world.isBlockLoaded(existingCitizen.get().getPosition()))
+        if (!existingCitizen.get().isAlive() || !existingCitizen.get().world.isBlockPresent(existingCitizen.get().getPosition()))
         {
             existingCitizen.get().remove();
             data.setCitizenEntity(citizen);
@@ -429,7 +429,7 @@ public class CitizenManager implements ICitizenManager
         final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
         if (effect != null)
         {
-            max = effect.getEffect();
+            max += effect.getEffect();
         }
         return max;
     }

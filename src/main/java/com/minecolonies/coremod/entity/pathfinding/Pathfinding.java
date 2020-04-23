@@ -38,6 +38,7 @@ public final class Pathfinding
     
     /**
      * Creates a new thread pool for pathfinding jobs
+     * @return the threadpool executor.
      */
     public static ThreadPoolExecutor getExecutor()
     {

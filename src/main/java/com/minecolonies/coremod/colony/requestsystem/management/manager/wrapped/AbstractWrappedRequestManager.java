@@ -15,8 +15,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.Logger;
 import net.minecraft.nbt.CompoundNBT;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,7 +131,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     /**
      * Method to get a resolver from its token.
      *
-     * @param token@return The resolver registered with the given token.
+     * @param token the token.
+     * @return The resolver registered with the given token.
      * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull

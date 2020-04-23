@@ -433,7 +433,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Sets the next patrol target, and moves to it if patrolling
      *
-     * @param target
+     * @param target the next patrol target.
      */
     public void setNextPatrolTarget(final BlockPos target)
     {
@@ -842,6 +842,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Calculates the dmg increase per level
+     * @return the level damage.
      */
     public int getLevelDamage()
     {

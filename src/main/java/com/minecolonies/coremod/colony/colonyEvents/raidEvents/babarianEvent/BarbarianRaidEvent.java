@@ -203,7 +203,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     /**
      * Called when an entity is removed
      *
-     * @param entity
+     * @param entity the entity to unregister.
      */
     @Override
     public void unregisterEntity(final Entity entity)
@@ -401,7 +401,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
      *
      * @param colony   colony to load into
      * @param compound NBTcompound with saved values
-     * @return
+     * @return the raid event.
      */
     public static BarbarianRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
     {

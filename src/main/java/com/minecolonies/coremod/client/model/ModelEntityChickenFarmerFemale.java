@@ -2,9 +2,7 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The chicken farmer female model.
@@ -284,6 +282,10 @@ public class ModelEntityChickenFarmerFemale extends CitizenModel<AbstractEntityC
 
     /**
      * This is a helper function from Tabula to set the rotation of model parts
+     * @param ModelRenderer the model renderer.
+     * @param x the x pos.
+     * @param y the y pos.
+     * @param z the z pos.
      */
     public void setRotation(ModelRenderer ModelRenderer, float x, float y, float z)
     {

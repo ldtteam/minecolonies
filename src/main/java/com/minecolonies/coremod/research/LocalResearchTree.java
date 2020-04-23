@@ -13,9 +13,11 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_TREE;
 
 /**
  * The class which contains all research.

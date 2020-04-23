@@ -5,8 +5,10 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.CraftingUpdate;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.InitialUpdate;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.ResetRSToFixBuildingId;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +18,8 @@ public class UpdateHandler implements IUpdateHandler
     @VisibleForTesting
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
       new InitialUpdate(),
-      new CraftingUpdate()
+      new CraftingUpdate(),
+      new ResetRSToFixBuildingId()
     );
 
     private final IStandardRequestManager manager;
@@ -30,7 +33,7 @@ public class UpdateHandler implements IUpdateHandler
     }
 
     @Override
-    public void handleUpdate()
+    public void handleUpdate(final UpdateType type)
     {
         if (manager.getColony().isRemote())
         {
@@ -42,8 +45,8 @@ public class UpdateHandler implements IUpdateHandler
           .sorted(Comparator.comparing(IUpdateStep::updatesToVersion))
           .forEachOrdered(s ->
           {
-              s.update(manager);
               manager.setCurrentVersion(s.updatesToVersion());
+              s.update(manager);
           });
     }
 

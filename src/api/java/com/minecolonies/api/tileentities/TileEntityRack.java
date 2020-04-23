@@ -73,8 +73,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a certain itemstack is present in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a certain itemstack is present in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack the stack to check.
      * @return true if so.
@@ -97,8 +96,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
      *
      * @return true if so.
      */
@@ -109,8 +107,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Get the amount of free slots in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
      */
@@ -127,8 +124,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a similar/same item as the stack is in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack             the stack to check.
      * @param ignoreDamageValue ignore the damage value.
@@ -149,8 +145,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a similar/same item as the stack is in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param itemStackSelectionPredicate the predicate to test the stack against.
      * @return true if so.
@@ -167,6 +162,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
         return false;
     }
+
+    /**
+     * Gets the content of the Rack
+     * @return the map of content.
+     */
+    public Map<ItemStorage, Integer> getAllContent() {return content;}
 
     /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
@@ -238,8 +239,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Update the blockState of the rack.
-     * Switch between connected, single, full and empty texture.
+     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
      */
     @Override
     protected void updateBlockState()
@@ -332,8 +332,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
      *
      * @return true if so.
      */

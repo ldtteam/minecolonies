@@ -7,7 +7,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +100,7 @@ public class RemoveEntityMessage implements IMessage
 
                     for(final Entity entity: list)
                     {
-                        if (entity.getName().equals(entityName))
+                        if (entity.getName().getFormattedText().equals(entityName))
                         {
                             entity.remove();
                         }

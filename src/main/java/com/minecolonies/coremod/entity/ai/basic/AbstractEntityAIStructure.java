@@ -16,13 +16,14 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -235,6 +236,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * Store the progressPos in the building if possible for the worker.
      * @param blockPos the progressResult.
+     * @param stage the current stage.
      */
     public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
@@ -255,6 +257,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Switches the structures stage after the current one has been completed.
+     * @param state the current state.
+     * @return the next stage.
      */
     public IAIState switchStage(final IAIState state)
     {
@@ -380,7 +384,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
-     *
+     * @param currentBlock the current block it is working on.
      * @return true while walking to the site.
      */
     public boolean walkToConstructionSite(final BlockPos currentBlock)
@@ -430,12 +434,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 }
                 if (!sameInWorld && !MineColonies.getConfig().getCommon().builderInfiniteResources.get())
                 {
-                    final List<ItemStack> requiredItems =
-                      handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
                     {
+                        for (final ToolType toolType : ToolType.values())
+                        {
+                            if (ItemStackUtils.isTool(stack, toolType))
+                            {
+                                if (checkForToolOrWeapon(toolType))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
                         itemList.add(this.getTotalAmount(stack));
                     }
 
@@ -508,6 +521,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @param placer   the placer.
      * @param itemList the list to check.
+     * @param force if force insertion.
      * @return true if need to request.
      */
     public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)

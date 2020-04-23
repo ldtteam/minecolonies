@@ -12,7 +12,7 @@ public class PublicCrafting extends AbstractCrafting
      * Create a Stack deliverable.
      *
      * @param stack the required stack.
-     * @param count
+     * @param count the crafting count.
      */
     public PublicCrafting(@NotNull final ItemStack stack, final int count)
     {

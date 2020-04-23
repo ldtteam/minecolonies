@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -216,7 +215,7 @@ public class StructureIterator
      * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
-     *
+     * @param abstractEntityAIStructure the entity.
      * @return a Result enum specifying the result
      */
     @NotNull

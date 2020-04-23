@@ -85,6 +85,7 @@ public class BlockStateUtils
      *
      * @param state Blockstate we're checking for a property
      * @param name  name of the property to find
+     * @return the property.
      */
     public static IProperty getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
     {

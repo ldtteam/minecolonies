@@ -244,6 +244,7 @@ public interface IColony
 
     /**
      * Get the last time mercenaries were used.
+     * @return the mercenary use time.
      */
     long getMercenaryUseTime();
 

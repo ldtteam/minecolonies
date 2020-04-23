@@ -1,6 +1,5 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.entity.citizen.Skill;

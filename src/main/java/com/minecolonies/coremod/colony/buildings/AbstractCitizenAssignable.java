@@ -35,12 +35,12 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
 
     /**
      * Constructor for the abstract class which receives the position and colony.
-     * @param pos
-     * @param colony
+     * @param pos the position.
+     * @param colony the colony.
      */
-    public AbstractCitizenAssignable(final BlockPos pos, final IColony colony)
+    public AbstractCitizenAssignable(final BlockPos pos, @NotNull final IColony colony)
     {
-        super(pos);
+        super(pos, colony);
         this.colony = colony;
     }
 

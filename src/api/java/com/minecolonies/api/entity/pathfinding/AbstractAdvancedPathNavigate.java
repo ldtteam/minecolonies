@@ -3,7 +3,6 @@ package com.minecolonies.api.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
@@ -26,6 +25,11 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     protected       BlockPos     originalDestination;
     @Nullable
     protected       Future<Path> calculationFuture;
+
+    /**
+     * The navigators node costs
+     */
+    private PathingOptions pathingOptions = new PathingOptions();
 
     public AbstractAdvancedPathNavigate(
       final MobEntity entityLiving,
@@ -60,4 +64,14 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
 
     public abstract PathResult moveToLivingEntity(@NotNull final Entity e, final double speed);
+
+    /**
+     * Get the pathing options
+     *
+     * @return the pathing options.
+     */
+    public PathingOptions getPathingOptions()
+    {
+        return pathingOptions;
+    }
 }

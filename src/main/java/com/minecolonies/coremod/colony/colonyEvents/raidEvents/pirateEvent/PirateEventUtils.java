@@ -57,15 +57,23 @@ public final class PirateEventUtils
      * @param colony           the target colony.
      * @param shipSize         the size of the ship.
      * @param eventID          the id of the raids event.
+     * @param shipRotation     the shiprotation.
+     * @return true if successful.
      */
-    public static boolean spawnPirateShip(final BlockPos targetSpawnPoint, final World world, final IColony colony, final String shipSize, final int eventID)
+    public static boolean spawnPirateShip(
+      final BlockPos targetSpawnPoint,
+      final World world,
+      final IColony colony,
+      final String shipSize,
+      final int eventID,
+      final int shipRotation)
     {
         final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(0), world, targetSpawnPoint, Mirror.NONE);
+        structure.rotate(BlockPosUtil.getRotationFromRotations(shipRotation), world, targetSpawnPoint, Mirror.NONE);
 
         if (!colony.getEventManager()
                .getStructureManager()
-               .spawnTemporaryStructure(structure, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, 0, Mirror.NONE))
+               .spawnTemporaryStructure(structure, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, shipRotation, Mirror.NONE))
         {
             return false;
         }
@@ -85,27 +93,27 @@ public final class PirateEventUtils
         switch (shipSize)
         {
             case SMALL_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(2).north(), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(2).north(3), world, PIRATE, colony, eventID);
                 break;
             case MEDIUM_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, CHIEFPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(1), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(5).south(6), world, ARCHERPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).north(12), world, CHIEFPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(1).north(2), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(5).south(4), world, ARCHERPIRATE, colony, eventID);
                 break;
             case BIG_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).south(), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(3).north(), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).south(5), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).north(5).east(2), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).north(8), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(2).south(12), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).south().north(2), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).north(3), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.down(1).south(3), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.down(1).north(7).east(2), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.down(1).north(10), world, PIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(2).south(10), world, PIRATE, colony, eventID);
 
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, CHIEFPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(6).north(12), world, CHIEFPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).north(12), world, CHIEFPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(6).north(14), world, CHIEFPIRATE, colony, eventID);
 
-                setupSpawner(targetSpawnPoint.up(9).north(13), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(22).south(), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(6).south(11), world, ARCHERPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(9).north(15), world, ARCHERPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(22).south().north(2), world, ARCHERPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(6).south(9), world, ARCHERPIRATE, colony, eventID);
                 break;
             default:
                 Log.getLogger().warn("Invalid ship size detected!");
@@ -137,12 +145,13 @@ public final class PirateEventUtils
     /**
      * Checks whether a pirate event is possible at this place.
      *
-     * @param colony
-     * @param spawnPoint
-     * @param raidLevel
-     * @return
+     * @param colony the colony.
+     * @param spawnPoint the spawn point.
+     * @param raidLevel the raid level.
+     * @param rotation the rotation.
+     * @return true if successful.
      */
-    public static boolean canSpawnPirateEventAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel)
+    public static boolean canSpawnPirateEventAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation)
     {
         if (spawnPoint.equals(colony.getCenter()) || spawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
         {
@@ -153,7 +162,7 @@ public final class PirateEventUtils
         final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicName;
 
         final Structure structure = new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(0), colony.getWorld(), spawnPoint, Mirror.NONE);
+        structure.rotate(BlockPosUtil.getRotationFromRotations(rotation), colony.getWorld(), spawnPoint, Mirror.NONE);
 
         return canPlaceShipAt(spawnPoint, structure, world) || canPlaceShipAt(spawnPoint.down(), structure, world);
     }
@@ -175,11 +184,13 @@ public final class PirateEventUtils
     }
 
     /**
-     * Returns true when most parts of the given area are water, > 90%
+     * Returns true when most parts of the given area are water, more then 90%
      *
      * @param world Blockacces to use
      * @param from  First corner of search rectangle
      * @param to    Second corner of search rectangle
+     * @param materials the materials.
+     * @param percentRequired the required percentage.
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyMaterial(
@@ -187,7 +198,7 @@ public final class PirateEventUtils
       @NotNull final World world,
       @NotNull final BlockPos from,
       @NotNull final BlockPos to,
-      @NotNull final double percentRequired)
+      final double percentRequired)
     {
         final int xDist = Math.abs(from.getX() - to.getX());
         final int zDist = Math.abs(from.getZ() - to.getZ());
@@ -237,7 +248,7 @@ public final class PirateEventUtils
      * @param maxDistancePos the position from where to calc the max distance.
      * @param minDistance    the min distance from colony center allowed
      * @param accuracy       the accuracy of steps to check in percent, min 1.
-     * @return
+     * @return the position.
      */
     public static BlockPos getLoadedPositionTowardsCenter(
       final BlockPos startPos,
@@ -252,9 +263,9 @@ public final class PirateEventUtils
             return null;
         }
 
-        if (colony.getWorld().isBlockLoaded(startPos))
+        if (colony.getWorld().isBlockPresent(startPos))
         {
-            return startPos;
+            return BlockPosUtil.findLand(startPos, colony.getWorld());
         }
 
         BlockPos diff = colony.getCenter().subtract(startPos);
@@ -274,11 +285,38 @@ public final class PirateEventUtils
                 return null;
             }
 
-            if (colony.getWorld().isBlockLoaded(tempPos))
+            if (colony.getWorld().isBlockPresent(tempPos))
             {
                 return BlockPosUtil.getFloor(tempPos, colony.getWorld());
             }
         }
         return null;
+    }
+
+    /**
+     * Finds a spawnpoint for pirates on a ship
+     *
+     * @param spawnPos the ships spawnpoint
+     * @param world    the world
+     * @param radius the radius to check for.
+     * @return the position.
+     */
+    public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final World world, final int radius)
+    {
+        for (int y = 0; y <= radius * 2; y += 2)
+        {
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int z = -radius; z <= radius; z++)
+                {
+                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() == Blocks.AIR && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() == Blocks.AIR)
+                    {
+                        return spawnPos.add(x, y, z);
+                    }
+                }
+            }
+        }
+
+        return spawnPos;
     }
 }

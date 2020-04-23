@@ -9,7 +9,6 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -20,6 +19,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -386,8 +386,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return true;
         }
         else return job.getWorkOrder() != null
-                      && ( !world.isBlockLoaded(job.getWorkOrder().getBuildingLocation())
-                             || (currentStructure != null && !world.isBlockLoaded(incrementBlock(currentStructure.getCurrentBlockPosition(), new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight())))));
+                      && (!world.isBlockPresent(job.getWorkOrder().getBuildingLocation())
+                            || (currentStructure != null && !world.isBlockPresent(incrementBlock(currentStructure.getCurrentBlockPosition(),
+          new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight())))));
     }
 
     /**

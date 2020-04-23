@@ -13,8 +13,8 @@ import com.minecolonies.coremod.client.gui.WindowHutCowboy;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.network.messages.CowboySetMilkCowsMessage;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

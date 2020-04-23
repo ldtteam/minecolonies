@@ -23,6 +23,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -899,7 +900,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 {
                     for (final ICitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
                     {
-                        if (citizen.getName().equals(name))
+                        if (citizen.getName().equals(name.getFormattedText()))
                         {
                             LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
                             return;
@@ -1150,6 +1151,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
+                    this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
                 }
             }
         }
@@ -1202,7 +1204,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param entity entity to ride on
      * @param force  force flag
-     * @return
+     * @return true if successful.
      */
     @Override
     public boolean startRiding(final Entity entity, final boolean force)
@@ -1250,8 +1252,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), getPosition(),
-              citizenJobHandler.getColonyJob().getMoveAwaySound(), 1);
+            SoundUtils.playSoundAtCitizenWith(world, getPosition(), EventType.DANGER, getCitizenData());
         }
     }
 
@@ -1460,6 +1461,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
         if (citizenData != null)
         {
@@ -1526,12 +1528,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (CompatibilityUtils.getWorldFromCitizen(this).isDaytime() && !CompatibilityUtils.getWorldFromCitizen(this).isRaining() && citizenData != null)
         {
-            SoundUtils.playRandomSound(CompatibilityUtils.getWorldFromCitizen(this), this, citizenData.getSaturation());
-        }
-        else if (citizenStatusHandler.getStatus() != Status.SLEEPING && CompatibilityUtils.getWorldFromCitizen(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE)
-                   && citizenJobHandler.getColonyJob() != null)
-        {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), citizenJobHandler.getColonyJob().getBadWeatherSound(), 1);
+            SoundUtils.playRandomSound(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), citizenData);
         }
     }
 
@@ -1620,6 +1617,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Get if the citizen is fleeing from an attacker.
+     * @return true if so.
      */
     public boolean isCurrentlyFleeing()
     {

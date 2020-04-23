@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.pathfinding.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 
 import java.util.function.Function;

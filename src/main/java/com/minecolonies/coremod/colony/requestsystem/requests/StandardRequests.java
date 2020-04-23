@@ -20,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

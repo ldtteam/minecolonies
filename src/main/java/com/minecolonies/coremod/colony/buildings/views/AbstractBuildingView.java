@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -12,18 +13,20 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +38,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING
 import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
- * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
- * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
- * Mutable operations on a View result in a message to the server to perform the operation.
+ * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
+ * client-friendly form. Mutable operations on a View result in a message to the server to perform the operation.
  */
 public abstract class AbstractBuildingView implements IBuildingView
 {
@@ -122,6 +124,22 @@ public abstract class AbstractBuildingView implements IBuildingView
      * The claim radius.
      */
     private int claimRadius = 0;
+
+    /**
+     * The BlockPos list of all Containers
+     */
+
+    private List<BlockPos> containerlist = new ArrayList<>();
+
+    /**
+     * The minimum stock.
+     */
+    private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+
+    /**
+     * If the stock limit was reached.
+     */
+    private boolean reachedLimit = false;
 
     /**
      * Creates a building view.
@@ -217,6 +235,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Getter for the custom building name.
+     *
      * @return the name.
      */
     @Override
@@ -271,6 +290,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Check if the building is current being built.
+     *
      * @return true if so.
      */
     @Override
@@ -281,6 +301,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Check if the building is currently being repaired.
+     *
      * @return true if so.
      */
     @Override
@@ -291,6 +312,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Get the claim radius for the building.
+     *
      * @return the radius.
      */
     @Override
@@ -300,8 +322,16 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Open the associated BlockOut window for this building.
-     * If the player is sneaking open the inventory else open the GUI directly.
+     * Returns the Container List
+     */
+    @Override
+    public List<BlockPos> getContainerList()
+    {
+        return containerlist;
+    }
+
+    /**
+     * Open the associated BlockOut window for this building. If the player is sneaking open the inventory else open the GUI directly.
      *
      * @param shouldOpenInv if the player is sneaking.
      */
@@ -372,8 +402,38 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
-
+        final int racks = buf.readInt();
+        for (int i = 0; i < racks; i++)
+        {
+            containerlist.add(buf.readBlockPos());
+        }
         loadRequestSystemFromNBT(buf.readCompoundTag());
+
+        minimumStock.clear();
+        final int size = buf.readInt();
+        for(int i = 0; i < size; i++)
+        {
+            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
+        }
+        reachedLimit = buf.readBoolean();
+    }
+
+    /**
+     * The minimum stock.
+     * @return the stock.
+     */
+    public List<Tuple<ItemStorage, Integer>> getStock()
+    {
+        return minimumStock;
+    }
+
+    /**
+     * Check if the warehouse has reached the limit.
+     * @return true if so.
+     */
+    public boolean hasReachedLimit()
+    {
+        return reachedLimit;
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)
@@ -392,7 +452,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         return getDataStore().getOpenRequestsByCitizen();
     }
 
-    private Map<IToken<?>, Integer> getCitizensByRequest()
+    protected Map<IToken<?>, Integer> getCitizensByRequest()
     {
         return getDataStore().getCitizensByRequest();
     }
@@ -515,7 +575,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
-                return new StringTextComponent("<UNKNOWN>");
+                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() :this.getCustomName() );
             }
 
             return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
@@ -568,8 +628,8 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Setter for the custom name.
-     * Sets the name on the client side and sends it to the server.
+     * Setter for the custom name. Sets the name on the client side and sends it to the server.
+     *
      * @param name the new name.
      */
     @Override

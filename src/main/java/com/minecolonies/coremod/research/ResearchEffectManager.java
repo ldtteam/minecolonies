@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

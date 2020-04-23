@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.Items;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;

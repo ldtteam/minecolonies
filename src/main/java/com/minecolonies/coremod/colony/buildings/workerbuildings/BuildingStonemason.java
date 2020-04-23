@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -11,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
@@ -125,7 +125,9 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             final Item item = storage.getPrimaryOutput().getItem();
             if (item.isIn(Tags.Items.STONE) ||
                     item.isIn(Tags.Items.COBBLESTONE) ||
-                    item.isIn(ItemTags.STONE_BRICKS))
+                    item.isIn(ItemTags.STONE_BRICKS) ||
+                    item.getRegistryName().getPath().contains("prismarine") ||
+                    item.getRegistryName().getPath().contains("end_stone"))
             {
                 return true;
             }
@@ -147,7 +149,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                             block.isIn(Tags.Blocks.COBBLESTONE) ||
                             block.isIn(BlockTags.STONE_BRICKS) ||
                             block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
-                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") )
+                            block.asItem().getRegistryName().getPath().contains("sandstone_slab"))
                     {
                         amountOfValidBlocks++;
                         continue;

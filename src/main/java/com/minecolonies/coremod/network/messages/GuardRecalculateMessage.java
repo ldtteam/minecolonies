@@ -4,12 +4,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +41,7 @@ public class GuardRecalculateMessage implements IMessage
      * Creates a new message of this type to set the guard scepter in the player inventory.
      *
      * @param building the building.
+     * @param colonyId the colony id.
      */
     public GuardRecalculateMessage(final int colonyId, final AbstractBuildingView building)
     {

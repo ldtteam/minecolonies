@@ -81,7 +81,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, button.getID());
-        if (research != null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+        if (research != null &&
+              building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
+              (building.getBuildingLevel() >= research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
+              research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
             close();
@@ -103,6 +106,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param tree the local tree of the colony.
      * @param parentResearched if possibly can be researched.
      * @param abandoned if abandoned child.
+     * @param parentHeight the height of the parent.
      * @return the next y offset.
      */
     public int drawTree(final int height, final int depth, final ZoomDragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
@@ -218,7 +222,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.notenoughresources"));
                 }
-                else if (research.getDepth() > building.getBuildingLevel())
+                else if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.buildingleveltoolow"));

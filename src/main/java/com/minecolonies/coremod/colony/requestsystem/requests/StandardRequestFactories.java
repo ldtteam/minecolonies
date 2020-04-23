@@ -585,6 +585,8 @@ public final class StandardRequestFactories
         final ListNBT deliveriesList = new ListNBT();
         request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.write(new CompoundNBT())));
 
+        compound.put(NBT_DELIVERIES, deliveriesList);
+
         return compound;
     }
 

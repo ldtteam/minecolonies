@@ -25,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-
 /**
  * Creates a decoration placerholder block.
  */

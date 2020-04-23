@@ -12,10 +12,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,6 +121,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * Create a Work Order from a saved CompoundNBT.
      *
      * @param compound the compound that contains the data for the Work Order
+     * @param manager the work manager.
      * @return {@link AbstractWorkOrder} from the NBT
      */
     public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
@@ -306,7 +306,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     {
         if (citizen.getWorkBuilding() != null)
         {
-            return citizen.getWorkBuilding().equals(claimedBy);
+            return citizen.getWorkBuilding().getPosition().equals(claimedBy);
         }
         return false;
     }

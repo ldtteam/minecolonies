@@ -1,9 +1,7 @@
 package com.minecolonies.api.colony.workorders;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**

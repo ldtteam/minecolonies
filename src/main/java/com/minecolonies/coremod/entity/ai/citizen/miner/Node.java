@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -285,6 +284,7 @@ public class Node
      * Return a random next node to work at, might be at this node or at a parent.
      * @return the next node to go to.
      * @param level the level it is part of.
+     * @param step the step.
      */
     @Nullable
     public Node getRandomNextNode(final Level level, final int step)

@@ -66,8 +66,8 @@ public enum ShipSize
     /**
      * Returns the right shipsize for the given raidlevel
      *
-     * @param raidLevel
-     * @return
+     * @param raidLevel the raid level.
+     * @return the ship size.
      */
     public static ShipSize getShipForRaidLevel(final int raidLevel)
     {

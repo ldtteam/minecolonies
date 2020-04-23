@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Creates a new building for the school.
@@ -253,6 +253,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Get a random place to sit from the school.
+     * @return the place to sit.
      */
     @Nullable
     public BlockPos getRandomPlaceToSit()

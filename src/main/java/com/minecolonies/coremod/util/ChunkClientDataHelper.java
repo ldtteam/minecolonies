@@ -22,7 +22,7 @@ public class ChunkClientDataHelper
     /**
      * Adds a colony chunk data entry
      *
-     * @param chunkCap
+     * @param chunkCap the capability to add.
      */
     public static void addCapData(final ChunkCapData chunkCap)
     {
@@ -31,6 +31,7 @@ public class ChunkClientDataHelper
 
     /**
      * Applies saved data for late loading on client side
+     * @param chunk the chunk to apply it to.
      */
     public static void applyLate(final Chunk chunk)
     {

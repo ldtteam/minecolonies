@@ -7,20 +7,18 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.*;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -64,6 +62,7 @@ public class OpenCraftingGUIMessage implements IMessage
      * Creates an open inventory message for a building.
      *
      * @param building {@link AbstractBuildingView}
+     * @param gridSize the grid size.
      */
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int gridSize)
     {

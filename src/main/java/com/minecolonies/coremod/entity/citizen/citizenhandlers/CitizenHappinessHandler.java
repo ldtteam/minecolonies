@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.DEMANDS;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO;
 
 /**
  * The new happiness handler for the citizen.
@@ -120,7 +121,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             totalWeight += happinessModifier.getWeight();
         }
 
-        return 10.0 * ( total / totalWeight );
+        return Math.min(10.0 * ( total / totalWeight ), 10);
     }
 
     @Override
@@ -228,6 +229,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 workers += citizen.getJobModifier();
             }
         }
-        return guards / workers;
+        return Math.min(guards / workers, 2);
     }
 }

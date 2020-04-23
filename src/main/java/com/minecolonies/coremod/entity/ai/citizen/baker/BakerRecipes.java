@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 

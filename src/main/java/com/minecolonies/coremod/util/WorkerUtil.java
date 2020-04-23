@@ -70,7 +70,7 @@ public final class WorkerUtil
     /**
      * Gets or initializes the test tool list.
      *
-     * @return
+     * @return the list of possible tools.
      */
     public static List<Tuple<ToolType, ItemStack>> getOrInitTestTools()
     {
@@ -172,6 +172,7 @@ public final class WorkerUtil
      * Get a Tooltype for a certain block. We need this because minecraft has a lot of blocks which have strange or no required tool.
      *
      * @param target the target block.
+     * @param blockHardness the hardness.
      * @return the toolType to use.
      */
     public static IToolType getBestToolForBlock(final Block target, float blockHardness)
@@ -251,6 +252,7 @@ public final class WorkerUtil
      * Change the citizens Rotation to look at said block.
      *
      * @param block the block he should look at.
+     * @param citizen the citizen that shall face the block.
      */
     public static void faceBlock(@Nullable final BlockPos block, final AbstractEntityCitizen citizen)
     {
@@ -346,14 +348,15 @@ public final class WorkerUtil
 
     /**
      * Check if there is any already composted land.
-     *
+     * @param buildingFlorist the building to check.
+     * @param world the world to check it for.
      * @return true if there is any.
      */
     public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
     {
         for (final BlockPos pos : buildingFlorist.getPlantGround())
         {
-            if (world.isBlockLoaded(pos))
+            if (world.isBlockPresent(pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

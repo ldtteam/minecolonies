@@ -67,8 +67,8 @@ public class EventStructureManager implements IEventStructureManager
     /**
      * Spawns the given structure at the blockpos and saves a backup for the previous blocks.
      *
-     * @param structure
-     * @param eventID
+     * @param structure the structure to spawn.
+     * @param eventID the id of the event.
      */
     @Override
     public boolean spawnTemporaryStructure(

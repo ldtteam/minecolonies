@@ -248,7 +248,7 @@ public class BuildingHome extends AbstractBuilding
         }
         childCreationTimer += TWENTYFIVESEC;
 
-        if (getAssignedCitizen().size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
+        if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -363,12 +363,12 @@ public class BuildingHome extends AbstractBuilding
         final String[] lastName = parentName.split(" ");
         newName[newName.length - 1] = lastName[lastName.length - 1];
 
-        String combinedName = "";
+        final StringBuilder combinedName = new StringBuilder();
         for (final String namePart : newName)
         {
-            combinedName = combinedName + namePart + " ";
+            combinedName.append(namePart).append(" ");
         }
-        child.setName(combinedName.trim());
+        child.setName(combinedName.toString().trim());
     }
 
     @Override
@@ -459,7 +459,7 @@ public class BuildingHome extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        for (final Optional<AbstractEntityCitizen> entityCitizen : getAssignedEntities())
+        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities()))
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {
@@ -497,22 +497,6 @@ public class BuildingHome extends AbstractBuilding
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);
-    }
-
-    /**
-     * Return the child creation interval
-     */
-    public int getCitizenCreationInterval()
-    {
-        return childCreationInterval;
-    }
-
-    /**
-     * Sets the child creation interval in seconds
-     */
-    public void setCitizenCreationInterval(final int childCreationInterval)
-    {
-        this.childCreationTimer = childCreationInterval;
     }
 
     @Override

@@ -1,10 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -12,6 +7,11 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;

@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.blockout.Log;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -10,11 +14,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
-import com.ldtteam.blockout.Log;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.Box;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -69,6 +68,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * Constructor to initiate the window request tree windows.
      *
      * @param building citizen to bind the window to.
+     * @param pane the string name of the pane.
+     * @param colony the colony it belongs to.
      */
     public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
     {

@@ -13,35 +13,32 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.InstantStructurePlacer;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +54,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
 public class BuildToolPlaceMessage implements IMessage
 {
     /**
-     * Language key for missing hut 
+     * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
 
@@ -74,7 +71,7 @@ public class BuildToolPlaceMessage implements IMessage
     private boolean  mirror;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildToolPlaceMessage()
     {
@@ -205,7 +202,8 @@ public class BuildToolPlaceMessage implements IMessage
       final BlockState state)
     {
         final String hut = sn.getSection();
-        final Block block =  ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockhut" + hut));
+        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
+        final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
@@ -235,31 +233,29 @@ public class BuildToolPlaceMessage implements IMessage
 
                 boolean complete = false;
                 int level = 0;
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                  itemStack -> itemStack.isItemEqual(new ItemStack(Item.getItemFromBlock(block), 1)));
-                if (slot != -1)
+
+                final CompoundNBT compound = stack.getTag();
+                if (compound != null)
                 {
-                    final ItemStack stack = player.inventory.getStackInSlot(slot);
-                    final CompoundNBT compound = stack.getTag();
-                    if (compound != null)
+                    if (compound.keySet().contains(TAG_OTHER_LEVEL))
                     {
-                        if (compound.keySet().contains(TAG_OTHER_LEVEL))
-                        {
-                            level = compound.getInt(TAG_OTHER_LEVEL);
-                        }
-                        if (compound.keySet().contains(TAG_PASTEABLE))
-                        {
-                            String schematic = sn.toString();
-                            schematic = schematic.substring(0, schematic.length() - 1);
-                            schematic += level;
-                            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
-                              buildPos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
-                            complete = true;
-                        }
+                        level = compound.getInt(TAG_OTHER_LEVEL);
                     }
-                    player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)),1);
+                    if (compound.keySet().contains(TAG_PASTEABLE))
+                    {
+                        String schematic = sn.toString();
+                        schematic = schematic.substring(0, schematic.length() - 1);
+                        schematic += level;
+                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
+                          buildPos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                        complete = true;
+                    }
                 }
-                setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
+                player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)), 1);
+                if (IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos) != null)
+                {
+                    setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
+                }
             }
         }
         else
@@ -280,9 +276,9 @@ public class BuildToolPlaceMessage implements IMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleDecoration(
-                                          @NotNull final World world, @NotNull final PlayerEntity player,
-                                          final StructureName sn, final String workOrderName,
-                                          final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+      @NotNull final World world, @NotNull final PlayerEntity player,
+      final StructureName sn, final String workOrderName,
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
@@ -354,7 +350,6 @@ public class BuildToolPlaceMessage implements IMessage
 
 
             building.setStyle(sn.getStyle());
-            building.setRotation(rotation);
             building.setBuildingLevel(level);
 
             if (!(building instanceof IRSComponent))

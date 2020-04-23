@@ -343,6 +343,10 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> magiccompost;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightning;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> deeppockets;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> loaded;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> heavilyloaded;
+
     /**
      * Builds common configuration.
      *
@@ -824,16 +828,16 @@ public class CommonConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:iron_block*6"),
           s -> s instanceof String);
         squiretraining = defineList(builder, "squiretraining",
-          Collections.singletonList("minecraft:shield*5"),
+          Collections.singletonList("minecraft:shield*4"),
           s -> s instanceof String);
         knighttraining = defineList(builder, "knighttraining",
-          Collections.singletonList("minecraft:shield*10"),
+          Collections.singletonList("minecraft:shield*8"),
           s -> s instanceof String);
         captaintraining = defineList(builder, "captaintraining",
-          Collections.singletonList("minecraft:shield*25"),
+          Collections.singletonList("minecraft:shield*16"),
           s -> s instanceof String);
         captainoftheguard = defineList(builder, "captainoftheguard",
-          Collections.singletonList("minecraft:shield*64"),
+          Collections.singletonList("minecraft:shield*27"),
           s -> s instanceof String);
 
         improvedbows = defineList(builder, "improvedbows",
@@ -1287,6 +1291,16 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.magiccompost = defineList(builder, "magiccompost",
           Collections.singletonList("minecraft:wheat_seeds*2048"),
+          s -> s instanceof String);
+
+        this.loaded = defineList(builder, "loaded",
+          Collections.singletonList("minecraft:emerald*64"),
+          s -> s instanceof String);
+        this.heavilyloaded = defineList(builder, "heavilyloaded",
+          Collections.singletonList("minecraft:emerald*128"),
+          s -> s instanceof String);
+        this.deeppockets = defineList(builder, "deeppockets",
+          Collections.singletonList("minecraft:emerald*256"),
           s -> s instanceof String);
 
         finishCategory(builder);

@@ -1,17 +1,14 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -68,7 +65,9 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     /**
      * Set the current angler.
-     * @param citizen
+     * @param citizen the citizen to set.
+     * @param luck the luck param.
+     * @param lureSpeed the lure speed param.
      */
     public void setAngler(final EntityCitizen citizen, final int luck, final int lureSpeed)
     {

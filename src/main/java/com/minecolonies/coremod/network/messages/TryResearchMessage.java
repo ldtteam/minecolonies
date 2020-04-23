@@ -62,6 +62,7 @@ public class TryResearchMessage implements IMessage
      * @param branch the research branch.
      * @param colonyId the colony id.
      * @param dimension the dimension.
+     * @param university the university position.
      */
     public TryResearchMessage(@NotNull final String researchId, final String branch, final int colonyId, final int dimension, final BlockPos university)
     {
@@ -119,7 +120,7 @@ public class TryResearchMessage implements IMessage
         {
             final IBuilding uni = colony.getBuildingManager().getBuilding(university);
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
-            if (research.canResearch(uni.getBuildingLevel(), colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
+            if (research.canResearch(uni.getBuildingLevel() == uni.getMaxBuildingLevel() ? Integer.MAX_VALUE : uni.getBuildingLevel(), colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
                 if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
                 {

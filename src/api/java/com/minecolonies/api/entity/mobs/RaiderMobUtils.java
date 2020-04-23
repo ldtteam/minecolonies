@@ -132,6 +132,7 @@ public final class RaiderMobUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      * @param colony         the colony to spawn them close to.
+     * @param eventID        the event id.
      */
     public static void spawn(
       final EntityType entityToSpawn,

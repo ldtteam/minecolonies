@@ -9,7 +9,6 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +52,7 @@ public class HutRenameMessage implements IMessage
      *
      * @param colony Colony the rename is going to occur in.
      * @param name   New name of the town hall.
+     * @param b the building.
      */
     public HutRenameMessage(@NotNull final IColony colony, final String name, final AbstractBuildingView b)
     {

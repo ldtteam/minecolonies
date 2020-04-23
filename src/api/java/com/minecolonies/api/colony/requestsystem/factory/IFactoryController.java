@@ -2,8 +2,9 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.network.PacketBuffer;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -117,6 +118,7 @@ public interface IFactoryController
      * Method used to quickly serialize a object if it is known to this controller.
      *
      * @param object The object to serialize.
+     * @param <Output> the output type.
      * @return An NBTTag containing a serialized version of the given object.
      *
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.

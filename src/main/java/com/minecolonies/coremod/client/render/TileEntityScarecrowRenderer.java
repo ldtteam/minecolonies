@@ -77,6 +77,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
     /**
      * The public constructor for the renderer.
+     * @param dispatcher the render dispatcher.
      */
     public TileEntityScarecrowRenderer(final TileEntityRendererDispatcher dispatcher)
     {

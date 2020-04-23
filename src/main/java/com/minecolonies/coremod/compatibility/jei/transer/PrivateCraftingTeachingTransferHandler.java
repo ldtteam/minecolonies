@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.compatibility.jei.transer;
 
 import com.google.common.collect.ImmutableSet;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
 import io.netty.buffer.Unpooled;
 import mezz.jei.api.gui.IRecipeLayout;

@@ -54,7 +54,7 @@ public class BarbarianHorde
     /**
      * Gets the barbarian message id
      *
-     * @return
+     * @return the id of the message.
      */
     public int getMessageID()
     {
@@ -77,7 +77,7 @@ public class BarbarianHorde
     /**
      * Write the horde to the given nbt compound
      *
-     * @param compound
+     * @param compound the compound to write it to.
      */
     public void writeToNbt(final CompoundNBT compound)
     {
@@ -90,8 +90,8 @@ public class BarbarianHorde
     /**
      * Create a new horde from the nbt compound
      *
-     * @param compound
-     * @return
+     * @param compound the compound to load it from.
+     * @return the loaded horde.
      */
     public static BarbarianHorde loadFromNbt(final CompoundNBT compound)
     {

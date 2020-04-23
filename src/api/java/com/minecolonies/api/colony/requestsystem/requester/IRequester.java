@@ -29,24 +29,23 @@ public interface IRequester
 
     /**
      * Method called by the request system to notify this requester that a request is complete.
-     *
+     * @param manager the request manager.
      * @param request the request.
      */
-    @NotNull
     void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
-     *
+     * @param manager the request manager.
      * @param request the request.
      */
-    @NotNull
     void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
      * Gets the name of the requester that requested the request given by the token.
      *
      * @param request the request for which the name of the requester is retrieved
+     * @param manager the request manager.
      * @return The display name of the requester.
      */
     @NotNull
