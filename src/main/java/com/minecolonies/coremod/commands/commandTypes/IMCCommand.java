@@ -69,8 +69,8 @@ public interface IMCCommand
 
     /**
      * Preconditions to check before executing
-     * @param context the command context.
      * @return true if fine.
+     * @param context the command context.
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
