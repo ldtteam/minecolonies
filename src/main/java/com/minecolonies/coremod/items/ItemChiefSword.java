@@ -26,6 +26,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
 
     /**
      * Constructor method for the Chief Sword Item
+     * @param properties the properties.
      */
     public ItemChiefSword(final Properties properties)
     {

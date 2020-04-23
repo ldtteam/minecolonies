@@ -121,6 +121,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * Create a Work Order from a saved CompoundNBT.
      *
      * @param compound the compound that contains the data for the Work Order
+     * @param manager the work manager.
      * @return {@link AbstractWorkOrder} from the NBT
      */
     public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)

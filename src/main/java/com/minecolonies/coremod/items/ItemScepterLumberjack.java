@@ -33,7 +33,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
     /**
      * LumberjackScepter constructor. Sets max stack to 1, like other tools.
-     * @param properties
+     * @param properties the properties.
      */
     public ItemScepterLumberjack(final Properties properties)
     {

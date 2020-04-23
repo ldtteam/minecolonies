@@ -363,7 +363,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Find given level in the levels array.
-     *
+     * @param level the level.
      * @return position in the levels array.
      */
     public int getLevelId(final Level level)

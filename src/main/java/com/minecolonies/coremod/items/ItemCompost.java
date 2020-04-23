@@ -22,6 +22,7 @@ public class ItemCompost extends AbstractItemMinecolonies
 
     /***
      * Constructor for the ItemCompost
+     * @param properties the properties.
      */
     public ItemCompost(final Item.Properties properties)
     {

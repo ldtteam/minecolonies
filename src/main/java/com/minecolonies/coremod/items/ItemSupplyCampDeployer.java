@@ -52,6 +52,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
+     * @param properties the properties.
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
@@ -131,6 +132,8 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param world the world.
      * @param pos   the position.
      * @param size  the size.
+     * @param placer the placer.
+     * @param placementErrorList the list of placement errors.
      * @return true if so.
      */
     public static boolean canCampBePlaced(

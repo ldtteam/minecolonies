@@ -399,7 +399,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
     /**
      * Check for all items of the required recipe.
-     *
+     * @param storage the storage.
      * @return the next state to go to.
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)

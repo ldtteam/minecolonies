@@ -13,6 +13,7 @@ public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptai
 
     /**
      * Constructor of the entity.
+     * @param type the entity type.
      * @param worldIn world to construct it in.
      */
     public EntityCaptainPirate(final EntityType type, final World worldIn)

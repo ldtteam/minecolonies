@@ -291,6 +291,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Check if the dman can currently accept requests.
+     * @return true if active.
      */
     public boolean isActive()
     {

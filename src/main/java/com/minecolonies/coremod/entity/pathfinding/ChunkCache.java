@@ -61,6 +61,7 @@ public class ChunkCache implements IWorldReader
 
     /**
      * set by !chunk.getAreLevelsEmpty
+     * @return if so.
      */
     @OnlyIn(Dist.CLIENT)
     public boolean isEmpty()

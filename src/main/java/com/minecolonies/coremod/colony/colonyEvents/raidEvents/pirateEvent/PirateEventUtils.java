@@ -57,6 +57,8 @@ public final class PirateEventUtils
      * @param colony           the target colony.
      * @param shipSize         the size of the ship.
      * @param eventID          the id of the raids event.
+     * @param shipRotation     the shiprotation.
+     * @return true if successful.
      */
     public static boolean spawnPirateShip(
       final BlockPos targetSpawnPoint,
@@ -143,10 +145,11 @@ public final class PirateEventUtils
     /**
      * Checks whether a pirate event is possible at this place.
      *
-     * @param colony
-     * @param spawnPoint
-     * @param raidLevel
-     * @return
+     * @param colony the colony.
+     * @param spawnPoint the spawn point.
+     * @param raidLevel the raid level.
+     * @param rotation the rotation.
+     * @return true if successful.
      */
     public static boolean canSpawnPirateEventAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation)
     {
@@ -186,6 +189,8 @@ public final class PirateEventUtils
      * @param world Blockacces to use
      * @param from  First corner of search rectangle
      * @param to    Second corner of search rectangle
+     * @param materials the materials.
+     * @param percentRequired the required percentage.
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyMaterial(
@@ -193,7 +198,7 @@ public final class PirateEventUtils
       @NotNull final World world,
       @NotNull final BlockPos from,
       @NotNull final BlockPos to,
-      @NotNull final double percentRequired)
+      final double percentRequired)
     {
         final int xDist = Math.abs(from.getX() - to.getX());
         final int zDist = Math.abs(from.getZ() - to.getZ());
@@ -243,7 +248,7 @@ public final class PirateEventUtils
      * @param maxDistancePos the position from where to calc the max distance.
      * @param minDistance    the min distance from colony center allowed
      * @param accuracy       the accuracy of steps to check in percent, min 1.
-     * @return
+     * @return the position.
      */
     public static BlockPos getLoadedPositionTowardsCenter(
       final BlockPos startPos,
@@ -293,7 +298,8 @@ public final class PirateEventUtils
      *
      * @param spawnPos the ships spawnpoint
      * @param world    the world
-     * @return
+     * @param radius the radius to check for.
+     * @return the position.
      */
     public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final World world, final int radius)
     {

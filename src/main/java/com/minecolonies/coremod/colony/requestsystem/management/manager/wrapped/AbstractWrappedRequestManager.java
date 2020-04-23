@@ -131,7 +131,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     /**
      * Method to get a resolver from its token.
      *
-     * @param token@return The resolver registered with the given token.
+     * @param token the token.
+     * @return The resolver registered with the given token.
      * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull

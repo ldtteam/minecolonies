@@ -138,6 +138,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
     /**
      * attackPhysical tries to launch an attack. Ticked every 8 Ticks
+     * @return the next state to go to.
      */
     protected IAIState attackPhysical()
     {

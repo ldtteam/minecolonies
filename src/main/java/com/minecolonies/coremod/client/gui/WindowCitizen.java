@@ -159,6 +159,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
+     * @param citizen the citizen.
+     * @param healthBarView the health bar view.
      */
     public static void createHealthBar(final ICitizenDataView citizen, final View healthBarView)
     {
@@ -229,6 +231,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
+     * @param citizen the citizen.
+     * @param view the view to add these to.
      */
     public static void createSaturationBar(final ICitizenDataView citizen, final View view)
     {
@@ -461,7 +465,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
-     * Update the display for the happiness
+     * Update the display for the happiness.
+     * @param citizen the citizen to update it for.
+     * @param window the window to add things to.
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {

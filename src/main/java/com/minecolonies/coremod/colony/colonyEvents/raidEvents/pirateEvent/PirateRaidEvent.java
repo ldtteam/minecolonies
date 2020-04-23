@@ -126,6 +126,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
 
     /**
      * Create a new Pirate raid event.
+     * @param colony the colony.
      */
     public PirateRaidEvent(@NotNull final IColony colony)
     {
@@ -281,7 +282,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Called when an entity is removed
      *
-     * @param entity
+     * @param entity the entity to unregister.
      */
     @Override
     public void unregisterEntity(final Entity entity)
@@ -299,7 +300,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Get the allowed amount of pirates this event can have.
      *
-     * @return
+     * @return the max number of pirates.
      */
     private int getMaxPirates()
     {
@@ -309,7 +310,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Sets the ship size for this event.
      *
-     * @param shipSize
+     * @param shipSize the ship size.
      */
     public void setShipSize(final ShipSize shipSize)
     {
@@ -319,7 +320,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Sets the ships rotation
      *
-     * @param shipRotation
+     * @param shipRotation the ship rotation.
      */
     public void setShipRotation(final int shipRotation)
     {
@@ -414,7 +415,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
      *
      * @param colony   the events colony
      * @param compound the NBT compound
-     * @return
+     * @return the colony to load.
      */
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {

@@ -152,6 +152,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * Get last index of the current itemHandler a slot belongs to.
      *
      * @param slot the slot of an itemHandler.
+     * @return the last index.
      */
     public int getLastIndex(final int slot)
     {

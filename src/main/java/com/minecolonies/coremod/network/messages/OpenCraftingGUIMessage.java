@@ -62,6 +62,7 @@ public class OpenCraftingGUIMessage implements IMessage
      * Creates an open inventory message for a building.
      *
      * @param building {@link AbstractBuildingView}
+     * @param gridSize the grid size.
      */
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int gridSize)
     {

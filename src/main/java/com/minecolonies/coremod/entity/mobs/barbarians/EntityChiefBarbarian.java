@@ -14,6 +14,7 @@ public class EntityChiefBarbarian extends AbstractEntityBarbarian implements ICh
     /**
      * Constructor of the entity.
      * @param worldIn world to construct it in.
+     * @param type the entity type.
      */
     public EntityChiefBarbarian(final EntityType type, final World worldIn)
     {

@@ -18,6 +18,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
 {
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
+     * @param properties the properties.
      */
     public ItemAncientTome(final Properties properties)
     {

@@ -65,7 +65,8 @@ public class TransferItemsRequestMessage implements IMessage
      *
      * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
-     * @param quantity  of item needed to be transfered
+     * @param quantity  of item needed to be transferred
+     * @param attemptResolve if resolving attempt.
      */
     public TransferItemsRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
     {

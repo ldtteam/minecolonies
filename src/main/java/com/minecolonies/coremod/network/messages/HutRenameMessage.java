@@ -52,6 +52,7 @@ public class HutRenameMessage implements IMessage
      *
      * @param colony Colony the rename is going to occur in.
      * @param name   New name of the town hall.
+     * @param b the building.
      */
     public HutRenameMessage(@NotNull final IColony colony, final String name, final AbstractBuildingView b)
     {

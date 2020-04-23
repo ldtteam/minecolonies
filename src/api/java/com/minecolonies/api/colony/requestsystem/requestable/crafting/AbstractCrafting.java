@@ -23,7 +23,7 @@ public abstract class AbstractCrafting implements IRequestable
     /**
      * Create a Stack deliverable.
      * @param stack the required stack.
-     * @param count
+     * @param count the crafting count.
      */
     public AbstractCrafting(@NotNull final ItemStack stack, final int count)
     {

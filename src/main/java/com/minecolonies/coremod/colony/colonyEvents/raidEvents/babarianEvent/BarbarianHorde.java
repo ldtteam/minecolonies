@@ -54,7 +54,7 @@ public class BarbarianHorde
     /**
      * Gets the barbarian message id
      *
-     * @return
+     * @return the id of the message.
      */
     public int getMessageID()
     {

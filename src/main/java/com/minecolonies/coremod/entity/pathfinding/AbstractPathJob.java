@@ -312,6 +312,8 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param onPath     checks if the node is on a path.
      * @param onRails    checks if the node is a rail block.
      * @param railsExit  the exit of the rails.
+     * @param blockPos   the position.
+     * @param swimStart  if its the swim start.
      * @return cost to move from the parent to the new position.
      */
     protected double computeCost(
@@ -1092,7 +1094,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Sets the pathing options
      *
-     * @param pathingOptions
+     * @param pathingOptions the pathing options to set.
      */
     public void setPathingOptions(final PathingOptions pathingOptions)
     {
