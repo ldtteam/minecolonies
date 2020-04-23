@@ -87,6 +87,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         }
 
         compound.put(NBT_KEY_HANDLERS, handlerList);
+        compound.put(NBT_KEY_HANDLERS_INDEXLIST, indexList);
 
         if (customName != null)
         {

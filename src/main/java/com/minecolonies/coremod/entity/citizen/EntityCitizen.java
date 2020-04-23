@@ -900,7 +900,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 {
                     for (final ICitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
                     {
-                        if (citizen.getName().equals(name))
+                        if (citizen.getName().equals(name.getFormattedText()))
                         {
                             LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
                             return;

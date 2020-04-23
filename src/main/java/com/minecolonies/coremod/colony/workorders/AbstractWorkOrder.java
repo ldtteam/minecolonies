@@ -306,7 +306,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     {
         if (citizen.getWorkBuilding() != null)
         {
-            return citizen.getWorkBuilding().equals(claimedBy);
+            return citizen.getWorkBuilding().getPosition().equals(claimedBy);
         }
         return false;
     }
