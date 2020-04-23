@@ -275,6 +275,13 @@ public final class ModBuildingsInitializer
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SCHOOL_ID))
                                   .createBuildingEntry();
 
+        ModBuildings.glassblower = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutGlassblower)
+                                .setBuildingProducer(BuildingSchool::new)
+                                .setBuildingViewProducer(() -> BuildingSchool.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
+                                .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -311,5 +318,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.hospital);
         reg.register(ModBuildings.stash);
         reg.register(ModBuildings.school);
+        reg.register(ModBuildings.glassblower);
     }
 }
