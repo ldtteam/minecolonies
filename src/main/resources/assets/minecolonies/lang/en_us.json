@@ -1115,7 +1115,7 @@
 
   "com.minecolonies.coremod.gui.colony.here": "You are inside %s owned by %s",
   "com.minecolonies.coremod.gui.colony.near": "Colony with ID %d is nearby.",
-  "com.minecolonies.coremod.gui.colony.nonenearby": "No nearby clony found.",
+  "com.minecolonies.coremod.gui.colony.nonenearby": "No nearby colony found.",
   "com.minecolonies.coremod.gui.colony.none": "You do not currently own a colony",
   "com.minecolonies.coremod.gui.colony.own": "You own an existing colony at %s",
   "com.minecolonies.coremod.gui.colony.delete": "Delete own colony",

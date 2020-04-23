@@ -217,6 +217,12 @@ public class EventHandler
     public static void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
     {
         final Entity entity = event.getEntity();
+        final BlockPos pos = entity.getPosition();
+
+        if (pos.equals(BlockPos.ZERO))
+        {
+            return;
+        }
 
         //  Add nearby players
         if (entity instanceof ServerPlayerEntity)

@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -78,14 +77,6 @@ public interface IRaiderManager
      * @return
      */
     BlockPos calculateSpawnLocation();
-
-    /**
-     * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
-     * @param directionX the first direction parameter.
-     * @param directionZ the second direction paramter.
-     * @return the position.
-     */
-    BlockPos getRandomOutsiderInDirection(final Direction directionX, final Direction directionZ);
 
     /**
      * Getter for the last spawn points.

@@ -76,8 +76,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.nodeProcessor = new WalkNodeProcessor();
         this.nodeProcessor.setCanEnterDoors(true);
+        getPathingOptions().setEnterDoors(true);
         this.nodeProcessor.setCanOpenDoors(true);
+        getPathingOptions().setCanOpenDoors(true);
         this.nodeProcessor.setCanSwim(true);
+        getPathingOptions().setCanSwim(true);
     }
 
     /**
@@ -129,6 +132,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
+        job.setPathingOptions(getPathingOptions());
         calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
         return pathResult;
@@ -643,6 +647,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected void pathFollow()
     {
+        getSpeed();
         final int curNode = currentPath.getCurrentPathIndex();
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
@@ -673,6 +678,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         super.pathFollow();
     }
+
+    public void updatePath() {}
 
     /**
      * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
@@ -838,5 +845,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
+    }
+
+    @Override
+    public void setCanSwim(boolean canSwim)
+    {
+        super.setCanSwim(canSwim);
+        getPathingOptions().setCanSwim(canSwim);
     }
 }
