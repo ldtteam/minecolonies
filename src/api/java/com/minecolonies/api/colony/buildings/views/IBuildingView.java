@@ -48,7 +48,7 @@ public interface IBuildingView extends IRequester
     /**
      * Get the BlockPos of the Containers.
      *
-     * @return List<BlockPos>containerList.
+     * @return List BlockPos containerList.
      */
     List<BlockPos> getContainerList();
 

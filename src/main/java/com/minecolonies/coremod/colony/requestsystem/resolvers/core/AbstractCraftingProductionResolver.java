@@ -38,7 +38,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      * Constructor to initialize.
      * @param location the location.
      * @param token the id.
-     * @param cClass
+     * @param cClass the class.
      */
     public AbstractCraftingProductionResolver(
       @NotNull final ILocation location,

@@ -236,6 +236,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * Store the progressPos in the building if possible for the worker.
      * @param blockPos the progressResult.
+     * @param stage the current stage.
      */
     public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
@@ -256,6 +257,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Switches the structures stage after the current one has been completed.
+     * @param state the current state.
+     * @return the next stage.
      */
     public IAIState switchStage(final IAIState state)
     {
@@ -381,7 +384,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
-     *
+     * @param currentBlock the current block it is working on.
      * @return true while walking to the site.
      */
     public boolean walkToConstructionSite(final BlockPos currentBlock)
@@ -518,6 +521,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @param placer   the placer.
      * @param itemList the list to check.
+     * @param force if force insertion.
      * @return true if need to request.
      */
     public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)

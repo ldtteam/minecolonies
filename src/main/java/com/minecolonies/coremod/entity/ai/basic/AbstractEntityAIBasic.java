@@ -277,7 +277,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Can be overridden in implementations to return the exact building type.
-     *
+     * @param <W> the building type.
+     * @param type the type.
      * @return the building associated with this AI's worker.
      */
     @Nullable
@@ -1177,6 +1178,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Calculates the most efficient tool to use on that block.
      *
      * @param target the Block type to mine
+     * @param pos the pos it is at.
      * @return the slot with the best tool
      */
     protected int getMostEfficientTool(@NotNull final Block target, final BlockPos pos)
@@ -1564,7 +1566,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The current exception timer
      *
-     * @return
+     * @return the timer.
      */
     public int getExceptionTimer()
     {

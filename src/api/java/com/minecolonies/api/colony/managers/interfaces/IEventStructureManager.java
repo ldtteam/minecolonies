@@ -27,21 +27,21 @@ public interface IEventStructureManager
     /**
      * Restores backup schematics for the given event ID, may be more than one.
      *
-     * @param eventID
+     * @param eventID the id of the event.
      */
     void loadBackupForEvent(int eventID);
 
     /**
      * Reads all saved schematics from nbt, needs to happen before the event managers nbt read.
      *
-     * @param compound
+     * @param compound the compound to read from.
      */
     void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Writes all backup schematics to NBT
      *
-     * @param compound
+     * @param compound the compound to write to.
      */
     void writeToNBT(@NotNull CompoundNBT compound);
 }

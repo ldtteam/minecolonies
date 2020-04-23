@@ -27,6 +27,7 @@ public class EntityAICitizenWander extends Goal
      *
      * @param citizen the citizen.
      * @param speed   the speed.
+     * @param randomModifier the random modifier for the movement.
      */
     public EntityAICitizenWander(final AbstractEntityCitizen citizen, final double speed, final double randomModifier)
     {

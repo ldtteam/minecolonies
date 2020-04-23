@@ -82,6 +82,7 @@ public interface ICitizenSkillHandler
 
     /**
      * Level-up actions for the citizen, increases levels and notifies the Citizen's Job
+     * @param data the citizen to level up.
      */
     void levelUp(ICitizenData data);
 

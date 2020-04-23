@@ -241,6 +241,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * Potentially increase the blockdrops.
      * To be overriden by the worker.
      * @param drops the drops.
+     * @return the list of additional drops.
      */
     protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
     {

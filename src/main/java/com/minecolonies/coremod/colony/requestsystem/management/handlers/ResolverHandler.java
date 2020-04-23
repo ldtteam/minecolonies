@@ -42,7 +42,6 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to register multiple resolvers simultaneously
      * <p>
-     * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
@@ -60,7 +59,6 @@ public class ResolverHandler implements IResolverHandler
 
     /**
      * Method used to register a resolver.
-     * <p>
      * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track which resolver are registered.
@@ -105,7 +103,6 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to register multiple resolvers simultaneously
      * <p>
-     * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
@@ -123,7 +120,6 @@ public class ResolverHandler implements IResolverHandler
 
     /**
      * Method used to remove a registered resolver.
-     * <p>
      * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
@@ -145,7 +141,6 @@ public class ResolverHandler implements IResolverHandler
 
     /**
      * Method used to remove a registered resolver.
-     * <p>
      * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
@@ -197,7 +192,6 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method to get a resolver from a given token.
      * <p>
-     * <p>
      * Is only used internally.
      * Querries the resolverBiMap to get the resolver for a given Token.
      * </p>
@@ -235,7 +229,6 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a multiple registered resolvers.
      * <p>
-     * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
@@ -252,7 +245,6 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a multiple registered resolvers.
      * <p>
-     * <p>
      * Is only used internally.
      * The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
@@ -268,7 +260,6 @@ public class ResolverHandler implements IResolverHandler
 
     /**
      * Method used to add a request to a resolver.
-     * <p>
      * <p>
      * Is only used internally.
      * The method modifies the resolverRequestMap that is used to track which resolver handles which request.
@@ -294,7 +285,6 @@ public class ResolverHandler implements IResolverHandler
 
     /**
      * Method used to remove a request from a resolver.
-     * <p>
      * <p>
      * Is only used internally.
      * The method modifies the resolverRequestMap that is used to track which resolver handles which request.

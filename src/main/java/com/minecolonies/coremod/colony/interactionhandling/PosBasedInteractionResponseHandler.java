@@ -43,6 +43,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param inquiry the client inquiry.
      * @param priority the interaction priority.
      * @param pos the pos this is related to.
+     * @param validator the validator id.
      */
     public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,

@@ -42,8 +42,8 @@ public interface IDeliverable extends IRetryable
 
     /**
      * Creates a new instance of this requestable with the given count.
-     *
      * @param newCount The new requestable, with the requested count.
+     * @return the deliverable.
      */
-    IDeliverable copyWithCount(@NotNull final int newCount);
+    IDeliverable copyWithCount(final int newCount);
 }

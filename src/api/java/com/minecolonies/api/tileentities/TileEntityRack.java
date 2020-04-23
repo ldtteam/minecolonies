@@ -165,6 +165,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     /**
      * Gets the content of the Rack
+     * @return the map of content.
      */
     public Map<ItemStorage, Integer> getAllContent() {return content;}
 

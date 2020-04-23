@@ -56,14 +56,14 @@ public interface IRaiderManager
     /**
      * Returns whether spies are enabled
      *
-     * @return
+     * @return true if enabled.
      */
     boolean areSpiesEnabled();
 
     /**
      * Sets whether spies are enabled
      *
-     * @param enabled
+     * @param enabled true if enabled.
      */
     void setSpiesEnabled(boolean enabled);
 
@@ -75,7 +75,7 @@ public interface IRaiderManager
     /**
      * Calculates the spawn position for raids
      *
-     * @return
+     * @return the spawn location.
      */
     BlockPos calculateSpawnLocation();
 
@@ -96,13 +96,13 @@ public interface IRaiderManager
     /**
      * Calculates the barbarian amount for raids
      *
-     * @return
+     * @return the number of barbs.
      */
     int calcBarbarianAmount();
 
     /**
      * Whether the colony is currently raided.
-     * @return
+     * @return true if so.
      */
     boolean isRaided();
 
@@ -113,46 +113,46 @@ public interface IRaiderManager
 
     /**
      * Returns the amount of nights since the last raid
-     * @return
+     * @return the number of nights.
      */
     int getNightsSinceLastRaid();
 
     /**
      * Sets the amount of nights since the last raid
-     * @param nightsSinceLastRaid
+     * @param nightsSinceLastRaid the nights to set.
      */
     void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
     /**
      * Tries to raid the colony, if possible.
-     * @param colony
+     * @param colony the colony to try.
      */
     void tryToRaidColony(final IColony colony);
 
     /**
      * Whether the colony can be raided.
-     * @return
+     * @return true if possible.
      */
     boolean canRaid();
 
     /**
      * Returns true when it is time to raid
      *
-     * @return
+     * @return when its time to raid.
      */
     boolean isItTimeToRaid();
 
     /**
      * calculates the colonies raid level
      *
-     * @return
+     * @return the raid level.
      */
     int getColonyRaidLevel();
 
     /**
      * Returns a random building for raiders to go to, groups up 3 raiders to the same position.
      *
-     * @return
+     * @return a random building.
      */
     BlockPos getRandomBuilding();
 }

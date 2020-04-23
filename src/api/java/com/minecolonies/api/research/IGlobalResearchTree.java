@@ -30,6 +30,7 @@ public interface IGlobalResearchTree
     /**
      * Add a research to the tree.
      * @param research the research to add.
+     * @param branch the branch of the research.
      */
     void addResearch(final String branch, final IGlobalResearch research);
 

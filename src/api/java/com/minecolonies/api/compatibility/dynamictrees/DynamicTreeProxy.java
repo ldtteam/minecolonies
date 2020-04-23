@@ -82,14 +82,19 @@ public class DynamicTreeProxy
 
     /**
      * Default method when dynamic tree's isnt present
-     *
+     * @param world the world it is in.
+     * @param blockToBreak the block position.
+     * @param toolToUse the tool
+     * @param workerPos the pos of the worker
      * @return Null
      */
     protected Runnable getTreeBreakActionCompat(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {return null;}
 
     /**
      * Default method for trying to plant a dynamic sapling when the mod isnt present.
-     *
+     * @param world the world it is in.
+     * @param location the position.
+     * @param sapling the sapling stack.
      * @return false
      */
     protected boolean plantDynamicSaplingCompat(final World world, final BlockPos location, final ItemStack sapling) {return false;}
@@ -99,6 +104,8 @@ public class DynamicTreeProxy
      *
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
+     * @param world the world it is in.
+     * @return if compat exists.
      */
     protected boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IWorld world) {return false;}
 }

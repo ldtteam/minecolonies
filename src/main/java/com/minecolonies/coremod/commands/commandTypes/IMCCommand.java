@@ -33,6 +33,7 @@ public interface IMCCommand
      * Helper function for typing.
      *
      * @param name name of the new command.
+     * @return the builder.
      */
     static LiteralArgumentBuilder<CommandSource> newLiteral(final String name)
     {
@@ -46,6 +47,8 @@ public interface IMCCommand
 
     /**
      * Executes pre-checks before issuing the command
+     * @param context the context.
+     * @return 1 if successful and 0 if incomplete.
      */
     default int checkPreConditionAndExecute(final CommandContext<CommandSource> context)
     {
@@ -70,6 +73,7 @@ public interface IMCCommand
 
     /**
      * Preconditions to check before executing
+     * @return true if fine.
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
@@ -80,6 +84,7 @@ public interface IMCCommand
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
+     * @return 1 if successful and 0 if incomplete.
      */
     int onExecute(final CommandContext<CommandSource> context);
 
