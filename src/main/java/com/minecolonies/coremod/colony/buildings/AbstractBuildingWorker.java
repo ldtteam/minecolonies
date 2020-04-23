@@ -583,7 +583,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         /**
          * List of the worker ids.
          */
-        private final List<Integer> workerIDs = new ArrayList<>();
+        private final Set<Integer> workerIDs = new HashSet<>();
 
         /**
          * List of recipes.
@@ -751,14 +751,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         @Override
         public void removeWorkerId(final int id)
         {
-            for (int i = 0; i < workerIDs.size(); i++)
-            {
-                final int workerId = workerIDs.get(i);
-                if (workerId == id)
-                {
-                    workerIDs.remove(i);
-                }
-            }
+            workerIDs.remove(id);
         }
 
         /**
