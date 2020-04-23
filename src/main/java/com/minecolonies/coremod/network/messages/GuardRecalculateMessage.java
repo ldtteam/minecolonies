@@ -41,6 +41,7 @@ public class GuardRecalculateMessage implements IMessage
      * Creates a new message of this type to set the guard scepter in the player inventory.
      *
      * @param building the building.
+     * @param colonyId the colony id.
      */
     public GuardRecalculateMessage(final int colonyId, final AbstractBuildingView building)
     {

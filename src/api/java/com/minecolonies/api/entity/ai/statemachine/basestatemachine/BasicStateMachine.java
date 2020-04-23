@@ -47,6 +47,8 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
 
     /**
      * Construct a new StateMachine
+     * @param initialState the initial state.
+     * @param exceptionHandler the exception handler.
      */
     protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
     {

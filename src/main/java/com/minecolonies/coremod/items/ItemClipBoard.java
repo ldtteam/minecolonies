@@ -32,6 +32,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
+     * @param properties the properties.
      */
     public ItemClipBoard(final Item.Properties properties)
     {

@@ -68,7 +68,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     /**
      * Get the pathing options
      *
-     * @return
+     * @return the pathing options.
      */
     public PathingOptions getPathingOptions()
     {

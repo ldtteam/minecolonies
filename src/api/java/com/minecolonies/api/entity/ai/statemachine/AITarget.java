@@ -24,12 +24,13 @@ public class AITarget extends TickingTransition<IAIState>
      * @param state     the state it needs to be
      * @param predicate the predicate for execution
      * @param action    the action to apply
+     * @param tickRate the tick rate.
      */
     public AITarget(
       @NotNull final IAIState state,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<IAIState> action,
-      @NotNull final int tickRate)
+      final int tickRate)
     {
         super(state, predicate, action, tickRate);
     }
@@ -39,11 +40,12 @@ public class AITarget extends TickingTransition<IAIState>
      *
      * @param predicate the predicate for execution
      * @param action    the action to apply
+     * @param tickRate the tick rate.
      */
     protected AITarget(
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<IAIState> action,
-      @NotNull final int tickRate)
+      final int tickRate)
     {
         super(predicate, action, tickRate);
     }
@@ -53,8 +55,9 @@ public class AITarget extends TickingTransition<IAIState>
      *
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
+     * @param tickRate the tick rate.
      */
-    public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state, @NotNull final int tickRate)
+    public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state, final int tickRate)
     {
         this(predicateState, () -> state, tickRate);
     }
@@ -64,8 +67,9 @@ public class AITarget extends TickingTransition<IAIState>
      *
      * @param state  the state it needs to be | null
      * @param action the action to apply
+     * @param tickRate the tick rate.
      */
-    public AITarget(@NotNull final IAIState state, @NotNull final Supplier<IAIState> action, @NotNull final int tickRate)
+    public AITarget(@NotNull final IAIState state, @NotNull final Supplier<IAIState> action, final int tickRate)
     {
         this(state, () -> true, action, tickRate);
     }

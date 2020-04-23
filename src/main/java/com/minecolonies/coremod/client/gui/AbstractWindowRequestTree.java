@@ -68,6 +68,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * Constructor to initiate the window request tree windows.
      *
      * @param building citizen to bind the window to.
+     * @param pane the string name of the pane.
+     * @param colony the colony it belongs to.
      */
     public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
     {

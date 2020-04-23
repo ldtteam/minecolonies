@@ -286,6 +286,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
 
     /**
      * Whether or not the LJ should replant saplings.
+     * @return true if so.
      */
     public boolean shouldReplant()
     {
@@ -304,6 +305,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
 
     /**
      * Whether or not the LJ should be restricted.
+     * @return true if it should restrict.
      */
     public boolean shouldRestrict()
     {

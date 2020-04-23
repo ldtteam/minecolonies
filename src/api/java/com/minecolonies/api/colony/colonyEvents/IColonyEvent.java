@@ -14,52 +14,53 @@ public interface IColonyEvent
     /**
      * Returns the events current status
      *
-     * @return
+     * @return the status.
      */
     EventStatus getStatus();
 
     /**
      * Sets the current event status
+     * @param status the status to set.
      */
     void setStatus(final EventStatus status);
 
     /**
      * Returns this events ID.
      *
-     * @return
+     * @return the event id.
      */
     int getID();
 
     /**
      * The event type's id
      *
-     * @return
+     * @return the event type id.
      */
     ResourceLocation getEventTypeID();
 
     /**
      * Sets the colony
      *
-     * @param colony
+     * @param colony the colony to set.
      */
     void setColony(@NotNull final IColony colony);
 
     /**
      * Writes the event to NBT
      *
-     * @param compound
-     * @return
+     * @param compound the compound to write it to.
+     * @return the compound.
      */
     CompoundNBT writeToNBT(final CompoundNBT compound);
 
     /**
      * Reads the events values from NBT
      *
-     * @param compound
+     * @param compound the compound to read it from.
      */
     void readFromNBT(final CompoundNBT compound);
 
-    /**
+    /*
      *
      * Event triggers
      *
@@ -68,32 +69,27 @@ public interface IColonyEvent
     /**
      * Onupdate function, called every 25s / 500 ticks. Comes from colony then goes to the eventmanager and then to the event.
      */
-    default void onUpdate() {
-    }
+    default void onUpdate() { }
 
     /**
      * Actions which are done on the start of the event.
      */
-    default void onStart() {
-    }
+    default void onStart() { }
 
     /**
      * Actions which are done on the finish/removal of the event.
      */
-    default void onFinish() {
-    }
+    default void onFinish() { }
 
     /**
      * Called by tileentities relevant to the event on invalidation.
      *
-     * @param te
+     * @param te the broken Tile entity.
      */
-    default void onTileEntityBreak(final TileEntity te) {
-    }
+    default void onTileEntityBreak(final TileEntity te) { }
 
     /**
      * Called on night fall, to execute special day-based logic.
      */
-    default void onNightFall() {
-    }
+    default void onNightFall() { }
 }

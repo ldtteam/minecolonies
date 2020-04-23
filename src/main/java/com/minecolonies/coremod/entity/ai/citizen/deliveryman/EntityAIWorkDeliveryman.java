@@ -432,6 +432,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
     /**
      * Gets the colony's warehouse for the Deliveryman.
+     * @return the warehouse.
      */
     public IWareHouse getAndCheckWareHouse()
     {

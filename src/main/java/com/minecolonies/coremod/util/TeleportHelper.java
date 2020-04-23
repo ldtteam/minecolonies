@@ -69,6 +69,7 @@ public final class TeleportHelper
 
     /**
      * Teleports the player to his home colony.
+     * @param player the player to teleport home.
      */
     public static void homeTeleport(@NotNull final ServerPlayerEntity player)
     {

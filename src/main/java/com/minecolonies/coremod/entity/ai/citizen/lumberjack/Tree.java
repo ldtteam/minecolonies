@@ -271,7 +271,7 @@ public class Tree
      * Fills the list of drops for a leaf.
      * @param world world reference
      * @param position position of the leaf
-     * @return
+     * @return the list of saplings.
      */
     public static List<ItemStack> getSaplingsForLeaf(ServerWorld world, BlockPos position)
     {
@@ -700,7 +700,7 @@ public class Tree
     /**
      * Gets the trees sapling
      *
-     * @return
+     * @return the sapling stack.
      */
     public ItemStack getSapling()
     {

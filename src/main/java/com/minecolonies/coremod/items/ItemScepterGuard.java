@@ -40,6 +40,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.
+     * @param properties the properties.
      */
     public ItemScepterGuard(final Item.Properties properties)
     {

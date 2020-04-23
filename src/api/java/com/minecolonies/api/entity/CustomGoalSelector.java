@@ -233,7 +233,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Gets all goals currently running
      *
-     * @return
+     * @return the stream of running goals.
      */
     public Stream<PrioritizedGoal> getRunningGoals()
     {
@@ -243,7 +243,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Disables the given flag
      *
-     * @param flag
+     * @param flag the flag to disable.
      */
     public void disableFlag(Goal.Flag flag)
     {
@@ -253,7 +253,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Enables the given flag
      *
-     * @param flag
+     * @param flag the flag to enable.
      */
     public void enableFlag(Goal.Flag flag)
     {

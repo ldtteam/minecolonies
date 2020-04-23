@@ -30,6 +30,9 @@ public class MobEntryView
 
     /**
      * Public constructor of the WorkOrderView.
+     * @param location the location.
+     * @param priority the mob priority.
+     * @param shouldAttack if it should be attacked or not.
      */
     public MobEntryView(final ResourceLocation location, final Boolean shouldAttack, final Integer priority)
     {

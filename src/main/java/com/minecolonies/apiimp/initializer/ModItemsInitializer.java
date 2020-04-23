@@ -42,6 +42,7 @@ public final class ModItemsInitializer
 
     /**
      * Initates all the blocks. At the correct time.
+     * @param registry the registry.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final IForgeRegistry<Item> registry)

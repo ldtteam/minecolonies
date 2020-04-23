@@ -92,7 +92,7 @@ public interface IWalkToProxy
     /**
      * Getter for the current proxy.
      *
-     * @return
+     * @return the current proxy.
      */
     BlockPos getCurrentProxy();
 

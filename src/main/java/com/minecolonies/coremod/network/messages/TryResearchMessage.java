@@ -62,6 +62,7 @@ public class TryResearchMessage implements IMessage
      * @param branch the research branch.
      * @param colonyId the colony id.
      * @param dimension the dimension.
+     * @param university the university position.
      */
     public TryResearchMessage(@NotNull final String researchId, final String branch, final int colonyId, final int dimension, final BlockPos university)
     {

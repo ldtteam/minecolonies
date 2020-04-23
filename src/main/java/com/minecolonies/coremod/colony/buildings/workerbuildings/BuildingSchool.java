@@ -253,6 +253,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Get a random place to sit from the school.
+     * @return the place to sit.
      */
     @Nullable
     public BlockPos getRandomPlaceToSit()

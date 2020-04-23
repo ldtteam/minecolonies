@@ -16,6 +16,7 @@ public class DynamicTreeProxy
 {
     /**
      * Default method for when dynamic Tree's mod is not present, returns false
+     * @return true if so.
      */
     protected boolean isDynamicTreePresent()
     {
@@ -59,6 +60,10 @@ public class DynamicTreeProxy
      * Get the list of Drops from a Dynamic leaf
      *
      * @param leaf The leaf to check
+     * @param world the world it is in.
+     * @param pos the pos of the block.
+     * @param blockstate the blockstate to check.
+     * @param fortune the fortune effect.
      * @return {@link NonNullList} of {@link ItemStack} Drops
      */
     protected NonNullList<ItemStack> getDropsForLeaf(

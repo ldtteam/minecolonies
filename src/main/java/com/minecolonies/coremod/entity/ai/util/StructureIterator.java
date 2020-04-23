@@ -215,7 +215,7 @@ public class StructureIterator
      * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
-     *
+     * @param abstractEntityAIStructure the entity.
      * @return a Result enum specifying the result
      */
     @NotNull

@@ -130,6 +130,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Returns current state of automatical sheep dyeing, true = enabled
+     * @return true if so.
      */
     public boolean isDyeSheeps()
     {
@@ -138,6 +139,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Sets state of automatical sheep dyeing, true = enabled
+     * @param dyeSheeps true if sheeps should be dyed.
      */
     public void setDyeSheeps(final boolean dyeSheeps)
     {
@@ -174,6 +176,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
         /**
          * Called from button handler
+         * @param dyeSheeps true if the sheeps should be dyed.
          */
         public void setDyeSheeps(final boolean dyeSheeps)
         {
@@ -182,7 +185,8 @@ public class BuildingShepherd extends AbstractBuildingWorker
         }
 
         /**
-         * Returns current state of automatical sheep dyeing, true = enabled
+         * Returns current state of automatical sheep dyeing.
+         * @return true if so.
          */
         public boolean isDyeSheeps()
         {

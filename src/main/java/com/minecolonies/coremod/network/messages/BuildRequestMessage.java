@@ -71,6 +71,7 @@ public class BuildRequestMessage implements IMessage
      *
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
+     * @param builder the builder position.
      */
     public BuildRequestMessage(@NotNull final IBuildingView building, final int mode, final BlockPos builder)
     {

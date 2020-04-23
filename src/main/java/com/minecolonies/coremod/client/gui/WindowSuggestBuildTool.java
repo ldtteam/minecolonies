@@ -40,6 +40,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      *
      * @param pos   the position of the placement.
      * @param state the block he is trying to place.
+     * @param stack the stack to suggest it for.
      */
     public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {

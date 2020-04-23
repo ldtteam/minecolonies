@@ -118,6 +118,7 @@ public interface IFactoryController
      * Method used to quickly serialize a object if it is known to this controller.
      *
      * @param object The object to serialize.
+     * @param <Output> the output type.
      * @return An NBTTag containing a serialized version of the given object.
      *
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.

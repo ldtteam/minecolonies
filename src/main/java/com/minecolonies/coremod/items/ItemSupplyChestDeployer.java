@@ -58,6 +58,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
+     * @param properties the properties.
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
     {
@@ -136,6 +137,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param world the world.
      * @param pos   the pos.
      * @param size  the size.
+     * @param placer the placer.
+     * @param placementErrorList the list of placement errors.
      * @return true if so.
      */
     public static boolean canShipBePlaced(

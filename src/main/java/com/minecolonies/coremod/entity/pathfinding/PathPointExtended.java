@@ -79,7 +79,7 @@ public class PathPointExtended extends PathPoint
 
     /**
      * Set if it is on rails.
-     * @param isOnRails
+     * @param isOnRails if on rails.
      */
     public void setOnRails(final boolean isOnRails)
     {
