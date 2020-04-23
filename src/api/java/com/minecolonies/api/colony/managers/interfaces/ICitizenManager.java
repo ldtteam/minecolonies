@@ -82,6 +82,7 @@ public interface ICitizenManager
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
+     * @return the citizen data of the spawned citizen.
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world)
     {
@@ -107,6 +108,7 @@ public interface ICitizenManager
      * @param data Data to use when spawn, null when new generation.
      * @param world THe world.
      * @param force True to skip max citizen test, false when not.
+     * @param spawnPos the pos to spawn it at.
      * @return the new citizen.
      */
     ICitizenData spawnOrCreateCitizen(final ICitizenData data, final World world, final BlockPos spawnPos, final boolean force);

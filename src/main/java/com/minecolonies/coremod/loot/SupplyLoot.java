@@ -82,6 +82,7 @@ public class SupplyLoot
 
     /**
      * Adds loot to the given event, if the name fits
+     * @param event the event.
      */
     public void addLootToEvent(LootTableLoadEvent event)
     {

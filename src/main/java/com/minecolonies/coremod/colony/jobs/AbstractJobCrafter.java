@@ -156,7 +156,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Returns the {@link IRequest} of the current Task.
-     *
+     * @param <R> the request type.
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)

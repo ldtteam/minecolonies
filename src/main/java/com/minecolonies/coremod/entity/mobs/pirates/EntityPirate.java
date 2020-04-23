@@ -14,6 +14,7 @@ public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEn
 
     /**
      * Constructor of the entity.
+     * @param type the entity type.
      * @param worldIn world to construct it in.
      */
     public EntityPirate(final EntityType type, final World worldIn)

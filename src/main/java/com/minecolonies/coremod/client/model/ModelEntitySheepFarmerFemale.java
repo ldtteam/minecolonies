@@ -313,6 +313,10 @@ public class ModelEntitySheepFarmerFemale extends CitizenModel<AbstractEntityCit
 
     /**
      * This is a helper function from Tabula to set the rotation of model parts
+     * @param ModelRenderer the model renderer.
+     * @param x the x pos.
+     * @param y the y pos.
+     * @param z the z pos.
      */
     public void setRotation(ModelRenderer ModelRenderer, float x, float y, float z)
     {

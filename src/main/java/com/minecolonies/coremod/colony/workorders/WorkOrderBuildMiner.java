@@ -51,8 +51,8 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
 
     /**
      * Read the WorkOrder data from the CompoundNBT.
-     *  @param compound NBT Tag compound.
-     * @param manager
+     * @param compound NBT Tag compound.
+     * @param manager the work manager.
      */
     @Override
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)

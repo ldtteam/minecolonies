@@ -106,6 +106,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param tree the local tree of the colony.
      * @param parentResearched if possibly can be researched.
      * @param abandoned if abandoned child.
+     * @param parentHeight the height of the parent.
      * @return the next y offset.
      */
     public int drawTree(final int height, final int depth, final ZoomDragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)

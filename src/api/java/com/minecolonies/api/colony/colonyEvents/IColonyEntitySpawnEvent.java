@@ -14,9 +14,9 @@ public interface IColonyEntitySpawnEvent extends IColonySpawnEvent
     /**
      * The list of entities related to this event
      *
-     * @return
+     * @return the list.
      */
-    default public List<Entity> getEntities()
+    default List<Entity> getEntities()
     {
         return new ArrayList<>();
     }
@@ -24,21 +24,21 @@ public interface IColonyEntitySpawnEvent extends IColonySpawnEvent
     /**
      * Called to register an entity with this event
      *
-     * @param entity
+     * @param entity the entity to register.
      */
-    default public void registerEntity(final Entity entity) {}
+    default void registerEntity(final Entity entity) {}
 
     /**
      * called to unregister an entity with this event
      *
-     * @param entity
+     * @param entity the entity to unregister.
      */
-    default public void unregisterEntity(final Entity entity) {}
+    default void unregisterEntity(final Entity entity) {}
 
     /**
      * Trigger on entity death.
      *
-     * @param entity
+     * @param entity the killed entity.
      */
-    default public void onEntityDeath(final LivingEntity entity) {}
+    default void onEntityDeath(final LivingEntity entity) {}
 }

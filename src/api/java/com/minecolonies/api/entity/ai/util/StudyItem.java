@@ -27,6 +27,9 @@ public class StudyItem
 
     /**
      * Initializing Study item, making sure the rates are valid.
+     * @param breakChance the break chance.
+     * @param item the item.
+     * @param skillIncrease the skill increase factor.
      */
     public StudyItem(@NotNull final Item item, final int skillIncrease, final int breakChance)
     {

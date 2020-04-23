@@ -104,7 +104,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Returns the item that is currently being held by citizen.
-     *
+     * @param hand the hand it is held in.
      * @return {@link ItemStack} currently being held by citizen.
      */
     public ItemStack getHeldItem(final Hand hand)
@@ -119,7 +119,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Set item to be held by citizen.
-     *
+     * @param hand the hand it is held in.
      * @param slot Slot index with item to be held by citizen.
      */
     public void setHeldItem(final Hand hand, final int slot)
@@ -134,7 +134,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     *
+     * @param hand the hand it is held in.
      * @return Slot index of held item
      */
     public int getHeldItemSlot(final Hand hand)

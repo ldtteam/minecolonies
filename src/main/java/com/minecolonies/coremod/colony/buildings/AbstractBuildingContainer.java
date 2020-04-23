@@ -68,6 +68,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * The constructor for the building container.
      * @param pos the position of it.
+     * @param colony the colony.
      */
     public AbstractBuildingContainer(final BlockPos pos, final IColony colony)
     {

@@ -10,14 +10,14 @@ public interface IColonySpawnEvent extends IColonyEvent
     /**
      * Sets the spawn point
      *
-     * @param spawnPoint
+     * @param spawnPoint the spawn point to set.
      */
     void setSpawnPoint(BlockPos spawnPoint);
 
     /**
      * The position the event starts at
      *
-     * @return
+     * @return the spawn pos.
      */
-    public BlockPos getSpawnPos();
+    BlockPos getSpawnPos();
 }

@@ -72,6 +72,8 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
      * Create a selection window with the origin window as input.
      * @param origin the origin.
      * @param colonyId the colony id.
+     * @param building the building position.
+     * @param test the testing predicate for the selector.
      */
     public WindowSelectRes(final Window origin, final int colonyId, final BlockPos building, final Predicate<ItemStack> test)
     {

@@ -30,7 +30,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     private DynamicTreeCompat()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -70,6 +70,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * Check wether the block is part of a dynamic Tree
      *
      * @param block Block to check
+     * @return true if so.
      */
     public static boolean isDynamicTreeBlock(final Block block)
     {
@@ -91,6 +92,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * Check wether the block is a dynamic leaf
      *
      * @param block Block to check
+     * @return true if so.
      */
     public static boolean isDynamicLeavesBlock(final Block block)
     {
@@ -134,7 +136,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
       @NotNull final IWorld world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @NotNull final int fortune,
+      final int fortune,
       @NotNull final Block leaf)
     {
         return NonNullList.create();
@@ -148,6 +150,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param blockState Blockstate of the Leaf
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
+     * @return the list of drops.
      */
     public static NonNullList<ItemStack> getDropsForLeafCompat(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
@@ -169,6 +172,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * Check wether the item is a dynamic Sapling
      *
      * @param item Item to check
+     * @return true if so.
      */
     public static boolean isDynamicTreeSapling(final Item item)
     {
@@ -273,6 +277,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      *
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
+     * @param world the world.
      * @return true when same family
      */
     public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)

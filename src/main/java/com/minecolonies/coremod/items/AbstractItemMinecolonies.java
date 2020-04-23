@@ -16,6 +16,7 @@ public abstract class AbstractItemMinecolonies extends Item
      * Sets the name, creative tab, and registers the item.
      *
      * @param name The name of this item
+     * @param properties the properties.
      */
     public AbstractItemMinecolonies(final String name,final Item.Properties properties)
     {

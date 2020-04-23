@@ -70,6 +70,7 @@ public interface IMCCommand
     /**
      * Preconditions to check before executing
      * @return true if fine.
+     * @param context the command context.
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
@@ -86,6 +87,7 @@ public interface IMCCommand
 
     /**
      * Name string of the command.
+     * @return the name.
      */
     String getName();
 

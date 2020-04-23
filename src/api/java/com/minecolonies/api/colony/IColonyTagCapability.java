@@ -24,14 +24,14 @@ public interface IColonyTagCapability
 {
     /**
      * Remove a colony from the list. Only relevant in non dynamic claiming.
-     *
+     * @param chunk the chunk to remove it from.
      * @param id the id to remove.
      */
     void removeColony(final int id, final Chunk chunk);
 
     /**
      * Add a new colony to the chunk. Only relevant in non dynamic claiming.
-     *
+     * @param chunk the chunk to add it to.
      * @param id the id to add.
      */
     void addColony(final int id, final Chunk chunk);
@@ -46,7 +46,7 @@ public interface IColonyTagCapability
 
     /**
      * Set the owning colony.
-     *
+     * @param chunk the chunk to set it for.
      * @param id the id to set.
      */
     void setOwningColony(final int id, final Chunk chunk);
@@ -60,6 +60,7 @@ public interface IColonyTagCapability
 
     /**
      * Reset the capability.
+     * @param chunk the chunk to reset.
      */
     void reset(final Chunk chunk);
 
@@ -68,6 +69,7 @@ public interface IColonyTagCapability
      *
      * @param colonyId the colony id.
      * @param pos      the position of the building.
+     * @param chunk the chunk to add the claim for.
      */
     void addBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk);
 
@@ -76,13 +78,14 @@ public interface IColonyTagCapability
      *
      * @param colonyId the colony id.
      * @param pos      the position of the building.
+     * @param chunk    the chunk to remove it from.
      */
     void removeBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk);
 
     /**
      * Sets all close colonies.
      *
-     * @param colonies
+     * @param colonies the set of colonies.
      */
     void setCloseColonies(final List<Integer> colonies);
 

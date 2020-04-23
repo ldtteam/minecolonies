@@ -71,6 +71,7 @@ public interface IProxy
      * Opens the resource scroll window.
      *
      * @param colonyId the colony id.
+     * @param pos the position of the builder.
      */
     void openResourceScrollWindow(final int colonyId, final BlockPos pos);
 

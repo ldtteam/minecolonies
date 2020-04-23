@@ -92,6 +92,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
+     * @param type the entity type.
      */
     public AbstractEntityMinecoloniesMob(final EntityType type, final World world)
     {

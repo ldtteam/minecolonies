@@ -426,7 +426,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Returns the colonies babarian level
      *
-     * @return
+     * @return the amount of barbarians.
      */
     @Override
     public int calcBarbarianAmount()
