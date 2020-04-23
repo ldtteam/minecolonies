@@ -34,6 +34,8 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
 
     /**
      * Construct a new StateMachine
+     * @param exceptionHandler the exception handler.
+     * @param initialState the initial state.
      */
     public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
     {

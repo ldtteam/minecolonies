@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,8 +26,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
-import com.minecolonies.api.util.constant.WindowConstants;
 
 /**
  * Window for a hut name entry.

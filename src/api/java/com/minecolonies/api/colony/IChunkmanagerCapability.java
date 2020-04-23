@@ -2,8 +2,8 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.ChunkPos;

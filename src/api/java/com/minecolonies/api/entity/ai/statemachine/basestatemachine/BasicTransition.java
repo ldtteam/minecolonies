@@ -49,6 +49,8 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
 
     /**
      * Protected Constructor to allow subclasses without a state
+     * @param condition the condition.
+     * @param nextState the next state to go to.
      */
     protected BasicTransition(@NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState)
     {

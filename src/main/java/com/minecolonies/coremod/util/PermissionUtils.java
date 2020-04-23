@@ -4,8 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

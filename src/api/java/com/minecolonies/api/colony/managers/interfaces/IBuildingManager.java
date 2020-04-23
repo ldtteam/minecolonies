@@ -127,6 +127,7 @@ public interface IBuildingManager
      * Returns a field which has not been taken yet.
      *
      * @param owner id of the owner of the field.
+     * @param world the world it is in.
      * @return a field if there is one available, else null.
      */
     @Nullable
@@ -134,7 +135,7 @@ public interface IBuildingManager
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
-     *
+     * @param subscribers the subscribers of the colony to message.
      * @param building IBuilding to remove.
      */
     void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers);
@@ -148,6 +149,7 @@ public interface IBuildingManager
      * Creates a building from a tile entity and adds it to the colony.
      *
      * @param tileEntity Tile entity to build a building from.
+     * @param world the world to add it to.
      * @return IBuilding that was created and added.
      */
     @Nullable
@@ -177,8 +179,8 @@ public interface IBuildingManager
     /**
      * Returns a random building in the colony, matching the filter predicate.
      *
-     * @param filterPredicate
-     * @return
+     * @param filterPredicate the filter to apply.
+     * @return the random building.
      */
     BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
 
@@ -190,6 +192,7 @@ public interface IBuildingManager
 
     /**
      * Removes a warehouse from the BuildingManager
+     * @param wareHouse the warehouse to remove.
      */
     void removeWareHouse(final IWareHouse wareHouse);
 

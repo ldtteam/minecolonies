@@ -84,6 +84,9 @@ public final class TeleportHelper
 
     /**
      * Teleports the player to his home colony.
+     * @param dimension the dimension the colony is in.
+     * @param player the player to teleport.
+     * @param id the colony id.
      */
     public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final int dimension)
     {
@@ -99,6 +102,8 @@ public final class TeleportHelper
 
     /**
      * Teleports the player to the given colony.
+     * @param colony the colony to teleport to.
+     * @param player the player to teleport.
      */
     public static void colonyTeleport(@NotNull final ServerPlayerEntity player, @NotNull final IColony colony)
     {

@@ -117,6 +117,7 @@ public interface IWorkManager
      *
      * @param type the type of workOrder which is required.
      * @param builder the builder wanting to claim it.
+     * @param <W> the type.
      * @return the list.
      */
     <W extends IWorkOrder> List<W> getOrderedList(@NotNull Class<W> type, BlockPos builder);

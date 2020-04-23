@@ -20,8 +20,8 @@ public interface ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
-     * @param colonyID
-     * @param citizenID
+     * @param colonyID the colony id.
+     * @param citizenID the citizen id.
      */
     void registerWithColony(final int colonyID, final int citizenID);
 

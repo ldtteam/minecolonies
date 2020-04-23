@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -44,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Class of the warehouse building.

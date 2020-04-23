@@ -5,12 +5,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
@@ -33,6 +29,7 @@ public interface IMCCommand
      * Helper function for typing.
      *
      * @param name name of the new command.
+     * @return the builder.
      */
     static LiteralArgumentBuilder<CommandSource> newLiteral(final String name)
     {
@@ -46,6 +43,8 @@ public interface IMCCommand
 
     /**
      * Executes pre-checks before issuing the command
+     * @param context the context.
+     * @return 1 if successful and 0 if incomplete.
      */
     default int checkPreConditionAndExecute(final CommandContext<CommandSource> context)
     {
@@ -70,6 +69,7 @@ public interface IMCCommand
 
     /**
      * Preconditions to check before executing
+     * @return true if fine.
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
@@ -80,6 +80,7 @@ public interface IMCCommand
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
+     * @return 1 if successful and 0 if incomplete.
      */
     int onExecute(final CommandContext<CommandSource> context);
 

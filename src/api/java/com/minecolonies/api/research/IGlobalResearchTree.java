@@ -3,7 +3,7 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import net.minecraft.nbt.CompoundNBT;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * The interface for the object that holds all research globally.
@@ -30,6 +30,7 @@ public interface IGlobalResearchTree
     /**
      * Add a research to the tree.
      * @param research the research to add.
+     * @param branch the branch of the research.
      */
     void addResearch(final String branch, final IGlobalResearch research);
 

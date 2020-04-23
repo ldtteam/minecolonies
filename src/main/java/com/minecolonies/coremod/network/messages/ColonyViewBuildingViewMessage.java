@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.IColonyManager;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;

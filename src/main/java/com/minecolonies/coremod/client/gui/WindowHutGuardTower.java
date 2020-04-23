@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
-import com.minecolonies.api.colony.guardtype.GuardType;
-import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;

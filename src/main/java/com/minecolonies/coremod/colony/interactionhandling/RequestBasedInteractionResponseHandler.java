@@ -57,6 +57,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      * @param inquiry the client inquiry.
      * @param priority the interaction priority.
      * @param token the token this is related to.
+     * @param validator the validator id.
      */
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,

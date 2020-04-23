@@ -450,6 +450,7 @@ public class Colony implements IColony
 
     /**
      * Updates the pvping playeres.
+     * @return true if under attack.
      */
     public boolean updateAttackingPlayers()
     {
@@ -512,6 +513,7 @@ public class Colony implements IColony
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
+     * @param world the world to load it for.
      * @return loaded colony.
      */
     @Nullable
@@ -947,6 +949,7 @@ public class Colony implements IColony
      * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
      * @param world the world.
+     * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */
     public static boolean shallUpdate(final World world, final int averageTicks)

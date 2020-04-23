@@ -104,7 +104,7 @@ public class SittingEntity extends Entity
     /**
      * Sets the lifetime
      *
-     * @param maxLifeTime
+     * @param maxLifeTime the max life span of the entity.
      */
     public void setMaxLifeTime(final int maxLifeTime)
     {

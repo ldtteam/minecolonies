@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.ColonyView;
 import org.jetbrains.annotations.NotNull;
 

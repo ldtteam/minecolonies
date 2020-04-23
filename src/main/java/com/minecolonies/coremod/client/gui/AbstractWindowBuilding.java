@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
@@ -11,6 +11,7 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;

@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.minecolonies.api.colony.ICitizen;
-import com.minecolonies.api.colony.interactionhandling.*;
+import com.minecolonies.api.colony.interactionhandling.IChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;

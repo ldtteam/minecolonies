@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.Log;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.TextField;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;

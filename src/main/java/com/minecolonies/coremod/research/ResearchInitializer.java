@@ -11,6 +11,7 @@ public class ResearchInitializer
 {
     /**
      * Method to fill the research tree with the elements.
+     * @param researchTree the research tree to fill.
      */
     public static void fillResearchTree(final IGlobalResearchTree researchTree)
     {

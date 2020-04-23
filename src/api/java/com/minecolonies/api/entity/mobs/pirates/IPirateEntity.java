@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.mobs.pirates;
 
-import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.nbt.CompoundNBT;

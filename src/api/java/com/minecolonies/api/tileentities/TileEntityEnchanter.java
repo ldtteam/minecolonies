@@ -36,6 +36,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
 
     /**
      * Alternative overriden constructor.
+     * @param type the entity type.
      */
     public TileEntityEnchanter(final TileEntityType type)
     {

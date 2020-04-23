@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.util.constant.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

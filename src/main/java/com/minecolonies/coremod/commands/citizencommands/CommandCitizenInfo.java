@@ -14,10 +14,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.CITIZENID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;

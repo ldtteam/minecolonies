@@ -17,6 +17,7 @@ public interface IGlobalResearch
     /**
      * Check if this research can be executed at this moment.
      * @param uni_level the level of the university.
+     * @param localTree the local tree of the colony.
      * @return true if so.
      */
     boolean canResearch(int uni_level, @NotNull final ILocalResearchTree localTree);
@@ -111,6 +112,7 @@ public interface IGlobalResearch
 
     /**
      * Get the list of children of the research.
+     * @return a copy of the list of child identifiers.
      */
     ImmutableList<String> getChilds();
 

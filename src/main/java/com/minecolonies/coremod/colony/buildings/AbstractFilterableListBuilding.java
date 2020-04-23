@@ -3,10 +3,10 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +98,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Add a compostable item to the list.
+     * @param id the string id of the item type.
      * @param item the item to add.
      */
     public void addItem(final String id, final ItemStorage item)
@@ -123,6 +124,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     /**
      * Check if the item is an allowed item.
      * @param item the item to check.
+     * @param id the string id of the item type.
      * @return true if so.
      */
     public boolean isAllowedItem(final String id, final ItemStorage item)
@@ -132,6 +134,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Remove a compostable item from the list.
+     * @param id the string id of the item type.
      * @param item the item to remove.
      */
     public void removeItem(final String id, final ItemStorage item)

@@ -3,7 +3,10 @@ package com.minecolonies.coremod.colony.interactionhandling;
 import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.interactionhandling.*;
+import com.minecolonies.api.colony.interactionhandling.IChatPriority;
+import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -43,6 +46,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param inquiry the client inquiry.
      * @param priority the interaction priority.
      * @param pos the pos this is related to.
+     * @param validator the validator id.
      */
     public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,

@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;

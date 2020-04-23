@@ -1,7 +1,5 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import net.minecraft.tileentity.ITickableTileEntity;
-
 public interface ICitizenStuckHandler
 {
     /**

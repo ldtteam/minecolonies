@@ -70,7 +70,7 @@ public interface IEventManager
      * Update function, which is called from the colony every 500 ticks. Used to update event states/remove them if needed. Forwarded to events aswell to allow them tick based
      * logic
      *
-     * @param colony
+     * @param colony the colony to tick.
      */
     void onColonyTick(@NotNull IColony colony);
 
@@ -85,28 +85,28 @@ public interface IEventManager
     /**
      * Returns the full event Map
      *
-     * @return
+     * @return the map of events per colony.
      */
     Map<Integer, IColonyEvent> getEvents();
 
     /**
      * Reads the eventManager nbt and creates events from it
      *
-     * @param compound
+     * @param compound the compound to read from.
      */
     void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Write the eventmanager and all events to NBT
      *
-     * @param compound
+     * @param compound the compound to write to.
      */
     void writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Returns the associated structure manager, which manages structure spawn/despawn for events.
      *
-     * @return
+     * @return the manager.
      */
     IEventStructureManager getStructureManager();
 }

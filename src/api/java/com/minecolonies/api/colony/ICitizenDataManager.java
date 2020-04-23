@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**

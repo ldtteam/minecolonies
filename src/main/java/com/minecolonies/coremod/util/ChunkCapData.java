@@ -31,7 +31,7 @@ public class ChunkCapData
     /**
      * Writes data to a buffer
      *
-     * @param buf
+     * @param buf the buffer to write it to.
      */
     public void toBytes(@NotNull final PacketBuffer buf)
     {
@@ -48,8 +48,8 @@ public class ChunkCapData
     /**
      * Creates the data from a buffer
      *
-     * @param buffer
-     * @return
+     * @param buffer the bytebuffer.
+     * @return the cap data.
      */
     public static ChunkCapData fromBytes(@NotNull final PacketBuffer buffer)
     {

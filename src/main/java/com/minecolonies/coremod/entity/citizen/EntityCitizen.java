@@ -1204,7 +1204,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param entity entity to ride on
      * @param force  force flag
-     * @return
+     * @return true if successful.
      */
     @Override
     public boolean startRiding(final Entity entity, final boolean force)
@@ -1617,6 +1617,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Get if the citizen is fleeing from an attacker.
+     * @return true if so.
      */
     public boolean isCurrentlyFleeing()
     {

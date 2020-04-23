@@ -130,6 +130,7 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
     /**
      * Add a recipe to the building.
      * @param token the id of the recipe.
+     * @return true if successful
      */
     boolean addRecipe(IToken token);
 

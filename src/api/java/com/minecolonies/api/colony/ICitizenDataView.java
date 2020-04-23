@@ -45,6 +45,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * DEPRECATED
+     * @param bp the position.
      */
     void setWorkBuilding(BlockPos bp);
 

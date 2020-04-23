@@ -166,7 +166,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Check for all items of the required recipe.
-     *
+     * @param storage the recipe storage.
      * @return the next state to go to.
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)

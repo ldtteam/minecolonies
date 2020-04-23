@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;

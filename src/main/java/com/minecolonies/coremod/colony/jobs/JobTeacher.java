@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.research.EntityAIWorkResearcher;
 import com.minecolonies.coremod.entity.ai.citizen.school.EntityAIWorkTeacher;
 import org.jetbrains.annotations.NotNull;
 

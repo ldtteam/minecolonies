@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Empty renderer for entities which should not actually be rendered.
  *
- * @param <T>
+ * @param <T> the entity that shall sit.
  */
 public class RenderSitting<T extends Entity> extends EntityRenderer<T>
 {
