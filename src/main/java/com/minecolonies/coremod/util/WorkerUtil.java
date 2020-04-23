@@ -356,7 +356,7 @@ public final class WorkerUtil
     {
         for (final BlockPos pos : buildingFlorist.getPlantGround())
         {
-            if (world.isBlockLoaded(pos))
+            if (world.isBlockPresent(pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

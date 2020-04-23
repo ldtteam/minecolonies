@@ -321,7 +321,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
         for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
         {
-            if(!worldObj.isBlockLoaded(entry.getKey()))
+            if (!worldObj.isBlockPresent(entry.getKey()))
             {
                 return;
             }

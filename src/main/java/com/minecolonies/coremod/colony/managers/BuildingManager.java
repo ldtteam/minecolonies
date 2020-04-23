@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -168,7 +167,7 @@ public class BuildingManager implements IBuildingManager
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
-            if (colony.getWorld().isBlockLoaded(building.getPosition()))
+            if (colony.getWorld().isBlockPresent(building.getPosition()))
             {
                 building.onColonyTick(colony);
             }
@@ -192,7 +191,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final IBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getPosition();
-            if (colony.getWorld().isBlockLoaded(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
+            if (colony.getWorld().isBlockPresent(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
                 removedBuildings.add(building);
@@ -203,7 +202,7 @@ public class BuildingManager implements IBuildingManager
 
         for (@NotNull final BlockPos pos : tempFields)
         {
-            if (colony.getWorld().isBlockLoaded(pos))
+            if (colony.getWorld().isBlockPresent(pos))
             {
                 if (colony.getWorld().getTileEntity(pos) instanceof ScarecrowTileEntity)
                 {

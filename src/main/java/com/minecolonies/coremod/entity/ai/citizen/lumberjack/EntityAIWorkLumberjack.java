@@ -84,7 +84,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Number of ticks until he gives up destroying leaves
      * and walks a bit back to try a new path.
      */
-    private static final int    WALKING_BACK_WAIT_TIME = 60;
+    private static final int    WALKING_BACK_WAIT_TIME = 120;
     /**
      * How much he backs away when really not finding any path.
      */
@@ -116,7 +116,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Number of ticks to wait for tree.
      */
     private static final int TIMEOUT_DELAY      = 10;
-    private static final int LEAVES_RADIUS      = 3;
+    private static final int LEAVES_RADIUS      = 1;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
@@ -137,7 +137,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Delay before going to gather after cutting a tree.
      */
-    private static final int GATHERING_DELAY  = 3;
+    private static final int GATHERING_DELAY       = 3;
+    private static final int MAX_LEAVES_BREAK_DIST = 8 * 8;
+    private static final int TIME_TO_LEAVEBREAK    = 5;
 
     /**
      * Position where the Builders constructs from.
@@ -273,6 +275,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
             return findTree();
         }
+
+        stillTicks = 0;
         return LUMBERJACK_CHOP_TREE;
     }
 
@@ -284,13 +288,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private IAIState findTree()
     {
         final IBuilding building = getOwnBuilding();
-
-        // Waiting for current path to finish
-        if (pathResult != null && pathResult.isInProgress())
-        {
-            return getState();
-        }
-
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
@@ -513,24 +510,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
         final int distance = (int) location.distanceSq(worker.getPosition());
-        if (previousDistance != distance)
+        if (distance < MAX_LEAVES_BREAK_DIST)
         {
-            //something is moving, reset counters
-            stillTicks = 0;
-            previousDistance = distance;
-            return;
+            stillTicks++;
+            tryGettingUnstuckFromLeaves();
         }
-        //Stuck, probably on leaves
-        stillTicks++;
-        if (stillTicks < STUCK_WAIT_TIME)
-        {
-            //Wait for some time before jumping to conclusions
-            return;
-        }
-        //now we seem to be stuck!
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.stuckinleaves"));
-
-        tryGettingUnstuckFromLeaves();
     }
 
     /**
@@ -564,6 +548,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private void tryGettingUnstuckFromLeaves()
     {
+        if (stillTicks < TIME_TO_LEAVEBREAK)
+        {
+            return;
+        }
+
         @Nullable final BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
@@ -572,11 +561,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             stillTicks = 0;
             return;
         }
-        if (!mineBlock(nextLeaves, workFrom))
-        {
-            return;
-        }
-        stillTicks = 0;
+        mineBlock(nextLeaves, workFrom);
     }
 
     /**

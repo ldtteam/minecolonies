@@ -12,24 +12,24 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianHorde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
-import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
+import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
+import static com.minecolonies.api.util.constant.ColonyConstants.NUMBER_OF_CITIZENS_NEEDED;
 
 /**
  * Handles spawning hostile raid events.
@@ -40,6 +40,11 @@ public class RaidManager implements IRaiderManager
      * Spawn modifier to decrease the spawn-rate.
      */
     public static final double SPAWN_MODIFIER = 1.5;
+
+    /**
+     * Min distance to keep while spawning near buildings
+     */
+    private static final int MIN_BUILDING_SPAWN_DIST = 35;
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -176,12 +181,17 @@ public class RaidManager implements IRaiderManager
         for (int i = 0; i < raidCount; i++)
         {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
-            if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
+            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
             {
-                return;
+                continue;
             }
 
             spawnPoints.add(targetSpawnPoint);
+        }
+
+        if (spawnPoints.isEmpty())
+        {
+            return;
         }
 
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
@@ -195,11 +205,14 @@ public class RaidManager implements IRaiderManager
                   "Horde Spawn Point: " + targetSpawnPoint);
             }
 
-            if (PirateEventUtils.canSpawnPirateEventAt(colony, targetSpawnPoint, amount))
+            // No rotation till spawners are moved into schematics
+            final int pirateShipRotation = 0;
+            if (PirateEventUtils.canSpawnPirateEventAt(colony, targetSpawnPoint, amount, pirateShipRotation))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                event.setShipRotation(pirateShipRotation);
                 colony.getEventManager().addEvent(event);
             }
             else
@@ -214,6 +227,8 @@ public class RaidManager implements IRaiderManager
         colony.markDirty();
     }
 
+    private static final int MIN_RAID_CHUNK_DIST_CENTER = 5;
+
     /**
      * Calculate a random spawn point along the colony's border
      *
@@ -222,75 +237,184 @@ public class RaidManager implements IRaiderManager
     @Override
     public BlockPos calculateSpawnLocation()
     {
-        final Random random = colony.getWorld().rand;
-        final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
-          random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST,
-          random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH);
+        List<IBuilding> loadedBuildings = new ArrayList<>();
+        BlockPos locationSum = new BlockPos(0, 0, 0);
+        int amount = 0;
 
-        if (pos.equals(colony.getCenter()))
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            Log.getLogger().info("Spawning at colony center: " + colony.getCenter().getX() + " " + colony.getCenter().getZ());
-            return colony.getCenter();
-        }
-
-        return BlockPosUtil.findLand(pos, colony.getWorld());
-    }
-
-    @Override
-    public BlockPos getRandomOutsiderInDirection(final Direction directionX, final Direction directionZ)
-    {
-        final BlockPos center = colony.getCenter();
-        final World world = colony.getWorld();
-
-        if (world == null)
-        {
-            return center;
-        }
-
-        final List<BlockPos> positions = colony.getWayPoints().keySet().stream().filter(
-          pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
-        positions.addAll(colony.getBuildingManager().getBuildings().keySet().stream().filter(
-          pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
-
-        BlockPos thePos = center;
-        double distance = 0;
-        IBuilding theBuilding = null;
-        for (final BlockPos pos : positions)
-        {
-            final double currentDistance = center.distanceSq(pos);
-            if (currentDistance > distance && world.isAreaLoaded(pos, DEFAULT_SPAWN_RADIUS))
+            if (colony.getWorld().isBlockPresent(building.getPosition()))
             {
-                distance = currentDistance;
-                thePos = pos;
-                theBuilding = colony.getBuildingManager().getBuilding(thePos);
+                loadedBuildings.add(building);
+                amount++;
+                locationSum = locationSum.add(building.getPosition());
             }
         }
 
-        int minDistance = 0;
-        if (theBuilding != null)
+        if (amount == 0)
         {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
-            minDistance
-              = Math.max(corners.getA().getA() - corners.getA().getB(), corners.getB().getA() - corners.getB().getB());
+            Log.getLogger().info("Trying to spawn raid on colony with no loaded buildings, aborting!");
+            return null;
         }
 
-        int radius = DEFAULT_SPAWN_RADIUS;
-        while (radius < MAX_SPAWN_RADIUS && world.isAreaLoaded(thePos, radius))
+        // Calculate center on loaded buildings, to find a nice distance for raiders
+        BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
+
+        final Random random = colony.getWorld().rand;
+
+        BlockPos spawnPos = null;
+
+        Direction direction1 = random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST;
+        Direction direction2 = random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH;
+
+        for (int i = 0; i < 4; i++)
         {
-            radius += DEFAULT_SPAWN_RADIUS;
+            if (i > 0)
+            {
+                direction1 = direction1.rotateY();
+                direction2 = direction2.rotateY();
+            }
+
+            spawnPos = findSpawnPointInDirections(calcCenter, direction1, direction2, loadedBuildings);
+            if (spawnPos != null)
+            {
+                break;
+            }
         }
 
-        final int dist = Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS));
-        thePos = thePos.offset(directionX, dist);
-        thePos = thePos.offset(directionZ, dist);
+        if (spawnPos == null)
+        {
+            return null;
+        }
 
-        final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-        final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
+        return BlockPosUtil.findLand(spawnPos, colony.getWorld());
+    }
 
-        final double x = Math.round(thePos.getX() + 3 * Math.sin(rads));
-        final double z = Math.round(thePos.getZ() + 3 * Math.cos(rads));
+    private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;
 
-        return new BlockPos(x, thePos.getY(), z);
+    /**
+     * Finds a spawnpoint randomly in a circular shape around the center Advances
+     *
+     * @param center
+     * @param dir1
+     * @param dir2
+     * @return
+     */
+    private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
+    {
+        final Random random = colony.getWorld().rand;
+
+        BlockPos spawnPos = new BlockPos(center);
+
+        // Do the min offset
+        for (int i = 1; i <= MIN_RAID_CHUNK_DIST_CENTER; i++)
+        {
+            if (random.nextBoolean())
+            {
+                spawnPos = spawnPos.offset(dir1, 16);
+            }
+            else
+            {
+                spawnPos = spawnPos.offset(dir2, 16);
+            }
+        }
+
+        BlockPos tempPos = new BlockPos(spawnPos);
+
+        // Check if loaded
+        if (colony.getWorld().isBlockPresent(spawnPos))
+        {
+            for (int i = 1; i <= random.nextInt(RAID_SPAWN_SEARCH_CHUNKS - 3) + 3; i++)
+            {
+                // Choose random between our two directions
+                if (random.nextBoolean())
+                {
+                    if (colony.getWorld().isBlockPresent(tempPos.offset(dir1, 16)))
+                    {
+                        if (isValidSpawnPoint(tempPos.offset(dir1, 16), loadedBuildings))
+                        {
+                            spawnPos = tempPos.offset(dir1, 16);
+                        }
+                        tempPos = tempPos.offset(dir1, 16);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if (colony.getWorld().isBlockPresent(tempPos.offset(dir2, 16)))
+                    {
+                        if (isValidSpawnPoint(tempPos.offset(dir2, 16), loadedBuildings))
+                        {
+                            spawnPos = tempPos.offset(dir2, 16);
+                        }
+                        tempPos = tempPos.offset(dir2, 16);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (isValidSpawnPoint(spawnPos, loadedBuildings))
+            {
+                return spawnPos;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determines whether the given spawnpoint is allowed.
+     *
+     * @param spawnPos
+     * @param loadedBuildings
+     * @return
+     */
+    private boolean isValidSpawnPoint(final BlockPos spawnPos, final List<IBuilding> loadedBuildings)
+    {
+        for (final IBuilding building : loadedBuildings)
+        {
+            if (building.getBuildingLevel() == 0)
+            {
+                continue;
+            }
+
+            int minDist = MIN_BUILDING_SPAWN_DIST;
+
+            // Additional raid protection for certain buildings, towers can be used now to deal with unlucky - inwall spawns
+            if (building instanceof BuildingGuardTower)
+            {
+                // 47/59/71/83/95
+                minDist += building.getBuildingLevel() * 12;
+            }
+            else if (building instanceof BuildingHome)
+            {
+                // 39/43/47/51/55
+                minDist += building.getBuildingLevel() * 4;
+            }
+            else if (building instanceof BuildingTownHall)
+            {
+                // 43/51/59/67/75
+                minDist += building.getBuildingLevel() * 8;
+            }
+            else
+            {
+                // 37/39/41/43/45
+                minDist += building.getBuildingLevel() * 2;
+            }
+
+            if (BlockPosUtil.getDistance2D(building.getPosition(), spawnPos) < minDist)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -377,7 +501,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
-        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL.PEACEFUL
+        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL
                  && MineColonies.getConfig().getCommon().doBarbariansSpawn.get()
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
