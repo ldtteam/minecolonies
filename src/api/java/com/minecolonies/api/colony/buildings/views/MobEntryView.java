@@ -5,7 +5,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 

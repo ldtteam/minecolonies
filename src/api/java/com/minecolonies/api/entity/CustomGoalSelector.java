@@ -7,7 +7,7 @@ import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.profiler.IProfiler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**

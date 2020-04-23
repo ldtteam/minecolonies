@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Creates a new building for the school.

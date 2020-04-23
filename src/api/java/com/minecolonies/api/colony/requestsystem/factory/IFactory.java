@@ -57,6 +57,7 @@ public interface IFactory<Input, Output>
      * @param nbt        The data of the request that should be deserialized.
      * @param controller The controller that can be used to deserialize complicated types.
      * @return The request that corresponds with the given data in the nbt
+     * @throws Exception if somethings goes wrong during the deserialization.
      */
     @NotNull
     Output deserialize(@NotNull IFactoryController controller, @NotNull CompoundNBT nbt) throws Throwable;

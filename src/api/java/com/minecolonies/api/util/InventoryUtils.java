@@ -2279,7 +2279,8 @@ public class InventoryUtils
 
     /**
      * Calculates howmany items match the given predicate that are in the list.
-     *
+     * @param stacks the stacks to count in.
+     * @param stackPredicate the condition to count for.
      * @return The sum of the itemstack sizes that match the predicate
      */
     public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, @NotNull final Predicate<ItemStack> stackPredicate)

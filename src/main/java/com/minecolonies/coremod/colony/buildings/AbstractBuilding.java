@@ -49,7 +49,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -694,7 +693,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Requests a repair for the current building.
      *
-     * @param builder
      * @param builder the assigned builder.
      */
     @Override

@@ -15,6 +15,7 @@ public interface ICitizenSleepHandler
 
     /**
      * Returns the orientation of the bed in degrees.
+     * @return the bed orientation.
      */
     @OnlyIn(Dist.CLIENT)
     float getBedOrientationInDegrees();

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.entity.LivingEntity;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.util.Pond;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;

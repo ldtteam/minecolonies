@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

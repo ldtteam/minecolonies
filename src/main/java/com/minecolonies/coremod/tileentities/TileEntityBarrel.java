@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;

@@ -7,8 +7,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;

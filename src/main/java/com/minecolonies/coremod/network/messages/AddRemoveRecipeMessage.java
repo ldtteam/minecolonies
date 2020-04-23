@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.network.IMessage;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;

@@ -278,11 +278,13 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Schedule restart and cleanup.
+     * @param player the player scheduling it.
      */
     void scheduleRestart(ServerPlayerEntity player);
 
     /**
      * AI will be restarted, also restart building etc
+     * @return true if so.
      */
     boolean shouldRestart();
 

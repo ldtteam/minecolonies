@@ -10,12 +10,11 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;

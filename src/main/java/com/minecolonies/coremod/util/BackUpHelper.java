@@ -306,6 +306,7 @@ public final class BackUpHelper
      * @param colonyId  of the colony.
      * @param dimension the colony dimension.
      * @param loadDeleted whether to load deleted colonies aswell.
+     * @param claimChunks if chunks shall be claimed on loading.
      */
     public static void loadColonyBackup(final int colonyId, final int dimension, boolean loadDeleted, boolean claimChunks)
     {

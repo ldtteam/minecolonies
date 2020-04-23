@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

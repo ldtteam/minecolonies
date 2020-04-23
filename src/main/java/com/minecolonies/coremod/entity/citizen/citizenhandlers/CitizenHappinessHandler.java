@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.DEMANDS;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO;
 
 /**
  * The new happiness handler for the citizen.

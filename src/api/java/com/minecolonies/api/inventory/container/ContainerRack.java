@@ -1,8 +1,8 @@
 package com.minecolonies.api.inventory.container;
 
+import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

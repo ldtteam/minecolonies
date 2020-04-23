@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;

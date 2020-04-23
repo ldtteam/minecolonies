@@ -4,11 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import io.netty.util.internal.MathUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
@@ -16,8 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
@@ -231,39 +228,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
-        }
-    }
-
-    /**
-     * Try to transfer a stack to one of the inventories of the building.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
-     */
-    @Override
-    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
-    {
-        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
-        {
-            final Iterator<BlockPos> posIterator = containerList.iterator();
-            @NotNull ItemStack resultStack = stack.copy();
-
-            while (posIterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
-            {
-                final BlockPos pos = posIterator.next();
-                final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof ChestTileEntity && !InventoryUtils.isProviderFull(tempTileEntity))
-                {
-                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
-                }
-            }
-
-            return resultStack;
-        }
-        else
-        {
-            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
     }
 

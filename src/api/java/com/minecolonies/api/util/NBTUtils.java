@@ -1,10 +1,12 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

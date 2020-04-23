@@ -58,6 +58,7 @@ public final class BlockPosUtil
      * @param compound Compound to write to.
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
+     * @return the resulting compound.
      */
     public static CompoundNBT write(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
     {
@@ -86,6 +87,7 @@ public final class BlockPosUtil
      * @param world           the world.
      * @param currentPosition the current position.
      * @param def             the default position if none was found.
+     * @param minDist the minimum distance of the pos.
      * @return the BlockPos.
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist)
@@ -378,6 +380,7 @@ public final class BlockPosUtil
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
      * @param fortune Level of fortune on the pickaxe.
+     * @param stack the tool.
      * @return List of {@link ItemStack} with possible drops.
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack)

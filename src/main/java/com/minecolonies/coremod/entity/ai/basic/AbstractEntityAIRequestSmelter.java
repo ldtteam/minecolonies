@@ -17,9 +17,9 @@ import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 

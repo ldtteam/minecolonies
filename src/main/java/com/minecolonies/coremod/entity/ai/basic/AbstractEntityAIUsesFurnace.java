@@ -30,7 +30,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
  *
- * @param <J>
+ * @param <J> the job it is for.
  */
 public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {

@@ -281,6 +281,7 @@ public final class EntityUtils
      *
      * @param entity the entity.
      * @param world  the world.
+     * @param placer the entity to get the itemstacks from to check.
      * @return true if there.
      */
     public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)

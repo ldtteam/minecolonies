@@ -46,6 +46,7 @@ public final class Pond
      * @param water  The coordinate to check.
      * @param width  which has to be water.
      * @param length which has to be water.
+     * @return true if water.
      */
     public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final int width, final int length)
     {

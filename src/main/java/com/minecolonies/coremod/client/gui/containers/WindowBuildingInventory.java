@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;

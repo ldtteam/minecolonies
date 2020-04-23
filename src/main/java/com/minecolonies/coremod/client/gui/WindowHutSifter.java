@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import net.minecraft.client.Minecraft;
@@ -19,9 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.WindowConstants.LIST_RESOURCES;
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_ICON;
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_NAME;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.GREEN;
 import static org.jline.utils.AttributedStyle.WHITE;
 

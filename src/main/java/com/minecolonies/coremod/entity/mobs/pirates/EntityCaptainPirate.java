@@ -5,8 +5,6 @@ import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
  * Class for the Chief Pirate entity.
  */

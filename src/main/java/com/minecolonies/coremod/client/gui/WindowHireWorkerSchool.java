@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.*;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**

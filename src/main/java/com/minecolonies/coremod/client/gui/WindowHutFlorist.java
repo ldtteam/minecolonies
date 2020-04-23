@@ -16,7 +16,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.BUTTON_SWITCH;
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.ON;
 
 /**
  * Florist window class. Specifies the extras the florist has for its list.

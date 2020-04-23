@@ -1,12 +1,15 @@
 package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.*;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.FurnaceResultSlot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;

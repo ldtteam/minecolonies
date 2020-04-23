@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling.registry;
 
 import com.minecolonies.api.colony.ICitizen;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;

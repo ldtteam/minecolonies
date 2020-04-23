@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

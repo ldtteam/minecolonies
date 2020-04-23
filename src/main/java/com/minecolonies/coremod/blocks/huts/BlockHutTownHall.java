@@ -58,13 +58,13 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     /**
      * Choose a different gui when no colony view, for colony overview and creation/deletion
      *
-     * @param state
-     * @param worldIn
-     * @param pos
-     * @param player
-     * @param hand
-     * @param ray
-     * @return
+     * @param state the blockstate.
+     * @param worldIn the world.
+     * @param pos the position.
+     * @param player the player.
+     * @param hand the hand.
+     * @param ray the raytraceresult.
+     * @return the result type.
      */
     @Override
     public ActionResultType onBlockActivated(

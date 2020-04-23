@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -11,13 +12,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
