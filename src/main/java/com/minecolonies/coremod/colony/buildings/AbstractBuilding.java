@@ -694,7 +694,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Requests a repair for the current building.
      *
-     * @param builder
      * @param builder the assigned builder.
      */
     @Override

@@ -80,6 +80,7 @@ public class AttackingPlayer
     /**
      * Adds a new guard to the list.
      * @param guard the guard to add.
+     * @return true if successful
      */
     public boolean addGuard(final AbstractEntityCitizen guard)
     {
@@ -93,6 +94,7 @@ public class AttackingPlayer
 
     /**
      * Check if the attack is valid.
+     * @param colony the colony to check for.
      * @return true if so.
      */
     public boolean isValidAttack(final Colony colony)
@@ -116,16 +118,11 @@ public class AttackingPlayer
 
     /**
      * Refreshes the list and checks if all are still alive.
+     * @param colony the colony to refresh it for.
      */
     public void refreshList(final Colony colony)
     {
-        for (final AbstractEntityCitizen citizen : new ArrayList<>(guards))
-        {
-            if (citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()))
-            {
-                guards.remove(citizen);
-            }
-        }
+        guards.removeIf(citizen -> citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()));
     }
 
     @Override

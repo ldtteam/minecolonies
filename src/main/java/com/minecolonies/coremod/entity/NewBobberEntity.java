@@ -68,7 +68,9 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     /**
      * Set the current angler.
-     * @param citizen
+     * @param citizen the citizen to set.
+     * @param luck the luck param.
+     * @param lureSpeed the lure speed param.
      */
     public void setAngler(final EntityCitizen citizen, final int luck, final int lureSpeed)
     {
