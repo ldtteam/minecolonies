@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.research.util.ResearchConstants.GROWTH;
-import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 
 /**
  * AI which controls child behaviour and growing.

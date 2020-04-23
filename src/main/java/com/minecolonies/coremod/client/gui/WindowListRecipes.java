@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
@@ -10,7 +7,9 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;

@@ -5,8 +5,6 @@ import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
  * Class for the Barbarian entity.
  */

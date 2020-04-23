@@ -13,7 +13,8 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
+import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
  * Handler taking care of citizens getting stuck.

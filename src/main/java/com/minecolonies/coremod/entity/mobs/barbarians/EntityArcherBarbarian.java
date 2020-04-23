@@ -5,8 +5,6 @@ import com.minecolonies.api.entity.mobs.barbarians.IArcherBarbarianEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
  * Class for the Archer Barbarian entity.
  */

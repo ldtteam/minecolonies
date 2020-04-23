@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.item.Item;
 
 /**

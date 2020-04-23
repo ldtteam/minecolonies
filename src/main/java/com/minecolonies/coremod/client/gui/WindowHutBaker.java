@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.views.View;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import net.minecraft.item.ItemStack;

@@ -2,6 +2,7 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundNBT;
+
 import java.util.List;
 
 /**

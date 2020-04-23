@@ -3,7 +3,7 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import net.minecraft.nbt.CompoundNBT;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * The interface for the object that holds all research globally.
