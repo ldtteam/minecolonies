@@ -257,6 +257,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
 
+        @NotNull final ListNBT minimumStockTagList = new ListNBT();
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
+        {
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            entry.getKey().getItemStack().write(compoundNBT);
+            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
+            minimumStockTagList.add(compoundNBT);
+        }
+        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
+
         return compound;
     }
 

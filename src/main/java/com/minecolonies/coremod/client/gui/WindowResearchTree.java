@@ -48,6 +48,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private final WindowHutUniversity last;
 
     /**
+     * If has a max research for this branch already.
+     */
+    private boolean hasMax;
+
+    /**
      * Create the research tree window.
      * @param branch the branch being researched.
      * @param building the associated university.
@@ -59,8 +64,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.branch = branch;
         this.building = building;
         this.last = last;
+        this.hasMax = false;
 
         final List<String> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
+        this.hasMax = building.getColony().getResearchManager().getResearchTree().branchFinishedHighestLevel(branch);
+
         final ZoomDragView view = findPaneOfTypeByID(DRAG_VIEW_ID, ZoomDragView.class);
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchManager().getResearchTree(), true, false, 0);
@@ -226,6 +234,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.buildingleveltoolow"));
+                }
+                else if (research.getDepth() == 6
+                           && building.getBuildingLevel() == building.getBuildingMaxLevel()
+                            && hasMax)
+                {
+                    buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
                 }
 
                 view.addChild(buttonImage);
