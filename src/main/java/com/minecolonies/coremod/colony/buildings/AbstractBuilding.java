@@ -25,6 +25,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -43,9 +44,14 @@ import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDelive
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -60,6 +66,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,11 +90,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 {
     public static final int       MAX_BUILD_HEIGHT = 256;
     public static final int       MIN_BUILD_HEIGHT = 1;
+
     /**
      * The data store id for request system related data.
      */
-    @NotNull
-    private             IToken<?> rsDataStoreToken;
+    private IToken<?> rsDataStoreToken;
 
     /**
      * The ID of the building. Needed in the request system to identify it.
@@ -1504,4 +1511,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(false);
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
+            }
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(false)).writeBlockPos(getID()));
+    }
 }

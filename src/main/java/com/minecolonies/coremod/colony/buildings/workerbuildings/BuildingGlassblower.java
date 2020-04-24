@@ -11,20 +11,30 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -116,6 +126,29 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     //todo allow any recipe for glass
     //todo add some way to accept all sand -> glass recipes.
 
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(false);
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
+            }
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(false)).writeBlockPos(getID()));
+    }
+
     /**
      * Method to check if the stack is craftable for the smeltery.
      *
@@ -133,6 +166,8 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
 
         return false;
     }
+
+    //todo scan in a block for the modblocks too.
 
     @Override
     public BuildingEntry getBuildingRegistryEntry()
@@ -163,7 +198,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
      */
     public static class View extends AbstractBuildingSmelterCrafter.View
     {
-
         /**
          * Instantiate the stone smeltery view.
          *
