@@ -96,7 +96,7 @@ public class ResearchInitializer
         final GlobalResearch woodwork = new GlobalResearch("woodwork", "technology", "Woodwork", 1, new UnlockBuildingResearchEffect("Sawmill", true));
         woodwork.setRequirement(new BuildingResearchRequirement(3, "lumberjack"));
 
-        final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Siever", true));
+        final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Sifter", true));
         sieving.setRequirement(new BuildingResearchRequirement(3, "fisherman"));
 
         final GlobalResearch space = new GlobalResearch("space", "technology", "Space", 3, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 0.5));
