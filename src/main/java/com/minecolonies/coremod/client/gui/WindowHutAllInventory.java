@@ -135,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final List<BlockPos> containerList = building.getContainerList();
 
-        final List<ItemStack> items = new ArrayList<>();
+        final List<ItemStorage> items = new ArrayList<>();
         final World world = building.getColony().getWorld();
         for (BlockPos blockPos : containerList)
         {
@@ -147,9 +147,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
                 for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
                 {
-                    ItemStack stack = entry.getKey().getItemStack().copy();
-                    stack.setCount(entry.getValue());
-                    items.add(stack);
+                    items.add(entry.getKey());
                 }
             }
             else if (rack instanceof ChestTileEntity)
@@ -160,17 +158,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     final ItemStack stack = ((ChestTileEntity) rack).getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        items.add(stack.copy());
+                        items.add(new ItemStorage(stack.copy()));
                     }
                 }
             }
         }
 
         final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
-        for (final ItemStack currentItem : items)
+        for (final ItemStorage currentStorage : items)
         {
-            final ItemStorage currentStorage = new ItemStorage(currentItem, currentItem.getCount(), false);
-
             if (storedItems.containsKey(currentStorage))
             {
                 final ItemStorage existing = storedItems.get(currentStorage);
