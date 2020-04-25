@@ -31,10 +31,15 @@ public class DefaultSoundProvider implements IDataProvider
     {
         final Map<String[], List<String>> map = new LinkedHashMap<>();
 
-        final List<String> defaultSounds = new ArrayList<>();
-        defaultSounds.add("minecolonies:mob/citizen/male/say1");
-        defaultSounds.add("minecolonies:mob/citizen/male/say2");
-        defaultSounds.add("minecolonies:mob/citizen/male/say3");
+        final List<String> defaultMaleSounds = new ArrayList<>();
+        defaultMaleSounds.add("minecolonies:mob/citizen/male/say1");
+        defaultMaleSounds.add("minecolonies:mob/citizen/male/say2");
+        defaultMaleSounds.add("minecolonies:mob/citizen/male/say3");
+
+        final List<String> defaultFemaleSounds = new ArrayList<>();
+        defaultFemaleSounds.add("minecolonies:mob/citizen/female/say1");
+        defaultFemaleSounds.add("minecolonies:mob/citizen/female/say2");
+        defaultFemaleSounds.add("minecolonies:mob/citizen/female/say3");
 
         final List<String> childSounds = new ArrayList<>();
         childSounds.add("minecolonies:mob/citizen/child/laugh1");
@@ -46,27 +51,27 @@ public class DefaultSoundProvider implements IDataProvider
             {
                 for (final EventType soundEvents : EventType.values())
                 {
-                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
-                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
+                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultMaleSounds);
+                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultFemaleSounds);
                 }
             }
         }
 
         for (final EventType soundEvents : EventType.values())
         {
-            map.put(new String[]{"mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
-            map.put(new String[]{"mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
+            map.put(new String[]{"mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultMaleSounds);
+            map.put(new String[]{"mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultFemaleSounds);
         }
 
         for (final EventType soundEvents : EventType.values())
         {
-            map.put(new String[]{"mob.child.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
-            map.put(new String[]{"mob.child.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultSounds);
+            map.put(new String[]{"mob.child.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, childSounds);
+            map.put(new String[]{"mob.child.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, childSounds);
         }
 
         map.put(new String[]{"mob.barbarian.death", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/death"));
         map.put(new String[]{"mob.barbarian.say", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/say"));
-        map.put(new String[]{"mob.barbarian.hurt", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/hurt1, minecolonies:mob/barbarian/hurt2, minecolonies:mob/barbarian/hurt3, minecolonies:mob/barbarian/hurt4"));
+        map.put(new String[]{"mob.barbarian.hurt", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/hurt1", "minecolonies:mob/barbarian/hurt2", "minecolonies:mob/barbarian/hurt3", "minecolonies:mob/barbarian/hurt4"));
 
         map.put(new String[]{"mob.citizen.snore", "neutral"}, ImmutableList.of("minecolonies:mob/citizen/snore"));
 
