@@ -188,8 +188,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
 
-    //todo scan in a block for the modblocks too.
-
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
