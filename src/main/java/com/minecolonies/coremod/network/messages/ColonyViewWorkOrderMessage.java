@@ -35,7 +35,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
      * Updates a {@link WorkOrderView} of the workOrders.
      *
      * @param colony    colony of the workOrder.
-     * @param workOrder workOrder of the colony to update view.
+     * @param workOrderList list of workorders to send to the client
      */
     public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
     {

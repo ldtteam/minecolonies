@@ -214,11 +214,9 @@ public final class ChunkDataHelper
      *
      * --- This is only for dynamic claiming ---
      *
-     * @param world the world it was placed in.
+     * @param colony the colony to claim for
      * @param add if add or remove.
-     * @param id the id of the colony.
      * @param center the center position of the colony.
-     * @param dimension the dimension it was placed in.
      * @param range the range to claim.
      */
     public static void claimColonyChunks(final IColony colony, final boolean add, final BlockPos center, final int range)
