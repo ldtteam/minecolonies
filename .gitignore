@@ -47,3 +47,5 @@ libs/
 runServer/
 
 gradle\.properties
+
+src/main/generated/resources/.cache/cache
