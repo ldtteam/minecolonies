@@ -267,10 +267,10 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
-                .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                        new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
-                                () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.id,
-                                        ally.dimension)))));
+                                          .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                            new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
+                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.id,
+                                                ally.dimension)))));
 
         Minecraft.getInstance().player.sendMessage(teleport);
         this.close();
@@ -372,14 +372,14 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             if (row < freeBlocks.size())
             {
                 Network.getNetwork().sendToServer(
-                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreeBlock(freeBlocks.get(row));
             }
             else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
                 Network.getNetwork().sendToServer(
-                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreePosition(freePos);
             }
             fillFreeBlockList();
@@ -515,8 +515,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                        .setLabel(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                                : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                  .setLabel(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                              : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
@@ -671,7 +671,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
                     final String job = LanguageHandler.format(entry.getKey());
                     final String numberOfWorkers =
-                            LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
+                      LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
                     label.setLabelText(numberOfWorkers);
                 }
                 else
@@ -932,7 +932,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText(
-                "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
+          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 
@@ -1243,12 +1243,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             if (button.getID().equals(BUTTON_PROMOTE))
             {
                 Network.getNetwork()
-                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
+                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
                 Network.getNetwork()
-                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
+                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
     }
