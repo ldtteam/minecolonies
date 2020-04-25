@@ -75,15 +75,15 @@ public class DefaultSoundProvider implements IDataProvider
 
         map.put(new String[]{"mob.citizen.snore", "neutral"}, ImmutableList.of("minecolonies:mob/citizen/snore"));
 
-        final SoundsJson lootTableJson = new SoundsJson(map);
+        final SoundsJson soundJson = new SoundsJson(map);
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
-        IDataProvider.save(DataGeneratorConstants.GSON, cache, lootTableJson.serialize(), savePath);
+        IDataProvider.save(DataGeneratorConstants.GSON, cache, soundJson.serialize(), savePath);
     }
 
     @NotNull
     @Override
     public String getName()
     {
-        return "Default Block Loot Table Provider";
+        return "Default Sound Json Provider";
     }
 }
