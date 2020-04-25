@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -33,6 +35,13 @@ public class JobGlassblower extends AbstractJobCrafter
     public String getName()
     {
         return "com.minecolonies.coremod.job.glassblower";
+    }
+
+    @NotNull
+    @Override
+    public IModelType getModel()
+    {
+        return BipedModelType.GLASSBLOWER;
     }
 
     /**
