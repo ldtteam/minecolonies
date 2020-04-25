@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecolonies:blockhutenchanter",
+          "name": "minecolonies:blockhutglassblower",
           "functions": [
             {
               "function": "minecraft:copy_name",
