@@ -135,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final List<BlockPos> containerList = building.getContainerList();
 
-        final List<ItemStorage> items = new ArrayList<>();
+        final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
         final World world = building.getColony().getWorld();
         for (BlockPos blockPos : containerList)
         {
@@ -147,7 +147,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
                 for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
                 {
-                    items.add(entry.getKey());
+                    if (storedItems.containsKey(entry.getKey()))
+                    {
+                        final ItemStorage existing = storedItems.get(entry.getKey());
+                        existing.setAmount(existing.getAmount() + entry.getKey().getAmount());
+                    }
+                    else
+                    {
+                        storedItems.put(entry.getKey(), entry.getKey());
+                    }
                 }
             }
             else if (rack instanceof ChestTileEntity)
@@ -158,23 +166,18 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     final ItemStack stack = ((ChestTileEntity) rack).getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        items.add(new ItemStorage(stack.copy()));
+                        ItemStorage currentStorage = new ItemStorage(stack.copy());
+                        if (storedItems.containsKey(currentStorage))
+                        {
+                            final ItemStorage existing = storedItems.get(currentStorage);
+                            existing.setAmount(existing.getAmount() + currentStorage.getAmount());
+                        }
+                        else
+                        {
+                            storedItems.put(currentStorage, currentStorage);
+                        }
                     }
                 }
-            }
-        }
-
-        final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
-        for (final ItemStorage currentStorage : items)
-        {
-            if (storedItems.containsKey(currentStorage))
-            {
-                final ItemStorage existing = storedItems.get(currentStorage);
-                existing.setAmount(existing.getAmount() + currentStorage.getAmount());
-            }
-            else
-            {
-                storedItems.put(currentStorage, currentStorage);
             }
         }
 
