@@ -848,10 +848,14 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewWorkOrderMessage(final PacketBuffer buf)
     {
-        @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
-        if (workOrder != null)
+        final int amount = buf.readInt();
+        for (int i = 0; i < amount; i++)
         {
-            workOrders.put(workOrder.getId(), workOrder);
+            @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+            if (workOrder != null)
+            {
+                workOrders.put(workOrder.getId(), workOrder);
+            }
         }
 
         return null;

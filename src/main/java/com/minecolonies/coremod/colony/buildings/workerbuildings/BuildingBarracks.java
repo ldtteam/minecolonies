@@ -189,7 +189,7 @@ public class BuildingBarracks extends AbstractBuilding
                 sum += building.getBuildingLevel();
             }
         }
-        return Math.max(1, sum / getMaxBuildingLevel());
+        return Math.max(0, sum / getMaxBuildingLevel());
     }
 
     @Override
