@@ -147,9 +147,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
                 for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
                 {
-                    ItemStack stack = entry.getKey().getItemStack().copy();
-                    stack.setCount(entry.getValue());
-                    items.add(stack);
+                    items.add(entry.getKey().getItemStack().copy());
                 }
             }
             else if (rack instanceof ChestTileEntity)

@@ -225,12 +225,14 @@ public class TileEntityRack extends AbstractTileEntityRack
                 continue;
             }
 
-            final ItemStorage storage = new ItemStorage(stack.copy());
+            final ItemStack stackCopy = stack.copy();
+            final ItemStorage storage = new ItemStorage(stackCopy);
             int amount = ItemStackUtils.getSize(stack);
             if (content.containsKey(storage))
             {
                 amount += content.remove(storage);
             }
+            stackCopy.setCount(amount);
             content.put(storage, amount);
         }
 
