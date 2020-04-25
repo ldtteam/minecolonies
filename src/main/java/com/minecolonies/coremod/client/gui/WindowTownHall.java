@@ -25,6 +25,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.*;
@@ -327,7 +328,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         if (townHall.getColony().getMercenaryUseTime() != 0
-              && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+                && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -596,13 +597,50 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();
                 }
 
-                final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
-                jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
-                totalWorkers += workers;
+                if (building instanceof BuildingSchool.View)
+                {
+                    String teacherJobName = LanguageHandler.format("com.minecolonies.coremod.job.teacher");
+
+                    int maxTeachers = 1;
+                    max = max - 1;
+                    int teachers = workers = 0;
+                    for(@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
+                    {
+                        if (townHall.getColony().getCitizen(workerId).isChild())
+                        {
+                            workers += 1;
+                        }
+                        else
+                        {
+                            teachers += 1;
+                        }
+                    }
+                    final Tuple<Integer, Integer> teacherTuple = jobMaxCountMap.getOrDefault(teacherJobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(teacherJobName, new Tuple<>(teacherTuple.getA() + teachers, teacherTuple.getB() + maxTeachers));
+                    totalWorkers += teachers;
+                    final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+
+                }
+                else
+                {
+                    final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+                    totalWorkers += workers;
+                }
             }
         }
 
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers);
+
+        //calculate number of children
+        for(ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
+        {
+            if (iCitizenDataView.isChild())
+            {
+                children++;
+            }
+        }
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers - children);
         final String numberOfKids = LanguageHandler.format("com.minecolonies.coremod.gui.townhall.population.childs", children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
