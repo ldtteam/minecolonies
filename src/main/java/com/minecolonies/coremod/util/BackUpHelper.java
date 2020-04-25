@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -134,8 +133,7 @@ public final class BackUpHelper
     }
 
     /**
-     * Get save location for Minecolonies backup data, from the world/save
-     * directory.
+     * Get save location for Minecolonies backup data, from the world/save directory.
      *
      * @return Save file for minecolonies.
      */
@@ -157,7 +155,7 @@ public final class BackUpHelper
     private static void addToZipFile(final String fileName, final ZipOutputStream zos, final File folder)
     {
         final File file = new File(folder, fileName);
-        try(FileInputStream fis = new FileInputStream(file))
+        try (FileInputStream fis = new FileInputStream(file))
         {
             zos.putNextEntry(new ZipEntry(fileName));
             Files.copy(file, zos);
@@ -186,6 +184,7 @@ public final class BackUpHelper
 
     /**
      * Get save location for Minecolonies data, from the world/save directory.
+     *
      * @param world the server world object to use.
      * @return Save file for minecolonies.
      */
@@ -198,8 +197,7 @@ public final class BackUpHelper
     }
 
     /**
-     * Save an CompoundNBT to a file.  Does so in a safe manner using an
-     * intermediate tmp file.
+     * Save an CompoundNBT to a file.  Does so in a safe manner using an intermediate tmp file.
      *
      * @param file     The destination file to write the data to.
      * @param compound The CompoundNBT to write to the file.
@@ -303,8 +301,8 @@ public final class BackUpHelper
     /**
      * Load the colony backup by colony, also works for backups of deleted colonies.
      *
-     * @param colonyId  of the colony.
-     * @param dimension the colony dimension.
+     * @param colonyId    of the colony.
+     * @param dimension   the colony dimension.
      * @param loadDeleted whether to load deleted colonies aswell.
      * @param claimChunks if chunks shall be claimed on loading.
      */
@@ -349,22 +347,15 @@ public final class BackUpHelper
                 IColonyTagCapability cap = ((Chunk) colonyWorld.getChunk(colony.getCenter())).getCapability(CLOSE_COLONY_CAP, null).orElse(null);
                 if (cap != null && cap.getOwningColony() != colonyId)
                 {
-                    if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
+                    for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                     {
-                        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-                        {
-                            ChunkDataHelper.claimColonyChunks(colonyWorld,
-                              true,
-                              colony.getID(),
-                              building.getPosition(),
-                              colony.getDimension(),
-                              building.getClaimRadius(building.getBuildingLevel()));
-                        }
+                        ChunkDataHelper.claimColonyChunks(colony,
+                          true,
+                          building.getPosition(),
+                          building.getClaimRadius(building.getBuildingLevel()));
                     }
-                    else
-                    {
-                        ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
-                    }
+
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
                 }
             }
         }

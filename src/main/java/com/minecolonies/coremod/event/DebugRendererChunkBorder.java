@@ -55,7 +55,7 @@ public class DebugRendererChunkBorder
         {
             center = new Tuple<>(player.chunkCoordX, player.chunkCoordZ);
             colonies.clear();
-            final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
+            final int range = MineColonies.getConfig().getCommon().maxColonySize.get();
             for (int incX = -range; incX <= range; incX += 1)
             {
                 for (int incZ = -range; incZ <= range; incZ += 1)

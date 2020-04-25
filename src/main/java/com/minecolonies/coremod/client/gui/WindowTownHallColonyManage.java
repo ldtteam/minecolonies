@@ -61,7 +61,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         else
         {
             // Close colony
-            int closeClonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getCommon().minTownHallPadding.get());
+            int closeClonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getCommon().minColonyDistance.get());
 
             if (closeClonyID != 0)
             {

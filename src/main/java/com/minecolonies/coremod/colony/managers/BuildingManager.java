@@ -544,6 +544,8 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouses.add((IWareHouse) building);
         }
+
+        colony.getPackageManager().updateSubscribers();
     }
 
     /**
@@ -553,7 +555,12 @@ public class BuildingManager implements IBuildingManager
     {
         if (isBuildingsDirty || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = isBuildingsDirty ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isBuildingsDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             for (@NotNull final IBuilding building : buildings.values())
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
@@ -571,7 +578,12 @@ public class BuildingManager implements IBuildingManager
     {
         if (isFieldsDirty || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = isFieldsDirty ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isFieldsDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             for (final IBuilding building : buildings.values())
             {
                 if (building instanceof BuildingFarmer)
