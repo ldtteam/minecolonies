@@ -92,6 +92,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     @Override
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
+        if (storage.getIntermediate() != Blocks.FURNACE)
+        {
+            return super.checkForItems(storage);
+        }
+
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
