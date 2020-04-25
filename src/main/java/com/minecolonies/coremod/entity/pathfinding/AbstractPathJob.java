@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -1019,7 +1020,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                 return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock
                                                             || block.getBlock() instanceof FenceGateBlock
                                                             || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
-                                                            || block.getBlock() instanceof PressurePlateBlock);
+                                                            || block.getBlock() instanceof PressurePlateBlock
+                                                            || block.getBlock() instanceof BlockDecorationController);
             }
             else
             {
