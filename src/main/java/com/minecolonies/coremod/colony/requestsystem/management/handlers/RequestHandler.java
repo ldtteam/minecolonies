@@ -189,7 +189,8 @@ public class RequestHandler implements IRequestHandler
             resolver.onRequestAssigned(manager, request, false);
 
             for (final IToken<?> childRequestToken :
-                            attemptResult) {
+                            attemptResult)
+            {
                 @SuppressWarnings(RAWTYPES) final IRequest childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
                 childRequest.setParent(request.getId());
@@ -197,17 +198,21 @@ public class RequestHandler implements IRequestHandler
             }
 
             for (final IToken<?> childRequestToken :
-                            attemptResult) {
+                            attemptResult)
+            {
                 @SuppressWarnings(RAWTYPES) final IRequest childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
-                if (!isAssigned(childRequestToken)) {
+                if (!isAssigned(childRequestToken))
+                {
                     assignRequest(childRequest, resolverTokenBlackList);
                 }
             }
 
-            if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal()) {
+            if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+            {
                 request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
-                if (!request.hasChildren()) {
+                if (!request.hasChildren())
+                {
                     resolveRequest(request);
                 }
             }
