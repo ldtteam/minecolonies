@@ -108,12 +108,6 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         return "com.minecolonies.coremod.job.healer";
     }
 
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
     @NotNull
     @Override
     public Skill getPrimarySkill()

@@ -159,7 +159,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         final BlockPos pos = building.getPosition();
         Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, building.canCraftComplexRecipes() ? 3 : 2));
+        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building));
     }
 
     /**

@@ -88,10 +88,10 @@ public class ResearchInitializer
         hot.addChild(theflintstones);
         theflintstones.addChild(rockingroll);
 
-        //final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("GlassBlower", true));
-        //thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
+        final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("Glassblower", true));
+        thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
 
-        //hot.addChild(thoselungs);
+        hot.addChild(thoselungs);
 
         final GlobalResearch woodwork = new GlobalResearch("woodwork", "technology", "Woodwork", 1, new UnlockBuildingResearchEffect("Sawmill", true));
         woodwork.setRequirement(new BuildingResearchRequirement(3, "lumberjack"));
@@ -221,7 +221,7 @@ public class ResearchInitializer
 
         //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
         //researchTree.addResearch(stringwork.getBranch(), stringwork);
-        //researchTree.addResearch(thoselungs.getBranch(), thoselungs);
+        researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         //researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
 
         researchTree.addResearch(deeppockets.getBranch(), deeppockets);

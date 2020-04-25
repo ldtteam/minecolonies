@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XSX",
+    "XTX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "T": {
+      "item": "minecraft:glass"
+    },
+    "S": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutglassblower"
+  }
+}
