@@ -141,7 +141,7 @@ public class ResearchInitializer
 
         final GlobalResearch heavilyloaded = new GlobalResearch("heavilyloaded", "technology", "Heavily Loaded", 6, new AdditionModifierResearchEffect(INV_SLOTS, 27));
 
-        recipebook.addChild(deeppockets);
+        cheatsheet.addChild(deeppockets);
         deeppockets.addChild(loaded);
         loaded.addChild(heavilyloaded);
 
