@@ -1155,7 +1155,7 @@ public class CommonConfiguration extends AbstractConfiguration
         //          Collections.singletonList("minecraft:oak_log*64"),
         //          s -> s instanceof String);
         thoselungs = defineList(builder, "thoselungs",
-                  Collections.singletonList("minecraft:64*glass"),
+                  Collections.singletonList("minecraft:glass*64"),
                   s -> s instanceof String);
         //rainbowheaven = defineList(builder, "rainbowheaven",
         //          Collections.singletonList("minecraft:poppy*64"),
