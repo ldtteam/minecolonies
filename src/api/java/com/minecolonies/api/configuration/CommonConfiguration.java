@@ -75,11 +75,10 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     workingRangeTownHallChunks;
-    public final ForgeConfigSpec.IntValue     minTownHallPadding;
-    public final ForgeConfigSpec.IntValue     townHallPaddingChunk;
+    public final ForgeConfigSpec.IntValue     maxColonySize;
+    public final ForgeConfigSpec.IntValue     minColonyDistance;
+    public final ForgeConfigSpec.IntValue     initialColonySize;
     public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
-    public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes;
     public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
     public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
     public final ForgeConfigSpec.BooleanValue protectVillages;
@@ -410,11 +409,10 @@ public class CommonConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "claims");
 
-        workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 20, 1, 50);
-        minTownHallPadding = defineInteger(builder, "mintownhallpadding", 10, 1, 200);
-        townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 5, 1, 200);
+        maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 50);
+        minColonyDistance = defineInteger(builder, "minColonyDistance", 8, 1, 200);
+        initialColonySize = defineInteger(builder, "initialColonySize", 4, 1, 200);
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
-        enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", true);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
         protectVillages = defineBoolean(builder, "protectvillages", false);

@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
@@ -43,6 +44,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     private static final double PIRATE_SWIM_BONUS        = 30;
     private static final double BARBARIAN_SWIM_BONUS     = 15;
+    private static final double CITIZEN_SWIM_BONUS       = 10;
     public static final  double MIN_Y_DISTANCE           = 0.001;
     public static final  int    MAX_SPEED_ALLOWED        = 100;
 
@@ -303,6 +305,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         else if (ourEntity instanceof AbstractEntityBarbarian && ourEntity.isInWater())
         {
             speed = walkSpeed * BARBARIAN_SWIM_BONUS;
+            return speed;
+        }
+        else if (ourEntity instanceof EntityCitizen && ourEntity.isInWater())
+        {
+            speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
         }
 

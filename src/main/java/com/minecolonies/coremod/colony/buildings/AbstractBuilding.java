@@ -31,7 +31,6 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -204,10 +203,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onPlacement()
     {
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
     }
 
     /**
@@ -305,10 +301,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 
@@ -468,8 +461,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         switch (newLevel)
         {
+            case 1:
+            case 2:
             case 3:
                 return 1;
+            case 4:
             case 5:
                 return 2;
             default:
@@ -793,10 +789,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()

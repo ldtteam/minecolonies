@@ -170,7 +170,7 @@ public class EntityMercenaryAI extends Goal
                 }
             }
 
-            if (rand.nextInt(4) == 0)
+            if (rand.nextInt(4) == 0 && !patrolPoints.isEmpty())
             {
                 movingToBuilding = true;
                 currentPatrolPos = patrolPoints.get(rand.nextInt(patrolPoints.size()));
