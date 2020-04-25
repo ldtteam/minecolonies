@@ -231,7 +231,6 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 amount += content.remove(storage);
             }
-            storage.setAmount(amount);
             content.put(storage, amount);
         }
 

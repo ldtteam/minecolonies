@@ -135,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final List<BlockPos> containerList = building.getContainerList();
 
-        final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
+        final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final World world = building.getColony().getWorld();
         for (BlockPos blockPos : containerList)
         {
@@ -149,12 +149,11 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 {
                     if (storedItems.containsKey(entry.getKey()))
                     {
-                        final ItemStorage existing = storedItems.get(entry.getKey());
-                        existing.setAmount(existing.getAmount() + entry.getKey().getAmount());
+                        storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
                     }
                     else
                     {
-                        storedItems.put(entry.getKey(), entry.getKey());
+                        storedItems.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -169,19 +168,22 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                         ItemStorage currentStorage = new ItemStorage(stack.copy());
                         if (storedItems.containsKey(currentStorage))
                         {
-                            final ItemStorage existing = storedItems.get(currentStorage);
-                            existing.setAmount(existing.getAmount() + currentStorage.getAmount());
+                            storedItems.put(currentStorage, storedItems.get(currentStorage) + stack.getCount());
                         }
                         else
                         {
-                            storedItems.put(currentStorage, currentStorage);
+                        	storedItems.put(currentStorage, stack.getCount());
                         }
                     }
                 }
             }
         }
 
-        final List<ItemStorage> filterItems = new ArrayList<>(storedItems.keySet());
+        final List<ItemStorage> filterItems = new ArrayList<>();
+        storedItems.forEach((storage, amount) -> {
+            storage.setAmount(amount);
+            filterItems.add(storage);
+        });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
                                                                   || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || stack.getItemStack()
