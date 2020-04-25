@@ -50,7 +50,7 @@ public class NetworkChannel
         registerMessage(++idx, ServerUUIDMessage.class, ServerUUIDMessage::new);
 
         //  ColonyView messages
-        registerMessage(5000, ColonyViewMessage.class, ColonyViewMessage::new);
+        registerMessage(++idx, ColonyViewMessage.class, ColonyViewMessage::new);
         registerMessage(++idx, ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage::new);
         registerMessage(++idx, ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage::new);
         registerMessage(++idx, ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);

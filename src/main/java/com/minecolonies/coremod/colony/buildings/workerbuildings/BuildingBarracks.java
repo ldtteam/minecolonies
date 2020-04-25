@@ -180,6 +180,11 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public int getClaimRadius(final int newLevel)
     {
+        if (newLevel <= 0)
+        {
+            return 0;
+        }
+
         int sum = newLevel;
         for (final BlockPos pos : towers)
         {
@@ -189,7 +194,7 @@ public class BuildingBarracks extends AbstractBuilding
                 sum += building.getBuildingLevel();
             }
         }
-        return Math.max(0, sum / getMaxBuildingLevel());
+        return Math.max(1, sum / getMaxBuildingLevel());
     }
 
     @Override
