@@ -171,7 +171,12 @@ public class CitizenManager implements ICitizenManager
     {
         if (isCitizensDirty || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = isCitizensDirty ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isCitizensDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             for (@NotNull final ICitizenData citizen : citizens.values())
             {
                 if (citizen.getCitizenEntity().isPresent())

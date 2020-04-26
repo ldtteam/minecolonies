@@ -25,12 +25,12 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -43,9 +43,14 @@ import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDelive
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -60,6 +65,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,11 +89,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 {
     public static final int       MAX_BUILD_HEIGHT = 256;
     public static final int       MIN_BUILD_HEIGHT = 1;
+
     /**
      * The data store id for request system related data.
      */
-    @NotNull
-    private             IToken<?> rsDataStoreToken;
+    private IToken<?> rsDataStoreToken;
 
     /**
      * The ID of the building. Needed in the request system to identify it.
@@ -197,10 +203,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onPlacement()
     {
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
     }
 
     /**
@@ -257,6 +260,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
 
+        @NotNull final ListNBT minimumStockTagList = new ListNBT();
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
+        {
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            entry.getKey().getItemStack().write(compoundNBT);
+            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
+            minimumStockTagList.add(compoundNBT);
+        }
+        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
+
         return compound;
     }
 
@@ -288,10 +301,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 
@@ -451,8 +461,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         switch (newLevel)
         {
+            case 1:
+            case 2:
             case 3:
                 return 1;
+            case 4:
             case 5:
                 return 2;
             default:
@@ -776,10 +789,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
-        }
+        ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
@@ -1504,4 +1515,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(false);
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
+            }
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(false)).writeBlockPos(getID()));
+    }
 }

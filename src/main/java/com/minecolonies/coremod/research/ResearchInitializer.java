@@ -88,15 +88,15 @@ public class ResearchInitializer
         hot.addChild(theflintstones);
         theflintstones.addChild(rockingroll);
 
-        //final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("GlassBlower", true));
-        //thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
+        final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("Glassblower", true));
+        thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
 
-        //hot.addChild(thoselungs);
+        hot.addChild(thoselungs);
 
         final GlobalResearch woodwork = new GlobalResearch("woodwork", "technology", "Woodwork", 1, new UnlockBuildingResearchEffect("Sawmill", true));
         woodwork.setRequirement(new BuildingResearchRequirement(3, "lumberjack"));
 
-        final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Siever", true));
+        final GlobalResearch sieving = new GlobalResearch("sieving", "technology", "Sieving", 2, new UnlockBuildingResearchEffect("Sifter", true));
         sieving.setRequirement(new BuildingResearchRequirement(3, "fisherman"));
 
         final GlobalResearch space = new GlobalResearch("space", "technology", "Space", 3, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 0.5));
@@ -141,7 +141,7 @@ public class ResearchInitializer
 
         final GlobalResearch heavilyloaded = new GlobalResearch("heavilyloaded", "technology", "Heavily Loaded", 6, new AdditionModifierResearchEffect(INV_SLOTS, 27));
 
-        recipebook.addChild(deeppockets);
+        cheatsheet.addChild(deeppockets);
         deeppockets.addChild(loaded);
         loaded.addChild(heavilyloaded);
 
@@ -221,7 +221,7 @@ public class ResearchInitializer
 
         //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
         //researchTree.addResearch(stringwork.getBranch(), stringwork);
-        //researchTree.addResearch(thoselungs.getBranch(), thoselungs);
+        researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         //researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
 
         researchTree.addResearch(deeppockets.getBranch(), deeppockets);

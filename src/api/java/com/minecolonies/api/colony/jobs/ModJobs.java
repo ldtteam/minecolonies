@@ -39,6 +39,7 @@ public final class ModJobs
     public static final ResourceLocation HEALER_ID         = new ResourceLocation(Constants.MOD_ID,"healer");
     public static final ResourceLocation PUPIL_ID          = new ResourceLocation(Constants.MOD_ID,"pupil");
     public static final ResourceLocation TEACHER_ID        = new ResourceLocation(Constants.MOD_ID,"teacher");
+    public static final ResourceLocation GLASSBLOWER_ID    = new ResourceLocation(Constants.MOD_ID,"glassblower");
 
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
@@ -72,6 +73,8 @@ public final class ModJobs
     public static       JobEntry         healer;
     public static       JobEntry         pupil;
     public static       JobEntry         teacher;
+    public static       JobEntry         glassblower;
+
 
     private ModJobs()
     {

@@ -19,7 +19,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
@@ -39,8 +41,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     private Set<ServerPlayerEntity> closeSubscribers = new HashSet<>();
 
     /**
-     * List of players with global permissions, like receiving important messages from far away.
-     * Populated on player login and logoff.
+     * List of players with global permissions, like receiving important messages from far away. Populated on player login and logoff.
      */
     private Set<ServerPlayerEntity> importantColonyPlayers = new HashSet<>();
 
@@ -177,7 +178,13 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             final PacketBuffer colonyPacketBuffer = new PacketBuffer(Unpooled.buffer());
             ColonyView.serializeNetworkData(colony, colonyPacketBuffer, !newSubscribers.isEmpty());
-            final Set<ServerPlayerEntity> players = isDirty ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+
             players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
         }
         colony.getRequestManager().setDirty(false);
@@ -189,7 +196,12 @@ public class ColonyPackageManager implements IColonyPackageManager
         final Permissions permissions = colony.getPermissions();
         if (permissions.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = permissions.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
         }
     }
@@ -200,14 +212,23 @@ public class ColonyPackageManager implements IColonyPackageManager
         final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = workManager.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+
+            List<IWorkOrder> workOrders = new ArrayList<>();
             for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                    workOrders.add(workOrder);
                 }
             }
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrders), player));
+
             workManager.setDirty(false);
         }
     }
@@ -217,7 +238,12 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = Structures.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), player));
         }
         Structures.clearDirty();

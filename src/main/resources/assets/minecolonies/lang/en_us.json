@@ -146,12 +146,12 @@
   "minecolonies.config.canplayerusedeletecolonycommand.comment": "Should the player be allowed to use the '/mc colony delete' command? [Default: true]",
   "minecolonies.config.numberofattemptsforsafttp": "Number of Attempts for Safe TP",
   "minecolonies.config.numberofattemptsforsafttp.comment": "Amount of attempts to find a save rtp. [Default: 4]",
-  "minecolonies.config.workingrangetownhallchunks": "Maximum claim range for a townhall",
-  "minecolonies.config.workingrangetownhallchunks.comment": "Maximum claim range for a townhall. [Default: 20]",
-  "minecolonies.config.mintownhallpadding": "Minimum Townhall Padding",
-  "minecolonies.config.mintownhallpadding.comment": "The minimum distance between colony townhalls. [Default: 5]",
-  "minecolonies.config.townhallpaddingchunk": "Initial townhall claim size",
-  "minecolonies.config.townhallpaddingchunk.comment": "Initial townhall claim size [Default: 5]",
+  "minecolonies.config.maxColonySize": "Maximum claim range in a circle for colonies",
+  "minecolonies.config.maxColonySize.comment": "Maximum claim range for a colony. [Default: 20]",
+  "minecolonies.config.minColonyDistance": "Minimum colony distance",
+  "minecolonies.config.minColonyDistance.comment": "The minimum distance between colonies on creation. [Default: 8]",
+  "minecolonies.config.initialColonySize": "Initial colony claim size",
+  "minecolonies.config.initialColonySize.comment": "Initial colony claim size in a square [Default: 4]",
   "minecolonies.config.restrictcolonyplacement": "Restrict Colony Placement",
   "minecolonies.config.restrictcolonyplacement.comment": "Should the min/max distance from spawn also affect colony placement? [Default: false]",
   "minecolonies.config.enabledynamiccolonysizes": "Enable Dynamic Colony Sizes",
@@ -1380,5 +1380,11 @@
   "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
   "com.minecolonies.coremod.gui.townhall.happiness.raidwithoutdeath": "Raids without Deaths",
   "com.minecolonies.coremod.gui.townhall.happiness.slepttonight": "Getting Sleep",
-  "com.minecolonies.coremod.gui.back": "Back"
+  "com.minecolonies.coremod.gui.back": "Back",
+  "com.minecolonies.coremod.research.research.maxunlocked": "Max 1 Level 6 per branch",
+  "com.minecolonies.coremod.gui.workerhuts.glassblower": "Glassblower",
+  "com.minecolonies.coremod.job.glassblower": "Glassblower",
+  "block.minecolonies.blockhutglassblower.name": "Glassblower",
+  "block.minecolonies.blockhutglassblower": "Glassblower"
+
 }
