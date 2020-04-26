@@ -1064,6 +1064,16 @@ public final class WindowConstants
     public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
 
     /**
+     * Quarry Station Suffix.
+     */
+    public static final String QUARRY_STATION_RESOURCE_SUFFIX = ":gui/windowhutquarrystation.xml";
+
+    /**
+     * Quarry Suffix.
+     */
+    public static final String QUARRY_RESOURCE_SUFFIX = ":gui/windowhutquarry.xml";
+
+    /**
      * Id of the chat label.
      */
     public static final String CHAT_LABEL_ID = "chat";

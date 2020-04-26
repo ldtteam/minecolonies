@@ -239,33 +239,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
     }
 
-    /**
-     * Add blocks to the builder building if he needs it.
-     *
-     * @param building   the building.
-     * @param blockState the block to add.
-     * @param blockInfo the complete blockinfo.
-     */
-    private void requestBlockToBuildingIfRequired(final AbstractBuildingStructureBuilder building, final BlockState blockState, final BlockInfo blockInfo)
-    {
-        if (blockInfo.getTileEntityData() != null)
-        {
-            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity());
-
-            for (final ItemStack stack : itemList)
-            {
-                building.addNeededResource(stack, stack.getCount());
-            }
-        }
-
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
-              && !(blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART) == BedPart.FOOT)
-              && !blockState.getBlock().isIn(BlockTags.BANNERS))
-        {
-            building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
-        }
-    }
-
     @Override
     public void registerBlockAsNeeded(final ItemStack stack)
     {

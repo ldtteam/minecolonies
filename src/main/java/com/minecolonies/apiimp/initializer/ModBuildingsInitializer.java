@@ -163,6 +163,20 @@ public final class ModBuildingsInitializer
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
                                .createBuildingEntry();
 
+        ModBuildings.quarry = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutQuarry)
+                                .setBuildingProducer(BuildingQuarry::new)
+                                .setBuildingViewProducer(() -> BuildingQuarry.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.QUARRY_ID))
+                                .createBuildingEntry();
+
+        ModBuildings.quarryStation = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutQuarryStation)
+                                .setBuildingProducer(BuildingQuarryStation::new)
+                                .setBuildingViewProducer(() -> BuildingQuarryStation.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.QUARRY_STATION_ID))
+                                .createBuildingEntry();
+
         ModBuildings.sawmill = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutSawmill)
                                  .setBuildingProducer(BuildingSawmill::new)
@@ -295,6 +309,8 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.library);
         reg.register(ModBuildings.lumberjack);
         reg.register(ModBuildings.miner);
+        reg.register(ModBuildings.quarry);
+        reg.register(ModBuildings.quarryStation);
         reg.register(ModBuildings.sawmill);
         reg.register(ModBuildings.shepherd);
         reg.register(ModBuildings.sifter);

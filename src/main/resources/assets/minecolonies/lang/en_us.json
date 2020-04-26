@@ -245,6 +245,8 @@
   "block.minecolonies.blockhutlumberjack": "Lumberjack's Hut",
   "block.minecolonies.blockhutfisherman": "Fisherman's Hut",
   "block.minecolonies.blockhutminer": "Mine",
+  "block.minecolonies.blockhutquarry": "Quarry",
+  "block.minecolonies.blockhutquarrystation": "Quarry Station",
   "block.minecolonies.blockhutstonemason": "Stonemason",
   "block.minecolonies.blockhuttownhall": "Town Hall",
   "block.minecolonies.blocksubstitution": "Placeholderblock",
@@ -397,6 +399,8 @@
   "com.minecolonies.coremod.gui.workerhuts.homehut": "Citizen's Hut",
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Lumberjack's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.quarry": "Quarry Hut",
+  "com.minecolonies.coremod.gui.workerhuts.quarrystation": "Quarry Station",
 
   "com.minecolonies.coremod.gui.townhall.rename": "Rename Colony",
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",

@@ -52,6 +52,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGuardTower = new BlockHutGuardTower().registerBlock(registry);
         ModBlocks.blockHutLumberjack = new BlockHutLumberjack().registerBlock(registry);
         ModBlocks.blockHutMiner = new BlockHutMiner().registerBlock(registry);
+        ModBlocks.blockHutQuarry = new BlockHutQuarry().registerBlock(registry);
+        ModBlocks.blockHutQuarryStation = new BlockHutQuarryStation().registerBlock(registry);
         ModBlocks.blockHutStonemason = new BlockHutStonemason().registerBlock(registry);
         ModBlocks.blockHutTownHall = new BlockHutTownHall().registerBlock(registry);
         ModBlocks.blockHutWareHouse = new BlockHutWareHouse().registerBlock(registry);
@@ -114,6 +116,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGuardTower.registerBlockItem(registry, properties);
         ModBlocks.blockHutLumberjack.registerBlockItem(registry, properties);
         ModBlocks.blockHutMiner.registerBlockItem(registry, properties);
+        ModBlocks.blockHutQuarry.registerBlockItem(registry, properties);
+        ModBlocks.blockHutQuarryStation.registerBlockItem(registry, properties);
         ModBlocks.blockHutStonemason.registerBlockItem(registry, properties);
         ModBlocks.blockHutTownHall.registerBlockItem(registry, properties);
         ModBlocks.blockHutWareHouse.registerBlockItem(registry, properties);

@@ -25,6 +25,8 @@ public final class ModBuildings
     public static final String        LIBRARY_ID        = "library";
     public static final String        LUMBERJACK_ID     = "lumberjack";
     public static final String        MINER_ID          = "miner";
+    public static final String        QUARRY_ID         = "quarry";
+    public static final String        QUARRY_STATION_ID = "quarrystation";
     public static final String        SAWMILL_ID        = "sawmill";
     public static final String        SHEPHERD_ID       = "shepherd";
     public static final String        SIFTER_ID         = "sifter";
@@ -39,7 +41,7 @@ public final class ModBuildings
     public static final String        ENCHANTER_ID      = "enchanter";
     public static final String        UNIVERSITY_ID     = "university";
     public static final String        HOSPITAL_ID       = "hospital";
-    public static final String        STASH_ID        = "stash";
+    public static final String        STASH_ID          = "stash";
     public static final String        SCHOOL_ID         = "school";
 
     public static       BuildingEntry archery;
@@ -62,6 +64,8 @@ public final class ModBuildings
     public static       BuildingEntry library;
     public static       BuildingEntry lumberjack;
     public static       BuildingEntry miner;
+    public static       BuildingEntry quarry;
+    public static       BuildingEntry quarryStation;
     public static       BuildingEntry sawmill;
     public static       BuildingEntry shepherd;
     public static       BuildingEntry sifter;

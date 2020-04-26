@@ -137,7 +137,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 building.changeFields(field, true, (ScarecrowTileEntity) entity);
             }
 
-            pullLevelsFromHut();
+            pullFieldsFromHut();
             window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
         }
     }
@@ -145,7 +145,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Retrieve levels from the building to display in GUI.
      */
-    private void pullLevelsFromHut()
+    private void pullFieldsFromHut()
     {
         fields = building.getFields();
     }
@@ -253,7 +253,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_FIELDS))
         {
-            pullLevelsFromHut();
+            pullFieldsFromHut();
             window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
         }
     }

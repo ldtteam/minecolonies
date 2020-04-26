@@ -154,7 +154,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockBreakAction Runnable that is used instead of the default block break action, can be null
      * @return true once we're done
      */
-    protected final boolean mineBlock(
+    protected boolean mineBlock(
       @NotNull final BlockPos blockToMine,
       @NotNull final BlockPos safeStand,
       final boolean damageTool,

@@ -18,6 +18,8 @@ public final class ModBlocks
     public static AbstractBlockHut blockHutTownHall;
     public static AbstractBlockHut blockHutHome;
     public static AbstractBlockHut blockHutMiner;
+    public static AbstractBlockHut blockHutQuarry;
+    public static AbstractBlockHut blockHutQuarryStation;
     public static AbstractBlockHut blockHutLumberjack;
     public static AbstractBlockHut blockHutBaker;
     public static AbstractBlockHut blockHutBuilder;
@@ -99,6 +101,8 @@ public final class ModBlocks
           blockHutLibrary,
           blockHutLumberjack,
           blockHutMiner,
+          blockHutQuarry,
+          blockHutQuarryStation,
           blockHutSawmill,
           blockHutSifter,
           blockHutShepherd,

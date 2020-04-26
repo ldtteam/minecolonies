@@ -39,6 +39,11 @@ public final class ModJobsInitializer
                           .setRegistryName(ModJobs.MINER_ID)
                           .createJobEntry();
 
+        ModJobs.quarryMiner = new JobEntry.Builder()
+                .setJobProducer(JobQuarryMiner::new)
+                .setRegistryName(ModJobs.QUARRY_MINER_ID)
+                .createJobEntry();
+
         ModJobs.lumberjack = new JobEntry.Builder()
                                .setJobProducer(JobLumberjack::new)
                                .setRegistryName(ModJobs.LUMBERJACK_ID)
@@ -183,6 +188,7 @@ public final class ModJobsInitializer
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
         reg.register(ModJobs.miner);
+        reg.register(ModJobs.quarryMiner);
         reg.register(ModJobs.lumberjack);
         reg.register(ModJobs.farmer);
         reg.register(ModJobs.fisherman);
