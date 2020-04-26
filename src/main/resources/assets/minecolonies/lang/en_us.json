@@ -1385,6 +1385,10 @@
   "com.minecolonies.coremod.gui.workerhuts.glassblower": "Glassblower",
   "com.minecolonies.coremod.job.glassblower": "Glassblower",
   "block.minecolonies.blockhutglassblower.name": "Glassblower",
-  "block.minecolonies.blockhutglassblower": "Glassblower"
+  "block.minecolonies.blockhutglassblower": "Glassblower",
+  "com.minecolonies.coremod.gui.workerhuts.dyer": "Dyer",
+  "com.minecolonies.coremod.job.dyer": "Dyer",
+  "block.minecolonies.blockhutdyer.name": "Dyer",
+  "block.minecolonies.blockhutdyer": "Dyer"
 
 }

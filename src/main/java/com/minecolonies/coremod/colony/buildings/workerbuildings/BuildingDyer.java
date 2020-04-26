@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -15,20 +16,22 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.jobs.JobGlassblower;
+import com.minecolonies.coremod.colony.jobs.JobDyer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ConcretePowderBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -38,37 +41,45 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
- * Class of the glassblower building.
+ * Class of the dyer building.
  */
-public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
+public class BuildingDyer extends AbstractBuildingSmelterCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String GLASS_BLOWER = "glassblower";
+    private static final String DYER = "dyer";
 
     /**
-     * Instantiates a new stone smeltery building.
+     * Instantiates a new dyer building.
      *
      * @param c the colony.
      * @param l the location
      */
-    public BuildingGlassblower(final IColony c, final BlockPos l)
+    public BuildingDyer(final IColony c, final BlockPos l)
     {
         super(c, l);
+
+        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
+          1,
+          new ItemStack(Items.GREEN_DYE, 1),
+          Blocks.FURNACE);
+        recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+
     }
+
 
     @NotNull
     @Override
     public String getSchematicName()
     {
-        return GLASS_BLOWER;
+        return DYER;
     }
 
     @Override
@@ -81,14 +92,14 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public IJob createJob(final ICitizenData citizen)
     {
-        return new JobGlassblower(citizen);
+        return new JobDyer(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return GLASS_BLOWER;
+        return DYER;
     }
 
     @NotNull
@@ -102,7 +113,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public Skill getSecondarySkill()
     {
-        return Skill.Focus;
+        return Skill.Dexterity;
     }
 
     @Override
@@ -113,50 +124,28 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        if (recipes.isEmpty())
-        {
-            for (final Item item: Tags.Items.SAND.getAllElements())
-            {
-                final ItemStack stack = new ItemStack(item);
-                final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
-                if (Tags.Items.GLASS.contains(output.getItem()))
-                {
-                    final List<ItemStack> list = new ArrayList<>();
-                    list.add(stack);
-
-                    final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                      TypeConstants.RECIPE,
-                      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                      list,
-                      1,
-                      output,
-                      Blocks.FURNACE);
-                    recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-                }
-            }
-        }
-
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
         {
             return false;
         }
 
-        boolean hasGlass = false;
+        if (storage.getPrimaryOutput().getItem().getRegistryName().getPath().contains("concrete"))
+        {
+            return false;
+        }
+
+        boolean hasDye = false;
 
         for (final ItemStorage stack : storage.getCleanedInput())
         {
-            if (Tags.Items.GLASS.contains(stack.getItemStack().getItem()) || Tags.Items.GLASS_PANES.contains(stack.getItemStack().getItem()))
-            {
-                hasGlass = true;
-            }
             if (Tags.Items.DYES.contains(stack.getItemStack().getItem()))
             {
-                return false;
+                hasDye = true;
             }
         }
 
-        return hasGlass;
+        return hasDye;
     }
 
     @Override
@@ -191,14 +180,13 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
-        return ModBuildings.glassblower;
+        return ModBuildings.dyer;
     }
 
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        super.requestUpgrade(player, builder);
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Glassblower", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Dyer", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -208,12 +196,13 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     }
 
     /**
-     * Stone smeltery View.
+     * Dyer View.
      */
     public static class View extends AbstractBuildingSmelterCrafter.View
     {
+
         /**
-         * Instantiate the stone smeltery view.
+         * Instantiate the dyer view.
          *
          * @param c the colonyview to put it in
          * @param l the positon
@@ -227,7 +216,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutGlassblower(this);
+            return new WindowHutWorkerPlaceholder<>(this, DYER);
         }
     }
 }

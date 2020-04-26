@@ -42,6 +42,7 @@ public final class ModBuildings
     public static final String        STASH_ID          = "stash";
     public static final String        SCHOOL_ID         = "school";
     public static final String        GLASSBLOWER_ID    = "glassblower";
+    public static final String        DYER_ID           = "dyer";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -80,6 +81,7 @@ public final class ModBuildings
     public static       BuildingEntry stash;
     public static       BuildingEntry school;
     public static       BuildingEntry glassblower;
+    public static       BuildingEntry dyer;
 
     private ModBuildings()
     {

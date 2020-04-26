@@ -282,6 +282,13 @@ public final class ModBuildingsInitializer
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                 .createBuildingEntry();
 
+        ModBuildings.dyer = new BuildingEntry.Builder()
+                                     .setBuildingBlock(ModBlocks.blockHutDyer)
+                                     .setBuildingProducer(BuildingDyer::new)
+                                     .setBuildingViewProducer(() -> BuildingDyer.View::new)
+                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
+                                     .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -319,5 +326,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.stash);
         reg.register(ModBuildings.school);
         reg.register(ModBuildings.glassblower);
+        reg.register(ModBuildings.dyer);
     }
 }

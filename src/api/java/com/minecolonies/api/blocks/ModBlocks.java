@@ -52,6 +52,7 @@ public final class ModBlocks
     public static AbstractBlockHut blockStash;
     public static AbstractBlockHut blockHutSchool;
     public static AbstractBlockHut blockHutGlassblower;
+    public static AbstractBlockHut blockHutDyer;
 
     /**
      * Utility blocks.
@@ -110,6 +111,7 @@ public final class ModBlocks
           blockHutHospital,
           blockHutSchool,
           blockHutEnchanter,
-          blockHutGlassblower};
+          blockHutGlassblower,
+          blockHutDyer};
     }
 }
