@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.generation.defaults.DefaultBlockLootTableProvider;
+import com.minecolonies.coremod.generation.defaults.DefaultSoundProvider;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 public class GatherDataHandler
@@ -12,5 +13,7 @@ public class GatherDataHandler
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
         event.getGenerator().addProvider(new DefaultBlockLootTableProvider(event.getGenerator()));
+        event.getGenerator().addProvider(new DefaultSoundProvider(event.getGenerator()));
+
     }
 }
