@@ -182,7 +182,8 @@ public final class NameConstants
       "Stephen",
       "Tobias",
       "Walter",
-      "William"
+      "William",
+      "Kysen"
     };
 
     /**
@@ -590,6 +591,7 @@ public final class NameConstants
       "Hambard",
       "Hammer",
       "Hammond",
-      "Hampden"
+      "Hampden",
+      "Sparrow"
     };
 }
