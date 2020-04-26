@@ -371,6 +371,7 @@ public class BuildingManager implements IBuildingManager
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
+            colony.getPackageManager().updateSubscribers();
             return building;
         }
         return null;
@@ -544,8 +545,6 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouses.add((IWareHouse) building);
         }
-
-        colony.getPackageManager().updateSubscribers();
     }
 
     /**
