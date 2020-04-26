@@ -13,7 +13,6 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -161,9 +160,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             if (rack instanceof TileEntityRack)
             {
 
-                Map<ItemStorage, Integer> storage = ((TileEntityRack) rack).getAllContent();
+                Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
 
-                for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
+                for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
                 {
                     if (storedItems.containsKey(entry.getKey()))
                     {
