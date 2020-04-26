@@ -668,7 +668,7 @@
   "com.minecolonies.coremod.item.permissionscepter.addposition.success": "Added location '%d %d %d'",
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block '%s'",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location '%d %d %d'",
-  "tile.blockHut.warehouse.limit": "The amount of warehouses is limited to 1 per colony.",
+  "tile.blockhut.warehouse.limit": "The amount of warehouses is limited to 1 per colony.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker": "Baker",
   "com.minecolonies.coremod.bakery.nofurnace": "My building doesn't have any furnaces, please repair it.",
