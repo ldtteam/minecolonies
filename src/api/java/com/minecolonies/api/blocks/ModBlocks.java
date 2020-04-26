@@ -109,6 +109,7 @@ public final class ModBlocks
           blockHutUniversity,
           blockHutHospital,
           blockHutSchool,
+          blockHutEnchanter,
           blockHutGlassblower};
     }
 }
