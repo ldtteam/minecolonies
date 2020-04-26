@@ -2,7 +2,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -97,7 +96,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
             return;
         }
 
-        MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+        colony.getRaiderManager().raiderEvent();
         sender.sendMessage(SUCCESSFUL);
     }
 

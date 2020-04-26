@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.AdvancementUtils;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -15,7 +16,6 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -29,7 +29,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import static com.minecolonies.api.util.ItemStackUtils.*;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -111,6 +112,11 @@ public class EntityAIEatTask extends EntityAIBase
     private BlockPos placeToPath;
 
     /**
+     * Delay ticks.
+     */
+    private int delayTicks = 0;
+
+    /**
      * Instantiates this task.
      *
      * @param citizen the citizen.
@@ -160,6 +166,12 @@ public class EntityAIEatTask extends EntityAIBase
         {
             return;
         }
+
+        if (++delayTicks % TICKS_SECOND != 0)
+        {
+            return;
+        }
+        delayTicks = 0;
 
         switch (currentState)
         {
@@ -214,22 +226,20 @@ public class EntityAIEatTask extends EntityAIBase
 
         citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
 
-        if (waitingTicks % 10 == 0)
-        {
-            citizen.swingArm(EnumHand.MAIN_HAND);
-            citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            MineColonies.getNetwork()
-              .sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
-                citizen.posX,
-                citizen.posY,
-                citizen.posZ,
-                citizen.rotationPitch,
-                citizen.rotationYaw,
-                citizen.getEyeHeight()), citizen);
-        }
+        citizen.swingArm(EnumHand.MAIN_HAND);
+        citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+        MineColonies.getNetwork()
+          .sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
+            citizen.posX,
+            citizen.posY,
+            citizen.posZ,
+            citizen.rotationPitch,
+            citizen.rotationYaw,
+            citizen.getEyeHeight()), citizen);
+
 
         waitingTicks++;
-        if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_EAT)
+        if (waitingTicks < REQUIRED_TIME_TO_EAT)
         {
             return EAT;
         }
@@ -353,7 +363,7 @@ public class EntityAIEatTask extends EntityAIBase
 
         waitingTicks++;
 
-        if (waitingTicks > TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+        if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
         {
             waitingTicks = 0;
             return GET_FOOD_YOURSELF;

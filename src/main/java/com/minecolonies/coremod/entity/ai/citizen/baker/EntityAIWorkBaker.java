@@ -366,11 +366,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             if (stack.getItem() != Items.WHEAT)
             {
-                requestList.add(stack.getItemStack());
+                requestList.add(stack.getItemStack().copy());
             }
             else
             {
-                final ItemStack copy = stack.getItemStack();
+                final ItemStack copy = stack.getItemStack().copy();
                 copy.setCount(copy.getMaxStackSize());
                 requestList.add(copy);
             }
@@ -388,7 +388,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        {
 	            if (stack.getItem() != Items.WHEAT)
 	            {
-	                list.add(stack.getItemStack());
+                    list.add(stack.getItemStack().copy());
 	            }
 	            else
 	            {

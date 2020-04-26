@@ -12,7 +12,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -47,7 +46,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             if (job != null)
             {
                 final ITextComponent component = new TextComponentTranslation(
-                  "block.blockhuttownhall.messageworkerdead",
+                  "tile.blockhuttownhall.messageworkerdead",
                   new TextComponentTranslation(job.getName()),
                   citizen.getCitizenData().getName(),
                   (int) citizen.posX,
@@ -59,7 +58,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
-                  "block.blockhuttownhall.messagecolonistdead",
+                  "tile.blockhuttownhall.messagecolonistdead",
                   citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
             }
         }

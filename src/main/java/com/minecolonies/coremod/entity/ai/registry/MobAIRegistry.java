@@ -5,8 +5,10 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIAttackArcher;
+import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIBreakDoor;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIRaiderAttackMelee;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIWalkToRandomHuts;
 import com.minecolonies.coremod.util.MultimapCollector;
@@ -35,8 +37,7 @@ public class MobAIRegistry implements IMobAIRegistry
     }
 
     /**
-     * Method setups the AI task logic for mobs.
-     * Replaces the old MobSpawnUtils.setAi(Mob)
+     * Method setups the AI task logic for mobs. Replaces the old MobSpawnUtils.setAi(Mob)
      *
      * @param registry The registry to register the AI tasks to.
      */
@@ -45,14 +46,15 @@ public class MobAIRegistry implements IMobAIRegistry
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
-          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true))
-          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIOpenFenceGate(mob, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
+          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true, false))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true, false))
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new EntityAIWatchClosest(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIAttackArcher::new, mob -> mob instanceof IArcherMobEntity)
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIRaiderAttackMelee::new, mob -> !(mob instanceof IArcherMobEntity));
     }
-
     @NotNull
     @Override
     public Multimap<Integer, EntityAIBase> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob)

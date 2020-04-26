@@ -104,7 +104,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         }
 
         final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ItemTool || output.getItem() instanceof ItemSword || output.getItem() instanceof ItemArmor || output.getItem() instanceof ItemHoe || Compatibility.isTinkersWeapon(output) || ingots == size;
+        return output.getItem() instanceof ItemShield || output.getItem() instanceof ItemTool || output.getItem() instanceof ItemSword || output.getItem() instanceof ItemArmor || output.getItem() instanceof ItemHoe || Compatibility.isTinkersWeapon(output) || ingots == size;
     }
 
     @Override

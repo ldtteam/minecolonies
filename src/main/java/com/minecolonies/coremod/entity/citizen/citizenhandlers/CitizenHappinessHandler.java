@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
-import com.minecolonies.api.colony.interactionhandling.TranslationTextComponent;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -290,12 +290,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * depending on how hurt they are.
      */
     @Override
-    public void setDamageModifier()
+    public void updateDamageModifier()
     {
         final Optional<AbstractEntityCitizen> entityCitizen = citizen.getCitizenEntity();
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
+            final double prevDamageModifier = damageModifier;
             if (health < DAMAGE_LOWEST_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MAX;
@@ -308,9 +309,16 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             {
                 damageModifier = DAMAGE_MODIFIER_MIN;
             }
-            citizen.markDirty();
+            else
+            {
+                damageModifier = 0;
+            }
+
+            if (prevDamageModifier != damageModifier)
+            {
+                citizen.markDirty();
+            }
         }
-        citizen.markDirty();
     }
 
     /**

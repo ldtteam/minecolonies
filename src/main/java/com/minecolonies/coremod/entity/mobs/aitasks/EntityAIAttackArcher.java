@@ -10,6 +10,8 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
+import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+
 /**
  * Barbarian Ranged Attack AI class
  */
@@ -55,7 +57,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        target = entity.getAttackTarget();
+        target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
         return target != null;
     }
 
@@ -67,7 +69,6 @@ public class EntityAIAttackArcher extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        target = entity.getAttackTarget();
         if (target != null && target.isEntityAlive() && entity.isEntityAlive())
         {
             attack(target);
@@ -121,7 +122,7 @@ public class EntityAIAttackArcher extends EntityAIBase
                 final double zVector = target.posZ - entity.posZ;
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
-
+                arrowEntity.setDamage(entity.getEntityAttribute(MOB_ATTACK_DAMAGE).getAttributeValue());
                 arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
 
                 entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);

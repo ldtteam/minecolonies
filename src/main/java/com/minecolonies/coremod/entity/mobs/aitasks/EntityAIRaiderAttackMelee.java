@@ -3,13 +3,13 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.RaiderConstants;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
+
+import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
 /**
  * Barbarian Attack AI class
@@ -21,7 +21,8 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     private static final double                        HALF_ROTATION           = 180;
     private static final double                        MIN_DISTANCE_FOR_ATTACK = 2.5;
     private static final double                        ATTACK_SPEED            = 1.3;
-    private static final int                           MUTEX_BITS              = 3;
+    public static final  int                           MUTEX_BITS              = 3;
+    private static final double                        MELEE_DAMAGE_BONUS      = 1.0;
     private final        AbstractEntityMinecoloniesMob entity;
     private              EntityLivingBase              target;
     private              int                           lastAttack              = 0;
@@ -46,7 +47,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        target = entity.getAttackTarget();
+        target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
         return target != null;
     }
 
@@ -93,12 +94,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
 
         if (target != null)
         {
-            double damageToBeDealt = RaiderConstants.ATTACK_DAMAGE;
-
-            if (entity instanceof EntityChiefBarbarian)
-            {
-                damageToBeDealt += 2.0;
-            }
+            double damageToBeDealt = entity.getEntityAttribute(MOB_ATTACK_DAMAGE).getAttributeValue() + MELEE_DAMAGE_BONUS;
 
             if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {

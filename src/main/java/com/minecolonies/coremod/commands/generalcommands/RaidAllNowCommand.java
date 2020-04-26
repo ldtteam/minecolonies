@@ -2,7 +2,6 @@ package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -73,7 +72,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
 
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            MobEventsUtils.raiderEvent(colony.getWorld(), colony);
+            colony.getRaiderManager().raiderEvent();
         }
 
         sender.sendMessage(SUCCESSFUL);

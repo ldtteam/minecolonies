@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -83,10 +82,6 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     @Override
     public void onEntityAdded(@NotNull final Entity entity)
     {
-        if (entity instanceof EntityCitizen)
-        {
-            ((AbstractEntityCitizen) entity).getCitizenColonyHandler().updateColonyServer();
-        }
     }
 
     @Override
@@ -94,12 +89,13 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     {
         if (entity instanceof EntityCitizen)
         {
-            final ICitizenData citizen = ((AbstractEntityCitizen) entity).getCitizenData();
-            if (citizen != null)
-            {
-                citizen.setLastPosition(((AbstractEntityCitizen) entity).getCurrentPosition());
-                citizen.setCitizenEntity(null);
-            }
+            entity.setDead();
+            return;
+        }
+        // Removing from world does not kill the entity itself
+        if (entity instanceof AbstractEntityMinecoloniesMob)
+        {
+            entity.setDead();
         }
     }
 

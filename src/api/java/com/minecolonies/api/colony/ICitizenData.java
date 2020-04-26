@@ -62,6 +62,11 @@ public interface ICitizenData extends ICitizen, INBTSerializable<NBTTagCompound>
     void initForNewCitizen();
 
     /**
+     * Initializes the entities values from citizen data.
+     */
+    void initEntityValues();
+
+    /**
      * Sets wether this citizen is female.
      *
      * @param isFemale true if female

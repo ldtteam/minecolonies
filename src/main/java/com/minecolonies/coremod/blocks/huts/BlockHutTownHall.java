@@ -84,7 +84,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                     }
                     else
                     {
-                        colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
+                        ownedColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
                     }
                 }
                 else
