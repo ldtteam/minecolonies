@@ -135,8 +135,12 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        boolean hasDye = false;
+        if (Tags.Items.DYES.contains(storage.getPrimaryOutput().getItem()))
+        {
+            return true;
+        }
 
+        boolean hasDye = false;
         for (final ItemStorage stack : storage.getCleanedInput())
         {
             if (Tags.Items.DYES.contains(stack.getItemStack().getItem()))
