@@ -169,7 +169,7 @@ public class BuildingMoveMessage implements IMessage
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
-        final BlockState blockState = CompatibilityUtils.getWorldFromEntity(player).getBlockState(buildPos);
+        final BlockState blockState = world.getBlockState(buildPos);
         if ( blockState.getBlock() instanceof IBuilderUndestroyable
                  || blockState.getBlock() == Blocks.BEDROCK)
         {
@@ -179,7 +179,7 @@ public class BuildingMoveMessage implements IMessage
 
         final String hut = sn.getSection();
 
-        final Block block = blockState.getBlock();
+        final Block block = world.getBlockState(oldBuildingId).getBlock();
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)

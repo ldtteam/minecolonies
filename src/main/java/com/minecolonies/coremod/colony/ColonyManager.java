@@ -10,11 +10,12 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
+import com.minecolonies.coremod.network.messages.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.FurnaceRecipes;
@@ -118,14 +119,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), 2);
-        }
-        else
-        {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-        }
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
     }
 
     /**
@@ -219,6 +213,8 @@ public final class ColonyManager implements IColonyManager
 
             cap.deleteColony(id);
             BackUpHelper.markColonyDeleted(colony.getID(),colony.getDimension());
+            colony.getImportantMessageEntityPlayers()
+              .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayerEntity) player));
             Log.getLogger().info("Successfully deleted colony: " + id);
         }
         catch (final RuntimeException e)
@@ -352,27 +348,9 @@ public final class ColonyManager implements IColonyManager
     @Override
     public boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
-        {
-            return !ChunkDataHelper.canClaimChunksInRange(w, pos, MineColonies.getConfig().getCommon().minTownHallPadding.get());
-        }
-        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
-        if (worldCapability == null)
-        {
-            return true;
-        }
-        final Chunk centralChunk = w.getChunkAt(pos);
-        final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-        if (colonyCap == null)
-        {
-            return true;
-        }
-        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().x, centralChunk.getPos().z);
-        if (storage != null)
-        {
-            storage.applyToCap(colonyCap, centralChunk);
-        }
-        return !colonyCap.getAllCloseColonies().isEmpty();
+        return !ChunkDataHelper.canClaimChunksInRange(w,
+          pos,
+          Math.max(MineColonies.getConfig().getCommon().minColonyDistance.get(), getConfig().getCommon().initialColonySize.get()));
     }
 
     /**
@@ -725,7 +703,7 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return getConfig().getCommon().minTownHallPadding.get() * BLOCKS_PER_CHUNK;
+        return getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK;
     }
 
     @Override

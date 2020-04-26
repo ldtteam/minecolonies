@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -319,4 +320,10 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @param quantity the quantity.
      */
     void addMinimumStock(final ItemStack itemStack, final int quantity);
+
+    /**
+     * Open the right crafting container.
+     * @param player the player opening it.
+     */
+    void openCraftingContainer(final ServerPlayerEntity player);
 }

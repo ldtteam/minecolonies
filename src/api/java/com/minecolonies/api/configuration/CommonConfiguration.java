@@ -75,11 +75,10 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     workingRangeTownHallChunks;
-    public final ForgeConfigSpec.IntValue     minTownHallPadding;
-    public final ForgeConfigSpec.IntValue     townHallPaddingChunk;
+    public final ForgeConfigSpec.IntValue     maxColonySize;
+    public final ForgeConfigSpec.IntValue     minColonyDistance;
+    public final ForgeConfigSpec.IntValue     initialColonySize;
     public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
-    public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes;
     public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
     public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
     public final ForgeConfigSpec.BooleanValue protectVillages;
@@ -290,7 +289,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
-    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> veinminer;
@@ -410,11 +409,10 @@ public class CommonConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "claims");
 
-        workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 20, 1, 50);
-        minTownHallPadding = defineInteger(builder, "mintownhallpadding", 10, 1, 200);
-        townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 5, 1, 200);
+        maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 50);
+        minColonyDistance = defineInteger(builder, "minColonyDistance", 8, 1, 200);
+        initialColonySize = defineInteger(builder, "initialColonySize", 4, 1, 200);
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
-        enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", true);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
         protectVillages = defineBoolean(builder, "protectvillages", false);
@@ -1154,9 +1152,9 @@ public class CommonConfiguration extends AbstractConfiguration
         //stringwork = defineList(builder, "stringwork",
         //          Collections.singletonList("minecraft:oak_log*64"),
         //          s -> s instanceof String);
-        //thoselungs = defineList(builder, "thoselungs",
-        //          Collections.singletonList("minecraft:64*glass"),
-        //          s -> s instanceof String);
+        thoselungs = defineList(builder, "thoselungs",
+                  Collections.singletonList("minecraft:glass*64"),
+                  s -> s instanceof String);
         //rainbowheaven = defineList(builder, "rainbowheaven",
         //          Collections.singletonList("minecraft:poppy*64"),
         //          s -> s instanceof String);

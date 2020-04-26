@@ -11,15 +11,27 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -133,6 +145,29 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public boolean canRecipeBeAdded(final IToken token)
     {
         return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+    }
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(canCraftComplexRecipes());
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
+            }
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
 
     /**

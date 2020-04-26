@@ -94,7 +94,7 @@ public class CreateColonyMessage implements IMessage
         if (MineColonies.getConfig().getCommon().protectVillages.get()
               && ((ServerChunkProvider) world.getChunkProvider())
                    .getChunkGenerator()
-                   .findNearestStructure(world, "Village", townHall, MineColonies.getConfig().getCommon().minTownHallPadding.get() * BLOCKS_PER_CHUNK, false) != null)
+                   .findNearestStructure(world, "Village", townHall, MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK, false) != null)
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(sender,

@@ -122,7 +122,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
         if (maxSittingTicks == 0 || worker.ridingEntity == null)
         {
             // Sit for 2-100 seconds.
-            final int jobModifier = 100 / worker.getCitizenData().getJobModifier();
+            final int jobModifier = 100 / Math.max(1, worker.getCitizenData().getJobModifier());
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
