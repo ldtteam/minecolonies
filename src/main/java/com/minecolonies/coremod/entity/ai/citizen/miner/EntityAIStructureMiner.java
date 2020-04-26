@@ -81,6 +81,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int LADDER_REQUEST_BATCHES = 10;
 
     private static final String RENDER_META_TORCH   = "torch";
+    private static final String RENDER_META_STONE   = "stone";
+
     private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
@@ -180,9 +182,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected void updateRenderMetaData()
     {
-        @NotNull final String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
+        worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 
     @NotNull
@@ -191,6 +192,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.TORCH))
         {
             return RENDER_META_TORCH;
+        }
+        return "";
+    }
+
+    @NotNull
+    private String getRenderMetaStone()
+    {
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.COBBLESTONE))
+        {
+            return RENDER_META_STONE;
         }
         return "";
     }

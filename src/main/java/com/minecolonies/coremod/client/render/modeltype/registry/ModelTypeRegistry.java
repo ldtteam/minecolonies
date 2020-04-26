@@ -22,7 +22,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.ARISTOCRAT, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
         register(BipedModelType.BUILDER, new CitizenModel<>(), new ModelEntityBuilderFemale());
         register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        register(BipedModelType.MINER, new CitizenModel<>(), new ModelEntityMinerFemale());
+        register(BipedModelType.MINER, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
         register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
         register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
         register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
