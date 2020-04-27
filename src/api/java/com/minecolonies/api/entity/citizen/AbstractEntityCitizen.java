@@ -173,7 +173,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @Override
     public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final Hand hand)
     {
-        if (player.world.isRemote())
+        if (!player.world.isRemote())
         {
             SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), EventType.INTERACTION, this.getCitizenData());
         }
