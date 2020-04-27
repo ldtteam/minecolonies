@@ -387,7 +387,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 return DesiredActivity.WORK;
             }
-            return DesiredActivity.IDLE;
+            if (isDay)
+            {
+                return DesiredActivity.IDLE;
+            }
         }
 
         return null;
