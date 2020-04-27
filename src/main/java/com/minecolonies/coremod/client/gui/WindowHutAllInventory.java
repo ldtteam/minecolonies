@@ -175,26 +175,6 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     }
                 }
             }
-            else if (rack instanceof LockableTileEntity)
-            {
-                final int size = ((LockableTileEntity) rack).getSizeInventory();
-                for (int slot = 0; slot < size; slot++)
-                {
-                    final ItemStack stack = ((LockableTileEntity) rack).getStackInSlot(slot);
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        ItemStorage currentStorage = new ItemStorage(stack.copy());
-                        if (storedItems.containsKey(currentStorage))
-                        {
-                            storedItems.put(currentStorage, storedItems.get(currentStorage) + stack.getCount());
-                        }
-                        else
-                        {
-                        	storedItems.put(currentStorage, stack.getCount());
-                        }
-                    }
-                }
-            }
         }
 
         final List<ItemStorage> filterItems = new ArrayList<>();
