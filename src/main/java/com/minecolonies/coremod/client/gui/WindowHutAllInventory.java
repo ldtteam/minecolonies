@@ -16,10 +16,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -174,12 +175,12 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     }
                 }
             }
-            else if (rack instanceof ChestTileEntity)
+            else if (rack instanceof LockableTileEntity)
             {
-                final int size = ((ChestTileEntity) rack).getSizeInventory();
+                final int size = ((LockableTileEntity) rack).getSizeInventory();
                 for (int slot = 0; slot < size; slot++)
                 {
-                    final ItemStack stack = ((ChestTileEntity) rack).getStackInSlot(slot);
+                    final ItemStack stack = ((LockableTileEntity) rack).getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         ItemStorage currentStorage = new ItemStorage(stack.copy());
