@@ -354,6 +354,10 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isDay)
         {
+            if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() > NOON)
+            {
+                return DesiredActivity.IDLE;
+            }
             return hidingFromRain ? DesiredActivity.IDLE : DesiredActivity.WORK;
         }
         else
@@ -424,13 +428,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 this.getNavigator().clearPath();
             }
 
-            if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
-            {
-                if (world.getDayTime() > NOON)
-                {
-                    return DesiredActivity.IDLE;
-                }
-            }
+
 
             return DesiredActivity.WORK;
         }
