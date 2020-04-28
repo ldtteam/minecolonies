@@ -74,7 +74,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
     }
 
-
     @NotNull
     @Override
     public String getSchematicName()
