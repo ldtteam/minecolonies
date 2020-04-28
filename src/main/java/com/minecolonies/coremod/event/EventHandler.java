@@ -8,6 +8,7 @@ import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -735,6 +736,11 @@ public class EventHandler
         if (!event.getWorld().isRemote() && event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldUnload((World) event.getWorld());
+        }
+        if (event.getWorld().isRemote())
+        {
+            IColonyManager.getInstance().resetColonyViews();
+            Log.getLogger().info("Removed all colony views");
         }
     }
 }
