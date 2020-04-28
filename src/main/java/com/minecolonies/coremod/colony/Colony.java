@@ -825,7 +825,7 @@ public class Colony implements IColony
     @Override
     public void onWorldUnload(@NotNull final World w)
     {
-        if (!w.equals(world))
+        if (w != world)
         {
             /**
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.

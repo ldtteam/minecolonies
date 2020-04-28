@@ -8,7 +8,6 @@ import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -52,7 +51,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -61,6 +59,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -207,6 +206,57 @@ public class EventHandler
         if (event.getWorld() instanceof ServerWorld)
         {
             ChunkDataHelper.unloadChunk((Chunk) event.getChunk(), (ServerWorld) event.getWorld());
+        }
+    }
+
+    /**
+     * Called right before dimension change event, used to remove the player from an existing colony
+     *
+     * @param event dim travel event.
+     */
+    @SubscribeEvent(priority = LOWEST)
+    public static void onEntityTravelToDimensionEvent(final EntityTravelToDimensionEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayerEntity && !event.isCanceled())
+        {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+            final Chunk oldChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+            // Remove visiting/subscriber from old colony
+            if (oldCloseColonies.getOwningColony() != 0)
+            {
+                final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), player.world);
+                if (oldColony != null)
+                {
+                    oldColony.removeVisitingPlayer(player);
+                    oldColony.getPackageManager().removeCloseSubscriber(player);
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds the player to the new colony on dim enter.
+     *
+     * @param event DimChangedEvent
+     */
+    @SubscribeEvent
+    public static void playerChangeDim(final PlayerEvent.PlayerChangedDimensionEvent event)
+    {
+        if (event.getPlayer() instanceof ServerPlayerEntity)
+        {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+
+            final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+
+            // Add visiting/subscriber to new colony
+            final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), player.world);
+            if (newColony != null)
+            {
+                newColony.addVisitingPlayer(player);
+                newColony.getPackageManager().addCloseSubscriber(player);
+            }
         }
     }
 
@@ -658,7 +708,6 @@ public class EventHandler
     @SubscribeEvent(priority = LOWEST)
     public static void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
-        Log.getLogger().warn("World load");
         if (event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldLoad((World) event.getWorld());
@@ -683,14 +732,9 @@ public class EventHandler
     @SubscribeEvent
     public static void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
-        if (event.getWorld() instanceof World)
+        if (!event.getWorld().isRemote() && event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldUnload((World) event.getWorld());
-        }
-        if (event.getWorld().isRemote() && event.getWorld().getDimension().getType() == DimensionType.OVERWORLD)
-        {
-            IColonyManager.getInstance().resetColonyViews();
-            Log.getLogger().info("Removed all colony views");
         }
     }
 }

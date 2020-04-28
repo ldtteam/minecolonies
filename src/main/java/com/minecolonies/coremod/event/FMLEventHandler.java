@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
@@ -60,6 +61,12 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onServerStopped(final FMLServerStoppingEvent event)
     {
+        if (!event.getServer().isDedicatedServer())
+        {
+            IColonyManager.getInstance().resetColonyViews();
+            Log.getLogger().info("Removed all colony views");
+        }
+
         Pathfinding.shutdown();
     }
 
