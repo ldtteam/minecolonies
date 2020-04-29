@@ -205,6 +205,8 @@ public class JobDeliveryman extends AbstractJob
         //Just to be sure lets delete them!
         if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
             getTaskQueueFromDataStore().removeFirst();
+
+        getCitizen().getWorkBuilding().markDirty();
     }
 
     /**
@@ -223,6 +225,8 @@ public class JobDeliveryman extends AbstractJob
 
             getTaskQueueFromDataStore().remove(token);
         }
+
+        getCitizen().getWorkBuilding().markDirty();
     }
 
     /**

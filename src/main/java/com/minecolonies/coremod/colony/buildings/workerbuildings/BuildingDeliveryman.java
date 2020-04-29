@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
@@ -222,7 +223,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
          */
         public List<IToken<?>> getTasks()
         {
-            return tasks;
+            return tasks.stream().filter(token -> getColony().getRequestManager().getRequestForToken(token) != null).collect(Collectors.toList());
         }
     }
 }
