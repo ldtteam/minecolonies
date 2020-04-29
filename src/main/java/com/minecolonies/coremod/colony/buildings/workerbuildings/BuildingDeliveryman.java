@@ -11,12 +11,14 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
@@ -25,6 +27,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -140,6 +144,18 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
+
+        final List<IToken<?>> tasks = new ArrayList<>();
+        for (final ICitizenData citizenData :getAssignedCitizen())
+        {
+            tasks.addAll(((JobDeliveryman) citizenData.getJob()).getTaskQueue());
+        }
+
+        buf.writeInt(tasks.size());
+        for (final IToken<?> task : tasks)
+        {
+            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(task));
+        }
     }
 
     @Override
@@ -166,6 +182,10 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * List of dman tasks.
+         */
+        private final List<IToken<?>> tasks = new ArrayList<>();
 
         /**
          * Instantiate the deliveryman view.
@@ -182,13 +202,27 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, DELIVERYMAN);
+            return new WindowHutDeliveryman(this);
         }
 
         @Override
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
+            final int size = buf.readInt();
+            for (int i = 0; i < size; i++)
+            {
+                tasks.add(StandardFactoryController.getInstance().deserialize(buf.readCompoundTag()));
+            }
+        }
+
+        /**
+         * Get the list of tasks.
+         * @return the list of delivery tasks.
+         */
+        public List<IToken<?>> getTasks()
+        {
+            return tasks;
         }
     }
 }

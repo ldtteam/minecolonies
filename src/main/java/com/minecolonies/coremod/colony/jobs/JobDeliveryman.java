@@ -182,6 +182,7 @@ public class JobDeliveryman extends AbstractJob
     public void addRequest(@NotNull final IToken<?> token)
     {
         getTaskQueueFromDataStore().add(token);
+        getCitizen().getWorkBuilding().markDirty();
     }
 
     /**
