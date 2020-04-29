@@ -31,7 +31,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -1052,8 +1051,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
             List<BlockPos> fluids = fluidsToRemove.get(currentBlock.blockPosition.getY());
             fluids.forEach(fluid -> {
-                if(currentBlock.worldBlock instanceof IBucketPickupHandler) {
-                    ((IBucketPickupHandler)currentBlock.worldBlock).pickupFluid(world, fluid, currentBlock.worldMetadata);
+            	BlockState blockState = world.getBlockState(fluid);
+            	Block block = blockState.getBlock();
+                if(block instanceof IBucketPickupHandler) {
+                    ((IBucketPickupHandler)block).pickupFluid(world, fluid, blockState);
                 }
             });
             fluidsToRemove.remove(currentBlock.blockPosition.getY());
