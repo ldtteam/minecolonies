@@ -223,14 +223,18 @@ public class EventHandler
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
             final Chunk oldChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-            // Remove visiting/subscriber from old colony
-            if (oldCloseColonies.getOwningColony() != 0)
+
+            if (oldCloseColonies != null)
             {
-                final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), player.world);
-                if (oldColony != null)
+                // Remove visiting/subscriber from old colony
+                if (oldCloseColonies.getOwningColony() != 0)
                 {
-                    oldColony.removeVisitingPlayer(player);
-                    oldColony.getPackageManager().removeCloseSubscriber(player);
+                    final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), player.world);
+                    if (oldColony != null)
+                    {
+                        oldColony.removeVisitingPlayer(player);
+                        oldColony.getPackageManager().removeCloseSubscriber(player);
+                    }
                 }
             }
         }
@@ -250,13 +254,16 @@ public class EventHandler
 
             final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-
-            // Add visiting/subscriber to new colony
-            final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), player.world);
-            if (newColony != null)
+            
+            if (newCloseColonies != null)
             {
-                newColony.addVisitingPlayer(player);
-                newColony.getPackageManager().addCloseSubscriber(player);
+                // Add visiting/subscriber to new colony
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), player.world);
+                if (newColony != null)
+                {
+                    newColony.addVisitingPlayer(player);
+                    newColony.getPackageManager().addCloseSubscriber(player);
+                }
             }
         }
     }
