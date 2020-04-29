@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -210,7 +211,7 @@ public final class BlockPosUtil
      */
     public static boolean isPositionSafe(@NotNull final World sender, final BlockPos blockPos)
     {
-        return sender.getBlockState(blockPos).getBlock() != Blocks.AIR
+        return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
           && sender.getWorldBorder().contains(blockPos);
@@ -236,8 +237,8 @@ public final class BlockPosUtil
         while (top >= bot)
         {
             tempPos = new BlockPos(tempPos.getX(), mid, tempPos.getZ());
-            final Block blocks = world.getBlockState(tempPos).getBlock();
-            if (blocks == Blocks.AIR && world.canBlockSeeSky(tempPos))
+            final Block block = world.getBlockState(tempPos).getBlock();
+            if (block instanceof AirBlock && world.canBlockSeeSky(tempPos))
             {
                 top = mid - 1;
                 foundland = tempPos;
