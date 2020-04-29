@@ -1050,6 +1050,8 @@
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter Hut",
   "block.minecolonies.blockpostbox": "Postbox",
   "block.minecolonies.blockpostbox.name": "Postbox",
+  "block.minecolonies.blockstash": "Stash",
+  "block.minecolonies.blockstash.name": "Stash",
 
   "com.minecolonies.coremod.gui.citizen.stacks": "Blocks to Request:",
   "com.minecolonies.coremod.gui.workerhuts.request": "Request",
