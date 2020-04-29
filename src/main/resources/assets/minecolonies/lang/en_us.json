@@ -694,6 +694,8 @@
   "com.minecolonies.coremod.status.avoiding": "Avoiding mob",
   "com.minecolonies.coremod.status.clearing": "Clearing",
   "com.minecolonies.coremod.status.building": "Building",
+  "com.minecolonies.coremod.status.detecting_fluids": "Detecting Fluids",
+  "com.minecolonies.coremod.status.removing_fluids": "Removing Fluids",
   "com.minecolonies.coremod.status.decorating": "Decorating",
   "com.minecolonies.coremod.status.gathering": "Gathering",
   "com.minecolonies.coremod.status.spawning": "Spawning entities",
