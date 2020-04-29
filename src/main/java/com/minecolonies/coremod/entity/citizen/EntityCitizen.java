@@ -948,7 +948,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
 
             heal((float) healAmount);
-            citizenData.markDirty();
+            if (healAmount > 0.1D)
+            {
+                citizenData.markDirty();
+            }
         }
     }
 
