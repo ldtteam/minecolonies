@@ -354,6 +354,10 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isDay)
         {
+            if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() > NOON)
+            {
+                return DesiredActivity.IDLE;
+            }
             return hidingFromRain ? DesiredActivity.IDLE : DesiredActivity.WORK;
         }
         else
@@ -379,15 +383,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
         {
             return DesiredActivity.MOURN;
-        }
-
-        if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil)
-        {
-            if (world.getDayTime() <= NOON)
-            {
-                return DesiredActivity.WORK;
-            }
-            return DesiredActivity.IDLE;
         }
 
         return null;
@@ -432,6 +427,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 this.getNavigator().clearPath();
             }
+
+
+
             return DesiredActivity.WORK;
         }
     }
@@ -948,7 +946,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
 
             heal((float) healAmount);
-            citizenData.markDirty();
+            if (healAmount > 0.1D)
+            {
+                citizenData.markDirty();
+            }
         }
     }
 
