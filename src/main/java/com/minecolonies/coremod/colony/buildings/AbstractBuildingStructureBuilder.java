@@ -100,7 +100,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * all the fluids to be removed in fluids_remove.
      */
-    private Map<Integer, List<BlockPos>> fluidsToRemove = new TreeMap<>();
+    private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
