@@ -131,6 +131,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     private int rotation = 0;
 
     /**
+     * all the fluids to be removed later.
+     */
+    private Map<Integer, List<BlockPos>> fluidsToRemove = new TreeMap<>();
+
+    /**
      * Creates this ai base class and set's up important things.
      * <p>
      * Always use this constructor!
@@ -169,7 +174,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP), STANDARD_DELAY),
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, FLUID_STEP), STANDARD_DELAY),
+          /*
+           * Remove fluids that aren't part of the structure.
+           */
+          new AITarget(FLUID_STEP, generateStructureGenerator(this::fluidStep, SPAWN_STEP), 1),
           /*
            * Spawn entities on the structure.
            */
@@ -186,7 +195,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<AbstractBuildingStructureBuilder> getExpectedBuildingClass()
     {
         return AbstractBuildingStructureBuilder.class;
     }
@@ -270,6 +279,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             currentStructure.setStage(StructureIterator.Stage.BUILD);
         }
+        else if (state.equals(FLUID_STEP))
+        {
+            currentStructure.setStage(StructureIterator.Stage.FLUID);
+        }
         else if (state.equals(DECORATION_STEP))
         {
             currentStructure.setStage(StructureIterator.Stage.DECORATE);
@@ -282,6 +295,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             currentStructure.setStage(StructureIterator.Stage.COMPLETE);
         }
+        System.out.println(currentStructure.getStage());
         return state;
     }
 
@@ -884,7 +898,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.clearing"));
 
         //Don't break bedrock etc.
-        //Don't break bedrock etc.
         if (!(currentBlock.worldBlock instanceof IBuilderUndestroyable) || currentBlock.worldBlock == Blocks.BEDROCK && currentBlock.worldBlock != Blocks.TORCH)
         {
             //Fill workFrom with the position from where the builder should build.
@@ -899,6 +912,33 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
             {
                 return true;
+            }
+
+            if (currentBlock.block instanceof FlowingFluidBlock || currentBlock.worldBlock instanceof FlowingFluidBlock) {
+            	if(!(currentBlock.block instanceof FlowingFluidBlock)) {
+            		List<BlockPos> layer;
+            		if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+            			layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+            		} else {
+            			layer = new ArrayList<>();
+            		}
+            		layer.add(currentBlock.blockPosition);
+            		if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+            			fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+            		}
+            		return true;
+            	} else if(currentBlock.worldBlock instanceof FlowingFluidBlock && currentBlock.block != currentBlock.worldBlock) {
+            		List<BlockPos> layer;
+            		if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+            			layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+            		} else {
+            			layer = new ArrayList<>();
+            		}
+            		layer.add(currentBlock.blockPosition);
+            		if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+            			fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+            		}
+            	}
             }
 
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
@@ -960,6 +1000,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         return currentStructure != null;
     }
 
+    private boolean fluidStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
+        checkForExtraBuildingActions();
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.fluids"));
+        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
+        {
+            return false;
+        }
+        if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+            List<BlockPos> fluids = fluidsToRemove.get(currentBlock.blockPosition.getY());
+            fluids.forEach(fluid -> {
+                if(currentBlock.worldBlock instanceof FlowingFluidBlock) {
+                    world.removeBlock(fluid, false);
+                    world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
+                } else {
+                    
+                }
+            });
+            fluidsToRemove.remove(currentBlock.blockPosition.getY());
+        }
+        return true;
+    }
+
     /**
      * Start building this StructureIterator.
      * <p>
@@ -983,6 +1045,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return CLEAR_STEP;
             case BUILD:
                 return BUILDING_STEP;
+            case FLUID:
+            	return FLUID_STEP;
             case DECORATE:
                 return DECORATION_STEP;
             case SPAWN:

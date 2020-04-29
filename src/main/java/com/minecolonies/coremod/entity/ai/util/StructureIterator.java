@@ -231,6 +231,10 @@ public class StructureIterator
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
                                                                                          || structureBlock.block == Blocks.AIR
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
+            case FLUID:
+                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> (!(structureBlock.worldBlock instanceof FlowingFluidBlock)
+                        || structureBlock.block instanceof FlowingFluidBlock)
+                        || (!structureBlock.metadata.getFluidState().isEmpty() || structureBlock.worldMetadata.getFluidState().isEmpty()));
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
                                                                           structureBlock.entity == null || structureBlock.entity.length <= 0);
@@ -391,6 +395,7 @@ public class StructureIterator
     {
         CLEAR,
         BUILD,
+        FLUID,
         DECORATE,
         SPAWN,
         COMPLETE,
