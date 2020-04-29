@@ -226,10 +226,10 @@ public class StructureIterator
             case CLEAR:
                 return advanceBlocks(this.theStructure::decrementBlock,
                   structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                      || structureBlock.worldBlock == Blocks.AIR);
+                                      || isAir(structureBlock.worldBlock));
             case BUILD:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
-                                                                                         || structureBlock.block == Blocks.AIR
+                                                                                         || isAir(structureBlock.block)
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
@@ -237,10 +237,11 @@ public class StructureIterator
             case DECORATE:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
                                                                           doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
-                                                                         || structureBlock.metadata.getMaterial().isSolid());
+                                                                         || structureBlock.metadata.getMaterial().isSolid()
+                                                                         || isAir(structureBlock.block));
             case REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock,
-                        structureBlock -> structureBlock.worldBlock == Blocks.AIR);
+                        structureBlock -> isAir(structureBlock.worldBlock));
             default:
                 return Result.NEW_BLOCK;
         }
@@ -372,6 +373,15 @@ public class StructureIterator
         {
             this.theStructure.setLocalPosition(progressPos);
         }
+    }
+
+    /**
+     * checks whether the given block is air.
+     * @param block the block to check.
+     * @return whether the given block is air.
+     */
+    private static boolean isAir(Block block) {
+        return block == Blocks.AIR || block == Blocks.CAVE_AIR || block == Blocks.VOID_AIR;
     }
 
     /**
@@ -535,7 +545,7 @@ public class StructureIterator
             return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
               structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                 && worldMetadata.getMaterial().isSolid() && !(IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata))
-                && worldBlock != Blocks.AIR);
+                && !isAir(worldBlock));
         }
     }
 }
