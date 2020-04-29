@@ -463,7 +463,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * Getter for the blocks to be removed in fluids_remove.
      * @return the blocks to be removed in fluids_remove.
      */
-    public Map<Integer, List<BlockPos>> getFluidsToRemove() {
+    public Map<Integer, List<BlockPos>> getFluidsToRemove()
+    {
         return fluidsToRemove;
     }
 }

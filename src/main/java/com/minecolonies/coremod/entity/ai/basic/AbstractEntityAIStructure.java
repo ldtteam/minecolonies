@@ -982,9 +982,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param currentBlock the block that is currently being worked on.
      * @return the next step once done.
      */
-    private boolean fluidDetectStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
+    private boolean fluidDetectStep(@NotNull final StructureIterator.StructureBlock currentBlock)
+    {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.detecting_fluids"));
-        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition())) {
+        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
+        {
             return false;
         }
 
@@ -1071,7 +1073,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param currentBlock
      * @return the next step once done.
      */
-    private IAIState fluidRemoveStep() {
+    private IAIState fluidRemoveStep()
+    {
         checkForExtraBuildingActions();
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.removing_fluids"));
 
