@@ -15,11 +15,9 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
@@ -49,7 +47,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider
+public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider, INPC
 {
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
