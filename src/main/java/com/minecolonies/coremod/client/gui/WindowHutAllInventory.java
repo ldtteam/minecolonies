@@ -10,15 +10,15 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -135,52 +135,51 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final List<BlockPos> containerList = building.getContainerList();
 
-        final List<ItemStack> items = new ArrayList<>();
+        final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final World world = building.getColony().getWorld();
+
+        TileEntityRack hut = (TileEntityRack) world.getTileEntity(building.getPosition());
+        Map<ItemStorage, Integer> hutStorage = ((TileEntityRack) hut).getAllContent();
+
+        for (final Map.Entry<ItemStorage, Integer> entry : hutStorage.entrySet())
+        {
+            if (storedItems.containsKey(entry.getKey()))
+            {
+                storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
+            }
+            else
+            {
+                storedItems.put(entry.getKey(), entry.getValue());
+            }
+        }
+
         for (BlockPos blockPos : containerList)
         {
             final TileEntity rack = world.getTileEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
 
-                Map<ItemStorage, Integer> storage = ((TileEntityRack) rack).getAllContent();
+                Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
 
-                for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
+                for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
                 {
-                    items.add(new ItemStorage(entry.getKey().getItemStack(), entry.getValue(), false).getItemStack());
-                }
-            }
-            else if (rack instanceof ChestTileEntity)
-            {
-                final int size = ((ChestTileEntity) rack).getSizeInventory();
-                for (int slot = 0; slot < size; slot++)
-                {
-                    final ItemStack stack = ((ChestTileEntity) rack).getStackInSlot(slot);
-                    if (!ItemStackUtils.isEmpty(stack))
+                    if (storedItems.containsKey(entry.getKey()))
                     {
-                        items.add(stack.copy());
+                        storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
+                    }
+                    else
+                    {
+                        storedItems.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
         }
 
-        final Map<ItemStorage, ItemStorage> storedItems = new HashMap<>();
-        for (final ItemStack currentItem : items)
-        {
-            final ItemStorage currentStorage = new ItemStorage(currentItem, currentItem.getCount(), false);
-
-            if (storedItems.containsKey(currentStorage))
-            {
-                final ItemStorage existing = storedItems.get(currentStorage);
-                existing.setAmount(existing.getAmount() + currentStorage.getAmount());
-            }
-            else
-            {
-                storedItems.put(currentStorage, currentStorage);
-            }
-        }
-
-        final List<ItemStorage> filterItems = new ArrayList<>(storedItems.keySet());
+        final List<ItemStorage> filterItems = new ArrayList<>();
+        storedItems.forEach((storage, amount) -> {
+            storage.setAmount(amount);
+            filterItems.add(storage);
+        });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
                                                                   || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || stack.getItemStack()

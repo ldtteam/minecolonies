@@ -139,7 +139,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         currentRequest = currentTask;
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
-
+        final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
+        final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
+        job.setCraftCounter(currentCount/countPerIteration);
         return QUERY_ITEMS;
     }
 
@@ -175,11 +177,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) < inputStorage.getAmount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = new Tuple<>(predicate, Constants.STACKSIZE);
+                    needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * job.getMaxCraftingCount());
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;
