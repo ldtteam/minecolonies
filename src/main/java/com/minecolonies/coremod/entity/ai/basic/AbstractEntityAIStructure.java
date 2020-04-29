@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
@@ -131,11 +132,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     private int rotation = 0;
 
     /**
-     * all the fluids to be removed later.
-     */
-    private Map<Integer, List<BlockPos>> fluidsToRemove = new TreeMap<>();
-
-    /**
      * Creates this ai base class and set's up important things.
      * <p>
      * Always use this constructor!
@@ -182,7 +178,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Remove fluids that aren't part of the structure.
            */
-          new AITarget(FLUID_REMOVE_STEP, generateStructureGenerator(this::fluidRemoveStep, SPAWN_STEP), 1),
+          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 1),
           /*
            * Spawn entities on the structure.
            */
@@ -286,10 +282,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         else if (state.equals(FLUID_DETECT_STEP))
         {
             currentStructure.setStage(StructureIterator.Stage.FLUID_DETECT);
-        }
-        else if (state.equals(FLUID_REMOVE_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.FLUID_REMOVE);
         }
         else if (state.equals(DECORATION_STEP))
         {
@@ -996,6 +988,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             return false;
         }
 
+        final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
         if (currentBlock.block instanceof FlowingFluidBlock || currentBlock.worldBlock instanceof FlowingFluidBlock)
         {
             if(!(currentBlock.block instanceof FlowingFluidBlock))
@@ -1078,17 +1071,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param currentBlock
      * @return the next step once done.
      */
-    private boolean fluidRemoveStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
+    private IAIState fluidRemoveStep() {
         checkForExtraBuildingActions();
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.removing_fluids"));
-        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
-        {
-            return false;
-        }
 
-        if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
+        final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
+        if (fluidsToRemove.isEmpty())
         {
-            List<BlockPos> fluids = fluidsToRemove.get(currentBlock.blockPosition.getY());
+            return AIWorkerState.DECORATION_STEP;
+        }
+        else
+        {
+            int y = fluidsToRemove.keySet().iterator().next();
+        	List<BlockPos> fluids = fluidsToRemove.get(y);
             fluids.forEach(fluid -> {
             	BlockState blockState = world.getBlockState(fluid);
             	Block block = blockState.getBlock();
@@ -1097,9 +1092,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     ((IBucketPickupHandler)block).pickupFluid(world, fluid, blockState);
                 }
             });
-            fluidsToRemove.remove(currentBlock.blockPosition.getY());
+            fluidsToRemove.remove(y);
+            return getState();
         }
-        return true;
     }
 
     /**
@@ -1127,8 +1122,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return BUILDING_STEP;
             case FLUID_DETECT:
             	return FLUID_DETECT_STEP;
-            case FLUID_REMOVE:
-                return FLUID_REMOVE_STEP;
             case DECORATE:
                 return DECORATION_STEP;
             case SPAWN:

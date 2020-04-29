@@ -233,7 +233,6 @@ public class StructureIterator
                                                                                          || structureBlock.block == Blocks.AIR
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case FLUID_DETECT:
-            case FLUID_REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> (!(structureBlock.worldBlock instanceof FlowingFluidBlock)
                                                                                          || (structureBlock.block instanceof FlowingFluidBlock && structureBlock.worldBlock == structureBlock.block))
                                                                                          && (structureBlock.worldMetadata.getFluidState().isEmpty() || (!structureBlock.metadata.getFluidState().isEmpty() 
@@ -399,7 +398,6 @@ public class StructureIterator
         CLEAR,
         BUILD,
         FLUID_DETECT,
-        FLUID_REMOVE,
         DECORATE,
         SPAWN,
         COMPLETE,
