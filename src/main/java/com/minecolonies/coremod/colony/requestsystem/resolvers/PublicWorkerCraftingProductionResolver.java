@@ -169,8 +169,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         final ICitizenData freeCrafter = building.getAssignedCitizen()
                                            .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                           .filter(c -> ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
+                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
                                            .findFirst()
                                            .orElse(null);
 
