@@ -186,6 +186,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 
+    /**
+     * Get render data to render torches at the backpack if in inventory.
+     * @return metaData String if so.
+     */
     @NotNull
     private String getRenderMetaTorch()
     {
@@ -196,6 +200,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return "";
     }
 
+    /**
+     * Get render data to render stone in the backpack if cobble in inventory.
+     * @return metaData String if so.
+     */
     @NotNull
     private String getRenderMetaStone()
     {
