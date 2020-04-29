@@ -226,15 +226,17 @@ public class StructureIterator
             case CLEAR:
                 return advanceBlocks(this.theStructure::decrementBlock,
                   structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                      || structureBlock.worldBlock == Blocks.AIR);
+                                      || structureBlock.worldBlock == Blocks.AIR
+                                      || structureBlock.worldBlock instanceof FlowingFluidBlock);
             case BUILD:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
                                                                                          || structureBlock.block == Blocks.AIR
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
-            case FLUID:
+            case FLUID_DETECT:
+            case FLUID_REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> (!(structureBlock.worldBlock instanceof FlowingFluidBlock)
-                        || structureBlock.block instanceof FlowingFluidBlock)
-                        || (!structureBlock.metadata.getFluidState().isEmpty() || structureBlock.worldMetadata.getFluidState().isEmpty()));
+                        || (structureBlock.block instanceof FlowingFluidBlock && structureBlock.worldBlock == structureBlock.block))
+                        || (structureBlock.worldMetadata.getFluidState().isEmpty() || !structureBlock.metadata.getFluidState().isEmpty()));
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
                                                                           structureBlock.entity == null || structureBlock.entity.length <= 0);
@@ -395,7 +397,8 @@ public class StructureIterator
     {
         CLEAR,
         BUILD,
-        FLUID,
+        FLUID_DETECT,
+        FLUID_REMOVE,
         DECORATE,
         SPAWN,
         COMPLETE,

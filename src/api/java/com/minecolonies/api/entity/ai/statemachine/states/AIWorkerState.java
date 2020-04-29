@@ -55,9 +55,13 @@ public enum AIWorkerState implements IAIState
      */
     BUILDING_STEP(false),
     /**
+     * Checks for fluids to remove.
+     */
+    FLUID_DETECT_STEP(false),
+    /**
      * Removes all fluids.
      */
-    FLUID_STEP(false),
+    FLUID_REMOVE_STEP(false),
     /**
      * Sets decorative blocks.
      */

@@ -175,11 +175,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, FLUID_STEP), STANDARD_DELAY),
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, FLUID_DETECT_STEP), STANDARD_DELAY),
+          /*
+           * Detect fluids that aren't part of the structure.
+           */
+          new AITarget(FLUID_DETECT_STEP, generateStructureGenerator(this::fluidDetectStep, FLUID_REMOVE_STEP), 1),
           /*
            * Remove fluids that aren't part of the structure.
            */
-          new AITarget(FLUID_STEP, generateStructureGenerator(this::fluidStep, SPAWN_STEP), 1),
+          new AITarget(FLUID_REMOVE_STEP, generateStructureGenerator(this::fluidRemoveStep, SPAWN_STEP), 1),
           /*
            * Spawn entities on the structure.
            */
@@ -280,9 +284,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             currentStructure.setStage(StructureIterator.Stage.BUILD);
         }
-        else if (state.equals(FLUID_STEP))
+        else if (state.equals(FLUID_DETECT_STEP))
         {
-            currentStructure.setStage(StructureIterator.Stage.FLUID);
+            currentStructure.setStage(StructureIterator.Stage.FLUID_DETECT);
+        }
+        else if (state.equals(FLUID_REMOVE_STEP))
+        {
+            currentStructure.setStage(StructureIterator.Stage.FLUID_REMOVE);
         }
         else if (state.equals(DECORATION_STEP))
         {
@@ -296,7 +304,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             currentStructure.setStage(StructureIterator.Stage.COMPLETE);
         }
-        System.out.println(currentStructure.getStage());
         return state;
     }
 
@@ -915,60 +922,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return true;
             }
 
-            if (currentBlock.block instanceof FlowingFluidBlock || currentBlock.worldBlock instanceof FlowingFluidBlock) {
-                if(!(currentBlock.block instanceof FlowingFluidBlock)) {
-                    List<BlockPos> layer;
-                    if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                    } else {
-                        layer = new ArrayList<>();
-                    }
-                    layer.add(currentBlock.blockPosition);
-                    if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                    }
-                    return true;
-                } else if(currentBlock.worldBlock instanceof FlowingFluidBlock && currentBlock.worldBlock != currentBlock.block) {
-                    List<BlockPos> layer;
-                    if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                    } else {
-                        layer = new ArrayList<>();
-                    }
-                    layer.add(currentBlock.blockPosition);
-                    if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                    }
-                    return true;
-                }
-            }
-
-            if (!currentBlock.metadata.getFluidState().isEmpty() || !currentBlock.worldMetadata.getFluidState().isEmpty()) {
-                if(currentBlock.metadata.getFluidState().isEmpty()) {
-                    List<BlockPos> layer;
-                    if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                    } else {
-                        layer = new ArrayList<>();
-                    }
-                    layer.add(currentBlock.blockPosition);
-                    if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                    }
-                } else if(!currentBlock.worldMetadata.getFluidState().isEmpty() && currentBlock.worldMetadata.getFluidState().getFluid() != currentBlock.metadata.getFluidState().getFluid()) {
-                    List<BlockPos> layer;
-                    if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                    } else {
-                        layer = new ArrayList<>();
-                    }
-                    layer.add(currentBlock.blockPosition);
-                    if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
-                        fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                    }
-                }
-            }
-
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
 
             //We need to deal with materials
@@ -1028,21 +981,79 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         return currentStructure != null;
     }
 
-    private boolean fluidStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
-        checkForExtraBuildingActions();
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.fluids"));
+    private boolean fluidDetectStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.detecting_fluids"));
         if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
         {
             return false;
         }
+
+        if (currentBlock.block instanceof FlowingFluidBlock || currentBlock.worldBlock instanceof FlowingFluidBlock) {
+            if(!(currentBlock.block instanceof FlowingFluidBlock)) {
+                List<BlockPos> layer;
+                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+                } else {
+                    layer = new ArrayList<>();
+                }
+                layer.add(currentBlock.blockPosition);
+                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+                }
+            } else if(currentBlock.worldBlock instanceof FlowingFluidBlock && currentBlock.worldBlock != currentBlock.block) {
+                List<BlockPos> layer;
+                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+                } else {
+                    layer = new ArrayList<>();
+                }
+                layer.add(currentBlock.blockPosition);
+                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+                }
+            }
+        }
+        else if (!currentBlock.metadata.getFluidState().isEmpty() || !currentBlock.worldMetadata.getFluidState().isEmpty()) {
+            if(currentBlock.metadata.getFluidState().isEmpty()) {
+                List<BlockPos> layer;
+                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+                } else {
+                    layer = new ArrayList<>();
+                }
+                layer.add(currentBlock.blockPosition);
+                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+                }
+            } else if(!currentBlock.worldMetadata.getFluidState().isEmpty() && currentBlock.worldMetadata.getFluidState().getFluid() != currentBlock.metadata.getFluidState().getFluid()) {
+                List<BlockPos> layer;
+                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
+                } else {
+                    layer = new ArrayList<>();
+                }
+                layer.add(currentBlock.blockPosition);
+                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
+                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean fluidRemoveStep(@NotNull final StructureIterator.StructureBlock currentBlock) {
+        checkForExtraBuildingActions();
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.removing_fluids"));
+        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
+        {
+            return false;
+        }
+
         if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY())) {
             List<BlockPos> fluids = fluidsToRemove.get(currentBlock.blockPosition.getY());
             fluids.forEach(fluid -> {
-                if(currentBlock.worldBlock instanceof FlowingFluidBlock) {
-                    world.removeBlock(fluid, false);
-                    world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
-                } else {
-                    ((ILiquidContainer)currentBlock.worldBlock).receiveFluid(world, fluid, currentBlock.worldMetadata, Fluids.EMPTY.getDefaultState());
+                if(currentBlock.worldBlock instanceof IBucketPickupHandler) {
+                    ((IBucketPickupHandler)currentBlock.worldBlock).pickupFluid(world, fluid, currentBlock.worldMetadata);
                 }
             });
             fluidsToRemove.remove(currentBlock.blockPosition.getY());
@@ -1073,8 +1084,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return CLEAR_STEP;
             case BUILD:
                 return BUILDING_STEP;
-            case FLUID:
-                return FLUID_STEP;
+            case FLUID_DETECT:
+            	return FLUID_DETECT_STEP;
+            case FLUID_REMOVE:
+                return FLUID_REMOVE_STEP;
             case DECORATE:
                 return DECORATION_STEP;
             case SPAWN:
