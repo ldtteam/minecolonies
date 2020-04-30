@@ -201,6 +201,12 @@ public abstract class AbstractPathJob implements Callable<Path>
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
+        // 1 Up when we're standing within this node
+        if (bs.getMaterial().blocksMovement() && bs.getCollisionShape(entity.world, pos).getEnd(Direction.Axis.Y) > 0)
+        {
+            pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
+        }
+
         if (entity.isInWater())
         {
             while (bs.getMaterial().isLiquid())
