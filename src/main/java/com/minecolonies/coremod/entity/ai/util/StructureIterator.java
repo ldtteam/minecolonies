@@ -226,10 +226,10 @@ public class StructureIterator
             case CLEAR:
                 return advanceBlocks(this.theStructure::decrementBlock,
                   structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                      || structureBlock.worldBlock == Blocks.AIR);
+                                      || structureBlock.worldBlock instanceof AirBlock);
             case BUILD:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
-                                                                                         || structureBlock.block == Blocks.AIR
+                                                                                         || structureBlock.block instanceof AirBlock
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
@@ -240,7 +240,7 @@ public class StructureIterator
                                                                          || structureBlock.metadata.getMaterial().isSolid());
             case REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock,
-                        structureBlock -> structureBlock.worldBlock == Blocks.AIR);
+                        structureBlock -> structureBlock.worldBlock instanceof AirBlock);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -535,7 +535,7 @@ public class StructureIterator
             return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
               structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                 && worldMetadata.getMaterial().isSolid() && !(IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata))
-                && worldBlock != Blocks.AIR);
+                && !(worldBlock instanceof AirBlock));
         }
     }
 }

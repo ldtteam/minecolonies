@@ -8,6 +8,7 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -163,7 +164,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         final BlockState curBlockState = world.getBlockState(blockToMine);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if (curBlock.equals(Blocks.AIR)
+        if (curBlock instanceof AirBlock
               || curBlock instanceof IBuilderUndestroyable
               || curBlock == Blocks.BEDROCK)
         {
