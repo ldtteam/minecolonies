@@ -158,7 +158,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 1),
           /*
            * Clean up area completely.
            */
