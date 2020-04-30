@@ -511,6 +511,36 @@ public final class NbtTagConstants
     public static final String TAG_HANDLER_TYPE = "handlertype";
 
     /**
+     * Tags to store the needed resourced to nbt.
+     */
+    public static final String TAG_RESOURCE_LIST = "resourcesItem";
+
+    /**
+     * Tags to store the needed resourced to nbt.
+     */
+    public static final String TAG_PROGRESS_POS = "progressPos";
+
+    /**
+     * Tags to store the needed resourced to nbt.
+     */
+    public static final String TAG_PROGRESS_STAGE = "progressStage";
+
+    /**
+     * Tags to store the needed resources to nbt.
+     */
+    public static final String TAG_FLUIDS_REMOVE = "fluidsToRemove";
+
+    /**
+     * Tags to store the needed resources to nbt.
+     */
+    public static final String TAG_FLUIDS_REMOVE_POSITIONS = "positions";
+
+    /**
+     * Tags to store the needed resources to nbt.
+     */
+    public static final String TAG_FLUIDS_REMOVE_Y = "yLevel";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

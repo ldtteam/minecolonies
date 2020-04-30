@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The structureBuilder building.
@@ -40,36 +41,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * The maximum upgrade of the building.
      */
     public static final  int    MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_RESOURCE_LIST = "resourcesItem";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_POS = "progressPos";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_STAGE = "progressStage";
-
-    /**
-     * Tags to store the needed resources to nbt.
-     */
-    private static final String TAG_FLUIDS_REMOVE = "fluidsToRemove";
-
-    /**
-     * Tags to store the needed resources to nbt.
-     */
-    private static final String TAG_FLUIDS_REMOVE_POSITIONS = "positions";
-
-    /**
-     * Tags to store the needed resources to nbt.
-     */
-    private static final String TAG_FLUIDS_REMOVE_Y = "y";
 
     /**
      * Progress amount to mark building dirty.
