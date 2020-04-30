@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Remove fluids that aren't part of the structure.
            */
-          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 1),
+          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 100),
           /*
            * Spawn entities on the structure.
            */
