@@ -158,6 +158,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
           Utils.scanForBlockNearPoint
                   (CompatibilityUtils.getWorldFromCitizen(citizen), destination, 1, 1, 1, 3,
                     Blocks.AIR,
+                    Blocks.CAVE_AIR,
                     Blocks.SNOW,
                     Blocks.TALL_GRASS);
 

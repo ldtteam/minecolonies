@@ -30,7 +30,7 @@ public class ResearchInitializer
         final GlobalResearch flowerpower = new GlobalResearch("flowerpower", "technology", "Flower power", 2, new UnlockBuildingResearchEffect("Florist", true));
         flowerpower.setRequirement(new BuildingResearchRequirement(3, "composter"));
 
-        final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "civilian", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
+        final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "technology", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
         rainbowheaven.setRequirement(new BuildingResearchRequirement(3, "florist"));
 
         biodegradable.addChild(flowerpower);
