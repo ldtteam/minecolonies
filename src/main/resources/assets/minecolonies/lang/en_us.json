@@ -1393,6 +1393,5 @@
   "com.minecolonies.coremod.job.dyer": "Dyer",
   "block.minecolonies.blockhutdyer.name": "Dyer",
   "block.minecolonies.blockhutdyer": "Dyer",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
-  "item.minecolonies.iron_scimitar": "Scimitar"
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries"
 }
