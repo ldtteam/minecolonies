@@ -15,7 +15,6 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
@@ -32,6 +31,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -1081,7 +1081,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
         if (fluidsToRemove.isEmpty())
         {
-            return AIWorkerState.DECORATION_STEP;
+            return DECORATION_STEP;
         }
         else
         {
@@ -1090,9 +1090,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             fluids.forEach(fluid -> {
             	BlockState blockState = world.getBlockState(fluid);
             	Block block = blockState.getBlock();
-                if(block instanceof IBucketPickupHandler)
+                if(block instanceof IBucketPickupHandler && ((IBucketPickupHandler)block).pickupFluid(world, fluid, blockState) != Fluids.EMPTY)
                 {
-                    ((IBucketPickupHandler)block).pickupFluid(world, fluid, blockState);
+                }
+                else if (block instanceof FlowingFluidBlock)
+                {
+                    world.setBlockState(fluid, Blocks.AIR.getDefaultState(), 3);
                 }
             });
             fluidsToRemove.remove(y);
