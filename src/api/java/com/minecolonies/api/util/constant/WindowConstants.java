@@ -959,6 +959,11 @@ public final class WindowConstants
     public static final String REQUESTER = "requester";
 
     /**
+     * Id of the parent label.
+     */
+    public static final String PARENT = "parent";
+
+    /**
      * The divider for the life count.
      */
     public static final int LIFE_COUNT_DIVIDER = 30;

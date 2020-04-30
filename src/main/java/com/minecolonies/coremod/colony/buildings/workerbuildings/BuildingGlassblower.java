@@ -95,14 +95,14 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public Skill getPrimarySkill()
     {
-        return Skill.Athletics;
+        return Skill.Creativity;
     }
 
     @NotNull
     @Override
     public Skill getSecondarySkill()
     {
-        return Skill.Dexterity;
+        return Skill.Focus;
     }
 
     @Override
