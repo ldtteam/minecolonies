@@ -158,7 +158,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 1),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
           /*
            * Clean up area completely.
            */
@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Remove fluids that aren't part of the structure.
            */
-          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 100),
+          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 1),
           /*
            * Spawn entities on the structure.
            */
