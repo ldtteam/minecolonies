@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberj
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
@@ -431,6 +432,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
               Utils.scanForBlockNearPoint
                       (world, workFrom, 1, 1, 1, 3,
                         Blocks.AIR,
+                        Blocks.CAVE_AIR,
                         Blocks.SNOW,
                         Blocks.TALL_GRASS);
             WorkerUtil.setSpawnPoint(spawnPoint, worker);
@@ -573,7 +575,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private boolean plantSapling(@NotNull final BlockPos location)
     {
         final Block worldBlock = world.getBlockState(location).getBlock();
-        if (worldBlock != Blocks.AIR && !(worldBlock.isIn(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
+        if (!(worldBlock instanceof AirBlock) && !(worldBlock.isIn(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
         {
             return true;
         }

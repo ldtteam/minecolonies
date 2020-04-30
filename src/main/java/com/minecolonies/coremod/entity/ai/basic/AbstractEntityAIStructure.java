@@ -686,7 +686,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
         }
 
-        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && blockToPlace != Blocks.AIR)
+        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && !(blockToPlace instanceof AirBlock))
         {
             double decrease = 1;
             final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_PLACE_SPEED, MultiplierModifierResearchEffect.class);
@@ -780,7 +780,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             if (structureBlock.block == null
-                  || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
+                  || (!structureBlock.metadata.getMaterial().isSolid() && !(structureBlock.block instanceof AirBlock)))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
