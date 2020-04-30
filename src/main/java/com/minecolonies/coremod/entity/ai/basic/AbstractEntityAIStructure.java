@@ -162,7 +162,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Clean up area completely.
            */
-          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD), STANDARD_DELAY),
+          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, SPAWN_STEP), STANDARD_DELAY),
           /*
            * Clear out the building area.
            */
@@ -182,11 +182,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, DECORATION_STEP), STANDARD_DELAY),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, COMPLETE_BUILD), STANDARD_DELAY),
           /*
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD), STANDARD_DELAY),
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, REMOVE_STEP), STANDARD_DELAY),
           /*
            * Finalize the building and give back control to the ai.
            */
