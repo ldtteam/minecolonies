@@ -1,6 +1,7 @@
 package com.minecolonies.api.research.effects;
 
 import net.minecraft.util.text.TranslationTextComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The effect of a research.
@@ -31,4 +32,11 @@ public interface IResearchEffect<T>
      * @return the desc.
      */
     TranslationTextComponent getDesc();
+
+    /**
+     * Does this effect override another effect with the same id?
+     * @param other the effect to check.
+     * @return true if so.
+     */
+    boolean overrides(@NotNull final IResearchEffect other);
 }

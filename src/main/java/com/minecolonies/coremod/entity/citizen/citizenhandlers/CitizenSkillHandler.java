@@ -75,7 +75,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     {
         for (final Skill skill : Skill.values())
         {
-            skillMap.put(skill, new Tuple<>((Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE), 0.0D));
+            skillMap.put(skill, new Tuple<>(Math.max(1, (Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE)), 0.0D));
         }
     }
 
@@ -107,7 +107,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
             skillMap.put(Skill.values()[levelExperienceAtJob.getInt(TAG_SKILL)],
-              new Tuple<>(Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+              new Tuple<>(Math.max(1, Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL)), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
         }
     }
 

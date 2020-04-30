@@ -32,7 +32,8 @@ public enum BipedModelType implements IModelType
     CHILD("child", 4),
     HEALER("healer", 1),
     TEACHER("teacher", 1),
-    GLASSBLOWER("glassblower", 3);
+    GLASSBLOWER("glassblower", 3),
+    DYER("dyer", 3);
 
     /**
      * String describing the citizen.

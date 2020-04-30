@@ -32,6 +32,17 @@ public class ResearchEffectManager implements IResearchEffectManager
     @Override
     public void applyEffect(final IResearchEffect effect)
     {
-        effectMap.put(effect.getId(), effect);
+        if (effectMap.containsKey(effect.getId()))
+        {
+            final IResearchEffect effectInMap = effectMap.get(effect.getId());
+            if (effect.overrides(effectInMap))
+            {
+                effectMap.put(effect.getId(), effect);
+            }
+        }
+        else
+        {
+            effectMap.put(effect.getId(), effect);
+        }
     }
 }
