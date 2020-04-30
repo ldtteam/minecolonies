@@ -262,7 +262,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
             if (blueprint != null)
             {
-                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset().getA()).getState();
+                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
                 if (structureState != null)
                 {
                     if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
