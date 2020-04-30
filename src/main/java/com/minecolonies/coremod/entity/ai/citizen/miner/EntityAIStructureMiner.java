@@ -81,6 +81,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int LADDER_REQUEST_BATCHES = 10;
 
     private static final String RENDER_META_TORCH   = "torch";
+    private static final String RENDER_META_STONE   = "stone";
+
     private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
@@ -180,17 +182,34 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected void updateRenderMetaData()
     {
-        @NotNull final String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
+        worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 
+    /**
+     * Get render data to render torches at the backpack if in inventory.
+     * @return metaData String if so.
+     */
     @NotNull
     private String getRenderMetaTorch()
     {
         if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.TORCH))
         {
             return RENDER_META_TORCH;
+        }
+        return "";
+    }
+
+    /**
+     * Get render data to render stone in the backpack if cobble in inventory.
+     * @return metaData String if so.
+     */
+    @NotNull
+    private String getRenderMetaStone()
+    {
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.COBBLESTONE))
+        {
+            return RENDER_META_STONE;
         }
         return "";
     }

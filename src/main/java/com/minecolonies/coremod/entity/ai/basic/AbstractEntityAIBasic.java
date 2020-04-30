@@ -1128,6 +1128,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
         {
+            worker.getCitizenData().setIdleAtJob(false);
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bestSlot);
             return true;
         }

@@ -18,7 +18,7 @@ public final class InventoryConstants
     /**
      * Initial y-offset of the inventory slot.
      */
-    public static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 30;
+    public static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 31;
 
     /**
      * Each offset of the inventory slots.
@@ -28,7 +28,7 @@ public final class InventoryConstants
     /**
      * Initial y-offset of the inventory slots in the hotbar.
      */
-    public static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 88;
+    public static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 89;
 
     /**
      * Amount of rows in the player inventory.
