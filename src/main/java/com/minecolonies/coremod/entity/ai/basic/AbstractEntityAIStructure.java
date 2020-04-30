@@ -160,10 +160,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
            */
           new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
           /*
-           * Clean up area completely.
-           */
-          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, SPAWN_STEP), STANDARD_DELAY),
-          /*
            * Clear out the building area.
            */
           new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP), STANDARD_DELAY),
@@ -180,13 +176,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
            */
           new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 1),
           /*
-           * Spawn entities on the structure.
-           */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, COMPLETE_BUILD), STANDARD_DELAY),
-          /*
            * Decorate the AbstractBuilding with torches etc.
            */
           new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, REMOVE_STEP), STANDARD_DELAY),
+          /*
+           * Clean up area completely.
+           */
+          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, SPAWN_STEP), STANDARD_DELAY),
+          /*
+           * Spawn entities on the structure.
+           */
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, COMPLETE_BUILD), STANDARD_DELAY),
           /*
            * Finalize the building and give back control to the ai.
            */
@@ -1081,6 +1081,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
         if (fluidsToRemove.isEmpty())
         {
+            switchStage(DECORATION_STEP);
             return DECORATION_STEP;
         }
         else
