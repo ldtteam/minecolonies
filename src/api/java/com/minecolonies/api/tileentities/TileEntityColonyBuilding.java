@@ -98,6 +98,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation registryName;
 
     /**
+     * Called on container update to reprocess the combined inventory.
+     */
+    private boolean containersUpdated = false;
+
+    /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
     public TileEntityColonyBuilding()
@@ -360,11 +365,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
-        /*
-         * We want a new inventory every tick.
-         * The accessed inventory in the same tick must be the same.
-         */
-        combinedInv = null;
+        if (containersUpdated)
+        {
+            containersUpdated = false;
+            combinedInv = null;
+        }
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -433,6 +438,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation getBuildingName()
     {
         return registryName;
+    }
+
+    @Override
+    public void markInvDirty()
+    {
+        this.containersUpdated = true;
     }
 
     @Override
