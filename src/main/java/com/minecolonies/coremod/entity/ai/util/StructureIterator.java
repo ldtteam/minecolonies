@@ -242,8 +242,8 @@ public class StructureIterator
                                                                                          || structureBlock.block instanceof AirBlock
                                                                                          || structureBlock.metadata.getMaterial().isSolid());
             case REMOVE:
-                return advanceBlocks(this.theStructure::decrementBlock,
-                        structureBlock -> structureBlock.worldBlock instanceof AirBlock);
+                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
+                                                                                         || structureBlock.worldBlock instanceof AirBlock);
             case SPAWN:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
                                                                           structureBlock.entity == null || structureBlock.entity.length <= 0);
