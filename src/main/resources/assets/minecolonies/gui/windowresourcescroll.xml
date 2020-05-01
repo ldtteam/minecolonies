@@ -15,7 +15,9 @@
 
     <label size="100% 11" pos="0 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
 
-    <list id="resources" size="164 75%" pos="13 51">
+    <label size="100% 11" pos="0 49" id="progress" label="" color="black" textalign="MIDDLE"/>
+
+    <list id="resources" size="164 71%" pos="13 60">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
