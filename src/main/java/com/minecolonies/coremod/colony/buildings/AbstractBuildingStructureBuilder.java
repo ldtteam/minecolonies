@@ -22,12 +22,15 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The structureBuilder building.
@@ -38,21 +41,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * The maximum upgrade of the building.
      */
     public static final  int    MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_RESOURCE_LIST = "resourcesItem";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_POS = "progressPos";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_STAGE = "progressStage";
 
     /**
      * Progress amount to mark building dirty.
@@ -78,6 +66,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * The progress counter of the builder.
      */
     private int progressCounter = 0;
+
+    /**
+     * all the fluids to be removed in fluids_remove.
+     */
+    private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -144,10 +137,26 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             }
         }
 
-        if (compound.keySet().contains(TAG_PROGRESS_POS))
+        if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
             progressStage = StructureIterator.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+        }
+
+        if (compound.contains(TAG_FLUIDS_REMOVE))
+        {
+            fluidsToRemove.clear();
+            ListNBT fluidsToRemove = (ListNBT) compound.get(TAG_FLUIDS_REMOVE);
+            fluidsToRemove.forEach(fluidsRemove -> {
+            	int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                ListNBT positions = (ListNBT) ((CompoundNBT) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
+                final List<BlockPos> fluids = new ArrayList<BlockPos>();
+                for (int i = 0; i < positions.size(); i++)
+                {
+                	fluids.add(BlockPosUtil.readFromListNBT(positions, i));
+                }
+                this.fluidsToRemove.put(y, fluids);
+            });
         }
     }
 
@@ -173,6 +182,17 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
+
+        final ListNBT fluidsToRemove = new ListNBT();
+        this.fluidsToRemove.forEach((y, fluids) -> {
+        	final CompoundNBT fluidsRemove = new CompoundNBT();
+            final ListNBT positions = new ListNBT();
+            fluids.forEach(fluid -> BlockPosUtil.writeToListNBT(positions, fluid));
+            fluidsRemove.put(TAG_FLUIDS_REMOVE_POSITIONS, positions);
+            fluidsRemove.putInt(TAG_FLUIDS_REMOVE_Y, y);
+            fluidsToRemove.add(fluidsRemove);
+        });
+        compound.put(TAG_FLUIDS_REMOVE, fluidsToRemove);
 
         return compound;
     }
@@ -407,5 +427,14 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public boolean requiresCompleteRequestFulfillment()
     {
         return false;
+    }
+
+    /**
+     * Getter for the blocks to be removed in fluids_remove.
+     * @return the blocks to be removed in fluids_remove.
+     */
+    public Map<Integer, List<BlockPos>> getFluidsToRemove()
+    {
+        return fluidsToRemove;
     }
 }
