@@ -76,6 +76,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
 
     /**
+     * Base patrol range
+     */
+    private static final int PATROL_BASE_DIST = 50;
+
+    /**
      * The Bonus Health for each building level
      */
     private static final int BONUS_HEALTH_PER_LEVEL = 2;
@@ -89,7 +94,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Vision range per building level.
      */
-    private static final int VISION_RANGE_PER_LEVEL = 6;
+    private static final int VISION_RANGE_PER_LEVEL = 3;
+
+    /**
+     * Base Vision range per building level.
+     */
+    private static final int BASE_VISION_RANGE = 17;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -496,7 +506,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             BlockPos pos;
             if (colony.getWorld().rand.nextBoolean())
             {
-                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10);
+                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10, 16);
             }
             else
             {
@@ -536,7 +546,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public int getPatrolDistance()
     {
-        return this.getBuildingLevel() * PATROL_DISTANCE;
+        return PATROL_BASE_DIST + this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
     /**
@@ -1066,7 +1076,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public int getBonusVision()
     {
-        return getBuildingLevel() * VISION_RANGE_PER_LEVEL;
+        return BASE_VISION_RANGE + getBuildingLevel() * VISION_RANGE_PER_LEVEL;
     }
 
     /**

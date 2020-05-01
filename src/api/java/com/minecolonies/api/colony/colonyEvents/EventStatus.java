@@ -6,6 +6,7 @@ package com.minecolonies.api.colony.colonyEvents;
 public enum EventStatus
 {
     STARTING,
+    PREPARING,
     PROGRESSING,
     WAITING,
     DONE,
