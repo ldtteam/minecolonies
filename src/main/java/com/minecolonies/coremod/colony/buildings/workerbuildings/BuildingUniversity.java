@@ -146,6 +146,12 @@ public class BuildingUniversity extends AbstractBuildingWorker
         }
     }
 
+    @Override
+    public int getMaxInhabitants()
+    {
+        return getBuildingLevel();
+    }
+
     /**
      * Returns a random bookshelf from the list.
      *
@@ -235,6 +241,17 @@ public class BuildingUniversity extends AbstractBuildingWorker
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
+        }
+
+        /**
+         * Check if it has enough workers.
+         *
+         * @return true if so.
+         */
+        @Override
+        public boolean hasEnoughWorkers()
+        {
+            return getWorkerId().size() >= getBuildingLevel();
         }
     }
 }
