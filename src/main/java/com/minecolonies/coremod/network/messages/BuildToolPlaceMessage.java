@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.Log;
@@ -247,7 +248,7 @@ public class BuildToolPlaceMessage implements IMessage
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
                         InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
-                          buildPos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
                         complete = true;
                     }
                 }

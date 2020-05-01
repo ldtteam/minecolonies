@@ -176,7 +176,7 @@ public class BuildToolPasteMessage implements IMessage
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state , complete);
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-                  pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
@@ -188,8 +188,8 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
-                  pos, Rotation.values()[rotation], mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
+                com.ldtteam.structurize.util.InstantStructurePlacer.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
         else if( structureName.contains("supply") )
@@ -229,7 +229,7 @@ public class BuildToolPasteMessage implements IMessage
                 }
 
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-                  pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
             }
             else
             {
