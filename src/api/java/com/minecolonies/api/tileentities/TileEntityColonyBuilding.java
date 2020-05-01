@@ -359,12 +359,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
-
-        /*
-         * We want a new inventory every tick.
-         * The accessed inventory in the same tick must be the same.
-         */
-        combinedInv = null;
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -433,6 +427,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation getBuildingName()
     {
         return registryName;
+    }
+
+    @Override
+    public void markInvDirty()
+    {
+        combinedInv = null;
     }
 
     @Override
