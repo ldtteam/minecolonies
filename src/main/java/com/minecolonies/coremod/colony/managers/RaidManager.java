@@ -39,7 +39,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    public static final double SPAWN_MODIFIER = 1.5;
+    public static final double SPAWN_MODIFIER = 5;
 
     /**
      * Min distance to keep while spawning near buildings
@@ -432,7 +432,7 @@ public class RaidManager implements IRaiderManager
     public int calcBarbarianAmount()
     {
         return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
-          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.1)));
+          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
     }
 
     /**
@@ -581,10 +581,20 @@ public class RaidManager implements IRaiderManager
      * @param world The world in which the raid is possibly happening (Used to get a random number easily)
      * @return Boolean value on whether to act this night
      */
-    private static boolean raidThisNight(final World world, final IColony colony)
+    private boolean raidThisNight(final World world, final IColony colony)
     {
-        return colony.getRaiderManager().getNightsSinceLastRaid() > MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get()
-                 && world.rand.nextDouble() < 1.0 / MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get();
+        if (nightsSinceLastRaid < MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get())
+        {
+            return false;
+        }
+
+        if (nightsSinceLastRaid > MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() + 2)
+        {
+            return true;
+        }
+
+        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+                                                                                                                                 .getCommon().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override

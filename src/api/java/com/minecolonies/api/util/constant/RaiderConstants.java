@@ -55,7 +55,7 @@ public final class RaiderConstants
     /**
      * Barbarian Attack Damage.
      */
-    public static final double ATTACK_DAMAGE = 1.0D;
+    public static final double ATTACK_DAMAGE = 3.0D;
 
     /**
      * Values used in Spawn() method
@@ -84,10 +84,10 @@ public final class RaiderConstants
      */
     public static final double FOLLOW_RANGE                = 35.0D;
     public static final double MOVEMENT_SPEED              = 0.25D;
-    public static final double ARMOR                       = 0.5D;
-    public static final double CHIEF_ARMOR                 = 8D;
+    public static final double ARMOR                       = 4D;
+    public static final double CHIEF_BONUS_ARMOR           = 2D;
     public static final double BARBARIAN_BASE_HEALTH       = 15;
-    public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
+    public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.1;
     public static final double ATTACK_SPEED_DIVIDER        = 3;
 
 

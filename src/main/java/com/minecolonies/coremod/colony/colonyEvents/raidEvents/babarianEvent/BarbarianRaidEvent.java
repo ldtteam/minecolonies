@@ -10,15 +10,19 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
@@ -30,6 +34,7 @@ import java.util.*;
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
 import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
+import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
@@ -77,6 +82,11 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
 
     /**
+     * Currently active campfires
+     */
+    private List<BlockPos> campFires = new ArrayList<>();
+
+    /**
      * The related colony
      */
     private IColony colony;
@@ -105,6 +115,11 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
      * Days the event can last, to make sure it eventually despawns.
      */
     private int daysToGo = 3;
+
+    /**
+     * Time the campfires are active
+     */
+    private int campFireTime = 0;
 
     public BarbarianRaidEvent(IColony colony)
     {
@@ -268,7 +283,18 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
             return;
         }
 
-        status = EventStatus.PROGRESSING;
+        status = EventStatus.PREPARING;
+        spawnCampFires(spawnPos);
+        final double dist = colony.getCenter().distanceSq(spawnPos);
+        if (dist < MIN_CENTER_DISTANCE * MIN_CENTER_DISTANCE)
+        {
+            campFireTime = 6;
+        }
+        else
+        {
+            campFireTime = 3;
+        }
+
         RaiderMobUtils.spawn(BARBARIAN, horde.numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(CHIEFBARBARIAN, horde.numberOfBosses, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(ARCHERBARBARIAN, horde.numberOfArchers, spawnPos, colony.getWorld(), colony, id);
@@ -281,6 +307,11 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     @Override
     public void onUpdate()
     {
+        if (status == EventStatus.PREPARING)
+        {
+            prepareEvent();
+        }
+
         if (horde.hordeSize == 0)
         {
             status = EventStatus.DONE;
@@ -320,12 +351,52 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         }
     }
 
+    /**
+     * Prepares the barbarian event, makes them wait at campfires for a while,deciding on their plans.
+     */
+    private void prepareEvent()
+    {
+        if (--campFireTime <= 0)
+        {
+            // Start raiding
+            status = EventStatus.PROGRESSING;
+        }
+    }
+
+    /**
+     * Spawns a few campfires around the pos, depending on raid size
+     *
+     * @param pos
+     */
+    private void spawnCampFires(final BlockPos pos)
+    {
+        final int fireCount = Math.max(1, horde.hordeSize / 5);
+        for (int i = 0; i < fireCount; i++)
+        {
+            for (int tries = 0; tries < 3; tries++)
+            {
+                BlockPos spawn = BlockPosUtil.getRandomPosition(colony.getWorld(), pos, BlockPos.ZERO, 3, 7);
+                if (spawn != BlockPos.ZERO)
+                {
+                    colony.getWorld().setBlockState(spawn, Blocks.CAMPFIRE.getDefaultState());
+                    campFires.add(spawn);
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public void onFinish()
     {
         for (final Entity entity : getEntities())
         {
             entity.remove();
+        }
+
+        for (final BlockPos pos : campFires)
+        {
+            colony.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
         }
     }
 
@@ -342,6 +413,16 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     public void setHorde(final BarbarianHorde horde)
     {
         this.horde = horde;
+    }
+
+    /**
+     * Returns a random campfire
+     *
+     * @return
+     */
+    public BlockPos getRandomCampfire()
+    {
+        return campFires.get(colony.getWorld().rand.nextInt(campFires.size()));
     }
 
     /**
@@ -378,6 +459,14 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     {
         compound.putInt(TAG_EVENT_ID, id);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
+        ListNBT campFiresNBT = new ListNBT();
+
+        for (final BlockPos pos : campFires)
+        {
+            campFiresNBT.add(BlockPosUtil.write(new CompoundNBT(), NbtTagConstants.TAG_POS, pos));
+        }
+
+        compound.put(TAG_CAMPFIRE_LIST,campFiresNBT);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);
@@ -391,6 +480,12 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(BarbarianHorde.loadFromNbt(compound));
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
+
+        for (final INBT posCompound : compound.getList(TAG_CAMPFIRE_LIST, TAG_COMPOUND))
+        {
+            campFires.add(BlockPosUtil.read((CompoundNBT) posCompound, NbtTagConstants.TAG_POS));
+        }
+
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);

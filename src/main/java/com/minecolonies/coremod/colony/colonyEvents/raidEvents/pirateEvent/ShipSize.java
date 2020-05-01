@@ -50,6 +50,17 @@ public enum ShipSize
     public final int spawnerCount;
 
     /**
+     * The amount of barbarians up to which a small pirate ship spawns
+     */
+    private static final int SMALL_SHIP_SIZE_AMOUNT = 5;
+
+    /**
+     * The amount of barbarians up to which a medium pirate ship spawns
+     */
+    private static final int MEDIUM_SHIP_SIZE_AMOUNT = 15;
+
+
+    /**
      * Array of pirates which are spawned for landing, one wave.
      */
     public final EntityType[] pirates;
@@ -72,15 +83,11 @@ public enum ShipSize
     public static ShipSize getShipForRaidLevel(final int raidLevel)
     {
         ShipSize shipSize;
-        if (raidLevel < ColonyConstants.SMALL_HORDE_SIZE)
+        if (raidLevel <= SMALL_SHIP_SIZE_AMOUNT)
         {
             shipSize = SMALL;
         }
-        else if (raidLevel < ColonyConstants.MEDIUM_HORDE_SIZE)
-        {
-            shipSize = MEDIUM;
-        }
-        else if (raidLevel < ColonyConstants.BIG_HORDE_SIZE)
+        else if (raidLevel < MEDIUM_SHIP_SIZE_AMOUNT)
         {
             shipSize = MEDIUM;
         }
