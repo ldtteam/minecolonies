@@ -1,6 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
@@ -86,7 +87,7 @@ public class RecipeStorage implements IRecipeStorage
 
         for(final ItemStack stack: input)
         {
-            if(ItemStackUtils.isEmpty(stack))
+            if(ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool)
             {
                 continue;
             }
@@ -138,6 +139,10 @@ public class RecipeStorage implements IRecipeStorage
 
         for (final ItemStorage stack : items)
         {
+            if (stack.getItem() == ModItems.buildTool)
+            {
+                continue;
+            }
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
@@ -238,6 +243,11 @@ public class RecipeStorage implements IRecipeStorage
 
         for (final ItemStorage stack : getCleanedInput())
         {
+            if (stack.getItem() == ModItems.buildTool)
+            {
+                continue;
+            }
+
             int amountNeeded = stack.getAmount();
 
             if (amountNeeded == 0)
@@ -305,6 +315,11 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> secondaryStacks = new ArrayList<>();
         for(final ItemStack stack: input)
         {
+            if (stack.getItem() == ModItems.buildTool)
+            {
+                continue;
+            }
+
             final ItemStack container = stack.getItem().getContainerItem(stack);
             if (!ItemStackUtils.isEmpty(container))
             {
