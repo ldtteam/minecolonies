@@ -84,9 +84,9 @@ public class Stack implements IDeliverable
      */
     public Stack(
             @NotNull final ItemStack stack,
-            @NotNull final boolean matchMeta,
-            @NotNull final boolean matchNBT,
-            @NotNull final boolean matchOreDic,
+            final boolean matchMeta,
+            final boolean matchNBT,
+            final boolean matchOreDic,
             @NotNull final ItemStack result)
     {
         this.theStack = stack;
