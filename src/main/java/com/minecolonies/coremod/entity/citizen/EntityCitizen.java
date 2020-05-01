@@ -354,7 +354,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (isDay)
         {
-            if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() > NOON)
+            if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() % 24000 > NOON)
             {
                 return DesiredActivity.IDLE;
             }
