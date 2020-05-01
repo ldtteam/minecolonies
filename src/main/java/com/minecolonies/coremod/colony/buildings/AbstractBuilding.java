@@ -1422,7 +1422,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return getRequester().getLocation();
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
@@ -1450,7 +1449,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         markDirty();
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
