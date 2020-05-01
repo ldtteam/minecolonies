@@ -138,7 +138,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      */
     private BlockPos getWanderPosition()
     {
-        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getPosition(), 1);
+        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getPosition(), 1, 5);
 
         if (range == null)
         {
