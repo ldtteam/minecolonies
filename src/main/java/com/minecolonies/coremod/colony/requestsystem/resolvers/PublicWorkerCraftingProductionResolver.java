@@ -38,16 +38,13 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
     {
 
     }
 
-    @Nullable
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -58,8 +55,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> completedRequest)
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony || !completedRequest.hasParent())
@@ -139,7 +135,10 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
     @Override
     protected void onAssignedToThisResolverForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, final boolean simulation, @NotNull final AbstractBuilding building)
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends PublicCrafting> request,
+      final boolean simulation,
+      @NotNull final AbstractBuilding building)
     {
         if (manager.getColony().getWorld().isRemote)
             return;
@@ -161,8 +160,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     }
 
     @Override
-    public void resolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final AbstractBuilding building)
     {
         if (manager.getColony().getWorld().isRemote)
             return;

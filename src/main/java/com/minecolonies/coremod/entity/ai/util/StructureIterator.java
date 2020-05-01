@@ -239,12 +239,9 @@ public class StructureIterator
                                                                                          && structureBlock.worldMetadata.getFluidState().getFluid() == structureBlock.metadata.getFluidState().getFluid())));
             case DECORATE:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
-                                                                                         || structureBlock.block instanceof AirBlock
                                                                                          || structureBlock.metadata.getMaterial().isSolid());
             case REMOVE:
-                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
-                                                                                         || structureBlock.worldBlock instanceof AirBlock
-                                                                                         || structureBlock.worldBlock instanceof FlowingFluidBlock);
+                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> structureBlock.worldBlock instanceof AirBlock || !(structureBlock.block instanceof AirBlock));
             case SPAWN:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.entity == null || structureBlock.entity.length <= 0);
             default:

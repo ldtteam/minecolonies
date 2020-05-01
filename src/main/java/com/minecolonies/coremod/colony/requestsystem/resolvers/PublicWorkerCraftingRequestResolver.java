@@ -44,15 +44,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         return null;
     }
 
-    @Nullable
     @Override
     public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }
