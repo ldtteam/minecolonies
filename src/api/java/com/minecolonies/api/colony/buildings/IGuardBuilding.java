@@ -18,7 +18,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      * Worker gets this distance times building level away from his/her hut to
      * patrol.
      */
-    int PATROL_DISTANCE = 40;
+    int PATROL_DISTANCE = 30;
 
     /**
      * Check if a guard should take damage by a player..

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.goal.Goal;
@@ -96,6 +99,11 @@ public class EntityAIWalkToRandomHuts extends Goal
     private int totalStuckTime = 0;
 
     /**
+     * Timer for walking randomly between campfires
+     */
+    private int campFireWalkTimer = 0;
+
+    /**
      * Whether the entity had a path last update
      */
     boolean hadPath = false;
@@ -113,12 +121,34 @@ public class EntityAIWalkToRandomHuts extends Goal
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        campFireWalkTimer = world.rand.nextInt(1000);
+        proxy = new GeneralEntityWalkToProxy(entity);
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null;
+        if (!(this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null))
+        {
+            return false;
+        }
+
+        if (entity.getColony() != null)
+        {
+            final IColonyEvent event = entity.getColony().getEventManager().getEventByID(entity.getEventID());
+            if (event == null)
+            {
+                return false;
+            }
+
+            if (event.getStatus() == EventStatus.PREPARING && event instanceof BarbarianRaidEvent)
+            {
+                walkToCampFire();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -158,7 +188,6 @@ public class EntityAIWalkToRandomHuts extends Goal
     @Override
     public void startExecuting()
     {
-        proxy = new GeneralEntityWalkToProxy(entity);
         targetBlock = getRandomBuilding();
         hadPath = false;
         resetStuckCounters();
@@ -424,5 +453,23 @@ public class EntityAIWalkToRandomHuts extends Goal
         }
 
         return entity.getColony().getRaiderManager().getRandomBuilding();
+    }
+
+    private void walkToCampFire()
+    {
+        campFireWalkTimer -= 4;
+        if (campFireWalkTimer < 0)
+        {
+            campFireWalkTimer = world.rand.nextInt(1000);
+            targetBlock = BlockPosUtil.getRandomPosition(world,
+              ((BarbarianRaidEvent) entity.getColony().getEventManager().getEventByID(entity.getEventID())).getRandomCampfire(),
+              BlockPos.ZERO,
+              3,
+              6);
+            if (targetBlock != null && targetBlock != BlockPos.ZERO)
+            {
+                this.isEntityAtSiteWithMove(targetBlock, 3);
+            }
+        }
     }
 }
