@@ -199,7 +199,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
                   || (blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART).equals(BedPart.FOOT))
                   || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER))
-                  || blockState.getBlock() == Blocks.AIR)
+                  || blockState.getBlock() instanceof AirBlock)
             {
                 continue;
             }
@@ -211,7 +211,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     for (final ItemStack stack : handler.getRequiredItems(world, worldPos, blockState, blockInfo.getTileEntityData(), false))
                     {
-                        if (block != Blocks.AIR
+                        if (!(block instanceof AirBlock)
                               && worldBlock != Blocks.BEDROCK
                               && !(worldBlock instanceof AbstractBlockHut)
                               && !isBlockFree(block))

@@ -44,6 +44,7 @@ import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -754,8 +755,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
               && colony != null
               && colony.getWorld() != null
               && getPosition() != null
-              && colony.getWorld().getBlockState(getPosition()).getBlock()
-                   != Blocks.AIR && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
+              && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
+              && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(getPosition());
             if (te instanceof TileEntityColonyBuilding)
@@ -1421,7 +1422,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return getRequester().getLocation();
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
@@ -1449,7 +1449,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         markDirty();
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {

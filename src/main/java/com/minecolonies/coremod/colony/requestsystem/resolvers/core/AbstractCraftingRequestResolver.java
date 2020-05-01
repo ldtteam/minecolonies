@@ -141,7 +141,16 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (reqs.contains(request.getRequest()))
         {
-            return true;
+            for (final IRequestable requestable : reqs)
+            {
+                if (requestable.equals(request.getRequest())
+                      && request.getRequest() instanceof IDeliverable
+                      && requestable instanceof IDeliverable
+                      && ((IDeliverable) request.getRequest()).getCount() < ((IDeliverable) requestable).getCount() )
+                {
+                    return true;
+                }
+            }
         }
         reqs.add(request.getRequest());
 
@@ -152,7 +161,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
         {
-            return true;
+            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() < target.getRequest().getCount())
+            {
+                return true;
+            }
         }
 
         if (!request.hasParent())

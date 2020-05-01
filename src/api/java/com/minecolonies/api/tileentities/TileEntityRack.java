@@ -190,6 +190,29 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
+
+        if (!buildingPos.equals(BlockPos.ZERO))
+        {
+            TileEntity building = world.getTileEntity(buildingPos);
+            if (building instanceof TileEntityColonyBuilding)
+            {
+                ((TileEntityColonyBuilding) building).markInvDirty();
+            }
+        }
+    }
+
+    @Override
+    public void remove()
+    {
+        super.remove();
+        if (!buildingPos.equals(BlockPos.ZERO))
+        {
+            TileEntity building = world.getTileEntity(buildingPos);
+            if (building instanceof TileEntityColonyBuilding)
+            {
+                ((TileEntityColonyBuilding) building).markInvDirty();
+            }
+        }
     }
 
     /* Get the amount of items matching a predicate in the inventory.

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
@@ -309,7 +310,7 @@ public final class PirateEventUtils
             {
                 for (int z = -radius; z <= radius; z++)
                 {
-                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() == Blocks.AIR && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() == Blocks.AIR)
+                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() instanceof AirBlock)
                     {
                         return spawnPos.add(x, y, z);
                     }

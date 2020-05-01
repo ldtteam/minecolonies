@@ -7,10 +7,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.LadderBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.Path;
@@ -418,7 +415,7 @@ public class EntityAIWalkToRandomHuts extends Goal
         {
             final BlockPos posToDestroy = entity.getPosition().up(random.nextInt(3)).offset(dir);
             final BlockState state = world.getBlockState(posToDestroy);
-            if (state.getBlock() != Blocks.AIR && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
+            if (!(state.getBlock() instanceof AirBlock) && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
                                                                                         && world.getDifficulty() == Difficulty.HARD))
             {
                 world.destroyBlock(posToDestroy, true);

@@ -524,7 +524,7 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 final String[] split = oreString.split(":");
                 final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
-                if (block != null && !oreBlocks.contains(block) && block != Blocks.AIR)
+                if (block != null && !oreBlocks.contains(block) && !(block instanceof AirBlock))
                 {
                     oreBlocks.add(block);
                 }
