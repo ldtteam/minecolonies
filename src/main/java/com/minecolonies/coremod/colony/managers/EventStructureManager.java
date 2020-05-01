@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -102,7 +103,7 @@ public class EventStructureManager implements IEventStructureManager
         InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
           schematicPath,
           targetSpawnPoint.down(3),
-          rotations,
+          BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
           false);
 
@@ -126,7 +127,7 @@ public class EventStructureManager implements IEventStructureManager
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(colony.getWorld(),
                   fileName,
                   entry.getKey(),
-                  0,
+                  Rotation.NONE,
                   Mirror.NONE,
                   true);
 
