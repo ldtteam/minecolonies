@@ -137,4 +137,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack
      * @return The buildings name.
      */
     public abstract ResourceLocation getBuildingName();
+
+    /**
+     * Mark the inventory dirty for rebuild.
+     */
+    public abstract void markInvDirty();
 }
