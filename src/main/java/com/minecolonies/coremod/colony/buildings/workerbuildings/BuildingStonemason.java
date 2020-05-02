@@ -127,7 +127,8 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                     item.isIn(Tags.Items.COBBLESTONE) ||
                     item.isIn(ItemTags.STONE_BRICKS) ||
                     item.getRegistryName().getPath().contains("prismarine") ||
-                    item.getRegistryName().getPath().contains("end_stone"))
+                    item.getRegistryName().getPath().contains("end_stone") ||
+                    item.getRegistryName().getPath().contains("brick"))
             {
                 return true;
             }
@@ -149,7 +150,8 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                             block.isIn(Tags.Blocks.COBBLESTONE) ||
                             block.isIn(BlockTags.STONE_BRICKS) ||
                             block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
-                            block.asItem().getRegistryName().getPath().contains("sandstone_slab"))
+                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") ||
+                            block.asItem().getRegistryName().getPath().contains("brick"));
                     {
                         amountOfValidBlocks++;
                         continue;
