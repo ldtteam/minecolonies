@@ -199,11 +199,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             return;
         }
 
-        final IModelType model = getModelType();
-
-        final String textureBase = "textures/entity/" + model.getTextureBase() + (female ? "female" : "male");
-        final int moddedTextureId = (textureId % model.getNumTextures()) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
+        texture = getModelType().getTexture(this);
     }
 
     /**
@@ -600,12 +596,16 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      */
     public abstract ICitizenInventoryHandler getCitizenInventoryHandler();
 
+    public abstract void setCitizenInventoryHandler(ICitizenInventoryHandler citizenInventoryHandler);
+
     /**
      * The Handler for all colony related methods.
      *
      * @return the instance of the handler.
      */
     public abstract ICitizenColonyHandler getCitizenColonyHandler();
+
+    public abstract void setCitizenColonyHandler(ICitizenColonyHandler citizenColonyHandler);
 
     /**
      * The Handler for all job related methods.
@@ -634,6 +634,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * @return the instance of the handler.
      */
     public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
+
+
+    public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
 
     /**
      * Check if the citizen can eat now by considering the state and the job tasks.
@@ -676,11 +679,15 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
 
     public abstract boolean isDead();
 
+    public abstract void setCitizenStuckHandler(ICitizenStuckHandler citizenStuckHandler);
 
+    public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 
+    public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
 
+    public abstract void setCitizenItemHandler(ICitizenItemHandler citizenItemHandler);
 
+    public abstract void setCitizenChatHandler(ICitizenChatHandler citizenChatHandler);
 
-
-
+    public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
 }
