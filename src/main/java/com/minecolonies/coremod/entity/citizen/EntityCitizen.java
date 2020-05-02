@@ -279,7 +279,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (player.isShiftKeyDown())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(this.getName().getFormattedText(), this.getEntityId()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
             }
             else
             {
