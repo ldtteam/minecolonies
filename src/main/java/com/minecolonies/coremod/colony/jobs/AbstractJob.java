@@ -410,4 +410,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
 
     }
+
+    @Override
+    public void setActive(final boolean b)
+    {
+
+    }
 }
