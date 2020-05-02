@@ -139,10 +139,6 @@ public class RecipeStorage implements IRecipeStorage
 
         for (final ItemStorage stack : items)
         {
-            if (stack.getItem() == ModItems.buildTool)
-            {
-                continue;
-            }
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
@@ -243,11 +239,6 @@ public class RecipeStorage implements IRecipeStorage
 
         for (final ItemStorage stack : getCleanedInput())
         {
-            if (stack.getItem() == ModItems.buildTool)
-            {
-                continue;
-            }
-
             int amountNeeded = stack.getAmount();
 
             if (amountNeeded == 0)
