@@ -8,15 +8,14 @@
         <view id="pageStations" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.workerhuts.quarryHut.stations):"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.quarryhut.stations):"/>
 
-            <list id="stations" size="164 154" pos="13 60">
+            <list id="stations" size="170 154" pos="13 60">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
-                        <button id="assignStation" pos="95 10" size="40 15"/>
-                        <itemicon id="icon" size="16 16" pos="0 0"/>
-                        <label id="dist" color="black" pos="15 15"/>
-                        <label id="dir" color="black" pos="35 15"/>
+                        <buttonimage id="assignStation" pos="95 10" size="64 17" textcolor="black" source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+                        <label id="distance" color="black" pos="5 10"/>
+                        <label id="position" color="black" pos="5 20"/>
                     </box>
                 </view>
             </list>

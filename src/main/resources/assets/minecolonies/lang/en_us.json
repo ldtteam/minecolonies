@@ -401,6 +401,12 @@
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Lumberjack's Hut",
   "com.minecolonies.coremod.gui.workerhuts.quarry": "Quarry Hut",
   "com.minecolonies.coremod.gui.workerhuts.quarrystation": "Quarry Station",
+  "com.minecolonies.coremod.gui.workerhuts.station.full": "Full",
+  "com.minecolonies.coremod.gui.workerhuts.station.assigned": "Assigned",
+  "com.minecolonies.coremod.gui.workerhuts.station.assign": "Assign",
+  "com.minecolonies.coremod.gui.workerhuts.quarryhut.stations": "Stations",
+  "com.minecolonies.coremod.gui.workerhuts.quarryhut.distance": "Distance: %sm",
+  "com.minecolonies.coremod.gui.workerhuts.quarryhut.position": "Pos: %s",
 
   "com.minecolonies.coremod.gui.townhall.rename": "Rename Colony",
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
