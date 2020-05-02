@@ -177,7 +177,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (!containerList.contains(pos))
         {
             containerList.add(pos);
-            tileEntity.markInvDirty();
+            getTileEntity().markInvDirty();
         }
     }
 
@@ -190,7 +190,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void removeContainerPosition(final BlockPos pos)
     {
         containerList.remove(pos);
-        tileEntity.markInvDirty();
+        getTileEntity().markInvDirty();
     }
 
     /**
@@ -232,17 +232,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         {
             addContainerPosition(pos);
         }
-    }
-
-    /**
-     * Returns the tile entity that belongs to the colony building.
-     *
-     * @return {@link TileEntityColonyBuilding} object of the building.
-     */
-    @Override
-    public AbstractTileEntityColonyBuilding getTileEntity()
-    {
-        return tileEntity;
     }
 
     /**
