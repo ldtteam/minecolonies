@@ -11,6 +11,9 @@ import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
+import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
+import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
@@ -98,6 +101,7 @@ public class EntityInitializer
                                     .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                     .build(Constants.MOD_ID + ":chiefpirate")
                                     .setRegistryName("chiefpirate");
+
         ModEntities.SITTINGENTITY = EntityType.Builder.create(SittingEntity::new, EntityClassification.AMBIENT)
                                       .setTrackingRange(ENTITY_TRACKING_RANGE)
                                       .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
@@ -111,6 +115,27 @@ public class EntityInitializer
                                       .size(0.98F, 0.7F)
                                       .build(Constants.MOD_ID + ":mcminecart")
                                       .setRegistryName("mcminecart");
+
+        ModEntities.MUMMY = EntityType.Builder.create(EntityMummy::new, EntityClassification.MONSTER)
+                               .setTrackingRange(ENTITY_TRACKING_RANGE)
+                               .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                               .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                               .build(Constants.MOD_ID + ":mummy")
+                               .setRegistryName("mummy");
+
+        ModEntities.ARCHERMUMMY = EntityType.Builder.create(EntityArcherMummy::new, EntityClassification.MONSTER)
+                                     .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                     .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                     .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                     .build(Constants.MOD_ID + ":archermummy")
+                                     .setRegistryName("archermummy");
+
+        ModEntities.PHARAO = EntityType.Builder.create(EntityPharao::new, EntityClassification.MONSTER)
+                                    .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                    .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                    .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                    .build(Constants.MOD_ID + ":pharao")
+                                    .setRegistryName("pharao");
     }
 
     @SubscribeEvent
@@ -127,6 +152,9 @@ public class EntityInitializer
             ModEntities.CHIEFBARBARIAN,
             ModEntities.FISHHOOK,
             ModEntities.SITTINGENTITY,
-            ModEntities.MINECART);
+            ModEntities.MINECART,
+            ModEntities.MUMMY,
+            ModEntities.ARCHERMUMMY,
+            ModEntities.PHARAO);
     }
 }

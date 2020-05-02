@@ -40,6 +40,15 @@ public class ModEntities
     @ObjectHolder("sittingentity")
     public static EntityType<?> SITTINGENTITY;
 
+    @ObjectHolder("mummy")
+    public static EntityType<?> MUMMY;
+
+    @ObjectHolder("pharao")
+    public static EntityType<?> PHARAO;
+
+    @ObjectHolder("archermummy")
+    public static EntityType<?> ARCHERMUMMY;
+
     @ObjectHolder("minecart")
     public static EntityType<AbstractMinecartEntity> MINECART;
 }

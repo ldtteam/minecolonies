@@ -1395,5 +1395,15 @@
   "com.minecolonies.coremod.job.dyer": "Dyer",
   "block.minecolonies.blockhutdyer.name": "Dyer",
   "block.minecolonies.blockhutdyer": "Dyer",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries"
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
+
+  "entity.mummy": "Mummy",
+  "entity.archermummy": "Mummy Archer",
+  "entity.minecolonies.mummy": "Mummy",
+  "entity.minecolonies.archermummy": "Mummy Archer",
+  "entity.minecolonies.pharao": "Pharao",
+  "entity.pharao": "Pharao",
+  "death.attack.entity.minecolonies.mummy": "%s was scared to death by the Mummy!",
+  "death.attack.entity.minecolonies.pharao": "%s was put to sleep by the Pharao!",
+  "death.attack.entity.minecolonies.archermummy": "%s was pierced by the Mummies deadly glance"
 }
