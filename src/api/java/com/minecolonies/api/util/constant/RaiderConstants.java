@@ -60,7 +60,7 @@ public final class RaiderConstants
     /**
      * Raiders environmental resistance
      */
-    public static final int BASE_ENV_DAMAGE_RESIST = 5;
+    public static final int BASE_ENV_DAMAGE_RESIST = 2;
 
     /**
      * Values used in Spawn() method
