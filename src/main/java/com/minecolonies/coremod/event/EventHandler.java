@@ -279,7 +279,7 @@ public class EventHandler
         final Entity entity = event.getEntity();
         final BlockPos pos = entity.getPosition();
 
-        if (pos.equals(BlockPos.ZERO))
+        if (event.getOldChunkX() == 0 && event.getOldChunkZ() == 0 && pos.distanceSq(BlockPos.ZERO) > 100 * 100)
         {
             return;
         }

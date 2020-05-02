@@ -434,6 +434,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void onColonyTick(final IColony colony)
     {
+        super.onColonyTick(colony);
         if (patrolTimer > 0 && task == GuardTask.PATROL)
         {
             patrolTimer--;

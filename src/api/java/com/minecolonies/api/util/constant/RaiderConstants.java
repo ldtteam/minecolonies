@@ -58,6 +58,11 @@ public final class RaiderConstants
     public static final double ATTACK_DAMAGE = 3.0D;
 
     /**
+     * Raiders environmental resistance
+     */
+    public static final int BASE_ENV_DAMAGE_RESIST = 5;
+
+    /**
      * Values used in Spawn() method
      */
     public static final double WHOLE_CIRCLE = 360.0;

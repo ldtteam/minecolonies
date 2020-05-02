@@ -89,6 +89,22 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private int invulTime = 2 * 20;
 
     /**
+     * Environmental damage cooldown timer
+     */
+    private int envDmgCooldown = 0;
+
+    /**
+     * Environmental damage interval
+     */
+    private int envDamageInterval = 5;
+
+    /**
+     * Environmental damage immunity
+     */
+    private boolean envDamageImmunity = false;
+
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -370,6 +386,29 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
+    public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
+    {
+        if (damageSource.getImmediateSource() == null)
+        {
+            if (envDamageImmunity)
+            {
+                return false;
+            }
+
+            if (--envDmgCooldown <= 0)
+            {
+                envDmgCooldown = envDamageInterval;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return super.attackEntityFrom(damageSource, damage);
+    }
+
+    @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
@@ -396,5 +435,25 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public void setEventID(final int eventID)
     {
         this.eventID = eventID;
+    }
+
+    /**
+     * Sets the environmental damage interval
+     *
+     * @param interval damage interval
+     */
+    public void setEnvDamageInterval(final int interval)
+    {
+        envDamageInterval = interval;
+    }
+
+    /**
+     * Sets the immunity to environmental damage
+     *
+     * @param immunity whether immune
+     */
+    public void setEnvDamageImmunity(final boolean immunity)
+    {
+        envDamageImmunity = immunity;
     }
 }
