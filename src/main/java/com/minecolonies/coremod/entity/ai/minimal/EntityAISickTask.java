@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
@@ -14,6 +15,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
@@ -161,6 +163,12 @@ public class EntityAISickTask extends Goal
         if (citizenData == null)
         {
             return;
+        }
+
+        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null)
+        {
+            job.setActive(false);
         }
 
         citizen.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));

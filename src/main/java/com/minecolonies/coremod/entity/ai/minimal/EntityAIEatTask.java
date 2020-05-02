@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -453,6 +454,12 @@ public class EntityAIEatTask extends Goal
         {
             complained = true;
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+        }
+
+        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null)
+        {
+            job.setActive(false);
         }
 
         if (placeToPath == null)
