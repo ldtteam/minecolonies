@@ -204,4 +204,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * When job removed (death of citizen or job change).
      */
     void onRemoval();
+
+    /**
+     * Set if the worker can currently work.
+     * @param b true if so.
+     */
+    public void setActive(final boolean b);
 }

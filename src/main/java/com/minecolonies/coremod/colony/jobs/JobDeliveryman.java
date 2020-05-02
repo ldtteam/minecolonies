@@ -260,10 +260,7 @@ public class JobDeliveryman extends AbstractJob
         getDataStore().setReturning(returning);
     }
 
-    /**
-     * Set if the dman can currently work.
-     * @param b true if so.
-     */
+    @Override
     public void setActive(final boolean b)
     {
         if (!b && active)
