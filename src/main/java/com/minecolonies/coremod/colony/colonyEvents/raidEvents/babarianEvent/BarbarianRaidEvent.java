@@ -312,6 +312,8 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
             prepareEvent();
         }
 
+        colony.getRaiderManager().setNightsSinceLastRaid(0);
+
         if (horde.hordeSize == 0)
         {
             status = EventStatus.DONE;
