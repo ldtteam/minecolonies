@@ -1070,7 +1070,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Works on removing the fluid blocks that should get removed.
-     * @param currentBlock
      * @return the next step once done.
      */
     private IAIState fluidRemoveStep()

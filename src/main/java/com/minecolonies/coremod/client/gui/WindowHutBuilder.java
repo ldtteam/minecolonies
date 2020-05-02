@@ -51,6 +51,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private final List<BuildingBuilderResource> resources = new ArrayList<>();
 
     /**
+     * Tick to update the list.
+     */
+    private int tick = 0;
+
+    /**
      * Constructor for window builder hut.
      *
      * @param building {@link BuildingBuilder.View}.
@@ -68,34 +73,28 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void pullResourcesFromHut()
     {
-        final IBuildingView newView = builder.getColony().getBuilding(builder.getID());
-        if (newView instanceof BuildingBuilder.View && newView != builder)
+        final PlayerInventory inventory = this.mc.player.inventory;
+        final boolean isCreative = this.mc.player.isCreative();
+
+        resources.clear();
+        resources.addAll(building.getResources().values());
+        for (final BuildingBuilderResource resource : resources)
         {
-            builder = newView;
-            final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
-            final PlayerInventory inventory = this.mc.player.inventory;
-            final boolean isCreative = this.mc.player.isCreative();
-
-            resources.clear();
-            resources.addAll(updatedView.getResources().values());
-            for (final BuildingBuilderResource resource : resources)
+            final int amountToSet;
+            if (isCreative)
             {
-                final int amountToSet;
-                if (isCreative)
-                {
-                    amountToSet = resource.getAmount();
-                }
-                else
-                {
-                    amountToSet =
-                      InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                        stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
-                }
-                resource.setPlayerAmount(amountToSet);
+                amountToSet = resource.getAmount();
             }
-
-            resources.sort(new BuildingBuilderResource.ResourceComparator());
+            else
+            {
+                amountToSet =
+                  InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                    stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
+            }
+            resource.setPlayerAmount(amountToSet);
         }
+
+        resources.sort(new BuildingBuilderResource.ResourceComparator());
     }
 
     @Override
@@ -104,7 +103,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         super.onOpened();
 
         pullResourcesFromHut();
-
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -217,7 +215,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_RESOURCES))
         {
-            pullResourcesFromHut();
+            if (tick++ == 20)
+            {
+                pullResourcesFromHut();
+                tick = 0;
+            }
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         }
     }
