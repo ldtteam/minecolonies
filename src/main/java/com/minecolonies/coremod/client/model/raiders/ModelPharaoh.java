@@ -152,6 +152,8 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         jaw.setTextureOffset(10, 11).addBox(2.5F, 0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 0.0F, true);
         jaw.setTextureOffset(0, 15).addBox(-2.5F, 0.0F, -4.0F, 5.0F, 1.0F, 0.0F, 0.0F, true);
         jaw.setTextureOffset(10, 11).addBox(-2.5F, 0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 0.0F, true);
+
+        bipedHeadwear.showModel = false;
     }
 
     private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

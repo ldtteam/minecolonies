@@ -127,6 +127,8 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         bipedBody.addChild(arrowB);
         bipedRightArm.addChild(stripRightB);
         bipedLeftLeg.addChild(legLeftLayer);
+
+        bipedHeadwear.showModel = false;
     }
 
     /**

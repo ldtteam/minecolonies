@@ -84,6 +84,8 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
         bipedLeftArm.addChild(armLeftLayer);
         bipedRightArm.addChild(stripRightA);
         bipedRightLeg.addChild(legRightLayer);
+
+        bipedHeadwear.showModel = false;
     }
 
     /**
