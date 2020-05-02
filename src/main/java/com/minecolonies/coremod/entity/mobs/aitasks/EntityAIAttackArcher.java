@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.FireArrowEntity;
+import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
@@ -117,7 +123,13 @@ public class EntityAIAttackArcher extends Goal
 
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                final ArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                AbstractArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);
+                if (bow.getItem() instanceof BowItem)
+                {
+                    arrowEntity = ((BowItem) bow.getItem()).customeArrow(arrowEntity);
+                }
+
                 arrowEntity.setShooter(entity);
                 arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
                 final double xVector = target.posX - entity.posX;

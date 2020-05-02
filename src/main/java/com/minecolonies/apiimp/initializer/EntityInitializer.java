@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.entity.FireArrowEntity;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -21,6 +22,8 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -136,6 +139,14 @@ public class EntityInitializer
                                     .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                     .build(Constants.MOD_ID + ":pharao")
                                     .setRegistryName("pharao");
+
+        ModEntities.FIREARROW = (EntityType<? extends AbstractArrowEntity>) EntityType.Builder.<AbstractArrowEntity>create(FireArrowEntity::new, EntityClassification.MISC)
+                                 .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+                                 .size(0.5F, 0.5F)
+                                 .setShouldReceiveVelocityUpdates(true)
+                                 .build(Constants.MOD_ID + ":firearrow")
+                                 .setRegistryName("firearrow");
     }
 
     @SubscribeEvent
@@ -155,6 +166,7 @@ public class EntityInitializer
             ModEntities.MINECART,
             ModEntities.MUMMY,
             ModEntities.ARCHERMUMMY,
-            ModEntities.PHARAO);
+            ModEntities.PHARAO,
+            ModEntities.FIREARROW);
     }
 }

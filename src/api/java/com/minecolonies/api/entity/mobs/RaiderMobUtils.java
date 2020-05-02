@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
+import com.minecolonies.api.entity.mobs.egyptians.IPharaoEntity;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 import com.minecolonies.api.items.ModItems;
@@ -183,6 +184,10 @@ public final class RaiderMobUtils
         if (mob instanceof IMeleeBarbarianEntity)
         {
             mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
+        }
+        else if (mob instanceof IPharaoEntity)
+        {
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.pharaoscepter));
         }
         else if (mob instanceof IArcherMobEntity)
         {
