@@ -3,7 +3,7 @@ package com.minecolonies.api.client.render.modeltype;
 /**
  * Enum with possible citizens.
  */
-public enum BipedModelType implements IModelType
+public enum BipedModelType implements ISimpleModelType
 {
     SETTLER("settler", 3),
     CITIZEN("citizen", 3),
