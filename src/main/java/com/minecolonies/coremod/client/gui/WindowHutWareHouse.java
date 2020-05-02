@@ -14,10 +14,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
-import com.minecolonies.coremod.network.messages.RemoveMinimumStockFromBuildingMessage;
-import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
-import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -102,7 +102,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
         building.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(tuple.getA().getItemStack(), building.getColony().getID(), building.getID()));
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
         updateStockList();
     }
 
@@ -113,7 +113,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     {
         if (!building.hasReachedLimit())
         {
-            new WindowSelectRes(this, building.getColony().getID(), building.getID(), stack -> true).open();
+            new WindowSelectRes(this, building, stack -> true).open();
         }
     }
 

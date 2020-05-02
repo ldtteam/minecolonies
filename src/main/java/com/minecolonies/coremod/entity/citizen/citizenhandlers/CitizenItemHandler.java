@@ -6,7 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

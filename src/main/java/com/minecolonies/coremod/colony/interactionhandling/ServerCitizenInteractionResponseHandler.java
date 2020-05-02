@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.TriggerServerResponseHandlerMessage;
+import com.minecolonies.coremod.network.messages.server.colony.TriggerServerResponseHandlerMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;

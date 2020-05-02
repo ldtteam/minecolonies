@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -59,7 +59,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
                     && building.getColony() != null
                     && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
             }
         }
         return ActionResultType.SUCCESS;

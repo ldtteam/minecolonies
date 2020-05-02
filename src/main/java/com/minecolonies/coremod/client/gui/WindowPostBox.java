@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.PostBoxRequestMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,7 +131,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView.getID()));
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
     }
 
     /**
