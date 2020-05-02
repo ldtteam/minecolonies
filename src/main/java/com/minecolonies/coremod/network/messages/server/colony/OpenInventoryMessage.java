@@ -55,6 +55,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
      * Creates an open inventory message for the citizen.
      * @param name the name of the citizen.
      * @param id its id.
+     * @param colony the colony of the network message
      */
     public OpenInventoryMessage(IColonyView colony, @NotNull final String name, final int id)
     {
@@ -66,6 +67,8 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     /**
      * Creates an open inventory message for a building.
+     *
+     * @param building the building we're executing on.
      */
     public OpenInventoryMessage(final IBuildingView building)
     {

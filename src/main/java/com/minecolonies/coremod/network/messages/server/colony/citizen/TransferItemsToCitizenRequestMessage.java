@@ -51,6 +51,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
      * @param citizenDataView Citizen of the request.
      * @param itemStack       to be take from the player for the building
      * @param quantity        of item needed to be transfered
+     * @param colony          the colony of the network message
      */
     public TransferItemsToCitizenRequestMessage(final IColony colony, @NotNull final ICitizenDataView citizenDataView, final ItemStack itemStack, final int quantity)
     {

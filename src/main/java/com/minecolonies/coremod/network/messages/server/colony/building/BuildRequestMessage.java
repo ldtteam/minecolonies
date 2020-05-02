@@ -50,7 +50,9 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     /**
      * Creates a build request 
      *
+     * @param building the building we're executing on.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
+     * @param builder the builder we're assinging the request to
      */
     public BuildRequestMessage(@NotNull final IBuildingView building, final int mode, final BlockPos builder)
     {

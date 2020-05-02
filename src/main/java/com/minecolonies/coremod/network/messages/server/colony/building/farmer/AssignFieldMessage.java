@@ -30,6 +30,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFa
      *
      * @param assign   assign if true, free if false.
      * @param field    the field to assign or release.
+     * @param building the building we're executing on.
      */
     public AssignFieldMessage(final IBuildingView building, final boolean assign, final BlockPos field)
     {

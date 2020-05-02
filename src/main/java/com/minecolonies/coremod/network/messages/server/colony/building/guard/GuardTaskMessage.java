@@ -44,6 +44,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
      * @param patrollingMode the new patrolling mode.
      * @param retrieval      the new retrievel mode.
      * @param task           the new task.
+     * @param tightGrouping  are we tight grouping.
      */
     public GuardTaskMessage(
                              @NotNull final AbstractBuildingGuards.View building,

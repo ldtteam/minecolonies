@@ -43,6 +43,7 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
      * Creates a new message of this type to set the guard scepter in the player inventory.
      *
      * @param taskId     the task id.
+     * @param building the building we're executing on.
      */
     public GuardScepterMessage(final IBuildingView building, final int taskId)
     {

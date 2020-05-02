@@ -51,6 +51,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * Create a message to add or remove recipes.
      * @param storage the recipe storage.
      * @param remove true if remove.
+     * @param building the building we're executing on.
      */
     public AddRemoveRecipeMessage(final IBuildingWorkerView building, final boolean remove, final IRecipeStorage storage)
     {
@@ -67,6 +68,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param gridSize the gridSize.
      * @param primaryOutput the primary output.
      * @param remove true if remove.
+     * @param building the building we're executing on.
      */
     public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final boolean remove)
     {

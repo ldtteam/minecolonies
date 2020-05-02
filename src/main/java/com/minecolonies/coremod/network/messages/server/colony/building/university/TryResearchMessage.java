@@ -41,6 +41,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
      * Construct a message to attempt to research.
      * @param researchId the research id.
      * @param branch the research branch.
+     * @param building the building we're executing on.
      */
     public TryResearchMessage(final IBuildingView building, @NotNull final String researchId, final String branch)
     {

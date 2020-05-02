@@ -43,6 +43,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
      * @param id the id of the list of filterables.
      * @param assign   compost if true, dont if false.
      * @param item    the item to assign
+     * @param building the building we're executing on.
      */
     public AssignFilterableItemMessage(final IBuildingView building, final String id, final ItemStorage item, final boolean assign)
     {

@@ -30,6 +30,7 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
      * Object creation for the town hall rename 
      *
      * @param name   New name of the town hall.
+     * @param building the building we're executing on.
      */
     public HutRenameMessage(@NotNull final IBuildingView building, final String name)
     {

@@ -61,6 +61,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param pos the position of it.
      * @param name  it's name.
      * @param level the level.
+     * @param dimension the dimension we're executing on.
      */
     public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final int dimension)
     {

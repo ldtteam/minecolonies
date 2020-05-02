@@ -45,6 +45,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
      * @param requestId the request id.
      * @param state     the state to set.
      * @param itemStack the involved itemStack.
+     * @param colony the colony of the network message
      */
     public UpdateRequestStateMessage(final IColony colony, final IToken requestId, final RequestState state, final ItemStack itemStack)
     {

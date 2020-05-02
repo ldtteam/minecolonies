@@ -39,6 +39,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     /**
      * Creates a new message to get jei recipes.
      * @param itemStacks the stack recipes to register.
+     * @param complete whether we're complete
      */
     public TransferRecipeCrafingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete)
     {

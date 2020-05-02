@@ -36,6 +36,8 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
      * Network message for executing things on buildings on the server
      *
      * @param buildingId the ID of the building we're executing on.
+     * @param colonyId the ID of the colony we're executing on.
+     * @param dimensionId the ID of the dimension we're executing on.
      */
     public AbstractBuildingServerMessage(final int dimensionId, final int colonyId, final BlockPos buildingId)
     {
