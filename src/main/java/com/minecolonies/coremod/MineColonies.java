@@ -18,6 +18,9 @@ import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererMummy;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
@@ -170,6 +173,11 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.PIRATE, RendererPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MUMMY, RendererMummy::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
+
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINECART, MinecartRenderer::new);
