@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.client.render.mobs.egyptians;
 
-import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
+import com.minecolonies.coremod.client.model.raiders.ModelMummy;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,7 +13,7 @@ public class RendererMummy extends AbstractRendererEgyptian
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/pirate1.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/mummy.png");
 
     /**
      * Constructor method for renderer
@@ -23,7 +22,7 @@ public class RendererMummy extends AbstractRendererEgyptian
      */
     public RendererMummy(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<EntityMummy>(1.0F), 0.5F);
+        super(renderManagerIn, new ModelMummy(), 0.5F);
     }
 
     @Override
