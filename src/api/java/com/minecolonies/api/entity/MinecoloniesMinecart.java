@@ -282,6 +282,17 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         // Do nothing
     }
 
+    @Override
+    public void tick()
+    {
+        super.tick();
+
+        if (this.ticksExisted % 20 == 19 && getPassengers().isEmpty())
+        {
+            this.remove();
+        }
+    }
+
     @NotNull
     @Override
     public IPacket<?> createSpawnPacket()

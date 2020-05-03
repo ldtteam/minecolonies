@@ -1,7 +1,7 @@
 {
   "pools": [
     {
-      "name": "minecolonies:Barbarian",
+      "name": "minecolonies:barbarian",
       "rolls": 1,
       "bonus_rolls": 1,
       "entries": [
