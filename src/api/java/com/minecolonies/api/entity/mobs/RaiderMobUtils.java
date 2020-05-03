@@ -13,7 +13,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -82,7 +81,7 @@ public final class RaiderMobUtils
      * @param mob    The mob to set the attributes on.
      * @param colony The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final LivingEntity mob, final IColony colony)
+    public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
         final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                                         / (double) DEFAULT_BARBARIAN_DIFFICULTY);
@@ -103,12 +102,20 @@ public final class RaiderMobUtils
             final double chiefArmor = difficultyModifier * CHIEF_BONUS_ARMOR;
             mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
             mob.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage + 2.0);
+            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficultyModifier));
         }
         else
         {
             final double armor = difficultyModifier * ARMOR;
             mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficultyModifier));
         }
+
+        if (difficultyModifier >= 1.4d)
+        {
+            mob.setEnvDamageImmunity(true);
+        }
+
         mob.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier);
         mob.setHealth(mob.getMaxHealth());
     }
