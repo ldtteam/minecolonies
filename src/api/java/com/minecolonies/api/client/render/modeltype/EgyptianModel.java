@@ -23,5 +23,5 @@ public class EgyptianModel<T extends AbstractEntityEgyptian> extends BipedModel<
     public EgyptianModel()
     {
         this(1.0F);
-    }if (this.ticksExisted % 20 == 0if (this.ticksExisted % 20 == 0
+    }
 }
