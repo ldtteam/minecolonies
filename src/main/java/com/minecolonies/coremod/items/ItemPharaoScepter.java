@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 /**
- * Class handling the Chief Sword item.
+ * Class handling the Pharao Scepter item.
  */
 public class ItemPharaoScepter extends BowItem
 {
