@@ -791,7 +791,7 @@
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Delivery Priority:",
+  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Gathering Priority:",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
   "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
