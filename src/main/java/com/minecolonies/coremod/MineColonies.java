@@ -18,6 +18,9 @@ import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererMummy;
+import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
@@ -33,7 +36,9 @@ import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -164,12 +169,19 @@ public class MineColonies
     {
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CITIZEN, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
+
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.PIRATE, RendererPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MUMMY, RendererMummy::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
+
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINECART, MinecartRenderer::new);
