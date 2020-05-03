@@ -113,7 +113,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Open the spies gui when the button is clicked.
      *
-     * @param button
+     * @param button the clicked button.
      */
     private void hireSpiesClicked(final Button button)
     {

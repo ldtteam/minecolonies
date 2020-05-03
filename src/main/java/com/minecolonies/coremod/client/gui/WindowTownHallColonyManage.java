@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.CreateColonyMessage;
-import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
+import com.minecolonies.coremod.network.messages.client.CreateColonyMessage;
+import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -143,7 +143,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      * @param world world to use
      * @param start start position
      * @param range search range
-     * @return
+     * @return the id of the found colony
      */
     private static int findNextNearbyColony(final World world, final BlockPos start, final int range)
     {

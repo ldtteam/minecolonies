@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -177,6 +179,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (!containerList.contains(pos))
         {
             containerList.add(pos);
+            getTileEntity().markInvDirty();
         }
     }
 
@@ -189,6 +192,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void removeContainerPosition(final BlockPos pos)
     {
         containerList.remove(pos);
+        getTileEntity().markInvDirty();
     }
 
     /**
@@ -229,18 +233,15 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
+            if (block instanceof BlockMinecoloniesRack)
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    ((TileEntityRack) entity).setBuildingPos(this.getID());
+                }
+            }
         }
-    }
-
-    /**
-     * Returns the tile entity that belongs to the colony building.
-     *
-     * @return {@link TileEntityColonyBuilding} object of the building.
-     */
-    @Override
-    public AbstractTileEntityColonyBuilding getTileEntity()
-    {
-        return tileEntity;
     }
 
     /**

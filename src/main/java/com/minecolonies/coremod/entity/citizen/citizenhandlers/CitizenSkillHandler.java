@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
+import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -75,7 +75,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     {
         for (final Skill skill : Skill.values())
         {
-            skillMap.put(skill, new Tuple<>((Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE), 0.0D));
+            skillMap.put(skill, new Tuple<>(Math.max(1, (Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE)), 0.0D));
         }
     }
 
@@ -107,7 +107,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
             skillMap.put(Skill.values()[levelExperienceAtJob.getInt(TAG_SKILL)],
-              new Tuple<>(Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+              new Tuple<>(Math.max(1, Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL)), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
         }
     }
 
@@ -151,7 +151,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 5 : home.getMaxBuildingLevel();
 
-        if ((citizenHutLevel < citizenHutMaxLevel && Math.pow(2.0, citizenHutLevel + 1.0) <= level) || level >= MAX_CITIZEN_LEVEL)
+        if ((citizenHutLevel < citizenHutMaxLevel && citizenHutLevel * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
         {
             return;
         }

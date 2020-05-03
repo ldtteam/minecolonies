@@ -30,7 +30,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
     /**
      * Called when the inventory of the tileEntity it holds it's changed
      *
-     * @param isEmpty
+     * @param isEmpty whether the inventory is empty.
      */
     private void buildingInventoryChanged(boolean isEmpty)
     {

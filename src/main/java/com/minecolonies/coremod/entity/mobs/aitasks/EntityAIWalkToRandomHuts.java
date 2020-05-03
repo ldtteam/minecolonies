@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.LadderBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.Path;
@@ -99,6 +99,11 @@ public class EntityAIWalkToRandomHuts extends Goal
     private int totalStuckTime = 0;
 
     /**
+     * Timer for walking randomly between campfires
+     */
+    private int campFireWalkTimer = 0;
+
+    /**
      * Whether the entity had a path last update
      */
     boolean hadPath = false;
@@ -116,12 +121,34 @@ public class EntityAIWalkToRandomHuts extends Goal
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        campFireWalkTimer = world.rand.nextInt(1000);
+        proxy = new GeneralEntityWalkToProxy(entity);
     }
 
     @Override
     public boolean shouldExecute()
     {
-        return this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null;
+        if (!(this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null))
+        {
+            return false;
+        }
+
+        if (entity.getColony() != null)
+        {
+            final IColonyEvent event = entity.getColony().getEventManager().getEventByID(entity.getEventID());
+            if (event == null)
+            {
+                return false;
+            }
+
+            if (event.getStatus() == EventStatus.PREPARING && event instanceof HordeRaidEvent)
+            {
+                walkToCampFire();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -161,7 +188,6 @@ public class EntityAIWalkToRandomHuts extends Goal
     @Override
     public void startExecuting()
     {
-        proxy = new GeneralEntityWalkToProxy(entity);
         targetBlock = getRandomBuilding();
         hadPath = false;
         resetStuckCounters();
@@ -251,6 +277,9 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Handles beeing completly stuck, teleports the entity a little.
+     * 
+     * @param targetDist the current distance from the target.
+     * @return whether the handling worked.
      */
     private boolean handleTotalStuck(final long targetDist)
     {
@@ -282,6 +311,8 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Tries to skip ahead on an existing path.
+     * 
+     * @return whether we skipped ahead on the current path.
      */
     private boolean trySkipAheadOnPath()
     {
@@ -299,11 +330,9 @@ public class EntityAIWalkToRandomHuts extends Goal
     }
 
     /**
-     * Handles the entity beeing stuck, resets the path, places temporary blocks and ladders/block breaks if needed.
-     *
-     * @return
+     * Handles the entity being stuck, resets the path, places temporary blocks and ladders/block breaks if needed.
      */
-    private boolean handleEntityBeingStuck()
+    private void handleEntityBeingStuck()
     {
         entity.getNavigator().clearPath();
         stuckTime = 0;
@@ -326,7 +355,6 @@ public class EntityAIWalkToRandomHuts extends Goal
         {
             handleBarbarianMovementSpecials();
         }
-        return false;
     }
 
     /**
@@ -389,8 +417,8 @@ public class EntityAIWalkToRandomHuts extends Goal
         {
             final BlockPos posToDestroy = entity.getPosition().up(random.nextInt(3)).offset(dir);
             final BlockState state = world.getBlockState(posToDestroy);
-            if (state.getBlock() != Blocks.AIR && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
-                                                                                        && world.getDifficulty() == Difficulty.HARD))
+            if (!(state.getBlock() instanceof AirBlock) && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
+                                                                                                 && world.getDifficulty() == Difficulty.HARD))
             {
                 world.destroyBlock(posToDestroy, true);
             }
@@ -427,5 +455,30 @@ public class EntityAIWalkToRandomHuts extends Goal
         }
 
         return entity.getColony().getRaiderManager().getRandomBuilding();
+    }
+
+    private void walkToCampFire()
+    {
+        campFireWalkTimer -= 4;
+        if (campFireWalkTimer < 0)
+        {
+            final BlockPos campFire = ((HordeRaidEvent) entity.getColony().getEventManager().getEventByID(entity.getEventID())).getRandomCampfire();
+
+            if (campFire == null)
+            {
+                return;
+            }
+
+            campFireWalkTimer = world.rand.nextInt(1000);
+            targetBlock = BlockPosUtil.getRandomPosition(world,
+              campFire,
+              BlockPos.ZERO,
+              3,
+              6);
+            if (targetBlock != null && targetBlock != BlockPos.ZERO)
+            {
+                this.isEntityAtSiteWithMove(targetBlock, 3);
+            }
+        }
     }
 }

@@ -30,11 +30,11 @@ public class ResearchInitializer
         final GlobalResearch flowerpower = new GlobalResearch("flowerpower", "technology", "Flower power", 2, new UnlockBuildingResearchEffect("Florist", true));
         flowerpower.setRequirement(new BuildingResearchRequirement(3, "composter"));
 
-        //final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "civilian", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
-        //rainbowheaven.setRequirement(new BuildingResearchRequirement(3, "florist"));
+        final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "technology", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
+        rainbowheaven.setRequirement(new BuildingResearchRequirement(3, "florist"));
 
         biodegradable.addChild(flowerpower);
-        //flowerpower.addChild(rainbowheaven);
+        flowerpower.addChild(rainbowheaven);
 
         final GlobalResearch bonemeal = new GlobalResearch("bonemeal", "technology", "Bonemeal", 2, new MultiplierModifierResearchEffect(FARMING, 0.1));
         bonemeal.setRequirement(new BuildingResearchRequirement(4, "farmer"));
@@ -222,7 +222,7 @@ public class ResearchInitializer
         //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
         //researchTree.addResearch(stringwork.getBranch(), stringwork);
         researchTree.addResearch(thoselungs.getBranch(), thoselungs);
-        //researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
+        researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
 
         researchTree.addResearch(deeppockets.getBranch(), deeppockets);
         researchTree.addResearch(loaded.getBranch(), loaded);

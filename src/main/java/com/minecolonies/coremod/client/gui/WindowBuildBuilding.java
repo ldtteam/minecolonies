@@ -24,8 +24,8 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import com.minecolonies.coremod.network.messages.BuildRequestMessage;
-import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -275,7 +275,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 continue;
             }
 
-            if (block != Blocks.AIR
+            if (!(block instanceof AirBlock)
                   && !AbstractEntityAIStructure.isBlockFree(block)
                   && block != com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                   && block != com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)

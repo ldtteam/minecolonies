@@ -20,10 +20,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LadderBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
@@ -81,6 +78,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int LADDER_REQUEST_BATCHES = 10;
 
     private static final String RENDER_META_TORCH   = "torch";
+    private static final String RENDER_META_STONE   = "stone";
+
     private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
@@ -180,17 +179,34 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected void updateRenderMetaData()
     {
-        @NotNull final String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
+        worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 
+    /**
+     * Get render data to render torches at the backpack if in inventory.
+     * @return metaData String if so.
+     */
     @NotNull
     private String getRenderMetaTorch()
     {
         if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.TORCH))
         {
             return RENDER_META_TORCH;
+        }
+        return "";
+    }
+
+    /**
+     * Get render data to render stone in the backpack if cobble in inventory.
+     * @return metaData String if so.
+     */
+    @NotNull
+    private String getRenderMetaStone()
+    {
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.COBBLESTONE))
+        {
+            return RENDER_META_STONE;
         }
         return "";
     }
@@ -434,6 +450,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Calculates the next non-air block to mine.
      * Will take the nearest block it finds.
+     * 
+     * @return the next block to mine.
      */
     @Nullable
     private BlockPos getNextBlockInShaftToMine()
@@ -447,7 +465,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         Block block = getBlock(minerWorkingLocation);
         if (block != null
-              && block != Blocks.AIR
+              && !(block instanceof AirBlock)
               && block != Blocks.LADDER
               && !(block.equals(Blocks.WATER)
                      || block.equals(Blocks.LAVA)))
@@ -601,7 +619,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         final Node parentNode = currentLevel.getNode(workingNode.getParent());
-        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || world.getBlockState(new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ())).getBlock() != Blocks.AIR))
+        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || !(world.getBlockState(new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ())).getBlock() instanceof AirBlock)))
         {
             workingNode = parentNode;
             workingNode.setStatus(Node.NodeStatus.AVAILABLE);

@@ -4,7 +4,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.ColonyDeleteOwnMessage;
+import com.minecolonies.coremod.network.messages.server.colony.ColonyDeleteOwnMessage;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;

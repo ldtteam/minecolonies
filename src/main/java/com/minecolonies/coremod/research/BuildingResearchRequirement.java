@@ -34,9 +34,9 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public boolean isFulfilled(final IColony colony)
     {
+        int sum = 0;
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            int sum = 0;
             if (building.getSchematicName().equalsIgnoreCase(this.building))
             {
                 sum += building.getBuildingLevel();

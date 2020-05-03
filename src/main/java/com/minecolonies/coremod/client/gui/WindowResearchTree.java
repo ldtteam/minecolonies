@@ -14,7 +14,7 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
-import com.minecolonies.coremod.network.messages.TryResearchMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -94,7 +94,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
               (building.getBuildingLevel() >= research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
               research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
         {
-            Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
+            Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
             close();
         }
 

@@ -517,6 +517,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Utility method to search for items currently needed. Poll this until all items are there.
+     * 
+     * @return the next state to go to.
      */
     @NotNull
     private IAIState lookForRequests()
@@ -1128,6 +1130,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
         {
+            worker.getCitizenData().setIdleAtJob(false);
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bestSlot);
             return true;
         }

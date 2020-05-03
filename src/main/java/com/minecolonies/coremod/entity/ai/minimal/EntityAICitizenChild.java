@@ -127,6 +127,8 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Exception handler for the statemachine
+     * 
+     * @param ex the exception to handle
      */
     private void handleAIException(final RuntimeException ex)
     {
@@ -136,6 +138,8 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Updates all timers
+     * 
+     * @return false
      */
     private boolean updateTimers()
     {
@@ -152,6 +156,8 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Whether the child moves to a new activity
+     * 
+     * @return whether the child moves to a new activity
      */
     private boolean isReadyForActivity()
     {
@@ -170,6 +176,8 @@ public class EntityAICitizenChild extends Goal
     /**
      * Follow activity preconditions
      * Search for someone to follow around
+     * 
+     * @return whether a entity to follow was found
      */
     private boolean searchEntityToFollow()
     {
@@ -206,6 +214,8 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Follow an entity around
+     * 
+     * @return the next ai state to go into
      */
     private IAIState followingEntity()
     {
@@ -224,6 +234,8 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Child visits random buildings
+     * 
+     * @return the next ai state to go into
      */
     private IAIState visitHuts()
     {

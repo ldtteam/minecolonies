@@ -14,7 +14,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -137,9 +137,11 @@ public class WindowResourceList extends AbstractWindowSkeleton
         });
 
         //Make sure we have a fresh view
-        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.builder));
+        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(builder.getWorkerName());
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(builder.getConstructionName());
+        findPaneOfTypeByID(LABEL_PROGRESS, Label.class).setLabelText(builder.getProgress());
     }
 
     /**

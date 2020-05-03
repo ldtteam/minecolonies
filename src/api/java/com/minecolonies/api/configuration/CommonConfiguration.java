@@ -290,7 +290,7 @@ public class CommonConfiguration extends AbstractConfiguration
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
-    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> veinminer;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> goodveins;
@@ -421,12 +421,12 @@ public class CommonConfiguration extends AbstractConfiguration
         swapToCategory(builder, "combat");
 
         doBarbariansSpawn = defineBoolean(builder, "dobarbariansspawn", true);
-        barbarianHordeDifficulty = defineInteger(builder,  "barbarianhordedifficulty", 5, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
+        barbarianHordeDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
         spawnBarbarianSize = defineInteger(builder,  "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
-        maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 20, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
+        maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 5, 1, 10);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 3, 1, 30);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 7, 1, 10);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 5, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
@@ -1155,9 +1155,9 @@ public class CommonConfiguration extends AbstractConfiguration
         thoselungs = defineList(builder, "thoselungs",
                   Collections.singletonList("minecraft:glass*64"),
                   s -> s instanceof String);
-        //rainbowheaven = defineList(builder, "rainbowheaven",
-        //          Collections.singletonList("minecraft:poppy*64"),
-        //          s -> s instanceof String);
+        rainbowheaven = defineList(builder, "rainbowheaven",
+                  Collections.singletonList("minecraft:poppy*64"),
+                  s -> s instanceof String);
 
         this.veinminer = defineList(builder, "veinminer",
           Collections.singletonList("minecraft:iron_ore*32"),

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,7 +16,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -390,6 +391,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
+     * @param data the citizens data.
      * @return the next state to go to.
      */
     private EatingState goToHut(final ICitizenData data)
@@ -453,6 +455,12 @@ public class EntityAIEatTask extends Goal
         {
             complained = true;
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+        }
+
+        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null)
+        {
+            job.setActive(false);
         }
 
         if (placeToPath == null)

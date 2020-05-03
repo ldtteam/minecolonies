@@ -179,10 +179,16 @@ public final class ModJobsInitializer
                                .setRegistryName(ModJobs.TEACHER_ID)
                                .createJobEntry();
 
-        ModJobs.glassblower     = new JobEntry.Builder()
+        ModJobs.glassblower  = new JobEntry.Builder()
                                 .setJobProducer(JobGlassblower::new)
                                 .setRegistryName(ModJobs.GLASSBLOWER_ID)
                                 .createJobEntry();
+
+        ModJobs.dyer        = new JobEntry.Builder()
+                                    .setJobProducer(JobDyer::new)
+                                    .setRegistryName(ModJobs.DYER_ID)
+                                    .createJobEntry();
+
 
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
@@ -217,5 +223,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.pupil);
         reg.register(ModJobs.teacher);
         reg.register(ModJobs.glassblower);
+        reg.register(ModJobs.dyer);
     }
 }

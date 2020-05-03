@@ -88,6 +88,8 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     /**
      * Parses Study Items from the Config and adds them on the keepX list
+     * 
+     * @return the list of study items
      */
     private List<StudyItem> parseFromConfig()
     {

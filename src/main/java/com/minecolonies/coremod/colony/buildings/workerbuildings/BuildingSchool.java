@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -241,7 +242,19 @@ public class BuildingSchool extends AbstractBuildingWorker
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onColonyTick(colony);
+        // School auto hiring
+        if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()))
+              && (getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || getHiringMode() == HiringMode.AUTO))
+        {
+            for (final ICitizenData data : colony.getCitizenManager().getCitizens())
+            {
+                if (data.getWorkBuilding() == null)
+                {
+                    assignCitizen(data);
+                }
+            }
+        }
+
         for (final ICitizenData citizenData: getAssignedCitizen())
         {
             if (citizenData.getJob() instanceof JobPupil && !citizenData.isChild())

@@ -195,6 +195,8 @@ public class ViewFilterableList
 
     /**
      * Add exceptions which do not match the predicate after scanning.
+     * 
+     * @return a list of {@link ItemStorage}s that do not match the predicate.
      */
     private List<ItemStorage> getExceptions()
     {

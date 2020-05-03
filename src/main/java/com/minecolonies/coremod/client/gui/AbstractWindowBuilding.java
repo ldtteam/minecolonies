@@ -6,8 +6,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.network.messages.BuildRequestMessage;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +111,7 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
 
     @Override
@@ -150,6 +150,8 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
 
     /**
      * Update the state and label for the Build button.
+     * 
+     * @param buildingView the view to update from.
      */
     private void updateButtonBuild(final IBuildingView buildingView)
     {

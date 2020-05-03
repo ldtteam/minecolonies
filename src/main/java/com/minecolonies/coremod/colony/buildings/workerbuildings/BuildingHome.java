@@ -413,6 +413,8 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Moves the citizen into his new hut
+     * 
+     * @param citizen the citizen to move
      */
     private void moveCitizenToHut(final ICitizenData citizen)
     {
@@ -573,6 +575,7 @@ public class BuildingHome extends AbstractBuilding
         {
             super.deserialize(buf);
 
+            residents.clear();
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {

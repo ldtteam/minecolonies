@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -153,6 +153,6 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.homeHut";
+        return "com.minecolonies.coremod.gui.workerhuts.homehut";
     }
 }

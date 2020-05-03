@@ -104,7 +104,9 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
               entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName()), true);
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.activity",
               entityCitizen.getDesiredActivity(),
-              entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription()), true);
+              entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
+              entityCitizen.goalSelector.getRunningGoals().findFirst().get().getGoal().toString()),
+              true);
         }
 
         return 1;

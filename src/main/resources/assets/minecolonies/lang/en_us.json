@@ -151,7 +151,7 @@
   "minecolonies.config.minColonyDistance": "Minimum colony distance",
   "minecolonies.config.minColonyDistance.comment": "The minimum distance between colonies on creation. [Default: 8]",
   "minecolonies.config.initialColonySize": "Initial colony claim size",
-  "minecolonies.config.initialColonySize.comment": "Initial colony claim size in a square [Default: 4]",
+  "minecolonies.config.initialColonySize.comment": "Initial colony claim size radius in Chunks.(square layout) [Default: 4]",
   "minecolonies.config.restrictcolonyplacement": "Restrict Colony Placement",
   "minecolonies.config.restrictcolonyplacement.comment": "Should the min/max distance from spawn also affect colony placement? [Default: false]",
   "minecolonies.config.enabledynamiccolonysizes": "Enable Dynamic Colony Sizes",
@@ -300,6 +300,9 @@
   "item.minecolonies.ancienttome": "Ancient Tome",
   "item.minecolonies.chiefsword": "Chief Sword",
   "item.minecolonies.scepterGuard": "Guard-scepter",
+  "item.minecolonies.iron_scimitar": "Iron Scimitar",
+  "item.minecolonies.pharaoscepter": "Pharao Scepter",
+  "item.minecolonies.firearrow": "Fire Arrow",
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 
@@ -360,7 +363,7 @@
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
-  "com.minecolonies.command.citizeninfo.activity": "§2Desired activity: §f%s §2Current Activity: §f%s",
+  "com.minecolonies.command.citizeninfo.activity": "§2Desired activity: §f%s §2Current Activity: §f%s §2Task: §f%s",
   "com.minecolonies.command.citizeninfo.noactivity": "§4No activity is being desired or executed!",
   "com.minecolonies.command.citizeninfo.homepos": "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s",
   "com.minecolonies.command.citizeninfo.workpos": "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s",
@@ -668,7 +671,7 @@
   "com.minecolonies.coremod.item.permissionscepter.addposition.success": "Added location '%d %d %d'",
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block '%s'",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location '%d %d %d'",
-  "tile.blockHut.warehouse.limit": "The amount of warehouses is limited to 1 per colony.",
+  "tile.blockhut.warehouse.limit": "The amount of warehouses is limited to 1 per colony.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker": "Baker",
   "com.minecolonies.coremod.bakery.nofurnace": "My building doesn't have any furnaces, please repair it.",
@@ -693,6 +696,8 @@
   "com.minecolonies.coremod.status.avoiding": "Avoiding mob",
   "com.minecolonies.coremod.status.clearing": "Clearing",
   "com.minecolonies.coremod.status.building": "Building",
+  "com.minecolonies.coremod.status.detecting_fluids": "Detecting Fluids",
+  "com.minecolonies.coremod.status.removing_fluids": "Removing Fluids",
   "com.minecolonies.coremod.status.decorating": "Decorating",
   "com.minecolonies.coremod.status.gathering": "Gathering",
   "com.minecolonies.coremod.status.spawning": "Spawning entities",
@@ -786,7 +791,7 @@
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Delivery Priority:",
+  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Gathering Priority:",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
   "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
@@ -1387,6 +1392,20 @@
   "com.minecolonies.coremod.gui.workerhuts.glassblower": "Glassblower",
   "com.minecolonies.coremod.job.glassblower": "Glassblower",
   "block.minecolonies.blockhutglassblower.name": "Glassblower",
-  "block.minecolonies.blockhutglassblower": "Glassblower"
+  "block.minecolonies.blockhutglassblower": "Glassblower",
+  "com.minecolonies.coremod.gui.workerhuts.dyer": "Dyer",
+  "com.minecolonies.coremod.job.dyer": "Dyer",
+  "block.minecolonies.blockhutdyer.name": "Dyer",
+  "block.minecolonies.blockhutdyer": "Dyer",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
 
+  "entity.mummy": "Mummy",
+  "entity.archermummy": "Mummy Archer",
+  "entity.minecolonies.mummy": "Mummy",
+  "entity.minecolonies.archermummy": "Mummy Archer",
+  "entity.minecolonies.pharao": "Pharao",
+  "entity.pharao": "Pharao",
+  "death.attack.entity.minecolonies.mummy": "%s was scared to death by the Mummy!",
+  "death.attack.entity.minecolonies.pharao": "%s was put to sleep by the Pharao!",
+  "death.attack.entity.minecolonies.archermummy": "%s was pierced by the Mummy's deadly glance"
 }

@@ -358,7 +358,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         if (path == null)
         {
-            this.currentPath = null;
+            clearPath();
             return false;
         }
         pathStartTime = world.getGameTime();

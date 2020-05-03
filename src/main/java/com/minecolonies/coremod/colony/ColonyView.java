@@ -26,7 +26,7 @@ import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
-import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
+import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -943,14 +943,23 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final PacketBuffer buf)
     {
-        @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
-        if (building != null)
+        if (buildings.containsKey(buildingId))
         {
-            buildings.put(building.getID(), building);
-
-            if (building instanceof BuildingTownHall.View)
+            //Read the string first to set up the buffer.
+            buf.readString(32767);
+            buildings.get(buildingId).deserialize(buf);
+        }
+        else
+        {
+            @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
+            if (building != null)
             {
-                townHall = (ITownHallView) building;
+                buildings.put(building.getID(), building);
+
+                if (building instanceof BuildingTownHall.View)
+                {
+                    townHall = (ITownHallView) building;
+                }
             }
         }
 

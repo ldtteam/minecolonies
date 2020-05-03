@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -89,7 +89,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10);
+            recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
             return RECESS;
         }
 
@@ -120,7 +120,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         {
             return getState();
         }
-        recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10);
+        recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
         return getState();
     }
 

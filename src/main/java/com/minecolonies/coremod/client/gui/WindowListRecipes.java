@@ -12,8 +12,8 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
-import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -167,7 +167,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         {
             final IRecipeStorage data = recipes.get(row+1);
             building.removeRecipe(row+1);
-            Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
+            Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, true, data));
         }
         else if (button.getID().equals(BUTTON_FORWARD))
         {

@@ -185,7 +185,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack());
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount());
 
         if (storage == null)
         {

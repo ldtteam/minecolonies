@@ -217,6 +217,7 @@ public class Tree
      * @param world         world to use for accessing blocks
      * @param pos           Blockposition of the leaf
      * @param checkFitsBase boolean whether we should check leaf and tree's log compatibility
+     * @return the sapling to plant at the given position
      */
     private ItemStack calcSaplingForPos(final World world, final BlockPos pos, final boolean checkFitsBase)
     {
@@ -359,8 +360,11 @@ public class Tree
     /**
      * Adds a log and searches for further logs(Breadth first search).
      *
-     * @param world The world the log is in.
-     * @param log   the log to add.
+     * @param world        The world the log is in.
+     * @param log          The log to add.
+     * @param woodenBlocks The wooden blocks.
+     * @param bottomLog    The bottom most log.
+     * @param topLog       The top most log.
      * @return a tuple containing, first: bottom log and second: top log.
      */
     @NotNull

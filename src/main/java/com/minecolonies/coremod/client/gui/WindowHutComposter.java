@@ -9,7 +9,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
-import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.composter.ComposterRetrievalMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 
@@ -89,6 +89,8 @@ public class WindowHutComposter extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
+     * 
+     * @param retrieve the button to update.
      */
     private void switchReplant(final Button retrieve)
     {

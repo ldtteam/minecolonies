@@ -20,8 +20,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
-import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -549,6 +549,9 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the buildings.
+     * 
+     * @param closeSubscribers the current event subscribers.
+     * @param newSubscribers   the new event subscribers.
      */
     private void sendBuildingPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {
@@ -572,6 +575,9 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
+     * 
+     * @param closeSubscribers the current event subscribers.
+     * @param newSubscribers   the new event subscribers.
      */
     private void sendFieldPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {

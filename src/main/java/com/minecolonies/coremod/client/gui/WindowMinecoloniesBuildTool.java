@@ -12,8 +12,8 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
-import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
-import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
+import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
+import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -62,7 +62,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
@@ -89,7 +89,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())
         {

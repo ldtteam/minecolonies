@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The modifier multiplication research effect, it returns a double modifier.
@@ -40,5 +42,11 @@ public class MultiplierModifierResearchEffect extends AbstractResearchEffect<Dou
     public TranslationTextComponent getDesc()
     {
         return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier.multiplication", this.getId(), effect * 100);
+    }
+
+    @Override
+    public boolean overrides(@NotNull final IResearchEffect other)
+    {
+        return effect > ((MultiplierModifierResearchEffect) other).effect;
     }
 }

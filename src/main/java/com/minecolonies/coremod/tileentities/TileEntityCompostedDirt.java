@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.item.BlockItem;
@@ -96,7 +97,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
         if(random.nextDouble() * 100 <= this.percentage)
         {
             final BlockPos position = pos.up();
-            if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
+            if(worldIn.getBlockState(position).getBlock() instanceof AirBlock)
             {
                 if (flower.getItem() instanceof BlockItem)
                 {

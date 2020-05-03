@@ -15,8 +15,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianHorde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -39,7 +40,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    public static final double SPAWN_MODIFIER = 1.5;
+    public static final double SPAWN_MODIFIER = 5;
 
     /**
      * Min distance to keep while spawning near buildings
@@ -215,11 +216,18 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(pirateShipRotation);
                 colony.getEventManager().addEvent(event);
             }
+            else if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert"))
+            {
+                final EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setHorde(new Horde(amount));
+                colony.getEventManager().addEvent(event);
+            }
             else
             {
                 final BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new BarbarianHorde(amount));
+                event.setHorde(new Horde(amount));
                 colony.getEventManager().addEvent(event);
             }
             addRaiderSpawnPoint(targetSpawnPoint);
@@ -295,10 +303,11 @@ public class RaidManager implements IRaiderManager
     /**
      * Finds a spawnpoint randomly in a circular shape around the center Advances
      *
-     * @param center
-     * @param dir1
-     * @param dir2
-     * @return
+     * @param center          the center of the area to search for a spawn point
+     * @param dir1            the first of the directions to look in
+     * @param dir2            the second of the directions to look in
+     * @param loadedBuildings a list of loaded buildings
+     * @return the calculated position
      */
     private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
     {
@@ -369,11 +378,11 @@ public class RaidManager implements IRaiderManager
     }
 
     /**
-     * Determines whether the given spawnpoint is allowed.
+     * Determines whether the given spawn point is allowed.
      *
-     * @param spawnPos
-     * @param loadedBuildings
-     * @return
+     * @param spawnPos        the spawn point to check
+     * @param loadedBuildings the loaded buildings
+     * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos, final List<IBuilding> loadedBuildings)
     {
@@ -432,7 +441,7 @@ public class RaidManager implements IRaiderManager
     public int calcBarbarianAmount()
     {
         return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
-          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.1)));
+          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
     }
 
     /**
@@ -497,6 +506,8 @@ public class RaidManager implements IRaiderManager
 
     /**
      * Checks if a raid is possible
+     * 
+     * @return whether a raid is possible
      */
     @Override
     public boolean canRaid()
@@ -528,6 +539,11 @@ public class RaidManager implements IRaiderManager
                       "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
+
+                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert") && colony.getWorld().isRaining())
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -578,13 +594,24 @@ public class RaidManager implements IRaiderManager
     /**
      * Returns whether a raid should happen depending on the Config
      *
-     * @param world The world in which the raid is possibly happening (Used to get a random number easily)
+     * @param world  The world in which the raid is possibly happening (Used to get a random number easily)
+     * @param colony The colony to raid
      * @return Boolean value on whether to act this night
      */
-    private static boolean raidThisNight(final World world, final IColony colony)
+    private boolean raidThisNight(final World world, final IColony colony)
     {
-        return colony.getRaiderManager().getNightsSinceLastRaid() > MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get()
-                 && world.rand.nextDouble() < 1.0 / MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get();
+        if (nightsSinceLastRaid < MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get())
+        {
+            return false;
+        }
+
+        if (nightsSinceLastRaid > MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() + 2)
+        {
+            return true;
+        }
+
+        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+                                                                                                                                 .getCommon().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override

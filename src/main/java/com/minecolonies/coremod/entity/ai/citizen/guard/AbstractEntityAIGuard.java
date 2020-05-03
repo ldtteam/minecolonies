@@ -21,7 +21,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
+import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
@@ -264,6 +264,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Emits sleeping particles and regens hp when asleep
+     * 
+     * @return the next state to go into
      */
     private IAIState sleepParticles()
     {
@@ -279,6 +281,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Sleep activity
+     * 
+     * @return the next state to go into
      */
     private IAIState sleep()
     {
@@ -288,6 +292,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             worker.setRevengeTarget(null);
             worker.stopRiding();
             worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.getCitizenExperienceHandler().addExperience(1);
             return DECIDE;
         }
 
@@ -445,7 +450,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
     {
         return AbstractBuildingGuards.class;
     }
@@ -503,6 +508,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Helping out a citizen, moving into range and setting attack target.
+     * 
+     * @return the next state to go into
      */
     private IAIState helping()
     {
@@ -874,6 +881,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Returns the block distance at which a guard should chase his target
+     * 
+     * @return the block distance at which a guard should chase his target
      */
     private int getPersecutionDistance()
     {

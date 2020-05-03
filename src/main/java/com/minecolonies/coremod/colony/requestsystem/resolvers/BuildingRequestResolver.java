@@ -98,8 +98,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 

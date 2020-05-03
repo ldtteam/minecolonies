@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The modifier addition research effect, it returns a double modifier.
@@ -40,5 +42,11 @@ public class AdditionModifierResearchEffect extends AbstractResearchEffect<Doubl
     public TranslationTextComponent getDesc()
     {
         return new TranslationTextComponent("com.minecolonies.coremod.research.effect.modifier.addition", this.getId(), effect);
+    }
+
+    @Override
+    public boolean overrides(@NotNull final IResearchEffect other)
+    {
+        return effect > ((AdditionModifierResearchEffect) other).effect;
     }
 }

@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
+import com.minecolonies.api.entity.mobs.egyptians.IPharaoEntity;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 import com.minecolonies.api.items.ModItems;
@@ -13,7 +14,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -28,7 +28,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_BARBARIAN_DIFFICULTY;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
@@ -82,46 +82,54 @@ public final class RaiderMobUtils
      * @param mob    The mob to set the attributes on.
      * @param colony The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final LivingEntity mob, final IColony colony)
+    public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
+        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+                                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY);
         mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
 
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         final double attackDamage =
-          (float) MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() / MAX_BARBARIAN_DIFFICULTY + ATTACK_DAMAGE + Math.max(
+          difficultyModifier * (ATTACK_DAMAGE + Math.min(
             raidLevel / DAMAGE_PER_X_RAID_LEVEL,
-            MAX_RAID_LEVEL_DAMAGE);
+            MAX_RAID_LEVEL_DAMAGE));
 
         mob.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage);
 
         if (mob instanceof IChiefMobEntity)
         {
-            final double chiefArmor = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
+            final double chiefArmor = difficultyModifier * CHIEF_BONUS_ARMOR;
             mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
             mob.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage + 2.0);
+            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficultyModifier));
         }
         else
         {
-            final double armor = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() * ARMOR;
+            final double armor = difficultyModifier * ARMOR;
             mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficultyModifier));
         }
-        mob.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(raidLevel));
+
+        if (difficultyModifier >= 1.4d)
+        {
+            mob.setEnvDamageImmunity(true);
+        }
+
+        mob.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier);
         mob.setHealth(mob.getMaxHealth());
     }
 
     /**
      * Sets the entity's health based on the raidLevel
      *
-     * @param raidLevel
+     * @param raidLevel the raid level.
      * @return returns the health in the form of a double
      */
     private static double getHealthBasedOnRaidLevel(final int raidLevel)
     {
-        return Math.max(BARBARIAN_BASE_HEALTH,
-          (BARBARIAN_BASE_HEALTH + raidLevel * BARBARIAN_HEALTH_MULTIPLIER) * ((double) MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
-                                                                                 * 0.1));
+        return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel * BARBARIAN_HEALTH_MULTIPLIER));
     }
 
     /**
@@ -183,6 +191,10 @@ public final class RaiderMobUtils
         if (mob instanceof IMeleeBarbarianEntity)
         {
             mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
+        }
+        else if (mob instanceof IPharaoEntity)
+        {
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.pharaoscepter));
         }
         else if (mob instanceof IArcherMobEntity)
         {

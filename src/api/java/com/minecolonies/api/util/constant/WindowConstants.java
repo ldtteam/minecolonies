@@ -629,6 +629,7 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
     public static final String LABEL_PROGRESS =  "progress";
+    public static final String LABEL_WORKERNAME = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 
@@ -957,6 +958,11 @@ public final class WindowConstants
      * Id of the requester label.
      */
     public static final String REQUESTER = "requester";
+
+    /**
+     * Id of the parent label.
+     */
+    public static final String PARENT = "parent";
 
     /**
      * The divider for the life count.

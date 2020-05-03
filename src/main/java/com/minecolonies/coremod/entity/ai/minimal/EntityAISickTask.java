@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
@@ -15,7 +16,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.goal.Goal;
@@ -163,6 +164,12 @@ public class EntityAISickTask extends Goal
             return;
         }
 
+        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null)
+        {
+            job.setActive(false);
+        }
+
         citizen.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
         switch (currentState)
         {
@@ -303,6 +310,8 @@ public class EntityAISickTask extends Goal
 
     /**
      * Cure the citizen.
+     * 
+     * @param citizenData the data of the citizen to cure.
      */
     private void cure(final ICitizenData citizenData)
     {
@@ -384,6 +393,7 @@ public class EntityAISickTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
+     * @param data the citizens data.
      * @return the next state to go to.
      */
     private DiseaseState goToHut(final ICitizenData data)
