@@ -128,14 +128,14 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             return true;
         }
 
-        if (registeredDeliverymen.size() >= getBuildingLevel())
+        if (registeredDeliverymen.size() >= getMaxAssignedDmen())
         {
             if (!registeredDeliverymen.isEmpty())
             {
                 checkForRegisteredDeliverymen();
             }
 
-            if (registeredDeliverymen.size() >= getBuildingLevel())
+            if (registeredDeliverymen.size() >= getMaxAssignedDmen())
             {
                 return false;
             }
@@ -143,6 +143,15 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
         return true;
+    }
+
+    /**
+     * Get the maximimum number of dmen that can be assigned to the warehoue.
+     * @return the maximum amount.
+     */
+    private int getMaxAssignedDmen()
+    {
+        return getBuildingLevel() * 2;
     }
 
     /**
