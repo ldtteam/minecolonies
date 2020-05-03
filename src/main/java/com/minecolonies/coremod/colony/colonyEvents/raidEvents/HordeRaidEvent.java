@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
@@ -28,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
-import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -263,6 +261,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
      */
     public BlockPos getRandomCampfire()
     {
+        if (campFires.isEmpty())
+        {
+            return null;
+        }
         return campFires.get(colony.getWorld().rand.nextInt(campFires.size()));
     }
 
