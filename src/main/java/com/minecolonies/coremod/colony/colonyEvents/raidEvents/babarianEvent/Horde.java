@@ -5,9 +5,9 @@ import net.minecraft.nbt.CompoundNBT;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
 /**
- * Class representing a horde of barbarians.
+ * Class representing a horde of attackers (barbarians or egyptians).
  */
-public class BarbarianHorde
+public class Horde
 {
     /**
      * NBT Tags
@@ -42,7 +42,7 @@ public class BarbarianHorde
      *
      * @param hordeSize total amount of raiders.
      */
-    public BarbarianHorde(final int hordeSize)
+    public Horde(final int hordeSize)
     {
         numberOfBosses = Math.max(1, (int) (hordeSize * CHIEF_BARBARIANS_MULTIPLIER));
         numberOfArchers = Math.max(1, (int) (hordeSize * ARCHER_BARBARIANS_MULTIPLIER));
@@ -93,14 +93,14 @@ public class BarbarianHorde
      * @param compound the compound to load it from.
      * @return the loaded horde.
      */
-    public static BarbarianHorde loadFromNbt(final CompoundNBT compound)
+    public static Horde loadFromNbt(final CompoundNBT compound)
     {
         if (!compound.contains(TAG_HORDESIZE))
         {
             return null;
         }
 
-        BarbarianHorde horde = new BarbarianHorde(compound.getInt(TAG_HORDESIZE));
+        Horde horde = new Horde(compound.getInt(TAG_HORDESIZE));
         horde.numberOfRaiders = compound.getInt(TAG_NUMBEROFRAIDERS);
         horde.numberOfArchers = compound.getInt(TAG_NUMBEROFARCHERS);
         horde.numberOfBosses = compound.getInt(TAG_NUMBEROFBOSSES);

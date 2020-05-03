@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.goal.Goal;
@@ -141,7 +141,7 @@ public class EntityAIWalkToRandomHuts extends Goal
                 return false;
             }
 
-            if (event.getStatus() == EventStatus.PREPARING && event instanceof BarbarianRaidEvent)
+            if (event.getStatus() == EventStatus.PREPARING && event instanceof HordeRaidEvent)
             {
                 walkToCampFire();
                 return false;
@@ -416,7 +416,7 @@ public class EntityAIWalkToRandomHuts extends Goal
             final BlockPos posToDestroy = entity.getPosition().up(random.nextInt(3)).offset(dir);
             final BlockState state = world.getBlockState(posToDestroy);
             if (!(state.getBlock() instanceof AirBlock) && !state.getMaterial().isLiquid() || (state.getBlock() instanceof DoorBlock
-                                                                                        && world.getDifficulty() == Difficulty.HARD))
+                                                                                                 && world.getDifficulty() == Difficulty.HARD))
             {
                 world.destroyBlock(posToDestroy, true);
             }
@@ -460,9 +460,16 @@ public class EntityAIWalkToRandomHuts extends Goal
         campFireWalkTimer -= 4;
         if (campFireWalkTimer < 0)
         {
+            final BlockPos campFire = ((HordeRaidEvent) entity.getColony().getEventManager().getEventByID(entity.getEventID())).getRandomCampfire();
+
+            if (campFire == null)
+            {
+                return;
+            }
+
             campFireWalkTimer = world.rand.nextInt(1000);
             targetBlock = BlockPosUtil.getRandomPosition(world,
-              ((BarbarianRaidEvent) entity.getColony().getEventManager().getEventByID(entity.getEventID())).getRandomCampfire(),
+              campFire,
               BlockPos.ZERO,
               3,
               6);

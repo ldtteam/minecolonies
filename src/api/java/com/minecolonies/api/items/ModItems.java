@@ -18,6 +18,8 @@ public final class ModItems
     public static Item chiefSword;
     public static Item scimitar;
     public static Item scepterLumberjack;
+    public static Item pharaoscepter;
+    public static Item firearrow;
 
     public static Item clipboard;
     public static Item compost;
