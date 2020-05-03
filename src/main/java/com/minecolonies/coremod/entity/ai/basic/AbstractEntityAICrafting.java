@@ -146,7 +146,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack())) + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack())) < inputStorage.getAmount() * remainingOpsCount)
+            if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
+                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
+                  < inputStorage.getAmount() * remainingOpsCount)
             {
                 job.finishRequest(false);
                 return START_WORKING;
