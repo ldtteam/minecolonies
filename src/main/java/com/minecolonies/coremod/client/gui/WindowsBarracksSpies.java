@@ -8,7 +8,7 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.HireSpiesMessage;
+import com.minecolonies.coremod.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
@@ -96,7 +96,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
             case BUTTON_HIRE:
             {
                 findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
-                Network.getNetwork().sendToServer(new HireSpiesMessage(buildingView.getColony().getID(), buildingView.getColony().getDimension()));
+                Network.getNetwork().sendToServer(new HireSpiesMessage(buildingView.getColony()));
                 this.close();
                 break;
             }

@@ -8,9 +8,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
-import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
-import com.minecolonies.coremod.network.messages.LumberjackRestrictionToggleMessage;
-import com.minecolonies.coremod.network.messages.LumberjackScepterMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +96,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void givePlayerScepter()
     {
-        Network.getNetwork().sendToServer(new LumberjackScepterMessage(building.getID(), building.getColony().getID()));
+        Network.getNetwork().sendToServer(new LumberjackScepterMessage(building));
     }
 
     @Override

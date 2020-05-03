@@ -16,8 +16,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchant
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
-import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
