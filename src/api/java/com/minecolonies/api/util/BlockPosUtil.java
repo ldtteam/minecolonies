@@ -88,7 +88,7 @@ public final class BlockPosUtil
      * @param currentPosition the current position.
      * @param def             the default position if none was found.
      * @param minDist the minimum distance of the pos.
-     * @param maxDist the max distance
+     * @param maxDist the maximum distance.
      * @return the BlockPos.
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
