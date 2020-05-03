@@ -10,7 +10,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.network.messages.BuyCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.BuyCitizenMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;

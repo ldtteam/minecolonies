@@ -10,7 +10,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;

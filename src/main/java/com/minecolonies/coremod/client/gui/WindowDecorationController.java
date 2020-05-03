@@ -14,8 +14,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
-import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
+import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
+import com.minecolonies.coremod.network.messages.server.DecorationControllerUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -169,7 +169,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             try
             {
                 final int level = Integer.parseInt(levelString);
-                Network.getNetwork().sendToServer(new DecorationControllUpdateMessage(controller.getPos(), name, level));
+                Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getPos(), name, level));
                 controller.setSchematicName(name);
                 controller.setLevel(level);
                 close();

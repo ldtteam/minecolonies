@@ -10,7 +10,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import com.minecolonies.coremod.network.messages.MinerSetLevelMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 

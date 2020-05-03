@@ -16,7 +16,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.network.messages.RemoveMinimumStockFromBuildingMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -103,7 +103,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = ((BuildingCook.View) building).getStock().get(row);
         ((BuildingCook.View) building).getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(tuple.getA().getItemStack(), building.getColony().getID(), building.getID()));
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
         updateStockList();
     }
 
@@ -114,7 +114,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
     {
         if (!((BuildingCook.View) building).hasReachedLimit())
         {
-            new WindowSelectRes(this, building.getColony().getID(), building.getID(),
+            new WindowSelectRes(this, building,
               itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack))).open();
         }
     }

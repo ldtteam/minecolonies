@@ -6,7 +6,7 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
+import com.minecolonies.coremod.network.messages.server.TransferRecipeCrafingTeachingMessage;
 import io.netty.buffer.Unpooled;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;

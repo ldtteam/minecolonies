@@ -7,7 +7,7 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.UpdateClientWithRecipesMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateClientWithRecipesMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
