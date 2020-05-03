@@ -105,7 +105,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfRaiders, final int numberOfBosses, final int numberOfArchers)
+    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
     {
         RaiderMobUtils.spawn(MUMMY, numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(PHARAO, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
