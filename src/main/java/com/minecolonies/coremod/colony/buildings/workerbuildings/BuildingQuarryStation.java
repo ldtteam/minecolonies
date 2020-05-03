@@ -3,13 +3,10 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.client.gui.WindowHutQuarryStation;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -31,14 +28,6 @@ public class BuildingQuarryStation extends AbstractBuilding
     public BuildingQuarryStation(@NotNull final IColony colony, final BlockPos pos)
     {
         super(colony, pos);
-
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-        {
-            if (building instanceof BuildingQuarry)
-            {
-                ((BuildingQuarry) building).setStationPos(pos);
-            }
-        }
     }
 
     @Override
@@ -95,6 +84,12 @@ public class BuildingQuarryStation extends AbstractBuilding
             super.deserialize(buf);
 
             //TODO: Deserialization
+        }
+
+        public boolean isFull()
+        {
+            //TODO: IMPLEMENT
+            return false;
         }
     }
 }

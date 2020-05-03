@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,16 +9,14 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutQuarry;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobQuarryMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.network.messages.AssignQuarryStationMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
@@ -30,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUARRY_STATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The Quarry Miner's building.
@@ -170,6 +167,12 @@ public class BuildingQuarry extends AbstractBuildingStructureBuilder
     {
         super.serializeToView(buf);
 
+        buf.writeBoolean(stationPos != null);
+        if (stationPos != null)
+        {
+            buf.writeBlockPos(stationPos);
+        }
+
         //TODO: View Serialization  (if needed?)
     }
 
@@ -224,6 +227,8 @@ public class BuildingQuarry extends AbstractBuildingStructureBuilder
             super(c, l);
         }
 
+        private BlockPos assignedStation = null;
+
         @NotNull
         @Override
         public Window getWindow()
@@ -237,7 +242,23 @@ public class BuildingQuarry extends AbstractBuildingStructureBuilder
         {
             super.deserialize(buf);
 
+            if (buf.readBoolean())
+            {
+                this.assignedStation = buf.readBlockPos();
+            }
+
             //TODO: Deserialization
+        }
+
+        public BlockPos getAssignedStation()
+        {
+            return assignedStation;
+        }
+
+        public void setAssignedStation(final BlockPos assignedStation)
+        {
+            Network.getNetwork().sendToServer(new AssignQuarryStationMessage(this.getColony().getDimension(), this.getColony().getID(), this.getID(), assignedStation));
+            this.assignedStation = assignedStation;
         }
     }
 }

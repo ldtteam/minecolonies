@@ -80,6 +80,7 @@ public class NetworkChannel
         registerMessage(++idx, HireFireMessage.class, HireFireMessage::new);
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
+        registerMessage(++idx, AssignQuarryStationMessage.class, AssignQuarryStationMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
         registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
