@@ -75,6 +75,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
      *
      * @param target         the target.
      * @param distanceToPath the total distance.
+     * @param building       the building to walk to.
      * @return a proxy or, if not applicable null.
      */
     @NotNull

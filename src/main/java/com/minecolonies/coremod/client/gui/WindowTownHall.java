@@ -490,6 +490,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Fills the permission list in the GUI.
+     * 
+     * @param category the category to fill.
      */
     private void fillPermissionList(@NotNull final String category)
     {
@@ -1101,6 +1103,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Toggles printing progress.
+     * 
+     * @param button the button to toggle.
      */
     private void togglePrintProgress(@NotNull final Button button)
     {

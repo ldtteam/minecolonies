@@ -144,10 +144,10 @@ public class CustomGoalSelector extends GoalSelector
     }
 
     /**
-     * Whether the goals flag are within the disabled flags.
+     * Whether one of the goals flags is within the disabled flags.
      *
-     * @param goal
-     * @return
+     * @param goal the goal to check.
+     * @return whether one of the goals flags is within the disabled flags.
      */
     private boolean goalContainsDisabledFlag(final PrioritizedGoal goal)
     {

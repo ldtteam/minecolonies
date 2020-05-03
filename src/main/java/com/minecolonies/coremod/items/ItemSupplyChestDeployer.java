@@ -99,6 +99,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return new ActionResult<>(ActionResultType.FAIL, stack);
     }
 
+    /**
+     * Places a supply chest on the given position looking to the given direction.
+     * 
+     * @param pos       the position to place the supply chest at.
+     * @param direction the direction the supply chest should face.
+     */
     private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         if (pos == null)
@@ -134,11 +140,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Checks if the ship can be placed.
      *
-     * @param world the world.
-     * @param pos   the pos.
-     * @param size  the size.
-     * @param placer the placer.
+     * @param world              the world.
+     * @param pos                the pos.
+     * @param size               the size.
      * @param placementErrorList the list of placement errors.
+     * @param placer             the placer.
      * @return true if so.
      */
     public static boolean canShipBePlaced(
@@ -170,8 +176,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Check if the there is water at one of three positions.
      *
-     * @param world the world.
-     * @param pos   the first position.
+     * @param world              the world.
+     * @param pos                the first position.
+     * @param placementErrorList a list of placement errors.
+     * @param placer             the player placing the supply camp.
      */
     private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
@@ -192,8 +200,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Check if any of the coordinates is in any colony.
      *
-     * @param world the world to check in.
-     * @param pos   the first position.
+     * @param world  the world to check in.
+     * @param pos    the first position.
+     * @param placer the placer.
      * @return true if no colony found.
      */
     private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)

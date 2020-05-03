@@ -125,7 +125,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingFarmer> getExpectedBuildingClass()
     {
         return BuildingFarmer.class;
     }
@@ -420,6 +420,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     /**
      * This (re)initializes a field. Checks the block above to see if it is a plant, if so, breaks it. Then tills.
+     * 
+     * @return the next state to go into.
      */
     private IAIState workAtField()
     {
@@ -531,6 +533,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * Checks if we can harvest, and does so if we can.
      *
+     * @param position the block to harvest.
      * @return true if we harvested or not supposed to.
      */
     private boolean harvestIfAble(final BlockPos position)

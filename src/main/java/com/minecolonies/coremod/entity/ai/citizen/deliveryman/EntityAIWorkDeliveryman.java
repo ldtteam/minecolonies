@@ -342,6 +342,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * It depends on his building level.
      * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
      * That's 2^buildingLevel-1.
+     * 
+     * @return whether this deliveryman can hold more items
      */
     private boolean cannotHoldMoreItems()
     {
@@ -608,6 +610,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Gathers only one stack of the item.
      *
      * @param request request to gather
+     * @return the next state to go into
      */
     private IAIState gatherItems(@NotNull final IRequest<? extends Delivery> request)
     {
