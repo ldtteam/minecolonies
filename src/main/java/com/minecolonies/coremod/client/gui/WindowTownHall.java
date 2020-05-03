@@ -28,7 +28,10 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
-import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallTownhallMessage;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -1258,7 +1261,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+        Network.getNetwork().sendToServer(new RecallTownhallMessage(townHall.getColony()));
     }
 
     /**

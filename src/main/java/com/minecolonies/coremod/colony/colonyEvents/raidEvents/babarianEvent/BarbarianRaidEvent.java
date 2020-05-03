@@ -420,7 +420,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     /**
      * Returns a random campfire
      *
-     * @return
+     * @return BlockPos of random Campfire
      */
     public BlockPos getRandomCampfire()
     {
