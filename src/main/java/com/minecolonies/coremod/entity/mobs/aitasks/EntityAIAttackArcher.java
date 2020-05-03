@@ -124,13 +124,14 @@ public class EntityAIAttackArcher extends Goal
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
                 AbstractArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                arrowEntity.setShooter(entity);
+
                 final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);
                 if (bow.getItem() instanceof BowItem)
                 {
                     arrowEntity = ((BowItem) bow.getItem()).customeArrow(arrowEntity);
                 }
 
-                arrowEntity.setShooter(entity);
                 arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
                 final double xVector = target.posX - entity.posX;
                 final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
