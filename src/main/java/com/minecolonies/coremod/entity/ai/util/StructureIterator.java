@@ -94,6 +94,7 @@ public class StructureIterator
      * @param blockProgress     the progress we have made so far
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
+     * @return the newly loaded structure
      */
     private static Structure loadStructure(
                                                    @Nullable final World targetWorld,

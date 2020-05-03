@@ -40,6 +40,10 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Executes rtp for a target
+     * 
+     * @param context the command context
+     * @return 1 if the command executed successfully, 0 otherwise
+     * @throws CommandSyntaxException if the syntax isn't correct
      */
     private int executeOtherPlayerRTP(final CommandContext<CommandSource> context) throws CommandSyntaxException
     {
@@ -63,9 +67,6 @@ public class CommandRTP implements IMCCommand
         return 1;
     }
 
-    /**
-     * prechecks for both commands
-     */
     @Override
     public boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
@@ -145,6 +146,8 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Get a random coordinate to teleport to.
+     * 
+     * @return a random coordinate.
      */
     private static int getRandCoordinate()
     {
@@ -161,6 +164,8 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Name string of the command.
+     * 
+     * @return this commands name.
      */
     @Override
     public String getName()

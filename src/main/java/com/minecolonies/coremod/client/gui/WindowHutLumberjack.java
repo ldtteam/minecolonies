@@ -145,6 +145,8 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
+     * 
+     * @param replant the button to update.
      */
     private void switchReplant(final Button replant)
     {
@@ -155,6 +157,8 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
+     * 
+     * @param restriction the button to update.
      */
     private void toggleRestriction(final Button restriction)
     {

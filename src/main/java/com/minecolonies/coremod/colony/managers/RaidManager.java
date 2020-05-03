@@ -303,10 +303,11 @@ public class RaidManager implements IRaiderManager
     /**
      * Finds a spawnpoint randomly in a circular shape around the center Advances
      *
-     * @param center the center pos .
-     * @param dir1 the first direction .
-     * @param dir2 the second direction.
-     * @return the calculated position.
+     * @param center          the center of the area to search for a spawn point
+     * @param dir1            the first of the directions to look in
+     * @param dir2            the second of the directions to look in
+     * @param loadedBuildings a list of loaded buildings
+     * @return the calculated position
      */
     private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
     {
@@ -377,11 +378,11 @@ public class RaidManager implements IRaiderManager
     }
 
     /**
-     * Determines whether the given spawnpoint is allowed.
+     * Determines whether the given spawn point is allowed.
      *
-     * @param spawnPos the spawn pos.
-     * @param loadedBuildings the loaded buildings.
-     * @return true if valid.
+     * @param spawnPos        the spawn point to check
+     * @param loadedBuildings the loaded buildings
+     * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos, final List<IBuilding> loadedBuildings)
     {
@@ -505,6 +506,8 @@ public class RaidManager implements IRaiderManager
 
     /**
      * Checks if a raid is possible
+     * 
+     * @return whether a raid is possible
      */
     @Override
     public boolean canRaid()
@@ -591,7 +594,8 @@ public class RaidManager implements IRaiderManager
     /**
      * Returns whether a raid should happen depending on the Config
      *
-     * @param world The world in which the raid is possibly happening (Used to get a random number easily)
+     * @param world  The world in which the raid is possibly happening (Used to get a random number easily)
+     * @param colony The colony to raid
      * @return Boolean value on whether to act this night
      */
     private boolean raidThisNight(final World world, final IColony colony)

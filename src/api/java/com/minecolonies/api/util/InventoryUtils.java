@@ -492,8 +492,8 @@ public class InventoryUtils
      * @param provider  The provider to process all the
      * @param predicate The predicate to match the ItemStacks in the {@link
      *                  IItemHandler} for each side with.
-     * @return A combined {@link List<ItemStack>} as if the given predicate was
-     * called on all ItemStacks in all IItemHandlers of the given provider.
+     * @return A combined {@link List}<{@link ItemStack}> as if the given predicate was
+     * called on all ItemStacks in all {@link IItemHandler}s of the given provider.
      */
     @NotNull
     private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)

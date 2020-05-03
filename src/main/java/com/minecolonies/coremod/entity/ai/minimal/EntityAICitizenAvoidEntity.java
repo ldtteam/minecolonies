@@ -172,6 +172,8 @@ public class EntityAICitizenAvoidEntity extends Goal
 
     /**
      * Makes entity move away from {@link #closestLivingEntity}.
+     * 
+     * @return whether the citizen started moving away.
      */
     private boolean performMoveAway()
     {
@@ -186,6 +188,8 @@ public class EntityAICitizenAvoidEntity extends Goal
 
     /**
      * Updates the task.
+     * 
+     * @return false if the citizen is fleeing.
      */
     private boolean updateMoving()
     {

@@ -124,7 +124,7 @@ public final class RaiderMobUtils
     /**
      * Sets the entity's health based on the raidLevel
      *
-     * @param raidLevel
+     * @param raidLevel the raid level.
      * @return returns the health in the form of a double
      */
     private static double getHealthBasedOnRaidLevel(final int raidLevel)

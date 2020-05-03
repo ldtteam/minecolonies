@@ -328,6 +328,8 @@ public class Colony implements IColony
 
     /**
      * Updates the state the colony is in.
+     * 
+     * @return the new colony state.
      */
     private ColonyState updateState()
     {
@@ -354,6 +356,8 @@ public class Colony implements IColony
 
     /**
      * Updates the existing subscribers
+     * 
+     * @return false
      */
     private boolean updateSubscribers()
     {
@@ -363,6 +367,8 @@ public class Colony implements IColony
 
     /**
      * Ticks the request manager.
+     * 
+     * @return false
      */
     private boolean tickRequests()
     {
@@ -375,6 +381,8 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates.
+     * 
+     * @return false
      */
     private boolean worldTickSlow()
     {
@@ -392,6 +400,8 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates. Only ticked when the colony is not loaded.
+     * 
+     * @return false
      */
     private boolean worldTickUnloaded()
     {
@@ -402,7 +412,7 @@ public class Colony implements IColony
     /**
      * Adds 500 additional ticks to the child growth.
      */
-    private boolean updateChildTime()
+    private void updateChildTime()
     {
         if (hasChilds)
         {
@@ -412,11 +422,12 @@ public class Colony implements IColony
         {
             additionalChildTime = 0;
         }
-        return false;
     }
 
     /**
      * Updates the day and night detection.
+     * 
+     * @return false
      */
     private boolean checkDayTime()
     {
@@ -450,9 +461,8 @@ public class Colony implements IColony
 
     /**
      * Updates the pvping playeres.
-     * @return true if under attack.
      */
-    public boolean updateAttackingPlayers()
+    public void updateAttackingPlayers()
     {
         final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
@@ -477,7 +487,6 @@ public class Colony implements IColony
                 }
             }
         }
-        return false;
     }
 
     /**
@@ -959,6 +968,8 @@ public class Colony implements IColony
 
     /**
      * Update the waypoints after worldTicks.
+     * 
+     * @return false
      */
     private boolean updateWayPoints()
     {

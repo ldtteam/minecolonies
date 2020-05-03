@@ -143,7 +143,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      * @param world world to use
      * @param start start position
      * @param range search range
-     * @return
+     * @return the id of the found colony
      */
     private static int findNextNearbyColony(final World world, final BlockPos start, final int range)
     {

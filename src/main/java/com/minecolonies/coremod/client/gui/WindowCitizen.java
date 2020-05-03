@@ -220,6 +220,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Adds a heart to the healthbarView at the given Position
+     * 
+     * @param healthBarView the health bar to add the heart to.
+     * @param heartPos      the number of the heart to add.
+     * @param heart         the heart to add.
      */
     private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
     {
@@ -269,8 +273,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
-     * +
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
+     * <p>
+     * currently unused.
+     * 
+     * @param citizen the citizen to create a create a happiness bar for.
+     * @param view    the view to add the happiness bar to.
      */
     private static void createHappinessBar(final ICitizenDataView citizen, final View view)
     {
@@ -466,8 +474,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Update the display for the happiness.
+     * 
      * @param citizen the citizen to update it for.
-     * @param window the window to add things to.
+     * @param window  the window to add things to.
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
@@ -513,8 +522,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Update the job page of the citizen.
-     * @param citizen the citizen.
+     * 
+     * @param citizen       the citizen.
      * @param windowCitizen the window.
+     * @param colony        the colony.
      */
     private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
     {

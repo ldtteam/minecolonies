@@ -549,6 +549,9 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the buildings.
+     * 
+     * @param closeSubscribers the current event subscribers.
+     * @param newSubscribers   the new event subscribers.
      */
     private void sendBuildingPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {
@@ -572,6 +575,9 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
+     * 
+     * @param closeSubscribers the current event subscribers.
+     * @param newSubscribers   the new event subscribers.
      */
     private void sendFieldPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
     {

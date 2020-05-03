@@ -277,6 +277,9 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Handles beeing completly stuck, teleports the entity a little.
+     * 
+     * @param targetDist the current distance from the target.
+     * @return whether the handling worked.
      */
     private boolean handleTotalStuck(final long targetDist)
     {
@@ -308,6 +311,8 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Tries to skip ahead on an existing path.
+     * 
+     * @return whether we skipped ahead on the current path.
      */
     private boolean trySkipAheadOnPath()
     {
@@ -325,11 +330,9 @@ public class EntityAIWalkToRandomHuts extends Goal
     }
 
     /**
-     * Handles the entity beeing stuck, resets the path, places temporary blocks and ladders/block breaks if needed.
-     *
-     * @return
+     * Handles the entity being stuck, resets the path, places temporary blocks and ladders/block breaks if needed.
      */
-    private boolean handleEntityBeingStuck()
+    private void handleEntityBeingStuck()
     {
         entity.getNavigator().clearPath();
         stuckTime = 0;
@@ -352,7 +355,6 @@ public class EntityAIWalkToRandomHuts extends Goal
         {
             handleBarbarianMovementSpecials();
         }
-        return false;
     }
 
     /**

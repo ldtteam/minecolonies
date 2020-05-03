@@ -114,6 +114,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
      * If not available create and return it.
      *
      * @param scepter the scepter to check in for.
+     * @return the compound of the scepter.
      */
     private static CompoundNBT checkForCompound(final ItemStack scepter)
     {
