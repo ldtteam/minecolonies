@@ -6,8 +6,8 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.ClickGuiButtonTriggerMessage;
-import com.minecolonies.coremod.network.messages.OpenGuiWindowTriggerMessage;
+import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
+import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

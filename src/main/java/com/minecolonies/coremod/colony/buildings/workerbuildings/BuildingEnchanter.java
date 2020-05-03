@@ -15,7 +15,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutEnchanter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
-import com.minecolonies.coremod.network.messages.EnchanterWorkerSetMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;

@@ -19,8 +19,8 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.HutRenameMessage;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -340,7 +340,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (shouldOpenInv)
         {
-            Network.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
+            Network.getNetwork().sendToServer(new OpenInventoryMessage(this));
         }
         else
         {
@@ -636,6 +636,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void setCustomName(final String name)
     {
         this.customName = name;
-        Network.getNetwork().sendToServer(new HutRenameMessage(colony, name, this));
+        Network.getNetwork().sendToServer(new HutRenameMessage(this, name));
     }
 }

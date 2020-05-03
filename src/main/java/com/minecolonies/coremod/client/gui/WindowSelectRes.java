@@ -7,12 +7,12 @@ import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.AddMinimumStockToBuildingMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,11 +44,6 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
     private final ScrollingList resourceList;
 
     /**
-     * The building position.
-     */
-    private final BlockPos             building;
-
-    /**
      * Predicate to test for.
      */
     private final Predicate<ItemStack> test;
@@ -66,16 +61,15 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
     /**
      * The colony id this belongs to.
      */
-    private int colonyId;
+    private final IBuildingView building;
 
     /**
      * Create a selection window with the origin window as input.
      * @param origin the origin.
-     * @param colonyId the colony id.
-     * @param building the building position.
+     * @param building the building.
      * @param test the testing predicate for the selector.
      */
-    public WindowSelectRes(final Window origin, final int colonyId, final BlockPos building, final Predicate<ItemStack> test)
+    public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test)
     {
         super("minecolonies:gui/windowselectres.xml");
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
@@ -86,7 +80,6 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
         this.findPaneOfTypeByID("qty", TextField.class).setText("1");
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(new ItemStack(Items.AIR));
         this.findPaneOfTypeByID("resourceName", Label.class).setLabelText(new ItemStack(Items.AIR).getDisplayName().getUnformattedComponentText());
-        this.colonyId = colonyId;
         this.building = building;
         this.test = test;
     }
@@ -130,7 +123,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
 
         if (!ItemStackUtils.isEmpty(to))
         {
-            Network.getNetwork().sendToServer(new AddMinimumStockToBuildingMessage(to, qty, colonyId, building));
+            Network.getNetwork().sendToServer(new AddMinimumStockToBuildingMessage(building, to, qty));
             this.origin.open();
         }
         this.close();

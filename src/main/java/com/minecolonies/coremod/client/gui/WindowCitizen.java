@@ -23,9 +23,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
-import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -383,7 +383,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 setPage("");
                 break;
             case INVENTORY_BUTTON_ID:
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()));
                 break;
             default:
                 super.onButtonClicked(button);
@@ -457,8 +457,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
             }
             Network.getNetwork().sendToServer(
-              new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getId(), RequestState.OVERRULED, itemStack));
+              new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
         updateRequests();

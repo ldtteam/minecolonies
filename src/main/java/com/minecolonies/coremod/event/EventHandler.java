@@ -24,9 +24,9 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.loot.SupplyLoot;
-import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
-import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
-import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
+import com.minecolonies.coremod.network.messages.client.OpenSuggestionWindowMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.BedBlock;

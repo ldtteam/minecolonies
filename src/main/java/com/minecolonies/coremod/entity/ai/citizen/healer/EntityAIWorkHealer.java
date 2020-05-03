@@ -20,8 +20,8 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionRe
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
-import com.minecolonies.coremod.network.messages.StreamParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.CircleParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
