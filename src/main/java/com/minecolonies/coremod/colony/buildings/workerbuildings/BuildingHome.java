@@ -573,6 +573,7 @@ public class BuildingHome extends AbstractBuilding
         {
             super.deserialize(buf);
 
+            residents.clear();
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
