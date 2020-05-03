@@ -450,6 +450,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Calculates the next non-air block to mine.
      * Will take the nearest block it finds.
+     * 
+     * @return the next block to mine.
      */
     @Nullable
     private BlockPos getNextBlockInShaftToMine()

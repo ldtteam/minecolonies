@@ -368,7 +368,7 @@ public class BarbarianRaidEvent implements IColonyRaidEvent
     /**
      * Spawns a few campfires around the pos, depending on raid size
      *
-     * @param pos
+     * @param pos the pos to spawn the campfires around
      */
     private void spawnCampFires(final BlockPos pos)
     {

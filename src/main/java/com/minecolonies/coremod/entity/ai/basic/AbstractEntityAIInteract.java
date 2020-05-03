@@ -263,6 +263,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      *
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (empty Block!)
+     * @return true if you should wait
      */
     private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
@@ -279,7 +280,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
         currentWorkingLocation = blockToMine;
-
 
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
     }

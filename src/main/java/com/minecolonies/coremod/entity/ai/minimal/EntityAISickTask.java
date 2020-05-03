@@ -310,6 +310,8 @@ public class EntityAISickTask extends Goal
 
     /**
      * Cure the citizen.
+     * 
+     * @param citizenData the data of the citizen to cure.
      */
     private void cure(final ICitizenData citizenData)
     {
@@ -391,6 +393,7 @@ public class EntityAISickTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
+     * @param data the citizens data.
      * @return the next state to go to.
      */
     private DiseaseState goToHut(final ICitizenData data)

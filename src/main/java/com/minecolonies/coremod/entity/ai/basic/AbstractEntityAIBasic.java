@@ -517,6 +517,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Utility method to search for items currently needed. Poll this until all items are there.
+     * 
+     * @return the next state to go to.
      */
     @NotNull
     private IAIState lookForRequests()

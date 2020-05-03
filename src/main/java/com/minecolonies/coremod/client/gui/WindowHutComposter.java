@@ -89,6 +89,8 @@ public class WindowHutComposter extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
+     * 
+     * @param retrieve the button to update.
      */
     private void switchReplant(final Button retrieve)
     {

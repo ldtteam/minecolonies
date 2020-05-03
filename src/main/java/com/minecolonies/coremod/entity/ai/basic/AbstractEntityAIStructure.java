@@ -957,6 +957,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Get the current working position for the worker. If workFrom is null calculate a new one.
+     * 
+     * @return the current working position.
      */
     private BlockPos getCurrentWorkingPosition()
     {
@@ -979,6 +981,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Works on detecting fluid blocks that should get removed.
+     * 
      * @param currentBlock the block that is currently being worked on.
      * @return the next step once done.
      */
@@ -1070,6 +1073,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     /**
      * Works on removing the fluid blocks that should get removed.
+     * 
      * @return the next step once done.
      */
     private IAIState fluidRemoveStep()
@@ -1165,9 +1169,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Suppressing Sonar Rule Squid:S3047
      * The rule thinks we can merge the two forge loops iterating over resources
      * But in this case the rule does not apply because that would destroy the logic.
+     * 
+     * @param currentBlock the current block to work on
+     * @return whether this action was successful
      */
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
-    private Boolean addEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
+    private boolean addEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
         final CompoundNBT[] entityInfos = currentBlock.entity;
         if (entityInfos.length == 0)

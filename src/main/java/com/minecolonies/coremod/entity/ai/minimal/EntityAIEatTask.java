@@ -391,6 +391,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
+     * @param data the citizens data.
      * @return the next state to go to.
      */
     private EatingState goToHut(final ICitizenData data)

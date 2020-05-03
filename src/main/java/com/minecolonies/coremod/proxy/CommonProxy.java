@@ -200,7 +200,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     /**
-     * Used for entity IDs, starts at 0 & increments for each call.
+     * Used for entity IDs, starts at 0 and increments for each call.
+     * <p>
+     * currently unused.
+     * 
+     * @return the next entity id.
      */
     private int getNextEntityId()
     {

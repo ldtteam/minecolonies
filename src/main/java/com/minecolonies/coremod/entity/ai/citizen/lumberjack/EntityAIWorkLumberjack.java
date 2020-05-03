@@ -528,6 +528,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     /**
      * Check if distance to block changed and if we are not moving for too long, try to get unstuck.
+     * 
+     * @return false
      */
     private boolean checkIfStuckOnLeaves()
     {
