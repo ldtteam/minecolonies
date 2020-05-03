@@ -15,8 +15,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianHorde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -215,11 +216,18 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(pirateShipRotation);
                 colony.getEventManager().addEvent(event);
             }
+            else if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert"))
+            {
+                final EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setHorde(new Horde(amount));
+                colony.getEventManager().addEvent(event);
+            }
             else
             {
                 final BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new BarbarianHorde(amount));
+                event.setHorde(new Horde(amount));
                 colony.getEventManager().addEvent(event);
             }
             addRaiderSpawnPoint(targetSpawnPoint);
@@ -299,7 +307,7 @@ public class RaidManager implements IRaiderManager
      * @param dir1            the first of the directions to look in
      * @param dir2            the second of the directions to look in
      * @param loadedBuildings a list of loaded buildings
-     * @return the spawn point
+     * @return the calculated position
      */
     private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
     {
@@ -373,8 +381,8 @@ public class RaidManager implements IRaiderManager
      * Determines whether the given spawn point is allowed.
      *
      * @param spawnPos        the spawn point to check
-     * @param loadedBuildings the buildings to take into account while checking
-     * @return whether the spawn point is valid
+     * @param loadedBuildings the loaded buildings
+     * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos, final List<IBuilding> loadedBuildings)
     {
@@ -531,6 +539,11 @@ public class RaidManager implements IRaiderManager
                       "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
+
+                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert") && colony.getWorld().isRaining())
+                {
+                    return true;
+                }
             }
             return false;
         }
