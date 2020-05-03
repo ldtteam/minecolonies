@@ -287,7 +287,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     {
         super.tick();
 
-        if (this.ticksExisted % 20 == 0 && getPassengers().isEmpty())
+        if (this.ticksExisted % 20 == 19 && getPassengers().isEmpty())
         {
             this.remove();
         }

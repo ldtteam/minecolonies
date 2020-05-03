@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 /**
- * ModelMummy - Either Mojang or a mod author
+ * Create a mummy model.
  * Created using Tabula 7.0.0
  */
 public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
@@ -89,7 +89,11 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     }
 
     /**
-     * This is a helper function from Tabula to set the rotation of model parts
+     * this is a helper function from tabula to set the rotation of model parts
+     * @param modelRenderer the model renderer.
+     * @param z the z coord.
+     * @param y the y coord.
+     * @param x the x coord.
      */
     public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
