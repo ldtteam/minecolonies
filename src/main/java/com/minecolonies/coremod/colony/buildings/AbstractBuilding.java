@@ -607,7 +607,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Check if the building is already requesting this stack.
+     * 
      * @param stack the stack to check.
+     * @param list  the list of tokes to check.
      * @return the token if so.
      */
     private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)

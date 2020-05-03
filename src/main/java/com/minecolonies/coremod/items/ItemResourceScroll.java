@@ -118,6 +118,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * If not available create and return it.
      *
      * @param item the item to check in for.
+     * @return the compound of the item.
      */
     private static CompoundNBT checkForCompound(final ItemStack item)
     {

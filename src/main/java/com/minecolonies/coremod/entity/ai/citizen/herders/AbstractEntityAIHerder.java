@@ -478,6 +478,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
     /**
      * Gets the slot in which the Tool is in.
      *
+     * @param toolType this herders tool type.
      * @return slot number.
      */
     private int getToolSlot(final ToolType toolType)

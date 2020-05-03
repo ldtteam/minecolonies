@@ -88,6 +88,8 @@ public final class PirateEventUtils
      * @param world            the world to load it in.
      * @param targetSpawnPoint the initital spawn point.
      * @param shipSize         the size of the ship.
+     * @param colony           the attacked colony.
+     * @param eventID          the events id.
      */
     private static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize, final IColony colony, final int eventID)
     {
@@ -128,6 +130,8 @@ public final class PirateEventUtils
      * @param location the location to set it up at.
      * @param world    the world to place it in.
      * @param mob      the mob to spawn.
+     * @param colony   the colony to attack.  
+     * @param eventID  the events id.
      */
     private static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColony colony, final int eventID)
     {

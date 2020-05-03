@@ -413,6 +413,8 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Moves the citizen into his new hut
+     * 
+     * @param citizen the citizen to move
      */
     private void moveCitizenToHut(final ICitizenData citizen)
     {

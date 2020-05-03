@@ -55,7 +55,8 @@ public final class FireworkUtils
     /**
      * Generates random firework with various properties.
      *
-     * @return ItemStack of random firework
+     * @param explosionAmount the amount of explosions.
+     * @return ItemStack of random firework.
      */
     private static ItemStack genFireworkItemStack(final int explosionAmount)
     {

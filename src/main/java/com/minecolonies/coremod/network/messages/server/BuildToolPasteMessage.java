@@ -241,7 +241,8 @@ public class BuildToolPasteMessage implements IMessage
     /**
      * Whether the itemstack used allows a free placement.
      *
-     * @return
+     * @param playerEntity the player to check
+     * @return whether the itemstack used allows a free placement.
      */
     private boolean isFreeInstantPlacementMH(ServerPlayerEntity playerEntity)
     {
