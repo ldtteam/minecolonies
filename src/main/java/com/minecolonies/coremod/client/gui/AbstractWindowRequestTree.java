@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
-import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -130,7 +130,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             building.onRequestedRequestCancelled(colony.getRequestManager(), request);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
         updateRequests();
     }

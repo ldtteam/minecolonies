@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -62,8 +64,8 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         {
             if (ctx.getWorld().isRemote)
             {
-                final int colonyId = compound.getInt(TAG_COLONY);
-                MineColonies.proxy.openClipBoardWindow(colonyId);
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), ctx.getWorld().dimension.getType().getId());
+                MineColonies.proxy.openClipBoardWindow(colonyView);
             }
         }
 
@@ -96,8 +98,8 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
         if (compound.keySet().contains(TAG_COLONY))
         {
-            final int colonyId = compound.getInt(TAG_COLONY);
-            MineColonies.proxy.openClipBoardWindow(colonyId);
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), worldIn.dimension.getType().getId());
+            MineColonies.proxy.openClipBoardWindow(colonyView);
         }
         else
         {

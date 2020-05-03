@@ -9,7 +9,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
-import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.composter.ComposterRetrievalMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 

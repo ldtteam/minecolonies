@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.VanillaParticleMessage;
+import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

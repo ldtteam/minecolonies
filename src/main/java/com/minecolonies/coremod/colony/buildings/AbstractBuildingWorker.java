@@ -25,7 +25,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.network.messages.BuildingHiringModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;

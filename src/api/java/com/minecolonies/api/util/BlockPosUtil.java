@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -89,6 +88,7 @@ public final class BlockPosUtil
      * @param currentPosition the current position.
      * @param def             the default position if none was found.
      * @param minDist the minimum distance of the pos.
+     * @param maxDist the max distance
      * @return the BlockPos.
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
