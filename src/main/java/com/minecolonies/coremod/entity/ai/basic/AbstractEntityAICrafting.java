@@ -129,8 +129,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
         final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
-
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
@@ -141,7 +140,20 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
-        job.setCraftCounter(currentCount/countPerIteration);
+        final int doneOpsCount = currentCount/countPerIteration;
+        final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount;
+
+        final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
+        for (final ItemStorage inputStorage : input)
+        {
+            if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack())) + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack())) < inputStorage.getAmount() * remainingOpsCount)
+            {
+                job.finishRequest(false);
+                return START_WORKING;
+            }
+        }
+
+        job.setCraftCounter(doneOpsCount);
         return QUERY_ITEMS;
     }
 
