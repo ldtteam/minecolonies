@@ -275,9 +275,7 @@ public class JobDeliveryman extends AbstractJob
             else if (!active && b)
             {
                 this.active = b;
-                final ImmutableList<IToken<?>> tokenList = getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
-                getColony().getRequestManager()
-                  .onColonyUpdate(request -> tokenList.contains(request.getId()));
+                getColony().getRequestManager().onColonyUpdate(request -> true);
             }
         }
         catch (final Exception ex)
