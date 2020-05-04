@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -38,7 +39,6 @@ public class JobDeliveryman extends AbstractJob
      * Walking speed bonus per level
      */
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
-
 
     /**
      * If the dman is currently active.
@@ -115,7 +115,7 @@ public class JobDeliveryman extends AbstractJob
     {
         super.deserializeNBT(compound);
 
-        if(compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
@@ -204,7 +204,9 @@ public class JobDeliveryman extends AbstractJob
 
         //Just to be sure lets delete them!
         if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+        {
             getTaskQueueFromDataStore().removeFirst();
+        }
 
         getCitizen().getWorkBuilding().markDirty();
     }
@@ -263,25 +265,32 @@ public class JobDeliveryman extends AbstractJob
     @Override
     public void setActive(final boolean b)
     {
-        if (!b && active)
+        try
         {
-            cancelAssignedRequests();
-        }
-        else if (!active && b)
-        {
+            if (!b && active)
+            {
+                cancelAssignedRequests();
+            }
+            else if (!active && b)
+            {
+                this.active = b;
+                final ImmutableList<IToken<?>> tokenList = getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
+                getColony().getRequestManager()
+                  .onColonyUpdate(request -> tokenList.contains(request.getId()));
+            }
             this.active = b;
-            final ImmutableList<IToken<?>> tokenList = getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
-            getColony().getRequestManager()
-              .onColonyUpdate(request -> tokenList.contains(request.getId()));
         }
-        this.active = b;
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Active Triggered resulted in exception", ex);
+        }
     }
 
     private void cancelAssignedRequests()
     {
         for (final IToken<?> t : getTaskQueue())
         {
-            getColony().getRequestManager().updateRequestState(t,  RequestState.FAILED);
+            getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
         }
     }
 
@@ -293,6 +302,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Check if the dman can currently accept requests.
+     *
      * @return true if active.
      */
     public boolean isActive()
