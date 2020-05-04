@@ -6,9 +6,8 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
+import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -230,7 +229,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
+        if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
             if (block instanceof BlockMinecoloniesRack)
