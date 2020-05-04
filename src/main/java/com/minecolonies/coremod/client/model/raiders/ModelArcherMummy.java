@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.model.raiders;
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Archer mummy model.
@@ -10,6 +11,10 @@ import net.minecraft.client.renderer.model.ModelRenderer;
  */
 public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
 {
+    private ModelRenderer stripRightA;
+    private ModelRenderer stripRightB;
+    private ModelRenderer stripLeftA;
+
     /**
      * Create an instance of the model.
      */
@@ -20,10 +25,7 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         ModelRenderer arrowA;
         ModelRenderer arrowB;
         ModelRenderer arrowC;
-        ModelRenderer stripRightA;
-        ModelRenderer stripRightB;
         ModelRenderer armRightLayer;
-        ModelRenderer stripRightA_1;
         ModelRenderer armLeftLayer;
         ModelRenderer legRightLayer;
         ModelRenderer legLeftLayer;
@@ -34,7 +36,6 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         bipedRightLeg = new ModelRenderer(this, 24, 16);
         bipedRightLeg.setRotationPoint(-1.9F, 12.0F, 0.1F);
         bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.0F);
-        setRotateAngle(bipedRightLeg, -0.5918411493512771F, 0.0F, 0.0F);
 
         legRightLayer = new ModelRenderer(this, 40, 32);
         legRightLayer.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -48,12 +49,10 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         bipedRightArm = new ModelRenderer(this, 24, 16);
         bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
         bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
-        setRotateAngle(bipedRightArm, 0.3490658503988659F, -0.10000736613927509F, 0.10000736613927509F);
 
-        stripRightA_1 = new ModelRenderer(this, 40, -2);
-        stripRightA_1.setRotationPoint(3.3F, 5.0F, 2.0F);
-        stripRightA_1.addBox(0.0F, 0.0F, -1.0F, 0, 7, 2, 0.0F);
-        setRotateAngle(stripRightA_1, 0.3490658503988659F, -0.10000736613927509F, 0.0F);
+        stripLeftA = new ModelRenderer(this, 40, -2);
+        stripLeftA.setRotationPoint(3.3F, 5.0F, 2.0F);
+        stripLeftA.addBox(0.0F, 0.0F, -1.0F, 0, 7, 2, 0.0F);
 
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -80,13 +79,11 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         stripRightA = new ModelRenderer(this, 32, -2);
         stripRightA.setRotationPoint(-3.3F, 7.0F, 1.0F);
         stripRightA.addBox(0.0F, 0.0F, -1.0F, 0, 10, 2, 0.0F);
-        setRotateAngle(stripRightA, -0.3490658503988659F, 0.10000736613927509F, 0.0F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
         bipedLeftArm.mirror = true;
         bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
         bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
-        setRotateAngle(bipedLeftArm, -0.3490658503988659F, 0.10000736613927509F, -0.10000736613927509F);
 
         arrowC = new ModelRenderer(this, 12, 48);
         arrowC.setRotationPoint(-3.1F, 0.0F, 3.5F);
@@ -105,13 +102,11 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         stripRightB = new ModelRenderer(this, 36, -2);
         stripRightB.setRotationPoint(1.3F, 5.0F, 1.0F);
         stripRightB.addBox(0.0F, 0.0F, -1.0F, 0, 5, 2, 0.0F);
-        setRotateAngle(stripRightB, -0.3490658503988659F, 0.10000736613927509F, 0.0F);
 
         bipedLeftLeg = new ModelRenderer(this, 40, 16);
         bipedLeftLeg.mirror = true;
         bipedLeftLeg.setRotationPoint(1.9F, 12.0F, 0.1F);
         bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.0F);
-        setRotateAngle(bipedLeftLeg, 0.5918411493512771F, 0.0F, 0.0F);
 
         legLeftLayer = new ModelRenderer(this, 24, 32);
         legLeftLayer.mirror = true;
@@ -120,7 +115,7 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
 
         bipedRightLeg.addChild(legRightLayer);
         bipedLeftArm.addChild(armLeftLayer);
-        bipedLeftArm.addChild(stripRightA_1);
+        bipedLeftArm.addChild(stripLeftA);
         bipedRightArm.addChild(armRightLayer);
         bipedBody.addChild(quiver);
         bipedBody.addChild(arrowA);
@@ -146,5 +141,23 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         modelRenderer.rotateAngleX = x;
         modelRenderer.rotateAngleY = y;
         modelRenderer.rotateAngleZ = z;
+    }
+
+    @Override
+    public void render(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        float f = 0.05F * MathHelper.sin((float) Math.PI * ageInTicks/ 30.0F) % 2.0F;
+        setRotateAngle(this.stripLeftA,
+                - 1.1F * this.bipedLeftArm.rotateAngleX + f,
+                - this.bipedLeftArm.rotateAngleY,
+                - this.bipedLeftArm.rotateAngleZ + f);
+        setRotateAngle(this.stripRightA,
+                - 1.1F * this.bipedRightArm.rotateAngleX + f,
+                - this.bipedRightArm.rotateAngleY,
+                - this.bipedRightArm.rotateAngleZ + f);
+        setRotateAngle(this.stripRightB,
+                - 1.1F * this.bipedRightArm.rotateAngleX + f,
+                - this.bipedRightArm.rotateAngleY,
+                - this.bipedRightArm.rotateAngleZ + f);
     }
 }
