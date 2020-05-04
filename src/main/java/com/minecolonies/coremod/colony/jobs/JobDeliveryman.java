@@ -297,6 +297,7 @@ public class JobDeliveryman extends AbstractJob
     @Override
     public void onRemoval()
     {
+        this.active = false;
         cancelAssignedRequests();
     }
 
