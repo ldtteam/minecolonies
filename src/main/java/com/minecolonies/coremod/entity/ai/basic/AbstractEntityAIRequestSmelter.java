@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -100,12 +101,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
+            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = new Tuple<>(predicate, STACKSIZE);
+                    needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * job.getMaxCraftingCount());
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 else
@@ -125,10 +126,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     }
                 }
                 currentRecipeStorage = null;
+                currentRequest = null;
                 return GET_RECIPE;
             }
         }
-
         return CRAFT;
     }
 
@@ -167,8 +168,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getPrimaryOutput().isItemEqual(stack));
         if (resultCount > 0)
         {
-            currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+            for (int i = 0; i < resultCount; i++)
+            {
+                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+            }
             incrementActionsDoneAndDecSaturation();
+            job.finishRequest(true);
         }
 
         setDelay(STANDARD_DELAY);
