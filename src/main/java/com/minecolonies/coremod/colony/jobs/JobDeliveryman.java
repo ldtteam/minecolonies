@@ -269,6 +269,7 @@ public class JobDeliveryman extends AbstractJob
         {
             if (!b && active)
             {
+                this.active = b;
                 cancelAssignedRequests();
             }
             else if (!active && b)
@@ -278,7 +279,6 @@ public class JobDeliveryman extends AbstractJob
                 getColony().getRequestManager()
                   .onColonyUpdate(request -> tokenList.contains(request.getId()));
             }
-            this.active = b;
         }
         catch (final Exception ex)
         {
