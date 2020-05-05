@@ -130,7 +130,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
         IBuilding building = null;
         if (colony != null)
         {
-            building = colony.getBuildingManager().getBuilding(structure.getPosition());
+            building = colony.getBuildingManager().getBuilding(structure.getPosition().add(structure.getBluePrint().getPrimaryBlockOffset()));
         }
 
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
