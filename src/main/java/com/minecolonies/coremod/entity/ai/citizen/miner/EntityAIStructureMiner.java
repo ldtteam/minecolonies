@@ -131,6 +131,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new AITarget(PREPARING, this::prepareForMining, 1),
           new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, TICKS_SECOND),
           new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, TICKS_SECOND),
+          new AITarget(MINER_REPAIRING_LADDER, this::repairLadder, STANDARD_DELAY),
           new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, TICKS_SECOND),
           new AITarget(MINER_MINING_SHAFT, this::doShaftMining, STANDARD_DELAY),
           new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
@@ -140,7 +141,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingMiner> getExpectedBuildingClass()
     {
         return BuildingMiner.class;
     }
@@ -233,12 +234,57 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return MINER_WALKING_TO_LADDER;
         }
-        return MINER_CHECK_MINESHAFT;
+        return MINER_REPAIRING_LADDER;
     }
 
     private boolean walkToLadder()
     {
         return walkToBlock(getOwnBuilding().getLadderLocation());
+    }
+
+    @NotNull
+    private IAIState repairLadder() {
+        if (!getOwnBuilding().hasFoundLadder())
+        {
+        	return MINER_SEARCHING_LADDER;
+        }
+
+    	@NotNull final BlockPos nextLadder =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
+        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+        boolean repair = true;
+
+        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock)
+        {
+            for (int x = -SHAFT_RADIUS; x <= SHAFT_RADIUS; x++)
+            {
+                for (int z = -SHAFT_RADIUS; z <= SHAFT_RADIUS; z++)
+                {
+                    @NotNull final BlockPos curBlock = new BlockPos(nextLadder.getX() + x + xOffset, nextLadder.getY(), nextLadder.getZ() + z + zOffset);
+                    if (world.getBlockState(curBlock).isSolid())
+                    {
+                        repair = false;
+                        break;
+                    }
+                }
+                if (!repair)
+                {
+                    break;
+                }
+            }
+         	if (repair)
+         	{
+         		if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
+                {
+                    return getState();
+                }
+                final BlockState metadata = getBlockState(nextLadder.up());
+         		setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
+         		return getState();
+         	}
+        }
+        return MINER_CHECK_MINESHAFT;
     }
 
     @NotNull
@@ -398,17 +444,45 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return state;
         }
 
+        @NotNull final BlockPos nextLadder =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
+        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+        boolean repair = true;
+
+        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock)
+        {
+        	for (int x = -SHAFT_RADIUS; x <= SHAFT_RADIUS; x++)
+            {
+                for (int z = -SHAFT_RADIUS; z <= SHAFT_RADIUS; z++)
+                {
+                    @NotNull final BlockPos curBlock = new BlockPos(nextLadder.getX() + x + xOffset, nextLadder.getY(), nextLadder.getZ() + z + zOffset);
+                    if (world.getBlockState(curBlock).isSolid())
+                    {
+                        repair = false;
+                        break;
+                    }
+                }
+                if (!repair)
+                {
+                    break;
+                }
+            }
+        	if (repair)
+        	{
+        		return MINER_REPAIRING_LADDER;
+        	}
+        }
+
         @NotNull final BlockPos safeCobble =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 2, getOwnBuilding().getLadderLocation().getZ());
 
-        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
-        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
         //Check for safe floor
-        for (int x = -SAFE_CHECK_RANGE + xOffset; x <= SAFE_CHECK_RANGE + xOffset; x++)
+        for (int x = -SAFE_CHECK_RANGE; x <= SAFE_CHECK_RANGE; x++)
         {
-            for (int z = -SAFE_CHECK_RANGE + zOffset; z <= SAFE_CHECK_RANGE + zOffset; z++)
+            for (int z = -SAFE_CHECK_RANGE; z <= SAFE_CHECK_RANGE; z++)
             {
-                @NotNull final BlockPos curBlock = new BlockPos(safeCobble.getX() + x, safeCobble.getY(), safeCobble.getZ() + z);
+                @NotNull final BlockPos curBlock = new BlockPos(safeCobble.getX() + x + xOffset, safeCobble.getY(), safeCobble.getZ() + z + zOffset);
                 if (!secureBlock(curBlock, currentStandingPosition))
                 {
                     return state;
@@ -418,8 +492,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         @NotNull final BlockPos safeStand =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world), getOwnBuilding().getLadderLocation().getZ());
-        @NotNull final BlockPos nextLadder =
-          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
         @NotNull final BlockPos nextCobble =
           new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
 
