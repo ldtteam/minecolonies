@@ -145,10 +145,10 @@ public class ResearchInitializer
         deeppockets.addChild(loaded);
         loaded.addChild(heavilyloaded);
 
-        //final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
-        //stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
+        final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
+        stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
 
-        //woodwork.addChild(stringwork);
+        woodwork.addChild(stringwork);
 
         final GlobalResearch hittingiron = new GlobalResearch("hittingiron", "technology", "Hitting Iron!", 1, new UnlockBuildingResearchEffect("Blacksmith", true));
         hittingiron.setRequirement(new BuildingResearchRequirement(3, "miner"));
@@ -220,7 +220,7 @@ public class ResearchInitializer
         //hittingiron.addChild(whatyaneed);
 
         //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
-        //researchTree.addResearch(stringwork.getBranch(), stringwork);
+        researchTree.addResearch(stringwork.getBranch(), stringwork);
         researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);
 
