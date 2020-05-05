@@ -209,5 +209,5 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * Set if the worker can currently work.
      * @param b true if so.
      */
-    public void setActive(final boolean b);
+    void setActive(final boolean b);
 }
