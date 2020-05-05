@@ -189,6 +189,10 @@ public final class ModJobsInitializer
                                     .setRegistryName(ModJobs.DYER_ID)
                                     .createJobEntry();
 
+        ModJobs.fletcher    = new JobEntry.Builder()
+                                .setJobProducer(JobFletcher::new)
+                                .setRegistryName(ModJobs.FLETCHER_ID)
+                                .createJobEntry();
 
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
@@ -224,5 +228,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.teacher);
         reg.register(ModJobs.glassblower);
         reg.register(ModJobs.dyer);
+        reg.register(ModJobs.fletcher);
     }
 }

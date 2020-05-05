@@ -288,7 +288,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel2;
 
     //public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
-    //public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
 
@@ -1149,9 +1149,9 @@ public class CommonConfiguration extends AbstractConfiguration
         //whatyaneed = defineList(builder, "whatyaneed",
         //          Collections.singletonList("minecraft:anvil*10"),
         //          s -> s instanceof String);
-        //stringwork = defineList(builder, "stringwork",
-        //          Collections.singletonList("minecraft:oak_log*64"),
-        //          s -> s instanceof String);
+        stringwork = defineList(builder, "stringwork",
+                  Collections.singletonList("minecraft:string*16"),
+                  s -> s instanceof String);
         thoselungs = defineList(builder, "thoselungs",
                   Collections.singletonList("minecraft:glass*64"),
                   s -> s instanceof String);
