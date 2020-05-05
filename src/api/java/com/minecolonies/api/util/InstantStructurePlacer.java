@@ -45,7 +45,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      * @param worldObj  the world to load it in
      * @param name      the structures name
      * @param pos       coordinates
-     * @param rotations number of times rotated
+     * @param rotation number of times rotated
      * @param mirror    the mirror used.
      * @param complete  paste it complete (with structure blocks) or without
      */
@@ -71,7 +71,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
     /**
      * Rotates the structure x times.
      *
-     * @param times     times to rotateWithMirror.
+     * @param rotation  times to rotateWithMirror.
      * @param world     world it's rotating it in.
      * @param rotatePos position to rotateWithMirror it around.
      * @param mirror    the mirror to rotate with.
