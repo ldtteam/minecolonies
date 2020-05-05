@@ -60,7 +60,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(),
-                  "tile.blockhuttownhall.messagecolonistdead",
+                  "block.blockhuttownhall.messagecolonistdead",
                   citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType));
             }
         }

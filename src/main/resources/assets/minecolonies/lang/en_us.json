@@ -590,6 +590,8 @@
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade or make space.",
   "block.minecolonies.blockhutwarehouse": "Warehouse",
   "block.minecolonies.blockhutwarehouse.name": "Warehouse",
+  "block.minecolonies.blockhuttavern": "Tavern",
+  "block.minecolonies.blockhuttavern.name": "Tavern",
 
   "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "Warehouse",
   "block.minecolonies.blockhutdeliveryman": "Deliveryman",
