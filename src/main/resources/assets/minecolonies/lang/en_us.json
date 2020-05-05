@@ -1070,7 +1070,7 @@
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
 
-  "com.minecolonies.coremod.gui.homehut.current": "Current home:",
+  "com.minecolonies.coremod.gui.homehut.current": "Current home: %d %d %d",
   "com.minecolonies.coremod.gui.homehut.currently": "Currently: %d blocks",
   "block.minecolonies.blockhutcrusher": "Crusher",
   "block.minecolonies.blockhutcrusher.name": "Crusher",
