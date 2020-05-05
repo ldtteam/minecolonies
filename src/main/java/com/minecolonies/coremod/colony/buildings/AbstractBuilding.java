@@ -1270,7 +1270,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
 
-            if (target == null)
+            if (target == null && target.getState() != RequestState.FINALIZING)
             {
                 continue;
             }
