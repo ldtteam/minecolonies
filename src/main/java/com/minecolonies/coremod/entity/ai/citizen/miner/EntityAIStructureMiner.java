@@ -141,7 +141,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public Class<BuildingMiner> getExpectedBuildingClass()
+    public Class<? extends BuildingMiner> getExpectedBuildingClass()
     {
         return BuildingMiner.class;
     }
@@ -251,39 +251,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     	@NotNull final BlockPos nextLadder =
                 new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
-        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
-        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
-        boolean repair = true;
+    	@NotNull final BlockPos nextCobble =
+                new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
 
-        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock || world.getBlockState(nextLadder).getBlock() instanceof TorchBlock
-           || world.getBlockState(nextLadder).getBlock() instanceof AbstractSignBlock)
+        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock && world.getBlockState(nextCobble).isSolid())
         {
-            for (int x = -SHAFT_RADIUS; x <= SHAFT_RADIUS; x++)
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
             {
-                for (int z = -SHAFT_RADIUS; z <= SHAFT_RADIUS; z++)
-                {
-                    @NotNull final BlockPos curBlock = new BlockPos(nextLadder.getX() + x + xOffset, nextLadder.getY(), nextLadder.getZ() + z + zOffset);
-                    if (world.getBlockState(curBlock).isSolid())
-                    {
-                        repair = false;
-                        break;
-                    }
-                }
-                if (!repair)
-                {
-                    break;
-                }
+                return getState();
             }
-         	if (repair)
-         	{
-         		if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
-                {
-                    return getState();
-                }
-                final BlockState metadata = getBlockState(nextLadder.up());
-         		setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
-         		return getState();
-         	}
+            final BlockState metadata = getBlockState(nextLadder.up());
+         	setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
+         	return getState();
         }
         return MINER_CHECK_MINESHAFT;
     }
