@@ -14,6 +14,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.pathfinding.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
@@ -45,7 +46,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The lumberjack AI class.
  */
-public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
+public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberjack>
 {
     /**
      * The render name to render logs.

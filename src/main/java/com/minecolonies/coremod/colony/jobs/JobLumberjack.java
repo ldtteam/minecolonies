@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJob
+public class JobLumberjack extends AbstractJobCrafter
 {
     private static final String TAG_TREE = "Tree";
     /**
