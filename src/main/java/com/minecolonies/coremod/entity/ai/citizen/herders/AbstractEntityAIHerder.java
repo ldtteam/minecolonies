@@ -319,7 +319,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
             }
         }
 
-        incrementActionsDone();
+        incrementActionsDoneAndDecSaturation();
 
         return DECIDE;
     }
