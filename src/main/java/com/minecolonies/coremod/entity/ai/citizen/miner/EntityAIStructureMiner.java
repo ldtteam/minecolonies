@@ -254,8 +254,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     	@NotNull final BlockPos nextLadder =
                 new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
 
+        if (!world.getBlockState(nextCobble).isSolid())
+        {
+        	if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
+            {
+                return getState();
+            }
+         	setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
+         	return getState();
+        }
 
-        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock && world.getBlockState(nextCobble).isSolid())
+        if (!world.getBlockState(nextLadder).isLadder(world, nextLadder, worker) && !world.getBlockState(nextLadder).isSolid())
         {
             if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
             {
@@ -1012,9 +1021,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         @NotNull final BlockPos nextLadder =
                 new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
-        @NotNull final BlockPos nextCobble =
-                new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
     	
-    	return world.getBlockState(nextLadder).getBlock() instanceof AirBlock && world.getBlockState(nextCobble).isSolid();
+    	return !world.getBlockState(nextLadder).isLadder(world, nextLadder, worker) && !world.getBlockState(nextLadder).isSolid();
     }
 }
