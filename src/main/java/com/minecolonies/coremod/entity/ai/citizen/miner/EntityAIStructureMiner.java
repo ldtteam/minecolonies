@@ -255,7 +255,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
         boolean repair = true;
 
-        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock)
+        if (world.getBlockState(nextLadder).getBlock() instanceof AirBlock || world.getBlockState(nextLadder).getBlock() instanceof TorchBlock
+           || world.getBlockState(nextLadder).getBlock() instanceof AbstractSignBlock)
         {
             for (int x = -SHAFT_RADIUS; x <= SHAFT_RADIUS; x++)
             {
@@ -434,7 +435,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState advanceLadder(final IAIState state)
     {
-        if (getOwnBuilding().getStartingLevelShaft() > 4)
+        if (getOwnBuilding().getStartingLevelShaft() > 4 && getLastLadder(getOwnBuilding().getLadderLocation(), world) %5 == 0)
         {
             return MINER_BUILDING_SHAFT;
         }
@@ -894,16 +895,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return world.getBlockState(loc).getBlock();
     }
 
-    private int getFirstLadder(@NotNull final BlockPos pos)
+    private int getFirstLadder(@NotNull BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
+        while (world.getBlockState(pos).isLadder(world, pos, worker))
         {
-            return getFirstLadder(pos.up());
+            pos = pos.up();
         }
-        else
-        {
-            return pos.getY() - 1;
-        }
+        return pos.getY() - 1;
     }
 
     @Override
