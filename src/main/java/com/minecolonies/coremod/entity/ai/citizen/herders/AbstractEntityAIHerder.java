@@ -371,7 +371,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
      */
     public abstract Class<T> getAnimalClass();
 
-    /**d
+    /**
      * Creates a simple area around the Herder's Hut used for AABB calculations for finding animals.
      *
      * @return The {@link AxisAlignedBB} of the Hut Area
