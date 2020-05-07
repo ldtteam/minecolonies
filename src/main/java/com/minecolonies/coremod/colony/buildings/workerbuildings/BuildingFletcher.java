@@ -20,10 +20,7 @@ import com.minecolonies.coremod.colony.jobs.JobFletcher;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.DyeableArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -122,8 +119,9 @@ public class BuildingFletcher extends AbstractBuildingCrafter
 
         boolean hasValidItem = false;
 
-        if (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-              && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER)
+        if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
+              || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
+              && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
         {
             return true;
         }
