@@ -245,7 +245,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final Skill primary = ((AbstractBuildingWorker.View) workBuilding).getPrimarySkill();
             final Skill secondary = ((AbstractBuildingWorker.View) workBuilding).getSecondarySkill();
-            return (getLevel(primary) + getLevel(secondary))/4;
+            return getLevel(primary) + getLevel(secondary)/4;
         }
         return 0;
     }
