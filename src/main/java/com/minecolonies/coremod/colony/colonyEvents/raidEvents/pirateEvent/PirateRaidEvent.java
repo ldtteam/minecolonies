@@ -137,7 +137,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     @Override
     public void onStart()
     {
-        status = EventStatus.PROGRESSING;
+        status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
         spawnerCount = shipSize.spawnerCount;
 
@@ -167,6 +167,14 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     @Override
     public void onUpdate()
     {
+        // TODO: remove once schematics have spawners
+        if (getStatus() == EventStatus.PREPARING)
+        {
+            PirateEventUtils.loadSpawners(colony.getWorld(), spawnPoint, shipSize.schematicName, colony, id);
+            status = EventStatus.PROGRESSING;
+            return;
+        }
+
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
         if (!respawns.isEmpty())
