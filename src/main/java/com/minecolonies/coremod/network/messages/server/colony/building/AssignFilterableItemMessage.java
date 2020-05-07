@@ -40,9 +40,9 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     /**
      * Creates the message to add an item.
      *
-     * @param id the id of the list of filterables.
+     * @param id       the id of the list of filterables.
      * @param assign   compost if true, dont if false.
-     * @param item    the item to assign
+     * @param item     the item to assign
      * @param building the building we're executing on.
      */
     public AssignFilterableItemMessage(final IBuildingView building, final String id, final ItemStorage item, final boolean assign)
@@ -75,13 +75,13 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractFilterableListBuilding building)
     {
-        if(assign)
+        if (assign)
         {
             building.addItem(id, item);
         }
         else
         {
-            building.removeItem(id,item);
+            building.removeItem(id, item);
         }
     }
 }

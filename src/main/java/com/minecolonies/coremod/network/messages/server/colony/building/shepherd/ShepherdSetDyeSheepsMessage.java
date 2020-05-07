@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShepherdSetDyeSheepsMessage extends AbstractBuildingServerMessage<BuildingShepherd>
 {
-    private boolean  dyeSheeps;
+    private boolean dyeSheeps;
 
     /**
      * Empty standard constructor.
@@ -23,7 +23,7 @@ public class ShepherdSetDyeSheepsMessage extends AbstractBuildingServerMessage<B
     }
 
     /**
-     * Creates object for the CowboySetMilk 
+     * Creates object for the CowboySetMilk
      *
      * @param building View of the building to read data from.
      */
