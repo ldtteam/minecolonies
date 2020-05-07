@@ -105,7 +105,9 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
             final PlayerEntity player = ctxIn.getSender();
             if (player == null) return;
 
-            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), mesh);
+            if(!player.isCreative()) {
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), mesh);
+            }
         }
     }
 }
