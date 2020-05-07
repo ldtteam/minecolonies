@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.coremod.colony.colonyEvents.ColonyRecruitableCitizenEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
@@ -23,5 +24,6 @@ public final class ModColonyEventTypeInitializer
         reg.register(new ColonyEventTypeRegistryEntry(PirateRaidEvent::loadFromNBT, PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID));
         reg.register(new ColonyEventTypeRegistryEntry(BarbarianRaidEvent::loadFromNBT, BarbarianRaidEvent.BABARIAN_RAID_EVENT_TYPE_ID));
         reg.register(new ColonyEventTypeRegistryEntry(EgyptianRaidEvent::loadFromNBT, EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID));
+        reg.register(new ColonyEventTypeRegistryEntry(ColonyRecruitableCitizenEvent::loadFromNBT, ColonyRecruitableCitizenEvent.RECRUITABLE_CITIZEN_EVENT));
     }
 }

@@ -112,6 +112,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         compound.putInt(TAG_HEIGHT, this.height);
 
+        compound.putInt(TAG_ROTATION, getRotation());
+
         return compound;
     }
 
@@ -137,6 +139,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.keySet().contains(TAG_HEIGHT))
         {
             this.height = compound.getInt(TAG_HEIGHT);
+        }
+
+        if (compound.contains(TAG_ROTATION))
+        {
+            this.cachedRotation = compound.getInt(TAG_ROTATION);
         }
     }
 
@@ -248,7 +255,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public int getRotation()
     {
-        if (cachedRotation > 0)
+        if (cachedRotation != -1)
         {
             return cachedRotation;
         }
