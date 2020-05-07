@@ -104,6 +104,10 @@ public enum AIWorkerState implements IAIState
 ###Lumberjack###
      */
     /**
+     * The lumberjack is starting up his/her routine.
+     */
+    LUMBERJACK_START_WORKING(true),
+    /**
      * The lumberjack is looking for trees.
      */
     LUMBERJACK_SEARCHING_TREE(true),

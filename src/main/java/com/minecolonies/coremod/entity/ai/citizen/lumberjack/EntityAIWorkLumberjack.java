@@ -183,6 +183,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private PathResult pathToTree;
 
+    @Override
+    protected int getActionRewardForCraftingSuccess() {
+        return MAX_BLOCKS_MINED;
+    }
+
     /**
      * Create a new LumberjackAI.
      *
@@ -191,10 +196,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     public EntityAIWorkLumberjack(@NotNull final JobLumberjack job)
     {
 
+        // Override state machine, otherwise the lumberjack will never check for wood to cut.
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(LUMBERJACK_START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
           new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
           new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
@@ -208,6 +213,43 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     public Class getExpectedBuildingClass()
     {
         return BuildingLumberjack.class;
+    }
+
+    /**
+     * The lumberjack is a special worker.
+     * In his/her decision state, he/she will try to add lumberjack cycles
+     * If there's nothing left to craft, he/she will proceed with woodworking
+     * @return the next state to go to.
+     */
+    protected IAIState decide()
+    {
+        if (job.getTaskQueue().isEmpty())
+        {
+            return LUMBERJACK_START_WORKING;
+        }
+
+        if (job.getCurrentTask() == null)
+        {
+            return LUMBERJACK_START_WORKING;
+        }
+
+        if (walkToBuilding())
+        {
+            return START_WORKING;
+        }
+
+        if (job.getActionsDone() >= MAX_BLOCKS_MINED)
+        {
+            // Wait to dump before continuing.
+            return getState();
+        }
+
+        if (currentRequest != null && currentRecipeStorage != null)
+        {
+            return QUERY_ITEMS;
+        }
+
+        return GET_RECIPE;
     }
 
     /**
@@ -244,7 +286,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (checkForToolOrWeapon(ToolType.AXE))
         {
-            return getState();
+            return START_WORKING; // Reset everything, maybe there are new crafting requests
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -260,7 +302,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             return getState();
         }
-        return LUMBERJACK_SEARCHING_TREE;
+        return START_WORKING; // Reset everything, maybe there are new crafting requests
     }
 
     /**
@@ -315,10 +357,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
                                  worker.getCitizenColonyHandler().getColony());
             }
-
-            // Delay between area searches
-            setDelay(100);
-            return getState();
         }
         if (pathResult.isPathReachingDestination())
         {
@@ -330,7 +368,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
-        return getState();
+
+        // None of the above yielded a result, report no trees found.
+        return LUMBERJACK_NO_TREES_FOUND;
     }
 
     private IAIState setNewTree()

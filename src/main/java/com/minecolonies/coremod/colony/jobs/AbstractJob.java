@@ -342,7 +342,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Actions done since the last reset.
+     * Increase the actions done since the last reset by 1
      * Used for example to detect
      * if and when the inventory has to be dumped.
      */
@@ -350,6 +350,17 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public void incrementActionsDone()
     {
         actionsDone++;
+    }
+
+    /**
+     * Increase the actions done since the last reset by numberOfActions
+     * Used for example to detect
+     * if and when the inventory has to be dumped.
+     */
+    @Override
+    public void incrementActionsDone(int numberOfActions)
+    {
+        actionsDone += numberOfActions;
     }
 
     /**

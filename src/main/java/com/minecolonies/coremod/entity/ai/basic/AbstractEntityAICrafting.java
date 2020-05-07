@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -57,6 +56,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * The current recipe that is being crafted.
      */
     protected IRecipeStorage currentRecipeStorage;
+
+    /**
+     * The number of actions a crafting "success" is worth.
+     * By default, that's 1 action for 1 crafting success.
+     * Override this in your subclass to make crafting recipes worth more actions :-)
+     */
+    protected int getActionRewardForCraftingSuccess() {
+        return 1;
+    }
 
     /**
      * Initialize the crafter job and add all his tasks.
@@ -133,7 +141,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
-            incrementActionsDone();
+            incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
 
@@ -152,7 +160,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                   < inputStorage.getAmount() * remainingOpsCount)
             {
                 job.finishRequest(false);
-                incrementActionsDone();
+                incrementActionsDone(getActionRewardForCraftingSuccess());
                 return START_WORKING;
             }
         }
@@ -243,20 +251,20 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
             currentRequest = null;
-            incrementActionsDone();
+            incrementActionsDone(getActionRewardForCraftingSuccess());
             currentRecipeStorage = null;
             return START_WORKING;
         }
 
         if (job.getProgress() >= getRequiredProgressForMakingRawMaterial())
         {
-            final IAIState check = checkForItems(currentRecipeStorage);
+             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
                 if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
                 {
                     currentRequest = null;
-                    incrementActionsDone();
+                    incrementActionsDone(getActionRewardForCraftingSuccess());
                     job.finishRequest(false);
                     resetValues();
                     return START_WORKING;
@@ -267,7 +275,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
-                    incrementActionsDone();
+                    incrementActionsDone(getActionRewardForCraftingSuccess());
                     currentRecipeStorage = null;
                     resetValues();
 

@@ -22,11 +22,13 @@ import com.minecolonies.coremod.colony.buildings.AbstractFilterableListIntrinsic
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -104,12 +106,27 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
 
+        addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
+        addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
+        addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
+        addStrippedWoodRecipe(Items.JUNGLE_LOG, Items.STRIPPED_JUNGLE_LOG);
+        addStrippedWoodRecipe(Items.ACACIA_LOG, Items.STRIPPED_ACACIA_LOG);
+        addStrippedWoodRecipe(Items.DARK_OAK_LOG, Items.STRIPPED_DARK_OAK_LOG);
+        addStrippedWoodRecipe(Items.OAK_WOOD, Items.STRIPPED_OAK_WOOD);
+        addStrippedWoodRecipe(Items.SPRUCE_WOOD, Items.STRIPPED_SPRUCE_WOOD);
+        addStrippedWoodRecipe(Items.BIRCH_WOOD, Items.STRIPPED_BIRCH_WOOD);
+        addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
+        addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
+        addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
+    }
+
+    public void addStrippedWoodRecipe(Item baseVariant, Item strippedVariant) {
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,
                 StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
+                ImmutableList.of(new ItemStack(baseVariant, 1)),
                 1,
-                new ItemStack(Items.STRING, 4),
+                new ItemStack(strippedVariant, 1),
                 Blocks.AIR);
         recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
