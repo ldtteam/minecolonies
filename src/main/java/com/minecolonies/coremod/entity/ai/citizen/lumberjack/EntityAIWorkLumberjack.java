@@ -185,7 +185,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
     @Override
     protected int getActionRewardForCraftingSuccess() {
-        return MAX_BLOCKS_MINED;
+        return getActionsDoneUntilDumping();
     }
 
     /**
@@ -223,6 +223,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     protected IAIState decide()
     {
+        if (walkToBuilding())
+        {
+            return START_WORKING;
+        }
+
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
+        {
+            // Wait to dump before continuing.
+            return getState();
+        }
+
+        // This got moved downwards compared to the AICrafting-implementation,
+        // because in this case waiting for dumping is more important
+        // than restarting chopping
         if (job.getTaskQueue().isEmpty())
         {
             return LUMBERJACK_START_WORKING;
@@ -233,16 +247,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return LUMBERJACK_START_WORKING;
         }
 
-        if (walkToBuilding())
-        {
-            return START_WORKING;
-        }
-
-        if (job.getActionsDone() >= MAX_BLOCKS_MINED)
-        {
-            // Wait to dump before continuing.
-            return getState();
-        }
 
         if (currentRequest != null && currentRecipeStorage != null)
         {
