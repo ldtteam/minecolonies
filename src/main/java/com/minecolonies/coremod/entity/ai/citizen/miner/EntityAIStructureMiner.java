@@ -131,6 +131,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new AITarget(PREPARING, this::prepareForMining, 1),
           new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder, TICKS_SECOND),
           new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, TICKS_SECOND),
+          new AITarget(MINER_REPAIRING_LADDER, this::repairLadder, STANDARD_DELAY),
           new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft, TICKS_SECOND),
           new AITarget(MINER_MINING_SHAFT, this::doShaftMining, STANDARD_DELAY),
           new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding, STANDARD_DELAY),
@@ -140,7 +141,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingMiner> getExpectedBuildingClass()
     {
         return BuildingMiner.class;
     }
@@ -233,12 +234,58 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return MINER_WALKING_TO_LADDER;
         }
-        return MINER_CHECK_MINESHAFT;
+        return MINER_REPAIRING_LADDER;
     }
 
     private boolean walkToLadder()
     {
         return walkToBlock(getOwnBuilding().getLadderLocation());
+    }
+
+    @NotNull
+    private IAIState repairLadder()
+    {
+        if (!getOwnBuilding().hasFoundLadder())
+        {
+            return MINER_SEARCHING_LADDER;
+        }
+
+        @NotNull final BlockPos nextCobble =
+          new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
+        @NotNull final BlockPos nextLadder =
+          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+        @NotNull final BlockPos safeStand =
+          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world), getOwnBuilding().getLadderLocation().getZ());
+
+        if (!world.getBlockState(nextCobble).isSolid())
+        {
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
+            {
+                return getState();
+            }
+            if (!world.getBlockState(nextCobble).isAir(world, nextCobble) && !mineBlock(nextCobble, safeStand))
+            {
+                return getState();
+            }
+            setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
+            return getState();
+        }
+
+        if (!world.getBlockState(nextLadder).isLadder(world, nextLadder, worker) && !world.getBlockState(nextLadder).isSolid())
+        {
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
+            {
+                return getState();
+            }
+            if (!world.getBlockState(nextLadder).isAir(world, nextLadder) && !mineBlock(nextLadder, safeStand))
+            {
+                return getState();
+            }
+            final BlockState metadata = getBlockState(nextLadder.up());
+            setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
+            return getState();
+        }
+        return MINER_CHECK_MINESHAFT;
     }
 
     @NotNull
@@ -388,27 +435,30 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState advanceLadder(final IAIState state)
     {
-        if (getOwnBuilding().getStartingLevelShaft() > 4)
-        {
-            return MINER_BUILDING_SHAFT;
-        }
-
         if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES), new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
         {
             return state;
         }
 
-        @NotNull final BlockPos safeCobble =
-          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 2, getOwnBuilding().getLadderLocation().getZ());
+        if (ladderDamaged())
+        {
+            return MINER_REPAIRING_LADDER;
+        }
 
         final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
         final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+
+        @NotNull final BlockPos nextLadder =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+        @NotNull final BlockPos safeCobble =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 2, getOwnBuilding().getLadderLocation().getZ());
+
         //Check for safe floor
-        for (int x = -SAFE_CHECK_RANGE + xOffset; x <= SAFE_CHECK_RANGE + xOffset; x++)
+        for (int x = -SAFE_CHECK_RANGE; x <= SAFE_CHECK_RANGE; x++)
         {
-            for (int z = -SAFE_CHECK_RANGE + zOffset; z <= SAFE_CHECK_RANGE + zOffset; z++)
+            for (int z = -SAFE_CHECK_RANGE; z <= SAFE_CHECK_RANGE; z++)
             {
-                @NotNull final BlockPos curBlock = new BlockPos(safeCobble.getX() + x, safeCobble.getY(), safeCobble.getZ() + z);
+                @NotNull final BlockPos curBlock = new BlockPos(safeCobble.getX() + x + xOffset, safeCobble.getY(), safeCobble.getZ() + z + zOffset);
                 if (!secureBlock(curBlock, currentStandingPosition))
                 {
                     return state;
@@ -418,10 +468,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         @NotNull final BlockPos safeStand =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world), getOwnBuilding().getLadderLocation().getZ());
-        @NotNull final BlockPos nextLadder =
-          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
         @NotNull final BlockPos nextCobble =
           new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
+
+        if (getOwnBuilding().getStartingLevelShaft() == 0)
+        {
+            getOwnBuilding().setStartingLevelShaft(nextCobble.getY() - 3);
+        }
+
+        if (nextCobble.getY() < getOwnBuilding().getStartingLevelShaft())
+        {
+            return MINER_BUILDING_SHAFT;
+        }
 
         if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
         {
@@ -437,7 +495,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
-        getOwnBuilding().incrementStartingLevelShaft();
         this.incrementActionsDoneAndDecSaturation();
         return MINER_CHECK_MINESHAFT;
     }
@@ -822,16 +879,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return world.getBlockState(loc).getBlock();
     }
 
-    private int getFirstLadder(@NotNull final BlockPos pos)
+    private int getFirstLadder(@NotNull BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
+        while (world.getBlockState(pos).isLadder(world, pos, worker))
         {
-            return getFirstLadder(pos.up());
+            pos = pos.up();
         }
-        else
-        {
-            return pos.getY() - 1;
-        }
+        return pos.getY() - 1;
     }
 
     @Override
@@ -855,7 +909,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
-            minerBuilding.resetStartingLevelShaft();
             WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         super.executeSpecificCompleteActions();
@@ -976,5 +1029,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
         }
         return false;
+    }
+
+    private boolean ladderDamaged()
+    {
+        @NotNull final BlockPos nextLadder =
+                new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+    	
+    	return !world.getBlockState(nextLadder).isLadder(world, nextLadder, worker) && !world.getBlockState(nextLadder).isSolid();
     }
 }
