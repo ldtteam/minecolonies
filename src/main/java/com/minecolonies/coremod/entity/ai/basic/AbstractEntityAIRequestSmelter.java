@@ -269,12 +269,19 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
             final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable)
-                  && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
             {
-                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  worker.getInventoryCitizen(), smeltable, STACKSIZE,
-                  new InvWrapper(furnace), SMELTABLE_SLOT);
+                if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
+                {
+                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                      worker.getInventoryCitizen(), smeltable, STACKSIZE,
+                      new InvWrapper(furnace), SMELTABLE_SLOT);
+                }
+            }
+            else
+            {
+                needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
+                return GATHERING_REQUIRED_MATERIALS;
             }
 
             if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), FurnaceTileEntity::isFuel)
