@@ -3,26 +3,19 @@ package com.minecolonies.api.util;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.util.ChangeStorage;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Interface for using the structure codebase.
@@ -37,7 +30,12 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      */
     public InstantStructurePlacer(final World worldObj, final String name)
     {
-        super(new Structure(worldObj, name, new PlacementSettings()));
+        this(new Structure(worldObj, name, new PlacementSettings()));
+    }
+
+    public InstantStructurePlacer(final Structure structure)
+    {
+        super(structure);
     }
 
     /**
@@ -47,22 +45,22 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      * @param worldObj  the world to load it in
      * @param name      the structures name
      * @param pos       coordinates
-     * @param rotations number of times rotated
+     * @param rotation number of times rotated
      * @param mirror    the mirror used.
      * @param complete  paste it complete (with structure blocks) or without
      */
     public static void loadAndPlaceStructureWithRotation(
       final World worldObj, @NotNull final String name,
-      @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror,
-      final boolean complete)
+      @NotNull final BlockPos pos, final Rotation rotation,
+      @NotNull final Mirror mirror, final boolean complete)
     {
         try
         {
-            @NotNull final InstantStructurePlacer structureWrapper = new InstantStructurePlacer(worldObj, name);
-            structureWrapper.structure.setPosition(pos);
-            structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            structureWrapper.structure.setPlacementSettings(new PlacementSettings(mirror, BlockPosUtil.getRotationFromRotations(rotations)));
-            structureWrapper.placeStructure(pos.subtract(structureWrapper.structure.getOffset()), complete);
+        	@NotNull final Structure structure = new Structure(worldObj, name, new PlacementSettings(mirror, rotation));
+            structure.setPosition(pos);
+            structure.rotate(rotation, worldObj, pos, mirror);
+            @NotNull final InstantStructurePlacer structureWrapper = new InstantStructurePlacer(structure);
+            structureWrapper.setupStructurePlacement(pos.subtract(structure.getOffset()), complete, null);
         }
         catch (final Exception e)
         {
@@ -73,108 +71,66 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
     /**
      * Rotates the structure x times.
      *
-     * @param times     times to rotateWithMirror.
+     * @param rotation  times to rotateWithMirror.
      * @param world     world it's rotating it in.
      * @param rotatePos position to rotateWithMirror it around.
      * @param mirror    the mirror to rotate with.
      */
-    public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
+    public void rotate(final Rotation rotation, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
-        structure.rotate(BlockPosUtil.getRotationFromRotations(times), world, rotatePos, mirror);
+        structure.rotate(rotation, world, rotatePos, mirror);
     }
 
     /**
-     * Place a structure into the world.
-     *
-     * @param pos      coordinates
-     * @param complete paste it complete (with structure blocks) or without
-     */
-    private void placeStructure(@NotNull final BlockPos pos, final boolean complete)
+	 * Place a structure into the world.
+	 *
+	 * @param world    the placing player.
+	 * @param inputPos the start pos.
+	 * @return the last pos.
+	 */
+    public BlockPos placeStructure(final World world, final BlockPos inputPos)
     {
-        structure.setLocalPosition(pos);
+        return placeStructure(world, null, inputPos);
+    }
 
-        @NotNull final List<BlockPos> delayedBlocks = new ArrayList<>();
-
-        //structure.getBlockInfo()[0].pos
-        for (int j = 0; j < structure.getHeight(); j++)
-        {
-            for (int k = 0; k < structure.getLength(); k++)
-            {
-                for (int i = 0; i < structure.getWidth(); i++)
-                {
-                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final BlockState localState = this.structure.getBlockState(localPos).getBlockState();
-                    final Block localBlock = localState.getBlock();
-
-                    final BlockPos worldPos = pos.add(localPos);
-
-                    if ((localBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution && !complete) || (localBlock instanceof AbstractBlockHut && !complete && structure.getBluePrint().getPrimaryBlockOffset().equals(localPos)))
-                    {
-                        continue;
-                    }
-
-                    if (localState.getMaterial().isSolid())
-                    {
-                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).getTileEntityData(), structure.getWorld(), pos);
-                    }
-                    else
-                    {
-                        delayedBlocks.add(localPos);
-                    }
-                }
-            }
-        }
-
-        for (@NotNull final BlockPos coords : delayedBlocks)
-        {
-            final BlockState localState = this.structure.getBlockState(coords).getBlockState();
-            final BlockPos newWorldPos = pos.add(coords);
-
-            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld(), pos);
-        }
-
-        for (final CompoundNBT compound : this.structure.getEntityData())
-        {
-            if (compound != null)
-            {
-                try
-                {
-                    final Optional<EntityType<?>> entityType = EntityType.readEntityType(compound);
-                    if (entityType.isPresent())
-                    {
-                        final Entity entity = entityType.get().create(structure.getWorld());
-                        entity.setUniqueId(UUID.randomUUID());
-                        final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
-                        entity.setPosition(worldPos.x, worldPos.y, worldPos.z);
-                        structure.getWorld().addEntity(entity);
-                    }
-                }
-                catch (final RuntimeException e)
-                {
-                    Log.getLogger().info("Couldn't restore entitiy", e);
-                }
-            }
-        }
+    /**
+	 * Place a structure into the world.
+	 *
+	 * @param world    the placing player.
+	 * @param storage  the change storage.
+	 * @param inputPos the start pos.
+	 * @return the last pos.
+	 */
+    @Override
+    public BlockPos placeStructure(final World world, final ChangeStorage storage, final BlockPos inputPos)
+    {
+        return placeStructure(world, storage, inputPos, (structure, pos) -> structure.getBlockState(pos).getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution
+                                                                             || ((structure.getBlockState(pos).getBlock() instanceof AbstractBlockHut) && structure.getBluePrint().getPrimaryBlockOffset().equals(pos)));
     }
 
     /**
      * This method handles the block placement.
      * When we extract this into another mod, we have to override the method.
      *
+     * @param world          the world.
      * @param pos            the world position.
      * @param localState     the local state.
      * @param complete       if complete with it.
      * @param tileEntityData the tileEntity.
-     * @param world          the world it is being placed in.
-     * @param centerPos the position this is centered around.
      */
-    private void handleBlockPlacement(final BlockPos pos, final BlockState localState, final boolean complete, final CompoundNBT tileEntityData, final World world, final BlockPos centerPos)
+    @Override
+    public void handleBlockPlacement(
+      final World world,
+      final BlockPos pos,
+      final BlockState localState,
+      final boolean complete,
+      final CompoundNBT tileEntityData)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         IBuilding building = null;
         if (colony != null)
         {
-            building = colony.getBuildingManager().getBuilding(structure.getPosition());
+            building = colony.getBuildingManager().getBuilding(structure.getPosition().add(structure.getBluePrint().getPrimaryBlockOffset()));
         }
 
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
@@ -183,7 +139,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             {
                 try
                 {
-                    handlers.handle(world, pos, localState, tileEntityData, complete, centerPos.add(structure.getOffset()), structure.getSettings());
+                    handlers.handle(world, pos, localState, tileEntityData, complete, structure.getPosition(), structure.getSettings());
                     if (building != null)
                     {
                         building.registerBlockPosition(localState, pos, world);
@@ -220,10 +176,10 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
         try
         {
             @NotNull final InstantStructurePlacer structureWrapper = new InstantStructurePlacer(worldObj, name);
-            structureWrapper.rotate(rotations, worldObj, pos, mirror);
+            structureWrapper.rotate(BlockPosUtil.getRotationFromRotations(rotations), worldObj, pos, mirror);
             if (structureWrapper.checkForFreeSpace(pos))
             {
-                structureWrapper.placeStructure(pos, false);
+                structureWrapper.placeStructure(worldObj, pos);
                 return true;
             }
             return false;

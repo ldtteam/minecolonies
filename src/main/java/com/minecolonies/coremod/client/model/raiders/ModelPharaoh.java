@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.model.raiders;
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * ModelPharaohMummy.
@@ -10,10 +11,12 @@ import net.minecraft.client.renderer.model.ModelRenderer;
  */
 public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
 {
+    private ModelRenderer bodyGoldenStrip;
+    private ModelRenderer jaw;
+
     public ModelPharaoh()
     {
         ModelRenderer bodyJewel;
-        ModelRenderer bodyGoldenStrip;
         ModelRenderer snakeBody;
         ModelRenderer snakeHead;
         ModelRenderer headRightSideTop;
@@ -25,7 +28,6 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         ModelRenderer headTail;
         ModelRenderer headTop;
         ModelRenderer headCap;
-        ModelRenderer jaw;
         
         textureWidth = 128;
         textureHeight = 64;
@@ -147,7 +149,6 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         jaw = new ModelRenderer(this);
         jaw.setRotationPoint(0.0F, -2.0F, 0.0F);
         bipedHead.addChild(jaw);
-        setRotationAngle(jaw, 0.5463F, 0.0F, 0.0F);
         jaw.setTextureOffset(33, 54).addBox(-2.5F, 1.0F, -4.0F, 5.0F, 1.0F, 5.0F, 0.0F, true);
         jaw.setTextureOffset(10, 11).addBox(2.5F, 0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 0.0F, true);
         jaw.setTextureOffset(0, 15).addBox(-2.5F, 0.0F, -4.0F, 5.0F, 1.0F, 0.0F, 0.0F, true);
@@ -162,4 +163,17 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         modelRenderer.rotateAngleY = y;
         modelRenderer.rotateAngleZ = z;
     }
+
+    private static float sinPi(float f){
+        return MathHelper.sin(f * (float) Math.PI);
+    }
+
+    @Override
+    public void render(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        this.bodyGoldenStrip.rotateAngleX = -Math.max(this.bipedRightLeg.rotateAngleX, this.bipedLeftLeg.rotateAngleX);
+        this.jaw.rotateAngleX = 0.3F - 0.1F * sinPi(ageInTicks/ 20.0F) % 2.0F;
+        this.jaw.rotateAngleY = 0.05F * sinPi((ageInTicks + 10.0F)/ 20.0F) % 2.0F;
+    }
+
 }

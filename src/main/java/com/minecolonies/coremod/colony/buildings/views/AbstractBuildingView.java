@@ -402,6 +402,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
+        containerlist.clear();
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {

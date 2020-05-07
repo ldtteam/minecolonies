@@ -57,7 +57,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingStructureBuilder> getExpectedBuildingClass()
     {
         return AbstractBuildingStructureBuilder.class;
     }

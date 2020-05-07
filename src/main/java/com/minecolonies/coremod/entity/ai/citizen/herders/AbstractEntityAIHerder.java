@@ -357,6 +357,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
         if (this.getTargetableArea() != null)
         {
             return new ArrayList<>(world.getEntitiesWithinAABB(
+
               ItemEntity.class,
               this.getTargetableArea()
             ));
@@ -427,7 +428,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
                 animal.setInLove(null);
                 worker.swingArm(Hand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
-                worker.decreaseSaturationForAction();
             }
         }
     }
@@ -538,7 +538,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
             worker.swingArm(Hand.MAIN_HAND);
             animal.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
-            worker.decreaseSaturationForAction();
         }
     }
 

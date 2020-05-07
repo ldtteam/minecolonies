@@ -289,6 +289,13 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
                                      .createBuildingEntry();
 
+        ModBuildings.fletcher = new BuildingEntry.Builder()
+                              .setBuildingBlock(ModBlocks.blockHutFletcher)
+                              .setBuildingProducer(BuildingFletcher::new)
+                              .setBuildingViewProducer(() -> BuildingFletcher.View::new)
+                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
+                              .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -327,5 +334,7 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.school);
         reg.register(ModBuildings.glassblower);
         reg.register(ModBuildings.dyer);
+        reg.register(ModBuildings.fletcher);
+
     }
 }
