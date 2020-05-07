@@ -67,6 +67,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      */
     private final ScrollingList recipeList;
 
+    private boolean isRemovalPossible = true;
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
      *
@@ -78,6 +79,23 @@ public class WindowListRecipes extends Window implements ButtonHandler
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
+        updateRecipes();
+    }
+
+    /**
+     * Constructor for the window when the player wants to assign a worker for a certain home building.
+     * Can additionally disable remove-buttons
+     *
+     * @param c          the colony view.
+     * @param buildingId the building position.
+     * @param isRemovalPossible whether or not to disable remove buttons.
+     */
+    public WindowListRecipes(final IColonyView c, final BlockPos buildingId, final boolean isRemovalPossible)
+    {
+        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
+        this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
+        recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
+        this.isRemovalPossible = isRemovalPossible;
         updateRecipes();
     }
 
@@ -126,6 +144,13 @@ public class WindowListRecipes extends Window implements ButtonHandler
                 final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
                 icon.setItem(recipe.getPrimaryOutput());
 
+                if (!isRemovalPossible) {
+                    final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
+                    if (removeButton != null) {
+                        removeButton.setVisible(false);
+                    }
+                }
+
                 final String name;
                 if(recipe.getInput().size() <= 4)
                 {
@@ -163,7 +188,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     public void onButtonClicked(@NotNull final Button button)
     {
         final int row = recipeList.getListElementIndexByPane(button) - 1;
-        if (button.getID().equals(BUTTON_REMOVE))
+        if (button.getID().equals(BUTTON_REMOVE) && isRemovalPossible)
         {
             final IRecipeStorage data = recipes.get(row+1);
             building.removeRecipe(row+1);

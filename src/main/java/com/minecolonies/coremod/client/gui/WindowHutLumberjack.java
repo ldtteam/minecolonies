@@ -77,12 +77,18 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
         registerButton(BUTTON_GIVE_TOOL, this::giveTool);
 
-
         setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
         setupRestrictionButton(findPaneOfTypeByID(BUTTON_TOGGLE_RESTRICTION, Button.class));
         setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
+    }
 
-
+    /**
+     * The lumberjack will not show recipe buttons
+     * @return false
+     */
+    @Override
+    protected boolean hasReadOnlyRecipes() {
+        return true;
     }
 
     private void giveTool()

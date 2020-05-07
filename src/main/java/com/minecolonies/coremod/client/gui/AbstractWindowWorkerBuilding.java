@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -96,6 +97,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
+    /**
+     * Defines whether or not the recipes of this buildings are read-only.
+     * Crafters with intrinsic recipes for example would override this to return true.
+     * @return Boolean stating if the teach-recipes button should be shown and Remove should be available.
+     */
+    protected boolean hasReadOnlyRecipes() {
+        return false;
+    }
 
     /**
      * Constructor for the window of the worker building.
@@ -148,7 +157,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private void recipeListClicked()
     {
-        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
+        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition(), !hasReadOnlyRecipes());
         window.open();
     }
 
@@ -224,6 +233,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                 }
             });
         }
+
+        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(!hasReadOnlyRecipes());
 
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
