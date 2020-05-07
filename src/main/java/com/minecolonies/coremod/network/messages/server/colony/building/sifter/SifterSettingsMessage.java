@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -98,7 +99,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
 
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.toomuch", qty));
         }
-        building.setup(new ItemStorage(block), new ItemStorage(mesh), qty);
 
         if (buy)
         {
@@ -106,8 +106,19 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
             if (player == null) return;
 
             if(!player.isCreative()) {
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), mesh);
+                final int slot = InventoryUtils.
+                        findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                                itemStack -> itemStack.isItemEqual(mesh));
+
+                //If the player doesn't have the item in the inventory, do not change anything
+                if(slot < 0) {
+                    return;
+                }
+
+                player.inventory.decrStackSize(slot, 1);
             }
         }
+
+        building.setup(new ItemStorage(block), new ItemStorage(mesh), qty);
     }
 }
