@@ -31,7 +31,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -195,7 +194,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     @Override
-    public Class<AbstractBuildingStructureBuilder> getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingStructureBuilder> getExpectedBuildingClass()
     {
         return AbstractBuildingStructureBuilder.class;
     }
@@ -1092,15 +1091,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             int y = fluidsToRemove.keySet().iterator().next();
         	List<BlockPos> fluids = fluidsToRemove.get(y);
             fluids.forEach(fluid -> {
-            	BlockState blockState = world.getBlockState(fluid);
-            	Block block = blockState.getBlock();
-                if(block instanceof IBucketPickupHandler && ((IBucketPickupHandler)block).pickupFluid(world, fluid, blockState) != Fluids.EMPTY)
-                {
-                }
-                else if (block instanceof FlowingFluidBlock)
-                {
-                    world.setBlockState(fluid, Blocks.AIR.getDefaultState(), 3);
-                }
+            	BlockUtils.removeFluid(world, fluid);
             });
             fluidsToRemove.remove(y);
             return getState();

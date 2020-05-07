@@ -78,7 +78,6 @@ public final class PirateEventUtils
         {
             return false;
         }
-        loadSpawners(world, targetSpawnPoint, shipSize, colony, eventID);
         return true;
     }
 
@@ -91,7 +90,7 @@ public final class PirateEventUtils
      * @param colony           the attacked colony.
      * @param eventID          the events id.
      */
-    private static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize, final IColony colony, final int eventID)
+    public static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize, final IColony colony, final int eventID)
     {
         switch (shipSize)
         {
