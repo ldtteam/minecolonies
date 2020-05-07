@@ -254,10 +254,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getCobbleLocation().getZ());
         @NotNull final BlockPos nextLadder =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world) - 1, getOwnBuilding().getLadderLocation().getZ());
+        @NotNull final BlockPos safeStand =
+          new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation(), world), getOwnBuilding().getLadderLocation().getZ());
 
         if (!world.getBlockState(nextCobble).isSolid())
         {
             if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
+            {
+                return getState();
+            }
+            if (!world.getBlockState(nextCobble).isAir(world, nextCobble) && !mineBlock(nextCobble, safeStand))
             {
                 return getState();
             }
@@ -268,6 +274,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (!world.getBlockState(nextLadder).isLadder(world, nextLadder, worker) && !world.getBlockState(nextLadder).isSolid())
         {
             if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
+            {
+                return getState();
+            }
+            if (!world.getBlockState(nextLadder).isAir(world, nextLadder) && !mineBlock(nextLadder, safeStand))
             {
                 return getState();
             }
