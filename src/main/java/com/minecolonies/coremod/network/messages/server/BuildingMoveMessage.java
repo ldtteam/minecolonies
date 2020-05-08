@@ -17,7 +17,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.event.EventHandler;
@@ -59,7 +59,7 @@ public class BuildingMoveMessage implements IMessage
     private boolean  mirror;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildingMoveMessage()
     {
@@ -67,8 +67,7 @@ public class BuildingMoveMessage implements IMessage
     }
 
     /**
-     * Create the building that was made with the build tool.
-     * Item in inventory required
+     * Create the building that was made with the build tool. Item in inventory required
      *
      * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
@@ -170,8 +169,8 @@ public class BuildingMoveMessage implements IMessage
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
         final BlockState blockState = world.getBlockState(buildPos);
-        if ( blockState.getBlock() instanceof IBuilderUndestroyable
-                 || blockState.getBlock() == Blocks.BEDROCK)
+        if (blockState.getBlock() instanceof IBuilderUndestroyable
+              || blockState.getBlock() == Blocks.BEDROCK)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.movebuilding.invalid"));
             return;

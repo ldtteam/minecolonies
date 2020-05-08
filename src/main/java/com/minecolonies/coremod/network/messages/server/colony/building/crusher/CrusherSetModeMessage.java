@@ -27,7 +27,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     private ItemStack crusherMode;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public CrusherSetModeMessage()
     {
@@ -69,7 +69,10 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingCrusher building)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         int qty = quantity;
         if (qty > building.getMaxDailyQuantity())

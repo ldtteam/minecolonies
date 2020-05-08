@@ -9,7 +9,6 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +39,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     private double posZ;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public LocalizedParticleEffectMessage()
     {
@@ -50,8 +49,8 @@ public class LocalizedParticleEffectMessage implements IMessage
     /**
      * Constructor to trigger an item particle message for crushing.
      *
-     * @param stack         the stack.
-     * @param pos          the pos.
+     * @param stack the stack.
+     * @param pos   the pos.
      */
     public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {
@@ -80,7 +79,6 @@ public class LocalizedParticleEffectMessage implements IMessage
         buf.writeDouble(posZ);
     }
 
-
     @Nullable
     @Override
     public LogicalSide getExecutionSide()
@@ -98,13 +96,13 @@ public class LocalizedParticleEffectMessage implements IMessage
         {
             final Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
             final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
-                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
-                  posX + randomOffset.x,
-                  posY + randomOffset.y,
-                  posZ + randomOffset.z,
-                  randomPos.x,
-                  randomPos.y + 0.05D,
-                  randomPos.z);
+            world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
+              posX + randomOffset.x,
+              posY + randomOffset.y,
+              posZ + randomOffset.z,
+              randomPos.x,
+              randomPos.y + 0.05D,
+              randomPos.z);
         }
     }
 }

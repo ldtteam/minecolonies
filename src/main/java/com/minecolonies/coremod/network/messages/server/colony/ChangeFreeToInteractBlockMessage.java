@@ -32,7 +32,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     private BlockState block = Blocks.DIRT.getDefaultState();
 
     /**
-     * The type of the 
+     * The type of the
      */
     private MessageType type;
     private MessageMode mode;
@@ -50,7 +50,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      *
      * @param colony Colony the block can be interacted with in.
      * @param block  the blockState.
-     * @param type   the type of 
+     * @param type   the type of
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
     {
@@ -66,7 +66,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      *
      * @param colony Colony the position can be interacted with in.
      * @param pos    the position.
-     * @param type   the type of 
+     * @param type   the type of
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
     {
@@ -108,7 +108,10 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         //Verify player has permission to change this huts settings
 
@@ -166,10 +169,9 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     }
 
     /**
-     * Enums for Message Type for the freeBlock 
+     * Enums for Message Type for the freeBlock
      * <p>
-     * ADD_BLOCK       Add a block or pos.
-     * REMOVE_BLOCK    Removing a block or pos.
+     * ADD_BLOCK       Add a block or pos. REMOVE_BLOCK    Removing a block or pos.
      */
     public enum MessageType
     {

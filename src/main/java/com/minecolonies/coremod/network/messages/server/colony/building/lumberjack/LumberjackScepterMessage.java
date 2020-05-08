@@ -50,7 +50,10 @@ public class LumberjackScepterMessage extends AbstractBuildingServerMessage<Buil
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingLumberjack building)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         final ItemStack scepter;
         boolean giveToPlayer = true;
