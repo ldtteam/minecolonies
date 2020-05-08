@@ -15,9 +15,9 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import net.minecraft.block.HopperBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -102,6 +102,18 @@ public class BuildingMechanic extends AbstractBuildingCrafter
             return false;
         }
 
+
+        if (storage.getPrimaryOutput().getItem().getRegistryName().getPath().contains("ice")
+              || ItemTags.RAILS.contains(storage.getPrimaryOutput().getItem())
+              ||  storage.getPrimaryOutput().getItem() instanceof MinecartItem
+              || storage.getPrimaryOutput().getItem() == Items.JACK_O_LANTERN
+              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock)
+              || Tags.Items.STORAGE_BLOCKS.contains(storage.getPrimaryOutput().getItem())
+              || storage.getPrimaryOutput().getItem() == Items.ENCHANTING_TABLE)
+        {
+            return true;
+        }
+
         boolean hasValidItem = false;
 
         for(final ItemStack stack : storage.getInput())
@@ -110,14 +122,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
             {
                 hasValidItem = true;
             }
-
-            if (ItemTags.WOOL.contains(stack.getItem()) || stack.getItem() == Items.STRING)
-            {
-                hasValidItem = true;
-            }
         }
-
-        //enchanting table/ packed ice / blue ice / bone block / hopper / jack o lantern / minecarts / rails / clock / compass
 
         return hasValidItem;
     }
