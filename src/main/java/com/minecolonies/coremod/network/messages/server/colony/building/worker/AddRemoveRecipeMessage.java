@@ -49,8 +49,9 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
 
     /**
      * Create a message to add or remove recipes.
-     * @param storage the recipe storage.
-     * @param remove true if remove.
+     *
+     * @param storage  the recipe storage.
+     * @param remove   true if remove.
      * @param building the building we're executing on.
      */
     public AddRemoveRecipeMessage(final IBuildingWorkerView building, final boolean remove, final IRecipeStorage storage)
@@ -61,14 +62,13 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     }
 
     /**
-     * Create a message to add or remove recipes.
-     * This constructor creates the recipeStorage on its own.
+     * Create a message to add or remove recipes. This constructor creates the recipeStorage on its own.
      *
-     * @param input the input.
-     * @param gridSize the gridSize.
+     * @param input         the input.
+     * @param gridSize      the gridSize.
      * @param primaryOutput the primary output.
-     * @param remove true if remove.
-     * @param building the building we're executing on.
+     * @param remove        true if remove.
+     * @param building      the building we're executing on.
      */
     public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final boolean remove)
     {
@@ -124,11 +124,14 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         @SuppressWarnings("rawtypes") final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
 
-        if(remove)
+        if (remove)
         {
             building.removeRecipe(token);
         }
@@ -146,6 +149,5 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         building.markDirty();
-
     }
 }

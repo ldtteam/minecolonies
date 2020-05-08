@@ -46,7 +46,10 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final ServerPlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
         building.openCraftingContainer(player);
     }
 }

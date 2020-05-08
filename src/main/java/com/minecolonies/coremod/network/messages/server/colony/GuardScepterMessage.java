@@ -42,7 +42,7 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
     /**
      * Creates a new message of this type to set the guard scepter in the player inventory.
      *
-     * @param taskId     the task id.
+     * @param taskId   the task id.
      * @param building the building we're executing on.
      */
     public GuardScepterMessage(final IBuildingView building, final int taskId)
@@ -74,7 +74,10 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
         final ItemStack scepter;
         boolean giveToPlayer = true;
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {

@@ -9,13 +9,12 @@ import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.BlockState;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +48,7 @@ public class DecorationBuildRequestMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public DecorationBuildRequestMessage()
     {
@@ -58,9 +57,10 @@ public class DecorationBuildRequestMessage implements IMessage
 
     /**
      * Creates a build request for a decoration.
-     * @param pos the position of it.
-     * @param name  it's name.
-     * @param level the level.
+     *
+     * @param pos       the position of it.
+     * @param name      it's name.
+     * @param level     the level.
      * @param dimension the dimension we're executing on.
      */
     public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final int dimension)
@@ -117,8 +117,8 @@ public class DecorationBuildRequestMessage implements IMessage
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                  .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
-                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(pos)).findFirst();
+                                                                  .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
+                                                                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {

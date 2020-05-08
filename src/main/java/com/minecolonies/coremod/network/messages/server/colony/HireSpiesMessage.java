@@ -30,7 +30,10 @@ public class HireSpiesMessage extends AbstractColonyServerMessage
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> stack.getItem() == Items.GOLD_INGOT) > SPIES_GOLD_COST)
         {

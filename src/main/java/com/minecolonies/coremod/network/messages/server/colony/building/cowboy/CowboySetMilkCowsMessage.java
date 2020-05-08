@@ -20,17 +20,16 @@ public class CowboySetMilkCowsMessage extends AbstractBuildingServerMessage<Buil
     }
 
     /**
-     * Creates object for the CowboySetMilk 
+     * Creates object for the CowboySetMilk
      *
-     * @param building       View of the building to read data from.
-     * @param milkCows       Whether Cowboy should milk cows.
+     * @param building View of the building to read data from.
+     * @param milkCows Whether Cowboy should milk cows.
      */
     public CowboySetMilkCowsMessage(@NotNull final BuildingCowboy.View building, final boolean milkCows)
     {
         super(building);
         this.milkCows = milkCows;
     }
-
 
     @Override
     public void fromBytesOverride(final PacketBuffer buf)

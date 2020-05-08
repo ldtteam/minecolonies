@@ -77,5 +77,4 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
             building.markDirty();
         }
     }
-
 }
