@@ -12,10 +12,10 @@ public class EntityAIWorkMechanic extends AbstractEntityAICrafting<JobMechanic>
     /**
      * Initialize the mechanic and add all his tasks.
      *
-     * @param sawmill the job he has.
+     * @param mechanic the job he has.
      */
-    public EntityAIWorkMechanic(@NotNull final JobMechanic sawmill)
+    public EntityAIWorkMechanic(@NotNull final JobMechanic mechanic)
     {
-        super(sawmill);
+        super(mechanic);
     }
 }
