@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     private Map<Integer, ItemStack> itemStacks = new HashMap<>();
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public TransferRecipeCrafingTeachingMessage()
     {
@@ -38,8 +38,9 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
 
     /**
      * Creates a new message to get jei recipes.
+     *
      * @param itemStacks the stack recipes to register.
-     * @param complete whether we're complete
+     * @param complete   whether we're complete
      */
     public TransferRecipeCrafingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete)
     {
@@ -87,7 +88,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
         {
             final ContainerCrafting container = (ContainerCrafting) player.openContainer;
 
-            if(complete)
+            if (complete)
             {
                 container.handleSlotClick(container.getSlot(1), itemStacks.containsKey(0) ? itemStacks.get(0) : ItemStackUtils.EMPTY);
                 container.handleSlotClick(container.getSlot(2), itemStacks.containsKey(1) ? itemStacks.get(1) : ItemStackUtils.EMPTY);

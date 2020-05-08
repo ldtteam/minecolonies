@@ -26,7 +26,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     /***
      * The inventory name.
      */
-    private String        name;
+    private String name;
 
     /**
      * The inventory type.
@@ -36,12 +36,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     /**
      * The entities id.
      */
-    private int           entityID;
+    private int entityID;
 
     /**
      * The position of the inventory block/entity.
      */
-    private BlockPos      tePos;
+    private BlockPos tePos;
 
     /**
      * Empty public constructor.
@@ -53,8 +53,9 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     /**
      * Creates an open inventory message for the citizen.
-     * @param name the name of the citizen.
-     * @param id its id.
+     *
+     * @param name   the name of the citizen.
+     * @param id     its id.
      * @param colony the colony of the network message
      */
     public OpenInventoryMessage(IColonyView colony, @NotNull final String name, final int id)
@@ -118,7 +119,10 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final ServerPlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:

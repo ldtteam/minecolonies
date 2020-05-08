@@ -37,7 +37,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     /**
      * Object creation for the recall.
      *
-     * @param building View of the building the citizen should be teleported to.
+     * @param building  View of the building the citizen should be teleported to.
      * @param citizenid the id of the citizen.
      */
     public RecallSingleCitizenMessage(final IBuildingView building, final int citizenid)
@@ -80,7 +80,10 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
         if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
         {
             final PlayerEntity player = ctxIn.getSender();
-            if (player == null) return;
+            if (player == null)
+            {
+                return;
+            }
 
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerhuts.recallFail");
         }

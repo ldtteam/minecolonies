@@ -37,7 +37,7 @@ public class AddMinimumStockToBuildingMessage extends AbstractBuildingServerMess
      *
      * @param itemStack to be take from the player for the building
      * @param quantity  of item needed to be transfered
-     * @param building the building we're executing on.
+     * @param building  the building we're executing on.
      */
     public AddMinimumStockToBuildingMessage(final IBuildingView building, final ItemStack itemStack, final int quantity)
     {

@@ -18,8 +18,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.Optional;
 
 /**
- * Recalls the citizen to the hut.
- * Created: May 26, 2014
+ * Recalls the citizen to the hut. Created: May 26, 2014
  *
  * @author Colton
  */
@@ -54,7 +53,10 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     protected void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
     {
-        if (building.getAssignedEntities() == null) return;
+        if (building.getAssignedEntities() == null)
+        {
+            return;
+        }
 
         for (int i = 0; i < building.getAssignedEntities().size(); i++)
         {
@@ -83,7 +85,10 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
             if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
             {
                 final PlayerEntity player = ctxIn.getSender();
-                if (player == null) return;
+                if (player == null)
+                {
+                    return;
+                }
 
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerhuts.recallFail");
             }

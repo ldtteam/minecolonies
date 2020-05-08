@@ -18,7 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse>
 {
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public UpgradeWarehouseMessage()
     {
@@ -47,7 +47,10 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingWareHouse building)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         building.upgradeContainers(player.world);
 

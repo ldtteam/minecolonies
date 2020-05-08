@@ -42,7 +42,7 @@ public class CircleParticleEffectMessage implements IMessage
     private int stage;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public CircleParticleEffectMessage()
     {

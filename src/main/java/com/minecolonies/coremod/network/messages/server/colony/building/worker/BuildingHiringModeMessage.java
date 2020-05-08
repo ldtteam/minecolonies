@@ -20,7 +20,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     private HiringMode mode;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildingHiringModeMessage()
     {
@@ -28,10 +28,10 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     }
 
     /**
-     * Creates object for the hiring mode 
+     * Creates object for the hiring mode
      *
      * @param building View of the building to read data from.
-     * @param mode  the hiring mode.
+     * @param mode     the hiring mode.
      */
     public BuildingHiringModeMessage(@NotNull final IBuildingWorkerView building, final HiringMode mode)
     {

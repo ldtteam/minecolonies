@@ -381,6 +381,7 @@
   "com.minecolonies.command.citizenspawn.success": "Spawned new citizen: %s",
 
   "com.minecolonies.command.colonyidnotfound": "Colony for id %s could not be found in this dimension!",
+  "com.minecolonies.command.nocolony": "Message: %s could not find any colony",
   "com.minecolonies.command.playernotfound": "Player %s could not be found.",
   "com.minecolonies.command.notenabledinconfig": "This command is disabled in the config.",
   "com.minecolonies.command.resetsupply": "Successfully reset the supply camp and ship placement",

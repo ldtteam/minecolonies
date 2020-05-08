@@ -21,7 +21,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     private ItemStack itemStack;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public PostBoxRequestMessage()
     {
@@ -29,7 +29,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     /**
-     * Creates a Transfer Items request 
+     * Creates a Transfer Items request
      *
      * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building

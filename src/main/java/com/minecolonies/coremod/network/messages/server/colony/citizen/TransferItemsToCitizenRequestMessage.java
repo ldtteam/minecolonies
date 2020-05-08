@@ -38,7 +38,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     private int quantity;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public TransferItemsToCitizenRequestMessage()
     {
@@ -46,7 +46,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     }
 
     /**
-     * Creates a Transfer Items request 
+     * Creates a Transfer Items request
      *
      * @param citizenDataView Citizen of the request.
      * @param itemStack       to be take from the player for the building
@@ -95,7 +95,10 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         }
 
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         final boolean isCreative = player.isCreative();
         if (quantity <= 0 && !isCreative)

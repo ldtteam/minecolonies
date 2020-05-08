@@ -9,7 +9,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,7 @@ public class ItemParticleEffectMessage implements IMessage
     private double posZ;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ItemParticleEffectMessage()
     {
@@ -64,15 +63,23 @@ public class ItemParticleEffectMessage implements IMessage
 
     /**
      * Constructor to trigger an item particle message for eating.
-     * @param stack the stack.
-     * @param posX the double x pos.
-     * @param posY the double y pos.
-     * @param posZ the double z pos.
+     *
+     * @param stack         the stack.
+     * @param posX          the double x pos.
+     * @param posY          the double y pos.
+     * @param posZ          the double z pos.
      * @param rotationPitch the rotation pitch.
-     * @param rotationYaw the rotation yaw.
-     * @param eyeHeight the eye height.
+     * @param rotationYaw   the rotation yaw.
+     * @param eyeHeight     the eye height.
      */
-    public ItemParticleEffectMessage(final ItemStack stack, final double posX, final double posY, final double posZ, final double rotationPitch, final double rotationYaw, final double eyeHeight)
+    public ItemParticleEffectMessage(
+      final ItemStack stack,
+      final double posX,
+      final double posY,
+      final double posZ,
+      final double rotationPitch,
+      final double rotationYaw,
+      final double eyeHeight)
     {
         this.stack = stack;
         this.posX = posX;
@@ -126,18 +133,18 @@ public class ItemParticleEffectMessage implements IMessage
                 Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
                 randomPos = randomPos.rotatePitch((float) (-rotationPitch * 0.017453292F));
                 randomPos = randomPos.rotateYaw((float) (-rotationYaw * 0.017453292F));
-                final double d0 =  -RAND.nextDouble() * 0.6D - 0.3D;
+                final double d0 = -RAND.nextDouble() * 0.6D - 0.3D;
                 Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
                 randomOffset = randomOffset.rotatePitch((float) (-rotationPitch * 0.017453292F));
                 randomOffset = randomOffset.rotateYaw((float) (-rotationYaw * 0.017453292F));
                 randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);
-                    world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
-                      randomOffset.x,
-                      randomOffset.y,
-                      randomOffset.z,
-                      randomPos.x,
-                      randomPos.y + 0.05D,
-                      randomPos.z);
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
+                  randomOffset.x,
+                  randomOffset.y,
+                  randomOffset.z,
+                  randomPos.x,
+                  randomPos.y + 0.05D,
+                  randomPos.z);
             }
         }
     }
