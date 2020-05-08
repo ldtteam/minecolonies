@@ -98,7 +98,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
     /**
-     * Defines whether or not the recipes of this buildings are read-only. Crafters with intrinsic recipes for example would override this to return true.
+     * Defines whether or not the recipes of this buildings are read-only.
+     * Crafters with intrinsic recipes for example would override this to return true.
      *
      * @return Boolean stating if the teach-recipes button should be shown and Remove should be available.
      */
@@ -173,7 +174,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     }
 
     /**
-     * Action when a hire button is clicked. If there is no worker (worker.Id == 0) then Contract someone. Else then Fire the current worker.
+     * Action when a hire button is clicked.
+     * If there is no worker (worker.Id == 0) then Contract someone.
+     * Else then Fire the current worker.
      *
      * @param button the clicked button.
      */

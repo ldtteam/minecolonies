@@ -58,8 +58,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
-     * actions :-)
+     * The number of actions a crafting "success" is worth.
+     * By default, that's 1 action for 1 crafting success.
+     * Override this in your subclass to make crafting recipes worth more actions :-)
      */
     protected int getActionRewardForCraftingSuccess()
     {

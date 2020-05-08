@@ -31,8 +31,10 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 /**
  * Basic job information.
  * <p>
- * Suppressing Sonar Rule squid:S2390 This rule does "Classes should not access static members of their own subclasses during initialization" But in this case the rule does not
- * apply because We are only mapping classes and that is reasonable
+ * Suppressing Sonar Rule squid:S2390
+ * This rule does "Classes should not access static members of their own subclasses during initialization"
+ * But in this case the rule does not apply because
+ * We are only mapping classes and that is reasonable
  */
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
@@ -341,7 +343,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Increase the actions done since the last reset by 1 Used for example to detect if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1
+     * Used for example to detect if and when the inventory has to be dumped.
      */
     @Override
     public void incrementActionsDone()
@@ -350,7 +353,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Increase the actions done since the last reset by numberOfActions Used for example to detect if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by numberOfActions
+     * Used for example to detect if and when the inventory has to be dumped.
      */
     @Override
     public void incrementActionsDone(int numberOfActions)
@@ -359,7 +363,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Clear the actions done counter. Call this when dumping into the chest.
+     * Clear the actions done counter.
+     * Call this when dumping into the chest.
      */
     @Override
     public void clearActionsDone()

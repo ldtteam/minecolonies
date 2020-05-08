@@ -84,7 +84,8 @@ public class WindowListRecipes extends Window implements ButtonHandler
     }
 
     /**
-     * Constructor for the window when the player wants to assign a worker for a certain home building. Can additionally disable remove-buttons
+     * Constructor for the window when the player wants to assign a worker for a certain home building.
+     * Can additionally disable remove-buttons
      *
      * @param c                 the colony view.
      * @param buildingId        the building position.
@@ -109,7 +110,8 @@ public class WindowListRecipes extends Window implements ButtonHandler
     }
 
     /**
-     * Called when the GUI has been opened. Will fill the fields and lists.
+     * Called when the GUI has been opened.
+     * Will fill the fields and lists.
      */
     @Override
     public void onOpened()

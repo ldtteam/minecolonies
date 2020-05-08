@@ -216,8 +216,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * The lumberjack is a special worker. In his/her decision state, he/she will try to add lumberjack cycles If there's nothing left to craft, he/she will proceed with
-     * woodworking
+     * The lumberjack is a special worker.
+     * In his/her decision state, he/she will try to add lumberjack cycles
+     * If there's nothing left to craft, he/she will proceed with woodworking
      *
      * @return the next state to go to.
      */
