@@ -8,7 +8,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ public class CompostParticleMessage implements IMessage
     private BlockPos pos;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public CompostParticleMessage()
     {

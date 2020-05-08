@@ -11,8 +11,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Adds a entry to the builderRequired map.
- * Created: May 26, 2014
+ * Adds a entry to the builderRequired map. Created: May 26, 2014
  *
  * @author Colton
  */
@@ -38,9 +37,8 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
      */
     private BlockPos builder;
 
-
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildRequestMessage()
     {
@@ -48,11 +46,11 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     }
 
     /**
-     * Creates a build request 
+     * Creates a build request
      *
      * @param building the building we're executing on.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
-     * @param builder the builder we're assinging the request to
+     * @param builder  the builder we're assinging the request to
      */
     public BuildRequestMessage(@NotNull final IBuildingView building, final int mode, final BlockPos builder)
     {

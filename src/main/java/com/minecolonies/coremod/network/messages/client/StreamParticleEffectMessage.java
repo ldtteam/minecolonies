@@ -54,7 +54,7 @@ public class StreamParticleEffectMessage implements IMessage
     private int maxStage;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public StreamParticleEffectMessage()
     {
@@ -63,21 +63,22 @@ public class StreamParticleEffectMessage implements IMessage
 
     /**
      * Start a particle stream.
-     * @param start the starting position.
-     * @param end the end position.
-     * @param type the particle type.
-     * @param stage the stage we're at
+     *
+     * @param start    the starting position.
+     * @param end      the end position.
+     * @param type     the particle type.
+     * @param stage    the stage we're at
      * @param maxStage the max stage
      */
     public StreamParticleEffectMessage(final Vec3d start, final Vec3d end, final BasicParticleType type, final int stage, final int maxStage)
     {
         super();
         this.sPosX = start.x;
-        this.sPosY = start.y -0.5;
+        this.sPosY = start.y - 0.5;
         this.sPosZ = start.z;
 
         this.ePosX = end.x;
-        this.ePosY = end.y -0.5;
+        this.ePosY = end.y - 0.5;
         this.ePosZ = end.z;
 
         this.stage = stage;
@@ -100,7 +101,6 @@ public class StreamParticleEffectMessage implements IMessage
         this.stage = buf.readInt();
         this.maxStage = buf.readInt();
         this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
-
     }
 
     @Override
@@ -133,15 +133,15 @@ public class StreamParticleEffectMessage implements IMessage
 
         final Vec3d end = new Vec3d(ePosX, ePosY, ePosZ);
 
-        double xDif = ( sPosX - ePosX ) / maxStage ;
-        double yDif = ( sPosY - ePosY ) / maxStage;
-        double zDif = ( sPosZ - ePosZ ) / maxStage;
+        double xDif = (sPosX - ePosX) / maxStage;
+        double yDif = (sPosY - ePosY) / maxStage;
+        double zDif = (sPosZ - ePosZ) / maxStage;
 
         final double curve = maxStage / 3.0;
 
         for (int step = Math.max(0, stage - 1); step <= Math.min(maxStage, stage + 1); step++)
         {
-            double minDif = Math.min(step, Math.abs(step-maxStage))/curve;
+            double minDif = Math.min(step, Math.abs(step - maxStage)) / curve;
 
             for (int i = 0; i < 10; ++i)
             {
@@ -149,7 +149,7 @@ public class StreamParticleEffectMessage implements IMessage
                 final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
                 world.addParticle(type,
                   end.x + randomOffset.x + xDif * step,
-                  end.y + randomOffset.y + yDif *step + minDif,
+                  end.y + randomOffset.y + yDif * step + minDif,
                   end.z + randomOffset.z + zDif * step,
                   randomPos.x,
                   randomPos.y + 0.05D,

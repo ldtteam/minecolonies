@@ -16,9 +16,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewBuildingViewMessage implements IMessage
 {
-    private int      colonyId;
-    private BlockPos buildingId;
-    private PacketBuffer  buildingData;
+    private int          colonyId;
+    private BlockPos     buildingId;
+    private PacketBuffer buildingData;
 
     /**
      * Dimension of the colony.
