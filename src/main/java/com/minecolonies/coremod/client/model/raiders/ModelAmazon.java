@@ -31,14 +31,14 @@ public class ModelAmazon extends AmazonModel<AbstractEntityAmazon>
         hairBack1 = new ModelRenderer(this);
         hairBack1.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedHead.addChild(hairBack1);
-        hairBack1.setTextureOffset(24, 4).addBox(-4.5F, -5.5F, -4.5F, 1.0F, 2.0F, 1.0F, 0.0F, false);
-        hairBack1.setTextureOffset(24, 0).addBox(3.5F, -5.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, false);
+        hairBack1.setTextureOffset(4, 0).addBox(-4.5F, -5.5F, -4.5F, 1.0F, 2.0F, 1.0F, 0.0F, false);
+        hairBack1.setTextureOffset(33, 30).addBox(3.5F, -5.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, false);
         hairBack1.setTextureOffset(0, 16).addBox(-5.0F, -7.2F, -4.8F, 10.0F, 2.0F, 8.0F, 0.0F, false);
-        hairBack1.setTextureOffset(28, 18).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 2.0F, 4.0F, 0.0F, false);
-        hairBack1.setTextureOffset(48, 13).addBox(-4.5F, -6.5F, -4.5F, 2.0F, 1.0F, 4.0F, 0.0F, false);
-        hairBack1.setTextureOffset(45, 24).addBox(2.5F, -6.5F, -4.5F, 2.0F, 1.0F, 4.0F, 0.0F, false);
+        hairBack1.setTextureOffset(23, 26).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 2.0F, 4.0F, 0.0F, false);
+        hairBack1.setTextureOffset(56, 44).addBox(-4.5F, -6.5F, -4.5F, 2.0F, 1.0F, 4.0F, 0.0F, false);
+        hairBack1.setTextureOffset(52, 39).addBox(2.5F, -6.5F, -4.5F, 2.0F, 1.0F, 4.0F, 0.0F, false);
         hairBack1.setTextureOffset(24, 26).addBox(-4.5F, -8.5F, 1.5F, 9.0F, 9.0F, 3.0F, 0.0F, false);
-        hairBack1.setTextureOffset(48, 0).addBox(-4.5F, -8.5F, -0.5F, 9.0F, 5.0F, 2.0F, 0.0F, false);
+        hairBack1.setTextureOffset(24, 29).addBox(-4.5F, -8.5F, -0.5F, 9.0F, 5.0F, 2.0F, 0.0F, false);
 
         feather = new ModelRenderer(this);
         feather.setRotationPoint(-9.3F, -8.0F, -0.1F);
@@ -54,21 +54,21 @@ public class ModelAmazon extends AmazonModel<AbstractEntityAmazon>
         hairback.setRotationPoint(0.0F, -7.0F, 3.0F);
         hairBack1.addChild(hairback);
         setRotationAngle(hairback, -0.5236F, 0.0F, 0.0F);
-        hairback.setTextureOffset(3, 5).addBox(-0.5F, -3.0314F, -0.5411F, 1.0F, 2.0F, 1.0F, 0.0F, false);
-        hairback.setTextureOffset(0, 26).addBox(-0.5F, -5.8046F, 0.3981F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-        hairback.setTextureOffset(0, 0).addBox(-0.5F, -1.2233F, 0.6553F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-        hairback.setTextureOffset(20, 26).addBox(-0.5F, -3.869F, 0.9776F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-        hairback.setTextureOffset(23, 27).addBox(-0.5F, -3.5984F, -0.2911F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+        hairback.setTextureOffset(35, 31).addBox(-0.5F, -3.0314F, -0.5411F, 1.0F, 2.0F, 1.0F, 0.0F, false);
+        hairback.setTextureOffset(16, 20).addBox(-0.5F, -5.8046F, 0.3981F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+        hairback.setTextureOffset(35, 29).addBox(-0.5F, -1.2233F, 0.6553F, 1.0F, 5.0F, 1.0F, 0.0F, false);
+        hairback.setTextureOffset(0, 22).addBox(-0.5F, -3.869F, 0.9776F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+        hairback.setTextureOffset(3, 21).addBox(-0.5F, -3.5984F, -0.2911F, 1.0F, 1.0F, 1.0F, 0.0F, false);
         hairback.setTextureOffset(14, 43).addBox(-0.5F, -5.3135F, 0.4115F, 1.0F, 9.0F, 1.0F, 0.0F, false);
 
         bone = new ModelRenderer(this);
         bone.setRotationPoint(0.0F, -4.5F, 1.5981F);
         hairback.addChild(bone);
         setRotationAngle(bone, 0.5236F, 0.0F, 0.0F);
-        bone.setTextureOffset(0, 16).addBox(-0.5F, -1.3154F, -0.6545F, 1.0F, 4.0F, 1.0F, 0.0F, false);
-        bone.setTextureOffset(3, 20).addBox(-0.5F, 1.9346F, -0.2545F, 1.0F, 3.0F, 1.0F, 0.0F, false);
-        bone.setTextureOffset(4, 16).addBox(-0.5F, 3.9346F, -0.9545F, 1.0F, 3.0F, 1.0F, 0.0F, false);
-        bone.setTextureOffset(4, 0).addBox(-0.5F, 5.9346F, -0.6545F, 1.0F, 4.0F, 1.0F, 0.0F, false);
+        bone.setTextureOffset(29, 28).addBox(-0.5F, -1.3154F, -0.6545F, 1.0F, 4.0F, 1.0F, 0.0F, false);
+        bone.setTextureOffset(29, 29).addBox(-0.5F, 1.9346F, -0.2545F, 1.0F, 3.0F, 1.0F, 0.0F, false);
+        bone.setTextureOffset(35, 30).addBox(-0.5F, 3.9346F, -0.9545F, 1.0F, 3.0F, 1.0F, 0.0F, false);
+        bone.setTextureOffset(4, 16).addBox(-0.5F, 5.9346F, -0.6545F, 1.0F, 4.0F, 1.0F, 0.0F, false);
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -84,12 +84,12 @@ public class ModelAmazon extends AmazonModel<AbstractEntityAmazon>
 
         bipedLeftLeg = new ModelRenderer(this);
         bipedLeftLeg.setRotationPoint(2.0F, 9.0F, 0.0F);
-        bipedLeftLeg.setTextureOffset(43, 33).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
+        bipedLeftLeg.setTextureOffset(10, 19).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
         bipedLeftLeg.setTextureOffset(32, 0).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 14.0F, 4.0F, 0.0F, false);
 
         bipedRightLeg = new ModelRenderer(this);
         bipedRightLeg.setRotationPoint(-2.0F, 9.0F, 0.0F);
-        bipedRightLeg.setTextureOffset(43, 33).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
+        bipedRightLeg.setTextureOffset(10, 18).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
         bipedRightLeg.setTextureOffset(24, 38).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 14.0F, 4.0F, 0.0F, false);
 
         bipedLeftArm = new ModelRenderer(this);
@@ -104,8 +104,6 @@ public class ModelAmazon extends AmazonModel<AbstractEntityAmazon>
         handstuff.setRotationPoint(5.0F, 24.0F, 0.0F);
         bipedRightArm.addChild(handstuff);
         handstuff.setTextureOffset(43, 33).addBox(-7.5F, -18.0F, -2.5F, 4.0F, 1.0F, 5.0F, 0.0F, false);
-
-        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

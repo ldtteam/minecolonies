@@ -4,6 +4,7 @@ import com.minecolonies.coremod.client.model.raiders.ModelAmazonChief;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for Chief amazons.
@@ -25,6 +26,7 @@ public class RendererChiefAmazon extends AbstractRendererAmazon
         super(renderManagerIn, new ModelAmazonChief(), 0.5F);
     }
 
+    @NotNull
     @Override
     public ResourceLocation getEntityTexture(final MobEntity entity)
     {
