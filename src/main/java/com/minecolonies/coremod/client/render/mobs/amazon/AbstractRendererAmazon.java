@@ -14,7 +14,7 @@ public abstract class AbstractRendererAmazon<T extends AbstractEntityAmazon, M e
 {
     public AbstractRendererAmazon(final EntityRendererManager renderManagerIn, final M modelBipedIn, final float shadowSize)
     {
-        super(renderManagerIn, (M) new BipedModel(0.0F), shadowSize);
+        super(renderManagerIn, modelBipedIn, shadowSize);
         this.addLayer(new HeldItemLayer(this));
         this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.0F)));
     }
