@@ -71,10 +71,8 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Generate your AI class to register.
      * <p>
-     * Suppressing Sonar Rule squid:S1452
-     * This rule does "Generic wildcard types should not be used in return parameters"
-     * But in this case the rule does not apply because
-     * We are fine with all AbstractJob implementations and need generics only for java
+     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters" But in this case the rule does not apply because We are
+     * fine with all AbstractJob implementations and need generics only for java
      *
      * @return your personal AI instance.
      */
@@ -94,16 +92,14 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     void setCheckedForFood();
 
     /**
-     * This method can be used to display the current status.
-     * That a citizen is having.
+     * This method can be used to display the current status. That a citizen is having.
      *
      * @return Small string to display info in name tag
      */
     String getNameTagDescription();
 
     /**
-     * Used by the AI skeleton to change a citizens name.
-     * Mostly used to update debugging information.
+     * Used by the AI skeleton to change a citizens name. Mostly used to update debugging information.
      *
      * @param nameTag The name tag to display.
      */
@@ -157,22 +153,17 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     int getActionsDone();
 
     /**
-     * Increase the actions done since the last reset by 1
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1 Used for example to detect if and when the inventory has to be dumped.
      */
     public void incrementActionsDone();
 
     /**
-     * Increase the actions done since the last reset by numberOfActions
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by numberOfActions Used for example to detect if and when the inventory has to be dumped.
      */
     public void incrementActionsDone(int numberOfActions);
 
     /**
-     * Clear the actions done counter.
-     * Call this when dumping into the chest.
+     * Clear the actions done counter. Call this when dumping into the chest.
      */
     void clearActionsDone();
 
@@ -197,12 +188,14 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Method to check if the colony job allows avoidance.
+     *
      * @return true if so.
      */
     boolean allowsAvoidance();
 
     /**
      * Disease modifier of the job.
+     *
      * @return the modifier of the job.
      */
     int getDiseaseModifier();
@@ -214,6 +207,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Set if the worker can currently work.
+     *
      * @param b true if so.
      */
     void setActive(final boolean b);

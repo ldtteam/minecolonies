@@ -31,10 +31,8 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 /**
  * Basic job information.
  * <p>
- * Suppressing Sonar Rule squid:S2390
- * This rule does "Classes should not access static members of their own subclasses during initialization"
- * But in this case the rule does not apply because
- * We are only mapping classes and that is reasonable
+ * Suppressing Sonar Rule squid:S2390 This rule does "Classes should not access static members of their own subclasses during initialization" But in this case the rule does not
+ * apply because We are only mapping classes and that is reasonable
  */
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
@@ -126,7 +124,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         final CompoundNBT compound = new CompoundNBT();
 
         compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
-        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().filter(token -> getColony().getRequestManager().getRequestForToken(token) != null).map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_ASYNC_REQUESTS,
+          getAsyncRequests().stream()
+            .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
+            .map(StandardFactoryController.getInstance()::serialize)
+            .collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
@@ -232,8 +234,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * This method can be used to display the current status.
-     * That a citizen is having.
+     * This method can be used to display the current status. That a citizen is having.
      *
      * @return Small string to display info in name tag
      */
@@ -244,8 +245,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Used by the AI skeleton to change a citizens name.
-     * Mostly used to update debugging information.
+     * Used by the AI skeleton to change a citizens name. Mostly used to update debugging information.
      *
      * @param nameTag The name tag to display.
      */
@@ -254,7 +254,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         this.nameTag = nameTag;
     }
-
 
     /**
      * Override this to implement Job specific death achievements.
@@ -342,9 +341,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Increase the actions done since the last reset by 1
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1 Used for example to detect if and when the inventory has to be dumped.
      */
     @Override
     public void incrementActionsDone()
@@ -353,9 +350,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Increase the actions done since the last reset by numberOfActions
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by numberOfActions Used for example to detect if and when the inventory has to be dumped.
      */
     @Override
     public void incrementActionsDone(int numberOfActions)
@@ -364,8 +359,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Clear the actions done counter.
-     * Call this when dumping into the chest.
+     * Clear the actions done counter. Call this when dumping into the chest.
      */
     @Override
     public void clearActionsDone()

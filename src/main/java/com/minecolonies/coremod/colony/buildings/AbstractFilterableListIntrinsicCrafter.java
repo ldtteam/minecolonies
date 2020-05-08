@@ -11,38 +11,23 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
@@ -55,7 +40,7 @@ public abstract class AbstractFilterableListIntrinsicCrafter extends AbstractFil
      * @param c the colony
      * @param l the position
      */
-    public AbstractFilterableListIntrinsicCrafter(@NotNull final IColony c, final BlockPos l)
+    protected AbstractFilterableListIntrinsicCrafter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -73,10 +58,10 @@ public abstract class AbstractFilterableListIntrinsicCrafter extends AbstractFil
     public boolean canBeGathered()
     {
         return super.canBeGathered() &&
-                this.getAssignedCitizen().stream()
-                        .map(c -> c.getJob(AbstractJobCrafter.class))
-                        .filter(Objects::nonNull)
-                        .allMatch(AbstractJobCrafter::hasTask);
+                 this.getAssignedCitizen().stream()
+                   .map(c -> c.getJob(AbstractJobCrafter.class))
+                   .filter(Objects::nonNull)
+                   .allMatch(AbstractJobCrafter::hasTask);
     }
 
     @Override
@@ -85,9 +70,9 @@ public abstract class AbstractFilterableListIntrinsicCrafter extends AbstractFil
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
-                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
-                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

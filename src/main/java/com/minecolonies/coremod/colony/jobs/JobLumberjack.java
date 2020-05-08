@@ -21,7 +21,7 @@ public class JobLumberjack extends AbstractJobCrafter
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    private Tree tree;
+    private              Tree   tree;
 
     /**
      * Create a lumberjack job.
@@ -105,6 +105,7 @@ public class JobLumberjack extends AbstractJobCrafter
 
     /**
      * Get the current tree the lumberjack is cutting.
+     *
      * @return the tree.
      */
     @Nullable
@@ -115,6 +116,7 @@ public class JobLumberjack extends AbstractJobCrafter
 
     /**
      * Set the tree he is currently cutting.
+     *
      * @param tree the tree.
      */
     public void setTree(@Nullable final Tree tree)

@@ -65,7 +65,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Button to access the crafting grid.
      */
-    private static final String BUTTON_CRAFTING  = "crafting";
+    private static final String BUTTON_CRAFTING = "crafting";
 
     /**
      * Button to access the recipe list.
@@ -98,11 +98,12 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
     /**
-     * Defines whether or not the recipes of this buildings are read-only.
-     * Crafters with intrinsic recipes for example would override this to return true.
+     * Defines whether or not the recipes of this buildings are read-only. Crafters with intrinsic recipes for example would override this to return true.
+     *
      * @return Boolean stating if the teach-recipes button should be shown and Remove should be available.
      */
-    protected boolean hasReadOnlyRecipes() {
+    protected boolean hasReadOnlyRecipes()
+    {
         return false;
     }
 
@@ -172,9 +173,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     }
 
     /**
-     * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) then Contract someone.
-     * Else then Fire the current worker.
+     * Action when a hire button is clicked. If there is no worker (worker.Id == 0) then Contract someone. Else then Fire the current worker.
      *
      * @param button the clicked button.
      */
@@ -227,7 +226,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel", worker.getCitizenSkillHandler().getJobModifier(building)));
+                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel",
+                                worker.getCitizenSkillHandler().getJobModifier(building)));
                         }
                     }
                 }

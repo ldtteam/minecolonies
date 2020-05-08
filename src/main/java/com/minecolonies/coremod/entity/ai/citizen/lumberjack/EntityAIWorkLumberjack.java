@@ -15,7 +15,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.pathfinding.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.PathJobMoveToWithPassable;
@@ -184,7 +183,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private PathResult pathToTree;
 
     @Override
-    protected int getActionRewardForCraftingSuccess() {
+    protected int getActionRewardForCraftingSuccess()
+    {
         return getActionsDoneUntilDumping();
     }
 
@@ -216,9 +216,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * The lumberjack is a special worker.
-     * In his/her decision state, he/she will try to add lumberjack cycles
-     * If there's nothing left to craft, he/she will proceed with woodworking
+     * The lumberjack is a special worker. In his/her decision state, he/she will try to add lumberjack cycles If there's nothing left to craft, he/she will proceed with
+     * woodworking
+     *
      * @return the next state to go to.
      */
     protected IAIState decide()
@@ -573,7 +573,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
     /**
      * Check if distance to block changed and if we are not moving for too long, try to get unstuck.
-     * 
+     *
      * @return false
      */
     private boolean checkIfStuckOnLeaves()

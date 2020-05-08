@@ -58,11 +58,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * The number of actions a crafting "success" is worth.
-     * By default, that's 1 action for 1 crafting success.
-     * Override this in your subclass to make crafting recipes worth more actions :-)
+     * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
+     * actions :-)
      */
-    protected int getActionRewardForCraftingSuccess() {
+    protected int getActionRewardForCraftingSuccess()
+    {
         return 1;
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
-        final int doneOpsCount = currentCount/countPerIteration;
+        final int doneOpsCount = currentCount / countPerIteration;
         final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount;
 
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
@@ -192,6 +192,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Check for all items of the required recipe.
+     *
      * @param storage the recipe storage.
      * @return the next state to go to.
      */
@@ -201,7 +202,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
+                  < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -258,7 +260,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         if (job.getProgress() >= getRequiredProgressForMakingRawMaterial())
         {
-             final IAIState check = checkForItems(currentRecipeStorage);
+            final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
                 if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))

@@ -84,10 +84,12 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * The lumberjack will not show recipe buttons
+     *
      * @return false
      */
     @Override
-    protected boolean hasReadOnlyRecipes() {
+    protected boolean hasReadOnlyRecipes()
+    {
         return true;
     }
 
@@ -98,7 +100,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Send message to player to add scepter to his inventory.
-     *
      */
     private void givePlayerScepter()
     {
@@ -108,7 +109,12 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance()
+                 .getCompatibilityManager()
+                 .getCopyOfSaplings()
+                 .stream()
+                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
+                 .collect(Collectors.toList());
     }
 
     /**
@@ -146,12 +152,14 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupRestrictionButton(final Button button)
     {
-        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon" : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff" ));
+        button.setLabel(LanguageHandler.format(ownBuilding.shouldRestrict
+                                                 ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon"
+                                                 : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff"));
     }
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
-     * 
+     *
      * @param replant the button to update.
      */
     private void switchReplant(final Button replant)
@@ -163,7 +171,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
-     * 
+     *
      * @param restriction the button to update.
      */
     private void toggleRestriction(final Button restriction)

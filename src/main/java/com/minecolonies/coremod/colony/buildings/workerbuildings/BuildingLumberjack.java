@@ -17,7 +17,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListIntrinsicCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
@@ -28,7 +27,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +82,6 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
      */
     private BlockPos endRestriction = null;
 
-
     /**
      * The maximum upgrade of the building.
      */
@@ -106,7 +103,8 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
 
-        if (recipes.isEmpty()) {
+        if (recipes.isEmpty())
+        {
             addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
             addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
             addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
@@ -122,14 +120,15 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
         }
     }
 
-    public void addStrippedWoodRecipe(Item baseVariant, Item strippedVariant) {
+    public void addStrippedWoodRecipe(Item baseVariant, Item strippedVariant)
+    {
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                TypeConstants.RECIPE,
-                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(new ItemStack(baseVariant, 1)),
-                1,
-                new ItemStack(strippedVariant, 1),
-                Blocks.AIR);
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(baseVariant, 1)),
+          1,
+          new ItemStack(strippedVariant, 1),
+          Blocks.AIR);
         recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
@@ -138,7 +137,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
-        if(getMainCitizen() != null && getMainCitizen().getInventory() != null)
+        if (getMainCitizen() != null && getMainCitizen().getInventory() != null)
         {
             final int invSIze = getMainCitizen().getInventory().getSlots();
             int keptStacks = 0;
@@ -322,6 +321,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
     /**
      * Whether or not the LJ should replant saplings.
+     *
      * @return true if so.
      */
     public boolean shouldReplant()
@@ -331,6 +331,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
     /**
      * Set whether or not LJ should replant saplings
+     *
      * @param shouldReplant whether or not the LJ should replant
      */
     public void setShouldReplant(final boolean shouldReplant)
@@ -341,6 +342,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
     /**
      * Whether or not the LJ should be restricted.
+     *
      * @return true if it should restrict.
      */
     public boolean shouldRestrict()
@@ -358,6 +360,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
 
     /**
      * Set whether or not LJ should replant saplings
+     *
      * @param shouldRestrict whether or not the LJ should be restricted
      */
     public void setShouldRestrict(final boolean shouldRestrict)

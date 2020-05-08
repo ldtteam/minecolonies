@@ -1,9 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.states;
 
 /**
- * Basic state enclosing states all ai's use.
- * Please extend this class with the states your ai needs.
- * And please document each state on what it does.
+ * Basic state enclosing states all ai's use. Please extend this class with the states your ai needs. And please document each state on what it does.
  */
 public enum AIWorkerState implements IAIState
 {
@@ -12,14 +10,11 @@ public enum AIWorkerState implements IAIState
 ###GENERAL###
      */
     /**
-     * this is the idle state for the ai.
-     * From here on it will start working.
-     * Use this state in your ai to start your code.
+     * this is the idle state for the ai. From here on it will start working. Use this state in your ai to start your code.
      */
     IDLE(true),
     /**
-     * This state is only used on ai initialization.
-     * It checks if any important things are null.
+     * This state is only used on ai initialization. It checks if any important things are null.
      */
     INIT(true),
     /**
@@ -430,7 +425,7 @@ public enum AIWorkerState implements IAIState
      */
 
     /**
-     *  Guard attack a dummy.
+     * Guard attack a dummy.
      */
     KNIGHT_ATTACK_DUMMY(true),
 
@@ -532,9 +527,9 @@ public enum AIWorkerState implements IAIState
 
     RUNNING(true),
 
-      /*
+    /*
 ### Healer ###
-     */
+   */
     REQUEST_CURE(true),
 
     CURE(true),
@@ -559,6 +554,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Create a new one.
+     *
      * @param okayToEat if okay.
      */
     AIWorkerState(final boolean okayToEat)
@@ -568,6 +564,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Method to check if it is okay.
+     *
      * @return true if so.
      */
     public boolean isOkayToEat()

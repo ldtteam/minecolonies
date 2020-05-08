@@ -45,12 +45,12 @@ public class WindowListRecipes extends Window implements ButtonHandler
     /**
      * The item icon of the resource.
      */
-    private static final String RESOURCE  = "resource%d";
+    private static final String RESOURCE = "resource%d";
 
     /**
      * The item icon of the 3x3 resource.
      */
-    private static final String RES  = "res%d";
+    private static final String RES = "res%d";
 
     /**
      * Contains all the recipes.
@@ -68,6 +68,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private final ScrollingList recipeList;
 
     private boolean isRemovalPossible = true;
+
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
      *
@@ -83,11 +84,10 @@ public class WindowListRecipes extends Window implements ButtonHandler
     }
 
     /**
-     * Constructor for the window when the player wants to assign a worker for a certain home building.
-     * Can additionally disable remove-buttons
+     * Constructor for the window when the player wants to assign a worker for a certain home building. Can additionally disable remove-buttons
      *
-     * @param c          the colony view.
-     * @param buildingId the building position.
+     * @param c                 the colony view.
+     * @param buildingId        the building position.
      * @param isRemovalPossible whether or not to disable remove buttons.
      */
     public WindowListRecipes(final IColonyView c, final BlockPos buildingId, final boolean isRemovalPossible)
@@ -109,8 +109,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -144,15 +143,17 @@ public class WindowListRecipes extends Window implements ButtonHandler
                 final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
                 icon.setItem(recipe.getPrimaryOutput());
 
-                if (!isRemovalPossible) {
+                if (!isRemovalPossible)
+                {
                     final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
-                    if (removeButton != null) {
+                    if (removeButton != null)
+                    {
                         removeButton.setVisible(false);
                     }
                 }
 
                 final String name;
-                if(recipe.getInput().size() <= 4)
+                if (recipe.getInput().size() <= 4)
                 {
                     name = RESOURCE;
                 }
@@ -164,9 +165,9 @@ public class WindowListRecipes extends Window implements ButtonHandler
                     icon.setPosition(80, 17);
                 }
 
-                for(int i = 0; i < recipe.getInput().size(); i++)
+                for (int i = 0; i < recipe.getInput().size(); i++)
                 {
-                    rowPane.findPaneOfTypeByID(String.format(name, i+1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                    rowPane.findPaneOfTypeByID(String.format(name, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
                 }
             }
         });
@@ -190,8 +191,8 @@ public class WindowListRecipes extends Window implements ButtonHandler
         final int row = recipeList.getListElementIndexByPane(button) - 1;
         if (button.getID().equals(BUTTON_REMOVE) && isRemovalPossible)
         {
-            final IRecipeStorage data = recipes.get(row+1);
-            building.removeRecipe(row+1);
+            final IRecipeStorage data = recipes.get(row + 1);
+            building.removeRecipe(row + 1);
             Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, true, data));
         }
         else if (button.getID().equals(BUTTON_FORWARD))
