@@ -111,13 +111,15 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
                 return;
             }
 
-            if(!player.isCreative()) {
+            if(!player.isCreative())
+            {
                 final int slot = InventoryUtils.
                         findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
                                 itemStack -> itemStack.isItemEqual(mesh));
 
                 //If the player doesn't have the item in the inventory, do not change anything
-                if(slot < 0) {
+                if(slot < 0)
+                {
                     return;
                 }
 
