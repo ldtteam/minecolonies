@@ -244,8 +244,7 @@ public class StructureIterator
             case REMOVE:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> structureBlock.worldBlock instanceof AirBlock || !(structureBlock.block instanceof AirBlock));
             case SPAWN:
-                return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
-                                                                          structureBlock.entity == null || structureBlock.entity.length <= 0);
+                return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.entity == null || structureBlock.entity.length <= 0);
             default:
                 return Result.NEW_BLOCK;
         }

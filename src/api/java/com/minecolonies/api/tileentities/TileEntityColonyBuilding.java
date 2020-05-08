@@ -210,8 +210,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof AbstractTileEntityRack
                        && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (entity instanceof ChestTileEntity
-                            && isInTileEntity(entity, notEmptyPredicate)))
+                      || (isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
                 }

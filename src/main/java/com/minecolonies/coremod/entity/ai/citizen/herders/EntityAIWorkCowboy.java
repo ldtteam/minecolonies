@@ -139,7 +139,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
             }
 
             incrementActionsDoneAndDecSaturation();
-            incrementActionsDoneAndDecSaturation();
             worker.getCitizenExperienceHandler().addExperience(1.0);
         }
 

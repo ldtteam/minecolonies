@@ -60,7 +60,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     private boolean clearedShaft = false;
 
     /**
-     * Here we can detect multiples of 5.
+     * The first y level to start the shaft at.
      */
     private int startingLevelShaft = 0;
 
@@ -523,29 +523,29 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
-     * Getter of the starting level of the shaft.
+     * Getter of the starting level of the shaft. (Y position).
      *
      * @return the start level.
      */
     public int getStartingLevelShaft()
     {
-        return startingLevelShaft;
+        if (levels.isEmpty())
+        {
+            return startingLevelShaft;
+        }
+        else
+        {
+            return levels.get(levels.size() - 1).getDepth() - 6;
+        }
     }
 
     /**
      * Resets the starting level of the shaft to 0.
+     * @param level the level o set it to.
      */
-    public void resetStartingLevelShaft()
+    public void setStartingLevelShaft(final int level)
     {
-        this.startingLevelShaft = 1;
-    }
-
-    /**
-     * Increments the starting level of the shaft by one.
-     */
-    public void incrementStartingLevelShaft()
-    {
-        this.startingLevelShaft++;
+        this.startingLevelShaft = level;
     }
 
     /**

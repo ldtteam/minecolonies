@@ -53,6 +53,7 @@ public final class ModBlocks
     public static AbstractBlockHut blockHutSchool;
     public static AbstractBlockHut blockHutGlassblower;
     public static AbstractBlockHut blockHutDyer;
+    public static AbstractBlockHut blockHutFletcher;
     public static AbstractBlockHut blockHutTavern;
 
     /**
@@ -113,6 +114,8 @@ public final class ModBlocks
           blockHutSchool,
           blockHutEnchanter,
           blockHutGlassblower,
+          blockHutDyer,
+          blockHutFletcher};
           blockHutDyer,
           blockHutTavern};
     }

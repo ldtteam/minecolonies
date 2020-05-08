@@ -30,7 +30,7 @@ public final class BuildingConstants
     /**
      * The NBT Tag to store the starting level of the shaft.
      */
-    public static final String TAG_STARTING_LEVEL = "startingLevelShaft";
+    public static final String TAG_STARTING_LEVEL = "newStartingLevelShaft";
 
     /**
      * The NBT Tag to store list of levels.

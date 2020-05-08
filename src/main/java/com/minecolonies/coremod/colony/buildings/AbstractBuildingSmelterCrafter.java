@@ -117,13 +117,16 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
-                    for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
+                    if (recipeStorage != null)
                     {
-                        if (recipeOutputs.containsKey(itemStorage))
+                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
-                            itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                            if (recipeOutputs.containsKey(itemStorage))
+                            {
+                                itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                            }
+                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                         }
-                        recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                     }
                 }
             }
