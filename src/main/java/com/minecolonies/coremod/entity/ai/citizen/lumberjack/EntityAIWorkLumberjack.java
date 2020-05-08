@@ -216,12 +216,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
+     * Main method to decide on what to do.
+     * <p>
      * The lumberjack is a special worker.
-     * In his/her decision state, he/she will try to add lumberjack cycles
-     * If there's nothing left to craft, he/she will proceed with woodworking
+     * In their decision state, they will try to add lumberjack cycles
+     * If there's nothing left to craft, they will proceed with woodworking
+     * </p>
      *
      * @return the next state to go to.
      */
+    @Override
     protected IAIState decide()
     {
         if (walkToBuilding())

@@ -355,9 +355,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     /**
      * Increase the actions done since the last reset by numberOfActions
      * Used for example to detect if and when the inventory has to be dumped.
+     *
+     * @param numberOfActions number of actions to be added at once.
      */
     @Override
-    public void incrementActionsDone(int numberOfActions)
+    public void incrementActionsDone(final int numberOfActions)
     {
         actionsDone += numberOfActions;
     }

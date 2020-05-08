@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -17,10 +18,11 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListIntrinsicCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -40,7 +42,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
+public class BuildingLumberjack extends AbstractFilterableListCrafter
 {
     /**
      * NBT tag if the lj should replant saplings
@@ -120,7 +122,7 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
         }
     }
 
-    public void addStrippedWoodRecipe(Item baseVariant, Item strippedVariant)
+    public final void addStrippedWoodRecipe(final Item baseVariant, final Item strippedVariant)
     {
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
           TypeConstants.RECIPE,
@@ -312,6 +314,24 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
     }
 
     @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        return false;
+    }
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        return;
+    }
+
+    @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
@@ -417,6 +437,12 @@ public class BuildingLumberjack extends AbstractFilterableListIntrinsicCrafter
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();
             shouldRestrict = buf.readBoolean();
+        }
+
+        @Override
+        public boolean canRecipeBeAdded()
+        {
+            return false;
         }
 
         @NotNull

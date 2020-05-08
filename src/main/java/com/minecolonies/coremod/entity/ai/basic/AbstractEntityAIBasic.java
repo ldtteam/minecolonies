@@ -1275,9 +1275,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * After x blocks, bring everything back.
      *
+     * @param numberOfActions number of actions to be added at once.
      * @see #incrementActionsDone()
      */
-    protected final void incrementActionsDone(int numberOfActions)
+    protected final void incrementActionsDone(final int numberOfActions)
     {
         job.incrementActionsDone(numberOfActions);
     }

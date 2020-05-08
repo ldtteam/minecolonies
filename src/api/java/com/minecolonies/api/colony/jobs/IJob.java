@@ -159,13 +159,13 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * Increase the actions done since the last reset by 1
      * Used for example to detect if and when the inventory has to be dumped.
      */
-    public void incrementActionsDone();
+    void incrementActionsDone();
 
     /**
      * Increase the actions done since the last reset by numberOfActions
      * Used for example to detect if and when the inventory has to be dumped.
      */
-    public void incrementActionsDone(int numberOfActions);
+    void incrementActionsDone(int numberOfActions);
 
     /**
      * Clear the actions done counter.
