@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewCitizenViewMessage implements IMessage
 {
-    private int     colonyId;
-    private int     citizenId;
+    private int          colonyId;
+    private int          citizenId;
     private PacketBuffer citizenBuffer;
 
     /**
@@ -26,7 +26,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewCitizenViewMessage()
     {

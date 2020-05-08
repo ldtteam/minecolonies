@@ -10,7 +10,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,9 +40,10 @@ public class DecorationControllerUpdateMessage implements IMessage
     public DecorationControllerUpdateMessage() {super();}
 
     /**
-     * Constructor for the decoration controller update 
-     * @param pos the position of the controller.
-     * @param name the name to set.
+     * Constructor for the decoration controller update
+     *
+     * @param pos   the position of the controller.
+     * @param name  the name to set.
      * @param level the new level to set.
      */
     public DecorationControllerUpdateMessage(@NotNull final BlockPos pos, final String name, final int level)

@@ -3,9 +3,9 @@ package com.minecolonies.coremod.network.messages.client;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.Block;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -33,7 +33,7 @@ public class OpenSuggestionWindowMessage implements IMessage
     private ItemStack stack;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public OpenSuggestionWindowMessage()
     {
@@ -42,8 +42,9 @@ public class OpenSuggestionWindowMessage implements IMessage
 
     /**
      * Open the window.
+     *
      * @param state the state to be placed.
-     * @param pos the pos to place it at.
+     * @param pos   the pos to place it at.
      * @param stack the stack in the hand.
      */
     public OpenSuggestionWindowMessage(final BlockState state, final BlockPos pos, final ItemStack stack)

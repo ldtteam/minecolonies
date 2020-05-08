@@ -31,11 +31,9 @@ public class PermissionsMessage
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
     /**
-     * Enums for Message Type for the permission 
+     * Enums for Message Type for the permission
      * <p>
-     * SET_PERMISSION       Setting a permission.
-     * REMOVE_PERMISSION    Removing a permission.
-     * TOGGLE_PERMISSION    Toggeling a permission.
+     * SET_PERMISSION       Setting a permission. REMOVE_PERMISSION    Removing a permission. TOGGLE_PERMISSION    Toggeling a permission.
      */
     public enum MessageType
     {
@@ -45,20 +43,20 @@ public class PermissionsMessage
     }
 
     /**
-     * Client side presentation of the 
+     * Client side presentation of the
      */
     public static class View implements IMessage
     {
-        private int     colonyID;
+        private int          colonyID;
         private PacketBuffer data;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 
         /**
-         * Empty constructor used when registering the 
+         * Empty constructor used when registering the
          */
         public View()
         {
@@ -66,7 +64,7 @@ public class PermissionsMessage
         }
 
         /**
-         * Instantiate 
+         * Instantiate
          *
          * @param colony     with the colony.
          * @param viewerRank and viewer rank.
@@ -123,7 +121,7 @@ public class PermissionsMessage
         private Action      action;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 
@@ -222,7 +220,7 @@ public class PermissionsMessage
         private String playerName;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 
@@ -235,7 +233,7 @@ public class PermissionsMessage
         }
 
         /**
-         * Constructor for adding player to permission 
+         * Constructor for adding player to permission
          *
          * @param colony Colony the permission is set in.
          * @param player New player name to be added.
@@ -297,7 +295,7 @@ public class PermissionsMessage
         private UUID   id;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 
@@ -310,11 +308,11 @@ public class PermissionsMessage
         }
 
         /**
-         * Constructor for adding player to permission 
+         * Constructor for adding player to permission
          *
-         * @param colony Colony the permission is set in.
+         * @param colony     Colony the permission is set in.
          * @param playerName New player name to be added.
-         * @param id the id of the player or fakeplayer.
+         * @param id         the id of the player or fakeplayer.
          */
         public AddPlayerOrFakePlayer(@NotNull final IColonyView colony, final String playerName, final UUID id)
         {
@@ -376,7 +374,7 @@ public class PermissionsMessage
         private Type type;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 
@@ -474,7 +472,7 @@ public class PermissionsMessage
         private UUID playerID;
 
         /**
-         * The dimension of the 
+         * The dimension of the
          */
         private int dimension;
 

@@ -39,7 +39,7 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     private boolean buy;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public SifterSettingsMessage()
     {
@@ -94,7 +94,10 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
             qty = building.getMaxDailyQuantity();
 
             final PlayerEntity player = ctxIn.getSender();
-            if (player == null) return;
+            if (player == null)
+            {
+                return;
+            }
 
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.toomuch", qty));
         }
@@ -103,7 +106,10 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
         if (buy)
         {
             final PlayerEntity player = ctxIn.getSender();
-            if (player == null) return;
+            if (player == null)
+            {
+                return;
+            }
 
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), mesh);
         }

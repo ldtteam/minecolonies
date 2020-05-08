@@ -140,6 +140,10 @@ public enum AIWorkerState implements IAIState
      */
     MINER_WALKING_TO_LADDER(true),
     /**
+     * The Miner repairs its ladder.
+     */
+    MINER_REPAIRING_LADDER(true),
+    /**
      * The Miner mines his shaft.
      */
     MINER_MINING_SHAFT(true),

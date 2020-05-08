@@ -21,7 +21,7 @@ public class ColonyStylesMessage implements IMessage
     private Map<String, String> md5Map;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyStylesMessage()
     {

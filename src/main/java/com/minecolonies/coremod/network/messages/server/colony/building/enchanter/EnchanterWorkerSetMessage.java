@@ -24,7 +24,7 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     private boolean add;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public EnchanterWorkerSetMessage()
     {
@@ -32,10 +32,11 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     }
 
     /**
-     * Create the enchanter worker 
+     * Create the enchanter worker
+     *
      * @param building the building of the enchanter.
-     * @param worker the worker to add/remove.
-     * @param add true if add, else false
+     * @param worker   the worker to add/remove.
+     * @param add      true if add, else false
      */
     public EnchanterWorkerSetMessage(@NotNull final BuildingEnchanter.View building, final BlockPos worker, final boolean add)
     {

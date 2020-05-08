@@ -39,9 +39,10 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
 
     /**
      * Construct a message to attempt to research.
+     *
      * @param researchId the research id.
-     * @param branch the research branch.
-     * @param building the building we're executing on.
+     * @param branch     the research branch.
+     * @param building   the building we're executing on.
      */
     public TryResearchMessage(final IBuildingView building, @NotNull final String researchId, final String branch)
     {
@@ -69,12 +70,16 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingUniversity building)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) == null)
         {
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
-            if (research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
+            if (research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(),
+              colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
             {
                 if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
                 {
@@ -85,7 +90,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                 if (player.isCreative())
                 {
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
-                    colony.getResearchManager().getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth()-1)));
+                    colony.getResearchManager().getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
                 }
                 else
                 {

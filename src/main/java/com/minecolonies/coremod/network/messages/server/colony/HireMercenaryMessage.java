@@ -35,12 +35,14 @@ public class HireMercenaryMessage extends AbstractColonyServerMessage
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         EntityMercenary.spawnMercenariesInColony(colony);
         colony.getWorld()
           .playSound(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, null, 1.0f, 1.0f, true);
-
     }
 
     @Override

@@ -43,10 +43,10 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     /**
      * Create a message to update the chunk cap on the client side.
      *
-     * @param world the world.
-     * @param xC    the x pos.
-     * @param zC    the z pos.
-     * @param range the range.
+     * @param world       the world.
+     * @param xC          the x pos.
+     * @param zC          the z pos.
+     * @param range       the range.
      * @param checkLoaded are we checking for loaded?
      */
     public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
