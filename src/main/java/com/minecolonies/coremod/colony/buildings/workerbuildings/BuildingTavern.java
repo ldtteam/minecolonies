@@ -6,8 +6,11 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.sounds.TavernSounds;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
+import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -75,6 +78,7 @@ public class BuildingTavern extends BuildingHome
             final int x = (int) ((corner1.getA() + corner1.getB()) * 0.5);
             final int z = (int) ((corner2.getA() + corner2.getB()) * 0.5);
 
+            Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
             colony.getWorld().playSound(null, new BlockPos(x, getPosition().getY(), z), TavernSounds.tavernTheme, SoundCategory.AMBIENT, 0.5f, 1.0f);
             musicCooldown = FOUR_MINUTES_TICKS;
         }

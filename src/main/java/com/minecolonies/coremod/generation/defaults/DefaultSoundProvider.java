@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
+
 public class DefaultSoundProvider implements IDataProvider
 {
     private final DataGenerator generator;
@@ -84,7 +86,7 @@ public class DefaultSoundProvider implements IDataProvider
         JsonObject tavernProperties = getDefaultProperties();
         tavernProperties.addProperty("attenuation_distance", 13);
         tavernProperties.addProperty("stream", true);
-        sounds.add("tile.tavern.tavern_theme", createSoundJson("record", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
+        sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
 
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
         IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);

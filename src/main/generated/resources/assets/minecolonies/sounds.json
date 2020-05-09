@@ -19504,7 +19504,7 @@
     ]
   },
   "tile.tavern.tavern_theme": {
-    "category": "record",
+    "category": "music",
     "sounds": [
       {
         "name": "minecolonies:tile/tavern/tavern_theme",
