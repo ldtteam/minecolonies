@@ -24,6 +24,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.lumberja
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
@@ -168,6 +169,7 @@ public class NetworkChannel
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
+        registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

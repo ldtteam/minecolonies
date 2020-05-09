@@ -416,4 +416,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
 
     }
+
+    @Override
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
+    {
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
+import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,5 +54,11 @@ public class JobPlanter extends AbstractJobCrafter
     public AbstractAISkeleton<JobPlanter> generateAI()
     {
         return new EntityAIWorkPlanter(this);
+    }
+
+    @Override
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
+    {
+        return damageSource == DamageSource.CACTUS;
     }
 }

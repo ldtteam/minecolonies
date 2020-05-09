@@ -210,4 +210,11 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param b true if so.
      */
     void setActive(final boolean b);
+
+    /**
+     * Check if the particular job ignores a particular damage type.
+     * @param damageSource the damage source to check.
+     * @return true if so.
+     */
+    boolean ignoresDamage(@NotNull final DamageSource damageSource);
 }

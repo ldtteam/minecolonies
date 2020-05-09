@@ -175,8 +175,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
                                                                ((this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
                                                                    || this.getOwnBuilding()
-                                                                        .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                                                                          r -> !worker.getCitizenData().isRequestAsync(r.getId())))
+                                                                        .hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getId())))
                                                                ), NEEDS_ITEM, 20),
           new AITarget(NEEDS_ITEM, this::waitForRequests, 10),
           /*
