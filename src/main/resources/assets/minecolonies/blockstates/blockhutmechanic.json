@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "minecolonies:block/blockhutmechanic",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "minecolonies:block/blockhutmechanic",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "minecolonies:block/blockhutmechanic",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "minecolonies:block/blockhutmechanic",
+      "y": 0
+    }
+  }
+}
