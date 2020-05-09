@@ -18,12 +18,24 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 
+/**
+ * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
+ */
 public class BuildingTavern extends BuildingHome
 {
+    /**
+     * Schematic name
+     */
     public static final String TARVERN_SCHEMATIC = "tavern";
 
+    /**
+     * Music interval
+     */
     private static final int FOUR_MINUTES_TICKS = 4800;
 
+    /**
+     * Cooldown for the music, to not play it too much/not overlap with itself
+     */
     private int musicCooldown = 0;
 
     /**
@@ -70,7 +82,7 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        if (musicCooldown <= 0)
+        if (musicCooldown <= 0 && getBuildingLevel() > 0)
         {
             Tuple<Integer, Integer> corner1 = getCorners().getA();
             Tuple<Integer, Integer> corner2 = getCorners().getB();

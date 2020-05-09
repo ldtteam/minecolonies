@@ -17,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
 
+/**
+ * Window for the tavern
+ */
 public class WindowHutTavern extends AbstractWindowBuilding<BuildingTavern.View>
 {
     /**

@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.coremod.blocks.huts.BlockHutTavern>
 {
+    /**
+     * Block name
+     */
     public static final String BLOCKHUT_TAVERN = "blockhuttavern";
 
     @NotNull

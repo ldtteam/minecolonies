@@ -24,6 +24,7 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 
 /**
+ * TODO: unused for now, implement soon
  * Event for recruitable citizens spawning in the tavern
  */
 public class ColonyRecruitableCitizenEvent implements IColonyEntitySpawnEvent
