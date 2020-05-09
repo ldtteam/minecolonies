@@ -68,8 +68,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * Constructor to initiate the window request tree windows.
      *
      * @param building citizen to bind the window to.
-     * @param pane the string name of the pane.
-     * @param colony the colony it belongs to.
+     * @param pane     the string name of the pane.
+     * @param colony   the colony it belongs to.
      */
     public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
     {
@@ -77,7 +77,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         this.colony = colony;
         this.building = colony.getBuilding(building);
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        
+
         registerButton(REQUEST_DETAIL, this::detailedClicked);
         registerButton(REQUEST_CANCEL, this::cancel);
 
@@ -228,7 +228,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if(getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
             @NotNull final IRequest request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             fulfill(request);

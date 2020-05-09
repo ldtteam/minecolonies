@@ -118,7 +118,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
+        super(citizen.getWorkBuilding(),
+          Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
+          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
     }
 
@@ -159,7 +161,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
-     * @param citizen the citizen.
+     *
+     * @param citizen       the citizen.
      * @param healthBarView the health bar view.
      */
     public static void createHealthBar(final ICitizenDataView citizen, final View healthBarView)
@@ -220,7 +223,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Adds a heart to the healthbarView at the given Position
-     * 
+     *
      * @param healthBarView the health bar to add the heart to.
      * @param heartPos      the number of the heart to add.
      * @param heart         the heart to add.
@@ -235,8 +238,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
+     *
      * @param citizen the citizen.
-     * @param view the view to add these to.
+     * @param view    the view to add these to.
      */
     public static void createSaturationBar(final ICitizenDataView citizen, final View view)
     {
@@ -246,7 +250,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.GUI_ICONS_LOCATION,
+              EMPTY_SATURATION_ITEM_ROW_POS,
+              SATURATION_ICON_COLUMN,
+              SATURATION_ICON_HEIGHT_WIDTH,
+              SATURATION_ICON_HEIGHT_WIDTH,
+              false);
 
             saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -276,7 +285,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      * <p>
      * currently unused.
-     * 
+     *
      * @param citizen the citizen to create a create a happiness bar for.
      * @param view    the view to add the happiness bar to.
      */
@@ -443,9 +452,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
             if (slot == -1)
             {
                 final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                        LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                        .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
-                        );
+                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                                                     .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
+                                                     );
                 Minecraft.getInstance().player.sendMessage(chatMessage);
 
                 return; // We don't have one that isn't in our armour slot
@@ -465,7 +474,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Update the display for the happiness.
-     * 
+     *
      * @param citizen the citizen to update it for.
      * @param window  the window to add things to.
      */
@@ -474,7 +483,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         final View pane = window.findPaneOfTypeByID("happinessModifierView", View.class);
         window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
         int yPos = 62;
-        for (final String name: citizen.getHappinessHandler().getModifiers())
+        for (final String name : citizen.getHappinessHandler().getModifiers())
         {
             final double value = citizen.getHappinessHandler().getModifier(name).getFactor();
 
@@ -483,7 +492,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             image.setPosition(25, yPos);
 
             final Label label = new Label();
-            label.setSize(136,11);
+            label.setSize(136, 11);
             label.setPosition(50, yPos);
             label.setColor(BLACK);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
@@ -507,13 +516,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
             pane.addChild(image);
             pane.addChild(label);
 
-            yPos+=12;
+            yPos += 12;
         }
     }
 
     /**
      * Update the job page of the citizen.
-     * 
+     *
      * @param citizen       the citizen.
      * @param windowCitizen the window.
      * @param colony        the colony.

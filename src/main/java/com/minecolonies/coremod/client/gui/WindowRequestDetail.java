@@ -91,11 +91,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private final int      colonyId;
     /**
      * Life count.
      */
-    private int lifeCount = 0;
+    private       int      lifeCount = 0;
 
     /**
      * The previous window.
@@ -105,19 +105,18 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Player inventory
      */
-    private final PlayerInventory inventory = this.mc.player.inventory;
+    private final PlayerInventory inventory  = this.mc.player.inventory;
     /**
      * Is the player in creative or not.
      */
-    private final boolean isCreative = this.mc.player.isCreative();
-
-
+    private final boolean         isCreative = this.mc.player.isCreative();
 
     /**
      * Open the request detail.
+     *
      * @param prevWindow the window we're coming from.
-     * @param request the request.
-     * @param colonyId the colony id.
+     * @param request    the request.
+     * @param colonyId   the colony id.
      */
     public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest request, final int colonyId)
     {
@@ -150,8 +149,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -162,7 +160,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
 
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if(!fulfillable())
+        if (!fulfillable())
         {
             fulfillButton.hide();
         }
@@ -204,7 +202,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
 
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
-        if(colony == null)
+        if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
             return;
@@ -213,7 +211,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         try
         {
             final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getId());
-            if(resolver == null)
+            if (resolver == null)
             {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
                 return;
@@ -221,7 +219,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
             findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
         }
-        catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
+        catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {
             /**
              * Do nothing we just need to know if it has a resolver or not.
@@ -235,7 +233,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Checks if the request is fulfillable
      */
-    public Boolean fulfillable(){
+    public Boolean fulfillable()
+    {
 
         if (!(request.getRequest() instanceof IDeliverable))
         {
@@ -248,11 +247,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
-        if (!isCreative && count <=  0)
+        if (!isCreative && count <= 0)
         {
             return false;
         }
-        if(!isCreative)
+        if (!isCreative)
         {
             final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
             final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
@@ -282,15 +281,15 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if(button.getID().equals(REQUEST_FULLFIL))
+        if (button.getID().equals(REQUEST_FULLFIL))
         {
             if (this.prevWindow instanceof WindowCitizen)
             {
                 ((WindowCitizen) this.prevWindow).fulfill(request);
             }
             this.window.close();
-
-        } else if(button.getID().equals(REQUEST_CANCEL))
+        }
+        else if (button.getID().equals(REQUEST_CANCEL))
         {
             if (this.prevWindow instanceof WindowCitizen)
             {
@@ -298,9 +297,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             }
             this.window.close();
         }
-        else {
+        else
+        {
             prevWindow.open();
         }
-
     }
 }
