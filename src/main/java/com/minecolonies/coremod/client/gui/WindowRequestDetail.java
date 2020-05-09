@@ -1,25 +1,33 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
+import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
+import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
+import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
 
 /**
  * Window for the request detail.
@@ -95,6 +103,17 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private final Window prevWindow;
 
     /**
+     * Player inventory
+     */
+    private final PlayerInventory inventory = this.mc.player.inventory;
+    /**
+     * Is the player in creative or not.
+     */
+    private final boolean isCreative = this.mc.player.isCreative();
+
+
+
+    /**
      * Open the request detail.
      * @param prevWindow the window we're coming from.
      * @param request the request.
@@ -141,6 +160,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
+
+        Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
+        if(!fulfillable())
+        {
+            fulfillButton.hide();
+        }
+
         for (final String s : labels)
         {
             final String labelText = "§r§0" + s;
@@ -207,6 +233,48 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     }
 
     /**
+     * Checks if the request is fulfillable
+     */
+    public Boolean fulfillable(){
+
+        if (!(request.getRequest() instanceof IDeliverable))
+        {
+            return false;
+        }
+
+        @NotNull final IRequest<? extends IDeliverable> myRequest = (IRequest<? extends IDeliverable>) request;
+        final Predicate<ItemStack> requestPredicate = stack -> myRequest.getRequest().matches(stack);
+        final int amount = myRequest.getRequest().getCount();
+
+        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+        if (!isCreative && count <=  0)
+        {
+            return false;
+        }
+        if(!isCreative)
+        {
+            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+            int slot = -1;
+            for (final Integer possibleSlot : slots)
+            {
+                if (possibleSlot < invSize)
+                {
+                    slot = possibleSlot;
+                    break;
+                }
+            }
+            if (slot == -1)
+            {
+                return false; // We don't have one that isn't in our armour slot
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Called when any button has been clicked.
      *
      * @param button the clicked button.
@@ -214,6 +282,25 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        prevWindow.open();
+        if(button.getID().equals(REQUEST_FULLFIL))
+        {
+            if (this.prevWindow instanceof WindowCitizen)
+            {
+                ((WindowCitizen) this.prevWindow).fulfill(request);
+            }
+            this.window.close();
+
+        } else if(button.getID().equals(REQUEST_CANCEL))
+        {
+            if (this.prevWindow instanceof WindowCitizen)
+            {
+                ((WindowCitizen) this.prevWindow).cancel(request);
+            }
+            this.window.close();
+        }
+        else {
+            prevWindow.open();
+        }
+
     }
 }

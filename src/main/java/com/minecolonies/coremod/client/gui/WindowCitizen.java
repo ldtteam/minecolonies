@@ -400,76 +400,67 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public void fulfill(@NotNull final Button button)
+    public void fulfill(@NotNull final IRequest tRequest)
     {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        if (!(tRequest.getRequest() instanceof IDeliverable))
         {
-            @NotNull final IRequest tRequest = getOpenRequestTreeOfBuilding().get(row).getRequest();
-
-            if (!(tRequest.getRequest() instanceof IDeliverable))
-            {
-                return;
-            }
-
-            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-            final int amount = request.getRequest().getCount();
-
-            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-            if (!isCreative && count <= 0)
-            {
-                return;
-            }
-
-            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-            // and use quantity for the size
-            @NotNull final ItemStack itemStack;
-            if (isCreative)
-            {
-                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-            }
-            else
-            {
-                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
-                int slot = -1;
-                for (final Integer possibleSlot : slots)
-                {
-                    if (possibleSlot < invSize)
-                    {
-                        slot = possibleSlot;
-                        break;
-                    }
-                }
-
-                if (slot == -1)
-                {
-                    final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                            LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                            .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
-                            );
-                    Minecraft.getInstance().player.sendMessage(chatMessage);
-
-                    return; // We don't have one that isn't in our armour slot
-                }
-                itemStack = inventory.getStackInSlot(slot);
-            }
-
-
-            if (citizen.getWorkBuilding() != null)
-            {
-                colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
-            }
-            Network.getNetwork().sendToServer(
-              new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
+            return;
         }
-        button.disable();
-        updateRequests();
+
+        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+
+        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+        final int amount = request.getRequest().getCount();
+
+        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+        if (!isCreative && count <= 0)
+        {
+            return;
+        }
+
+        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+        // and use quantity for the size
+        @NotNull final ItemStack itemStack;
+        if (isCreative)
+        {
+            itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+        }
+        else
+        {
+            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+            int slot = -1;
+            for (final Integer possibleSlot : slots)
+            {
+                if (possibleSlot < invSize)
+                {
+                    slot = possibleSlot;
+                    break;
+                }
+            }
+
+            if (slot == -1)
+            {
+                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
+                        LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                        .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
+                        );
+                Minecraft.getInstance().player.sendMessage(chatMessage);
+
+                return; // We don't have one that isn't in our armour slot
+            }
+            itemStack = inventory.getStackInSlot(slot);
+        }
+
+
+        if (citizen.getWorkBuilding() != null)
+        {
+            colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
+        }
+        Network.getNetwork().sendToServer(
+          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
     }
 
     /**

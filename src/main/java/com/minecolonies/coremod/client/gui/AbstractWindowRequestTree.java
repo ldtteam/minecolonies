@@ -136,6 +136,20 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     }
 
     /**
+     * After request cancel has been clicked cancel it and update the server side.
+     *
+     * @param tRequest the clicked button.
+     */
+    public void cancel(@NotNull final IRequest tRequest)
+    {
+        @NotNull final IRequest<?> request = (IRequest<?>) tRequest;
+        building.onRequestedRequestCancelled(colony.getRequestManager(), request);
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
+
+        updateRequests();
+    }
+
+    /**
      * Get the open request tree of the building and construct it.
      *
      * @return an immutable list containing it.
@@ -211,6 +225,24 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param button the clicked button.
      */
     public void fulfill(@NotNull final Button button)
+    {
+        final int row = resourceList.getListElementIndexByPane(button);
+
+        if(getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        {
+            @NotNull final IRequest request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            fulfill(request);
+        }
+        button.disable();
+        updateRequests();
+    }
+
+    /**
+     * Fulfill a given request.
+     *
+     * @param request the request to fulfill.
+     */
+    public void fulfill(@NotNull final IRequest request)
     {
         /*
          * Override if can fulfill.
