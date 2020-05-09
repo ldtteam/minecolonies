@@ -54,6 +54,7 @@ public final class ModBlocks
     public static AbstractBlockHut blockHutGlassblower;
     public static AbstractBlockHut blockHutDyer;
     public static AbstractBlockHut blockHutFletcher;
+    public static AbstractBlockHut blockHutMechanic;
 
     /**
      * Utility blocks.
@@ -114,6 +115,7 @@ public final class ModBlocks
           blockHutEnchanter,
           blockHutGlassblower,
           blockHutDyer,
-          blockHutFletcher};
+          blockHutFletcher,
+          blockHutMechanic};
     }
 }

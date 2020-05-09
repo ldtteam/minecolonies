@@ -120,7 +120,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      *
      * @return the next state to go to.
      */
-    private IAIState getRecipe()
+    protected IAIState getRecipe()
     {
         final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
 

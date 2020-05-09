@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -9,16 +8,14 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.jobs.JobFletcher;
+import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.HopperBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
@@ -30,43 +27,31 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
- * Class of the fletcher building.
+ * Class of the mechanic building.
  */
-public class BuildingFletcher extends AbstractBuildingCrafter
+public class BuildingMechanic extends AbstractBuildingCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String FLETCHER = "fletcher";
+    private static final String MECHANIC = "mechanic";
 
     /**
-     * Instantiates a new fletcher building.
+     * Instantiates a new mechanic building.
      *
      * @param c the colony.
      * @param l the location
      */
-    public BuildingFletcher(final IColony c, final BlockPos l)
+    public BuildingMechanic(final IColony c, final BlockPos l)
     {
         super(c, l);
-        if (recipes.isEmpty())
-        {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-                      1,
-                      new ItemStack(Items.STRING, 4),
-                      Blocks.AIR);
-            recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-        }
     }
-
 
     @NotNull
     @Override
     public String getSchematicName()
     {
-        return FLETCHER;
+        return MECHANIC;
     }
 
     @Override
@@ -79,28 +64,28 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public IJob createJob(final ICitizenData citizen)
     {
-        return new JobFletcher(citizen);
+        return new JobMechanic(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return FLETCHER;
+        return MECHANIC;
     }
 
     @NotNull
     @Override
     public Skill getPrimarySkill()
     {
-        return Skill.Dexterity;
+        return Skill.Knowledge;
     }
 
     @NotNull
     @Override
     public Skill getSecondarySkill()
     {
-        return Skill.Creativity;
+        return Skill.Agility;
     }
 
     @Override
@@ -117,23 +102,23 @@ public class BuildingFletcher extends AbstractBuildingCrafter
             return false;
         }
 
-        boolean hasValidItem = false;
 
-        if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
-              || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-              && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
+        if (storage.getPrimaryOutput().getItem().getRegistryName().getPath().contains("ice")
+              || ItemTags.RAILS.contains(storage.getPrimaryOutput().getItem())
+              ||  storage.getPrimaryOutput().getItem() instanceof MinecartItem
+              || storage.getPrimaryOutput().getItem() == Items.JACK_O_LANTERN
+              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock)
+              || Tags.Items.STORAGE_BLOCKS.contains(storage.getPrimaryOutput().getItem())
+              || storage.getPrimaryOutput().getItem() == Items.ENCHANTING_TABLE)
         {
             return true;
         }
 
+        boolean hasValidItem = false;
+
         for(final ItemStack stack : storage.getInput())
         {
-            if (Tags.Items.DYES.contains(stack.getItem()))
-            {
-                return false;
-            }
-
-            if (ItemTags.WOOL.contains(stack.getItem()) || stack.getItem() == Items.STRING)
+            if (Tags.Items.DUSTS_REDSTONE.contains(stack.getItem()) || Tags.Items.ORES_REDSTONE.contains(stack.getItem()) || Tags.Items.STORAGE_BLOCKS_REDSTONE.contains(stack.getItem()))
             {
                 hasValidItem = true;
             }
@@ -145,13 +130,13 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
-        return ModBuildings.fletcher;
+        return ModBuildings.mechanic;
     }
 
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Fletcher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Mechanic", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -161,13 +146,13 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     /**
-     * Fletcher View.
+     * Mechanic View.
      */
     public static class View extends AbstractBuildingCrafter.View
     {
 
         /**
-         * Instantiate the fletcher view.
+         * Instantiate the mechanic view.
          *
          * @param c the colonyview to put it in
          * @param l the positon
@@ -181,7 +166,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, FLETCHER);
+            return new WindowHutWorkerPlaceholder<>(this, MECHANIC);
         }
     }
 }
