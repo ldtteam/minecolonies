@@ -8,6 +8,7 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -50,7 +51,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
     @Override
     public Class getExpectedBuildingClass()
     {
-        return BuildingCrusher.class;
+        return BuildingPlantation.class;
     }
 
     @Override
@@ -75,67 +76,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
         {
             return getState();
         }
-        job.setProgress(job.getProgress() + TICK_DELAY);
-
-        final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
-        WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
-        if (currentRecipeStorage == null)
-        {
-            currentRecipeStorage = crusherBuilding.getCurrentRecipe();
-        }
-
-        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getB()) || currentRecipeStorage == null)
-        {
-            return START_WORKING;
-        }
-
-        final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
-        {
-            job.setProgress(0);
-
-            if (check == CRAFT)
-            {
-                if (getState() != CRAFT)
-                {
-                    crusherBuilding.setCurrentDailyQuantity(crusherBuilding.getCurrentDailyQuantity() + 1);
-                    if (crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getB())
-                    {
-                        incrementActionsDoneAndDecSaturation();
-                    }
-                }
-
-                worker.swingArm(Hand.MAIN_HAND);
-                job.setCraftCounter(job.getCraftCounter()+1);
-                currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
-                worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenExperienceHandler().addExperience(0.1);
-            }
-            else if (getState() != CRAFT)
-            {
-                currentRecipeStorage = crusherBuilding.getCurrentRecipe();
-                final int requestQty = Math.min((crusherBuilding.getCrusherMode().getB() - crusherBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
-                if (requestQty <= 0)
-                {
-                    return START_WORKING;
-                }
-                final ItemStack stack = currentRecipeStorage.getInput().get(0).copy();
-                stack.setCount(requestQty);
-                checkIfRequestForItemExistOrCreateAsynch(stack);
-                return START_WORKING;
-            }
-            else
-            {
-                return check;
-            }
-        }
-        if (check == CRAFT)
-        {
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
-              worker);
-            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
-        }
+        
         return getState();
     }
 
