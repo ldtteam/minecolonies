@@ -142,7 +142,7 @@ public class Tool implements IDeliverable
                 && getToolClasses(stack).stream()
                 .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                 .map(ToolType::getToolType)
-                .anyMatch(t -> t != ToolType.NONE && !(stack.isDamaged() || stack.getDamage() > 0) && ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+                .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
 
         if (!toolTypeResult)
         {
