@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.citizen.crusher;
+package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
@@ -9,6 +9,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
+import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -22,9 +23,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
- * Crusher AI class.
+ * Planter AI class.
  */
-public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAICrafting<J>
 {
     /**
      * Delay for each of the craftings.
@@ -32,12 +33,11 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     private static final int TICK_DELAY = 20;
 
     /**
-     * Constructor for the crusher.
-     * Defines the tasks the crusher executes.
+     * Constructor for the planter.
      *
-     * @param job a crusher job to use.
+     * @param job a planter job to use.
      */
-    public EntityAIWorkCrusher(@NotNull final J job)
+    public EntityAIWorkPlanter(@NotNull final J job)
     {
         super(job);
         super.registerTargets(
