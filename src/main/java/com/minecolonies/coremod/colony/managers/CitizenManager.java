@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.citizen.CitizenDataRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -24,6 +25,7 @@ import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -46,6 +48,12 @@ public class CitizenManager implements ICitizenManager
      */
     @NotNull
     private final Map<Integer, ICitizenData> citizens = new HashMap<>();
+
+    /**
+     * Map of visitors with ID,CitizenData
+     */
+    @NotNull
+    private final Map<Integer, ICitizenData> visitors = new HashMap<>();
 
     /**
      * Variables to determine if citizens have to be updated on the client side.
@@ -146,13 +154,42 @@ public class CitizenManager implements ICitizenManager
                           .map(this::deserializeCitizen)
                           .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
 
+        visitors.clear();
+        //  Citizens before Buildings, because Buildings track the Citizens
+        visitors.putAll(NBTUtils.streamCompound(compound.getList(TAG_VISITORS, Constants.NBT.TAG_COMPOUND))
+                          .map(this::deserializeCitizen)
+                          .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
+
         // Update child state after loading citizen data
         colony.updateHasChilds();
     }
 
+    /**
+     * Creates a citizen data from NBT
+     *
+     * @param compound NBT
+     * @return citizen data
+     */
     private ICitizenData deserializeCitizen(@NotNull final CompoundNBT compound)
     {
-        final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(compound, colony);
+        ResourceLocation citizenDataTypeName;
+
+        if (compound.contains(TAG_CITIZENDATA_TYPE))
+        {
+            citizenDataTypeName = new ResourceLocation(MOD_ID, compound.getString(TAG_CITIZENDATA_TYPE));
+        }
+        else
+        {
+            citizenDataTypeName = CitizenData.CITIZEN_DATA_TYPE;
+        }
+
+        CitizenDataRegistryEntry citizenDataType = MinecoloniesAPIProxy.getInstance().getCitizenDataTypeRegistry().getValue(citizenDataTypeName);
+        if (citizenDataType == null)
+        {
+            citizenDataType = MinecoloniesAPIProxy.getInstance().getCitizenDataTypeRegistry().getValue(CitizenData.CITIZEN_DATA_TYPE);
+        }
+
+        ICitizenData data = citizenDataType.getDataCreator().apply(colony, compound);
         topCitizenId = Math.max(topCitizenId, data.getId());
         return data;
     }
@@ -162,6 +199,9 @@ public class CitizenManager implements ICitizenManager
     {
         @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
         compound.put(TAG_CITIZENS, citizenTagList);
+
+        @NotNull final ListNBT visitorTagList = visitors.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
+        compound.put(TAG_VISITORS, visitorTagList);
     }
 
     @Override

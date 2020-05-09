@@ -64,6 +64,20 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void onPlacement();
 
     /**
+     * Called when a player comes close to the building.
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterNearby(final PlayerEntity player) {}
+
+    /**
+     * Called when a player enters the building area
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterBuilding(final PlayerEntity player) {}
+
+    /**
      * Checks if a block matches the current object.
      *
      * @param block Block you want to know whether it matches this class or not.

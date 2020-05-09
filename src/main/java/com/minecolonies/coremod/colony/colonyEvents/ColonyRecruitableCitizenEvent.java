@@ -56,11 +56,47 @@ public class ColonyRecruitableCitizenEvent implements IColonyEntitySpawnEvent
     /**
      * The event's id
      */
-    private int eventID = 0;
+    private int eventID;
 
     public ColonyRecruitableCitizenEvent(final IColony colony)
     {
         this.colony = colony;
+        eventID = colony.getEventManager().getAndTakeNextEventID();
+    }
+
+    @Override
+    public void onStart()
+    {
+        status = EventStatus.PROGRESSING;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        if (colony.getBuildingManager().getBuilding(spawnPos) == null)
+        {
+            for (final ICitizenData data : externalCitizens)
+            {
+                if (data.getCitizenEntity().isPresent())
+                {
+                    data.getCitizenEntity().get().remove();
+                }
+            }
+
+            status = EventStatus.DONE;
+            return;
+        }
+
+        if (externalCitizens.size() < 1)
+        {
+            CitizenData newCitizen = new CitizenData(0, colony);
+            newCitizen.initForNewCitizen();
+            externalCitizens.add(newCitizen);
+            newCitizen.setBedPos(spawnPos);
+            newCitizen.setHomeBuilding(colony.getBuildingManager().getBuilding(spawnPos));
+            newCitizen.getCitizenSkillHandler().init(20);
+            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), spawnPos, true);
+        }
     }
 
     @Override
@@ -78,7 +114,7 @@ public class ColonyRecruitableCitizenEvent implements IColonyEntitySpawnEvent
     @Override
     public EventStatus getStatus()
     {
-        return getStatus();
+        return status;
     }
 
     @Override
@@ -90,7 +126,7 @@ public class ColonyRecruitableCitizenEvent implements IColonyEntitySpawnEvent
     @Override
     public int getID()
     {
-        return 0;
+        return eventID;
     }
 
     @Override

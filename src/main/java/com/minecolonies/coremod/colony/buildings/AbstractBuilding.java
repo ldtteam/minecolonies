@@ -46,7 +46,6 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -196,6 +195,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onBuildingMove(final IBuilding oldBuilding)
     {
 
+    }
+
+    @Override
+    public void onPlayerEnterNearby(final PlayerEntity player)
+    {
+        if (getTargetableArea(colony.getWorld()).contains(player.getPositionVec()))
+        {
+            onPlayerEnterBuilding(player);
+        }
     }
 
     /**

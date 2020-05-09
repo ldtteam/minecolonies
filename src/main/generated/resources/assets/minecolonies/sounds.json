@@ -19502,5 +19502,15 @@
         "stream": false
       }
     ]
+  },
+  "tile.tavern.tavern_theme": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "minecolonies:tile/tavern/tavern_theme",
+        "stream": true,
+        "attenuation_distance": 13
+      }
+    ]
   }
 }

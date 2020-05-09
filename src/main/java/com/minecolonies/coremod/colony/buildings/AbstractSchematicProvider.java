@@ -67,6 +67,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public int cachedRotation = -1;
 
     /**
+     * The building area box of this building
+     */
+    private AxisAlignedBB buildingArea = null;
+
+    /**
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
@@ -215,7 +220,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Get all the corners of the building based on the schematic.
      *
-     * @return the corners.
+     * @return Tuple of X corners, Tuple of Z corners
      */
     @Override
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
@@ -244,7 +249,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
-        return BuildingUtils.getTargetAbleArea(world, this);
+        if (buildingArea == null)
+        {
+            buildingArea = BuildingUtils.getTargetAbleArea(world, this);
+        }
+        return buildingArea;
     }
 
     /**

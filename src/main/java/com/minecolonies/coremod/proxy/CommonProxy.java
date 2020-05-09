@@ -4,6 +4,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.citizen.CitizenDataRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
@@ -131,6 +132,12 @@ public abstract class CommonProxy implements IProxy
     public static void registerRaidEventTypes(@NotNull final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)
     {
         ModColonyEventTypeInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerCitizenDataTypes(@NotNull final RegistryEvent.Register<CitizenDataRegistryEntry> event)
+    {
+        ModCitizenDataTypeInitializer.init(event);
     }
 
     @SubscribeEvent

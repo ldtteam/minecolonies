@@ -115,7 +115,7 @@ public final class ModBlocks
           blockHutEnchanter,
           blockHutGlassblower,
           blockHutDyer,
-          blockHutFletcher};
+          blockHutFletcher,
           blockHutDyer,
           blockHutTavern};
     }

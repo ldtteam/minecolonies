@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -201,4 +203,14 @@ public interface IBuildingManager
      * @return the warehouse.
      */
     List<IWareHouse> getWareHouses();
+
+    /**
+     * Checks whether we're allowed to place the block for a new building
+     *
+     * @param block  Block to check
+     * @param pos    position
+     * @param player the player trying to place
+     * @return true if placement allowed
+     */
+    boolean canPlaceAt(Block block, BlockPos pos, PlayerEntity player);
 }
