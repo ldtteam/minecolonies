@@ -38,13 +38,19 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
 
     /**
      * Trigger the server response handler.
-     * @param colonyId the colony id.
+     *
+     * @param colonyId  the colony id.
      * @param citizenId the citizen id.
      * @param dimension the dimension the colony and citizen are in.
-     * @param key the key of the handler.
-     * @param response the response to trigger.
+     * @param key       the key of the handler.
+     * @param response  the response to trigger.
      */
-    public TriggerServerResponseHandlerMessage(final int colonyId, final int citizenId, final int dimension, @NotNull final ITextComponent key, @NotNull final ITextComponent response)
+    public TriggerServerResponseHandlerMessage(
+      final int colonyId,
+      final int citizenId,
+      final int dimension,
+      @NotNull final ITextComponent key,
+      @NotNull final ITextComponent response)
     {
         super(dimension, colonyId);
         this.citizenId = citizenId;
@@ -61,7 +67,7 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
         this.citizenId = buf.readInt();
-        this.key =  buf.readTextComponent();
+        this.key = buf.readTextComponent();
         this.response = buf.readTextComponent();
     }
 

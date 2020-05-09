@@ -303,6 +303,13 @@ public final class ModBuildingsInitializer
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
                                 .createBuildingEntry();
 
+        ModBuildings.mechanic = new BuildingEntry.Builder()
+                                  .setBuildingBlock(ModBlocks.blockHutMechanic)
+                                  .setBuildingProducer(BuildingMechanic::new)
+                                  .setBuildingViewProducer(() -> BuildingMechanic.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
+                                  .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -342,6 +349,7 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.glassblower);
         reg.register(ModBuildings.dyer);
         reg.register(ModBuildings.fletcher);
+        reg.register(ModBuildings.mechanic);
 
         reg.register(ModBuildings.tavern);
     }

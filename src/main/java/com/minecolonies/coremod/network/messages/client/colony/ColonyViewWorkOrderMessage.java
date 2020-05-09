@@ -24,7 +24,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     private PacketBuffer workOrderBuffer;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewWorkOrderMessage()
     {
@@ -34,7 +34,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     /**
      * Updates a {@link WorkOrderView} of the workOrders.
      *
-     * @param colony    colony of the workOrder.
+     * @param colony        colony of the workOrder.
      * @param workOrderList list of workorders to send to the client
      */
     public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)

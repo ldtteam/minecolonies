@@ -27,10 +27,10 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
     }
 
     /**
-     * Creates object for the player to handle the color 
+     * Creates object for the player to handle the color
      *
      * @param colorOrdinal the color to set.
-     * @param building  view of the building to read data from
+     * @param building     view of the building to read data from
      */
     public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final IBuildingView building)
     {

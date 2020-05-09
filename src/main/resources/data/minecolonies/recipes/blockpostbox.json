@@ -10,7 +10,7 @@
       "tag": "minecraft:planks"
     },
     "I": {
-      "item": "minecraft:chest"
+      "item": "forge:chests"
     },
     "S": {
       "item": "structurize:sceptergold"

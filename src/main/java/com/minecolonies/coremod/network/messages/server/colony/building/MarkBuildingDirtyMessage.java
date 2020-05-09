@@ -8,15 +8,14 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
- * Send a message to the server to mark the building as dirty.
- * Created: January 20, 2017
+ * Send a message to the server to mark the building as dirty. Created: January 20, 2017
  *
  * @author xavierh
  */
 public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public MarkBuildingDirtyMessage()
     {

@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Handles the server telling nearby clients to render a particle effect.
- * Created: February 10, 2016
+ * Handles the server telling nearby clients to render a particle effect. Created: February 10, 2016
  *
  * @author Colton
  */
@@ -22,12 +21,12 @@ public class BlockParticleEffectMessage implements IMessage
 {
     public static final int BREAK_BLOCK = -1;
 
-    private BlockPos pos;
-    private BlockState    block;
-    private int      side;
+    private BlockPos   pos;
+    private BlockState block;
+    private int        side;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BlockParticleEffectMessage()
     {

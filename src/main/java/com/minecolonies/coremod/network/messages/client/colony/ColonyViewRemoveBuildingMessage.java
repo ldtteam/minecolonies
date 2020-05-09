@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     private BlockPos buildingId;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewRemoveBuildingMessage()
     {
@@ -29,7 +28,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     }
 
     /**
-     * Creates an object for the building remove 
+     * Creates an object for the building remove
      *
      * @param colony   Colony the building is in.
      * @param building AbstractBuilding that is removed.

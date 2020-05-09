@@ -38,7 +38,7 @@ public class ColonyViewMessage implements IMessage
     private int dim;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewMessage()
     {

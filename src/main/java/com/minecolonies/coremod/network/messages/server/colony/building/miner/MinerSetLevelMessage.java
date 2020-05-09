@@ -15,7 +15,7 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
     private int level;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public MinerSetLevelMessage()
     {
@@ -23,7 +23,7 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
     }
 
     /**
-     * Creates object for the miner set level 
+     * Creates object for the miner set level
      *
      * @param building View of the building to read data from.
      * @param level    Level of the miner.

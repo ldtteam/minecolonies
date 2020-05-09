@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignmentModeMessage extends AbstractBuildingServerMessage<BuildingFarmer>
 {
-    private boolean  assignmentMode;
+    private boolean assignmentMode;
 
     /**
      * Empty standard constructor.
@@ -23,10 +23,10 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     /**
-     * Creates object for the assignmentMode 
+     * Creates object for the assignmentMode
      *
      * @param assignmentMode assignmentMode of the particular farmer.
-     * @param building the building we're executing on.
+     * @param building       the building we're executing on.
      */
     public AssignmentModeMessage(@NotNull final BuildingFarmer.View building, final boolean assignmentMode)
     {
