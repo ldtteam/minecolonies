@@ -134,6 +134,17 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     @Override
+    public boolean canBeGathered()
+    {
+        // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.
+        // BUT, the lumberjack both gathers and crafts things now, so it should always be gatherable.
+        // This unfortunately means that the dman will sometimes "steal" ingredients from the LJ.
+        // Fortunately, the dman is smart enough to not instantly gather the ingredients it brought to the LJ.
+        // Might be improved in the future. For now, it's a bit annoying, but not too bad imho.
+        return true;
+    }
+
+    @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
