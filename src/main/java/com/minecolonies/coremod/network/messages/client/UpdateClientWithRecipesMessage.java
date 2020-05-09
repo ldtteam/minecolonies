@@ -38,7 +38,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
      *
      * @param recipes the recipes.
      */
-    public UpdateClientWithRecipesMessage(@NotNull final  Map<ItemStorage, RecipeStorage> recipes)
+    public UpdateClientWithRecipesMessage(@NotNull final Map<ItemStorage, RecipeStorage> recipes)
     {
         super();
         this.recipes = recipes;
@@ -67,7 +67,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
             buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(entry.getValue()));
         }
     }
-    
+
     @Nullable
     @Override
     public LogicalSide getExecutionSide()

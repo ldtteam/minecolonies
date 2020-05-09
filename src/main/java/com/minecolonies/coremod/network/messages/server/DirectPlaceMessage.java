@@ -40,7 +40,7 @@ public class DirectPlaceMessage implements IMessage
     private ItemStack stack;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public DirectPlaceMessage()
     {
@@ -49,8 +49,9 @@ public class DirectPlaceMessage implements IMessage
 
     /**
      * Place the building.
+     *
      * @param state the state to be placed.
-     * @param pos the pos to place it at.
+     * @param pos   the pos to place it at.
      * @param stack the stack in the hand.
      */
     public DirectPlaceMessage(final BlockState state, final BlockPos pos, final ItemStack stack)

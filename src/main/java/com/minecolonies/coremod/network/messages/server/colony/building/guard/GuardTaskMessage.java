@@ -25,7 +25,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
     /**
      * Indicates whether tight grouping is used in mode Follow.
      */
-    private boolean  tightGrouping;
+    private boolean tightGrouping;
 
     /**
      * Empty standard constructor.
@@ -47,13 +47,13 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
      * @param tightGrouping  are we tight grouping.
      */
     public GuardTaskMessage(
-                             @NotNull final AbstractBuildingGuards.View building,
+      @NotNull final AbstractBuildingGuards.View building,
       final ResourceLocation job,
-                             final boolean assignmentMode,
-                             final boolean patrollingMode,
-                             final boolean retrieval,
-                             final int task,
-                             final boolean tightGrouping
+      final boolean assignmentMode,
+      final boolean patrollingMode,
+      final boolean retrieval,
+      final int task,
+      final boolean tightGrouping
     )
     {
         super(building);
@@ -103,7 +103,10 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
         if (building.getTask().equals(GuardTask.FOLLOW))
         {
             final PlayerEntity player = ctxIn.getSender();
-            if (player == null) return;
+            if (player == null)
+            {
+                return;
+            }
 
             building.setPlayerToFollow(player);
         }

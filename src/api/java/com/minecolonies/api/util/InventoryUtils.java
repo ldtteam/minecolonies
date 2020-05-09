@@ -1755,7 +1755,7 @@ public class InventoryUtils
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetHandler) == 0;
     }
@@ -1763,7 +1763,7 @@ public class InventoryUtils
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))

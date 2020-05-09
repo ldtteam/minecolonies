@@ -214,12 +214,12 @@ public class ResearchInitializer
         richveins.addChild(amazingveins);
         amazingveins.addChild(motherlode);
 
-        //final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect("Mechanist", true));
-        //whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
+        final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect("Mechanist", true));
+        whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
 
-        //hittingiron.addChild(whatyaneed);
+        hittingiron.addChild(whatyaneed);
 
-        //researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
+        researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
         researchTree.addResearch(stringwork.getBranch(), stringwork);
         researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);

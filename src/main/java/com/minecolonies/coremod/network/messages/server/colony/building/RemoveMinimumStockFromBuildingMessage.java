@@ -30,7 +30,7 @@ public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServe
     /**
      * Creates a Transfer Items request
      *
-     * @param building the building we're executing on.
+     * @param building  the building we're executing on.
      * @param itemStack to be take from the player for the building
      */
     public RemoveMinimumStockFromBuildingMessage(final IBuildingView building, final ItemStack itemStack)

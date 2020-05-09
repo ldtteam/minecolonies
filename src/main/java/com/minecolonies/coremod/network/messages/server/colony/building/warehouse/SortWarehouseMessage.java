@@ -21,7 +21,7 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     private static final int REQUIRED_LEVEL_TO_SORT_WAREHOUSE = 3;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public SortWarehouseMessage()
     {

@@ -32,7 +32,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     private RequestState state;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public UpdateRequestStateMessage()
     {
@@ -40,12 +40,12 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     }
 
     /**
-     * Create an update request state 
+     * Create an update request state
      *
      * @param requestId the request id.
      * @param state     the state to set.
      * @param itemStack the involved itemStack.
-     * @param colony the colony of the network message
+     * @param colony    the colony of the network message
      */
     public UpdateRequestStateMessage(final IColony colony, final IToken requestId, final RequestState state, final ItemStack itemStack)
     {
@@ -53,7 +53,6 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
         this.token = requestId;
         this.state = state;
         this.itemStack = itemStack;
-
     }
 
     @Override
