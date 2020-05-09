@@ -95,10 +95,6 @@ public class WindowListRecipes extends Window implements ButtonHandler
         recipes.addAll(building.getRecipes());
     }
 
-    /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
-     */
     @Override
     public void onOpened()
     {
@@ -109,21 +105,12 @@ public class WindowListRecipes extends Window implements ButtonHandler
         //Creates a dataProvider for the homeless recipeList.
         recipeList.setDataProvider(new ScrollingList.DataProvider()
         {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
             @Override
             public int getElementCount()
             {
                 return recipes.size();
             }
 
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
-             */
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
@@ -168,11 +155,6 @@ public class WindowListRecipes extends Window implements ButtonHandler
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 
-    /**
-     * Called when any button has been clicked.
-     *
-     * @param button the clicked button.
-     */
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {

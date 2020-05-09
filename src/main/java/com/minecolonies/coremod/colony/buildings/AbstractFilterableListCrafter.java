@@ -41,7 +41,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items AND can also craft stuff.
- *
+ * <p>
  * TODO: The crafter logic is just a copypaste from {@link AbstractBuildingCrafter} to avoid diamond inheritance.
  * This should be fixed at some point.
  */

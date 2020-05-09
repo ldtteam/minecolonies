@@ -216,14 +216,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * Main method to decide on what to do.
+     * {@inheritDoc}
      * <p>
      * The lumberjack is a special worker.
      * In their decision state, they will try to add lumberjack cycles
      * If there's nothing left to craft, they will proceed with woodworking
      * </p>
-     *
-     * @return the next state to go to.
      */
     @Override
     protected IAIState decide()
@@ -698,9 +696,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return false;
     }
 
-    /**
-     * Fill the list of the item positions to gather.
-     */
     @Override
     public void fillItemsList()
     {
@@ -828,40 +823,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return LUMBERJACK_SEARCHING_TREE;
     }
 
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
     @Override
     protected int getActionsDoneUntilDumping()
     {
         return MAX_BLOCKS_MINED;
     }
 
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
-     */
     @Override
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
-     */
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {

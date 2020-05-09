@@ -17,7 +17,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
@@ -183,11 +182,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         return ModBuildings.lumberjack;
     }
 
-    /**
-     * Getter of the schematic name.
-     *
-     * @return the schematic name.
-     */
     @NotNull
     @Override
     public String getSchematicName()
@@ -195,32 +189,18 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         return LUMBERJACK;
     }
 
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
     @Override
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
     }
 
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
     }
 
-    /**
-     * Create the job for the lumberjack.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
-     */
     @NotNull
     @Override
     public IJob createJob(final ICitizenData citizen)
@@ -287,11 +267,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         return compound;
     }
 
-    /**
-     * Getter of the job description.
-     *
-     * @return the description of the lumberjacks job.
-     */
     @NotNull
     @Override
     public String getJobName()

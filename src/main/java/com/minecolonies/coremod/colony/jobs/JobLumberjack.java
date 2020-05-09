@@ -33,11 +33,6 @@ public class JobLumberjack extends AbstractJobCrafter
         super(entity);
     }
 
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
@@ -59,11 +54,6 @@ public class JobLumberjack extends AbstractJobCrafter
         return ModJobs.lumberjack;
     }
 
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
     @NotNull
     @Override
     public String getName()
@@ -71,11 +61,6 @@ public class JobLumberjack extends AbstractJobCrafter
         return "com.minecolonies.coremod.job.Lumberjack";
     }
 
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     *
-     * @return Model of the citizen.
-     */
     @NotNull
     @Override
     public BipedModelType getModel()
@@ -83,11 +68,6 @@ public class JobLumberjack extends AbstractJobCrafter
         return BipedModelType.LUMBERJACK;
     }
 
-    /**
-     * Save the Job to an CompoundNBT.
-     *
-     * @param compound CompoundNBT to save the Job to.
-     */
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
@@ -124,11 +104,6 @@ public class JobLumberjack extends AbstractJobCrafter
         this.tree = tree;
     }
 
-    /**
-     * Generate your AI class to register.
-     *
-     * @return your personal AI instance.
-     */
     @NotNull
     @Override
     public AbstractAISkeleton<JobLumberjack> generateAI()

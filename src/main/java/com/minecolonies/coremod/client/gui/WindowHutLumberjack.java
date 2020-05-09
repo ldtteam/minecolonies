@@ -82,15 +82,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
     }
 
-    /**
-     * Defines whether or not players can change the building's recipe list.
-     * This is the case for most current buildings, but some buildings might only work on built-in recipes.
-     * It's recommended to turn this off for buildings that make no use of player-thaught recipes, to avoid confusion for new players.
-     * Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list,
-     * and also hide the recipe list altogether if no recipes are present.
-     *
-     * @return true if player is allowed to alter  recipes, false if not
-     */
     @Override
     protected boolean isRecipeAlterationAllowed()
     {
@@ -185,11 +176,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         Network.getNetwork().sendToServer(new LumberjackRestrictionToggleMessage(ownBuilding, ownBuilding.shouldRestrict));
     }
 
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
     @NotNull
     @Override
     public String getBuildingName()

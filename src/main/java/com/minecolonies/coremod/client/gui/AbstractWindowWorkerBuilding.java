@@ -162,7 +162,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private void recipeListClicked()
     {
-        if (!isRecipeAlterationAllowed() && building.getRecipes().isEmpty()) {
+        if (!isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
+        {
             /**
              * @see #onOpened() for the reasoning behind this.
              */
@@ -215,9 +216,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         Network.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
 
-    /**
-     * Called when the GUI has been opened.
-     */
     @Override
     public void onOpened()
     {
