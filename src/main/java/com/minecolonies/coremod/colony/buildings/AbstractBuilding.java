@@ -1249,7 +1249,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
 
-            if (target == null || target.getState() == RequestState.FINALIZING)
+            if (target == null || !colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId()))
             {
                 continue;
             }
@@ -1270,7 +1270,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
 
-            if (target == null || target.getState() == RequestState.FINALIZING)
+            if (target == null || !colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId()))
             {
                 continue;
             }
