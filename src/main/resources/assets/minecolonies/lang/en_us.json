@@ -1419,7 +1419,7 @@
   "entity.minecolonies.amazon": "Amazon",
   "entity.amazonchief": "Amazon Leader",
   "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader",
-  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon Arrow!"
+  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon Arrow!",
   "com.minecolonies.coremod.gui.workerhuts.mechanic": "Mechanic",
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "block.minecolonies.blockhutmechanic.name": "Mechanic",
