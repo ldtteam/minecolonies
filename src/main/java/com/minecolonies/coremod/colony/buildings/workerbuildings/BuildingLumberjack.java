@@ -295,6 +295,12 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     @Override
+    public boolean isRecipeAlterationAllowed()
+    {
+        return false;
+    }
+
+    @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
         return false;
@@ -412,12 +418,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();
             shouldRestrict = buf.readBoolean();
-        }
-
-        @Override
-        public boolean canRecipeBeAdded()
-        {
-            return false;
         }
 
         @NotNull

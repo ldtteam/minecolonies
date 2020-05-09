@@ -293,7 +293,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (checkForToolOrWeapon(ToolType.AXE))
         {
-            return START_WORKING; // Reset everything, maybe there are new crafting requests
+            // Reset everything, maybe there are new crafting requests
+            return START_WORKING;
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -309,7 +310,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             return getState();
         }
-        return START_WORKING; // Reset everything, maybe there are new crafting requests
+
+        // Reset everything, maybe there are new crafting requests
+        return START_WORKING;
     }
 
     /**

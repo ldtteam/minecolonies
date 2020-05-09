@@ -82,12 +82,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
     }
 
-    @Override
-    protected boolean isRecipeAlterationAllowed()
-    {
-        return false;
-    }
-
     private void giveTool()
     {
         givePlayerScepter();

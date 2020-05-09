@@ -98,20 +98,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
     /**
-     * Defines whether or not players can change the building's recipe list.
-     * This is the case for most current buildings, but some buildings might only work on built-in recipes.
-     * It's recommended to turn this off for buildings that make no use of player-thaught recipes, to avoid confusion for new players.
-     * Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list,
-     * and also hide the recipe list altogether if no recipes are present.
-     *
-     * @return true if player is allowed to alter  recipes, false if not
-     */
-    protected boolean isRecipeAlterationAllowed()
-    {
-        return true;
-    }
-
-    /**
      * Constructor for the window of the worker building.
      *
      * @param building class extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
@@ -128,6 +114,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
         super.registerButton(BUTTON_DP_STATE, this::changeDPState);
+
+
+        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
+        // The thought behind this is to show users player-thaught recipes and also built-in recipes.
+        // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
+        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
+
+        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
     }
 
     private void deliveryPrioUp()
@@ -162,7 +156,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private void recipeListClicked()
     {
-        if (!isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
+        if (!building.isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
         {
             /**
              * @see #onOpened() for the reasoning behind this.
@@ -170,7 +164,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
             return;
         }
-        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition(), isRecipeAlterationAllowed());
+        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
         window.open();
     }
 
@@ -179,7 +173,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     public void craftingClicked()
     {
-        if (!isRecipeAlterationAllowed())
+        if (!building.isRecipeAlterationAllowed())
         {
             // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
             return;
@@ -249,13 +243,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                 }
             });
         }
-
-        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
-        // The thought behind this is to show users player-thaught recipes and also built-in recipes.
-        // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
-        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
-
-        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(isRecipeAlterationAllowed());
 
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
