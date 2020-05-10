@@ -204,7 +204,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             playNeedRodSound();
             return getState();
         }
-        if (job.getWater() == null || world.getBlockState(job.getWater()).getBlock() == Blocks.WATER)
+        if (job.getWater() == null)
         {
             return FISHERMAN_SEARCHING_WATER;
         }
@@ -393,6 +393,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return START_WORKING;
         }
         job.setWater(job.getPonds().get(worker.getRandom().nextInt(job.getPonds().size())));
+        if (job.getWater() != null && world.getBlockState(job.getWater()).getBlock() == Blocks.WATER)
+        {
+            job.removeFromPonds(job.getWater());
+            job.setWater(null);
+            return FISHERMAN_SEARCHING_WATER;
+        }
 
         return FISHERMAN_CHECK_WATER;
     }
@@ -570,13 +576,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return PREPARING;
         }
-
-        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.WATER)
-        {
-            job.removeFromPonds(job.getWater());
-            job.setWater(null);
-            return FISHERMAN_SEARCHING_WATER;
-        }
+        
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getPosX(), (int) worker.getPosY(), (int) worker.getPosZ(), MIN_DISTANCE_TO_WATER))
         {
