@@ -45,6 +45,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 
 /**
  * Class of the plantation building.
+ * Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
 public class BuildingPlantation extends AbstractBuildingCrafter
 {
