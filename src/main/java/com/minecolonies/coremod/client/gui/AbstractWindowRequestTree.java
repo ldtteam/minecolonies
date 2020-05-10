@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -138,7 +139,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * After request cancel has been clicked cancel it and update the server side.
      *
-     * @param tRequest the clicked button.
+     * @param tRequest the request to cancel.
      */
     public void cancel(@NotNull final IRequest tRequest)
     {
@@ -383,6 +384,66 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
             }
         });
+    }
+
+    /**
+     * Checks if the request is fulfillable
+     */
+    public Boolean fulfillable(final IRequest tRequest)
+    {
+        if (canFulFill())
+        {
+            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+            final int amount = request.getRequest().getCount();
+
+            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+            if (!(tRequest.getRequest() instanceof IDeliverable))
+            {
+                return false;
+            }
+
+            if (!(request.getRequester() instanceof IBuildingBasedRequester)
+                  || !((IBuildingBasedRequester) request.getRequester())
+                        .getBuilding(colony.getRequestManager(),
+                          request.getId()).map(
+                iRequester -> iRequester.getLocation()
+                                .equals(building.getLocation())).isPresent())
+            {
+                return false;
+            }
+
+            if (!isCreative && count <= 0)
+            {
+                return false;
+            }
+
+            if (!isCreative)
+            {
+                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+                int slot = -1;
+                for (final Integer possibleSlot : slots)
+                {
+                    if (possibleSlot < invSize)
+                    {
+                        slot = possibleSlot;
+                        break;
+                    }
+                }
+                if (slot == -1)
+                {
+                    return false; // We don't have one that isn't in our armour slot
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**

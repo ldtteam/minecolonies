@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_SHORT_DETAIL;
 
 /**
  * Window for the request detail.
@@ -80,7 +80,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private static final String RESOLVER = "resolver";
 
     /**
-     * Resolver string.
+     * A Resolver string.
      */
     private static final String DELIVERY_IMAGE = "deliveryImage";
 
@@ -91,11 +91,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The colony id.
      */
-    private final int      colonyId;
+    private final int colonyId;
     /**
      * Life count.
      */
-    private       int      lifeCount = 0;
+    private int lifeCount = 0;
 
     /**
      * The previous window.
@@ -159,8 +159,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         int y = Y_OFFSET_EACH_TEXTFIELD;
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
 
+        //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if (!fulfillable())
+        if (prevWindow instanceof AbstractWindowRequestTree && !((AbstractWindowRequestTree) prevWindow).fulfillable(request))
         {
             fulfillButton.hide();
         }
@@ -228,49 +229,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
 
         box.setSize(box.getWidth(), y);
-    }
-
-    /**
-     * Checks if the request is fulfillable
-     */
-    public Boolean fulfillable()
-    {
-
-        if (!(request.getRequest() instanceof IDeliverable))
-        {
-            return false;
-        }
-
-        @NotNull final IRequest<? extends IDeliverable> myRequest = (IRequest<? extends IDeliverable>) request;
-        final Predicate<ItemStack> requestPredicate = stack -> myRequest.getRequest().matches(stack);
-        final int amount = myRequest.getRequest().getCount();
-
-        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-        if (!isCreative && count <= 0)
-        {
-            return false;
-        }
-        if (!isCreative)
-        {
-            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
-            int slot = -1;
-            for (final Integer possibleSlot : slots)
-            {
-                if (possibleSlot < invSize)
-                {
-                    slot = possibleSlot;
-                    break;
-                }
-            }
-            if (slot == -1)
-            {
-                return false; // We don't have one that isn't in our armour slot
-            }
-        }
-
-        return true;
     }
 
     /**
