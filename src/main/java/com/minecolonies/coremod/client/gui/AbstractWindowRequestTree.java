@@ -399,17 +399,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
             final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
-            if (!(tRequest.getRequest() instanceof IDeliverable))
-            {
-                return false;
-            }
-
-            if (!(request.getRequester() instanceof IBuildingBasedRequester)
-                  || !((IBuildingBasedRequester) request.getRequester())
-                        .getBuilding(colony.getRequestManager(),
-                          request.getId()).map(
-                iRequester -> iRequester.getLocation()
-                                .equals(building.getLocation())).isPresent())
+            if (!(tRequest.getRequest() instanceof IDeliverable) || !(request.getRequester() instanceof IBuildingBasedRequester))
             {
                 return false;
             }

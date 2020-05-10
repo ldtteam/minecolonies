@@ -161,7 +161,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if (prevWindow instanceof AbstractWindowRequestTree && !((AbstractWindowRequestTree) prevWindow).fulfillable(request))
+        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request))
         {
             fulfillButton.hide();
         }
