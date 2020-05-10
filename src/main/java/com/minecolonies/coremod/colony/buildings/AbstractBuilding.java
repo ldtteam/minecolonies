@@ -800,6 +800,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
+        cachedRotation = -1;
         ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());

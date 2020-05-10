@@ -86,6 +86,7 @@ public class DefaultSoundProvider implements IDataProvider
         JsonObject tavernProperties = getDefaultProperties();
         tavernProperties.addProperty("attenuation_distance", 13);
         tavernProperties.addProperty("stream", true);
+        tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
         sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
 
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
