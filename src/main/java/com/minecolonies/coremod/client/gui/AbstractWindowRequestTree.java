@@ -388,6 +388,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
     /**
      * Checks if the request is fulfillable
+     *
+     * @param tRequest the request to check if it's fulfillable
      */
     public Boolean fulfillable(final IRequest tRequest)
     {
