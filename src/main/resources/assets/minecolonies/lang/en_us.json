@@ -1413,5 +1413,10 @@
   "com.minecolonies.coremod.gui.workerhuts.fletcher": "Fletcher",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
   "block.minecolonies.blockhutfletcher.name": "Fletcher",
-  "block.minecolonies.blockhutfletcher": "Fletcher"
+  "block.minecolonies.blockhutfletcher": "Fletcher",
+
+  "com.minecolonies.coremod.gui.workerhuts.mechanic": "Mechanic",
+  "com.minecolonies.coremod.job.mechanic": "Mechanic",
+  "block.minecolonies.blockhutmechanic.name": "Mechanic",
+  "block.minecolonies.blockhutmechanic": "Mechanic"
 }

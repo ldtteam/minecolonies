@@ -245,6 +245,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently);
         }
 
+        walkTo = null;
         return getStateAfterPickUp();
     }
 
@@ -1461,7 +1462,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         do
         {
-
             if (amount > STACKSIZE)
             {
                 transferamount = STACKSIZE;
@@ -1480,14 +1480,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         while (amount > 0);
 
-        if (predicate.getB() > STACKSIZE)
-        {
-            amount = STACKSIZE;
-        }
-        else
-        {
-            amount = predicate.getB();
-        }
         return true;
     }
 
