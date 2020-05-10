@@ -4,19 +4,19 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
+
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJob
+public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumberjack>
 {
-    private static final String TAG_TREE = "Tree";
     /**
      * The tree this lumberjack is currently working on.
      */
@@ -33,16 +33,10 @@ public class JobLumberjack extends AbstractJob
         super(entity);
     }
 
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
-        super.read(compound);
-
+        final CompoundNBT compound = super.serializeNBT();
         if (compound.keySet().contains(TAG_TREE))
         {
             tree = Tree.read(compound.getCompound(TAG_TREE));
@@ -51,6 +45,7 @@ public class JobLumberjack extends AbstractJob
                 tree = null;
             }
         }
+        return compound;
     }
 
     @Override
@@ -83,16 +78,10 @@ public class JobLumberjack extends AbstractJob
         return BipedModelType.LUMBERJACK;
     }
 
-    /**
-     * Save the Job to an CompoundNBT.
-     *
-     * @param compound CompoundNBT to save the Job to.
-     */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
-        super.write(compound);
-
+        super.deserializeNBT(compound);
         @NotNull final CompoundNBT treeTag = new CompoundNBT();
 
         if (tree != null)
@@ -122,14 +111,8 @@ public class JobLumberjack extends AbstractJob
         this.tree = tree;
     }
 
-    /**
-     * Generate your AI class to register.
-     *
-     * @return your personal AI instance.
-     */
-    @NotNull
     @Override
-    public AbstractAISkeleton<JobLumberjack> generateAI()
+    public EntityAIWorkLumberjack generateAI()
     {
         return new EntityAIWorkLumberjack(this);
     }

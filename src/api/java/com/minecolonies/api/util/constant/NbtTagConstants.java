@@ -543,6 +543,19 @@ public final class NbtTagConstants
     public static final String TAG_FLUIDS_REMOVE_Y = "yLevel";
 
     /**
+     * Some job constants.
+     */
+    public static final String TAG_TREE = "Tree";
+
+    /**
+     * Final strings to save and retrieve the current water location and pond list.
+     */
+    public static final String TAG_WATER = "Pond";
+    public static final String TAG_PONDS   = "newPonds";
+    public static final String TAG_WATER_POND = "waterpond";
+    public static final String TAG_PARENT_POND = "parentpond";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

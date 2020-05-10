@@ -150,26 +150,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Save the Job to an CompoundNBT.
-     *
-     * @param compound CompoundNBT to save the Job to.
-     */
-    public void write(@NotNull final CompoundNBT compound)
-    {
-
-    }
-
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
-    public void read(@NotNull final CompoundNBT compound)
-    {
-
-    }
-
-    /**
      * Get a set of async requests connected to this job.
      *
      * @return a set of ITokens.
