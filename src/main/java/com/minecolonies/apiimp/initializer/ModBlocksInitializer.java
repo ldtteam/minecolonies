@@ -78,6 +78,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGlassblower = new BlockHutGlassblower().registerBlock(registry);
         ModBlocks.blockHutDyer = new BlockHutDyer().registerBlock(registry);
         ModBlocks.blockHutFletcher = new BlockHutFletcher().registerBlock(registry);
+        ModBlocks.blockHutMechanic = new BlockHutMechanic().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
@@ -143,6 +144,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGlassblower.registerBlockItem(registry, properties);
         ModBlocks.blockHutDyer.registerBlockItem(registry, properties);
         ModBlocks.blockHutFletcher.registerBlockItem(registry, properties);
+        ModBlocks.blockHutMechanic.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
