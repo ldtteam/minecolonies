@@ -232,6 +232,12 @@ public class Tool implements IDeliverable
     }
 
     @Override
+    public int getMinimumCount()
+    {
+        return 1;
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;

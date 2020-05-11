@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
@@ -79,8 +80,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         super.onRequestedRequestCancelled(manager, request);
         if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack)
         {
-            final Stack req = new Stack(((Stack) request.getRequest()).getStack());
-            req.setCount(((Stack) request.getRequest()).getCount());
+            final IDeliverable req = ((Stack) request.getRequest()).copyWithCount(((Stack) request.getRequest()).getCount());
             createRequest(req, false);
         }
     }

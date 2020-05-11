@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -87,11 +88,16 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest().getStack(), request.getRequest().getCount());
+        return attemptResolveForBuildingAndStack(
+          manager,
+          buildingWorker,
+          request.getRequest().getStack(),
+          request.getRequest().getCount(),
+          request.getRequest().getMinCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count, final int minCount)
     {
         if (!canBuildingCraftStack(manager, building, stack))
         {
@@ -110,7 +116,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        return createRequestsForRecipe(manager, building, stack, count, craftableCrafting);
+        return createRequestsForRecipe(manager, count, minCount, craftableCrafting);
     }
 
     protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
@@ -121,9 +127,8 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
             @NotNull final IRequestManager manager,
-            @NotNull final AbstractBuildingWorker building,
-            final ItemStack requestStack,
             final int count,
+            final int minCount,
             @NotNull final IRecipeStorage storage)
     {
         final List<IToken<?>> materialRequests = new ArrayList<>();
@@ -132,17 +137,16 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             if (!ItemStackUtils.isEmpty(ingredient.getItemStack()))
             {
                 final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
-                materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count));
+                materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount));
             }
         }
         return materialRequests;
     }
 
     @Nullable
-    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count)
+    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count, final int minCount)
     {
-        final Stack stackRequest = new Stack(stack);
-        stackRequest.setCount(count);
+        final Stack stackRequest = new Stack(stack, count, minCount);
         return manager.createRequest(this, stackRequest);
     }
 
