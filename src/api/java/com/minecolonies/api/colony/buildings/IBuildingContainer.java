@@ -45,16 +45,14 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
     void setPickUpPriority(int pickUpPriority);
 
     /**
-     * Check if the priority is static and it shouldn't change.
-     *
-     * @return the priority state, a boolean.
+     * Get the current priority state
      */
-    boolean isPriorityStatic();
+    PickUpPriorityState getPriorityState();
 
     /**
      * Change the current priority state.
      */
-    void alterPriorityState();
+    void setPriorityState(PickUpPriorityState state);
 
     /**
      * Add a new container to the building.
