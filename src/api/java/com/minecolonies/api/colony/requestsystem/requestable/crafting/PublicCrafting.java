@@ -13,11 +13,10 @@ public class PublicCrafting extends AbstractCrafting
      *
      * @param stack the required stack.
      * @param count the crafting count.
-     * @param minCount the min count.
      */
-    public PublicCrafting(@NotNull final ItemStack stack, final int count, final int minCount)
+    public PublicCrafting(@NotNull final ItemStack stack, final int count)
     {
-        super(stack, count, minCount);
+        super(stack, count, count);
     }
 
     /**
@@ -32,7 +31,6 @@ public class PublicCrafting extends AbstractCrafting
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
-        compound.putInt(NBT_MIN_COUNT, input.getCount());
 
         return compound;
     }
@@ -48,8 +46,7 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
-        final int minCount = compound.getInt(NBT_MIN_COUNT);
 
-        return new PublicCrafting(stack, count, minCount == 0 ? count : minCount);
+        return new PublicCrafting(stack, count);
     }
 }
