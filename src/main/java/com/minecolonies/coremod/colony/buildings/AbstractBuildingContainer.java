@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -69,7 +71,8 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     /**
      * The constructor for the building container.
-     * @param pos the position of it.
+     *
+     * @param pos    the position of it.
      * @param colony the colony.
      */
     public AbstractBuildingContainer(final BlockPos pos, final IColony colony)
@@ -95,11 +98,16 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (compound.keySet().contains(TAG_PRIO_STATE))
         {
             this.priorityState = PickUpPriorityState.fromIntRepresentation(compound.getInt(TAG_PRIO_STATE));
-        } else {
+        }
+        else
+        {
             // Do a migration from the old boolean state
-            if (compound.keySet().contains(TAG_PRIO_MODE)) {
+            if (compound.keySet().contains(TAG_PRIO_MODE))
+            {
                 this.priorityState = compound.getBoolean(TAG_PRIO_MODE) == true ? STATIC : AUTOMATIC;
-            } else {
+            }
+            else
+            {
                 // Default to Automatic
                 this.priorityState = AUTOMATIC;
             }

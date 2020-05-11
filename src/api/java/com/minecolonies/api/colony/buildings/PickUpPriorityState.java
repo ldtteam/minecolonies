@@ -13,26 +13,32 @@ public enum PickUpPriorityState
      */
     private final int intRepresentation;
 
-    PickUpPriorityState(final int intRepresentation) {
+    PickUpPriorityState(final int intRepresentation)
+    {
         this.intRepresentation = intRepresentation;
     }
 
     /**
      * The integer representation for this enum. Used for message serialization.
+     *
      * @return The integer representation
      */
-    public int getIntRepresentation() {
+    public int getIntRepresentation()
+    {
         return intRepresentation;
     }
 
     /**
      * Creates the enum from an int. Used for message deserialization.
      * This is not DRY, but we're talking about 3 to maybe later 4 values here.
+     *
      * @param intRepresentation The internal representation of the enum.
      * @return The corresponding enum.
      */
-    public static PickUpPriorityState fromIntRepresentation(int intRepresentation) {
-        switch (intRepresentation) {
+    public static PickUpPriorityState fromIntRepresentation(int intRepresentation)
+    {
+        switch (intRepresentation)
+        {
             case 0:
                 return NEVER;
             case 1:
@@ -41,6 +47,23 @@ public enum PickUpPriorityState
                 return AUTOMATIC;
             default:
                 return null;
+        }
+    }
+
+    @Override
+    public String toString()
+    {
+        switch (intRepresentation)
+        {
+            case 0:
+                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.never";
+            case 1:
+                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.static";
+            case 2:
+                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
+            default:
+                // In error cases, the system will default to Automatic. Reflect this in this string.
+                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
         }
     }
 }

@@ -2,9 +2,9 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -43,7 +43,8 @@ public class ChangePickUpPriorityStateMessage extends AbstractBuildingServerMess
     protected void fromBytesOverride(final PacketBuffer buf)
     {
         state = PickUpPriorityState.fromIntRepresentation(buf.readInt());
-        if (state == null) {
+        if (state == null)
+        {
             // This is just a sanity check. Since we are doing serialization ourselves, this should never happen.
             // But if it does happen, default to AUTOMATIC, just to be safe.
             state = AUTOMATIC;

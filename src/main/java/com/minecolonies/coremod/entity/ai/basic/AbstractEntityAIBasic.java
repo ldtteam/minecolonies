@@ -174,11 +174,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             and wait for new items.
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                               ((this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                                                                   || this.getOwnBuilding()
-                                                                        .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                                                                          r -> !worker.getCitizenData().isRequestAsync(r.getId())))
-                                                               ), NEEDS_ITEM, 20),
+                                                                     ((this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                                                                         || this.getOwnBuilding()
+                                                                              .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+                                                                                r -> !worker.getCitizenData().isRequestAsync(r.getId())))
+                                                                     ), NEEDS_ITEM, 20),
           new AITarget(NEEDS_ITEM, this::waitForRequests, 10),
           /*
            * Gather a needed item.
@@ -279,7 +279,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Can be overridden in implementations to return the exact building type.
-     * @param <W> the building type.
+     *
+     * @param <W>  the building type.
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
@@ -353,12 +354,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return true if we need to dump the inventory.
      */
-    protected boolean inventoryNeedsDump() {
+    protected boolean inventoryNeedsDump()
+    {
         return getState() != INVENTORY_FULL &&
-                (worker.getCitizenInventoryHandler().isInventoryFull()
-                        || job.getActionsDone() >= getActionsDoneUntilDumping()
-                        || wantInventoryDumped())
-                && !(job instanceof JobDeliveryman);
+                 (worker.getCitizenInventoryHandler().isInventoryFull()
+                    || job.getActionsDone() >= getActionsDoneUntilDumping()
+                    || wantInventoryDumped())
+                 && !(job instanceof JobDeliveryman);
     }
 
     /**
@@ -519,7 +521,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Utility method to search for items currently needed. Poll this until all items are there.
-     * 
+     *
      * @return the next state to go to.
      */
     @NotNull
@@ -1183,7 +1185,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Calculates the most efficient tool to use on that block.
      *
      * @param target the Block type to mine
-     * @param pos the pos it is at.
+     * @param pos    the pos it is at.
      * @return the slot with the best tool
      */
     protected int getMostEfficientTool(@NotNull final Block target, final BlockPos pos)
@@ -1438,7 +1440,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param predicate the predicate to evaluate.
      * @return true if succesful.
      */
-
 
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {

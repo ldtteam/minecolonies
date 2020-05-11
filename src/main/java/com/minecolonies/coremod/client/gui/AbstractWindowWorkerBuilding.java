@@ -106,22 +106,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private PickUpPriorityState state = building.getBuildingDmPrioState();
 
-    private String getStateString()
-    {
-        switch (state)
-        {
-            case AUTOMATIC:
-                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
-            case STATIC:
-                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.static";
-            case NEVER:
-                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.never";
-            default:
-                // In error cases, the system will default to Automatic. Reflect this in this string.
-                return "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
-        }
-    }
-
     /**
      * Constructor for the window of the worker building.
      *
@@ -179,10 +163,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         }
 
         Network.getNetwork().sendToServer(new ChangePickUpPriorityStateMessage(building, state));
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(getStateString()));
+        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(state.toString()));
 
         updatePickUpButtons();
-        Log.getLogger().info(state);
     }
 
     /**
@@ -284,6 +267,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         }
 
         findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(getStateString()));
+        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(state.toString()));
     }
 }
