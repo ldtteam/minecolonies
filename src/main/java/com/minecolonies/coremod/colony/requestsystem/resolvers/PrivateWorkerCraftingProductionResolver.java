@@ -63,12 +63,6 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request, @NotNull final AbstractBuilding building)
     {
-        if (building.requiresCompleteRequestFulfillment())
-        {
-            super.resolveForBuilding(manager, request, building);
-            return;
-        }
-
         manager.updateRequestState(request.getId(), RequestState.FINALIZING);
 
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;

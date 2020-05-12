@@ -34,9 +34,7 @@ import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIO
  */
 public class BuildingRequestResolver extends AbstractBuildingDependentRequestResolver<IDeliverable>
 {
-    public BuildingRequestResolver(
-                                    @NotNull final ILocation location,
-                                    @NotNull final IToken<?> token)
+    public BuildingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -54,22 +52,19 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }
 
     @Override
-    public boolean canResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
@@ -103,17 +98,25 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int totalRequested = request.getRequest().getCount();
-        final int totalAvailable = tileEntities.stream()
-                                     .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-                                     .filter(itemStacks -> !itemStacks.isEmpty())
-                                     .flatMap(List::stream)
-                                     .mapToInt(ItemStack::getCount)
-                                     .sum();
+        int totalAvailable = 0;
+        for (final ICapabilityProvider tile : tileEntities)
+        {
+            final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
+            for (final ItemStack stack : inv)
+            {
+                if (!stack.isEmpty())
+                {
+                    totalAvailable += stack.getCount();
+                }
+            }
+        }
 
         if (totalAvailable >= totalRequested)
+        {
             return Lists.newArrayList();
-        
-        if (!building.requiresCompleteRequestFulfillment())
+        }
+
+        if (totalAvailable > request.getRequest().getMinimumCount())
         {
             return Lists.newArrayList();
         }
@@ -131,37 +134,38 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         final int total = request.getRequest().getCount();
         final AtomicInteger current = new AtomicInteger(0);
 
-        tileEntities.stream()
-          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-          .filter(itemStacks -> !itemStacks.isEmpty())
-          .flatMap(List::stream)
-          .forEach(stack ->
-          {
-              if (current.get() < total)
-              {
-                  request.addDelivery(stack);
-                  current.getAndAdd(stack.getCount());
-              }
-          });
+        for (final ICapabilityProvider tile : tileEntities)
+        {
+            final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
+            for (final ItemStack stack : inv)
+            {
+                if (!stack.isEmpty() && current.get() < total)
+                {
+                    request.addDelivery(stack);
+                    current.getAndAdd(stack.getCount());
+                }
+            }
+        }
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
 
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
 
     }
 
