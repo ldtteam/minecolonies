@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
@@ -131,7 +132,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE, 1));
             }
         }
 

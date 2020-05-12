@@ -42,7 +42,6 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         return null;
     }
 
-    @Nullable
     @Override
     public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
@@ -50,13 +49,11 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
@@ -101,8 +98,8 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count)
+    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount)
     {
-        return new PrivateCrafting(stack, count);
+        return new PrivateCrafting(stack, count, minCount);
     }
 }

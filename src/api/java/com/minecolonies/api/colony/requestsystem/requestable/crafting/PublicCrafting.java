@@ -16,7 +16,7 @@ public class PublicCrafting extends AbstractCrafting
      */
     public PublicCrafting(@NotNull final ItemStack stack, final int count)
     {
-        super(stack, count);
+        super(stack, count, count);
     }
 
     /**

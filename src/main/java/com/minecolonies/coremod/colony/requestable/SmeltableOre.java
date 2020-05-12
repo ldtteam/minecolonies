@@ -59,8 +59,7 @@ public class SmeltableOre implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return ItemStackUtils.IS_SMELTABLE.and(
-            itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(itemStack)).test(stack);
+        return ItemStackUtils.IS_SMELTABLE.and(itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(itemStack)).test(stack);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class SmeltableOre implements IDeliverable
     }
 
     @Override
-    public IDeliverable copyWithCount(@NotNull final int newCount)
+    public IDeliverable copyWithCount(final int newCount)
     {
         return new SmeltableOre(newCount);
     }
@@ -79,6 +78,12 @@ public class SmeltableOre implements IDeliverable
     public int getCount()
     {
         return count;
+    }
+
+    @Override
+    public int getMinimumCount()
+    {
+        return 1;
     }
 
     @NotNull
