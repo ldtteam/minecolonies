@@ -15,7 +15,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJobCrafter
+public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, JobLumberjack>
 {
     /**
      * The tree this lumberjack is currently working on.
