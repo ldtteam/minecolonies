@@ -589,8 +589,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
-                stackRequest.setCount(placedStack.getValue());
+                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;

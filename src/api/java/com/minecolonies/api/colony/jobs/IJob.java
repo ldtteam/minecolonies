@@ -71,8 +71,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Generate your AI class to register.
      * <p>
-     * Suppressing Sonar Rule squid:S1452
-     * This rule does "Generic wildcard types should not be used in return parameters"
+     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters"
      * But in this case the rule does not apply because
      * We are fine with all AbstractJob implementations and need generics only for java
      *
@@ -157,11 +156,16 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     int getActionsDone();
 
     /**
-     * Actions done since the last reset.
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1
+     * Used for example to detect if and when the inventory has to be dumped.
      */
     void incrementActionsDone();
+
+    /**
+     * Increase the actions done since the last reset by numberOfActions
+     * Used for example to detect if and when the inventory has to be dumped.
+     */
+    void incrementActionsDone(int numberOfActions);
 
     /**
      * Clear the actions done counter.
@@ -190,12 +194,14 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Method to check if the colony job allows avoidance.
+     *
      * @return true if so.
      */
     boolean allowsAvoidance();
 
     /**
      * Disease modifier of the job.
+     *
      * @return the modifier of the job.
      */
     int getDiseaseModifier();
@@ -207,6 +213,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Set if the worker can currently work.
+     *
      * @param b true if so.
      */
     void setActive(final boolean b);

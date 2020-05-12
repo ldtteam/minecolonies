@@ -15,13 +15,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumberjack>
+public class JobLumberjack extends AbstractJobCrafter
 {
     /**
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    private Tree tree;
+    private              Tree   tree;
 
     /**
      * Create a lumberjack job.
@@ -54,11 +54,6 @@ public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumber
         return ModJobs.lumberjack;
     }
 
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
     @NotNull
     @Override
     public String getName()
@@ -66,11 +61,6 @@ public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumber
         return "com.minecolonies.coremod.job.Lumberjack";
     }
 
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     *
-     * @return Model of the citizen.
-     */
     @NotNull
     @Override
     public BipedModelType getModel()
@@ -94,6 +84,7 @@ public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumber
 
     /**
      * Get the current tree the lumberjack is cutting.
+     *
      * @return the tree.
      */
     @Nullable
@@ -104,6 +95,7 @@ public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumber
 
     /**
      * Set the tree he is currently cutting.
+     *
      * @param tree the tree.
      */
     public void setTree(@Nullable final Tree tree)
@@ -111,6 +103,7 @@ public class JobLumberjack extends AbstractJob<EntityAIWorkLumberjack, JobLumber
         this.tree = tree;
     }
 
+    @NotNull
     @Override
     public EntityAIWorkLumberjack generateAI()
     {

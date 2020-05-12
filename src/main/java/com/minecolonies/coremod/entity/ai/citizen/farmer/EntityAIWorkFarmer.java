@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -169,12 +170,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()), TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
-                compostAbleItems.add(new ItemStack(ModItems.compost));
+                compostAbleItems.add(new ItemStack(ModItems.compost, 1));
                 compostAbleItems.add(new ItemStack(Items.BONE_MEAL, 1));
-                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, FERTLIZER));
+                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, FERTLIZER, STACKSIZE, 1));
             }
         }
         else if (amountOfCompostInInv <= 0 && amountOfCompostInBuilding > 0)

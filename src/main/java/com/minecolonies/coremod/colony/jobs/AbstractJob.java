@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -87,33 +86,18 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         citizen = entity;
     }
 
-    /**
-     * Getter for the job which will be associated with the experience.
-     *
-     * @return the getName() or the specialized class name.
-     */
     @Override
     public String getExperienceTag()
     {
         return getName();
     }
 
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     *
-     * @return Model of the citizen.
-     */
     @Override
     public IModelType getModel()
     {
         return BipedModelType.CITIZEN;
     }
 
-    /**
-     * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColonyByPosFromWorld()).
-     *
-     * @return {@link Colony} of the citizen.
-     */
     @Override
     public IColony getColony()
     {
@@ -126,7 +110,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         final CompoundNBT compound = new CompoundNBT();
 
         compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
-        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().filter(token -> getColony().getRequestManager().getRequestForToken(token) != null).map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_ASYNC_REQUESTS,
+          getAsyncRequests().stream()
+            .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
+            .map(StandardFactoryController.getInstance()::serialize)
+            .collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
@@ -160,11 +148,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         return asyncRequests;
     }
 
-    /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list.
-     *
-     * @param tasks EntityAITasks list to add tasks to.
-     */
     @Override
     public void addWorkerAIToTaskList(@NotNull final GoalSelector tasks)
     {
@@ -191,69 +174,36 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         tasks.addGoal(TASK_PRIORITY, tempAI);
     }
 
-    /**
-     * Check if the citizen already checked for food in his chest today.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean hasCheckedForFoodToday()
     {
         return searchedForFoodToday;
     }
 
-    /**
-     * Sets that the citizen on this day already searched for food in his chest.
-     */
     @Override
     public void setCheckedForFood()
     {
         searchedForFoodToday = true;
     }
 
-    /**
-     * This method can be used to display the current status.
-     * That a citizen is having.
-     *
-     * @return Small string to display info in name tag
-     */
     @Override
     public String getNameTagDescription()
     {
         return this.nameTag;
     }
 
-    /**
-     * Used by the AI skeleton to change a citizens name.
-     * Mostly used to update debugging information.
-     *
-     * @param nameTag The name tag to display.
-     */
     @Override
     public final void setNameTag(final String nameTag)
     {
         this.nameTag = nameTag;
     }
 
-
-    /**
-     * Override this to implement Job specific death achievements.
-     *
-     * @param source  of the death
-     * @param citizen which just died
-     */
     @Override
     public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
 
     }
 
-    /**
-     * Method called when a stack is pickup by the entity.
-     *
-     * @param pickedUpStack The stack that is being picked up.
-     * @return true when the stack has been used to resolve a request, false when not.
-     */
     @Override
     public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
     {
@@ -279,85 +229,54 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
     }
 
-    /**
-     * Get the CitizenData that this Job belongs to.
-     *
-     * @return CitizenData that owns this Job.
-     */
     @Override
     public ICitizenData getCitizen()
     {
         return citizen;
     }
 
-    /**
-     * Executed every time the colony woke up.
-     */
     @Override
     public void onWakeUp()
     {
         searchedForFoodToday = false;
     }
 
-    /**
-     * Check if it is okay to eat
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isOkayToEat()
     {
         return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
     }
 
-    /**
-     * Getter for the amount of actions done.
-     *
-     * @return the quantity.
-     */
     @Override
     public int getActionsDone()
     {
         return actionsDone;
     }
 
-    /**
-     * Actions done since the last reset.
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
-     */
     @Override
     public void incrementActionsDone()
     {
         actionsDone++;
     }
 
-    /**
-     * Clear the actions done counter.
-     * Call this when dumping into the chest.
-     */
+    @Override
+    public void incrementActionsDone(final int numberOfActions)
+    {
+        actionsDone += numberOfActions;
+    }
+
     @Override
     public void clearActionsDone()
     {
         this.actionsDone = 0;
     }
 
-    /**
-     * Get the worker AI associated to this job
-     *
-     * @return worker AI
-     */
     @Override
     public AI getWorkerAI()
     {
         return workerAI.get();
     }
 
-    /**
-     * Check if the citizen is in an idle state.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isIdling()
     {

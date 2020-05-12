@@ -104,6 +104,10 @@ public enum AIWorkerState implements IAIState
 ###Lumberjack###
      */
     /**
+     * The lumberjack is starting up his/her routine.
+     */
+    LUMBERJACK_START_WORKING(true),
+    /**
      * The lumberjack is looking for trees.
      */
     LUMBERJACK_SEARCHING_TREE(true),
@@ -426,7 +430,7 @@ public enum AIWorkerState implements IAIState
      */
 
     /**
-     *  Guard attack a dummy.
+     * Guard attack a dummy.
      */
     KNIGHT_ATTACK_DUMMY(true),
 
@@ -528,9 +532,9 @@ public enum AIWorkerState implements IAIState
 
     RUNNING(true),
 
-      /*
+    /*
 ### Healer ###
-     */
+   */
     REQUEST_CURE(true),
 
     CURE(true),
@@ -562,6 +566,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Create a new one.
+     *
      * @param okayToEat if okay.
      */
     AIWorkerState(final boolean okayToEat)
@@ -571,6 +576,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Method to check if it is okay.
+     *
      * @return true if so.
      */
     public boolean isOkayToEat()

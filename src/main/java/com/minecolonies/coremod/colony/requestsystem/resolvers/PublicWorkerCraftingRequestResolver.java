@@ -89,7 +89,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count)
+    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount)
     {
         return new PublicCrafting(stack, count);
     }

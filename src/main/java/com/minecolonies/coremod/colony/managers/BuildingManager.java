@@ -106,7 +106,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if(compound.keySet().contains(TAG_NEW_FIELDS))
+        if (compound.keySet().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -324,9 +324,9 @@ public class BuildingManager implements IBuildingManager
                 tileEntity.setBuilding(building);
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()));
+                  colony.getID(),
+                  tileEntity.getBlockState().getClass(),
+                  tileEntity.getPosition()));
                 if (tileEntity.isMirrored())
                 {
                     building.invertMirror();
@@ -365,9 +365,9 @@ public class BuildingManager implements IBuildingManager
             else
             {
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()), new Exception());
+                  colony.getID(),
+                  tileEntity.getBlockState().getClass(),
+                  tileEntity.getPosition()), new Exception());
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
@@ -495,6 +495,11 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
+        if (allowedBuildings.isEmpty())
+        {
+            return null;
+        }
+
         Collections.shuffle(allowedBuildings);
         return allowedBuildings.get(0).getPosition();
     }
@@ -549,7 +554,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the buildings.
-     * 
+     *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
@@ -575,7 +580,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
-     * 
+     *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
