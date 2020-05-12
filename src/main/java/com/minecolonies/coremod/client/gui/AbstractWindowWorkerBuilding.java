@@ -8,7 +8,6 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.PickUpPriorityState;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
@@ -125,6 +124,13 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_DP_STATE, this::changeDPState);
 
         updatePickUpButtons();
+
+        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
+        // The thought behind this is to show users player-thaught recipes and also built-in recipes.
+        // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
+        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
+
+        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
     }
 
     private void deliveryPrioUp()
@@ -191,6 +197,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private void recipeListClicked()
     {
+        if (!building.isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
+        {
+            /**
+             * @see #onOpened() for the reasoning behind this.
+             */
+            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
+            return;
+        }
         @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
         window.open();
     }
@@ -200,6 +214,11 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     public void craftingClicked()
     {
+        if (!building.isRecipeAlterationAllowed())
+        {
+            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
+            return;
+        }
         final BlockPos pos = building.getPosition();
         Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building));

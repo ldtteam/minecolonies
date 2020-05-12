@@ -1260,10 +1260,29 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * For example:
      * <p>
      * After x blocks, bring everything back.
+     *
+     * @see #incrementActionsDone(int)
      */
     protected final void incrementActionsDone()
     {
         job.incrementActionsDone();
+    }
+
+    /**
+     * Tell the ai that you have done numberOfActions more actions.
+     * <p>
+     * if the actions exceed a certain number, the ai will dump it's inventory.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     *
+     * @param numberOfActions number of actions to be added at once.
+     * @see #incrementActionsDone()
+     */
+    protected final void incrementActionsDone(final int numberOfActions)
+    {
+        job.incrementActionsDone(numberOfActions);
     }
 
     /**
