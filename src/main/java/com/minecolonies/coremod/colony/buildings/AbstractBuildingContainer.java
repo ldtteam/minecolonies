@@ -2,12 +2,13 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
+import static com.minecolonies.api.colony.buildings.PickUpPriorityState.STATIC;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -64,11 +67,12 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * Priority state of the building in the pickUpList.
      */
-    private boolean priorityStatic = false;
+    private PickUpPriorityState priorityState = AUTOMATIC;
 
     /**
      * The constructor for the building container.
-     * @param pos the position of it.
+     *
+     * @param pos    the position of it.
      * @param colony the colony.
      */
     public AbstractBuildingContainer(final BlockPos pos, final IColony colony)
@@ -91,9 +95,22 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         {
             this.pickUpPriority = compound.getInt(TAG_PRIO);
         }
-        if (compound.keySet().contains(TAG_PRIO_MODE))
+        if (compound.keySet().contains(TAG_PRIO_STATE))
         {
-            this.priorityStatic = compound.getBoolean(TAG_PRIO_MODE);
+            this.priorityState = PickUpPriorityState.fromIntRepresentation(compound.getInt(TAG_PRIO_STATE));
+        }
+        else
+        {
+            // Do a migration from the old boolean state
+            if (compound.keySet().contains(TAG_PRIO_MODE))
+            {
+                this.priorityState = compound.getBoolean(TAG_PRIO_MODE) == true ? STATIC : AUTOMATIC;
+            }
+            else
+            {
+                // Default to Automatic
+                this.priorityState = AUTOMATIC;
+            }
         }
     }
 
@@ -109,69 +126,41 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.pickUpPriority);
-        compound.putBoolean(TAG_PRIO_MODE, this.priorityStatic);
+        compound.putInt(TAG_PRIO_STATE, this.priorityState.getIntRepresentation());
 
         return compound;
     }
 
-    /**
-     * Get the pick up priority of the building.
-     *
-     * @return the priority, an integer.
-     */
     @Override
     public int getPickUpPriority()
     {
         return this.pickUpPriority;
     }
 
-    /**
-     * Increase or decrease the current pickup priority.
-     *
-     * @param value the new prio to add to.
-     */
     @Override
     public void alterPickUpPriority(final int value)
     {
         this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 1, MAX_PRIO);
     }
 
-    /**
-     * Sets the pickup priority to the given value.
-     *
-     * @param pickUpPriority The new pickup priority.
-     */
     @Override
     public void setPickUpPriority(final int pickUpPriority)
     {
         this.pickUpPriority = MathHelper.clamp(pickUpPriority, 1, MAX_PRIO);
     }
 
-    /**
-     * Check if the priority is static and it shouldn't change.
-     *
-     * @return the priority state, a boolean.
-     */
     @Override
-    public boolean isPriorityStatic()
+    public PickUpPriorityState getPriorityState()
     {
-        return this.priorityStatic;
+        return priorityState;
     }
 
-    /**
-     * Change the current priority state.
-     */
     @Override
-    public void alterPriorityState()
+    public void setPriorityState(final PickUpPriorityState state)
     {
-        this.priorityStatic = !this.priorityStatic;
+        this.priorityState = state;
     }
 
-    /**
-     * Add a new container to the building.
-     *
-     * @param pos position to add.
-     */
     @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
@@ -182,11 +171,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
     }
 
-    /**
-     * Remove a container from the building.
-     *
-     * @param pos position to remove.
-     */
     @Override
     public void removeContainerPosition(final BlockPos pos)
     {
@@ -194,37 +178,18 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         getTileEntity().markInvDirty();
     }
 
-    /**
-     * Get all additional containers which belong to the building.
-     *
-     * @return a copy of the list to avoid currentModification exception.
-     */
     @Override
     public List<BlockPos> getAdditionalCountainers()
     {
         return new ArrayList<>(containerList);
     }
 
-    /**
-     * Register a blockState and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param blockState to be registered
-     * @param pos   of the blockState
-     */
     @Override
     public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         registerBlockPosition(blockState.getBlock(), pos, world);
     }
 
-    /**
-     * Register a block and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param block to be registered
-     * @param pos   of the block
-     */
     @Override
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
@@ -243,11 +208,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
     }
 
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link AbstractTileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
     @Override
     public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {

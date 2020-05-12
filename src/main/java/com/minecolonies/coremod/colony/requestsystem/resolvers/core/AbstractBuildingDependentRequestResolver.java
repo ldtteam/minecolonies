@@ -19,17 +19,13 @@ import java.util.Optional;
  */
 public abstract class AbstractBuildingDependentRequestResolver<R extends IRequestable> extends AbstractRequestResolver<R> implements IBuildingBasedRequester
 {
-
-    public AbstractBuildingDependentRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
+    public AbstractBuildingDependentRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
     }
 
     @Override
-    public boolean canResolveRequest(
-      @NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -40,7 +36,6 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
-
         return false;
     }
 
@@ -48,25 +43,21 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
-    public abstract List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+    public abstract List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 
     @Override
-    public void resolveRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
-    public abstract void resolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+    public abstract void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 }

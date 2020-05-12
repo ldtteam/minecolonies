@@ -54,12 +54,12 @@ import java.util.function.Supplier;
  */
 public class NetworkChannel
 {
-    private static final String LATEST_PROTO_VER = "1.0";
-    private static final String ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
+    private static final String        LATEST_PROTO_VER    = "1.0";
+    private static final String        ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
     /**
      * Forge network channel
      */
-    private final SimpleChannel rawChannel;
+    private final        SimpleChannel rawChannel;
 
     /**
      * Creates a new instance of network channel.
@@ -69,7 +69,8 @@ public class NetworkChannel
      */
     public NetworkChannel(final String channelName)
     {
-        rawChannel = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> LATEST_PROTO_VER, ACCEPTED_PROTO_VERS::equals, ACCEPTED_PROTO_VERS::equals);
+        rawChannel =
+          NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> LATEST_PROTO_VER, ACCEPTED_PROTO_VERS::equals, ACCEPTED_PROTO_VERS::equals);
     }
 
     /**
@@ -134,7 +135,7 @@ public class NetworkChannel
         registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
         registerMessage(++idx, ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
-        registerMessage(++idx, ChangeDeliveryPriorityStateMessage.class, ChangeDeliveryPriorityStateMessage::new);
+        registerMessage(++idx, ChangePickUpPriorityStateMessage.class, ChangePickUpPriorityStateMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
         registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
@@ -298,7 +299,7 @@ public class NetworkChannel
      * <pre>
      * Math.min(Entity.getType().getTrackingRange(), ChunkManager.this.viewDistance - 1) * 16;
      * </pre>
-     *
+     * <p>
      * as of 24-06-2019
      *
      * @param msg    message to send
@@ -315,7 +316,7 @@ public class NetworkChannel
      * <pre>
      * Math.min(Entity.getType().getTrackingRange(), ChunkManager.this.viewDistance - 1) * 16;
      * </pre>
-     *
+     * <p>
      * as of 24-06-2019
      *
      * @param msg    message to send

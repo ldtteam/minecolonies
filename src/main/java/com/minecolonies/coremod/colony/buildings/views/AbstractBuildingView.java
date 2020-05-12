@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
 import static com.minecolonies.api.util.constant.Suppression.*;
@@ -72,7 +74,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     /**
      * The dm priority.
      */
-    private boolean buildingDmPrioState = false;
+    private PickUpPriorityState buildingDmPrioState = AUTOMATIC;
 
     /**
      * Rotation of the building.
@@ -375,7 +377,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
-        buildingDmPrioState = buf.readBoolean();
+        buildingDmPrioState = PickUpPriorityState.fromIntRepresentation(buf.readInt());
         workOrderLevel = buf.readInt();
         style = buf.readString(32767);
         schematicName = buf.readString(32767);
@@ -412,7 +414,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
         minimumStock.clear();
         final int size = buf.readInt();
-        for(int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
         }
@@ -421,6 +423,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * The minimum stock.
+     *
      * @return the stock.
      */
     public List<Tuple<ItemStorage, Integer>> getStock()
@@ -430,6 +433,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     /**
      * Check if the warehouse has reached the limit.
+     *
      * @return true if so.
      */
     public boolean hasReachedLimit()
@@ -576,7 +580,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
-                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() :this.getCustomName() );
+                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
             }
 
             return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
@@ -588,11 +592,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    /**
-     * Getter to get the location of this locatable.
-     *
-     * @return The location of the locatable.
-     */
     @NotNull
     @Override
     public ILocation getLocation()
@@ -600,24 +599,14 @@ public abstract class AbstractBuildingView implements IBuildingView
         return null;
     }
 
-    /**
-     * Get the delivery priority of the building.
-     *
-     * @return int, delivery priority.
-     */
     @Override
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
     }
 
-    /**
-     * Get the delivery priority state of the building.
-     *
-     * @return boolean, delivery priority state.
-     */
     @Override
-    public boolean isBuildingDmPrioState()
+    public PickUpPriorityState getBuildingDmPrioState()
     {
         return buildingDmPrioState;
     }
@@ -628,11 +617,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         return resolvers;
     }
 
-    /**
-     * Setter for the custom name. Sets the name on the client side and sends it to the server.
-     *
-     * @param name the new name.
-     */
     @Override
     public void setCustomName(final String name)
     {

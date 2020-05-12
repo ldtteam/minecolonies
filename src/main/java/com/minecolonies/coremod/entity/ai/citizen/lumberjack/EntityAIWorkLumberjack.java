@@ -14,7 +14,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.pathfinding.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.PathJobMoveToWithPassable;
@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The lumberjack AI class.
  */
-public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
+public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberjack>
 {
     /**
      * The render name to render logs.
@@ -182,6 +182,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private PathResult pathToTree;
 
+    @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return getActionsDoneUntilDumping();
+    }
+
     /**
      * Create a new LumberjackAI.
      *
@@ -190,10 +196,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     public EntityAIWorkLumberjack(@NotNull final JobLumberjack job)
     {
 
+        // Override state machine, otherwise the lumberjack will never check for wood to cut.
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(LUMBERJACK_START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
           new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
           new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
@@ -207,6 +213,50 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     public Class getExpectedBuildingClass()
     {
         return BuildingLumberjack.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The lumberjack is a special worker.
+     * In their decision state, they will try to add lumberjack cycles
+     * If there's nothing left to craft, they will proceed with woodworking
+     * </p>
+     */
+    @Override
+    protected IAIState decide()
+    {
+        if (walkToBuilding())
+        {
+            return START_WORKING;
+        }
+
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
+        {
+            // Wait to dump before continuing.
+            return getState();
+        }
+
+        // This got moved downwards compared to the AICrafting-implementation,
+        // because in this case waiting for dumping is more important
+        // than restarting chopping
+        if (job.getTaskQueue().isEmpty())
+        {
+            return LUMBERJACK_START_WORKING;
+        }
+
+        if (job.getCurrentTask() == null)
+        {
+            return LUMBERJACK_START_WORKING;
+        }
+
+
+        if (currentRequest != null && currentRecipeStorage != null)
+        {
+            return QUERY_ITEMS;
+        }
+
+        return GET_RECIPE;
     }
 
     /**
@@ -243,7 +293,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (checkForToolOrWeapon(ToolType.AXE))
         {
-            return getState();
+            // Reset everything, maybe there are new crafting requests
+            return START_WORKING;
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -259,7 +310,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return getState();
         }
-        return LUMBERJACK_SEARCHING_TREE;
+
+        // Reset everything, maybe there are new crafting requests
+        return START_WORKING;
     }
 
     /**
@@ -314,10 +367,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
                                  worker.getCitizenColonyHandler().getColony());
             }
-
-            // Delay between area searches
-            setDelay(100);
-            return getState();
         }
         if (pathResult.isPathReachingDestination())
         {
@@ -329,7 +378,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             setDelay(TICKS_SECOND * GATHERING_DELAY);
             return LUMBERJACK_GATHERING;
         }
-        return getState();
+
+        // None of the above yielded a result, report no trees found.
+        return LUMBERJACK_NO_TREES_FOUND;
     }
 
     private IAIState setNewTree()
@@ -528,7 +579,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     /**
      * Check if distance to block changed and if we are not moving for too long, try to get unstuck.
-     * 
+     *
      * @return false
      */
     private boolean checkIfStuckOnLeaves()
@@ -648,9 +699,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return false;
     }
 
-    /**
-     * Fill the list of the item positions to gather.
-     */
     @Override
     public void fillItemsList()
     {
@@ -778,40 +826,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return LUMBERJACK_SEARCHING_TREE;
     }
 
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
     @Override
     protected int getActionsDoneUntilDumping()
     {
         return MAX_BLOCKS_MINED;
     }
 
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
-     */
     @Override
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
-     */
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {

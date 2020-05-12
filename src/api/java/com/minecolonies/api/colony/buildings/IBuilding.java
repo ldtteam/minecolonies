@@ -317,12 +317,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     BuildingEntry getBuildingRegistryEntry();
 
     /**
-     * Check if the building requires always all items to continue working or if a partial quantity would also solve it.
-     * @return true if so.
-     */
-    boolean requiresCompleteRequestFulfillment();
-
-    /**
      * Remove the minimum stock.
      * @param itemStack the stack to remove.
      */

@@ -423,12 +423,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return new Tuple<>(this.progressPos, this.progressStage);
     }
 
-    @Override
-    public boolean requiresCompleteRequestFulfillment()
-    {
-        return false;
-    }
-
     /**
      * Getter for the blocks to be removed in fluids_remove.
      * @return the blocks to be removed in fluids_remove.

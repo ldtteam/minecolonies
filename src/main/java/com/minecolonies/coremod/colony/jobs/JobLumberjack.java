@@ -14,14 +14,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJob
+public class JobLumberjack extends AbstractJobCrafter
 {
     private static final String TAG_TREE = "Tree";
     /**
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    private Tree tree;
+    private              Tree   tree;
 
     /**
      * Create a lumberjack job.
@@ -33,11 +33,6 @@ public class JobLumberjack extends AbstractJob
         super(entity);
     }
 
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
@@ -59,11 +54,6 @@ public class JobLumberjack extends AbstractJob
         return ModJobs.lumberjack;
     }
 
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
     @NotNull
     @Override
     public String getName()
@@ -71,11 +61,6 @@ public class JobLumberjack extends AbstractJob
         return "com.minecolonies.coremod.job.Lumberjack";
     }
 
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     *
-     * @return Model of the citizen.
-     */
     @NotNull
     @Override
     public BipedModelType getModel()
@@ -83,11 +68,6 @@ public class JobLumberjack extends AbstractJob
         return BipedModelType.LUMBERJACK;
     }
 
-    /**
-     * Save the Job to an CompoundNBT.
-     *
-     * @param compound CompoundNBT to save the Job to.
-     */
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
@@ -105,6 +85,7 @@ public class JobLumberjack extends AbstractJob
 
     /**
      * Get the current tree the lumberjack is cutting.
+     *
      * @return the tree.
      */
     @Nullable
@@ -115,6 +96,7 @@ public class JobLumberjack extends AbstractJob
 
     /**
      * Set the tree he is currently cutting.
+     *
      * @param tree the tree.
      */
     public void setTree(@Nullable final Tree tree)
@@ -122,11 +104,6 @@ public class JobLumberjack extends AbstractJob
         this.tree = tree;
     }
 
-    /**
-     * Generate your AI class to register.
-     *
-     * @return your personal AI instance.
-     */
     @NotNull
     @Override
     public AbstractAISkeleton<JobLumberjack> generateAI()

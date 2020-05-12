@@ -473,7 +473,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (getOwnBuilding().getStartingLevelShaft() == 0)
         {
-            getOwnBuilding().setStartingLevelShaft(nextCobble.getY() - 3);
+            getOwnBuilding().setStartingLevelShaft(nextCobble.getY() - 4);
         }
 
         if (nextCobble.getY() < getOwnBuilding().getStartingLevelShaft())
