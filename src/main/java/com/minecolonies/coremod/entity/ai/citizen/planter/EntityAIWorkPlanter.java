@@ -28,6 +28,11 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAICrafting<J>
 {
     /**
+     * Return to chest after this amount of stacks.
+     */
+    private static final int    MAX_BLOCKS_MINED    = 64;
+
+    /**
      * The quantity to request.
      */
     private static final Integer PLANT_TO_REQUEST = 16;
@@ -119,6 +124,12 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
         }
 
         return START_WORKING;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
     }
 
     @Override
