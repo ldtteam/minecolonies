@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.citizen.CitizenDataRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
@@ -60,6 +59,4 @@ public interface IMinecoloniesAPI
     IGlobalResearchTree getGlobalResearchTree();
 
     IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
-
-    IForgeRegistry<CitizenDataRegistryEntry> getCitizenDataTypeRegistry();
 }

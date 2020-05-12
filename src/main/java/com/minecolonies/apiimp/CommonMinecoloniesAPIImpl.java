@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.citizen.CitizenDataRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
@@ -52,7 +51,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<InteractionResponseHandlerEntry> interactionHandlerRegistry;
     private final  IInteractionResponseHandlerDataManager          interactionDataManager = new InteractionResponseHandlerManager();
     private        IForgeRegistry<ColonyEventTypeRegistryEntry>    colonyEventRegistry;
-    private        IForgeRegistry<CitizenDataRegistryEntry>        citizenDataTypeRegistry;
     private static IGlobalResearchTree                             globalResearchTree     = new GlobalResearchTree();
 
     @Override
@@ -201,24 +199,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                                 .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                                 .disableSaving().allowModification().setType(ColonyEventTypeRegistryEntry.class)
                                 .setIDRange(0, Integer.MAX_VALUE - 1).create();
-
-        citizenDataTypeRegistry = new RegistryBuilder<CitizenDataRegistryEntry>()
-                                    .setName(new ResourceLocation(Constants.MOD_ID, "colonycitizendatatypes"))
-                                    .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                                    .disableSaving().allowModification().setType(CitizenDataRegistryEntry.class)
-                                    .setIDRange(0, Integer.MAX_VALUE - 1).create();
     }
 
     @Override
     public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
     {
         return colonyEventRegistry;
-    }
-
-    @Override
-    public IForgeRegistry<CitizenDataRegistryEntry> getCitizenDataTypeRegistry()
-    {
-        return citizenDataTypeRegistry;
     }
 }
 
