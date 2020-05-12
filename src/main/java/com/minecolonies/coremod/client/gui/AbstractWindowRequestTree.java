@@ -6,6 +6,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -13,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -393,48 +395,81 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      */
     public Boolean fulfillable(final IRequest tRequest)
     {
-        if (canFulFill())
+        if (!(tRequest.getRequest() instanceof IDeliverable))
         {
-            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-            final int amount = request.getRequest().getCount();
+            return false;
+        }
 
-            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+        final Predicate<ItemStack> requestPredicate = stack -> ((IRequest<? extends IDeliverable>) tRequest).getRequest().matches(stack);
+        List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
+        //RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get();
 
-            if (!(tRequest.getRequest() instanceof IDeliverable) || !(request.getRequester() instanceof IBuildingBasedRequester))
+        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        if (wrapper == null)
+        {
+            return false;
+        }
+
+        int depth = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get().getDepth();
+
+        if (wrapper.overruleable && canFulFill())
+        {
+            if (wrapper.getDepth() > 0)
             {
-                return false;
-            }
-
-            if (!isCreative && count <= 0)
-            {
-                return false;
-            }
-
-            if (!isCreative)
-            {
-                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
-                int slot = -1;
-                for (final Integer possibleSlot : slots)
+                if (!(tRequest.getRequester() instanceof IBuildingBasedRequester)
+                      || !((IBuildingBasedRequester) tRequest.getRequester())
+                            .getBuilding(colony.getRequestManager(),
+                              tRequest.getId()).map(
+                    iRequester -> iRequester.getLocation()
+                                    .equals(building.getLocation())).isPresent())
                 {
-                    if (possibleSlot < invSize)
+                    return false;
+                }
+                else
+                {
+                    if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestPredicate))
                     {
-                        slot = possibleSlot;
-                        break;
+                        return false;
                     }
                 }
-                if (slot == -1)
+            }
+            else
+            {
+                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestPredicate))
                 {
-                    return false; // We don't have one that isn't in our armour slot
+                    return false;
                 }
             }
-
-            return true;
         }
         else
         {
             return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the request is cancellable
+     *
+     * @param tRequest the request to check if it's cancellable
+     */
+    public boolean cancellable(final IRequest tRequest)
+    {
+        List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
+        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        if (wrapper == null)
+        {
+            return false;
+        }
+
+        if (wrapper.getDepth() > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 

@@ -8,9 +8,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -18,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +24,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_SHORT_DETAIL;
 
 /**
  * Window for the request detail.
@@ -109,7 +105,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Is the player in creative or not.
      */
-    private final boolean         isCreative = this.mc.player.isCreative();
+    private final boolean isCreative = this.mc.player.isCreative();
 
     /**
      * Open the request detail.
@@ -158,13 +154,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
-
-        //Checks if fulfill button should be displayed
-        Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request))
-        {
-            fulfillButton.hide();
-        }
 
         for (final String s : labels)
         {
@@ -226,6 +215,19 @@ public class WindowRequestDetail extends Window implements ButtonHandler
              * Do nothing we just need to know if it has a resolver or not.
              */
             Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
+        }
+
+        //Checks if fulfill button should be displayed
+        Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
+        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request))
+        {
+            fulfillButton.hide();
+        }
+        //Checks if cancel button should be displayed
+        Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
+        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
+        {
+            cancelButton.hide();
         }
 
         box.setSize(box.getWidth(), y);
