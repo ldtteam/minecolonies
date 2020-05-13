@@ -64,6 +64,20 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void onPlacement();
 
     /**
+     * Called when a player comes close to the building.
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterNearby(final PlayerEntity player) {}
+
+    /**
+     * Called when a player enters the building area
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterBuilding(final PlayerEntity player) {}
+
+    /**
      * Checks if a block matches the current object.
      *
      * @param block Block you want to know whether it matches this class or not.
@@ -301,12 +315,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken token);
 
     BuildingEntry getBuildingRegistryEntry();
-
-    /**
-     * Check if the building requires always all items to continue working or if a partial quantity would also solve it.
-     * @return true if so.
-     */
-    boolean requiresCompleteRequestFulfillment();
 
     /**
      * Remove the minimum stock.

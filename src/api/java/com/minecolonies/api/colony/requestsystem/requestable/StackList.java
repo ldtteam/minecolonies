@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
 
@@ -26,6 +25,9 @@ public class StackList implements IDeliverable
     private static final String NBT_MATCHOREDIC = "MatchOreDic";
     private static final String NBT_RESULT      = "Result";
     private static final String TAG_DESCRIPTION = "Desc";
+    private static final String NBT_COUNT       = "Count";
+    private static final String NBT_MINCOUNT    = "MinCount";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -37,17 +39,17 @@ public class StackList implements IDeliverable
     /**
      * If meta should be matched.
      */
-    private boolean matchMeta = false;
+    private boolean matchMeta;
 
     /**
      * If nbt should be matched.
      */
-    private boolean matchNBT = false;
+    private boolean matchNBT;
 
     /**
      * If oredict should be matched.
      */
-    private boolean matchOreDic = false;
+    private boolean matchOreDic;
 
     /**
      * Description of the request.
@@ -58,30 +60,39 @@ public class StackList implements IDeliverable
      * The result of the request.
      */
     @NotNull
-    private ItemStack result = ItemStackUtils.EMPTY;
+    private ItemStack result;
+
+    /**
+     * The required count.
+     */
+    private int count;
+
+    /**
+     * The required count.
+     */
+    private int minCount;
 
     /**
      * Create a Stacks deliverable.
      * @param stacks the required stacks.
      * @param description the description.
+     * @param count the count.
      */
-    public StackList(@NotNull final List<ItemStack> stacks, final String description)
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count)
     {
-        this.description = description;
-        for (final ItemStack stack : stacks)
-        {
-            final ItemStack tempStack = stack.copy();
-            tempStack.setCount(Math.min(tempStack.getCount(), tempStack.getMaxStackSize()));
+        this(stacks, description, count, count);
+    }
 
-            this.theStacks.add(tempStack);
-        }
-
-        if (stacks.isEmpty())
-        {
-            throw new IllegalArgumentException("Cannot deliver Empty List.");
-        }
-
-        setMatchMeta(true).setMatchNBT(true);
+    /**
+     * Create a Stacks deliverable.
+     * @param stacks the required stacks.
+     * @param description the description.
+     * @param count the count.
+     * @param minCount the min count.
+     */
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount)
+    {
+        this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount);
     }
 
     /**
@@ -92,13 +103,18 @@ public class StackList implements IDeliverable
      * @param matchOreDic if the oredict has to be matched.
      * @param result the result stack.
      * @param description the description.
+     * @param count the count.
+     * @param minCount the min count.
      */
     public StackList(
             @NotNull final List<ItemStack> stacks,
             final boolean matchMeta,
             final boolean matchNBT,
             final boolean matchOreDic,
-            @NotNull final ItemStack result, final String description)
+            @NotNull final ItemStack result,
+            final String description,
+            final int count,
+            final int minCount)
     {
         this.description = description;
         for (final ItemStack stack : stacks)
@@ -113,26 +129,8 @@ public class StackList implements IDeliverable
         this.matchNBT = matchNBT;
         this.matchOreDic = matchOreDic;
         this.result = result;
-    }
-
-    /**
-     * Set to match NBT
-     * @param match boolean var.
-     */
-    public void setMatchNBT(final boolean match)
-    {
-        this.matchNBT = match;
-    }
-
-    /**
-     * Set to match meta
-     * @param match boolean var.
-     * @return this object.
-     */
-    public StackList setMatchMeta(final boolean match)
-    {
-        this.matchMeta = match;
-        return this;
+        this.count = count;
+        this.minCount = minCount;
     }
 
     /**
@@ -160,6 +158,8 @@ public class StackList implements IDeliverable
             compound.put(NBT_RESULT, input.result.serializeNBT());
         }
         compound.putString(TAG_DESCRIPTION, input.description);
+        compound.putInt(NBT_COUNT, input.getCount());
+        compound.putInt(NBT_MINCOUNT, input.getMinimumCount());
 
         return compound;
     }
@@ -186,7 +186,15 @@ public class StackList implements IDeliverable
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
         final String desc = compound.keySet().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
-        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc);
+        int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
+        int minCount = count;
+        if (compound.keySet().contains(NBT_COUNT))
+        {
+            count = compound.getInt(NBT_COUNT);
+            minCount = compound.getInt(NBT_MINCOUNT);
+        }
+
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
     }
 
     @Override
@@ -207,9 +215,15 @@ public class StackList implements IDeliverable
     }
 
     @Override
+    public int getMinimumCount()
+    {
+        return count;
+    }
+
+    @Override
     public int getCount()
     {
-        return theStacks.isEmpty() ? 0 : theStacks.get(0).getCount();
+        return minCount;
     }
 
     @NotNull
@@ -225,19 +239,9 @@ public class StackList implements IDeliverable
     }
 
     @Override
-    public IDeliverable copyWithCount(@NotNull final int newCount)
+    public IDeliverable copyWithCount(final int newCount)
     {
-        return new StackList(this.theStacks.stream().map(s -> {
-            final ItemStack newStack = s.copy();
-            newStack.setCount(newCount);
-            return newStack;
-        }).collect(Collectors.toList()), this.description);
-    }
-
-    public StackList setMatchOreDic(final boolean match)
-    {
-        this.matchOreDic = match;
-        return this;
+        return new StackList(this.theStacks, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, this.description, newCount, this.minCount);
     }
 
     @NotNull
@@ -311,4 +315,3 @@ public class StackList implements IDeliverable
         return description;
     }
 }
-

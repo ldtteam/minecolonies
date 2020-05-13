@@ -45,16 +45,14 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
     void setPickUpPriority(int pickUpPriority);
 
     /**
-     * Check if the priority is static and it shouldn't change.
-     *
-     * @return the priority state, a boolean.
+     * Get the current priority state
      */
-    boolean isPriorityStatic();
+    PickUpPriorityState getPriorityState();
 
     /**
      * Change the current priority state.
      */
-    void alterPriorityState();
+    void setPriorityState(PickUpPriorityState state);
 
     /**
      * Add a new container to the building.
@@ -82,8 +80,8 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param blockState to be registered
-     * @param pos   of the blockState
-     * @param world world to register it at.
+     * @param pos        of the blockState
+     * @param world      world to register it at.
      */
     void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
 

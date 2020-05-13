@@ -20046,5 +20046,16 @@
         "stream": false
       }
     ]
+  },
+  "tile.tavern.tavern_theme": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "minecolonies:tile/tavern/tavern_theme",
+        "stream": true,
+        "attenuation_distance": 13,
+        "comment": "Credits to Darren Curtis - Fireside Tales"
+      }
+    ]
   }
 }
