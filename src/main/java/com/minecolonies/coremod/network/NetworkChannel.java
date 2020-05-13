@@ -182,6 +182,7 @@ public class NetworkChannel
         registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
         registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
+        registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);

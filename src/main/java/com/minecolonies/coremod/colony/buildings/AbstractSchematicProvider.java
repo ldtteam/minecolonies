@@ -67,6 +67,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public int cachedRotation = -1;
 
     /**
+     * The building area box of this building
+     */
+    private AxisAlignedBB buildingArea = null;
+
+    /**
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
@@ -112,6 +117,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         compound.putInt(TAG_HEIGHT, this.height);
 
+        compound.putInt(TAG_ROTATION, getRotation());
+
         return compound;
     }
 
@@ -137,6 +144,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.keySet().contains(TAG_HEIGHT))
         {
             this.height = compound.getInt(TAG_HEIGHT);
+        }
+
+        if (compound.contains(TAG_ROTATION))
+        {
+            this.cachedRotation = compound.getInt(TAG_ROTATION);
         }
     }
 
@@ -208,7 +220,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Get all the corners of the building based on the schematic.
      *
-     * @return the corners.
+     * @return Tuple of X corners, Tuple of Z corners
      */
     @Override
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
@@ -237,7 +249,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
-        return BuildingUtils.getTargetAbleArea(world, this);
+        if (buildingArea == null)
+        {
+            buildingArea = BuildingUtils.getTargetAbleArea(world, this);
+        }
+        return buildingArea;
     }
 
     /**
@@ -248,7 +264,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public int getRotation()
     {
-        if (cachedRotation > 0)
+        if (cachedRotation != -1)
         {
             return cachedRotation;
         }
