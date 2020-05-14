@@ -7,20 +7,21 @@ public final class NbtTagConstants
 {
     public static final String TAG_ID                     = "id";
     public static final String TAG_NAME                   = "name";
-    public static final String TAG_DIMENSION              = "dimension";
-    public static final String TAG_CENTER                 = "center";
-    public static final String TAG_BUILDINGS              = "buildings";
-    public static final String TAG_BUILDING               = "building";
-    public static final String TAG_BUILDINGS_CLAIM        = "buildingsClaim";
-    public static final String TAG_BUILDINGS_UNCLAIM      = "buildingUnclaim";
-    public static final String TAG_CITIZENS               = "citizens";
-    public static final String TAG_ACHIEVEMENT            = "achievement";
-    public static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
-    public static final String TAG_WORK                   = "work";
-    public static final String TAG_MANUAL_HIRING          = "manualHiring";
-    public static final String TAG_MANUAL_HOUSING         = "manualHousing";
-    public static final String TAG_MOVE_IN                = "moveIn";
-    public static final String TAG_REQUESTMANAGER         = "requestManager";
+    public static final String TAG_DIMENSION         = "dimension";
+    public static final String TAG_CENTER            = "center";
+    public static final String TAG_BUILDINGS         = "buildings";
+    public static final String TAG_BUILDING          = "building";
+    public static final String TAG_BUILDINGS_CLAIM   = "buildingsClaim";
+    public static final String TAG_BUILDINGS_UNCLAIM = "buildingUnclaim";
+    public static final String TAG_CITIZENS          = "citizens";
+    public static final String TAG_VISITORS          = "visitors";
+    public static final String TAG_ACHIEVEMENT       = "achievement";
+    public static final String TAG_ACHIEVEMENT_LIST  = "achievementlist";
+    public static final String TAG_WORK              = "work";
+    public static final String TAG_MANUAL_HIRING     = "manualHiring";
+    public static final String TAG_MANUAL_HOUSING    = "manualHousing";
+    public static final String TAG_MOVE_IN           = "moveIn";
+    public static final String TAG_REQUESTMANAGER    = "requestManager";
     public static final String TAG_WAYPOINT               = "waypoints";
     public static final String TAG_FREE_BLOCKS            = "freeBlocks";
     public static final String TAG_FREE_POSITIONS         = "freePositions";
@@ -104,14 +105,15 @@ public final class NbtTagConstants
     public static final String TAG_CHILD_TIME      = "childTime";
     public static final String TAG_BOUGHT_CITIZENS = "bought_citizen";
     public static final String TAG_JUST_ATE        = "justAte";
-    public static final String TAG_EXPLOSIONS      = "Explosions";
-    public static final String TAG_FIREWORKS       = "Fireworks";
-    public static final String TAG_COLORS          = "Colors";
-    public static final String TAG_FLICKER         = "Flicker";
-    public static final String TAG_TRAIL           = "Trail";
-    public static final String TAG_TYPE            = "Type";
-    public static final String TAG_MERCENARY_TIME       = "mercenaryUseTime";
-    public static final String TAG_IDLE            = "idle";
+    public static final String TAG_EXPLOSIONS        = "Explosions";
+    public static final String TAG_FIREWORKS         = "Fireworks";
+    public static final String TAG_COLORS            = "Colors";
+    public static final String TAG_FLICKER           = "Flicker";
+    public static final String TAG_TRAIL             = "Trail";
+    public static final String TAG_TYPE              = "Type";
+    public static final String TAG_MERCENARY_TIME    = "mercenaryUseTime";
+    public static final String TAG_IDLE              = "idle";
+    public static final String TAG_CITIZENDATA_TYPE  = "citizenDataType";
 
     /**
      * Tag used to store the containers to NBT.
