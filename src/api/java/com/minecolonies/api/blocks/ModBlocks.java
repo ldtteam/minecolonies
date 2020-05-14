@@ -119,7 +119,7 @@ public final class ModBlocks
           blockHutDyer,
           blockHutFletcher,
           blockHutMechanic,
-          blockHutPlantation};
+          blockHutPlantation,
           blockHutTavern};
     }
 }

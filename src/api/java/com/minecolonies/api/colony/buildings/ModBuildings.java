@@ -46,7 +46,7 @@ public final class ModBuildings
     public static final String        FLETCHER_ID       = "fletcher";
     public static final String        MECHANIC_ID       = "mechanic";
     public static final String        PLANTATION_ID     = "plantation";
-    public static final String TAVERN_ID         = "tavern";
+    public static final String        TAVERN_ID         = "tavern";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -89,7 +89,7 @@ public final class ModBuildings
     public static       BuildingEntry fletcher;
     public static       BuildingEntry mechanic;
     public static       BuildingEntry plantation;
-    public static BuildingEntry tavern;
+    public static       BuildingEntry tavern;
 
     private ModBuildings()
     {
