@@ -286,7 +286,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             return null;
         }
         final TileEntity tileEntity = world.getTileEntity(pos.subtract(relativeNeighbor));
-        if (tileEntity instanceof TileEntityRack)
+        if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
             if (!this.getPos().equals(((TileEntityRack) tileEntity).getNeighbor()))
             {
