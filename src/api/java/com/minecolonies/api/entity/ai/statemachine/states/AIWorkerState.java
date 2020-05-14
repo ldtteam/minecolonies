@@ -550,7 +550,14 @@ public enum AIWorkerState implements IAIState
      */
     TEACH(true),
 
-    RECESS(true);
+    RECESS(true),
+
+    /*
+### Plantation related ###
+     */
+    PLANTATION_FARM(true),
+
+    PLANTATION_PLANT(true);
 
     /**
      * Is it okay to eat.

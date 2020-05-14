@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.GroundPathNavigator;
@@ -53,7 +54,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 
     public abstract PathResult moveToXYZ(final double x, final double y, final double z, final double speed);
 
-    public abstract WaterPathResult moveToWater(final int searchRange, final double v, final List<BlockPos> ponds);
+    public abstract WaterPathResult moveToWater(final int searchRange, final double v, final List<Tuple<BlockPos, BlockPos>> ponds);
 
     public abstract PathResult moveAwayFromLivingEntity(final Entity target, final double distance, final double combatMovementSpeed);
 

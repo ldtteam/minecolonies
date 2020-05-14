@@ -296,7 +296,14 @@ public class JobDeliveryman extends AbstractJob
     public void onRemoval()
     {
         this.active = false;
-        cancelAssignedRequests();
+        try
+        {
+            cancelAssignedRequests();
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Active Triggered resulted in exception", ex);
+        }
     }
 
     /**

@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * The florist building.
@@ -56,16 +58,6 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
      * Maximum building level
      */
     private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Tag to store the plant ground position.
-     */
-    private static final String TAG_POS = "pos";
-
-    /**
-     * Tag to store the plant ground list.
-     */
-    private static final String TAG_PLANTGROUND = "plantGround";
 
     /**
      * List of registered barrels.

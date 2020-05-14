@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
@@ -773,7 +774,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @return the result of the search.
      */
     @Nullable
-    public WaterPathResult moveToWater(final int range, final double speed, final List<BlockPos> ponds)
+    public WaterPathResult moveToWater(final int range, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (WaterPathResult) setPathJob(

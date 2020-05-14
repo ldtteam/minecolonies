@@ -32,11 +32,6 @@ public class JobFlorist extends AbstractJob
         return "com.minecolonies.coremod.job.florist";
     }
 
-    /**
-     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
-     *
-     * @return Model of the citizen.
-     */
     @NotNull
     @Override
     public BipedModelType getModel()

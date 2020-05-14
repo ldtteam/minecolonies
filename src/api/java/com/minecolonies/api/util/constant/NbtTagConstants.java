@@ -63,6 +63,8 @@ public final class NbtTagConstants
     public static final String TAG_ORES                   = "tagOres";
     public static final String TAG_BLOCK                  = "block";
     public static final String TAG_POS                    = "pos";
+    public static final String TAG_PLANTGROUND            = "plantGround";
+    public static final String TAG_CURRENT_PHASE          = "currentPhase";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
@@ -548,6 +550,19 @@ public final class NbtTagConstants
      * Tags to store the needed resources to nbt.
      */
     public static final String TAG_FLUIDS_REMOVE_Y = "yLevel";
+
+    /**
+     * Some job constants.
+     */
+    public static final String TAG_TREE = "Tree";
+
+    /**
+     * Final strings to save and retrieve the current water location and pond list.
+     */
+    public static final String TAG_WATER = "Pond";
+    public static final String TAG_PONDS   = "newPonds";
+    public static final String TAG_WATER_POND = "waterpond";
+    public static final String TAG_PARENT_POND = "parentpond";
 
     /**
      * Private constructor to hide the implicit one.

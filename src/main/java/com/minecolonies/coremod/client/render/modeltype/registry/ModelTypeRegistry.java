@@ -44,6 +44,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.TEACHER, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
         register(BipedModelType.GLASSBLOWER, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
         register(BipedModelType.DYER, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
+        register(BipedModelType.PLANTER, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
     }
 
     @Override

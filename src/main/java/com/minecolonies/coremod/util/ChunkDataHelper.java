@@ -311,9 +311,9 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 // Initial chunk unclaim not allowed for dynamic(building removal)
-                if (!force && !add && (Math.abs(chunkColonyCenterX - i) <= getConfig().getCommon().initialColonySize.get()
-                                         && Math.abs(chunkColonyCenterZ - j) <= getConfig().getCommon().initialColonySize
-                                                                                  .get()))
+                if (!force && !add
+                      && (Math.abs(chunkColonyCenterX - i) <= getConfig().getCommon().initialColonySize.get() + 1
+                            && Math.abs(chunkColonyCenterZ - j) <= getConfig().getCommon().initialColonySize.get() + 1))
                 {
                     Log.getLogger().debug("Unclaim of initial chunk prevented");
                     continue;

@@ -36,6 +36,11 @@ public class ResearchInitializer
         biodegradable.addChild(flowerpower);
         flowerpower.addChild(rainbowheaven);
 
+        final GlobalResearch letitgrow = new GlobalResearch("letitgrow", "technology", "Let it Grow", 2, new UnlockBuildingResearchEffect("Plantation", true));
+        letitgrow.setRequirement(new BuildingResearchRequirement(3, "farmer"));
+
+        biodegradable.addChild(letitgrow);
+
         final GlobalResearch bonemeal = new GlobalResearch("bonemeal", "technology", "Bonemeal", 2, new MultiplierModifierResearchEffect(FARMING, 0.1));
         bonemeal.setRequirement(new BuildingResearchRequirement(4, "farmer"));
 
@@ -108,6 +113,11 @@ public class ResearchInitializer
         final GlobalResearch fullstock = new GlobalResearch("fullstock", "technology", "Full Stock!", 5, new MultiplierModifierResearchEffect(MINIMUM_STOCK, 2.0));
         fullstock.setRequirement(new BuildingResearchRequirement(5, "miner"));
 
+        final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
+        stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
+
+        woodwork.addChild(stringwork);
+
         woodwork.addChild(sieving);
         sieving.addChild(space);
         space.addChild(capacity);
@@ -144,11 +154,6 @@ public class ResearchInitializer
         cheatsheet.addChild(deeppockets);
         deeppockets.addChild(loaded);
         loaded.addChild(heavilyloaded);
-
-        final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
-        stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
-
-        woodwork.addChild(stringwork);
 
         final GlobalResearch hittingiron = new GlobalResearch("hittingiron", "technology", "Hitting Iron!", 1, new UnlockBuildingResearchEffect("Blacksmith", true));
         hittingiron.setRequirement(new BuildingResearchRequirement(3, "miner"));
@@ -271,6 +276,8 @@ public class ResearchInitializer
 
         researchTree.addResearch(biodegradable.getBranch(), biodegradable);
         researchTree.addResearch(flowerpower.getBranch(), flowerpower);
+
+        researchTree.addResearch(letitgrow.getBranch(), letitgrow);
 
         researchTree.addResearch(bonemeal.getBranch(), bonemeal);
         researchTree.addResearch(dung.getBranch(), dung);

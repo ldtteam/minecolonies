@@ -1425,5 +1425,10 @@
   "com.minecolonies.coremod.gui.workerhuts.mechanic": "Mechanic",
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "block.minecolonies.blockhutmechanic.name": "Mechanic",
-  "block.minecolonies.blockhutmechanic": "Mechanic"
+  "block.minecolonies.blockhutmechanic": "Mechanic",
+
+  "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
+  "com.minecolonies.coremod.job.planter": "Planter",
+  "block.minecolonies.blockhutplantation.name": "Plantation",
+  "block.minecolonies.blockhutplantation": "Plantation"
 }

@@ -82,26 +82,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     public static final float RANGE_HORIZONTAL_PICKUP = 5.0F;
 
     /**
-     * Number of ticks to wait before coming to the conclusion of being stuck.
-     */
-    private static final int    STUCK_WAIT_TIME        = 10;
-    /**
-     * Number of ticks until he gives up destroying leaves and walks a bit back to try a new path.
-     */
-    private static final int    WALKING_BACK_WAIT_TIME = 120;
-    /**
-     * How much he backs away when really not finding any path.
-     */
-    private static final double WALK_BACK_RANGE        = 3.0;
-    /**
-     * The speed in which he backs away.
-     */
-    private static final double WALK_BACK_SPEED        = 1.0;
-    /**
-     * The standard range the lumberjack should reach until his target.
-     */
-    private static final int    STANDARD_WORKING_RANGE = 1;
-    /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
     private static final int    MIN_WORKING_RANGE      = 2;
@@ -138,8 +118,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * Delay before going to gather after cutting a tree.
      */
     private static final int GATHERING_DELAY       = 3;
-    private static final int MAX_LEAVES_BREAK_DIST = 8 * 8;
-    private static final int TIME_TO_LEAVEBREAK    = 5;
 
     /**
      * Position where the Builders constructs from.
@@ -150,16 +128,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * The time in ticks the lumberjack has waited already. Directly connected with the MAX_WAITING_TIME.
      */
     private int timeWaited = 0;
-
-    /**
-     * Number of ticks the lumberjack is standing still.
-     */
-    private int stillTicks = 0;
-
-    /**
-     * Used to store the walk distance to check if the lumberjack is still walking.
-     */
-    private int previousDistance = 0;
 
     /**
      * Variable describing if the lj looked in his hut for a certain sapling.
@@ -329,7 +297,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return findTree();
         }
 
-        stillTicks = 0;
         return LUMBERJACK_CHOP_TREE;
     }
 

@@ -138,25 +138,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     /**
-     * Save the Job to an CompoundNBT.
+     * Get a set of async requests connected to this job.
      *
-     * @param compound CompoundNBT to save the Job to.
+     * @return a set of ITokens.
      */
-    public void write(@NotNull final CompoundNBT compound)
-    {
-
-    }
-
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
-    public void read(@NotNull final CompoundNBT compound)
-    {
-
-    }
-
     @Override
     public Set<IToken> getAsyncRequests()
     {
@@ -329,5 +314,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public void setActive(final boolean b)
     {
 
+    }
+
+    @Override
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
+    {
+        return false;
     }
 }
