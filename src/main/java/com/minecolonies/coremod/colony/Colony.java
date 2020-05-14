@@ -988,8 +988,8 @@ public class Colony implements IColony
                     {
                         wayPoints.remove(entry.getKey());
                         markDirty();
-                        return false;
                     }
+                    return false;
                 }
             }
         }
