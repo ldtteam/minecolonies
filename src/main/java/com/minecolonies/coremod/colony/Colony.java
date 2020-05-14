@@ -976,11 +976,11 @@ public class Colony implements IColony
     {
         if (!wayPoints.isEmpty() && world != null)
         {
-            final int stopAt = world.rand.nextInt(wayPoints.size());
+            final int randomPos = world.rand.nextInt(wayPoints.size());
             int count = 0;
             for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
             {
-                if (count++ == stopAt)
+                if (count++ == randomPos)
                 {
                     if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
