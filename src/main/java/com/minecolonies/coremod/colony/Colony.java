@@ -980,14 +980,17 @@ public class Colony implements IColony
             int count = 0;
             for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
             {
-                if (count++ == stopAt && world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
+                if (count++ == stopAt)
                 {
-                    final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
-                    if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
-                          || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
-                        wayPoints.remove(entry.getKey());
-                        markDirty();
+                        final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
+                        if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        {
+                            wayPoints.remove(entry.getKey());
+                            markDirty();
+                        }
                     }
                     return false;
                 }
