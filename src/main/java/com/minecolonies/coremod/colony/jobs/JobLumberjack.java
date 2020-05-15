@@ -4,19 +4,19 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
+
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJobCrafter
+public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, JobLumberjack>
 {
-    private static final String TAG_TREE = "Tree";
     /**
      * The tree this lumberjack is currently working on.
      */
@@ -34,10 +34,9 @@ public class JobLumberjack extends AbstractJobCrafter
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
-        super.read(compound);
-
+        final CompoundNBT compound = super.serializeNBT();
         if (compound.keySet().contains(TAG_TREE))
         {
             tree = Tree.read(compound.getCompound(TAG_TREE));
@@ -46,6 +45,7 @@ public class JobLumberjack extends AbstractJobCrafter
                 tree = null;
             }
         }
+        return compound;
     }
 
     @Override
@@ -69,10 +69,9 @@ public class JobLumberjack extends AbstractJobCrafter
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
-        super.write(compound);
-
+        super.deserializeNBT(compound);
         @NotNull final CompoundNBT treeTag = new CompoundNBT();
 
         if (tree != null)
@@ -106,7 +105,7 @@ public class JobLumberjack extends AbstractJobCrafter
 
     @NotNull
     @Override
-    public AbstractAISkeleton<JobLumberjack> generateAI()
+    public EntityAIWorkLumberjack generateAI()
     {
         return new EntityAIWorkLumberjack(this);
     }

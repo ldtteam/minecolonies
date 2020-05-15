@@ -1238,6 +1238,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             return false;
         }
 
+        if (getCitizenJobHandler().getColonyJob() != null && getCitizenJobHandler().getColonyJob().ignoresDamage(damageSource))
+        {
+            return false;
+        }
+
         // Maxdmg cap so citizens need a certain amount of hits to die, so we get more gameplay value and less scaling issues.
         return handleDamagePerformed(damageSource, damage, sourceEntity);
     }

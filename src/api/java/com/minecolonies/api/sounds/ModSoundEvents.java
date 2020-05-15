@@ -82,6 +82,7 @@ public final class ModSoundEvents
         }
         SOUND_EVENTS.put("child", childMap);
 
+        registry.register(TavernSounds.tavernTheme);
         registry.register(BarbarianSounds.barbarianHurt);
         registry.register(BarbarianSounds.barbarianDeath);
         registry.register(BarbarianSounds.barbarianSay);

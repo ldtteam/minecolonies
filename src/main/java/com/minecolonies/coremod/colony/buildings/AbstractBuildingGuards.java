@@ -21,6 +21,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -476,7 +477,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             if (curguard.getCitizenEntity().isPresent())
             {
-                ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                if (curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                {
+                    ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                }
             }
         }
         arrivedAtPatrol.clear();

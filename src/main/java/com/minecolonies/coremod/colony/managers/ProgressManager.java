@@ -97,7 +97,11 @@ public class ProgressManager implements IProgressManager
         {
             trigger(NINE_CITIZENS_SPAWNED);
         }
-        else if (total >= 10 && employed >= 4)
+        else if (total == 10)
+        {
+            trigger(TEN_CITIZENS_SPAWNED);
+        }
+        else if (total >= 11 && employed >= 4)
         {
             trigger(NOT_ENOUGH_JOBS);
         }

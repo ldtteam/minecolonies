@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "minecolonies:block/blockhuttavern"
+    },
+    "facing=west": {
+      "model": "minecolonies:block/blockhuttavern",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "minecolonies:block/blockhuttavern",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "minecolonies:block/blockhuttavern",
+      "y": 270
+    }
+  }
+}

@@ -98,6 +98,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Add a compostable item to the list.
+     * 
      * @param id the string id of the item type.
      * @param item the item to add.
      */
@@ -123,6 +124,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Check if the item is an allowed item.
+     * 
      * @param item the item to check.
      * @param id the string id of the item type.
      * @return true if so.
@@ -134,6 +136,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Remove a compostable item from the list.
+     * 
      * @param id the string id of the item type.
      * @param item the item to remove.
      */
@@ -150,6 +153,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Getter of copy of all allowed items.
+     * 
      * @return a copy.
      */
     public Map<String, List<ItemStorage>> getCopyOfAllowedItems()

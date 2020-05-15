@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -82,6 +83,7 @@ public interface IBuildingView extends IRequester
 
     /**
      * Getter for the custom building name.
+     *
      * @return the name.
      */
     String getCustomName();
@@ -116,18 +118,21 @@ public interface IBuildingView extends IRequester
 
     /**
      * Check if the building is current being built.
+     *
      * @return true if so.
      */
     boolean isBuilding();
 
     /**
      * Check if the building is currently being repaired.
+     *
      * @return true if so.
      */
     boolean isRepairing();
 
     /**
      * Get the claim radius for the building.
+     *
      * @return the radius.
      */
     int getClaimRadius();
@@ -189,15 +194,16 @@ public interface IBuildingView extends IRequester
     /**
      * Get the delivery priority state of the building.
      *
-     * @return boolean, delivery priority state.
+     * @return PickUpPriorityState enum
      */
-    boolean isBuildingDmPrioState();
+    PickUpPriorityState getBuildingDmPrioState();
 
     ImmutableCollection<IToken<?>> getResolverIds();
 
     /**
      * Setter for the custom name.
      * Sets the name on the client side and sends it to the server.
+     *
      * @param name the new name.
      */
     void setCustomName(String name);

@@ -117,7 +117,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingBaker> getExpectedBuildingClass()
     {
         return BuildingBaker.class;
     }
@@ -350,18 +350,16 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         final List<ItemStack> requestList = new ArrayList<>();
         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
         {
+            final ItemStack copy = itemStorage.getItemStack().copy();
             if (itemStorage.getItem() != Items.WHEAT)
             {
-                final ItemStack copy = itemStorage.getItemStack().copy();
                 copy.setCount(itemStorage.getAmount());
-                requestList.add(copy);
             }
             else
             {
-                final ItemStack copy = itemStorage.getItemStack().copy();
                 copy.setCount(copy.getMaxStackSize());
-                requestList.add(copy);
             }
+            requestList.add(copy);
         }
         checkIfRequestForItemExistOrCreateAsynch(requestList.toArray(new ItemStack[0]));
 
@@ -505,7 +503,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         progress = 0;
         final BuildingBaker building = getOwnBuilding();
         currentRecipe++;
-        if (currentRecipe >= building.getCopyOfAllowedItems().size())
+        if (currentRecipe >= building.getCopyOfAllowedItems().get("recipes").size())
         {
             currentRecipe = 0;
         }

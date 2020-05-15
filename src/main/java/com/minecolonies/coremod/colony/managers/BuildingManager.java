@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -15,7 +16,11 @@ import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
+import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
+import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -24,6 +29,8 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildin
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.ColonyUtils;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -106,7 +113,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if(compound.keySet().contains(TAG_NEW_FIELDS))
+        if (compound.keySet().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -324,9 +331,9 @@ public class BuildingManager implements IBuildingManager
                 tileEntity.setBuilding(building);
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()));
+                  colony.getID(),
+                  tileEntity.getBlockState().getClass(),
+                  tileEntity.getPosition()));
                 if (tileEntity.isMirrored())
                 {
                     building.invertMirror();
@@ -365,9 +372,9 @@ public class BuildingManager implements IBuildingManager
             else
             {
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                        colony.getID(),
-                        tileEntity.getBlockState().getClass(),
-                        tileEntity.getPosition()), new Exception());
+                  colony.getID(),
+                  tileEntity.getBlockState().getClass(),
+                  tileEntity.getPosition()), new Exception());
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
@@ -495,6 +502,11 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
+        if (allowedBuildings.isEmpty())
+        {
+            return null;
+        }
+
         Collections.shuffle(allowedBuildings);
         return allowedBuildings.get(0).getPosition();
     }
@@ -549,7 +561,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the buildings.
-     * 
+     *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
@@ -575,7 +587,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Sends packages to update the fields.
-     * 
+     *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
@@ -611,5 +623,44 @@ public class BuildingManager implements IBuildingManager
             fields.add(pos);
         }
         colony.markDirty();
+    }
+
+    @Override
+    public boolean canPlaceAt(final Block block, final BlockPos pos, final PlayerEntity player)
+    {
+        if (block instanceof BlockHutWareHouse)
+        {
+            if (colony != null && (!MineColonies.getConfig().getCommon().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
+            {
+                return true;
+            }
+            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.warehouse.limit");
+            return false;
+        }
+        else if (block instanceof BlockHutTownHall)
+        {
+            if (colony.hasTownHall())
+            {
+                if (colony.getWorld() != null && !colony.getWorld().isRemote)
+                {
+                    LanguageHandler.sendPlayerMessage(player, "tile.blockhuttownhall.messageplacedalready");
+                }
+                return false;
+            }
+            return true;
+        }
+        else if (block instanceof BlockHutTavern)
+        {
+            for (final IBuilding building : buildings.values())
+            {
+                if (building instanceof BuildingTavern)
+                {
+                    LanguageHandler.sendPlayerMessage(player, "tile.blockhut.tavern.limit");
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
