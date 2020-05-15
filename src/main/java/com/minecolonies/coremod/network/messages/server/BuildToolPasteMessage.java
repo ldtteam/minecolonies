@@ -299,10 +299,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param buildPos The location the hut is being placed.
      * @param mirror   Whether or not the strcture is mirrored.
      */
-    private static void setupBuilding(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    private static void setupBuilding(@NotNull final World world, @NotNull final PlayerEntity player, final StructureName sn, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 

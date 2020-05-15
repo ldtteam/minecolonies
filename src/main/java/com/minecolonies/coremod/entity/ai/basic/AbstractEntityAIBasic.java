@@ -764,7 +764,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private void workOnBlock(@Nullable final BlockPos target, final int timeout)
     {
         this.currentWorkingLocation = target;
-        this.delay = timeout;
     }
 
     public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, final ItemStack is)

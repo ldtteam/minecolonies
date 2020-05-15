@@ -33,7 +33,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
 
     /**
      * Constructor for the crusher.
-     * Defines the tasks the cook executes.
+     * Defines the tasks the crusher executes.
      *
      * @param job a crusher job to use.
      */

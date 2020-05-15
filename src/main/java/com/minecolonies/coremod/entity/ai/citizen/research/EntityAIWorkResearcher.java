@@ -14,16 +14,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch>
 {
     /**
-     * How often should intelligence factor into the researcher's skill modifier.
-     */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
-
-    /**
-     * How often should intelligence factor into the researcher's skill modifier.
-     */
-    private static final int DEXTERITY_MULTIPLIER = 1;
-
-    /**
      * Delay for each subject study.
      */
     private static final int STUDY_DELAY = 60;
@@ -44,7 +34,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STANDARD_DELAY)
+          new AITarget(STUDY, this::study, STUDY_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -70,14 +60,12 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
 
         if (walkToBlock(studyPos))
         {
-            setDelay(WALK_DELAY);
             return getState();
         }
 
         worker.decreaseSaturationForContinuousAction();
 
         studyPos = null;
-        setDelay(STUDY_DELAY);
         return getState();
     }
 

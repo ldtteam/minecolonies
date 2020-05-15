@@ -252,17 +252,21 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
         final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
         for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
         {
-            boolean hasRequest = false;
-            for (final IRequest<? extends Stack> request : list)
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual)
+                  && !InventoryUtils.hasItemInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), cure::isItemEqual))
             {
-                if (request.getRequest().getStack().isItemEqual(cure))
+                boolean hasRequest = false;
+                for (final IRequest<? extends Stack> request : list)
                 {
-                    hasRequest = true;
+                    if (request.getRequest().getStack().isItemEqual(cure))
+                    {
+                        hasRequest = true;
+                    }
                 }
-            }
-            if (!hasRequest)
-            {
-                worker.getCitizenData().createRequestAsync(new Stack(cure));
+                if (!hasRequest)
+                {
+                    worker.getCitizenData().createRequestAsync(new Stack(cure));
+                }
             }
         }
 
