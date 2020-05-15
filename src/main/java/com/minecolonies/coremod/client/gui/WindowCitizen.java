@@ -124,6 +124,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
         this.citizen = citizen;
     }
 
+    public ICitizenDataView getCitizen()
+    {
+        return citizen;
+    }
+
     @Override
     public boolean canFulFill()
     {

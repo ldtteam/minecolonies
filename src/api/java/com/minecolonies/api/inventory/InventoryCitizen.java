@@ -153,6 +153,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         return this.mainInventory.size() - ARMOR_SIZE;
     }
 
+    /*
+    Checks if the inventory has space
+     */
+    public boolean hasSpace()
+    {
+        return this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> itemStack.isEmpty());
+    }
+
     /**
      * Resize this inventory.
      * @param size the current size.

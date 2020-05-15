@@ -332,55 +332,12 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-                if (wrapper.getDepth() > 0)
+                if(!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
-                }
 
-                if (wrapper.overruleable && canFulFill())
-                {
-                    if (wrapper.getDepth() > 0)
-                    {
-                        if (!(request.getRequester() instanceof IBuildingBasedRequester)
-                              || !((IBuildingBasedRequester) request.getRequester())
-                                    .getBuilding(colony.getRequestManager(),
-                                      request.getId()).map(
-                            iRequester -> iRequester.getLocation()
-                                            .equals(building.getLocation())).isPresent())
-                        {
-                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                        }
-                        else
-                        {
-                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                                {
-                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                                }
-                            });
-
-                            if (!(request.getRequest() instanceof IDeliverable))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        }
-                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                    }
-                    else
-                    {
-                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        });
-                    }
-                }
-                else
+                if(!fulfillable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                 }
@@ -393,7 +350,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to check if it's fulfillable
      */
-    public Boolean fulfillable(final IRequest tRequest)
+    public boolean fulfillable(final IRequest tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {
@@ -439,6 +396,11 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 {
                     return false;
                 }
+            }
+
+            if(this instanceof WindowCitizen && !((WindowCitizen)this).getCitizen().getInventory().hasSpace())
+            {
+                return false;
             }
         }
         else
