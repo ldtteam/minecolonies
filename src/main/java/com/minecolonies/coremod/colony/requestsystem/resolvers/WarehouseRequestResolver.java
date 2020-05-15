@@ -104,14 +104,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return isRequestChainValid(manager, parentRequest);
     }
 
+    /*
+     * Moving the curly braces really makes the code hard to read.
+     */
     @Nullable
     @Override
     @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-    /**
-     * Moving the curly braces really makes the code hard to read.
-     */
-    public List<IToken<?>> attemptResolveRequest(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
             return Lists.newArrayList();
@@ -124,15 +123,23 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
         final int totalRequested = request.getRequest().getCount();
-        final int totalAvailable = wareHouses.stream()
-                                     .map(wareHouse -> wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack)))
-                                     .filter(itemStacks -> !itemStacks.isEmpty())
-                                     .flatMap(List::stream)
-                                     .mapToInt(ItemStack::getCount)
-                                     .sum();
+        int totalAvailable = 0;
+        for (final TileEntityWareHouse tile : wareHouses)
+        {
+            final List<ItemStack> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            for (final ItemStack stack : inv)
+            {
+                if (!stack.isEmpty())
+                {
+                    totalAvailable += stack.getCount();
+                }
+            }
+        }
 
-        if (totalAvailable >= totalRequested)
+        if (totalAvailable >= totalRequested || totalAvailable > request.getRequest().getMinimumCount())
+        {
             return Lists.newArrayList();
+        }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
         final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
@@ -147,8 +154,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -199,16 +205,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return deliveries.isEmpty() ? null : deliveries;
     }
 
-    @Nullable
     @Override
-    public void onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
+
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }

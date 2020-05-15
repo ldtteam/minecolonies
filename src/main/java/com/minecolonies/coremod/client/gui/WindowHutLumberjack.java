@@ -77,12 +77,9 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
         registerButton(BUTTON_GIVE_TOOL, this::giveTool);
 
-
         setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
         setupRestrictionButton(findPaneOfTypeByID(BUTTON_TOGGLE_RESTRICTION, Button.class));
         setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
-
-
     }
 
     private void giveTool()
@@ -92,7 +89,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Send message to player to add scepter to his inventory.
-     *
      */
     private void givePlayerScepter()
     {
@@ -102,7 +98,12 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance()
+                 .getCompatibilityManager()
+                 .getCopyOfSaplings()
+                 .stream()
+                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
+                 .collect(Collectors.toList());
     }
 
     /**
@@ -140,12 +141,14 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupRestrictionButton(final Button button)
     {
-        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon" : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff" ));
+        button.setLabel(LanguageHandler.format(ownBuilding.shouldRestrict
+                                                 ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon"
+                                                 : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff"));
     }
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
-     * 
+     *
      * @param replant the button to update.
      */
     private void switchReplant(final Button replant)
@@ -157,7 +160,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
-     * 
+     *
      * @param restriction the button to update.
      */
     private void toggleRestriction(final Button restriction)
@@ -167,11 +170,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         Network.getNetwork().sendToServer(new LumberjackRestrictionToggleMessage(ownBuilding, ownBuilding.shouldRestrict));
     }
 
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
     @NotNull
     @Override
     public String getBuildingName()

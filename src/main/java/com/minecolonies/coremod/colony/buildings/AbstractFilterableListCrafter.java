@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraft
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -28,9 +29,12 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
- * Class of the crafter building.
+ * Abstract class for all buildings which require a filterable list of allowed items AND can also craft stuff.
+ * <p>
+ * TODO: The crafter logic is just a copypaste from {@link AbstractBuildingCrafter} to avoid diamond inheritance.
+ * This should be fixed at some point.
  */
-public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
+public abstract class AbstractFilterableListCrafter extends AbstractFilterableListBuilding
 {
     /**
      * Extra amount of recipes the crafters can learn.
@@ -38,12 +42,12 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     private static final int EXTRA_RECIPE_MULTIPLIER = 10;
 
     /**
-     * Instantiates a new crafter building.
+     * The constructor of the building.
      *
-     * @param c the colony.
-     * @param l the location
+     * @param c the colony
+     * @param l the position
      */
-    public AbstractBuildingCrafter(final IColony c, final BlockPos l)
+    protected AbstractFilterableListCrafter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -132,7 +136,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+        return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
 
     /**
@@ -156,9 +160,10 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
          *
          * @return true if so.
          */
+        @Override
         public boolean canRecipeBeAdded()
         {
-            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+            return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
         }
     }
 
