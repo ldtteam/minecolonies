@@ -802,6 +802,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
+        getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
         this.child = isChild;
         this.getDataManager().set(DATA_IS_CHILD, isChild);
         markDirty();
