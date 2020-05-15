@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TownHallRenameMessage extends AbstractColonyServerMessage
 {
-    private static final int MAX_NAME_LENGTH  = 25;
-    private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
-    private String name;
+    private static final int    MAX_NAME_LENGTH  = 25;
+    private static final int    SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
+    private              String name;
 
     /**
      * Empty public constructor.
@@ -26,7 +26,7 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     }
 
     /**
-     * Object creation for the town hall rename 
+     * Object creation for the town hall rename
      *
      * @param colony Colony the rename is going to occur in.
      * @param name   New name of the town hall.

@@ -194,6 +194,16 @@ public final class ModJobsInitializer
                                 .setRegistryName(ModJobs.FLETCHER_ID)
                                 .createJobEntry();
 
+        ModJobs.mechanic    = new JobEntry.Builder()
+                                .setJobProducer(JobMechanic::new)
+                                .setRegistryName(ModJobs.MECHANIC_ID)
+                                .createJobEntry();
+
+        ModJobs.planter    = new JobEntry.Builder()
+                                .setJobProducer(JobPlanter::new)
+                                .setRegistryName(ModJobs.PLANTER_ID)
+                                .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -229,5 +239,7 @@ public final class ModJobsInitializer
         reg.register(ModJobs.glassblower);
         reg.register(ModJobs.dyer);
         reg.register(ModJobs.fletcher);
+        reg.register(ModJobs.mechanic);
+        reg.register(ModJobs.planter);
     }
 }

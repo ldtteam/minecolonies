@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.datagenerators.sounds.SoundsJson;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.sounds.EventType;
@@ -14,11 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
 
 public class DefaultSoundProvider implements IDataProvider
 {
-
     private final DataGenerator generator;
 
     public DefaultSoundProvider(final DataGenerator generator)
@@ -29,7 +32,7 @@ public class DefaultSoundProvider implements IDataProvider
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
-        final Map<String[], List<String>> map = new LinkedHashMap<>();
+        JsonObject sounds = new JsonObject();
 
         final List<String> defaultMaleSounds = new ArrayList<>();
         defaultMaleSounds.add("minecolonies:mob/citizen/male/say1");
@@ -51,33 +54,43 @@ public class DefaultSoundProvider implements IDataProvider
             {
                 for (final EventType soundEvents : EventType.values())
                 {
-                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultMaleSounds);
-                    map.put(new String[]{"mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultFemaleSounds);
+                    sounds.add("mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US),
+                      createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
+                    sounds.add("mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US),
+                      createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
                 }
             }
         }
 
         for (final EventType soundEvents : EventType.values())
         {
-            map.put(new String[]{"mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultMaleSounds);
-            map.put(new String[]{"mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, defaultFemaleSounds);
+            sounds.add("mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
+            sounds.add("mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
         }
 
         for (final EventType soundEvents : EventType.values())
         {
-            map.put(new String[]{"mob.child.male." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, childSounds);
-            map.put(new String[]{"mob.child.female." + soundEvents.name().toLowerCase(Locale.US), "neutral"}, childSounds);
+            sounds.add("mob.child.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
+            sounds.add("mob.child.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
         }
 
-        map.put(new String[]{"mob.barbarian.death", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/death"));
-        map.put(new String[]{"mob.barbarian.say", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/say"));
-        map.put(new String[]{"mob.barbarian.hurt", "hostile"}, ImmutableList.of("minecolonies:mob/barbarian/hurt1", "minecolonies:mob/barbarian/hurt2", "minecolonies:mob/barbarian/hurt3", "minecolonies:mob/barbarian/hurt4"));
+        sounds.add("mob.barbarian.death", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/death")));
+        sounds.add("mob.barbarian.say", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/say")));
+        sounds.add("mob.barbarian.hurt",
+          createSoundJson("hostile",
+            getDefaultProperties(),
+            ImmutableList.of("minecolonies:mob/barbarian/hurt1", "minecolonies:mob/barbarian/hurt2", "minecolonies:mob/barbarian/hurt3", "minecolonies:mob/barbarian/hurt4")));
 
-        map.put(new String[]{"mob.citizen.snore", "neutral"}, ImmutableList.of("minecolonies:mob/citizen/snore"));
+        sounds.add("mob.citizen.snore", createSoundJson("neutral", getDefaultProperties(), ImmutableList.of("minecolonies:mob/citizen/snore")));
 
-        final SoundsJson soundJson = new SoundsJson(map);
+        JsonObject tavernProperties = getDefaultProperties();
+        tavernProperties.addProperty("attenuation_distance", 13);
+        tavernProperties.addProperty("stream", true);
+        tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
+        sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
+
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
-        IDataProvider.save(DataGeneratorConstants.GSON, cache, soundJson.serialize(), savePath);
+        IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
     }
 
     @NotNull
@@ -85,5 +98,12 @@ public class DefaultSoundProvider implements IDataProvider
     public String getName()
     {
         return "Default Sound Json Provider";
+    }
+
+    private JsonObject getDefaultProperties()
+    {
+        JsonObject properties = new JsonObject();
+        properties.addProperty("stream", false);
+        return properties;
     }
 }

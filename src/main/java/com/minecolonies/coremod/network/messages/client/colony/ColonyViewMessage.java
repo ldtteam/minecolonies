@@ -38,7 +38,7 @@ public class ColonyViewMessage implements IMessage
     private int dim;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewMessage()
     {
@@ -93,7 +93,7 @@ public class ColonyViewMessage implements IMessage
         if (Minecraft.getInstance().world != null)
         {
             IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, Minecraft.getInstance().world, isNewSubscription, dim);
-            colonyBuffer.release();
         }
+        colonyBuffer.release();
     }
 }

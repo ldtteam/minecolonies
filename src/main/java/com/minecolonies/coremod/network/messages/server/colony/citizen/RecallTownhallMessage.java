@@ -56,7 +56,10 @@ public class RecallTownhallMessage extends AbstractColonyServerMessage
                 if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))
                 {
                     final PlayerEntity player = ctxIn.getSender();
-                    if (player == null) return;
+                    if (player == null)
+                    {
+                        return;
+                    }
 
                     LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerhuts.recallFail");
                 }

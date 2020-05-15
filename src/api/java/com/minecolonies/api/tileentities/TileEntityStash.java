@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
+import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
@@ -35,7 +36,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
     private void buildingInventoryChanged(boolean isEmpty)
     {
         IBuildingContainer building = getBuilding();
-        if (!isEmpty && building instanceof IBuilding && !building.isPriorityStatic())
+        if (!isEmpty && building instanceof IBuilding && building.getPriorityState() == AUTOMATIC)
         {
             IBuilding iBuilding = (IBuilding) building;
             if (!iBuilding.isBeingGathered())

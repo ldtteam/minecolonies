@@ -430,7 +430,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Add a task to the tasks list.
+     * Remove a task from the tasks list.
      *
      * @param state         the state of the task.
      * @param bakingProduct the regarding bakingProduct.

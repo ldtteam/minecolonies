@@ -150,6 +150,12 @@ public class CitizenManager implements ICitizenManager
         colony.updateHasChilds();
     }
 
+    /**
+     * Creates a citizen data from NBT
+     *
+     * @param compound NBT
+     * @return citizen data
+     */
     private ICitizenData deserializeCitizen(@NotNull final CompoundNBT compound)
     {
         final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(compound, colony);

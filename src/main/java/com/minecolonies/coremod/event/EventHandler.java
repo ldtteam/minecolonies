@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.Log;
@@ -14,7 +15,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -49,7 +49,6 @@ import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -73,6 +72,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
@@ -322,6 +323,26 @@ public class EventHandler
                 {
                     newColony.addVisitingPlayer(player);
                     newColony.getPackageManager().addCloseSubscriber(player);
+                }
+            }
+
+            // Alert nearby buildings of close player
+            if (newCloseColonies.getOwningColony() != 0)
+            {
+                for (final Map.Entry<Integer, Set<BlockPos>> entry : newCloseColonies.getAllClaimingBuildings().entrySet())
+                {
+                    final IColony newColony = IColonyManager.getInstance().getColonyByWorld(entry.getKey(), world);
+                    if (newColony != null)
+                    {
+                        for (final BlockPos buildingPos : entry.getValue())
+                        {
+                            IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
+                            if (building != null)
+                            {
+                                building.onPlayerEnterNearby(player);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -618,40 +639,20 @@ public class EventHandler
             return false;
         }
 
-        if (block instanceof BlockHutTownHall)
-        {
-            return canPlaceTownhall(world, player, pos);
-        }
-        else if (block instanceof BlockHutWareHouse)
-        {
-            return onWareHousePlaced(world, player, pos);
-        }
-        else
-        {
-            return onBlockHutPlaced(world, player, pos);
-        }
+        return onBlockHutPlaced(world, player, pos, block);
     }
 
-    private static boolean onWareHousePlaced(final World world, final PlayerEntity player, final BlockPos pos)
-    {
-        if (onBlockHutPlaced(world, player, pos))
-        {
-            final IColony colony = IColonyManager.getInstance().getClosestIColony(world, pos);
-            if (colony != null && (!MineColonies.getConfig().getCommon().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
-            {
-                return true;
-            }
-            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.warehouse.limit");
-        }
-        return false;
-    }
-
-    private static boolean onBlockHutPlaced(final World world, @NotNull final PlayerEntity player, final BlockPos pos)
+    private static boolean onBlockHutPlaced(final World world, @NotNull final PlayerEntity player, final BlockPos pos, final Block block)
     {
         final IColony colony = IColonyManager.getInstance().getIColony(world, pos);
 
         if (colony == null)
         {
+            if (block instanceof BlockHutTownHall)
+            {
+                return true;
+            }
+
             //  Not in a colony
             if (IColonyManager.getInstance().getIColonyByOwner(world, player) == null)
             {
@@ -671,41 +672,8 @@ public class EventHandler
         }
         else
         {
-            return true;
+            return player.isCreative() || colony.getBuildingManager().canPlaceAt(block, pos, player);
         }
-    }
-
-    private static boolean canPlaceTownhall(final World world, @NotNull final PlayerEntity player, final BlockPos pos)
-    {
-        final IColony currentColony = IColonyManager.getInstance().getIColony(world, pos);
-
-        if (currentColony == null)
-        {
-            return true;
-        }
-
-        if (currentColony.hasTownHall())
-        {
-            if (!world.isRemote)
-            {
-                player.sendMessage(new TranslationTextComponent("tile.blockhuttownhall.messageplacedalready"));
-            }
-            return false;
-        }
-        else
-        {
-            // In colony TH placement rules
-            if (!currentColony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
-            {
-                if (!world.isRemote)
-                {
-                    //  No permission to place hut in colony
-                    LanguageHandler.sendPlayerMessage(player, "block.blockHut.messagenopermissionplace", currentColony.getName());
-                }
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

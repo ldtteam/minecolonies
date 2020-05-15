@@ -7,7 +7,6 @@ import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -43,10 +41,10 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     /**
      * Create a message to update the chunk cap on the client side.
      *
-     * @param world the world.
-     * @param xC    the x pos.
-     * @param zC    the z pos.
-     * @param range the range.
+     * @param world       the world.
+     * @param xC          the x pos.
+     * @param zC          the z pos.
+     * @param range       the range.
      * @param checkLoaded are we checking for loaded?
      */
     public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
@@ -57,7 +55,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
             {
                 final int chunkX = xC + x;
                 final int chunkZ = zC + z;
-                if (!checkLoaded || world.isBlockLoaded(new BlockPos(chunkX * BLOCKS_PER_CHUNK, 0, chunkZ * BLOCKS_PER_CHUNK)))
+                if (!checkLoaded || world.getChunkProvider().isChunkLoaded(new ChunkPos(chunkX, chunkZ)))
                 {
                     final Chunk chunk = world.getChunk(chunkX, chunkZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);

@@ -15,8 +15,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Transfer some items from the player inventory to the Builder's chest or additional chests.
- * Created: January 20, 2017
+ * Transfer some items from the player inventory to the Builder's chest or additional chests. Created: January 20, 2017
  *
  * @author xavierh
  */
@@ -30,15 +29,15 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private int       quantity;
+    private int quantity;
 
     /**
      * Attempt a resolve or not.
      */
-    private boolean   attemptResolve;
+    private boolean attemptResolve;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public TransferItemsRequestMessage()
     {
@@ -46,11 +45,11 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     /**
-     * Creates a Transfer Items request 
+     * Creates a Transfer Items request
      *
-     * @param building  AbstractBuilding of the request.
-     * @param itemStack to be take from the player for the building
-     * @param quantity  of item needed to be transfered
+     * @param building       AbstractBuilding of the request.
+     * @param itemStack      to be take from the player for the building
+     * @param quantity       of item needed to be transfered
      * @param attemptResolve whether to attempt to resolve.
      */
     public TransferItemsRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
@@ -87,7 +86,10 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         }
 
         final PlayerEntity player = ctxIn.getSender();
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         final boolean isCreative = player.isCreative();
         final int amountToTake;
@@ -111,22 +113,25 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             building.getTileEntity().markDirty();
         }
 
-        if (!isCreative)
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
         {
-            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
-            while (amountToRemoveFromPlayer > 0)
+            if (!isCreative)
             {
-                final int slot =
-                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
-                final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-                amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+                while (amountToRemoveFromPlayer > 0)
+                {
+                    final int slot =
+                      InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
+                    final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                    amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                }
             }
-        }
 
-        if (attemptResolve)
-        {
-            building.overruleNextOpenRequestWithStack(itemStack);
+            if (attemptResolve)
+            {
+                building.overruleNextOpenRequestWithStack(itemStack);
+            }
         }
     }
 }

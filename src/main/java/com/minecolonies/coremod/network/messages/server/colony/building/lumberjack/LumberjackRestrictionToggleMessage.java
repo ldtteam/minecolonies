@@ -29,7 +29,7 @@ public class LumberjackRestrictionToggleMessage extends AbstractBuildingServerMe
     /**
      * Creates a message which will be sent to set the restrict setting in the lumberjack.
      *
-     * @param building      the building view of the lumberjack
+     * @param building       the building view of the lumberjack
      * @param shouldRestrict whether or not the lumberjack should be restricted.
      */
     public LumberjackRestrictionToggleMessage(final BuildingLumberjack.View building, final boolean shouldRestrict)

@@ -46,7 +46,6 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -88,8 +87,8 @@ import static com.minecolonies.api.util.constant.Suppression.*;
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
 public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
 {
-    public static final int       MAX_BUILD_HEIGHT = 256;
-    public static final int       MIN_BUILD_HEIGHT = 1;
+    public static final int MAX_BUILD_HEIGHT = 256;
+    public static final int MIN_BUILD_HEIGHT = 1;
 
     /**
      * The data store id for request system related data.
@@ -119,7 +118,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Minimum stock it can hold per level.
      */
-    private static final int STOCK_PER_LEVEL   = 5;
+    private static final int STOCK_PER_LEVEL = 5;
 
     /**
      * The minimum stock.
@@ -198,6 +197,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     }
 
+    @Override
+    public void onPlayerEnterNearby(final PlayerEntity player)
+    {
+        if (getTargetableArea(colony.getWorld()).contains(player.getPositionVec()))
+        {
+            onPlayerEnterBuilding(player);
+        }
+    }
+
     /**
      * On setting down the building.
      */
@@ -262,7 +270,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         compound.putString(TAG_CUSTOM_NAME, customName);
 
         @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry: minimumStock.entrySet())
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final CompoundNBT compoundNBT = new CompoundNBT();
             entry.getKey().getItemStack().write(compoundNBT);
@@ -475,7 +483,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Serializes to view. Sends 3 integers. 1) hashcode of the name of the class. 2) building level. 3) max building level.
+     * Serializes to view.
      *
      * @param buf PacketBuffer to write to.
      */
@@ -486,7 +494,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
-        buf.writeBoolean(isPriorityStatic());
+        buf.writeInt(getPriorityState().getIntRepresentation());
         buf.writeInt(getCurrentWorkOrderLevel());
         buf.writeString(getStyle());
         buf.writeString(this.getSchematicName());
@@ -524,6 +532,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Calculate the minimum stock size.
+     *
      * @return the size.
      */
     private int minimumStockSize()
@@ -560,7 +569,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
 
-        markDirty();;
+        markDirty();
+        ;
     }
 
     /**
@@ -607,7 +617,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Check if the building is already requesting this stack.
-     * 
+     *
      * @param stack the stack to check.
      * @param list  the list of tokes to check.
      * @return the token if so.
@@ -627,6 +637,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * If an incoming request is a minimum stock request.
+     *
      * @param request the request to check.
      * @return true if so.
      */
@@ -634,7 +645,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
-            if (request.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack && ((Stack) request.getRequest()).getStack().isItemEqual(entry.getKey().getItemStack()))
+            if (request.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack && ((Stack) request.getRequest()).getStack()
+                                                                                                                 .isItemEqual(entry.getKey().getItemStack()))
             {
                 return true;
             }
@@ -792,6 +804,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
+        cachedRotation = -1;
         ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
@@ -1249,7 +1262,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
 
-            if (target == null || target.getState() == RequestState.FINALIZING)
+            if (target == null
+                  || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
+                  && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
             {
                 continue;
             }
@@ -1270,7 +1285,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
 
-            if (target == null || target.getState() == RequestState.FINALIZING)
+            if (target == null || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
+                                     && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
             {
                 continue;
             }
@@ -1360,8 +1376,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getId()));
 
         return queue
-                .stream()
-                .filter(request -> request.getState() == RequestState.IN_PROGRESS && validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
+                 .stream()
+                 .filter(request -> request.getState() == RequestState.IN_PROGRESS && validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest()
+                                                                                                                                                         .matches(stack))
                  .findFirst()
                  .orElse(null);
     }
@@ -1507,12 +1524,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
-    }
-
-    @Override
-    public boolean requiresCompleteRequestFulfillment()
-    {
-        return true;
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

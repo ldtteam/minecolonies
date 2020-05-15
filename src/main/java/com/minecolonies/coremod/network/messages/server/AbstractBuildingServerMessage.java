@@ -35,8 +35,8 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     /**
      * Network message for executing things on buildings on the server
      *
-     * @param buildingId the ID of the building we're executing on.
-     * @param colonyId the ID of the colony we're executing on.
+     * @param buildingId  the ID of the building we're executing on.
+     * @param colonyId    the ID of the colony we're executing on.
      * @param dimensionId the ID of the dimension we're executing on.
      */
     public AbstractBuildingServerMessage(final int dimensionId, final int colonyId, final BlockPos buildingId)
@@ -51,6 +51,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     }
 
     protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final T building);
+
     @Override
     protected final void toBytesAbstractOverride(final PacketBuffer buf)
     {
@@ -68,7 +69,10 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
-        if (building == null) return;
+        if (building == null)
+        {
+            return;
+        }
 
         try
         {

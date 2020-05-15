@@ -2,14 +2,17 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -63,6 +66,40 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     public Class getExpectedBuildingClass()
     {
         return AbstractBuildingSmelterCrafter.class;
+    }
+
+    @Override
+    protected IAIState getRecipe()
+    {
+        final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
+
+        if (currentTask == null)
+        {
+            return START_WORKING;
+        }
+
+        final BlockPos furnacePos = getPositionOfOvenToRetrieveFrom();
+        if (furnacePos != null)
+        {
+            currentRequest = currentTask;
+            walkTo = furnacePos;
+            return RETRIEVING_END_PRODUCT_FROM_FURNACE;
+        }
+
+        for (final BlockPos pos : ((AbstractBuildingSmelterCrafter) getOwnBuilding()).getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof FurnaceTileEntity)
+            {
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                if (furnace.isBurning() || !isEmpty(furnace.getStackInSlot(RESULT_SLOT)) || !isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)))
+                {
+                    return CRAFT;
+                }
+            }
+        }
+
+        return super.getRecipe();
     }
 
     /**
@@ -165,13 +202,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         extractFromFurnace((FurnaceTileEntity) entity);
         //Do we have the requested item in the inventory now?
-        final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getPrimaryOutput().isItemEqual(stack));
+        final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRequest.getRequest().getStack().isItemEqual(stack));
         if (resultCount > 0)
         {
-            for (int i = 0; i < resultCount; i++)
-            {
-                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-            }
+            final ItemStack stack = currentRequest.getRequest().getStack().copy();
+            stack.setCount(resultCount);
+            currentRequest.addDelivery(stack);
+
             incrementActionsDoneAndDecSaturation();
             job.finishRequest(true);
         }
@@ -269,12 +306,19 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
             final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable)
-                  && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
             {
-                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  worker.getInventoryCitizen(), smeltable, STACKSIZE,
-                  new InvWrapper(furnace), SMELTABLE_SLOT);
+                if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
+                {
+                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                      worker.getInventoryCitizen(), smeltable, STACKSIZE,
+                      new InvWrapper(furnace), SMELTABLE_SLOT);
+                }
+            }
+            else
+            {
+                needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
+                return GATHERING_REQUIRED_MATERIALS;
             }
 
             if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), FurnaceTileEntity::isFuel)
@@ -351,7 +395,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {
-            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE));
+            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
         }
 
         if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)

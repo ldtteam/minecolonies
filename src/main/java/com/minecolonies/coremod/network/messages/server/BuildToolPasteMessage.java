@@ -5,7 +5,6 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -31,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -57,16 +55,16 @@ public class BuildToolPasteMessage implements IMessage
      */
     private BlockState state;
 
-    private boolean                  complete;
-    private String                   structureName;
-    private String                   workOrderName;
-    private int                      rotation;
-    private BlockPos                 pos;
-    private boolean                  isHut;
-    private boolean                  mirror;
+    private boolean  complete;
+    private String   structureName;
+    private String   workOrderName;
+    private int      rotation;
+    private BlockPos pos;
+    private boolean  isHut;
+    private boolean  mirror;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildToolPasteMessage()
     {
@@ -74,16 +72,16 @@ public class BuildToolPasteMessage implements IMessage
     }
 
     /**
-     * Create the building that was made with the build tool.
-     * Item in inventory required
-     *  @param structureName String representation of a structure
+     * Create the building that was made with the build tool. Item in inventory required
+     *
+     * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
-     * @param state the state.
+     * @param state         the state.
      */
     public BuildToolPasteMessage(
       final String structureName,
@@ -174,7 +172,7 @@ public class BuildToolPasteMessage implements IMessage
         {
             if (isHut)
             {
-                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state , complete);
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
@@ -192,7 +190,7 @@ public class BuildToolPasteMessage implements IMessage
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
             }
         }
-        else if( structureName.contains("supply") )
+        else if (structureName.contains("supply"))
         {
             if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get()
                   && !isFreeInstantPlacementMH(player))
@@ -202,11 +200,11 @@ public class BuildToolPasteMessage implements IMessage
             }
 
             Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
-            if(structureName.contains("supplyship"))
+            if (structureName.contains("supplyship"))
             {
                 searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
             }
-            if(structureName.contains("supplycamp"))
+            if (structureName.contains("supplycamp"))
             {
                 searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
             }
@@ -253,19 +251,19 @@ public class BuildToolPasteMessage implements IMessage
     /**
      * Handles the placement of huts.
      *
-     * @param world         World the hut is being placed into.
-     * @param player        Who placed the hut.
-     * @param sn            The name of the structure.
-     * @param rotation      The number of times the structure should be rotated.
-     * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the strcture is mirrored.
-     * @param state         The state of the hut.
-     * @param complete      If complete or not.
+     * @param world    World the hut is being placed into.
+     * @param player   Who placed the hut.
+     * @param sn       The name of the structure.
+     * @param rotation The number of times the structure should be rotated.
+     * @param buildPos The location the hut is being placed.
+     * @param mirror   Whether or not the strcture is mirrored.
+     * @param state    The state of the hut.
+     * @param complete If complete or not.
      */
     private static void handleHut(
-                                   @NotNull final World world, @NotNull final PlayerEntity player,
-                                   final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
+      @NotNull final World world, @NotNull final PlayerEntity player,
+      final StructureName sn,
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (!complete && tempColony != null
@@ -294,17 +292,14 @@ public class BuildToolPasteMessage implements IMessage
     /**
      * setup the building once it has been placed.
      *
-     * @param world         World the hut is being placed into.
-     * @param player        Who placed the hut.
-     * @param sn            The name of the structure.
-     * @param rotation      The number of times the structure should be rotated.
-     * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the strcture is mirrored.
+     * @param world    World the hut is being placed into.
+     * @param player   Who placed the hut.
+     * @param sn       The name of the structure.
+     * @param rotation The number of times the structure should be rotated.
+     * @param buildPos The location the hut is being placed.
+     * @param mirror   Whether or not the strcture is mirrored.
      */
-    private static void setupBuilding(
-                                       @NotNull final World world, @NotNull final PlayerEntity player,
-                                       final StructureName sn,
-                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    private static void setupBuilding(@NotNull final World world, @NotNull final PlayerEntity player, final StructureName sn, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 

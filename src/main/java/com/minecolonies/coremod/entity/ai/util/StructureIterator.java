@@ -234,9 +234,8 @@ public class StructureIterator
                                                                                          || structureBlock.block instanceof AirBlock
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case FLUID_DETECT:
-                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> (!(structureBlock.worldBlock instanceof FlowingFluidBlock)
-                                                                                         || (structureBlock.block instanceof FlowingFluidBlock && structureBlock.worldBlock == structureBlock.block))
-                                                                                         && (structureBlock.worldMetadata.getFluidState().isEmpty() || (!structureBlock.metadata.getFluidState().isEmpty() 
+                return advanceBlocks(this.theStructure::decrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
+                                                                                         || (structureBlock.worldMetadata.getFluidState().isEmpty() || (!structureBlock.metadata.getFluidState().isEmpty() 
                                                                                          && structureBlock.worldMetadata.getFluidState().getFluid() == structureBlock.metadata.getFluidState().getFluid())));
             case DECORATE:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> doesStructureBlockEqualWorldBlock(structureBlock, abstractEntityAIStructure)
@@ -524,8 +523,7 @@ public class StructureIterator
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if ((structureBlock instanceof StairsBlock && structureBlockState.equals(worldBlockState))
-                       || (worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
+            else if ((worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
             }

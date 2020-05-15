@@ -34,7 +34,10 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        if (ctxIn.getSender() == null) return;
+        if (ctxIn.getSender() == null)
+        {
+            return;
+        }
 
         if (colony.getPermissions().getRank(ctxIn.getSender().getUniqueID()) != Rank.NEUTRAL)
         {

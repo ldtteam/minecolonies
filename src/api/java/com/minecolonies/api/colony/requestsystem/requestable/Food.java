@@ -76,6 +76,12 @@ public class Food implements IDeliverable
         return count;
     }
 
+    @Override
+    public int getMinimumCount()
+    {
+        return 1;
+    }
+
     @NotNull
     @Override
     public ItemStack getResult()

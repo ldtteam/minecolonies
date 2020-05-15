@@ -19,7 +19,7 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     private String style;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public BuildingSetStyleMessage()
     {
@@ -56,10 +56,10 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         building.setStyle(style);
-        if(building.getTileEntity() != null)
+        if (building.getTileEntity() != null)
         {
             building.getTileEntity().setStyle(style);
-            if(building.getBuildingLevel() > 0)
+            if (building.getBuildingLevel() > 0)
             {
                 building.onUpgradeComplete(building.getBuildingLevel());
             }

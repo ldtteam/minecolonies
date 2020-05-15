@@ -66,6 +66,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony);
 
     protected abstract void toBytesOverride(final PacketBuffer buf);
+
     protected void toBytesAbstractOverride(final PacketBuffer buf) {}
 
     @Override
@@ -78,6 +79,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     }
 
     protected abstract void fromBytesOverride(final PacketBuffer buf);
+
     protected void fromBytesAbstractOverride(final PacketBuffer buf) {}
 
     @Override
@@ -104,7 +106,10 @@ public abstract class AbstractColonyServerMessage implements IMessage
         {
             if (!ownerOnly() && permissionNeeded() != null && !colony.getPermissions().hasPermission(player, permissionNeeded()))
             {
-                if (player == null) return;
+                if (player == null)
+                {
+                    return;
+                }
 
                 LanguageHandler.sendPlayerMessage(
                   player,
@@ -114,7 +119,10 @@ public abstract class AbstractColonyServerMessage implements IMessage
             }
             else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUniqueID())))
             {
-                if (player == null) return;
+                if (player == null)
+                {
+                    return;
+                }
 
                 LanguageHandler.sendPlayerMessage(
                   player,
@@ -124,6 +132,13 @@ public abstract class AbstractColonyServerMessage implements IMessage
             }
 
             onExecute(ctxIn, isLogicalServer, colony);
+        }
+        else
+        {
+            LanguageHandler.sendPlayerMessage(
+              player,
+              "com.minecolonies.command.nocolony", this.getClass().getSimpleName()
+            );
         }
     }
 }

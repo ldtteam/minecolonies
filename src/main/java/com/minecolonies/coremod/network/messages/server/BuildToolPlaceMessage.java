@@ -25,21 +25,20 @@ import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
-
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +47,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OTHER_LEVEL
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
 
 /**
- * Send build tool data to the server. Verify the data on the server side and then place the building.
- * Created: August 13, 2015
+ * Send build tool data to the server. Verify the data on the server side and then place the building. Created: August 13, 2015
  *
  * @author Colton
  */
@@ -81,8 +79,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Create the building that was made with the build tool.
-     * Item in inventory required
+     * Create the building that was made with the build tool. Item in inventory required
      *
      * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
