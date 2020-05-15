@@ -31,6 +31,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -54,6 +56,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 @SuppressWarnings({Suppression.BIG_CLASS, "PMD.ExcessiveClassLength"})
 public class CitizenData implements ICitizenData
 {
+    /**
+     * Citizen data's registry id
+     */
+    public static final ResourceLocation CITIZEN_DATA_TYPE = new ResourceLocation(MOD_ID, "colonycitizendata");
+
     /**
      * The max health.
      */
@@ -1041,5 +1048,19 @@ public class CitizenData implements ICitizenData
             return job.getAsyncRequests().contains(token);
         }
         return false;
+    }
+
+    /**
+     * Loads this citizen data from nbt
+     *
+     * @param colony colony to load for
+     * @param nbt    nbt compound to read from
+     * @return new CitizenData
+     */
+    public static CitizenData loadFromNBT(final IColony colony, final CompoundNBT nbt)
+    {
+        final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
+        data.deserializeNBT(nbt);
+        return data;
     }
 }

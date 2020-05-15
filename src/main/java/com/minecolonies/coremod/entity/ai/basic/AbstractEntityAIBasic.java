@@ -56,6 +56,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -763,7 +764,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private void workOnBlock(@Nullable final BlockPos target, final int timeout)
     {
         this.currentWorkingLocation = target;
-        this.delay = timeout;
     }
 
     public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, final ItemStack is)
@@ -985,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (!getOwnBuilding().isPriorityStatic())
+            if (getOwnBuilding().getPriorityState() == AUTOMATIC)
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
@@ -1006,7 +1006,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
-        if (!getOwnBuilding().isPriorityStatic())
+        if (getOwnBuilding().getPriorityState() == AUTOMATIC)
         {
             getOwnBuilding().alterPickUpPriority(1);
         }

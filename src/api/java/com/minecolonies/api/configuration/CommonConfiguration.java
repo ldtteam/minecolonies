@@ -335,6 +335,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> biodegradable;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> flowerpower;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> letitgrow;
+
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> bonemeal;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> dung;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> compost;
@@ -1273,6 +1275,10 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.flowerpower = defineList(builder, "flowerpower",
           Collections.singletonList("minecolonies:compost*64"),
+          s -> s instanceof String);
+
+        this.letitgrow = defineList(builder, "letitgrow",
+          Collections.singletonList("minecolonies:compost*16"),
           s -> s instanceof String);
 
         this.bonemeal = defineList(builder, "bonemeal",

@@ -1,5 +1,5 @@
 <window inherit="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml">
-    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>    
+    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
 
     <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.workerAssigned)"/>
@@ -7,35 +7,36 @@
     <list id="workers" size="164 30" pos="13 43">
         <view size="100% 22">
             <box size="100% 22" linewidth="0">
-                <label id="workerName" size="100% 11" pos="0 0"  textalign="MIDDLE" color="black"/>
+                <label id="workerName" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
                 <label id="workerLevel" size="100% 11" pos="0 11" textalign="MIDDLE" color="black"/>
             </box>
         </view>
     </list>
 
     <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
     <buttonimage id="recall" size="129 17" pos="30 92" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 
-    <label size="100 11" pos="30 145" textalign="MIDDLE" color="black"
+    <buttonimage id="deliveryPrioState" size="129 17" pos="30 135" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+
+    <label id="prioLabel" size="64 15" pos="30 154" textalign="MIDDLE_RIGHT" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.buildPrio)"/>
-    <label id="type" size="27 11" pos="132 145" textalign="MIDDLE" color="black"/>
+    <label id="prioValue" size="27 15" pos="96 154" textalign="MIDDLE" color="black"/>
 
-    <buttonimage id="deliveryPrioState" size="64 17" pos="46 156" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
-    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 156" textcolor="black"
+    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 154" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="-"/>
-    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 156" textcolor="black"
+    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 154" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="+"/>
 
 
     <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
     <buttonimage id="crafting" size="129 17" pos="30 192" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

@@ -33,7 +33,8 @@ public enum BipedModelType implements ISimpleModelType
     HEALER("healer", 1),
     TEACHER("teacher", 1),
     GLASSBLOWER("glassblower", 3),
-    DYER("dyer", 3);
+    DYER("dyer", 3),
+    PLANTER("planter", 1);
 
     /**
      * String describing the citizen.

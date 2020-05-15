@@ -88,7 +88,7 @@ dependencies {
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     contained fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
-    compile "com.ldtteam:datagenerators:0.1.37-ALPHA"
+    compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
     
     implementation fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
 
