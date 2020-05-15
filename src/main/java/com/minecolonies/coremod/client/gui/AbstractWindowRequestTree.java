@@ -398,7 +398,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
             }
 
-            if(this instanceof WindowCitizen && !((WindowCitizen)this).getCitizen().getInventory().hasSpace())
+            if (this instanceof WindowCitizen && !((WindowCitizen) this).getCitizen().getInventory().hasSpace())
             {
                 return false;
             }
