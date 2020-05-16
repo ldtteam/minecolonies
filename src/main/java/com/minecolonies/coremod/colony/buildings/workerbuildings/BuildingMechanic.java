@@ -109,7 +109,8 @@ public class BuildingMechanic extends AbstractBuildingCrafter
               || storage.getPrimaryOutput().getItem() == Items.JACK_O_LANTERN
               || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock)
               || Tags.Items.STORAGE_BLOCKS.contains(storage.getPrimaryOutput().getItem())
-              || storage.getPrimaryOutput().getItem() == Items.ENCHANTING_TABLE)
+              || storage.getPrimaryOutput().getItem() == Items.ENCHANTING_TABLE
+              || storage.getPrimaryOutput().getItem() == Items.LANTERN)
         {
             return true;
         }
