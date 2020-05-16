@@ -532,6 +532,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
     }
 
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        return true;
+    }
+
     /**
      * AbstractBuildingWorker View for clients.
      */
