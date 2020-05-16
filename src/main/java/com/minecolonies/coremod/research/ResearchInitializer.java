@@ -219,7 +219,7 @@ public class ResearchInitializer
         richveins.addChild(amazingveins);
         amazingveins.addChild(motherlode);
 
-        final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect("Mechanist", true));
+        final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect("Mechanic", true));
         whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
 
         hittingiron.addChild(whatyaneed);
