@@ -1328,6 +1328,7 @@
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
   "block.minecolonies.blockhuthospital": "Hospital",
+  "block.minecolonies.blockhuthospital.name": "Hospital",
   "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!",
   "com.minecolonies.coremod.job.healer": "Healer",
   "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",

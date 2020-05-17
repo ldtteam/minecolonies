@@ -11,6 +11,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,6 +91,16 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.swineHerder;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.CARROT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**

@@ -13,6 +13,8 @@ import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -145,6 +147,16 @@ public class BuildingShepherd extends AbstractBuildingWorker
     {
         this.dyeSheeps = dyeSheeps;
         markDirty();
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**
