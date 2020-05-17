@@ -371,6 +371,12 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public List<Disease> getDiseases()
+    {
+        return new ArrayList<>(diseases.values());
+    }
+
+    @Override
     public boolean isOre(final BlockState block)
     {
         if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedstoneOreBlock)

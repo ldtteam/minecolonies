@@ -371,6 +371,23 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     }
 
     @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        for (final Disease disease : IColonyManager.getInstance().getCompatibilityManager().getDiseases())
+        {
+            for (final ItemStack cure : disease.getCure())
+            {
+                if (cure.isItemEqual(stack))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return super.canEat(stack);
+    }
+
+    @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Hospital", UnlockBuildingResearchEffect.class);
