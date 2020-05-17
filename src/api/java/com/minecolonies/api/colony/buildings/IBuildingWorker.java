@@ -209,4 +209,11 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
      */
     @NotNull
     Skill getSecondarySkill();
+
+    /**
+     * Check if the worker is allowed to eat the following stack.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean canEat(final ItemStack stack);
 }

@@ -215,26 +215,26 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
             }
         }
-        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault)
+        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
         {
             //Push away from fence
             final double dX = entity.posX - Math.floor(entity.posX);
             final double dZ = entity.posZ - Math.floor(entity.posZ);
 
-            if (dX < TOO_CLOSE_TO_FENCE)
+            if (dX < ONE_SIDE)
             {
                 pos.setPos(pos.getX() - 1, pos.getY(), pos.getZ());
             }
-            else if (dX > TOO_FAR_FROM_FENCE)
+            else if (dX > OTHER_SIDE)
             {
                 pos.setPos(pos.getX() + 1, pos.getY(), pos.getZ());
             }
 
-            if (dZ < TOO_CLOSE_TO_FENCE)
+            if (dZ < ONE_SIDE)
             {
                 pos.setPos(pos.getX(), pos.getY(), pos.getZ() - 1);
             }
-            else if (dZ > TOO_FAR_FROM_FENCE)
+            else if (dZ > OTHER_SIDE)
             {
                 pos.setPos(pos.getX(), pos.getY(), pos.getZ() + 1);
             }
