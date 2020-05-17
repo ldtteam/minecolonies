@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -7,14 +8,19 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
-public class TileEntityDecorationController extends TileEntity
+public class TileEntityDecorationController extends TileEntity implements IBlueprintDataProvider
 {
     /**
      * Tag to store the basic facing to NBT
@@ -107,10 +113,52 @@ public class TileEntityDecorationController extends TileEntity
         world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
+    /**
+     * Map of block positions relative to TE pos and string tags
+     */
+    private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
+
+    @Override
+    public Map<BlockPos, List<String>> getPositionedTags()
+    {
+        return tagPosMap;
+    }
+
+    @Override
+    public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
+    {
+        tagPosMap = positionedTags;
+    }
+
+    /**
+     * Corner positions of schematic, relative to te pos.
+     */
+    private BlockPos corner1 = BlockPos.ZERO;
+    private BlockPos corner2 = BlockPos.ZERO;
+
+    @Override
+    public Tuple<BlockPos, BlockPos> getCornerPositions()
+    {
+        if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
+        {
+            return new Tuple<>(pos, pos);
+        }
+
+        return new Tuple<>(corner1, corner2);
+    }
+
+    @Override
+    public void setCorners(final BlockPos pos1, final BlockPos pos2)
+    {
+        corner1 = pos1;
+        corner2 = pos2;
+    }
+
     @Override
     public void read(final CompoundNBT compound)
     {
         super.read(compound);
+        readSchematicDataFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
         this.level = compound.getInt(TAG_LEVEL);
         this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
@@ -121,6 +169,7 @@ public class TileEntityDecorationController extends TileEntity
     public CompoundNBT write(final CompoundNBT compound)
     {
         super.write(compound);
+        writeSchematicDataToNBT(compound);
         compound.putString(TAG_NAME, schematicName);
         compound.putInt(TAG_LEVEL, level);
         compound.putInt(TAG_FACING, basicFacing.getHorizontalIndex());
