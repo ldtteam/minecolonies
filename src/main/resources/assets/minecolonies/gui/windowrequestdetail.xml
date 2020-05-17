@@ -17,6 +17,12 @@
     <label id="targetLocation" size="50 12" pos="42 44" color="black"/>
     <label id="resolver" size="50 12" pos="42 58" color="black"/>
 
-    <buttonimage id="back" size="37 16" pos="80 100" textcolor="black"
-                 label="Back" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+    <buttonimage id="back" size="37 16" pos="35 105" textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+
+    <buttonimage id="fulfill" size="37 16" pos="76 105" textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.citizen.requestsFulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+
+    <buttonimage id="cancel" size="37 16" pos="117 105" textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 </window>

@@ -118,8 +118,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
+        super(citizen.getWorkBuilding(),
+          Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
+          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
+    }
+
+    public ICitizenDataView getCitizen()
+    {
+        return citizen;
     }
 
     @Override
@@ -159,7 +166,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
-     * @param citizen the citizen.
+     *
+     * @param citizen       the citizen.
      * @param healthBarView the health bar view.
      */
     public static void createHealthBar(final ICitizenDataView citizen, final View healthBarView)
@@ -220,7 +228,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Adds a heart to the healthbarView at the given Position
-     * 
+     *
      * @param healthBarView the health bar to add the heart to.
      * @param heartPos      the number of the heart to add.
      * @param heart         the heart to add.
@@ -235,8 +243,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
+     *
      * @param citizen the citizen.
-     * @param view the view to add these to.
+     * @param view    the view to add these to.
      */
     public static void createSaturationBar(final ICitizenDataView citizen, final View view)
     {
@@ -246,7 +255,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.GUI_ICONS_LOCATION,
+              EMPTY_SATURATION_ITEM_ROW_POS,
+              SATURATION_ICON_COLUMN,
+              SATURATION_ICON_HEIGHT_WIDTH,
+              SATURATION_ICON_HEIGHT_WIDTH,
+              false);
 
             saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -276,7 +290,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      * <p>
      * currently unused.
-     * 
+     *
      * @param citizen the citizen to create a create a happiness bar for.
      * @param view    the view to add the happiness bar to.
      */
@@ -400,81 +414,72 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public void fulfill(@NotNull final Button button)
+    public void fulfill(@NotNull final IRequest tRequest)
     {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        if (!(tRequest.getRequest() instanceof IDeliverable))
         {
-            @NotNull final IRequest tRequest = getOpenRequestTreeOfBuilding().get(row).getRequest();
-
-            if (!(tRequest.getRequest() instanceof IDeliverable))
-            {
-                return;
-            }
-
-            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-            final int amount = request.getRequest().getCount();
-
-            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-            if (!isCreative && count <= 0)
-            {
-                return;
-            }
-
-            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-            // and use quantity for the size
-            @NotNull final ItemStack itemStack;
-            if (isCreative)
-            {
-                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-            }
-            else
-            {
-                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
-                int slot = -1;
-                for (final Integer possibleSlot : slots)
-                {
-                    if (possibleSlot < invSize)
-                    {
-                        slot = possibleSlot;
-                        break;
-                    }
-                }
-
-                if (slot == -1)
-                {
-                    final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                            LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                            .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
-                            );
-                    Minecraft.getInstance().player.sendMessage(chatMessage);
-
-                    return; // We don't have one that isn't in our armour slot
-                }
-                itemStack = inventory.getStackInSlot(slot);
-            }
-
-
-            if (citizen.getWorkBuilding() != null)
-            {
-                colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
-            }
-            Network.getNetwork().sendToServer(
-              new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
+            return;
         }
-        button.disable();
-        updateRequests();
+
+        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+
+        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+        final int amount = request.getRequest().getCount();
+
+        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+        if (!isCreative && count <= 0)
+        {
+            return;
+        }
+
+        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+        // and use quantity for the size
+        @NotNull final ItemStack itemStack;
+        if (isCreative)
+        {
+            itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+        }
+        else
+        {
+            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+            int slot = -1;
+            for (final Integer possibleSlot : slots)
+            {
+                if (possibleSlot < invSize)
+                {
+                    slot = possibleSlot;
+                    break;
+                }
+            }
+
+            if (slot == -1)
+            {
+                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
+                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                                                     .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
+                                                     );
+                Minecraft.getInstance().player.sendMessage(chatMessage);
+
+                return; // We don't have one that isn't in our armour slot
+            }
+            itemStack = inventory.getStackInSlot(slot);
+        }
+
+
+        if (citizen.getWorkBuilding() != null)
+        {
+            colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
+        }
+        Network.getNetwork().sendToServer(
+          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
     }
 
     /**
      * Update the display for the happiness.
-     * 
+     *
      * @param citizen the citizen to update it for.
      * @param window  the window to add things to.
      */
@@ -483,7 +488,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         final View pane = window.findPaneOfTypeByID("happinessModifierView", View.class);
         window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
         int yPos = 62;
-        for (final String name: citizen.getHappinessHandler().getModifiers())
+        for (final String name : citizen.getHappinessHandler().getModifiers())
         {
             final double value = citizen.getHappinessHandler().getModifier(name).getFactor();
 
@@ -492,7 +497,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             image.setPosition(25, yPos);
 
             final Label label = new Label();
-            label.setSize(136,11);
+            label.setSize(136, 11);
             label.setPosition(50, yPos);
             label.setColor(BLACK);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
@@ -516,13 +521,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
             pane.addChild(image);
             pane.addChild(label);
 
-            yPos+=12;
+            yPos += 12;
         }
     }
 
     /**
      * Update the job page of the citizen.
-     * 
+     *
      * @param citizen       the citizen.
      * @param windowCitizen the window.
      * @param colony        the colony.
