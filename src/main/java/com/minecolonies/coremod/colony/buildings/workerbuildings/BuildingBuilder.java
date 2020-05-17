@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import net.minecraft.block.Block;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -248,6 +249,16 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     public boolean canBeBuiltByBuilder(final int newLevel)
     {
         return getBuildingLevel() + 1 == newLevel;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (requiresResourceForBuilding(stack))
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**

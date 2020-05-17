@@ -67,7 +67,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
-    protected final List<IToken> recipes = new ArrayList<>();
+    protected final List<IToken<?>> recipes = new ArrayList<>();
 
     /**
      * The hiring mode of this particular building, by default overriden by colony mode.
@@ -147,7 +147,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        for (final IToken token : recipes)
+        for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
@@ -173,7 +173,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
     {
-        for (final IToken token : recipes)
+        for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
@@ -200,7 +200,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
         {
-            final IToken storage = recipes.get(i);
+            final IToken<?> storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
             recipes.set(j, storage);
         }
@@ -333,11 +333,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
 
-        recipes.clear();
         final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-        recipes.addAll(NBTUtils.streamCompound(recipesTags)
-                         .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
-                         .collect(Collectors.toList()));
+        for (int i = 0; i < recipesTags.size(); i++)
+        {
+            final IToken<?> token  = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            if (!recipes.contains(token))
+            {
+                recipes.add(token);
+            }
+        }
     }
 
     @Override
@@ -428,7 +432,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             buf.writeInt(data == null ? 0 : data.getId());
         }
         final List<IRecipeStorage> storages = new ArrayList<>();
-        for (final IToken token : new ArrayList<>(recipes))
+        for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage == null)
@@ -530,6 +534,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             citizen.setWorkBuilding(this);
             this.assignCitizen(citizen);
         }
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        return true;
     }
 
     /**
