@@ -13,6 +13,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryma
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -23,6 +25,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -176,6 +179,30 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     {
         super.onBuildingMove(oldBuilding);
         this.setBuildingToDeliver(((IBuildingDeliveryman) oldBuilding).getBuildingToDeliver());
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (buildingToDeliver != null)
+        {
+            final ICitizenData citizenData = getMainCitizen();
+            if (citizenData != null)
+            {
+                final JobDeliveryman job = (JobDeliveryman) citizenData.getJob();
+                final IRequest<Delivery> request = job.getCurrentTask();
+                if (request == null)
+                {
+                    return super.canEat(stack);
+                }
+
+                if (request.getRequest().getStack().isItemEqual(stack))
+                {
+                    return false;
+                }
+            }
+        }
+        return super.canEat(stack);
     }
 
     /**

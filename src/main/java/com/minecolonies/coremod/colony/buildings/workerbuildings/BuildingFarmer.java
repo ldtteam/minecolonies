@@ -554,6 +554,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
         this.shouldAssignManually = assignManually;
     }
 
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
+    }
+
     /**
      * Provides a view of the miner building class.
      */
