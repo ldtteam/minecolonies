@@ -42,6 +42,17 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
      */
     private Direction basicFacing = Direction.NORTH;
 
+    /**
+     * Corner positions of schematic, relative to te pos.
+     */
+    private BlockPos corner1 = BlockPos.ZERO;
+    private BlockPos corner2 = BlockPos.ZERO;
+
+    /**
+     * Map of block positions relative to TE pos and string tags
+     */
+    private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
+
     public TileEntityDecorationController()
     {
         super(MinecoloniesTileEntities.DECO_CONTROLLER);
@@ -113,11 +124,6 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
         world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
-    /**
-     * Map of block positions relative to TE pos and string tags
-     */
-    private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
-
     @Override
     public Map<BlockPos, List<String>> getPositionedTags()
     {
@@ -129,12 +135,6 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     {
         tagPosMap = positionedTags;
     }
-
-    /**
-     * Corner positions of schematic, relative to te pos.
-     */
-    private BlockPos corner1 = BlockPos.ZERO;
-    private BlockPos corner2 = BlockPos.ZERO;
 
     @Override
     public Tuple<BlockPos, BlockPos> getCornerPositions()
