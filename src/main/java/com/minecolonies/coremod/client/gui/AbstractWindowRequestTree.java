@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -68,8 +69,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * Constructor to initiate the window request tree windows.
      *
      * @param building citizen to bind the window to.
-     * @param pane the string name of the pane.
-     * @param colony the colony it belongs to.
+     * @param pane     the string name of the pane.
+     * @param colony   the colony it belongs to.
      */
     public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
     {
@@ -77,7 +78,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         this.colony = colony;
         this.building = colony.getBuilding(building);
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        
+
         registerButton(REQUEST_DETAIL, this::detailedClicked);
         registerButton(REQUEST_CANCEL, this::cancel);
 
@@ -132,6 +133,20 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
             building.onRequestedRequestCancelled(colony.getRequestManager(), request);
             Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
+        updateRequests();
+    }
+
+    /**
+     * After request cancel has been clicked cancel it and update the server side.
+     *
+     * @param tRequest the request to cancel.
+     */
+    public void cancel(@NotNull final IRequest tRequest)
+    {
+        @NotNull final IRequest<?> request = (IRequest<?>) tRequest;
+        building.onRequestedRequestCancelled(colony.getRequestManager(), request);
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
+
         updateRequests();
     }
 
@@ -211,6 +226,24 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param button the clicked button.
      */
     public void fulfill(@NotNull final Button button)
+    {
+        final int row = resourceList.getListElementIndexByPane(button);
+
+        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        {
+            @NotNull final IRequest request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            fulfill(request);
+        }
+        button.disable();
+        updateRequests();
+    }
+
+    /**
+     * Fulfill a given request.
+     *
+     * @param request the request to fulfill.
+     */
+    public void fulfill(@NotNull final IRequest request)
     {
         /*
          * Override if can fulfill.
@@ -297,60 +330,107 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-                if (wrapper.getDepth() > 0)
+                if(!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
-                }
 
-                if (wrapper.overruleable && canFulFill())
-                {
-                    if (wrapper.getDepth() > 0)
-                    {
-                        if (!(request.getRequester() instanceof IBuildingBasedRequester)
-                              || !((IBuildingBasedRequester) request.getRequester())
-                                    .getBuilding(colony.getRequestManager(),
-                                      request.getId()).map(
-                            iRequester -> iRequester.getLocation()
-                                            .equals(building.getLocation())).isPresent())
-                        {
-                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                        }
-                        else
-                        {
-                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                                {
-                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                                }
-                            });
-
-                            if (!(request.getRequest() instanceof IDeliverable))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        }
-                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                    }
-                    else
-                    {
-                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        });
-                    }
-                }
-                else
+                if(!fulfillable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                 }
             }
         });
+    }
+
+    /**
+     * Checks if the request is fulfillable
+     *
+     * @param tRequest the request to check if it's fulfillable
+     */
+    public boolean fulfillable(final IRequest tRequest)
+    {
+        if (!(tRequest.getRequest() instanceof IDeliverable))
+        {
+            return false;
+        }
+
+        final Predicate<ItemStack> requestPredicate = stack -> ((IRequest<? extends IDeliverable>) tRequest).getRequest().matches(stack);
+        List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
+        //RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get();
+
+        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        if (wrapper == null)
+        {
+            return false;
+        }
+
+        int depth = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get().getDepth();
+
+        if (wrapper.overruleable && canFulFill())
+        {
+            if (wrapper.getDepth() > 0)
+            {
+                if (!(tRequest.getRequester() instanceof IBuildingBasedRequester)
+                      || !((IBuildingBasedRequester) tRequest.getRequester())
+                            .getBuilding(colony.getRequestManager(),
+                              tRequest.getId()).map(
+                    iRequester -> iRequester.getLocation()
+                                    .equals(building.getLocation())).isPresent())
+                {
+                    return false;
+                }
+                else
+                {
+                    if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestPredicate))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestPredicate))
+                {
+                    return false;
+                }
+            }
+
+            if (this instanceof WindowCitizen && !((WindowCitizen) this).getCitizen().getInventory().hasSpace())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the request is cancellable
+     *
+     * @param tRequest the request to check if it's cancellable
+     */
+    public boolean cancellable(final IRequest tRequest)
+    {
+        List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
+        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        if (wrapper == null)
+        {
+            return false;
+        }
+
+        if (wrapper.getDepth() > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /**
