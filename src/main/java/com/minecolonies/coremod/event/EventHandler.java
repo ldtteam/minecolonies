@@ -372,7 +372,7 @@ public class EventHandler
               .sendToPlayer(new UpdateChunkRangeCapabilityMessage(player.world,
                 player.chunkCoordX,
                 player.chunkCoordZ,
-                8, false), (ServerPlayerEntity) event.getEntity());
+                8, true), (ServerPlayerEntity) event.getEntity());
 
             // Add visiting/subscriber to colony we're logging into
             final Chunk chunk = (Chunk) player.world.getChunk(player.getPosition());
