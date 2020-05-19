@@ -85,7 +85,10 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                 if (player.isCreative())
                 {
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
-                    colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                    colony.getResearchManager()
+                      .getResearchTree()
+                      .getResearch(branch, research.getId())
+                      .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
                 }
                 else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
                 {
@@ -108,7 +111,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         }
         else
         {
-            if(player.isCreative() && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
+            if (player.isCreative() && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
             {
                 final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
                 colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));

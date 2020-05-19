@@ -92,7 +92,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         if (research != null &&
               building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
               (building.getBuildingLevel() >= research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
-              research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory))||(research!=null && mc.player.isCreative()))
+              research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)) || (research != null && mc.player.isCreative()))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
             close();
@@ -179,7 +179,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //The player will reach the end of the research if he is in creative mode and the research was in progress
-                if(mc.player.isCreative() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth-1))
+                if (mc.player.isCreative() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
                 {
                     Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
                 }
@@ -232,7 +232,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
                 buttonImage.setID(research.getId());
 
-                if(mc.player.isCreative())
+                if (mc.player.isCreative())
                 {
                     if (research.getDepth() == 6
                           && hasMax)
