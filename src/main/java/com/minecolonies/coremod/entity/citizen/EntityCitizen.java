@@ -800,6 +800,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         else
         {
+            if (!isChild && this.child)
+            {
+                getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
+            }
             setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.child = isChild;
@@ -1234,6 +1238,11 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         final Entity sourceEntity = damageSource.getTrueSource();
         if (handleSourceEntityForDamage(sourceEntity))
+        {
+            return false;
+        }
+
+        if (getCitizenJobHandler().getColonyJob() != null && getCitizenJobHandler().getColonyJob().ignoresDamage(damageSource))
         {
             return false;
         }

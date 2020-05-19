@@ -41,6 +41,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -973,27 +974,29 @@ public class Colony implements IColony
      */
     private boolean updateWayPoints()
     {
-        if (!wayPoints.isEmpty())
+        if (!wayPoints.isEmpty() && world != null)
         {
-            final Object[] entries = wayPoints.entrySet().toArray();
-            final int stopAt = world.rand.nextInt(entries.length);
-            final Object obj = entries[stopAt];
-
-            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
+            final int randomPos = world.rand.nextInt(wayPoints.size());
+            int count = 0;
+            for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
             {
-                @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                if (world.isBlockPresent(key))
+                if (count++ == randomPos)
                 {
-                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
-                    final Block worldBlock = world.getBlockState(key).getBlock();
-                    if (worldBlock != (value.getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
-                        wayPoints.remove(key);
-                        markDirty();
+                        final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
+                        if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        {
+                            wayPoints.remove(entry.getKey());
+                            markDirty();
+                        }
                     }
+                    return false;
                 }
             }
         }
+
         return false;
     }
 

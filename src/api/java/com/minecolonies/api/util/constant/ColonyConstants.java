@@ -84,7 +84,7 @@ public final class ColonyConstants
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
-    public static final int              NUMBER_OF_CITIZENS_NEEDED    = 5;
+    public static final int              NUMBER_OF_CITIZENS_NEEDED    = 7;
 
 
     /**

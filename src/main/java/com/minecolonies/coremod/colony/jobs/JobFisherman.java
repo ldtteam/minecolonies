@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -18,32 +18,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * The fisherman's job class.
  * implements some useful things for him.
  */
-public class JobFisherman extends AbstractJob
+public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherman>
 {
-    /**
-     * Final strings to save and retrieve the current water location and pond list.
-     */
-    private static final String TAG_WATER = "Pond";
-    private static final String TAG_PONDS = "Ponds";
-
     /**
      * The water the fisherman is currently fishing at
      * Contains the location of the water so that the fisherman can path to the fishing spot.
      */
-    private BlockPos water;
+    private Tuple<BlockPos, BlockPos> water;
+
     /**
      * Contains all possible fishing spots.
      * This list is filled during the execution of the fisherman.
      * The fisherman will go from spot to spot and always store the location in this list.
      * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
      * from this list as the next fishing spot.
+     * The first position is the water to fish in, the second is the land to stand on.
      */
     @NotNull
-    private ArrayList<BlockPos> ponds = new ArrayList<>();
+    private ArrayList<Tuple<BlockPos, BlockPos>> ponds = new ArrayList<>();
 
     /**
      * Initializes the job class.
@@ -53,29 +51,6 @@ public class JobFisherman extends AbstractJob
     public JobFisherman(final ICitizenData entity)
     {
         super(entity);
-    }
-
-    /**
-     * Restore the Job from an CompoundNBT.
-     *
-     * @param compound CompoundNBT containing saved Job data.
-     */
-    @Override
-    public void read(@NotNull final CompoundNBT compound)
-    {
-        super.read(compound);
-
-        if (compound.keySet().contains(TAG_WATER))
-        {
-            water = BlockPosUtil.read(compound, TAG_WATER);
-        }
-
-        ponds = new ArrayList<>();
-        final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < listOfPonds.size(); i++)
-        {
-            ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));
-        }
     }
 
     @Override
@@ -108,17 +83,6 @@ public class JobFisherman extends AbstractJob
         return BipedModelType.FISHERMAN;
     }
 
-    /**
-     * Save the Job to an CompoundNBT.
-     *
-     * @param compound CompoundNBT to save the Job to.
-     */
-    @Override
-    public void write(@NotNull final CompoundNBT compound)
-    {
-
-    }
-
     @Override
     public CompoundNBT serializeNBT()
     {
@@ -127,13 +91,17 @@ public class JobFisherman extends AbstractJob
         @NotNull final CompoundNBT waterTag = new CompoundNBT();
         if (water != null)
         {
-            BlockPosUtil.write(waterTag, TAG_WATER, water);
+            BlockPosUtil.write(waterTag, TAG_WATER_POND, water.getA());
+            BlockPosUtil.write(waterTag, TAG_PARENT_POND, water.getB());
         }
 
         @NotNull final ListNBT lakes = new ListNBT();
-        for (@NotNull final BlockPos pond : ponds)
+        for (@NotNull final Tuple<BlockPos, BlockPos> pond : ponds)
         {
-            BlockPosUtil.writeToListNBT(lakes, pond);
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            BlockPosUtil.write(compoundNBT, TAG_WATER_POND, pond.getA());
+            BlockPosUtil.write(compoundNBT, TAG_PARENT_POND, pond.getB());
+            lakes.add(compoundNBT);
         }
         compound.put(TAG_PONDS, lakes);
 
@@ -143,18 +111,22 @@ public class JobFisherman extends AbstractJob
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        super.read(compound);
+        super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_WATER))
+        if (compound.keySet().contains(TAG_WATER_POND))
         {
-            water = BlockPosUtil.read(compound, TAG_WATER);
+            water = new Tuple<>(BlockPosUtil.read(compound, TAG_WATER_POND), BlockPosUtil.read(compound, TAG_PARENT_POND));
         }
 
         ponds = new ArrayList<>();
-        final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < listOfPonds.size(); i++)
+
+        if (compound.keySet().contains(TAG_PONDS))
         {
-            ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));
+            final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < listOfPonds.size(); i++)
+            {
+                ponds.add(new Tuple<>(BlockPosUtil.read(listOfPonds.getCompound(i), TAG_WATER_POND), BlockPosUtil.read(listOfPonds.getCompound(i), TAG_PARENT_POND)));
+            }
         }
     }
 
@@ -165,7 +137,7 @@ public class JobFisherman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobFisherman> generateAI()
+    public EntityAIWorkFisherman generateAI()
     {
         return new EntityAIWorkFisherman(this);
     }
@@ -181,7 +153,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return Location of the current water block.
      */
-    public BlockPos getWater()
+    public Tuple<BlockPos, BlockPos> getWater()
     {
         return water;
     }
@@ -191,7 +163,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param water New location for the current water block.
      */
-    public void setWater(final BlockPos water)
+    public void setWater(final Tuple<BlockPos, BlockPos> water)
     {
         this.water = water;
     }
@@ -202,7 +174,7 @@ public class JobFisherman extends AbstractJob
      * @return a list of coordinates.
      */
     @NotNull
-    public List<BlockPos> getPonds()
+    public List<Tuple<BlockPos, BlockPos>> getPonds()
     {
         return new ArrayList<>(ponds);
     }
@@ -212,9 +184,9 @@ public class JobFisherman extends AbstractJob
      *
      * @param pond the pond to add.
      */
-    public void addToPonds(final BlockPos pond)
+    public void addToPonds(final BlockPos pond, final BlockPos parent)
     {
-        this.ponds.add(pond);
+        this.ponds.add(new Tuple<>(pond, parent));
     }
 
     /**
@@ -222,7 +194,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param pond the coordinates matching one pond.
      */
-    public void removeFromPonds(final BlockPos pond)
+    public void removeFromPonds(final Tuple<BlockPos, BlockPos> pond)
     {
         this.ponds.remove(pond);
     }

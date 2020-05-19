@@ -29,6 +29,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.FurnaceTileEntity;
@@ -430,7 +431,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Add a task to the tasks list.
+     * Remove a task from the tasks list.
      *
      * @param state         the state of the task.
      * @param bakingProduct the regarding bakingProduct.
@@ -522,6 +523,16 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**

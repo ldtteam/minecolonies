@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -57,6 +56,18 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * The current recipe that is being crafted.
      */
     protected IRecipeStorage currentRecipeStorage;
+
+    /**
+     * The number of actions a crafting "success" is worth.
+     * By default, that's 1 action for 1 crafting success.
+     * Override this in your subclass to make crafting recipes worth more actions :-)
+     *
+     * @return The number of actions a crafting "success" is worth.
+     */
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return 1;
+    }
 
     /**
      * Initialize the crafter job and add all his tasks.
@@ -133,7 +144,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
-            incrementActionsDone();
+            incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
 
@@ -141,7 +152,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
-        final int doneOpsCount = currentCount/countPerIteration;
+        final int doneOpsCount = currentCount / countPerIteration;
         final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount;
 
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
@@ -152,7 +163,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                   < inputStorage.getAmount() * remainingOpsCount)
             {
                 job.finishRequest(false);
-                incrementActionsDone();
+                incrementActionsDone(getActionRewardForCraftingSuccess());
                 return START_WORKING;
             }
         }
@@ -184,6 +195,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
     /**
      * Check for all items of the required recipe.
+     *
      * @param storage the recipe storage.
      * @return the next state to go to.
      */
@@ -193,7 +205,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
+                  < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -221,7 +234,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
-        if (currentRequest == null)
+        if (currentRequest == null && job.getCurrentTask() != null)
         {
             return GET_RECIPE;
         }
@@ -243,7 +256,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
             currentRequest = null;
-            incrementActionsDone();
+            incrementActionsDone(getActionRewardForCraftingSuccess());
             currentRecipeStorage = null;
             return START_WORKING;
         }
@@ -256,7 +269,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                 if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
                 {
                     currentRequest = null;
-                    incrementActionsDone();
+                    incrementActionsDone(getActionRewardForCraftingSuccess());
                     job.finishRequest(false);
                     resetValues();
                     return START_WORKING;
@@ -267,7 +280,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
-                    incrementActionsDone();
+                    incrementActionsDone(getActionRewardForCraftingSuccess());
                     currentRecipeStorage = null;
                     resetValues();
 

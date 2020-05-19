@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IDeliverable extends IRetryable
 {
-
     /**
      * Method called to check if a given stack matches this deliverable.
      * The first stack that returns true from this method is returned as a Deliverable.
@@ -21,9 +20,16 @@ public interface IDeliverable extends IRetryable
     /**
      * Method called to get the amount of items that need to be in the stack.
      *
-     * @return The amount of items that
+     * @return The amount of items.
      */
     int getCount();
+
+    /**
+     * Method called to get the minimum amount required to fulfill this request.
+     *
+     * @return the minimum amount.
+     */
+    int getMinimumCount();
 
     /**
      * Method to get the result of the delivery.

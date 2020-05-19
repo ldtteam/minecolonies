@@ -113,22 +113,25 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             building.getTileEntity().markDirty();
         }
 
-        if (!isCreative)
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
         {
-            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
-            while (amountToRemoveFromPlayer > 0)
+            if (!isCreative)
             {
-                final int slot =
-                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
-                final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-                amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+                while (amountToRemoveFromPlayer > 0)
+                {
+                    final int slot =
+                      InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
+                    final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                    amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                }
             }
-        }
 
-        if (attemptResolve)
-        {
-            building.overruleNextOpenRequestWithStack(itemStack);
+            if (attemptResolve)
+            {
+                building.overruleNextOpenRequestWithStack(itemStack);
+            }
         }
     }
 }

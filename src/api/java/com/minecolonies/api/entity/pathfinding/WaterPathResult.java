@@ -8,6 +8,11 @@ import net.minecraft.util.math.BlockPos;
 public class WaterPathResult extends PathResult
 {
     /**
+     * The position of the parent (stand block).
+     */
+    public BlockPos parent;
+
+    /**
      * The position of the pond.
      */
     public BlockPos pond;
