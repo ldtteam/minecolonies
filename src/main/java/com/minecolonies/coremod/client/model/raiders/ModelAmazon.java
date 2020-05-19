@@ -108,7 +108,7 @@ public class ModelAmazon extends AmazonModel<AbstractEntityAmazon>
         bipedHeadwear.showModel = false;
     }
 
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
         modelRenderer.rotateAngleX = x;
         modelRenderer.rotateAngleY = y;
