@@ -99,6 +99,7 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+        super.onColonyTick(colony);
         if (musicCooldown > 0)
         {
             musicCooldown -= MAX_TICKRATE;

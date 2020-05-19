@@ -15,8 +15,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
@@ -195,6 +195,7 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
+        nightsSinceLastRaid = 0;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
