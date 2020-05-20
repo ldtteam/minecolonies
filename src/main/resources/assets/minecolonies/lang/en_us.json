@@ -1422,7 +1422,12 @@
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
   "block.minecolonies.blockhutfletcher.name": "Fletcher",
   "block.minecolonies.blockhutfletcher": "Fletcher",
-
+  "entity.amazon": "Amazon",
+  "entity.minecolonies.amazonchief": "Amazon Leader",
+  "entity.minecolonies.amazon": "Amazon",
+  "entity.amazonchief": "Amazon Leader",
+  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader",
+  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon Arrow!",
   "com.minecolonies.coremod.gui.workerhuts.mechanic": "Mechanic",
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "block.minecolonies.blockhutmechanic.name": "Mechanic",
