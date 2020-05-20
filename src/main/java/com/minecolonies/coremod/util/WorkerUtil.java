@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
@@ -285,24 +285,24 @@ public final class WorkerUtil
      * @return the position of the sign.
      */
     @Nullable
-    public static BlockPos findFirstLevelSign(final Structure structure)
+    public static BlockPos findFirstLevelSign(final Blueprint structure, final BlockPos pos)
     {
-        for (int j = 0; j < structure.getHeight(); j++)
+        for (int j = 0; j < structure.getSizeY(); j++)
         {
-            for (int k = 0; k < structure.getLength(); k++)
+            for (int k = 0; k < structure.getSizeZ(); k++)
             {
-                for (int i = 0; i < structure.getWidth(); i++)
+                for (int i = 0; i < structure.getSizeX(); i++)
                 {
                     @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final BlockInfo te = structure.getBlockInfo(localPos);
+                    final BlockInfo te = structure.getBlockInfoAsMap().get(localPos);
                     if (te != null)
                     {
                         final CompoundNBT teData = te.getTileEntityData();
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
-                            BlockPos zeroAnchor = structure.getPosition();
-                            zeroAnchor = zeroAnchor.add(new BlockPos(-(structure.getWidth() / 2), 0, -(structure.getLength() / 2)));
+                            BlockPos zeroAnchor = pos.subtract(structure.getPrimaryBlockOffset());
+                            zeroAnchor = zeroAnchor.add(new BlockPos(-(structure.getSizeX() / 2), 0, -(structure.getSizeZ() / 2)));
                             return zeroAnchor.add(localPos);
                         }
                     }

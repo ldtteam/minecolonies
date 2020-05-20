@@ -182,9 +182,10 @@ public final class PirateEventUtils
      */
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
     {
+        final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
         return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world,
-          pos.add(-ship.getPrimaryBlockOffset().getX(), 0, -ship.getPrimaryBlockOffset().getZ()),
-          pos.add(ship.getSizeX() - 1, 0, ship.getSizeZ() - 1).subtract(ship.getPrimaryBlockOffset()),
+          zeroPos,
+          new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
           0.6);
     }
 

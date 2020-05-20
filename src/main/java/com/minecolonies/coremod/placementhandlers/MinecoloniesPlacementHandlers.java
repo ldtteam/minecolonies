@@ -2,8 +2,8 @@ package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.blocks.PlaceholderBlock;
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.tileentities.TileEntityPlaceholder;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -36,8 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
 /**
@@ -89,7 +88,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -110,7 +109,7 @@ public final class MinecoloniesPlacementHandlers
                     world.setBlockState(pos, blockState);
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -129,7 +128,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -139,7 +138,7 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
             {
-                return blockState;
+                return ActionProcessingResult.SUCCESS;
             }
 
             TileEntity entity = world.getTileEntity(pos);
@@ -162,7 +161,7 @@ public final class MinecoloniesPlacementHandlers
                     world.setBlockState(pos, newState);
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -171,7 +170,7 @@ public final class MinecoloniesPlacementHandlers
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-            for (final ItemStack stack : getItemsFromTileEntity(tileEntityData, world))
+            for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world))
             {
                 if (!ItemStackUtils.isEmpty(stack))
                 {
@@ -191,7 +190,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -219,7 +218,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -227,7 +226,7 @@ public final class MinecoloniesPlacementHandlers
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+            itemList.addAll(PlacementHandlers.getItemsFromTileEntity(tileEntityData, world));
 
             itemList.removeIf(ItemStackUtils::isEmpty);
 
@@ -244,7 +243,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -265,7 +264,7 @@ public final class MinecoloniesPlacementHandlers
                         {
                             if (world.getBlockState(pos).getBlock() == block)
                             {
-                                return blockState;
+                                return ActionProcessingResult.SUCCESS;
                             }
 
                             final TileEntity building = world.getTileEntity(centerPos);
@@ -286,7 +285,7 @@ public final class MinecoloniesPlacementHandlers
                     }
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -327,7 +326,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -338,12 +337,12 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).equals(blockState))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (tileEntityData != null)
@@ -358,7 +357,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -378,7 +377,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -389,12 +388,12 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).equals(blockState))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (tileEntityData != null)
@@ -410,7 +409,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -440,7 +439,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -451,7 +450,7 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).equals(blockState))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             BlockState northState = world.getBlockState(pos.north());
@@ -466,10 +465,10 @@ public final class MinecoloniesPlacementHandlers
 
             if (!world.setBlockState(pos, fence, UPDATE_FLAG))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override

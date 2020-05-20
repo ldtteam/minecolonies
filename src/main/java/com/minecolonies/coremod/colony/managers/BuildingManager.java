@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
@@ -16,6 +15,7 @@ import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MCCreativeStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
@@ -352,16 +352,16 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
 
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                    final MCCreativeStructureHandler wrapper = new MCCreativeStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                       = ColonyUtils.calculateCorners(building.getPosition(),
                       world,
-                      wrapper,
+                      wrapper.getBluePrint(),
                       workOrder.getRotation(world),
                       workOrder.isMirrored());
 
                     building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
-                    building.setHeight(wrapper.getHeight());
+                    building.setHeight(wrapper.getBluePrint().getSizeY());
 
                     ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
                 }

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
@@ -73,7 +73,7 @@ public class EventStructureManager implements IEventStructureManager
      */
     @Override
     public boolean spawnTemporaryStructure(
-      final Structure structure,
+      final Blueprint structure,
       final String schematicPath,
       final BlockPos targetSpawnPoint,
       final int eventID,
@@ -88,10 +88,13 @@ public class EventStructureManager implements IEventStructureManager
         final World world = colony.getWorld();
 
         final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3);
+        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset());
 
         if (!ItemScanTool.saveStructureOnServer(world,
-          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()),
-          targetSpawnPoint.down(3).subtract(structure.getOffset()), backupPath, false))
+          zeroPos,
+          new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() - 1),
+          backupPath,
+          false))
         {
             // No structure spawn if we didnt successfully save the surroundings before
             Log.getLogger().info("Failed to save schematics for event");
@@ -105,7 +108,7 @@ public class EventStructureManager implements IEventStructureManager
           targetSpawnPoint.down(3),
           BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
-          false);
+          false, null);
 
         return true;
     }
@@ -129,7 +132,7 @@ public class EventStructureManager implements IEventStructureManager
                   entry.getKey(),
                   Rotation.NONE,
                   Mirror.NONE,
-                  true);
+                  true, null);
 
                 try
                 {

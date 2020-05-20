@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -302,7 +302,7 @@ public class WorkManager implements IWorkManager
         final World world = colony.getWorld();
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(order.getBuildingLocation(), world,
-          new Structure(world, order.getStructureName(), new PlacementSettings()), order.getRotation(world), order.isMirrored());
+          new CreativeStructureHandler(world, order.getBuildingLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(), order.getRotation(world), order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getA(), corners.getA().getB());

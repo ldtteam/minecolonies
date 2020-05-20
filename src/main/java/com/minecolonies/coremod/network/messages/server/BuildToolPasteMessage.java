@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;

@@ -20,6 +20,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for using the structure codebase.
@@ -115,7 +116,7 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
       @NotNull final BlockPos pos, final Rotation rotation,
       @NotNull final Mirror mirror,
       final boolean fancyPlacement,
-      final ServerPlayerEntity player)
+      @Nullable final ServerPlayerEntity player)
     {
         try
         {
@@ -123,7 +124,10 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
             structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
 
             @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
-            Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+            if (player != null)
+            {
+                Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+            }
         }
         catch (final IllegalStateException e)
         {
