@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.blocks.cactus.*;
 import com.ldtteam.structurize.blocks.decorative.BlockShingle;
 import com.ldtteam.structurize.blocks.decorative.BlockShingleSlab;
 import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
@@ -114,7 +115,20 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         }
 
         final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+        if (
+          item instanceof BlockItem && (
+            ((BlockItem) item).getBlock() instanceof BlockShingle
+              || ((BlockItem) item).getBlock() instanceof BlockShingleSlab
+              || ((BlockItem) item).getBlock() instanceof BlockTimberFrame
+              || ((BlockItem) item).getBlock() instanceof BlockCactusDoor
+              || ((BlockItem) item).getBlock() instanceof BlockCactusFence
+              || ((BlockItem) item).getBlock() instanceof BlockCactusFenceGate
+              || ((BlockItem) item).getBlock() instanceof BlockCactusPlank
+              || ((BlockItem) item).getBlock() instanceof BlockCactusStair
+              || ((BlockItem) item).getBlock() instanceof BlockCactusTrapdoor
+              || item.getRegistryName().getPath().equals("blockcactusslab")
+          )
+        )
         {
             return true;
         }
