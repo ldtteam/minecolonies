@@ -13,6 +13,8 @@ import com.minecolonies.coremod.client.gui.WindowHutCowboy;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -139,6 +141,16 @@ public class BuildingCowboy extends AbstractBuildingWorker
     {
         this.milkCows = milkCows;
         markDirty();
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**

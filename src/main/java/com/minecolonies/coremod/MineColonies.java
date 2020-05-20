@@ -16,6 +16,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
+import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
+import com.minecolonies.coremod.client.render.mobs.amazon.RendererChiefAmazon;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
@@ -181,6 +183,9 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MUMMY, RendererMummy::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZON, RendererAmazon::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);

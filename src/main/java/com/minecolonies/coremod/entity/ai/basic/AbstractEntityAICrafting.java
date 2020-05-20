@@ -234,7 +234,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
-        if (currentRequest == null)
+        if (currentRequest == null && job.getCurrentTask() != null)
         {
             return GET_RECIPE;
         }

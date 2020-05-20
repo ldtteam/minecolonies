@@ -13,17 +13,17 @@ public class PathingOptions
     /**
      * Cost improvement of paths - base 1.
      */
-    public double onPathCost = 0.1D;
+    public double onPathCost = 0.5D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    public double onRailCost = 0.01D;
+    public double onRailCost = 0.1D;
 
     /**
      * The rails exit cost.
      */
-    public double railsExitCost = 5;
+    public double railsExitCost = 2;
 
     /**
      * Additional cost of swimming - base 1.

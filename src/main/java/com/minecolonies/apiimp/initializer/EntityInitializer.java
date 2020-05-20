@@ -9,6 +9,8 @@ import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
+import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
@@ -140,6 +142,20 @@ public class EntityInitializer
                                     .build(Constants.MOD_ID + ":pharao")
                                     .setRegistryName("pharao");
 
+        ModEntities.AMAZON = EntityType.Builder.create(EntityArcherAmazon::new, EntityClassification.MONSTER)
+                                    .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                    .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                    .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                    .build(Constants.MOD_ID + ":amazon")
+                                    .setRegistryName("amazon");
+
+        ModEntities.AMAZONCHIEF = EntityType.Builder.create(EntityAmazonChief::new, EntityClassification.MONSTER)
+                               .setTrackingRange(ENTITY_TRACKING_RANGE)
+                               .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                               .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                               .build(Constants.MOD_ID + ":amazonchief")
+                               .setRegistryName("amazonchief");
+
         ModEntities.FIREARROW = (EntityType<? extends AbstractArrowEntity>) EntityType.Builder.<AbstractArrowEntity>create(FireArrowEntity::new, EntityClassification.MISC)
                                  .setTrackingRange(ENTITY_TRACKING_RANGE)
                                  .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
@@ -167,6 +183,8 @@ public class EntityInitializer
             ModEntities.MUMMY,
             ModEntities.ARCHERMUMMY,
             ModEntities.PHARAO,
+            ModEntities.AMAZON,
+            ModEntities.AMAZONCHIEF,
             ModEntities.FIREARROW);
     }
 }
