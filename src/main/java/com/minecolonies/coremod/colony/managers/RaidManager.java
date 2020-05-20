@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
@@ -46,6 +47,12 @@ public class RaidManager implements IRaiderManager
      * Min distance to keep while spawning near buildings
      */
     private static final int MIN_BUILDING_SPAWN_DIST = 35;
+
+    /**
+     * Different biome ids.
+     */
+    private static final String DESERT_BIOME_ID = "desert";
+    private static final String JUNGLE_BIOME_ID = "jungle";
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -217,9 +224,16 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(pirateShipRotation);
                 colony.getEventManager().addEvent(event);
             }
-            else if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert"))
+            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(DESERT_BIOME_ID))
             {
                 final EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setHorde(new Horde(amount));
+                colony.getEventManager().addEvent(event);
+            }
+            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(JUNGLE_BIOME_ID))
+            {
+                final AmazonRaidEvent event = new AmazonRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
                 colony.getEventManager().addEvent(event);
