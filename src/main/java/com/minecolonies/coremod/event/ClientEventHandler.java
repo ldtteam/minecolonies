@@ -3,7 +3,7 @@ package com.minecolonies.coremod.event;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -65,7 +65,7 @@ public class ClientEventHandler
         {
             Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
         }
-        final Structure structure = Settings.instance.getActiveStructure();
+        final Blueprint structure = Settings.instance.getActiveStructure();
         final ClientWorld world = Minecraft.getInstance().world;
         final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
@@ -78,7 +78,7 @@ public class ClientEventHandler
                 {
                     if (wayPointTemplate == null)
                     {
-                        wayPointTemplate = new Structure(world, "schematics/infrastructure/waypoint", settings).getBluePrint();
+                        wayPointTemplate = new CreativeStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
                     }
                     BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
                 }
@@ -105,7 +105,7 @@ public class ClientEventHandler
 
             if (partolPointTemplate == null)
             {
-                partolPointTemplate = new Structure(world, "schematics/infrastructure/patrolpoint", settings).getBluePrint();
+                partolPointTemplate = new CreativeStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
             }
 
             if (hut instanceof AbstractBuildingGuards.View)

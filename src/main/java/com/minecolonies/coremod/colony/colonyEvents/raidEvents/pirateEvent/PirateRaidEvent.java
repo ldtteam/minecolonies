@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MCCreativeStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -141,11 +141,11 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
         spawnerCount = shipSize.spawnerCount;
 
-        final Structure structure =
-          new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(shipRotation), colony.getWorld(), spawnPoint, Mirror.NONE);
+        final MCCreativeStructureHandler structure =
+          new MCCreativeStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings(), true);
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
-        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure, colony.getWorld()))
+        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
         {
             spawnPoint = spawnPoint.down();
         }

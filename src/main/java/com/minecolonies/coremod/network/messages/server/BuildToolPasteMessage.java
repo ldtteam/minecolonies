@@ -173,7 +173,7 @@ public class BuildToolPasteMessage implements IMessage
             if (isHut)
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
+                MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
@@ -226,7 +226,7 @@ public class BuildToolPasteMessage implements IMessage
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
 
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
+                MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
             }
             else

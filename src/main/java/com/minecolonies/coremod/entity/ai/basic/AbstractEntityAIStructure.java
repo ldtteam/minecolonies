@@ -446,7 +446,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 }
                 if (!sameInWorld && !MineColonies.getConfig().getCommon().builderInfiniteResources.get())
                 {
-                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getBlueprint().getTileEntityData(job.getBlueprint().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
@@ -481,7 +481,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.removeBlock(coords, false);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getWorkOrder().getBuildingLocation(), job.getStructure().getSettings());
+                final Object result = handlers.handle(world, coords, blockState, job.getBlueprint().getTileEntityData(job.getBlueprint().getLocalPosition()), false, job.getWorkOrder().getBuildingLocation(), job.getBlueprint().getSettings());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -839,26 +839,26 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         try
         {
             final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, name, new PlacementSettings());
-            job.setStructure(structure);
+            job.setBlueprint(structure);
             currentStructure = new StructureIterator(world, structure, removal ? StructureIterator.Stage.REMOVE : StructureIterator.Stage.CLEAR);
         }
         catch (final IllegalStateException e)
         {
             Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
-            job.setStructure(null);
+            job.setBlueprint(null);
         }
 
         try
         {
-            job.getStructure().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-            job.getStructure().setPosition(position);
-            job.getStructure().setPlacementSettings(new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)));
+            job.getBlueprint().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+            job.getBlueprint().setPosition(position);
+            job.getBlueprint().setPlacementSettings(new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)));
 
         }
         catch (final NullPointerException ex)
         {
             handleSpecificCancelActions();
-            job.setStructure(null);
+            job.setBlueprint(null);
             Log.getLogger().warn("StructureIterator couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
         }
         if (getProgressPos() != null)
@@ -909,7 +909,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return false;
             }
 
-            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getStructure().getBlockstate())
+            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getBlueprint().getBlockstate())
                   || (currentBlock.block instanceof BedBlock && currentBlock.metadata.get(BedBlock.PART).equals(BedPart.FOOT))
                   || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
             {

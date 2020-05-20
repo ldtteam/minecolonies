@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
@@ -27,7 +27,7 @@ public final class ColonyUtils
      *
      * @param pos        the central position.
      * @param world      the world.
-     * @param wrapper    the structureWrapper.
+     * @param blueprint    the structureWrapper.
      * @param rotation   the rotation.
      * @param isMirrored if its mirrored.
      * @return a tuple with the required corners.
@@ -35,17 +35,17 @@ public final class ColonyUtils
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
       final BlockPos pos,
       final World world,
-      final Structure wrapper,
+      final Blueprint blueprint,
       final int rotation,
       final boolean isMirrored)
     {
-        wrapper.rotate(BlockPosUtil.getRotationFromRotations(rotation), world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-        wrapper.setPosition(pos);
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-        final int x2 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-        final int z2 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        final int x1 = zeroPos.getX();
+        final int z1 = zeroPos.getZ();
+        final int x2 = zeroPos.getX() + blueprint.getSizeX();
+        final int z2 = zeroPos.getZ() + blueprint.getSizeZ();
 
         return new Tuple<>(new Tuple<>(x1, x2), new Tuple<>(z1, z2));
     }

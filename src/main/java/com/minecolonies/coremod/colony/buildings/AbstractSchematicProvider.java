@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -272,7 +272,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel));
         try
         {
-            final Structure structure = new Structure(colony.getWorld(), structureName.toString(), new PlacementSettings());
+            final CreativeStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), getPosition(), structureName.toString(), new PlacementSettings(), true);
 
             final Blueprint blueprint = structure.getBluePrint();
 

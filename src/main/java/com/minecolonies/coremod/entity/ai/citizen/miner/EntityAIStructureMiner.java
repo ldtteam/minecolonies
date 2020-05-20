@@ -815,7 +815,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
         //Preload structures
-        if (job.getStructure() == null)
+        if (job.getBlueprint() == null)
         {
             initStructure(mineNode, rotation, new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ()));
         }
@@ -840,7 +840,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         workingNode = null;
 
-        if (job.getStructure() != null)
+        if (job.getBlueprint() != null)
         {
             onStartWithoutStructure();
             return CLEAR_STEP;
@@ -902,10 +902,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
             WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
-        else if (job.getStructure() != null)
+        else if (job.getBlueprint() != null)
         {
-            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getStructure());
-            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY(), levelSignPos);
+            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint());
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getBlueprint().getPosition().getY(), levelSignPos);
 
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
@@ -915,7 +915,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         //Send out update to client
         getOwnBuilding().markDirty();
-        job.setStructure(null);
+        job.setBlueprint(null);
 
         final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)

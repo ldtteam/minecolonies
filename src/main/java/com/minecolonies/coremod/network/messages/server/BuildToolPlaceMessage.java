@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.InstantStructurePlacer;
+import com.minecolonies.api.util.MCCreativeStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -246,7 +246,7 @@ public class BuildToolPlaceMessage implements IMessage
                         String schematic = sn.toString();
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
-                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
+                        MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
                           buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
                         complete = true;
                     }

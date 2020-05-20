@@ -236,7 +236,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (!job.hasStructure())
+        if (!job.hasBlueprint())
         {
             super.initiate();
         }
