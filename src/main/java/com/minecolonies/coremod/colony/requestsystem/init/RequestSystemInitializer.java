@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -30,6 +31,7 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Burnable.class, StandardRequests.BurnableRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Delivery.class, StandardRequests.DeliveryRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Pickup.class, StandardRequests.PickupRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Food.class, StandardRequests.FoodRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Tool.class, StandardRequests.ToolRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(SmeltableOre.class, StandardRequests.SmeltAbleOreRequest.class);
@@ -43,7 +45,9 @@ public class RequestSystemInitializer
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
-        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL, MineColonies.getConfig().getCommon().enableDebugLogging.get() ? Level.DEBUG : Level.INFO, Filter.Result.NEUTRAL,
+        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL,
+          MineColonies.getConfig().getCommon().enableDebugLogging.get() ? Level.DEBUG : Level.INFO,
+          Filter.Result.NEUTRAL,
           Filter.Result.DENY));
 
         ctx.updateLoggers();

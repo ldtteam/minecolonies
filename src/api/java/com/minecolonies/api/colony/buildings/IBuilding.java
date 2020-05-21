@@ -143,13 +143,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void serializeToView(@NotNull PacketBuffer buf);
 
     /**
-     * Check if a building is being gathered.
-     *
-     * @return true if so.
-     */
-    boolean isBeingGathered();
-
-    /**
      * Set the custom building name of the building.
      * @param name the name to set.
      */
@@ -160,13 +153,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @return true if so.
      */
     boolean canBeGathered();
-
-    /**
-     * Set if a building is being gathered.
-     *
-     * @param gathering value to set.
-     */
-    void setBeingGathered(boolean gathering);
 
     /**
      * Requests an upgrade for the current building.

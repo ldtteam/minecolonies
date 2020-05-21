@@ -1,12 +1,8 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
 /**
@@ -29,24 +25,6 @@ public class TileEntityStash extends TileEntityColonyBuilding
     }
 
     /**
-     * Called when the inventory of the tileEntity it holds it's changed
-     *
-     * @param isEmpty whether the inventory is empty.
-     */
-    private void buildingInventoryChanged(boolean isEmpty)
-    {
-        IBuildingContainer building = getBuilding();
-        if (!isEmpty && building instanceof IBuilding && building.getPriorityState() == AUTOMATIC)
-        {
-            IBuilding iBuilding = (IBuilding) building;
-            if (!iBuilding.isBeingGathered())
-            {
-                iBuilding.alterPickUpPriority(MAX_PRIO);
-            }
-        }
-    }
-
-    /**
      * An {@link ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
      */
     public class NotifyingRackInventory extends RackInventory
@@ -54,13 +32,6 @@ public class TileEntityStash extends TileEntityColonyBuilding
         public NotifyingRackInventory(final int defaultSize)
         {
             super(defaultSize);
-        }
-
-        @Override
-        protected void onContentsChanged(int slot)
-        {
-            super.onContentsChanged(slot);
-            buildingInventoryChanged(isEmpty());
         }
     }
 }

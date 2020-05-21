@@ -759,6 +759,7 @@
   "item.minecolonies.scepterpermission": "PermissionScepter",
 
   "com.minecolonies.coremod.request.delivery": "Delivery of:",
+  "com.minecolonies.coremod.request.pickup": "Pickup",
   "com.minecolonies.coremod.request.food": "Food",
   "com.minecolonies.coremod.request.cookedfood": "Cooked Food",
   "com.minecolonies.coremod.request.burnable": "Fuel",

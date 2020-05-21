@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryma
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -23,6 +23,7 @@ import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -78,7 +79,8 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         builder.addAll(supers);
         builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
           getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
+        builder.add(new PickupRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         return builder.build();
     }
 
@@ -209,7 +211,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         /**
          * Get the list of tasks.
          *
-         * @return the list of delivery tasks.
+         * @return the list of delivery/pickup tasks.
          */
         public List<IToken<?>> getTasks()
         {

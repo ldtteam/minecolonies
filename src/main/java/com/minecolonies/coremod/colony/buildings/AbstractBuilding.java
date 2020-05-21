@@ -101,11 +101,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private IRequester requester;
 
     /**
-     * Is being gathered right now
-     */
-    private boolean beingGathered = false;
-
-    /**
      * If the building has been built already.
      */
     private boolean isBuilt = false;
@@ -655,17 +650,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Check if a building is being gathered.
-     *
-     * @return true if so.
-     */
-    @Override
-    public boolean isBeingGathered()
-    {
-        return this.beingGathered;
-    }
-
-    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.
@@ -687,18 +671,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         return true;
     }
-
-    /**
-     * Set if a building is being gathered.
-     *
-     * @param gathering value to set.
-     */
-    @Override
-    public void setBeingGathered(final boolean gathering)
-    {
-        this.beingGathered = gathering;
-    }
-
+    
     /**
      * Requests an upgrade for the current building.
      *
@@ -1264,7 +1237,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             if (target == null
                   || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
-                  && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
+                        && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
             {
                 continue;
             }

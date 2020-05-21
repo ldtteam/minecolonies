@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
@@ -149,29 +149,20 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns whether or not the job has a currentTask.
-     *
-     * @return true if has currentTask, otherwise false.
-     */
-    public boolean hasTask()
-    {
-        return !getTaskQueueFromDataStore().isEmpty() || getDataStore().isReturning();
-    }
-
-    /**
      * Returns the {@link IRequest} of the current Task.
      *
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<IRequestable> getCurrentTask()
+    public IRequest<IDeliverymanRequestable> getCurrentTask()
     {
-        if (getTaskQueueFromDataStore().isEmpty())
+        final IToken<?> request = getTaskQueueFromDataStore().peekFirst();
+        if (request == null)
         {
             return null;
         }
 
-        return (IRequest<IRequestable>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        return (IRequest<IDeliverymanRequestable>) getColony().getRequestManager().getRequestForToken(request);
     }
 
     /**
@@ -197,7 +188,6 @@ public class JobDeliveryman extends AbstractJob
             return;
         }
 
-        this.setReturning(true);
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
@@ -220,11 +210,6 @@ public class JobDeliveryman extends AbstractJob
     {
         if (getTaskQueueFromDataStore().contains(token))
         {
-            if (getTaskQueueFromDataStore().peek().equals(token))
-            {
-                this.setReturning(true);
-            }
-
             getTaskQueueFromDataStore().remove(token);
         }
 

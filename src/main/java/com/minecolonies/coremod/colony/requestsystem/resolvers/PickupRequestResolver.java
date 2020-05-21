@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
-public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
+public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
 {
-    public DeliveryRequestResolver(
+    public PickupRequestResolver(
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
@@ -34,13 +34,13 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public TypeToken<? extends Delivery> getRequestType()
+    public TypeToken<? extends Pickup> getRequestType()
     {
-        return TypeConstants.DELIVERY;
+        return TypeConstants.PICKUP;
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Pickup> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -51,20 +51,19 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                                .stream()
                                                .filter(citizenData -> citizenData.getCitizenEntity()
-                                                                        .map(entityCitizen -> requestToCheck.getRequest()
-                                                                                                .getTarget()
+                                                                        .map(entityCitizen -> requestToCheck.getRequester()
+                                                                                                .getLocation()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
                                                .filter(c -> c.getJob() instanceof JobDeliveryman)
                                                .findFirst()
                                                .orElse(null);
-
         return freeDeliveryMan != null;
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Pickup> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -77,15 +76,15 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                .getCitizens()
                                                .stream()
                                                .filter(citizenData -> citizenData.getCitizenEntity()
-                                                                        .map(entityCitizen -> request.getRequest()
-                                                                                                .getTarget()
+                                                                        .map(entityCitizen -> request.getRequester()
+                                                                                                .getLocation()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
                                                .filter(c -> c.getJob() instanceof JobDeliveryman)
                                                .filter(c -> ((JobDeliveryman) c.getJob()).isActive())
                                                .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                       .thenComparing(Comparator.comparing(c -> {
-                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                          BlockPos targetPos = request.getRequester().getLocation().getInDimensionLocation();
                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
                                                           BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
 
@@ -105,28 +104,28 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Pickup> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Pickup> completedRequest)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Pickup> request)
     {
 
     }
 
     @Override
     public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Pickup> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
