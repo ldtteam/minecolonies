@@ -19,6 +19,7 @@ import net.minecraft.block.HopperBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
@@ -91,41 +92,45 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        if(!super.canRecipeBeAdded(token))
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
 
-
-        if (storage.getPrimaryOutput().getItem().getRegistryName().getPath().contains("ice")
-              || ItemTags.RAILS.contains(storage.getPrimaryOutput().getItem())
-              ||  storage.getPrimaryOutput().getItem() instanceof MinecartItem
-              || storage.getPrimaryOutput().getItem() == Items.JACK_O_LANTERN
-              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock)
-              || Tags.Items.STORAGE_BLOCKS.contains(storage.getPrimaryOutput().getItem())
-              || storage.getPrimaryOutput().getItem() == Items.ENCHANTING_TABLE
-              || storage.getPrimaryOutput().getItem() == Items.LANTERN)
+        // Recipe includes tagged output
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
         {
             return true;
         }
 
-        boolean hasValidItem = false;
-
-        for(final ItemStack stack : storage.getInput())
+        // Recipe includes tagged ingredient
+        for (final ItemStack stack : storage.getInput())
         {
-            if (Tags.Items.DUSTS_REDSTONE.contains(stack.getItem()) || Tags.Items.ORES_REDSTONE.contains(stack.getItem()) || Tags.Items.STORAGE_BLOCKS_REDSTONE.contains(stack.getItem()))
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
             {
-                hasValidItem = true;
+                return true;
             }
         }
 
-        return hasValidItem;
+        // Additional rules for valid recipe
+        if (storage.getPrimaryOutput().getItem() instanceof MinecartItem
+              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
