@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
@@ -164,14 +164,14 @@ public class JobDeliveryman extends AbstractJob
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<Delivery> getCurrentTask()
+    public IRequest<IRequestable> getCurrentTask()
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
             return null;
         }
 
-        return (IRequest<Delivery>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        return (IRequest<IRequestable>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
     }
 
     /**

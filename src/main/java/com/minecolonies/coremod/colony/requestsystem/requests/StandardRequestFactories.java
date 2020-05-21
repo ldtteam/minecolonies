@@ -10,6 +10,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
@@ -259,6 +261,81 @@ public final class StandardRequestFactories
                                                                 @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
+        }
+    }
+
+    // TODO: @Mike: Use :D Also this duplicates the class above. Can we do this generally?
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class PickupRequestFactory implements IRequestFactory<Pickup, StandardRequests.PickupRequest>
+    {
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.PickupRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.PickupRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<Pickup> getFactoryInputType()
+        {
+            return TypeToken.of(Pickup.class);
+        }
+
+        /**
+         * Method to serialize a given constructable.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
+        {
+            return serializeToNBT(controller, request, Pickup::serialize);
+        }
+
+        /**
+         * Method to deserialize a given constructable.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.PickupRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        {
+            return deserializeFromNBT(controller, nbt, Pickup::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.PickupRequest getNewInstance(
+          @NotNull final Pickup input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.PickupRequest(location, token, initialState, input);
         }
     }
 

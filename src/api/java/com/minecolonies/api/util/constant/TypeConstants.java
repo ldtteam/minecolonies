@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -65,7 +66,7 @@ public class TypeConstants
     /////Implementations
     public static final TypeToken<StandardToken>   STANDARDTOKEN    = TypeToken.of(StandardToken.class);
     public static final TypeToken<PrivateCrafting> PRIVATE_CRAFTING = TypeToken.of(PrivateCrafting.class);
-    public static final TypeToken<PublicCrafting>  PUBLIC_CRAFTING  = TypeToken.of(PublicCrafting.class);
-    public static final TypeToken<Delivery>        DELIVERY         = TypeToken.of(Delivery.class);
-    public static final TypeToken<Tool>            TOOL             = TypeToken.of(Tool.class);
+    public static final TypeToken<PublicCrafting> PUBLIC_CRAFTING = TypeToken.of(PublicCrafting.class);
+    public static final TypeToken<Delivery>       DELIVERY        = TypeToken.of(Delivery.class);
+    public static final TypeToken<Tool>           TOOL            = TypeToken.of(Tool.class);
 }

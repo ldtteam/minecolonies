@@ -100,6 +100,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                                  = "com.minecolonies.coremod.request.delivery";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_PICKUP                                    = "com.minecolonies.coremod.request.pickup";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_COOKED_FOOD                               = "com.minecolonies.coremod.request.cookedfood";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_FOOD                                      = "com.minecolonies.coremod.request.food";

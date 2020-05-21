@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -133,11 +135,6 @@ public final class StandardRequests
      */
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
-        {
-            super(requester, token, requested);
-        }
-
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
             super(requester, token, state, requested);
@@ -172,6 +169,51 @@ public final class StandardRequests
         @Override
         public ResourceLocation getDisplayIcon()
         {
+            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
+        }
+    }
+
+    /**
+     * Generic delivery request.
+     */
+    // TODO: @Mike: Use :D
+    public static class PickupRequest extends AbstractRequest<Pickup>
+    {
+        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Pickup requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ImmutableList<ItemStack> getDeliveries()
+        {
+            //This request type has no deliverable.
+            //It is a pickup.
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP)); // TODO appendSibling?
+            return result;
+        }
+
+        @NotNull
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public ResourceLocation getDisplayIcon()
+        {
+            // This can be just the delivery icon. For the user, it's no big deal.
             return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
         }
     }
