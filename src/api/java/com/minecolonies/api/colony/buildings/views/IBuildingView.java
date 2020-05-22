@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -190,13 +189,6 @@ public interface IBuildingView extends IRequester
      * @return int, delivery priority.
      */
     int getBuildingDmPrio();
-
-    /**
-     * Get the delivery priority state of the building.
-     *
-     * @return PickUpPriorityState enum
-     */
-    PickUpPriorityState getBuildingDmPrioState();
 
     ImmutableCollection<IToken<?>> getResolverIds();
 

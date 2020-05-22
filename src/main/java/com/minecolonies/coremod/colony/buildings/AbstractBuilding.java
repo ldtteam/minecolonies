@@ -489,7 +489,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
-        buf.writeInt(getPriorityState().getIntRepresentation());
         buf.writeInt(getCurrentWorkOrderLevel());
         buf.writeString(getStyle());
         buf.writeString(this.getSchematicName());
@@ -671,7 +670,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         return true;
     }
-    
+
     /**
      * Requests an upgrade for the current building.
      *

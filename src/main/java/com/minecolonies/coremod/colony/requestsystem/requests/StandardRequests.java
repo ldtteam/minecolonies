@@ -179,7 +179,6 @@ public final class StandardRequests
     /**
      * Generic delivery request.
      */
-    // TODO: @Mike: Use :D
     public static class PickupRequest extends AbstractRequest<Pickup>
     {
         public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Pickup requested)
@@ -201,7 +200,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP)); // TODO appendSibling?
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP));
             return result;
         }
 

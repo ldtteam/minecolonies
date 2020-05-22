@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -26,6 +25,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliver
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
@@ -74,7 +75,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Completing a request with a priority of at least PRIORITY_FORCING_DUMP will force a dump.
      */
-    private static final int PRIORITY_FORCING_DUMP = 6;
+    private static final int PRIORITY_FORCING_DUMP = 8;
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -122,9 +123,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState pickup()
     {
-        final IRequest<? extends IDeliverymanRequestable> request = job.getCurrentTask();
+        final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
 
-        if (!(request instanceof Pickup))
+        if (!(currentTask instanceof PickupRequest))
         {
             // The current task has changed since the Decision-state. Restart.
             return START_WORKING;
@@ -132,7 +133,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
-        final BlockPos pickupTarget = request.getRequester().getLocation().getInDimensionLocation();
+        final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
         if (!worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
             return PICKUP;
@@ -163,7 +164,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.currentSlot = 0;
             job.finishRequest(true);
 
-            if (request.getRequest().getPriority() >= PRIORITY_FORCING_DUMP)
+            if (currentTask.getRequest().getPriority() >= PRIORITY_FORCING_DUMP)
             {
                 return DUMPING;
             }
@@ -304,9 +305,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState deliver()
     {
-        final IRequest<? extends IDeliverymanRequestable> request = job.getCurrentTask();
+        final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
 
-        if (!(request instanceof Delivery))
+        if (!(currentTask instanceof DeliveryRequest))
         {
             // The current task has changed since the Decision-state.
             // Since prepareDelivery() was called earlier, go dumping first and then restart.
@@ -315,7 +316,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
 
-        final ILocation targetBuildingLocation = ((Delivery) request).getTarget();
+        final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
         if (!targetBuildingLocation.isReachableFromLocation(worker.getLocation()))
         {
             Log.getLogger().info(worker.getCitizenColonyHandler().getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
@@ -527,7 +528,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             walkToBlock(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE);
             return START_WORKING;
         }
-        if (currentTask instanceof Delivery)
+        if (currentTask instanceof DeliveryRequest)
         {
             // Before a delivery can be made, the inventory first needs to be dumped.
             if (!worker.getInventoryCitizen().isEmpty())

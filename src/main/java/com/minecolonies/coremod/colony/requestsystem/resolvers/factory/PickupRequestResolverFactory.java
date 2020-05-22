@@ -6,14 +6,11 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * ------------ Class not Documented ------------
- */
-public class BuildingRequestResolverFactory implements IRequestResolverFactory<BuildingRequestResolver>
+public class PickupRequestResolverFactory implements IRequestResolverFactory<PickupRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN    = "Token";
@@ -22,9 +19,9 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public TypeToken<? extends BuildingRequestResolver> getFactoryOutputType()
+    public TypeToken<? extends PickupRequestResolver> getFactoryOutputType()
     {
-        return TypeToken.of(BuildingRequestResolver.class);
+        return TypeToken.of(PickupRequestResolver.class);
     }
 
     @NotNull
@@ -36,31 +33,33 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public BuildingRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
+    public PickupRequestResolver getNewInstance(
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        return new BuildingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
+        return new PickupRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
+      @NotNull final IFactoryController controller, @NotNull final PickupRequestResolver pickupRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.put(NBT_TOKEN, controller.serialize(buildingRequestResolver.getId()));
-        compound.put(NBT_LOCATION, controller.serialize(buildingRequestResolver.getLocation()));
+        compound.put(NBT_TOKEN, controller.serialize(pickupRequestResolver.getId()));
+        compound.put(NBT_LOCATION, controller.serialize(pickupRequestResolver.getLocation()));
         return compound;
     }
 
     @NotNull
     @Override
-    public BuildingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public PickupRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final IToken token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
-        return new BuildingRequestResolver(location, token);
+        return new PickupRequestResolver(location, token);
     }
 }

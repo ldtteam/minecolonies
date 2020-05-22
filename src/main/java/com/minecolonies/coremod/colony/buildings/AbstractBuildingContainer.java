@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -33,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.STATIC;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -65,11 +62,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     private int pickUpPriority = 1;
 
     /**
-     * Priority state of the building in the pickUpList.
-     */
-    private PickUpPriorityState priorityState = AUTOMATIC;
-
-    /**
      * The constructor for the building container.
      *
      * @param pos    the position of it.
@@ -97,19 +89,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
         if (compound.keySet().contains(TAG_PRIO_STATE))
         {
-            this.priorityState = PickUpPriorityState.fromIntRepresentation(compound.getInt(TAG_PRIO_STATE));
-        }
-        else
-        {
-            // Do a migration from the old boolean state
-            if (compound.keySet().contains(TAG_PRIO_MODE))
+            // This was the old int representation of Pickup:Never
+            if (compound.getInt(TAG_PRIO_STATE) == 0)
             {
-                this.priorityState = compound.getBoolean(TAG_PRIO_MODE) == true ? STATIC : AUTOMATIC;
-            }
-            else
-            {
-                // Default to Automatic
-                this.priorityState = AUTOMATIC;
+                this.pickUpPriority = 0;
             }
         }
     }
@@ -126,7 +109,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.pickUpPriority);
-        compound.putInt(TAG_PRIO_STATE, this.priorityState.getIntRepresentation());
 
         return compound;
     }
@@ -140,25 +122,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void alterPickUpPriority(final int value)
     {
-        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 1, MAX_PRIO);
-    }
-
-    @Override
-    public void setPickUpPriority(final int pickUpPriority)
-    {
-        this.pickUpPriority = MathHelper.clamp(pickUpPriority, 1, MAX_PRIO);
-    }
-
-    @Override
-    public PickUpPriorityState getPriorityState()
-    {
-        return priorityState;
-    }
-
-    @Override
-    public void setPriorityState(final PickUpPriorityState state)
-    {
-        this.priorityState = state;
+        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 0, MAX_PRIO);
     }
 
     @Override

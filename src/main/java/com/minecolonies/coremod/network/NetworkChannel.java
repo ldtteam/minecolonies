@@ -136,7 +136,6 @@ public class NetworkChannel
         registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
         registerMessage(++idx, ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
-        registerMessage(++idx, ChangePickUpPriorityStateMessage.class, ChangePickUpPriorityStateMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
         registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);

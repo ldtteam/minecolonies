@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -134,11 +133,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Already kept items during the dumping cycle.
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
-
-    /**
-     * Current pickup request token.
-     */
-    private IToken<?> pickupRequestToken = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -997,7 +991,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
 
-                pickupRequestToken = worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_PRIORITY));
+                if (getOwnBuilding().getPickUpPriority() > 0)
+                {
+                    worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_PRIORITY));
+                }
             }
 
             alreadyKept.clear();
@@ -1013,7 +1010,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         alreadyKept.clear();
         slotAt = 0;
         this.clearActionsDone();
-        if (worker.getCitizenData() != null)
+        if (worker.getCitizenData() != null && getOwnBuilding().getPickUpPriority() > 0)
         {
             worker.getCitizenData().createRequestAsync(new Pickup(getOwnBuilding().getPickUpPriority()));
         }

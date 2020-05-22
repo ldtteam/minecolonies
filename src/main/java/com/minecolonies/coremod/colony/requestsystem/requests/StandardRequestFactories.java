@@ -265,7 +265,6 @@ public final class StandardRequestFactories
         }
     }
 
-    // TODO: @Mike: Use :D Also this duplicates the class above. Can we do this generally?
     @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class PickupRequestFactory implements IRequestFactory<Pickup, StandardRequests.PickupRequest>
     {

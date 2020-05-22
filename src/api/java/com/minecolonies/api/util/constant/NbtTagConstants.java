@@ -31,11 +31,9 @@ public final class NbtTagConstants
     public static final String TAG_PRIO                   = "prio";
 
     /**
-     * @deprecated Superseeded by {@link NbtTagConstants#TAG_PRIO_STATE}
+     * @deprecated Superseeded by request-based pickup system.
      */
     @Deprecated
-    public static final String TAG_PRIO_MODE              = "prioMode";
-
     public static final String TAG_PRIO_STATE             = "prioState";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";

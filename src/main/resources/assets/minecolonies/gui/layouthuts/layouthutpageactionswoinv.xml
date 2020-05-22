@@ -20,11 +20,6 @@
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 
-    <buttonimage id="deliveryPrioState" size="129 17" pos="30 135" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
-
-    <label id="prioLabel" size="64 15" pos="30 154" textalign="MIDDLE_RIGHT" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.buildPrio)"/>
     <label id="prioValue" size="27 15" pos="96 154" textalign="MIDDLE" color="black"/>
 
     <buttonimage id="deliveryPrioDown" size="14 15" pos="127 154" textcolor="black"
