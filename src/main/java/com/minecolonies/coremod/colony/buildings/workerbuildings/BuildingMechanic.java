@@ -94,6 +94,8 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     {
         ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
         ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
 
         if (!super.canRecipeBeAdded(token))
         {
@@ -106,31 +108,40 @@ public class BuildingMechanic extends AbstractBuildingCrafter
             return false;
         }
 
-        // Recipe includes tagged output
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
-        {
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
+            return false;
+        }
+
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
+                return false;
+            }
+        }
+
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
             return true;
         }
 
-        // Recipe includes tagged ingredient
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
-            {
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
                 return true;
             }
         }
 
-        // Additional rules for valid recipe
+        // Additional recipe rules
+
         if (storage.getPrimaryOutput().getItem() instanceof MinecartItem
               || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
-        {
             return true;
-        }
-        else
-        {
-            return false;
-        }
+
+
+        // End Additional recipe rules
+
+        return false;
     }
 
     @Override

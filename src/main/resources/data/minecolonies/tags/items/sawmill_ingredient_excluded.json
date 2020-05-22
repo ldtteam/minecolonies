@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:ingots",
+    "#forge:stone",
+    "#forge:redstone",
+    "#forge:redstone_ore",
+    "#forge:string"
+  ]
+}

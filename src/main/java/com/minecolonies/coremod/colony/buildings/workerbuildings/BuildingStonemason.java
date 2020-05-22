@@ -105,6 +105,12 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
+
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
         if(!super.canRecipeBeAdded(token))
         {
             return false;
@@ -119,61 +125,35 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         double amountOfValidBlocks = 0;
         double blocks = 0;
 
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
+            return false;
+        }
 
-        if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
-        {
-            final Item item = storage.getPrimaryOutput().getItem();
-            if (item.isIn(Tags.Items.STONE) ||
-                    item.isIn(Tags.Items.COBBLESTONE) ||
-                    item.isIn(ItemTags.STONE_BRICKS) ||
-                    item.getRegistryName().getPath().contains("prismarine") ||
-                    item.getRegistryName().getPath().contains("end_stone") ||
-                    item.getRegistryName().getPath().contains("brick"))
-            {
-                return true;
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
+                return false;
             }
         }
-        else if (storage.getPrimaryOutput().getItem() == Items.FLOWER_POT)
-        {
+
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
             return true;
         }
 
-        for(final ItemStack stack : storage.getInput())
-        {
-            if(!ItemStackUtils.isEmpty(stack))
-            {
-                blocks++;
-                if (stack.getItem() instanceof BlockItem)
-                {
-                    final Block block = ((BlockItem) stack.getItem()).getBlock();
-                    if (block.isIn(Tags.Blocks.STONE) ||
-                            block.isIn(Tags.Blocks.COBBLESTONE) ||
-                            block.isIn(BlockTags.STONE_BRICKS) ||
-                            block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
-                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") ||
-                            block.asItem().getRegistryName().getPath().contains("brick"));
-                    {
-                        amountOfValidBlocks++;
-                        continue;
-                    }
-                }
-
-                for (final ResourceLocation tag : stack.getItem().getTags())
-                {
-                    if(tag.getPath().contains("stone"))
-                    {
-                        amountOfValidBlocks++;
-                        break;
-                    }
-                    else if(tag.getPath().contains("stick") || tag.getPath().contains("wood") || tag.getPath().toLowerCase(Locale.US).contains("redstone") || tag.getPath().contains("string") || tag.getPath().contains("gunpowder"))
-                    {
-                        return false;
-                    }
-                }
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
+                return true;
             }
         }
 
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+        // Additional recipe rules
+
+        // End Additional recipe rules
+
+       return false;
     }
 
     @Override

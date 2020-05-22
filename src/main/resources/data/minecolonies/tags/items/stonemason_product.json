@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#minecraft:stone_bricks",
+    "#minecraft:slabs",
+    "#minecraft:stairs",
+    "#minecraft:walls",
+    "minecraft:bricks",
+    "minecraft:nether_bricks",
+    "minecraft:flower_pot"
+  ]
+}

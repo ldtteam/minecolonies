@@ -30,6 +30,8 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -108,6 +110,12 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
+
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
         if (!super.canRecipeBeAdded(token))
         {
             return false;
@@ -142,21 +150,35 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        boolean hasGlass = false;
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
+            return false;
+        }
 
-        for (final ItemStorage stack : storage.getCleanedInput())
-        {
-            if (Tags.Items.GLASS.contains(stack.getItemStack().getItem()) || Tags.Items.GLASS_PANES.contains(stack.getItemStack().getItem()))
-            {
-                hasGlass = true;
-            }
-            if (Tags.Items.DYES.contains(stack.getItemStack().getItem()))
-            {
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
                 return false;
             }
         }
 
-        return hasGlass;
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
+            return true;
+        }
+
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
+                return true;
+            }
+        }
+
+        // Additional recipe rules
+
+        // End Additional recipe rules
+
+        return false;
     }
 
     @Override

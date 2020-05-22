@@ -102,6 +102,11 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
         if(!super.canRecipeBeAdded(token))
         {
             return false;
@@ -118,6 +123,32 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         {
             return true;
         }
+
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
+            return false;
+        }
+
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
+                return false;
+            }
+        }
+
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
+            return true;
+        }
+
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput()) {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
+                return true;
+            }
+        }
+
+        // Additional recipe rules
 
         double amountOfValidBlocks = 0;
         double blocks = 0;
@@ -137,16 +168,15 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                         amountOfValidBlocks++;
                         break;
                     }
-                    else if(tag.getPath().contains("ingot") || tag.getPath().contains("stone") || tag.getPath().contains("redstone") || tag.getPath().contains("string"))
-                    {
-                        return false;
-                    }
                 }
                 blocks++;
             }
         }
 
         return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+
+        // End Additional recipe rules
+
     }
 
     @Override

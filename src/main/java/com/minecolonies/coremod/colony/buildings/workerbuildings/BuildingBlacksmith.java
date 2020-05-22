@@ -20,6 +20,8 @@ import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
@@ -92,6 +94,11 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
         if(!super.canRecipeBeAdded(token))
         {
             return false;
@@ -103,36 +110,48 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
             return false;
         }
 
-        final int size = storage.getCleanedInput().size();
-        int ingots = 0;
-        int nuggets = 0;
-        for(final ItemStorage itemStorage : storage.getCleanedInput())
+// Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem()))
         {
-            final ItemStack stack = itemStorage.getItemStack();
-            if (!ItemStackUtils.isEmpty(stack))
+            return false;
+        }
+
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem()))
             {
-                if (stack.getItem().isIn(Tags.Items.INGOTS))
-                {
-                    ingots++;
-                    break;
-                }
-                else if (stack.getItem().isIn(Tags.Items.NUGGETS))
-                {
-                    nuggets++;
-                    break;
-                }
+                return false;
             }
         }
 
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return true;
+        }
+
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
+            {
+                return true;
+            }
+        }
+
+        // Additional recipe rules
+
         final ItemStack output = storage.getPrimaryOutput();
         return output.getItem() instanceof ToolItem ||
-                output.getItem() instanceof SwordItem ||
-                output.getItem() instanceof ArmorItem ||
-                output.getItem() instanceof HoeItem ||
-                output.getItem() instanceof ShieldItem ||
-                Compatibility.isTinkersWeapon(output) ||
-                ingots == size ||
-                nuggets == size;
+                 output.getItem() instanceof SwordItem ||
+                 output.getItem() instanceof ArmorItem ||
+                 output.getItem() instanceof HoeItem ||
+                 output.getItem() instanceof ShieldItem ||
+                 Compatibility.isTinkersWeapon(output);
+
+        // End Additional recipe rules
+
     }
 
     @Override

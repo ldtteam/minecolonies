@@ -28,11 +28,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -276,6 +279,12 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
+
+        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
         if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
         {
             return false;
@@ -295,6 +304,37 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             }
         }
 
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return false;
+        }
+
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem()))
+            {
+                return false;
+            }
+        }
+
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return true;
+        }
+
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
+            {
+                return true;
+            }
+        }
+
+        // Additional recipe rules
         boolean hasWheat = false;
         for (final ItemStorage input : storage.getCleanedInput())
         {
@@ -305,6 +345,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
 
         return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
+        // End Additional recipe rules
     }
 
     /**
