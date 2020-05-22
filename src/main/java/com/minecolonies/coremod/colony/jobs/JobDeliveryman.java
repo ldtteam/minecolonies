@@ -226,27 +226,6 @@ public class JobDeliveryman extends AbstractJob
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
-    /**
-     * Method used to check if this DMan is trying to return to the warehouse to clean up.
-     *
-     * @return True when this DMan is returning the warehouse to clean his inventory.
-     */
-    public boolean isReturning()
-    {
-        return getDataStore().isReturning();
-    }
-
-    /**
-     * Method used to set if this DMan needs to return and clear his inventory.
-     * A set task is preferred over the returning flag.
-     *
-     * @param returning True to return the DMan to the warehouse and clean, false not to.
-     */
-    public void setReturning(final boolean returning)
-    {
-        getDataStore().setReturning(returning);
-    }
-
     @Override
     public void setActive(final boolean b)
     {

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -127,6 +126,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!(request instanceof Pickup))
         {
+            // The current task has changed since the Decision-state. Restart.
             return START_WORKING;
         }
 
@@ -154,22 +154,23 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             this.alreadyKept = new ArrayList<>();
             this.currentSlot = 0;
-            job.setReturning(true);
-            return START_WORKING;
+            return DUMPING;
         }
 
         if (pickupFromBuilding(pickupBuilding))
         {
             this.alreadyKept = new ArrayList<>();
             this.currentSlot = 0;
+            job.finishRequest(true);
 
             if (request.getRequest().getPriority() >= PRIORITY_FORCING_DUMP)
             {
-                job.setReturning(true);
+                return DUMPING;
             }
-
-            job.finishRequest(true);
-            return START_WORKING;
+            else
+            {
+                return START_WORKING;
+            }
         }
 
         currentSlot++;
@@ -274,11 +275,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         getAndCheckWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
 
-        if (job.isReturning())
-        {
-            job.setReturning(false);
-        }
-
         return START_WORKING;
     }
 
@@ -302,6 +298,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
     /**
      * Deliver the items to the hut.
+     * TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
      *
      * @return the next state.
      */
@@ -311,7 +308,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!(request instanceof Delivery))
         {
-            return START_WORKING;
+            // The current task has changed since the Decision-state.
+            // Since prepareDelivery() was called earlier, go dumping first and then restart.
+            return DUMPING;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
@@ -333,6 +332,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
+            // TODO: Non-Colony deliveries are unsupported yet. Fix that at some point in time.
             job.finishRequest(true);
             return START_WORKING;
         }
@@ -353,6 +353,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             extracted = true;
             final ItemStack insertionResultStack;
 
+            // TODO: Please only push items into the target that were actually requested.
             if (targetBuilding instanceof AbstractBuildingWorker)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
@@ -360,18 +361,24 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
             else
             {
+                // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
+                // Therefore, the keep-predicate always returns true.
                 insertionResultStack =
                   InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                     stack,
-                    itemStack -> false);
+                    itemStack -> true);
             }
 
             if (!ItemStackUtils.isEmpty(insertionResultStack))
             {
-                success = false;
+                // A stack was replaced (meaning the inventory didn't have enough space).
+
                 if (ItemStack.areItemStacksEqual(insertionResultStack, stack) && worker.getCitizenData() != null)
                 {
-                    //same stack, we could not deliver ?
+                    // The replaced stack is the same as the one we tried to put into the inventory.
+                    // Meaning, replacing failed.
+                    success = false;
+
                     if (targetBuilding instanceof AbstractBuildingWorker)
                     {
                         worker.getCitizenData()
@@ -397,14 +404,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
+        setDelay(WAIT_DELAY);
+
         if (!extracted)
         {
+            // This can only happen if the dman's inventory was completely empty.
+            // Let the retry-system handle this case.
             worker.decreaseSaturationForContinuousAction();
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
             job.finishRequest(false);
 
-            setDelay(WAIT_DELAY);
-            return DUMPING;
+            // No need to go dumping in this case.
+            return START_WORKING;
         }
 
         worker.getCitizenExperienceHandler().addExperience(1.0D);
@@ -412,7 +423,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
 
-        setDelay(WAIT_DELAY);
         return success ? START_WORKING : DUMPING;
     }
 
@@ -425,56 +435,32 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private IAIState prepareDelivery()
     {
         final IRequest<? extends IRequestable> currentTask = job.getCurrentTask();
-        if (currentTask == null)
-        {
-            return START_WORKING;
-        }
-
         final IRequestable request = currentTask.getRequest();
-        if (request instanceof Pickup)
+        if (!(request instanceof Delivery))
         {
-            return PICKUP;
-        }
-        else if (request instanceof Delivery)
-        {
-            final Delivery delivery = (Delivery) request;
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-              itemStack -> delivery.getStack().isItemEqualIgnoreDurability(itemStack)))
-            {
-                return DELIVERY;
-            }
-
-            return gatherItems(delivery);
-        }
-        else
-        {
-            // Deliveryman doesn't support other IRequestable types at the moment.
-            job.finishRequest(false);
+            // The current task has changed since the Decision-state.
+            // Restart.
             return START_WORKING;
         }
-    }
 
-    /**
-     * Gather item from chest.
-     * Gathers only one stack of the item.
-     *
-     * @param delivery The delivery that should be made.
-     * @return the next state to go into
-     */
-    private IAIState gatherItems(@NotNull final Delivery delivery)
-    {
+        final Delivery delivery = (Delivery) request;
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
+          itemStack -> delivery.getStack().isItemEqualIgnoreDurability(itemStack)))
+        {
+            return DELIVERY;
+        }
+
         final ILocation location = delivery.getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
-            ((IBuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
             job.finishRequest(false);
             return START_WORKING;
         }
 
         if (walkToBlock(location.getInDimensionLocation()))
         {
-            return getState();
+            return PREPARE_DELIVERY;
         }
 
         final TileEntity tileEntity = world.getTileEntity(location.getInDimensionLocation());
@@ -486,14 +472,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
                 setDelay(DUMP_AND_GATHER_DELAY);
-                return getState();
+                return PREPARE_DELIVERY;
             }
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 0);
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, request.getRequest().getStack()))
+        if (gatherIfInTileEntity(tileEntity, delivery.getStack()))
         {
             setDelay(DUMP_AND_GATHER_DELAY);
             return DELIVERY;
@@ -534,20 +520,28 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState decide()
     {
-        if (job.isReturning())
-        {
-            return DUMPING;
-        }
-
-        if (job.getCurrentTask() == null)
+        final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
+        if (currentTask == null)
         {
             // If there are no deliveries/pickups pending, just loiter around the warehouse.
-            worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE);
+            walkToBlock(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE);
             return START_WORKING;
+        }
+        if (currentTask instanceof Delivery)
+        {
+            // Before a delivery can be made, the inventory first needs to be dumped.
+            if (!worker.getInventoryCitizen().isEmpty())
+            {
+                return DUMPING;
+            }
+            else
+            {
+                return PREPARE_DELIVERY;
+            }
         }
         else
         {
-            return PREPARE_DELIVERY;
+            return PICKUP;
         }
     }
 
