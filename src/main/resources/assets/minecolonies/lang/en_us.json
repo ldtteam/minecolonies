@@ -609,7 +609,8 @@
   "com.minecolonies.coremod.gui.structure.delete": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.title": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.body": "Do you want to delete %s?",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Pickup: Never",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Never",
+  "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request pickup now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a mercenary took the %s away!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A mercenary just stole %s from a building!",
 
@@ -795,7 +796,7 @@
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Priority:",
+  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
   "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",

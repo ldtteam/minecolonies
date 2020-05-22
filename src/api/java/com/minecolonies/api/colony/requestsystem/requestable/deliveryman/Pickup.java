@@ -44,4 +44,12 @@ public class Pickup extends AbstractDeliverymanRequestable
         }
         return o instanceof Pickup;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Pickup{" +
+                 "priority=" + priority +
+                 '}';
+    }
 }

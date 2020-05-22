@@ -195,6 +195,16 @@ public class JobDeliveryman extends AbstractJob
             }
         }
         getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
+
+        for (IToken<?> t : getTaskQueueFromDataStore()
+        )
+        {
+            //TODO Remove this
+            Log.getLogger().info("New job list for deliveryman:");
+
+            IRequest<? extends IDeliverymanRequestable> r = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(t));
+            Log.getLogger().info(r.getRequest().toString());
+        }
         getCitizen().getWorkBuilding().markDirty();
     }
 

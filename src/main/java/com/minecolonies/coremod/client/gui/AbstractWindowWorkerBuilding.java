@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
@@ -86,9 +87,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_DP_DOWN = "deliveryPrioDown";
 
     /**
-     * Button to set delivery prio state
+     * Button to force a pickup
      */
-    private static final String BUTTON_DP_STATE = "deliveryPrioState";
+    private static final String BUTTON_FORCE_PICKUP = "forcePickup";
 
     /**
      * Current pickup priority of the building.
@@ -111,6 +112,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_RECIPES_LIST, this::recipeListClicked);
         super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
+        super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
 
         // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
         // The thought behind this is to show users player-thaught recipes and also built-in recipes.
@@ -151,6 +153,11 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         }
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
         updatePriorityLabel();
+    }
+
+    private void forcePickup()
+    {
+        Network.getNetwork().sendToServer(new ForcePickupMessage(building));
     }
 
     private void recipeListClicked()

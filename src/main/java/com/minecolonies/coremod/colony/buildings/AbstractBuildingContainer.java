@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -122,7 +123,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void alterPickUpPriority(final int value)
     {
-        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 0, MAX_PRIO);
+        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 0, MAX_DELIVERYMAN_STANDARD_PRIORITY);
     }
 
     @Override

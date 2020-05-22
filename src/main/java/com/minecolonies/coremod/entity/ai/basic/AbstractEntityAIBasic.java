@@ -57,7 +57,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -993,7 +993,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
                 if (getOwnBuilding().getPickUpPriority() > 0)
                 {
-                    worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_PRIORITY));
+                    worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
                 }
             }
 

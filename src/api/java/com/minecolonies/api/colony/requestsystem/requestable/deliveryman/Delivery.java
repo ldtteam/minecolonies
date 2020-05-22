@@ -115,4 +115,15 @@ public class Delivery extends AbstractDeliverymanRequestable
         result = 31 * result + getStack().hashCode();
         return result;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Delivery{" +
+                 "start=" + start +
+                 ", target=" + target +
+                 ", stack=" + stack +
+                 ", priority=" + priority +
+                 '}';
+    }
 }
