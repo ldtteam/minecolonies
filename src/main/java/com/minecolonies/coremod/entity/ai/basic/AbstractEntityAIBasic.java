@@ -11,9 +11,11 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -56,9 +58,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
@@ -133,6 +134,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Already kept items during the dumping cycle.
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
+
+    /**
+     * Current pickup request token.
+     */
+    private IToken<?> pickupRequestToken = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -985,16 +991,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (getOwnBuilding().getPriorityState() == AUTOMATIC)
-            {
-                getOwnBuilding().alterPickUpPriority(MAX_PRIO);
-            }
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData()
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
+
+                pickupRequestToken = worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_PRIORITY));
             }
+
+            alreadyKept.clear();
+            slotAt = 0;
+            this.clearActionsDone();
+            return afterDump();
         }
         else if (dumpOneMoreSlot())
         {
@@ -1003,12 +1012,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         alreadyKept.clear();
         slotAt = 0;
-        this.itemsNiceToHave().forEach(this::isInHut);
-        // we dumped the inventory, reset actions done
         this.clearActionsDone();
-        if (getOwnBuilding().getPriorityState() == AUTOMATIC)
+        if (worker.getCitizenData() != null)
         {
-            getOwnBuilding().alterPickUpPriority(1);
+            worker.getCitizenData().createRequestAsync(new Pickup(getOwnBuilding().getPickUpPriority()));
         }
         return afterDump();
     }

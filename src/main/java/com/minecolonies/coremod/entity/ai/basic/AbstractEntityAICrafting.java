@@ -336,7 +336,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         }
 
         resetValues();
-        getOwnBuilding().setPickUpPriority(1);
         return super.afterDump();
     }
 

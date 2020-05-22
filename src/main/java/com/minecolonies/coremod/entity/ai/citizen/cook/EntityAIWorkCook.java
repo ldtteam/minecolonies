@@ -399,6 +399,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
     /**
      * Check for all items of the required recipe.
+     *
      * @param storage the storage.
      * @return the next state to go to.
      */
@@ -480,7 +481,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
 
-                if (job.getCraftCounter() >= job.getMaxCraftingCount()) {
+                if (job.getCraftCounter() >= job.getMaxCraftingCount())
+                {
                     incrementActionsDone();
                     currentRecipeStorage = null;
                     resetValues();
@@ -537,7 +539,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
 
         resetValues();
-        getOwnBuilding().setPickUpPriority(1);
         return super.afterDump();
     }
 
@@ -546,8 +547,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         return new Food(STACKSIZE);
     }
-
-
 
     /**
      * Get the required progress to execute a recipe.

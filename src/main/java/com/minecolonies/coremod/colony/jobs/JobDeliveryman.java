@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
@@ -21,6 +22,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -172,7 +174,27 @@ public class JobDeliveryman extends AbstractJob
      */
     public void addRequest(@NotNull final IToken<?> token)
     {
-        getTaskQueueFromDataStore().add(token);
+        final IRequestManager requestManager = getColony().getRequestManager();
+        IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
+
+        LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
+        Iterator<IToken<?>> iterator = taskQueue.descendingIterator();
+
+        int insertionIndex = taskQueue.size();
+        while (iterator.hasNext())
+        {
+            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(iterator.next()));
+            if (request.getRequest().getPriority() < newRequest.getRequest().getPriority())
+            {
+                request.getRequest().incrementPriorityDueToAging();
+                insertionIndex--;
+            }
+            else
+            {
+                break;
+            }
+        }
+        getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
         getCitizen().getWorkBuilding().markDirty();
     }
 
