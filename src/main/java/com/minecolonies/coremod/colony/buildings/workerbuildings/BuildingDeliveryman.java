@@ -202,6 +202,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         {
             super.deserialize(buf);
             final int size = buf.readInt();
+            tasks.clear();
             for (int i = 0; i < size; i++)
             {
                 tasks.add(StandardFactoryController.getInstance().deserialize(buf.readCompoundTag()));

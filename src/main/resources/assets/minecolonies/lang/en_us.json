@@ -313,6 +313,8 @@
   "entity.builder.messageneedmaterial": "I need %s (Amount: %d)",
   "entity.builder.messagebuildernecessary": "Requiring a builder's hut of level %d in order to build or upgrade this building.",
 
+  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+
   "entity.miner.messageneedtools": "Need tool %s!",
   "entity.miner.messageneedblockanditem": "I need %s!",
   "entity.miner.messageneedbettertools": "I need better tools!",
