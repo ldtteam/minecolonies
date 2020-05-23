@@ -354,4 +354,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
     }
+
+    @Override
+    public IRequest<?> getCurrentRequest()
+    {
+        return currentRequest;
+    }
 }

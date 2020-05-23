@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -589,6 +591,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Gets the current request of this AI. Will mostly be a crafting request.
+     *
+     * @return request, or null if not existent.
+     */
+    public IRequest<?> getCurrentRequest()
+    {
+        return null;
+    }
+
+    /**
      * What to do after picking up a request.
      *
      * @return the next state to go to.
@@ -978,22 +990,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private IAIState dumpInventory()
     {
-        if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        final IBuilding building = getOwnBuilding();
+        if (building == null)
+        {
+            // Uh oh, that shouldn't happen. Restart AI.
+            return afterDump();
+        }
+
+        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
         {
             return INVENTORY_FULL;
         }
 
-        if (InventoryUtils.isProviderFull(getOwnBuilding()))
+        if (InventoryUtils.isProviderFull(building))
         {
-            if (worker.getCitizenData() != null)
+            final ICitizenData citizenData = worker.getCitizenData();
+            if (citizenData != null)
             {
-                worker.getCitizenData()
+                citizenData
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
 
-                if (getOwnBuilding().getPickUpPriority() > 0)
+                // If the inventory full, open requests are ignored, the dman will still come and pickup.
+                if (building.getPickUpPriority() > 0)
                 {
-                    worker.getCitizenData().createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
+                    citizenData.createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
                 }
             }
 
@@ -1010,9 +1031,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         alreadyKept.clear();
         slotAt = 0;
         this.clearActionsDone();
-        if (worker.getCitizenData() != null && getOwnBuilding().getPickUpPriority() > 0)
+        final ICitizenData citizenData = worker.getCitizenData();
+        if (citizenData != null && building.getPickUpPriority() > 0 && getCurrentRequest() == null)
         {
-            worker.getCitizenData().createRequestAsync(new Pickup(getOwnBuilding().getPickUpPriority()));
+            citizenData.createRequestAsync(new Pickup(building.getPickUpPriority()));
         }
         return afterDump();
     }

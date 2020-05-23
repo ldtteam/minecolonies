@@ -131,6 +131,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
+        if (cannotHoldMoreItems())
+        {
+            this.alreadyKept = new ArrayList<>();
+            this.currentSlot = 0;
+            return DUMPING;
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
@@ -149,13 +156,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (pickupBuilding == null)
         {
             return START_WORKING;
-        }
-
-        if (cannotHoldMoreItems())
-        {
-            this.alreadyKept = new ArrayList<>();
-            this.currentSlot = 0;
-            return DUMPING;
         }
 
         if (pickupFromBuilding(pickupBuilding))
@@ -186,6 +186,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean pickupFromBuilding(@NotNull final IBuilding building)
     {
+        if (cannotHoldMoreItems())
+        {
+            return false;
+        }
+
         final IItemHandler handler = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
         if (handler == null)
         {
@@ -525,8 +530,21 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (currentTask == null)
         {
             // If there are no deliveries/pickups pending, just loiter around the warehouse.
-            walkToBlock(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE);
-            return START_WORKING;
+            if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
+            {
+                return START_WORKING;
+            }
+            else
+            {
+                if (!worker.getInventoryCitizen().isEmpty())
+                {
+                    return DUMPING;
+                }
+                else
+                {
+                    return START_WORKING;
+                }
+            }
         }
         if (currentTask instanceof DeliveryRequest)
         {
