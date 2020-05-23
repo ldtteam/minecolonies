@@ -239,7 +239,7 @@ public class BuildingStructureHandler extends AbstractStructureHandler
     @Override
     public int getMaxBlocksCheckedPerCall()
     {
-        return 100;
+        return 250;
     }
 
     @Override
