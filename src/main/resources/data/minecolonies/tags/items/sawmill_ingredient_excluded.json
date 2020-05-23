@@ -3,8 +3,7 @@
   "values": [
     "#forge:ingots",
     "#forge:stone",
-    "#forge:redstone",
-    "#forge:redstone_ore",
+    "#forge:dusts/redstone",
     "#forge:string"
   ]
 }

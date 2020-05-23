@@ -9,6 +9,7 @@
     "#minecraft:walls",
     "minecraft:bricks",
     "minecraft:nether_bricks",
-    "minecraft:flower_pot"
+    "minecraft:flower_pot",
+    "#forge:sandstone"
   ]
 }

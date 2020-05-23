@@ -2,7 +2,6 @@
   "replace" : false,
   "values" : [
     "#forge:nuggets",
-    "#forge:ingots",
-    ""
+    "#forge:ingots"
   ]
 }
