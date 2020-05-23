@@ -42,8 +42,8 @@ public final class ColonyUtils
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 
-        final int x1 = zeroPos.getX();
-        final int z1 = zeroPos.getZ();
+        final int x1 = zeroPos.getX() - 1;
+        final int z1 = zeroPos.getZ() - 1;
         final int x2 = zeroPos.getX() + blueprint.getSizeX();
         final int z2 = zeroPos.getZ() + blueprint.getSizeZ();
 

@@ -301,9 +301,7 @@ public final class WorkerUtil
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
-                            BlockPos zeroAnchor = pos.subtract(structure.getPrimaryBlockOffset());
-                            zeroAnchor = zeroAnchor.add(new BlockPos(-(structure.getSizeX() / 2), 0, -(structure.getSizeZ() / 2)));
-                            return zeroAnchor.add(localPos);
+                            return pos.subtract(structure.getPrimaryBlockOffset()).add(localPos);
                         }
                     }
                 }

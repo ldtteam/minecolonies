@@ -8,6 +8,7 @@ import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -15,12 +16,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Interface for using the structure codebase.
@@ -47,20 +52,6 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
     }
 
     /**
-     * The minecolonies specific creative structure placer.
-     * @param world the world.
-     * @param pos the pos it is placed at.
-     * @param blueprint the blueprint.
-     * @param settings the placement settings.
-     * @param fancyPlacement if fancy or complete.
-     */
-    public MCCreativeStructureHandler(final World world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
-    {
-        super(world, pos, blueprint, settings, fancyPlacement);
-        setupBuilding();
-    }
-
-    /**
      * Setup the building to register things to.
      */
     private void setupBuilding()
@@ -68,15 +59,19 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), getWorldPos());
         if (colony != null)
         {
-            this.building = colony.getBuildingManager().getBuilding(getWorldPos().add(getBluePrint().getPrimaryBlockOffset()));
+            this.building = colony.getBuildingManager().getBuilding(getWorldPos());
         }
     }
 
     @Override
-    public void triggerSuccess(final BlockPos pos)
+    public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement)
     {
-        super.triggerSuccess(pos);
-        building.registerBlockPosition(getBluePrint().getBlockState(pos), getWorldPos().subtract(getBluePrint().getPrimaryBlockOffset()).add(pos), this.getWorld());
+        super.triggerSuccess(pos, list, placement);
+        final BlockPos worldPos = getProgressPosInWorld(pos);
+        if (building != null)
+        {
+            building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
+        }
     }
 
     @Override
@@ -99,6 +94,15 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
         return super.shouldBlocksBeConsideredEqual(state1, state2);
     }
 
+    @Override
+    public boolean isStackFree(@Nullable final ItemStack itemStack)
+    {
+        return itemStack == null
+                 ||itemStack.isEmpty()
+                 || itemStack.getItem().isIn(ItemTags.LEAVES)
+                 || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+    }
+
     /**
      * Load a structure into this world
      * and place it in the right position and rotation.
@@ -110,8 +114,9 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
      * @param mirror   the mirror used.
      * @param fancyPlacement if fancy or complete.
      * @param player   the placing player.
+     * @return the placed blueprint.
      */
-    public static void loadAndPlaceStructureWithRotation(
+    public static Blueprint loadAndPlaceStructureWithRotation(
       final World worldObj, @NotNull final String name,
       @NotNull final BlockPos pos, final Rotation rotation,
       @NotNull final Mirror mirror,
@@ -124,14 +129,13 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
             structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
 
             @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
-            if (player != null)
-            {
-                Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
-            }
+            Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+            return structure.getBluePrint();
         }
         catch (final IllegalStateException e)
         {
             Log.getLogger().warn("Could not load structure!", e);
         }
+        return null;
     }
 }

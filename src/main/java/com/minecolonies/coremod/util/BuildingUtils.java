@@ -2,11 +2,11 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
@@ -54,7 +54,7 @@ public final class BuildingUtils
 
             final String structureName = sn.toString();
 
-            final CreativeStructureHandler wrapper = new CreativeStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
+            final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
             wrapper.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
 
             final BlockPos zeroPos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());

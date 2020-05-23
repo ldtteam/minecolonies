@@ -1,15 +1,19 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.placement.BlockPlacementResult;
+import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
+import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.StructurePlacementUtils;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -18,43 +22,34 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.coremod.util.WorkerUtil;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Hand;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
+import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
+import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -70,65 +65,27 @@ import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER
 public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> extends AbstractEntityAIInteract<J>
 {
     /**
-     * String which shows if something is a waypoint.
-     */
-    public static final String WAYPOINT_STRING = "infrastructure";
-
-    /**
-     * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
-     */
-    private static final double XP_EACH_BUILDING = 10.0D;
-
-    /**
-     * Amount of xp the builder gains for placing a block.
-     */
-    private static final double XP_EACH_BLOCK = 0.1D;
-
-    /**
-     * Increase this value to make the building speed slower.
-     * Used to balance worker level speed increase.
-     */
-    private static final int PROGRESS_MULTIPLIER = 10;
-
-    /**
-     * Speed the builder should run away when he castles himself in.
-     */
-    private static final double RUN_AWAY_SPEED = 4.1D;
-
-    /**
-     * The minimum range to keep from the current building place.
-     */
-    private static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
-
-    /**
-     * The amount of ticks to wait when not needing any tools to break blocks.
-     */
-    private static final int UNLIMITED_RESOURCES_TIMEOUT = 5;
-
-    /**
-     * The standard range the builder should reach until his target.
-     */
-    private static final int STANDARD_WORKING_RANGE = 5;
-
-    /**
-     * The minimum range the builder has to reach in order to construct or clear.
-     */
-    private static final int MIN_WORKING_RANGE = 12;
-
-    /**
      * The current structure task to be build.
      */
-    protected StructureIterator currentStructure;
+    protected Tuple<StructurePlacer, BuildingStructureHandler> structurePlacer;
+
+    /**
+     * Predicate defining things we don't want the builders to ever touch.
+     */
+    protected TriPredicate<BlueprintPositionInfo, BlockPos, IStructureHandler> DONT_TOUCH_PREDICATE = (info, worldPos, handler) ->
+    {
+        final BlockState worldState = handler.getWorld().getBlockState(worldPos);
+
+        return worldState.getBlock() instanceof IBuilderUndestroyable
+                 || worldState.getBlock() == Blocks.BEDROCK
+                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+    };
+
 
     /**
      * Position where the Builders constructs from.
      */
     protected BlockPos workFrom;
-
-    /**
-     * The rotation of the current build.
-     */
-    private int rotation = 0;
 
     /**
      * Creates this ai base class and set's up important things.
@@ -159,33 +116,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
            */
           new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
           /*
-           * Clear out the building area.
-           */
-          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP), STANDARD_DELAY),
-          /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, FLUID_DETECT_STEP), STANDARD_DELAY),
-          /*
-           * Detect fluids that aren't part of the structure.
-           */
-          new AITarget(FLUID_DETECT_STEP, generateStructureGenerator(this::fluidDetectStep, FLUID_REMOVE_STEP), 1),
-          /*
-           * Remove fluids that aren't part of the structure.
-           */
-          new AITarget(FLUID_REMOVE_STEP, this::fluidRemoveStep, 1),
-          /*
-           * Decorate the AbstractBuilding with torches etc.
-           */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, REMOVE_STEP), STANDARD_DELAY),
-          /*
-           * Clean up area completely.
-           */
-          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, SPAWN_STEP), STANDARD_DELAY),
-          /*
-           * Spawn entities on the structure.
-           */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, COMPLETE_BUILD), STANDARD_DELAY),
+          new AITarget(BUILDING_STEP, this::structureStep, STANDARD_DELAY),
           /*
            * Finalize the building and give back control to the ai.
            */
@@ -200,106 +133,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Generate a function that will iterate over a structure.
-     * <p>
-     * It will pass the current block (with all infos) to the evaluation function.
+     * Pick up residuals within the building area.
      *
-     * @param evaluationFunction the function to be called each block.
-     * @param nextState          the next state to change to once done iterating.
-     * @return the new state this AI will be in after one pass.
+     * @return the next state to go to.
      */
-    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<StructureIterator.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
+    protected IAIState pickUpResiduals()
     {
-        //do not replace with method reference, this one stays the same on changing reference for currentStructure
-        //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull final Supplier<StructureIterator.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull final Supplier<StructureIterator.Result> advanceBlock = () -> currentStructure.advanceBlock(this);
-
-        return () ->
-        {
-            final StructureIterator.StructureBlock currentBlock = getCurrentBlock.get();
-            /*
-            check if we have not found a block (when block == null
-            if we have a block, apply the eval function
-            (which changes stuff, so only execute on valid block!)
-            */
-            if (currentBlock.block == null
-                  || evaluationFunction.apply(currentBlock))
-            {
-                final StructureIterator.Result result = advanceBlock.get();
-                storeProgressPos(currentStructure.getLocalBlockPosition(), currentStructure.getStage());
-                if (result == StructureIterator.Result.AT_END)
-                {
-                    return switchStage(nextState);
-                }
-                if (result == StructureIterator.Result.CONFIG_LIMIT)
-                {
-                    return getState();
-                }
-            }
-            return getState();
-        };
-    }
-
-    /**
-     * Store the progressPos in the building if possible for the worker.
-     * @param blockPos the progressResult.
-     * @param stage the current stage.
-     */
-    public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
-    {
-        /*
-         * Override if needed.
-         */
-    }
-
-    /**
-     * Get the last progress.
-     * @return the blockPos or null.
-     */
-    @Nullable
-    public Tuple<BlockPos, StructureIterator.Stage> getProgressPos()
-    {
-        return null;
-    }
-
-    /**
-     * Switches the structures stage after the current one has been completed.
-     * @param state the current state.
-     * @return the next stage.
-     */
-    public IAIState switchStage(final IAIState state)
-    {
-        if (state.equals(REMOVE_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.REMOVE);
-        }
-        else if (state.equals(BUILDING_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.BUILD);
-        }
-        else if (state.equals(FLUID_DETECT_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.FLUID_DETECT);
-        }
-        else if (state.equals(DECORATION_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.DECORATE);
-        }
-        else if (state.equals(SPAWN_STEP))
-        {
-            currentStructure.setStage(StructureIterator.Stage.SPAWN);
-        }
-        else if (state.equals(COMPLETE_BUILD))
-        {
-            currentStructure.setStage(StructureIterator.Stage.COMPLETE);
-        }
-        return state;
-    }
-
-    private IAIState pickUpResiduals()
-    {
-        if (currentStructure.getStage() != StructureIterator.Stage.COMPLETE)
+        if (structurePlacer != null && structurePlacer.getB().getStage() != null)
         {
             return IDLE;
         }
@@ -314,88 +154,51 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             gatherItems();
             return getState();
         }
+
         resetGatheringItems();
         workFrom = null;
-        currentStructure = null;
+        structurePlacer = null;
 
         return IDLE;
     }
 
     /**
-     * Fill the list of the item positions to gather.
+     * Completition logic.
+     *
+     * @return the final state after completition.
      */
-    @Override
-    public void fillItemsList()
+    protected IAIState completeBuild()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
-
-        if (currentStructure == null)
-        {
-            return;
-        }
-
-        final BlockPos centerPos = currentStructure.getCenter();
-        if (centerPos.getY() == 0)
-        {
-            return;
-        }
-
-        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
-    }
-
-    private IAIState completeBuild()
-    {
-        storeProgressPos(null, StructureIterator.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
-        if (job instanceof AbstractJobStructure)
-        {
-            executeSpecificCompleteActions();
-            worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-        }
+        executeSpecificCompleteActions();
+        worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
 
         return PICK_UP_RESIDUALS;
     }
 
     /**
-     * Execute specific actions on loading a structure.
+     * Start building this StructureIterator.
+     * <p>
+     * Will determine where to start.
+     *
+     * @return the new State to start in.
      */
-    protected abstract void executeSpecificCompleteActions();
-
-    private Boolean decorationStep(final StructureIterator.StructureBlock structureBlock)
+    @NotNull
+    protected IAIState startBuilding()
     {
-        checkForExtraBuildingActions();
-        if (!(structureBlock.worldBlock instanceof IBuilderUndestroyable) || structureBlock.worldBlock == Blocks.BEDROCK)
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.decorating"));
-
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
-            {
-                return false;
-            }
-
-            if (structureBlock.block == null
-                  || structureBlock.doesStructureBlockEqualWorldBlock()
-                  || structureBlock.metadata.getMaterial().isSolid())
-            {
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
-
-            @Nullable final BlockState blockState = structureBlock.metadata;
-            //We need to deal with materials
-            return placeBlockAt(blockState, structureBlock.blockPosition);
+            onStartWithoutStructure();
+            return IDLE;
         }
-        return true;
+        return BUILDING_STEP;
     }
 
     /**
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
+     *
      * @param currentBlock the current block it is working on.
      * @return true while walking to the site.
      */
@@ -411,121 +214,189 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Specific actions to execute when building over a block.
-     *
-     * @param pos the position to build at.
+     * The Structure step to execute the actual placement actions etc.
+     * @return the next step to go to.
      */
-    private void handleBuildingOverBlock(@NotNull final BlockPos pos)
+    protected IAIState structureStep()
     {
-        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0, worker.getHeldItemMainhand());
-        for (final ItemStack item : items)
+        if (structurePlacer.getB().getStage() == null)
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
-        }
-    }
+            Log.getLogger().warn("Called with null stage");
 
-    private boolean placeBlockAt(@NotNull final BlockState blockState, @NotNull final BlockPos coords)
-    {
-        if (blockState.getBlock() instanceof GrassPathBlock)
-        {
-            holdEfficientTool(blockState.getBlock(), coords);
+            return IDLE;
         }
 
-        final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
 
-        final BlockState decrease;
-        for (final IPlacementHandler handlers : PlacementHandlers.handlers)
+        checkForExtraBuildingActions();
+
+        // some things to do first! then we go to the actual phase!
+
+        //Fill workFrom with the position from where the builder should build.
+        //also ensure we are at that position.
+        final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
+        final BlockPos worldPos = structurePlacer.getB().getProgressPosInWorld(progress);
+        if (getProgressPos() != null)
         {
-            if (handlers.canHandle(world, coords, blockState))
+            structurePlacer.getB().setStage(getProgressPos().getB());
+        }
+        if (!walkToConstructionSite(worldPos))
+        {
+            return getState();
+        }
+
+        final StructurePhasePlacementResult result;
+        final StructurePlacer placer = structurePlacer.getA();
+        switch (structurePlacer.getB().getStage())
+        {
+            case BUILD_SOLID:
+                //structure
+                Log.getLogger().warn("Build solid");
+
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo().getState().getBlock() instanceof CoralBlock)), false);
+                break;
+            case CLEAR_WATER:
+                Log.getLogger().warn("Clear water");
+
+                //water
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
+                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
+                break;
+            case DECORATE:
+                Log.getLogger().warn("Decorate");
+
+                // not solid
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo().getState().getBlock() instanceof CoralBlock))), false);
+                break;
+            case SPAWN:
+                Log.getLogger().warn("Spawn");
+                // entities
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
+                break;
+            case REMOVE:
+                Log.getLogger().warn("Remove");
+
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock || !(info.getBlockInfo().getState().getBlock() instanceof AirBlock))), true);
+                break;
+            case CLEAR:
+            default:
+                Log.getLogger().warn("Clear");
+
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
+                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable
+                                                                                 || handler.getWorld().getBlockState(pos).getBlock() == Blocks.BEDROCK
+                                                                                 || handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock), false);
+                break;
+        }
+
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+        {
+            Log.getLogger().warn("Next stage");
+
+            if (!structurePlacer.getB().nextStage())
             {
-                boolean sameInWorld = false;
-                if (world.getBlockState(coords).getBlock() == blockState.getBlock())
-                {
-                    sameInWorld = true;
-                }
-                if (!sameInWorld && !MineColonies.getConfig().getCommon().builderInfiniteResources.get())
-                {
-                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getBlueprint().getTileEntityData(job.getBlueprint().getLocalPosition()), false);
+                getOwnBuilding(getExpectedBuildingClass()).setProgressPos(null, null);
+                Log.getLogger().warn("Complete");
+                return COMPLETE_BUILD;
+            }
+        }
+        this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
 
-                    final List<ItemStack> itemList = new ArrayList<>();
-                    for (final ItemStack stack : requiredItems)
-                    {
-                        for (final ToolType toolType : ToolType.values())
-                        {
-                            if (ItemStackUtils.isTool(stack, toolType))
-                            {
-                                if (checkForToolOrWeapon(toolType))
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                        itemList.add(this.getTotalAmount(stack));
-                    }
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
+        {
+            hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1);
+            return NEEDS_ITEM;
+        }
 
-                    if (checkForListInInvAndRequest(this, itemList, itemList.size() > 1))
-                    {
-                        return false;
-                    }
-                }
-
-
-                final BlockState worldState = world.getBlockState(coords);
-
-                if (!sameInWorld
-                      && worldState.getMaterial() != Material.AIR
-                      && !(worldState.getBlock() instanceof DoublePlantBlock && worldState.get(DoublePlantBlock.HALF).equals(DoubleBlockHalf.UPPER)))
-                {
-                    handleBuildingOverBlock(coords);
-                    world.removeBlock(coords, false);
-                }
-
-                final Object result = handlers.handle(world, coords, blockState, job.getBlueprint().getTileEntityData(job.getBlueprint().getLocalPosition()), false, job.getWorkOrder().getBuildingLocation(), job.getBlueprint().getSettings());
-                if (result instanceof IPlacementHandler.ActionProcessingResult)
-                {
-                    if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
-                    {
-                        return true;
-                    }
-
-                    if (result == IPlacementHandler.ActionProcessingResult.DENY)
-                    {
-                        return false;
-                    }
-                    continue;
-                }
-
-                if (result instanceof BlockState)
-                {
-                    decrease = (BlockState) result;
-                    if (!sameInWorld)
-                    {
-                        decreaseInventory(coords, decrease.getBlock(), decrease);
-                    }
-                    connectBlockToBuildingIfNecessary(decrease, coords);
-                    worker.swingArm(worker.getActiveHand());
-                    worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
-                    worker.decreaseSaturationForContinuousAction();
-                    return true;
-                }
-
-                if (result instanceof ItemStack)
-                {
-                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), s -> s.isItemEqual((ItemStack) result));
-                    if (slot != -1)
-                    {
-                        final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
-                        worker.getInventoryCitizen().getStackInSlot(slot);
-                        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemStack);
-                        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
-                    }
-                }
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
+        {
+            if (!mineBlock(result.getBlockResult().getWorldPos(), getCurrentWorkingPosition()))
+            {
+                return getState();
+            }
+            else
+            {
+                worker.decreaseSaturationForContinuousAction();
             }
         }
 
-        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getTranslationKey());
-        return true;
+        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0)
+        {
+            double decrease = 1;
+            final MultiplierModifierResearchEffect
+              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_PLACE_SPEED, MultiplierModifierResearchEffect.class);
+            if (effect != null)
+            {
+                decrease = 1 - effect.getEffect();
+            }
+
+            setDelay((int) (
+              (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER))
+                * decrease));
+        }
+        return getState();
+    }
+
+    /**
+     * Loads the structure given the name, rotation and position.
+     *
+     * @param name        the name to retrieve  it.
+     * @param rotateTimes number of times to rotateWithMirror it.
+     * @param position    the position to set it.
+     * @param isMirrored  is the structure mirroed?
+     * @param removal     if removal step.
+     */
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    {
+        final BuildingStructureHandler structure;
+        IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
+        final TileEntity entity = world.getTileEntity(position);
+
+        if (removal)
+        {
+            structure = new BuildingStructureHandler(world,
+              position,
+              name,
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              this, new BuildingStructureHandler.Stage[]{REMOVE});
+        }
+        else if ((colonyBuilding != null && colonyBuilding.getBuildingLevel() > 0) ||
+                   (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getLevel() > 0))
+        {
+            structure = new BuildingStructureHandler(world,
+              position,
+              name,
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              this, new BuildingStructureHandler.Stage[]{BUILD_SOLID, CLEAR_WATER, DECORATE, SPAWN});
+        }
+        else
+        {
+            structure = new BuildingStructureHandler(world,
+              position,
+              name,
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              this, new BuildingStructureHandler.Stage[]{CLEAR, BUILD_SOLID, CLEAR_WATER, DECORATE, SPAWN});
+        }
+
+        if (!structure.hasBluePrint())
+        {
+            handleSpecificCancelActions();
+            Log.getLogger().warn("Couldn't find structure with name: " + name + " aborting loading procedure");
+            return;
+        }
+
+        job.setBlueprint(structure.getBluePrint());
+        job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        structurePlacer = new Tuple<>(new StructurePlacer(structure), structure);
+
+        if (getProgressPos() != null)
+        {
+            structure.setStage(getProgressPos().getB());
+        }
     }
 
     /**
@@ -533,10 +404,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @param placer   the placer.
      * @param itemList the list to check.
-     * @param force if force insertion.
+     * @param force    if force insertion.
      * @return true if need to request.
      */
-    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
+    public static boolean hasListOfResInInvOrRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
           itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(itemStack)));
@@ -579,7 +450,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (ItemStackUtils.isEmpty(placedStack.getKey().getItemStack()))
             {
-                return true;
+                return false;
             }
 
             if (placer.getOwnBuilding()
@@ -589,18 +460,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
+                final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
-                return true;
+                return false;
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
      * Register the block as needed at the building if possible.
+     *
      * @param stack the stack.
      */
     public void registerBlockAsNeeded(final ItemStack stack)
@@ -608,6 +480,37 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         /*
          * Override in child if possible.
          */
+    }
+
+    /**
+     * Store the progressPos in the building if possible for the worker.
+     *
+     * @param blockPos the progressResult.
+     * @param stage    the current stage.
+     */
+    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    {
+        /*
+         * Override if needed.
+         */
+    }
+
+    /**
+     * Fill the list of the item positions to gather.
+     */
+    @Override
+    public void fillItemsList()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
+
+        if (!structurePlacer.getB().hasBluePrint())
+        {
+            return;
+        }
+        final Blueprint blueprint = structurePlacer.getB().getBluePrint();
+
+        final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
+        searchForItems(new AxisAlignedBB(leftCorner, leftCorner.add(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
     }
 
     /**
@@ -624,98 +527,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         //get length or width either is larger.
-        final int length = currentStructure.getLength();
-        final int width = currentStructure.getWidth();
+        final int length = structurePlacer.getB().getBluePrint().getSizeX();
+        final int width = structurePlacer.getB().getBluePrint().getSizeZ();
         final int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD;
 
         return getWorkingPosition(distance, targetPosition, 0);
     }
 
-    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final BlockState state)
-    {
-        @NotNull final BlockState stateToPlace = state;
-
-        //Move out of the way when placing blocks
-        if (MathHelper.floor(worker.getPosX()) == pos.getX()
-              && MathHelper.abs(pos.getY() - (int) worker.getPosY()) <= 1
-              && MathHelper.floor(worker.getPosZ()) == pos.getZ()
-              && worker.getNavigator().noPath())
-        {
-            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1);
-        }
-
-        @NotNull final Block blockToPlace = block;
-
-        //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if (isBlockFree(blockToPlace))
-        {
-            return true;
-        }
-
-        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (ItemStackUtils.isEmpty(stack))
-        {
-            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock(), new Exception());
-            return false;
-        }
-
-        final List<ItemStack> itemList = new ArrayList<>();
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(stateToPlace))
-        {
-            itemList.add(stack);
-        }
-        itemList.addAll(getItemsFromTileEntity());
-
-        for (final ItemStack tempStack : itemList)
-        {
-            if (!ItemStackUtils.isEmpty(tempStack))
-            {
-                final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tempStack.getItem());
-                if (slot != -1)
-                {
-                    final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
-                    getInventory().extractItem(slot, tempStack.getCount(), false);
-                    if (!ItemStackUtils.isEmpty(container))
-                    {
-                        getInventory().insertItem(slot, container, false);
-                    }
-                    reduceNeededResources(tempStack);
-                }
-            }
-        }
-
-        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && !(blockToPlace instanceof AirBlock))
-        {
-            double decrease = 1;
-            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_PLACE_SPEED, MultiplierModifierResearchEffect.class);
-            if (effect != null)
-            {
-                decrease = 1 - effect.getEffect();
-            }
-
-            setDelay((int) ((MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER)) * decrease));
-        }
-
-        return true;
-    }
-
-    /**
-     * On placement of a Block execute this to store the location in the regarding building when needed.
-     *
-     * @param blockState itself
-     * @param pos        the position of the block.
-     */
-    public void connectBlockToBuildingIfNecessary(@NotNull final BlockState blockState, @NotNull final BlockPos pos)
-    {
-        /*
-         * Classes can overwrite this if necessary.
-         */
-    }
-
     /**
      * Defines blocks that can be built for free.
      *
-     * @param block    The block to check if it is free.
+     * @param block The block to check if it is free.
      * @return true or false.
      */
     public static boolean isBlockFree(@Nullable final Block block)
@@ -726,14 +548,39 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                  || block == ModBlocks.blockDecorationPlaceholder;
     }
 
-    /*
-     * Get specific data of a tileEntity.
-     * Workers should implement this correctly if they require this behavior.
-     * @return list of items of the tile.
+    /**
+     * Let childs overwrite this if necessary.
+     *
+     * @return true if so.
      */
-    public List<ItemStack> getItemsFromTileEntity()
+    protected boolean isAlreadyCleared()
     {
-        return Collections.emptyList();
+        return false;
+    }
+
+    /**
+     * Get the current working position for the worker. If workFrom is null calculate a new one.
+     *
+     * @return the current working position.
+     */
+    private BlockPos getCurrentWorkingPosition()
+    {
+        return workFrom == null ? getWorkingPosition(structurePlacer.getB().getProgressPosInWorld(structurePlacer.getA().getIterator().getProgressPos())) : workFrom;
+    }
+
+    /**
+     * Check if there is a StructureIterator to be build.
+     *
+     * @return true if we should start building.
+     */
+    protected boolean isThereAStructureToBuild()
+    {
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
+        {
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waitingForBuild"));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -759,116 +606,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Works on loading the structure.
-     * @param structureBlock the block that is currently being worked on.
-     * @return the next step once done.
-     */
-    private boolean structureStep(final StructureIterator.StructureBlock structureBlock)
-    {
-        checkForExtraBuildingActions();
-        if (!(structureBlock.worldBlock instanceof IBuilderUndestroyable) || structureBlock.worldBlock == Blocks.BEDROCK)
-        {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
-
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
-            {
-                return false;
-            }
-
-            if (structureBlock.block == null
-                  || (!structureBlock.metadata.getMaterial().isSolid() && !(structureBlock.block instanceof AirBlock)))
-            {
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            if (structureBlock.doesStructureBlockEqualWorldBlock())
-            {
-                connectBlockToBuildingIfNecessary(structureBlock.metadata, structureBlock.blockPosition);
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            @Nullable Block block = structureBlock.block;
-            @Nullable BlockState blockState = structureBlock.metadata;
-            if (block == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
-                  || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
-            {
-                blockState = getSolidSubstitution(structureBlock.blockPosition);
-                block = blockState.getBlock();
-            }
-
-            WorkerUtil.faceBlock(structureBlock.blockPosition, worker);
-
-            return placeBlockAt(blockState, structureBlock.blockPosition);
-        }
-        return true;
-    }
-
-    /**
-     * Check if a solid substitution block should be overwritten in a specific case.
-     *
-     * @param worldBlock    the worldblock.
-     * @param worldMetadata the world metadata.
-     * @return true if should be overwritten.
-     */
-    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata);
-
-    /**
-     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
-     *
-     * @param location the location the block should be at.
-     * @return the Block.
-     */
-    public abstract BlockState getSolidSubstitution(BlockPos location);
-
-    /**
-     * Loads the structure given the name, rotation and position.
-     *
-     * @param name        the name to retrieve  it.
-     * @param rotateTimes number of times to rotateWithMirror it.
-     * @param position    the position to set it.
-     * @param isMirrored  is the structure mirroed?
-     * @param removal     is this a removal task?
-     */
-    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
-    {
-        rotation = rotateTimes;
-        try
-        {
-            final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, name, new PlacementSettings());
-            job.setBlueprint(structure);
-            currentStructure = new StructureIterator(world, structure, removal ? StructureIterator.Stage.REMOVE : StructureIterator.Stage.CLEAR);
-        }
-        catch (final IllegalStateException e)
-        {
-            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
-            job.setBlueprint(null);
-        }
-
-        try
-        {
-            job.getBlueprint().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-            job.getBlueprint().setPosition(position);
-            job.getBlueprint().setPlacementSettings(new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)));
-
-        }
-        catch (final NullPointerException ex)
-        {
-            handleSpecificCancelActions();
-            job.setBlueprint(null);
-            Log.getLogger().warn("StructureIterator couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
-        }
-        if (getProgressPos() != null)
-        {
-            this.currentStructure.setStage(getProgressPos().getB());
-        }
-    }
-
-    /**
-     * Specific actions to handle a cancelation of a structure.
+     * Specific actions to handle a cancellation of a structure.
      */
     public void handleSpecificCancelActions()
     {
@@ -876,262 +614,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
          * Child classes have to override this.
          */
     }
-
-    /**
-     * Check if the structure tusk has been canceled.
-     *
-     * @return true if reset to idle.
-     */
-    protected abstract boolean checkIfCanceled();
-
-    /**
-     * Works on clearing the area of unneeded blocks.
-     * @param currentBlock the block that is currently being worked on.
-     * @return the next step once done.
-     */
-    private boolean clearStep(@NotNull final StructureIterator.StructureBlock currentBlock)
-    {
-        checkForExtraBuildingActions();
-        if (isAlreadyCleared() || (!currentStructure.getStage().equals(StructureIterator.Stage.CLEAR) && !currentStructure.getStage().equals(StructureIterator.Stage.REMOVE)))
-        {
-            return true;
-        }
-
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.clearing"));
-
-        //Don't break bedrock etc.
-        if (!(currentBlock.worldBlock instanceof IBuilderUndestroyable) || currentBlock.worldBlock == Blocks.BEDROCK && currentBlock.worldBlock != Blocks.TORCH)
-        {
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
-            {
-                return false;
-            }
-
-            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getBlueprint().getBlockstate())
-                  || (currentBlock.block instanceof BedBlock && currentBlock.metadata.get(BedBlock.PART).equals(BedPart.FOOT))
-                  || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
-            {
-                return true;
-            }
-
-            WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
-
-            //We need to deal with materials
-            if (MineColonies.getConfig().getCommon().builderInfiniteResources.get() || currentBlock.worldMetadata.getMaterial().isLiquid())
-            {
-                worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
-                world.removeBlock(currentBlock.blockPosition, false);
-                world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
-                worker.swingArm(worker.getActiveHand());
-                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER));
-            }
-            else
-            {
-                if (!mineBlock(currentBlock.blockPosition, getCurrentWorkingPosition()))
-                {
-                    return false;
-                }
-                else
-                {
-                    worker.decreaseSaturationForContinuousAction();
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Let childs overwrite this if necessary.
-     *
-     * @return true if so.
-     */
-    protected boolean isAlreadyCleared()
-    {
-        return false;
-    }
-
-    /**
-     * Get the current working position for the worker. If workFrom is null calculate a new one.
-     * 
-     * @return the current working position.
-     */
-    private BlockPos getCurrentWorkingPosition()
-    {
-        return workFrom == null ? getWorkingPosition(currentStructure.getCurrentBlockPosition()) : workFrom;
-    }
-
-    /**
-     * Check if there is a StructureIterator to be build.
-     *
-     * @return true if we should start building.
-     */
-    protected boolean isThereAStructureToBuild()
-    {
-        if (currentStructure == null)
-        {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waitingForBuild"));
-        }
-        return currentStructure != null;
-    }
-
-    /**
-     * Works on detecting fluid blocks that should get removed.
-     * 
-     * @param currentBlock the block that is currently being worked on.
-     * @return the next step once done.
-     */
-    private boolean fluidDetectStep(@NotNull final StructureIterator.StructureBlock currentBlock)
-    {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.detecting_fluids"));
-        if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
-        {
-            return false;
-        }
-
-        final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
-        if (currentBlock.block instanceof FlowingFluidBlock || currentBlock.worldBlock instanceof FlowingFluidBlock)
-        {
-            if(!(currentBlock.block instanceof FlowingFluidBlock))
-            {
-                List<BlockPos> layer;
-                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                }
-                else
-                {
-                    layer = new ArrayList<>();
-                }
-                layer.add(currentBlock.blockPosition);
-                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                }
-            }
-            else if(currentBlock.worldBlock instanceof FlowingFluidBlock && currentBlock.worldBlock != currentBlock.block)
-            {
-                List<BlockPos> layer;
-                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                }
-                else
-                {
-                    layer = new ArrayList<>();
-                }
-                layer.add(currentBlock.blockPosition);
-                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                }
-            }
-        }
-        else if (!currentBlock.metadata.getFluidState().isEmpty() || !currentBlock.worldMetadata.getFluidState().isEmpty())
-        {
-            if(currentBlock.metadata.getFluidState().isEmpty())
-            {
-                List<BlockPos> layer;
-                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                }
-                else
-                {
-                    layer = new ArrayList<>();
-                }
-                layer.add(currentBlock.blockPosition);
-                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                }
-            }
-            else if(!currentBlock.worldMetadata.getFluidState().isEmpty() && currentBlock.worldMetadata.getFluidState().getFluid() != currentBlock.metadata.getFluidState().getFluid())
-            {
-                List<BlockPos> layer;
-                if(fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    layer = fluidsToRemove.get(currentBlock.blockPosition.getY());
-                }
-                else
-                {
-                    layer = new ArrayList<>();
-                }
-                layer.add(currentBlock.blockPosition);
-                if(!fluidsToRemove.containsKey(currentBlock.blockPosition.getY()))
-                {
-                    fluidsToRemove.put(currentBlock.blockPosition.getY(), layer);
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Works on removing the fluid blocks that should get removed.
-     * 
-     * @return the next step once done.
-     */
-    private IAIState fluidRemoveStep()
-    {
-        checkForExtraBuildingActions();
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.removing_fluids"));
-
-        final Map<Integer,List<BlockPos>> fluidsToRemove = getOwnBuilding(AbstractBuildingStructureBuilder.class).getFluidsToRemove();
-        if (fluidsToRemove.isEmpty())
-        {
-            switchStage(DECORATION_STEP);
-            return DECORATION_STEP;
-        }
-        else
-        {
-            int y = fluidsToRemove.keySet().iterator().next();
-        	List<BlockPos> fluids = fluidsToRemove.get(y);
-            fluids.forEach(fluid -> {
-            	BlockUtils.removeFluid(world, fluid);
-            });
-            fluidsToRemove.remove(y);
-            return getState();
-        }
-    }
-
-    /**
-     * Start building this StructureIterator.
-     * <p>
-     * Will determine where to start.
-     *
-     * @return the new State to start in.
-     */
-    @NotNull
-    private IAIState startBuilding()
-    {
-        if (currentStructure == null)
-        {
-            onStartWithoutStructure();
-            return IDLE;
-        }
-        switch (currentStructure.getStage())
-        {
-            case REMOVE:
-                return REMOVE_STEP;
-            case CLEAR:
-                return CLEAR_STEP;
-            case BUILD:
-                return BUILDING_STEP;
-            case FLUID_DETECT:
-            	return FLUID_DETECT_STEP;
-            case DECORATE:
-                return DECORATION_STEP;
-            case SPAWN:
-                return SPAWN_STEP;
-            default:
-                return COMPLETE_BUILD;
-        }
-    }
-
-    protected abstract void onStartWithoutStructure();
 
     /**
      * Check how much of a certain stuck is actually required.
@@ -1151,102 +633,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     public void resetCurrentStructure()
     {
         workFrom = null;
-        currentStructure = null;
-    }
-
-    /**
-     * Iterates through all entities and spawns them
-     * Suppressing Sonar Rule Squid:S3047
-     * The rule thinks we can merge the two forge loops iterating over resources
-     * But in this case the rule does not apply because that would destroy the logic.
-     * 
-     * @param currentBlock the current block to work on
-     * @return whether this action was successful
-     */
-    @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
-    private boolean addEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
-    {
-        final CompoundNBT[] entityInfos = currentBlock.entity;
-        if (entityInfos.length == 0)
-        {
-            return true;
-        }
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.spawning"));
-
-        for (final CompoundNBT entityInfo : entityInfos)
-        {
-            if (entityInfo == null)
-            {
-                continue;
-            }
-
-            final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
-            final BlockPos pos = currentStructure.getPos();
-            if (entity != null)
-            {
-                final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
-                entity.setLocationAndAngles(
-                  worldPos.x,
-                  worldPos.y,
-                  worldPos.z,
-                  entity.rotationYaw,
-                  entity.rotationPitch);
-
-                if (!EntityUtils.isEntityAtPosition(entity, world, worker))
-                {
-                    final List<ItemStack> request = new ArrayList<>();
-                    if (entity instanceof ItemFrameEntity)
-                    {
-                        final ItemStack stack = ((ItemFrameEntity) entity).getDisplayedItem();
-                        if (!ItemStackUtils.isEmpty(stack))
-                        {
-                            ItemStackUtils.setSize(stack, 1);
-                            request.add(stack);
-                        }
-                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
-                    }
-                    else if (entity instanceof ArmorStandEntity)
-                    {
-                        request.add(entity.getPickedResult(new EntityRayTraceResult(worker)));
-                        entity.getArmorInventoryList().forEach(request::add);
-                        entity.getHeldEquipment().forEach(request::add);
-                    }
-
-                    request.removeIf(ItemStackUtils::isEmpty);
-
-                    if (!MineColonies.getConfig().getCommon().builderInfiniteResources.get())
-                    {
-                        if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
-                        {
-                            return false;
-                        }
-
-                        //Surpress
-                        for (final ItemStack stack : request)
-                        {
-                            if (ItemStackUtils.isEmpty(stack))
-                            {
-                                continue;
-                            }
-                            final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem());
-                            if (slot != -1)
-                            {
-                                getInventory().extractItem(slot, 1, false);
-                                reduceNeededResources(stack);
-                            }
-                        }
-                    }
-
-                    entity.setUniqueId(UUID.randomUUID());
-                    if (!world.addEntity(entity))
-                    {
-                        Log.getLogger().info("Failed to spawn entity");
-                    }
-                }
-            }
-        }
-
-        return true;
+        structurePlacer = null;
+        getOwnBuilding(getExpectedBuildingClass()).setProgressPos(null, null);
     }
 
     /**
@@ -1260,12 +648,42 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Get the rotation of the current build.
-     *
-     * @return the rotation
+     * Get the current structure progress,
+     * @return the progress with the current stage.
      */
-    public int getRotation()
-    {
-        return rotation;
-    }
+    public abstract Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos();
+
+    /**
+     * Check if a solid substitution block should be overwritten in a specific case.
+     *
+     * @param worldBlock    the worldblock.
+     * @param worldMetadata the world metadata.
+     * @return true if should be overwritten.
+     */
+    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata);
+
+    /**
+     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
+     *
+     * @param location the location the block should be at.
+     * @return the Block.
+     */
+    public abstract BlockState getSolidSubstitution(BlockPos location);
+
+    /**
+     * Execute specific actions on loading a structure.
+     */
+    protected abstract void executeSpecificCompleteActions();
+
+    /**
+     * Check if the structure tusk has been canceled.
+     *
+     * @return true if reset to idle.
+     */
+    protected abstract boolean checkIfCanceled();
+
+    /**
+     * If is loaded without a structure.
+     */
+    protected abstract void onStartWithoutStructure();
 }

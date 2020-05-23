@@ -8,11 +8,11 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
-import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.network.messages.server.BuildingMoveMessage;
@@ -133,7 +133,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
             final PlacementSettings settings = new PlacementSettings( Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation()));
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
                     building.getSchematicName() + building.getBuildingLevel());
-            final CreativeStructureHandler structure = new CreativeStructureHandler(Minecraft.getInstance().world, pos, structureName.toString(), settings, true);
+            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(Minecraft.getInstance().world, pos, structureName.toString(), settings, true);
 
             final String md5 = Structures.getMD5(structureName.toString());
             if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))

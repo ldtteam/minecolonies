@@ -830,7 +830,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolType type of tool we check for.
      * @return false if we have the tool
      */
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
+    public boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {
         final boolean needTool = checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
         worker.getCitizenData().setIdleAtJob(needTool);

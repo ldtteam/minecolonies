@@ -92,7 +92,7 @@ public class EventStructureManager implements IEventStructureManager
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
-          new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() - 1),
+          new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1),
           backupPath,
           false))
         {
@@ -108,7 +108,7 @@ public class EventStructureManager implements IEventStructureManager
           targetSpawnPoint.down(3),
           BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
-          false, null);
+          true, null);
 
         return true;
     }

@@ -3,13 +3,13 @@ package com.minecolonies.coremod.event;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
@@ -71,14 +72,14 @@ public class ClientEventHandler
         if (structure != null)
         {
             final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-            if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
+            if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
             {
                 final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
                 if (tempView != null)
                 {
                     if (wayPointTemplate == null)
                     {
-                        wayPointTemplate = new CreativeStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
                     }
                     BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
                 }
@@ -105,7 +106,7 @@ public class ClientEventHandler
 
             if (partolPointTemplate == null)
             {
-                partolPointTemplate = new CreativeStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
+                partolPointTemplate = new LoadOnlyStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
             }
 
             if (hut instanceof AbstractBuildingGuards.View)

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
@@ -9,10 +8,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -623,7 +619,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         initStructure(null, 0, new BlockPos(ladderPos.getX() + xOffset, lastLadder + 1, ladderPos.getZ() + zOffset));
 
-        return CLEAR_STEP;
+        return BUILDING_STEP;
     }
 
     @NotNull
@@ -759,7 +755,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 job.setWorkOrder(wo);
                 initiate();
             }
-            else if (currentStructure == null)
+            else if (structurePlacer.getB() == null)
             {
                 initiate();
             }
@@ -774,8 +770,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private String getCorrectStyleLocation(final String style, final String shaft)
     {
-        final Structure wrapper = new Structure(world, Structures.SCHEMATICS_PREFIX + "/" + style + shaft, new PlacementSettings());
-        if (wrapper.getBluePrint() != null)
+        final LoadOnlyStructureHandler
+          wrapper = new LoadOnlyStructureHandler(world, getOwnBuilding().getPosition(), Structures.SCHEMATICS_PREFIX + "/" + style + shaft, new PlacementSettings(), true);
+        if (wrapper.hasBluePrint())
         {
             return Structures.SCHEMATICS_PREFIX + "/" + style + shaft;
         }
@@ -843,7 +840,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (job.getBlueprint() != null)
         {
             onStartWithoutStructure();
-            return CLEAR_STEP;
+            return BUILDING_STEP;
         }
 
         return MINER_MINING_NODE;
@@ -897,15 +894,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             final Level currentLevel = minerBuilding.getCurrentLevel();
 
-            currentLevel.closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
+            currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), getOwnBuilding().getActiveNode());
             getOwnBuilding(BuildingMiner.class).setActiveNode(null);
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
             WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         else if (job.getBlueprint() != null)
         {
-            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint());
-            @NotNull final Level currentLevel = new Level(minerBuilding, job.getBlueprint().getPosition().getY(), levelSignPos);
+            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint(), job.getWorkOrder().getBuildingLocation());
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getWorkOrder().getBuildingLocation().getY(), levelSignPos);
 
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
@@ -1019,10 +1016,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             switch ((AIWorkerState) getState())
             {
-                case CLEAR_STEP:
                 case BUILDING_STEP:
-                case DECORATION_STEP:
-                case SPAWN_STEP:
                     return true;
                 default:
                     return false;

@@ -67,7 +67,6 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.FlowerPotPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.BlockSolidSubstitutionPlacementHandler());
         PlacementHandlers.handlers.add(new FencePlacementHandler());
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());

@@ -14,8 +14,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MCCreativeStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
@@ -352,7 +352,7 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
 
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final MCCreativeStructureHandler wrapper = new MCCreativeStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+                    final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                       = ColonyUtils.calculateCorners(building.getPosition(),
                       world,
