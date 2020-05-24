@@ -206,7 +206,7 @@ public interface ICitizenManager
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.
-     * 
+     *
      * @param mourn boolean to indicate if citizen should mourn or not
      */
     void updateCitizenMourn(final boolean mourn);
@@ -222,4 +222,10 @@ public interface ICitizenManager
      * @param id the name of it.
      */
     void updateModifier(final String id);
+
+    /**
+     *  Call this when citizens sleep
+     */
+    void onCitizenSleep();
+
 }

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -547,5 +549,21 @@ public class CitizenManager implements ICitizenManager
     public ICitizenData getRandomCitizen()
     {
         return (ICitizenData) citizens.values().toArray()[random.nextInt(citizens.values().size())];
+    }
+
+    @Override
+    public void onCitizenSleep()
+    {
+        boolean isSleeping = true;
+
+        for (final ICitizenData citizenData : citizens.values())
+        {
+            isSleeping = isSleeping && (citizenData.isAsleep() || citizenData.getJob() instanceof AbstractJobGuard);
+        }
+
+        if (isSleeping)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_CITIZENS_ARE_SLEEPING);
+        }
     }
 }
