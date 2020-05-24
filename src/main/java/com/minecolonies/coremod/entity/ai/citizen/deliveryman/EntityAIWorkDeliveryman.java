@@ -63,9 +63,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DUMP_AND_GATHER_DELAY = 3;
 
     /**
-     * Wait 10 seconds for the worker to gather.
+     * Wait 5 seconds for the worker to decide what to do.
      */
-    private static final int WAIT_DELAY = TICKS_SECOND * 10;
+    private static final int DECISION_DELAY = TICKS_SECOND * 5;
 
     /**
      * The inventory's slot which is held in hand.
@@ -75,7 +75,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Completing a request with a priority of at least PRIORITY_FORCING_DUMP will force a dump.
      */
-    private static final int PRIORITY_FORCING_DUMP = 8;
+    private static final int PRIORITY_FORCING_DUMP = 11;
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -100,7 +100,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
            * Check if tasks should be executed.
            */
           new AITarget(IDLE, () -> START_WORKING, 1),
-          new AITarget(START_WORKING, this::checkIfExecute, this::decide, TICKS_SECOND),
+          new AITarget(START_WORKING, this::checkIfExecute, this::decide, DECISION_DELAY),
           new AITarget(PREPARE_DELIVERY, this::prepareDelivery, 1),
           new AITarget(DELIVERY, this::deliver, 1),
           new AITarget(PICKUP, this::pickup, 1),
@@ -409,8 +409,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
         }
-
-        setDelay(WAIT_DELAY);
 
         if (!extracted)
         {

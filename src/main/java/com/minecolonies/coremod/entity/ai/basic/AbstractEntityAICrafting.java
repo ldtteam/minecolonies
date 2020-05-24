@@ -290,7 +290,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                         {
                             job.finishRequest(true);
                             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
-                            currentRequest = null;
                         }
                     }
                 }
@@ -330,8 +329,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
         {
-            job.finishRequest(true);
-            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+            // Fallback security blanket. Normally, the craft() method should have dealt with the request.
+            if (currentRequest.getState() == RequestState.IN_PROGRESS)
+            {
+                job.finishRequest(true);
+            }
             currentRequest = null;
         }
 
