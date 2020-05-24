@@ -591,13 +591,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Gets the current request of this AI. Will mostly be a crafting request.
+     * Checks whether automatic pickups after dumps are allowed.
+     * Usually we want this, but if the worker is currently crafting/building,
+     * he will handle deliveries/afterdumps in their resolvers, so we can disable automatic pickups in that time.
+     * Note that this is just a efficiency-thing. It doesn't hurt when the dman does a pickup
+     * during crafting, it's just a wasted run.
+     * Therefore, this flag is only considered for *automatic* pickups after dump.
+     * It is *ignored* for player-triggered forcePickups, and when the inventory is full.
      *
-     * @return request, or null if not existent.
+     * @return true if after-dump pickups are allowed currently.
      */
-    public IRequest<?> getCurrentRequest()
+    public boolean isAfterDumpPickupAllowed()
     {
-        return null;
+        return true;
     }
 
     /**
@@ -1032,7 +1038,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
         final ICitizenData citizenData = worker.getCitizenData();
-        if (citizenData != null && building.getPickUpPriority() > 0 && getCurrentRequest() == null)
+        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed())
         {
             citizenData.createRequestAsync(new Pickup(building.getPickUpPriority()));
         }

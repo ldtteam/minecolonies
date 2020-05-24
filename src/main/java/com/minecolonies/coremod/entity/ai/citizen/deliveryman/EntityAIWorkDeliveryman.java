@@ -75,7 +75,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Completing a request with a priority of at least PRIORITY_FORCING_DUMP will force a dump.
      */
-    private static final int PRIORITY_FORCING_DUMP = 11;
+    private static final int PRIORITY_FORCING_DUMP = 10;
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.

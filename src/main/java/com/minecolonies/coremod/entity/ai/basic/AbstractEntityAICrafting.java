@@ -358,8 +358,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     }
 
     @Override
-    public IRequest<?> getCurrentRequest()
+    public boolean isAfterDumpPickupAllowed()
     {
-        return currentRequest;
+        return currentRequest == null;
     }
 }

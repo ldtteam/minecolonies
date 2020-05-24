@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
@@ -242,6 +243,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isAfterDumpPickupAllowed()
+    {
+        return !checkForWorkOrder();
     }
 
     @Override
