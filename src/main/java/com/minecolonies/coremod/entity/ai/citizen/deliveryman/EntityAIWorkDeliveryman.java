@@ -58,11 +58,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int MIN_DISTANCE_TO_WAREHOUSE = 5;
 
     /**
-     * Delay in ticks between every inventory operation.
-     */
-    private static final int DUMP_AND_GATHER_DELAY = 3;
-
-    /**
      * Wait 5 seconds for the worker to decide what to do.
      */
     private static final int DECISION_DELAY = TICKS_SECOND * 5;
@@ -101,9 +96,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
            */
           new AITarget(IDLE, () -> START_WORKING, 1),
           new AITarget(START_WORKING, this::checkIfExecute, this::decide, DECISION_DELAY),
-          new AITarget(PREPARE_DELIVERY, this::prepareDelivery, 1),
-          new AITarget(DELIVERY, this::deliver, 1),
-          new AITarget(PICKUP, this::pickup, 1),
+          new AITarget(PREPARE_DELIVERY, this::prepareDelivery, STANDARD_DELAY),
+          new AITarget(DELIVERY, this::deliver, STANDARD_DELAY),
+          new AITarget(PICKUP, this::pickup, STANDARD_DELAY),
           new AITarget(DUMPING, this::dump, TICKS_SECOND)
 
         );
@@ -143,6 +138,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
         if (!worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
+            setDelay(WALK_DELAY);
             return PICKUP;
         }
 
@@ -224,7 +220,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         building.markDirty();
-        setDelay(DUMP_AND_GATHER_DELAY);
         worker.decreaseSaturationForContinuousAction();
 
         // The worker gets a little bit of exp for every itemstack he grabs.
@@ -275,6 +270,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
         {
+            setDelay(WALK_DELAY);
             return DUMPING;
         }
 
@@ -330,7 +326,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!worker.isWorkerAtSiteWithMove(targetBuildingLocation.getInDimensionLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
-            setDelay(10);
+            setDelay(WALK_DELAY);
             return DELIVERY;
         }
 
@@ -475,7 +471,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 1);
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
-                setDelay(DUMP_AND_GATHER_DELAY);
                 return PREPARE_DELIVERY;
             }
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 0);
@@ -485,7 +480,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (gatherIfInTileEntity(tileEntity, delivery.getStack()))
         {
-            setDelay(DUMP_AND_GATHER_DELAY);
             return DELIVERY;
         }
 
@@ -530,6 +524,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             // If there are no deliveries/pickups pending, just loiter around the warehouse.
             if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
             {
+                setDelay(WALK_DELAY);
                 return START_WORKING;
             }
             else
