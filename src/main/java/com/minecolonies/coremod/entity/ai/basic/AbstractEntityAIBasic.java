@@ -136,6 +136,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
+    /**
+     * true if the pickup lock is enabled. This is mostly the case while the hut's inventory is full,
+     * and prevents the worker from spamming pickup-requests during that time.
+     */
     private boolean isPickupLockEnabled = false;
 
     /**
