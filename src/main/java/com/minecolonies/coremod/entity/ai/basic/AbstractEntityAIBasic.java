@@ -137,12 +137,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
-     * true if the pickup lock is enabled. This is mostly the case while the hut's inventory is full,
-     * and prevents the worker from spamming pickup-requests during that time.
-     */
-    private boolean isPickupLockEnabled = false;
-
-    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -1024,11 +1018,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
 
-                // If the inventory full, open requests are ignored, the dman will still come and pickup.
-                if (building.getPickUpPriority() > 0 && !isPickupLockEnabled)
+                // Do not request pickups when the priority is NEVER, or when another pickup is already in progress.
+                // Pickups during crafting are OK when the inventory is full!
+                if (building.getPickUpPriority() > 0 && !building.hasWorkerOpenRequestsOfType(citizenData, TypeConstants.PICKUP))
                 {
                     citizenData.createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
-                    isPickupLockEnabled = true;
                 }
             }
 
@@ -1039,9 +1033,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else if (dumpOneMoreSlot())
         {
-            // Inventory was obviously not full, meaning that the previous pickup-lock has been resolved.
-            // Next time dumpInventory() is called, if the inventory is full again or dumping has finished, the worker may ask for another pickup.
-            isPickupLockEnabled = false;
             return INVENTORY_FULL;
         }
 
@@ -1049,10 +1040,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
         final ICitizenData citizenData = worker.getCitizenData();
-        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed() && !isPickupLockEnabled)
+        // Do not request pickups when the priority is NEVER, or when another craft/pickup is already in progress.
+        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed() && !building.hasWorkerOpenRequestsOfType(citizenData, TypeConstants.PICKUP))
         {
             citizenData.createRequestAsync(new Pickup(building.getPickUpPriority()));
-            isPickupLockEnabled = true;
         }
         return afterDump();
     }
