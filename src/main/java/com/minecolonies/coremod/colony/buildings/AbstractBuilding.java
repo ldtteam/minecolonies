@@ -195,6 +195,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onPlayerEnterNearby(final PlayerEntity player)
     {
+        if (getBuildingLevel() == 0 || getSchematicName() == null || getSchematicName().isEmpty())
+        {
+            return;
+        }
+
         if (getTargetableArea(colony.getWorld()).contains(player.getPositionVec()))
         {
             onPlayerEnterBuilding(player);
