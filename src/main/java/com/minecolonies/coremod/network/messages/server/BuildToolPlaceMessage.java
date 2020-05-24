@@ -242,7 +242,7 @@ public class BuildToolPlaceMessage implements IMessage
                         String schematic = sn.toString();
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
-                        MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
+                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
                           buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayerEntity) player);
                         complete = true;
                     }

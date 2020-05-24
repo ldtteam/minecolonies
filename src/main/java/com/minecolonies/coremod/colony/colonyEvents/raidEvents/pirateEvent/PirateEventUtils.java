@@ -7,7 +7,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MCCreativeStructureHandler;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
@@ -70,7 +70,8 @@ public final class PirateEventUtils
       final int eventID,
       final int shipRotation)
     {
-        final MCCreativeStructureHandler structure = new MCCreativeStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        final CreativeBuildingStructureHandler
+          structure = new CreativeBuildingStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
 
         if (!colony.getEventManager()
@@ -166,7 +167,8 @@ public final class PirateEventUtils
         final World world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicName;
 
-        final MCCreativeStructureHandler structure = new MCCreativeStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        final CreativeBuildingStructureHandler
+          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
         return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);

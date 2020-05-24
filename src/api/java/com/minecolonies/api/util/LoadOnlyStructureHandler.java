@@ -4,7 +4,6 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -17,15 +16,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Interface for using the structure codebase.
+ * Load only structure handler just to get dimensions etc from structures, not for placement.
  */
 public final class LoadOnlyStructureHandler extends CreativeStructureHandler
 {
-    /**
-     * The building associated with this placement.
-     */
-    private IBuilding building;
-
     /**
      * The minecolonies specific creative structure placer.
      * @param world the world.

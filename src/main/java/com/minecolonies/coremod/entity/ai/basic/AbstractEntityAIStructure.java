@@ -221,8 +221,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     {
         if (structurePlacer.getB().getStage() == null)
         {
-            Log.getLogger().warn("Called with null stage");
-
             return IDLE;
         }
 
@@ -251,40 +249,34 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             case BUILD_SOLID:
                 //structure
-                Log.getLogger().warn("Build solid");
 
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo().getState().getBlock() instanceof CoralBlock)), false);
                 break;
             case CLEAR_WATER:
-                Log.getLogger().warn("Clear water");
 
                 //water
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
                   () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
                 break;
             case DECORATE:
-                Log.getLogger().warn("Decorate");
 
                 // not solid
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo().getState().getBlock() instanceof CoralBlock))), false);
                 break;
             case SPAWN:
-                Log.getLogger().warn("Spawn");
                 // entities
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
                 break;
             case REMOVE:
-                Log.getLogger().warn("Remove");
 
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock || !(info.getBlockInfo().getState().getBlock() instanceof AirBlock))), true);
                 break;
             case CLEAR:
             default:
-                Log.getLogger().warn("Clear");
 
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
                   () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable
@@ -295,12 +287,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
-            Log.getLogger().warn("Next stage");
 
             if (!structurePlacer.getB().nextStage())
             {
                 getOwnBuilding(getExpectedBuildingClass()).setProgressPos(null, null);
-                Log.getLogger().warn("Complete");
                 return COMPLETE_BUILD;
             }
         }

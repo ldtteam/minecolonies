@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -199,7 +198,6 @@ public class BuildingStructureHandler extends AbstractStructureHandler
         {
             structureAI.getWorker().getCitizenColonyHandler().getColony().addWayPoint(worldPos, state);
         }
-        Log.getLogger().warn("success" + pos.toString());
     }
 
     @Override

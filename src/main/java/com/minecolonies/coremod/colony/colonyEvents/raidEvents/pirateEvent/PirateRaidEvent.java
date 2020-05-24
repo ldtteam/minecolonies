@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MCCreativeStructureHandler;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -141,8 +141,8 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
         spawnerCount = shipSize.spawnerCount;
 
-        final MCCreativeStructureHandler structure =
-          new MCCreativeStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings(), true);
+        final CreativeBuildingStructureHandler structure =
+          new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
         if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))

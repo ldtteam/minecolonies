@@ -8,7 +8,7 @@ import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MCCreativeStructureHandler;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -103,7 +103,7 @@ public class EventStructureManager implements IEventStructureManager
 
         backupSchematics.put(targetSpawnPoint.down(3), eventID);
 
-        MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(world,
+        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(world,
           schematicPath,
           targetSpawnPoint.down(3),
           BlockPosUtil.getRotationFromRotations(rotations),
@@ -127,7 +127,7 @@ public class EventStructureManager implements IEventStructureManager
                 final String backupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
                 final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
 
-                MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
                   fileName,
                   entry.getKey(),
                   Rotation.NONE,

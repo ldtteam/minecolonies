@@ -28,9 +28,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Interface for using the structure codebase.
+ * Minecolonies specific creative structure handler.
+ * Main difference related to registering blocks to colonies.
  */
-public final class MCCreativeStructureHandler extends CreativeStructureHandler
+public final class CreativeBuildingStructureHandler extends CreativeStructureHandler
 {
     /**
      * The building associated with this placement.
@@ -45,7 +46,7 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
      * @param settings the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public MCCreativeStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
+    public CreativeBuildingStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
     {
         super(world, pos, structureName, settings, fancyPlacement);
         setupBuilding();
@@ -125,7 +126,7 @@ public final class MCCreativeStructureHandler extends CreativeStructureHandler
     {
         try
         {
-            @NotNull final IStructureHandler structure = new MCCreativeStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement);
+            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement);
             structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
 
             @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);

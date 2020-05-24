@@ -180,7 +180,7 @@ public class BuildToolPasteMessage implements IMessage
             if (isHut)
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
-                final Blueprint blueprint = MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                final Blueprint blueprint = CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
 
                 final TileEntity tileEntity = player.world.getTileEntity(pos);
@@ -246,7 +246,7 @@ public class BuildToolPasteMessage implements IMessage
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
 
-                MCCreativeStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
             }
             else
