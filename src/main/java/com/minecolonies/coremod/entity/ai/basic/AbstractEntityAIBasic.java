@@ -136,6 +136,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
+    private boolean isPickupLockEnabled = false;
+
     /**
      * Sets up some important skeleton stuff for every ai.
      *
@@ -1005,6 +1007,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
         {
+            setDelay(WALK_DELAY);
             return INVENTORY_FULL;
         }
 
@@ -1018,9 +1021,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     ChatPriority.IMPORTANT));
 
                 // If the inventory full, open requests are ignored, the dman will still come and pickup.
-                if (building.getPickUpPriority() > 0)
+                if (building.getPickUpPriority() > 0 && !isPickupLockEnabled)
                 {
                     citizenData.createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
+                    isPickupLockEnabled = true;
                 }
             }
 
@@ -1031,6 +1035,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else if (dumpOneMoreSlot())
         {
+            // Inventory was obviously not full, meaning that the previous pickup-lock has been resolved.
+            // Next time dumpInventory() is called, if the inventory is full again or dumping has finished, the worker may ask for another pickup.
+            isPickupLockEnabled = false;
             return INVENTORY_FULL;
         }
 
@@ -1038,9 +1045,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
         final ICitizenData citizenData = worker.getCitizenData();
-        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed())
+        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed() && !isPickupLockEnabled)
         {
             citizenData.createRequestAsync(new Pickup(building.getPickUpPriority()));
+            isPickupLockEnabled = true;
         }
         return afterDump();
     }
