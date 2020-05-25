@@ -1122,6 +1122,7 @@
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
   "com.minecolonies.coremod.gui.deco.name": "The name of the decoration:",
   "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
+  "com.minecolonies.coremod.gui.deco.level.none": "This schematic is already at the highest level or not upgradeable.",
 
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
