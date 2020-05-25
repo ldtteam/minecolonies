@@ -126,9 +126,11 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             Log.getLogger().info("Unable to load structure: " + controller.getSchematicName() + " for decoration controller!");
         }
 
-        if (structure == null || !structure.hasBluePrint())
+        findPaneByID(LABEL_NO_UPGRADE).hide();
+        if (structure == null || structure.isBluePrintMissing())
         {
             findPaneByID(BUTTON_BUILD).hide();
+            findPaneByID(LABEL_NO_UPGRADE).show();
         }
 
         if (!isCreative)
