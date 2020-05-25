@@ -212,6 +212,13 @@ public interface ICitizenManager
     void updateCitizenMourn(final boolean mourn);
 
     /**
+     * Call this to set all citizens asleep
+     *
+     * @param sleep boolean to indicate whether the citizens are all asleep
+     */
+    void updateCitizenSleep(final boolean sleep);
+
+    /**
      * Get a random citizen.
      * @return the random citizen.
      */

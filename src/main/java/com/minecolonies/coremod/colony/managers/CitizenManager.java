@@ -552,18 +552,29 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
+    public void updateCitizenSleep(final boolean sleep)
+    {
+        this.isCitizensSleeping = sleep;
+    }
+
+    @Override
     public void onCitizenSleep()
     {
-        boolean isSleeping = true;
+
 
         for (final ICitizenData citizenData : citizens.values())
         {
-            isSleeping = isSleeping && (citizenData.isAsleep() || citizenData.getJob() instanceof AbstractJobGuard);
+            if (!(citizenData.isAsleep() || citizenData.getJob() instanceof AbstractJobGuard))
+            {
+                return;
+            }
         }
 
-        if (isSleeping)
+        if (!this.isCitizensSleeping)
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_CITIZENS_ARE_SLEEPING);
         }
+
+        this.isCitizensSleeping = true;
     }
 }
