@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
@@ -69,12 +70,13 @@ public final class PirateEventUtils
       final int eventID,
       final int shipRotation)
     {
-        final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(shipRotation), world, targetSpawnPoint, Mirror.NONE);
+        final CreativeBuildingStructureHandler
+          structure = new CreativeBuildingStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
 
         if (!colony.getEventManager()
                .getStructureManager()
-               .spawnTemporaryStructure(structure, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, shipRotation, Mirror.NONE))
+               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, shipRotation, Mirror.NONE))
         {
             return false;
         }
@@ -165,10 +167,11 @@ public final class PirateEventUtils
         final World world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicName;
 
-        final Structure structure = new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(rotation), colony.getWorld(), spawnPoint, Mirror.NONE);
+        final CreativeBuildingStructureHandler
+          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
-        return canPlaceShipAt(spawnPoint, structure, world) || canPlaceShipAt(spawnPoint.down(), structure, world);
+        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);
     }
 
     /**
@@ -179,11 +182,12 @@ public final class PirateEventUtils
      * @param world the world to use
      * @return true if ship fits
      */
-    public static boolean canPlaceShipAt(final BlockPos pos, final Structure ship, final World world)
+    public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
     {
+        final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
         return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world,
-          pos.add(-ship.getOffset().getX(), 0, -ship.getOffset().getZ()),
-          pos.add(ship.getWidth() - 1, 0, ship.getLength() - 1).subtract(ship.getOffset()),
+          zeroPos,
+          new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
           0.6);
     }
 

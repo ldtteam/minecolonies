@@ -257,4 +257,45 @@ public final class CitizenConstants
      * Noon day time.
      */
     public static final int NOON = 6000;
+
+    /**
+     * The minimum range to keep from the current building place.
+     */
+    public static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
+
+    /**
+     * String which shows if something is a waypoint.
+     */
+    public static final String WAYPOINT_STRING = "infrastructure";
+
+    /**
+     * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
+     */
+    public static final double XP_EACH_BUILDING = 10.0D;
+
+    /**
+     * Increase this value to make the building speed slower.
+     * Used to balance worker level speed increase.
+     */
+    public static final int PROGRESS_MULTIPLIER = 10;
+
+    /**
+     * Speed the builder should run away when he castles himself in.
+     */
+    public static final double RUN_AWAY_SPEED = 4.1D;
+
+    /**
+     * The amount of ticks to wait when not needing any tools to break blocks.
+     */
+    public static final int UNLIMITED_RESOURCES_TIMEOUT = 5;
+
+    /**
+     * The standard range the builder should reach until his target.
+     */
+    public static final int STANDARD_WORKING_RANGE = 5;
+
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    public static final int MIN_WORKING_RANGE = 12;
 }

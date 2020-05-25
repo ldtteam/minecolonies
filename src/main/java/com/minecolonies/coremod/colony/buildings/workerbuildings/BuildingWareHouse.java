@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Class of the warehouse building.
