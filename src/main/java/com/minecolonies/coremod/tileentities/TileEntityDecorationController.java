@@ -120,8 +120,6 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     private void update()
     {
         this.markDirty();
-        final BlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
     @Override
