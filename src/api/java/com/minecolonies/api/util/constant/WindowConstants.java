@@ -555,13 +555,14 @@ public final class WindowConstants
      */
     public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 
-    public static final String BUTTON_BUILD             = "build";
-    public static final String BUTTON_REPAIR            = "repair";
-    public static final String BUTTON_INVENTORY         = "inventory";
-    public static final String BUTTON_ALLINVENTORY      = "allinventory";
-    public static final String LABEL_BUILDING_NAME      = "name";
-    public static final String BUTTON_PREVPAGE          = "prevPage";
-    public static final String BUTTON_NEXTPAGE          = "nextPage";
+    public static final String BUTTON_BUILD        = "build";
+    public static final String BUTTON_REPAIR       = "repair";
+    public static final String BUTTON_INVENTORY    = "inventory";
+    public static final String BUTTON_ALLINVENTORY = "allinventory";
+    public static final String LABEL_BUILDING_NAME = "name";
+    public static final String BUTTON_PREVPAGE     = "prevPage";
+    public static final String BUTTON_NEXTPAGE     = "nextPage";
+    public static final String LABEL_NO_UPGRADE    = "infotextnoupgrade";
 
     /**
      * The GuardTower GUI file.

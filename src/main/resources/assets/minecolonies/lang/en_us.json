@@ -920,6 +920,8 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
   "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
+  "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.reposition": "Reposition",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away.",
@@ -1120,6 +1122,7 @@
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
   "com.minecolonies.coremod.gui.deco.name": "The name of the decoration:",
   "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
+  "com.minecolonies.coremod.gui.deco.level.none": "This schematic is already at the highest level or not upgradeable.",
 
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",

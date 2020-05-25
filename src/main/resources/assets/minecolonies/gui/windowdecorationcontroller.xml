@@ -15,6 +15,9 @@
     <buttonimage id="cancel" size="14 15" pos="400 0"
                  source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
+    <label id="infotextnoupgrade" size="50% 11" pos="60 103" color="white"
+           label="$(com.minecolonies.coremod.gui.deco.level.none)"/>
+
     <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="-70 120"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.repair)" textcolor="black"/>
