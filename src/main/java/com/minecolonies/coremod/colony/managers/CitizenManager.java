@@ -572,7 +572,7 @@ public class CitizenManager implements ICitizenManager
 
         if (!this.isCitizensSleeping)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_CITIZENS_ARE_SLEEPING);
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ALL_CITIZENS_ARE_SLEEPING);
         }
 
         this.isCitizensSleeping = true;
