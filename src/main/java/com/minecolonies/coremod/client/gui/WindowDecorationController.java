@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -115,10 +116,10 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             findPaneByID(BUTTON_REPAIR).hide();
         }
 
-        com.ldtteam.structures.helpers.Structure structure = null;
+        LoadOnlyStructureHandler structure = null;
         try
         {
-            structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings());
+            structure = new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
@@ -8,7 +8,7 @@ import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InstantStructurePlacer;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -73,7 +73,7 @@ public class EventStructureManager implements IEventStructureManager
      */
     @Override
     public boolean spawnTemporaryStructure(
-      final Structure structure,
+      final Blueprint structure,
       final String schematicPath,
       final BlockPos targetSpawnPoint,
       final int eventID,
@@ -88,10 +88,13 @@ public class EventStructureManager implements IEventStructureManager
         final World world = colony.getWorld();
 
         final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3);
+        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset());
 
         if (!ItemScanTool.saveStructureOnServer(world,
-          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()),
-          targetSpawnPoint.down(3).subtract(structure.getOffset()), backupPath, false))
+          zeroPos,
+          new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1),
+          backupPath,
+          false))
         {
             // No structure spawn if we didnt successfully save the surroundings before
             Log.getLogger().info("Failed to save schematics for event");
@@ -100,12 +103,12 @@ public class EventStructureManager implements IEventStructureManager
 
         backupSchematics.put(targetSpawnPoint.down(3), eventID);
 
-        InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
+        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(world,
           schematicPath,
           targetSpawnPoint.down(3),
           BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
-          false);
+          true, null);
 
         return true;
     }
@@ -124,12 +127,12 @@ public class EventStructureManager implements IEventStructureManager
                 final String backupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
                 final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
 
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
                   fileName,
                   entry.getKey(),
                   Rotation.NONE,
                   Mirror.NONE,
-                  true);
+                  true, null);
 
                 try
                 {
