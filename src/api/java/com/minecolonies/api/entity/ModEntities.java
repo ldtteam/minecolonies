@@ -51,6 +51,12 @@ public class ModEntities
     @ObjectHolder("archermummy")
     public static EntityType<?> ARCHERMUMMY;
 
+    @ObjectHolder("amazon")
+    public static EntityType<?> AMAZON;
+
+    @ObjectHolder("amazonchief")
+    public static EntityType<?> AMAZONCHIEF;
+
     @ObjectHolder("minecart")
     public static EntityType<AbstractMinecartEntity> MINECART;
 

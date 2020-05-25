@@ -32,8 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.PIRATES_SAILING_OFF_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -248,6 +247,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             {
                 daysToGo = 1;
                 status = EventStatus.WAITING;
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
     }
@@ -266,6 +266,10 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public void onEntityDeath(final LivingEntity entity)
     {
         pirates.remove(entity);
+        if (pirates.isEmpty() && spawnerCount == 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATES_KILLED_MESSAGE);
+        }
     }
 
     @Override
