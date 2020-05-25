@@ -330,6 +330,8 @@ public final class TranslationConstants
     @NonNls
     public static final String TOO_MANY_FILTERED_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomany";
     @NonNls
+    public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
+    @NonNls
     public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.florist";
     @NonNls
     public static final String ENCHANTER_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.enchanter";
