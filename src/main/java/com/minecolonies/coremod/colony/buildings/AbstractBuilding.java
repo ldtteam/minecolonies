@@ -21,6 +21,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -73,6 +74,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -1111,6 +1113,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
+    }
+
+    @Override
+    public boolean createPickupRequest(final int priority)
+    {
+        if (priority < 0 || priority > MAX_DELIVERYMAN_PLAYER_PRIORITY)
+        {
+            return false;
+        }
+
+        if (getOpenRequestsByRequestableType().containsKey(TypeConstants.PICKUP))
+        {
+            return false;
+        }
+
+        createRequest(new Pickup(priority), true);
+        return true;
     }
 
     @Override

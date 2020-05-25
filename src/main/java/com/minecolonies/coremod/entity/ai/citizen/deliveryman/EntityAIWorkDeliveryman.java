@@ -63,6 +63,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DECISION_DELAY = TICKS_SECOND * 5;
 
     /**
+     * Wait 5 seconds for the worker to decide what to do.
+     */
+    private static final int PICKUP_DELAY = 2;
+
+    /**
      * The inventory's slot which is held in hand.
      */
     private static final int SLOT_HAND = 0;
@@ -98,7 +103,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           new AITarget(START_WORKING, this::checkIfExecute, this::decide, DECISION_DELAY),
           new AITarget(PREPARE_DELIVERY, this::prepareDelivery, STANDARD_DELAY),
           new AITarget(DELIVERY, this::deliver, STANDARD_DELAY),
-          new AITarget(PICKUP, this::pickup, STANDARD_DELAY),
+          new AITarget(PICKUP, this::pickup, PICKUP_DELAY),
           new AITarget(DUMPING, this::dump, TICKS_SECOND)
 
         );

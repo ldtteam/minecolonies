@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
@@ -1017,15 +1016,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 citizenData
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
-
-                // Do not request pickups when the priority is NEVER, or when another pickup is already in progress.
-                // Pickups during crafting are OK when the inventory is full!
-                if (building.getPickUpPriority() > 0 && !building.hasWorkerOpenRequestsOfType(citizenData, TypeConstants.PICKUP))
-                {
-                    citizenData.createRequestAsync(new Pickup(MAX_DELIVERYMAN_STANDARD_PRIORITY));
-                }
             }
 
+            // Note that this will not create a pickup request when another request is already in progress.
+            if (building.getPickUpPriority() > 0)
+            {
+                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+            }
             alreadyKept.clear();
             slotAt = 0;
             this.clearActionsDone();
@@ -1039,11 +1036,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         alreadyKept.clear();
         slotAt = 0;
         this.clearActionsDone();
-        final ICitizenData citizenData = worker.getCitizenData();
-        // Do not request pickups when the priority is NEVER, or when another craft/pickup is already in progress.
-        if (citizenData != null && building.getPickUpPriority() > 0 && isAfterDumpPickupAllowed() && !building.hasWorkerOpenRequestsOfType(citizenData, TypeConstants.PICKUP))
+
+        if (isAfterDumpPickupAllowed())
         {
-            citizenData.createRequestAsync(new Pickup(building.getPickUpPriority()));
+            // Worker is not currently crafting, pickup is allowed.
+
+            // Note that this will not create a pickup request when another request is already in progress.
+            if (building.getPickUpPriority() > 0)
+            {
+                building.createPickupRequest(building.getPickUpPriority());
+            }
         }
         return afterDump();
     }

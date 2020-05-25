@@ -314,6 +314,7 @@
   "entity.builder.messagebuildernecessary": "Requiring a builder's hut of level %d in order to build or upgrade this building.",
 
   "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
   "entity.miner.messageneedtools": "Need tool %s!",
   "entity.miner.messageneedblockanditem": "I need %s!",

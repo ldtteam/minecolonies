@@ -1,15 +1,17 @@
 package com.minecolonies.coremod.network.messages.server.colony.building;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED;
 
 public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
 {
@@ -56,7 +58,19 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.createRequest(new Pickup(MAX_DELIVERYMAN_PLAYER_PRIORITY), true);
-        building.markDirty();
+        if (building.createPickupRequest(MAX_DELIVERYMAN_PLAYER_PRIORITY))
+        {
+            building.markDirty();
+        }
+        else
+        {
+            final PlayerEntity player = ctxIn.getSender();
+            if (player == null)
+            {
+                return;
+            }
+
+            LanguageHandler.sendPlayerMessage(player, COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED);
+        }
     }
 }
