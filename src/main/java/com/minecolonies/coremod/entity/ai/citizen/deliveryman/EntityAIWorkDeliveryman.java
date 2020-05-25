@@ -441,15 +441,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private IAIState prepareDelivery()
     {
         final IRequest<? extends IRequestable> currentTask = job.getCurrentTask();
-        final IRequestable request = currentTask.getRequest();
-        if (!(request instanceof Delivery))
+        if (!(currentTask instanceof DeliveryRequest))
         {
             // The current task has changed since the Decision-state.
             // Restart.
             return START_WORKING;
         }
 
-        final Delivery delivery = (Delivery) request;
+        final Delivery delivery = (Delivery) currentTask.getRequest();
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           itemStack -> delivery.getStack().isItemEqualIgnoreDurability(itemStack)))
         {
