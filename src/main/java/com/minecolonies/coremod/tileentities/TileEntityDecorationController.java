@@ -196,4 +196,10 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);
     }
+
+    @Override
+    public BlockPos getTilePos()
+    {
+        return pos;
+    }
 }
