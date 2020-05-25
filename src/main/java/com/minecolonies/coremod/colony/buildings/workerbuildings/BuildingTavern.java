@@ -5,9 +5,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.colonyEvents.IColonyEntitySpawnEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
+import com.minecolonies.coremod.colony.colonyEvents.civilianEvents.ColonyRecruitableCitizenEvent;
 import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -104,13 +107,7 @@ public class BuildingTavern extends BuildingHome
         {
             musicCooldown -= MAX_TICKRATE;
         }
-    }
 
-    /*
-    @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-       TODO: Next PR, Hiring
        for(final IColonyEvent event:colony.getEventManager().getEvents().values())
         {
             if (event instanceof ColonyRecruitableCitizenEvent)
@@ -123,7 +120,6 @@ public class BuildingTavern extends BuildingHome
         recruitEvent.setSpawnPoint(getID());
         colony.getEventManager().addEvent(recruitEvent);
     }
-    */
 
     /**
      * ClientSide representation of the building.

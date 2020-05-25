@@ -919,7 +919,7 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints": "Last Barbarian Spawns",
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
-  "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.barbarians.killed": "You successfully defended your colony against the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.reposition": "Reposition",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away.",

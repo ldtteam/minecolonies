@@ -368,12 +368,6 @@ public class EventHandler
                 }
             }
 
-            Network.getNetwork()
-              .sendToPlayer(new UpdateChunkRangeCapabilityMessage(player.world,
-                player.chunkCoordX,
-                player.chunkCoordZ,
-                8, true), (ServerPlayerEntity) event.getEntity());
-
             // Add visiting/subscriber to colony we're logging into
             final Chunk chunk = (Chunk) player.world.getChunk(player.getPosition());
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
