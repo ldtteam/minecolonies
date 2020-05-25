@@ -8,34 +8,35 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structurize.placement.BlockPlacementResult;
+import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
+import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.*;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -57,6 +59,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * Link to the xml file of the window.
      */
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowbuildbuilding.xml";
+
+    /**
+     * Predicate defining things we don't want the builders to ever touch.
+     */
+    protected TriPredicate<BlueprintPositionInfo, BlockPos, IStructureHandler> DONT_TOUCH_PREDICATE = (info, worldPos, handler) ->
+    {
+        final BlockState worldState = handler.getWorld().getBlockState(worldPos);
+
+        return worldState.getBlock() instanceof IBuilderUndestroyable
+                 || worldState.getBlock() == Blocks.BEDROCK
+                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+    };
 
     /**
      * The view of the current building.
@@ -229,11 +243,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                                 building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
           building.getSchematicName() + nextLevel);
-        final Structure structure = new Structure(world, sn.toString(), new PlacementSettings());
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, building.getPosition(), sn.toString(), new PlacementSettings(), true);
         final String md5 = Structures.getMD5(sn.toString());
-        if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
+        if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
         {
-            if (structure.isBluePrintMissing())
+            if (!structure.hasBluePrint())
             {
                 Log.getLogger().info("Template structure " + sn + " missing");
             }
@@ -254,63 +268,25 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
         }
 
-        structure.setPosition(building.getPosition());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getPosition(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
-        while (structure.findNextBlock())
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        StructurePlacer placer = new StructurePlacer(structure);
+        StructurePhasePlacementResult result;
+        BlockPos progressPos = NULL_POS;
+
+        do
         {
-            @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
-            @Nullable final BlockState blockState = blockInfo.getState();
+            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
 
-            if (blockState == null)
+            progressPos = result.getIteratorPos();
+            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
             {
-                continue;
+                addNeededResource(stack, stack.getCount());
             }
 
-            @Nullable final Block block = blockState.getBlock();
-
-            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, structure.getBlockPosition(), blockState)
-                  || (blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART).equals(BedPart.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
-            {
-                continue;
-            }
-
-            if (!(block instanceof AirBlock)
-                  && !AbstractEntityAIStructure.isBlockFree(block)
-                  && block != com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
-                  && block != com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)
-            {
-                if (structure.getBlockInfo().getTileEntityData() != null)
-                {
-                    final List<ItemStack> itemList = new ArrayList<>();
-                    if (structure.getBlockInfo().getState() != null && structure.getBlockInfo().getTileEntityData() != null)
-                    {
-                        itemList.addAll(com.ldtteam.structurize.api.util.ItemStackUtils.getItemStacksOfTileEntity(structure.getBlockInfo().getTileEntityData(), world));
-                    }
-
-                    for (final ItemStack stack : itemList)
-                    {
-                        addNeededResource(stack, 1);
-                    }
-                }
-
-                addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
-            }
         }
+        while (result != null && result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
-        for (final CompoundNBT entityInfo : structure.getEntityData())
-        {
-            if (entityInfo != null)
-            {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getInstance().player))
-                {
-                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
-                    {
-                        addNeededResource(stack.getItemStack(), 1);
-                    }
-                }
-            }
-        }
 
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         updateResourceList();
