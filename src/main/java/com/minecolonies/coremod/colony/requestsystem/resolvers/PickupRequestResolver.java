@@ -24,6 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Resolver that handles pickup requests.
+ * Pickups don't have much logic inherently, because the only important information
+ * are the requester and the priority.
+ * These resolvers are supposed to be provided by deliverymen.
+ * <p>
+ * Currently, this resolver will iterate through all available deliverymen and find
+ * the one with the least amount of open requests, followed by the one that is nearest.
+ * <p>
+ * There is a tiny bit of (known) code-smell in here, since this resolver should either be global
+ * or specific to a hut. Currently, it is a hut-specific resolver that acts as if it were global.
+ * The performance impact is negligible though.
+ */
 public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
 {
     public PickupRequestResolver(

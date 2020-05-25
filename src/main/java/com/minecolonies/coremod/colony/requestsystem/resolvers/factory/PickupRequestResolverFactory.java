@@ -10,6 +10,9 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestReso
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Factory generating resolvers for pickup requests.
+ */
 public class PickupRequestResolverFactory implements IRequestResolverFactory<PickupRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\

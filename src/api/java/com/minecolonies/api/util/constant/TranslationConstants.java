@@ -30,7 +30,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP             = "entity.deliveryman.forcepickup";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED             = "entity.deliveryman.forcepickupfailed";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED      = "entity.deliveryman.forcepickupfailed";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST           = "entity.worker.inventoryfullchestfull";
     @NonNls

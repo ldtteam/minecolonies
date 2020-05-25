@@ -1018,6 +1018,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     ChatPriority.IMPORTANT));
             }
 
+            // In this case, pickup during crafting is ok, since cleaning a full inventory is very important.
             // Note that this will not create a pickup request when another request is already in progress.
             if (building.getPickUpPriority() > 0)
             {
@@ -1037,15 +1038,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
 
-        if (isAfterDumpPickupAllowed())
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
         {
             // Worker is not currently crafting, pickup is allowed.
-
             // Note that this will not create a pickup request when another request is already in progress.
-            if (building.getPickUpPriority() > 0)
-            {
-                building.createPickupRequest(building.getPickUpPriority());
-            }
+            building.createPickupRequest(building.getPickUpPriority());
         }
         return afterDump();
     }

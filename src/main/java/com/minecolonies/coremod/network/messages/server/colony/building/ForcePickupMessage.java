@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED;
 
+/**
+ * Message class which manages the messages to request an immediate pickup
+ */
 public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
@@ -33,22 +36,12 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
         super(building);
     }
 
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
         // Noop
     }
 
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
