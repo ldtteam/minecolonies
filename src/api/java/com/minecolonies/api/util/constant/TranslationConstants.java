@@ -306,11 +306,15 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonunpaused";
     @NonNls
-    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townhall.buildingLevel";
+    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL         = "com.minecolonies.coremod.gui.townhall.buildingLevel";
     @NonNls
-    public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
+    public static final String PIRATES_SAILING_OFF_MESSAGE             = "com.minecolonies.coremod.pirates.sailing.away";
     @NonNls
-    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                        = "com.minecolonies.coremod.recipe.unable";
+    public static final String ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE   = "com.minecolonies.coremod.pirates.spawners.destroyed";
+    @NonNls
+    public static final String ALL_PIRATES_KILLED_MESSAGE              = "com.minecolonies.coremod.pirates.killed";
+    @NonNls
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE            = "com.minecolonies.coremod.recipe.unable";
     @NonNls
     public static final String BAKER_HAS_NO_RECIPES                                                = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
@@ -336,7 +340,9 @@ public final class TranslationConstants
     @NonNls
     public static final String TOO_MANY_FILTERED_FLORIST                                           = "com.minecolonies.gui.workerhuts.florist.toomany";
     @NonNls
-    public static final String FLORIST_BUILDING_NAME                                               = "com.minecolonies.coremod.gui.workerhuts.florist";
+    public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
+    @NonNls
+    public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.florist";
     @NonNls
     public static final String ENCHANTER_BUILDING_NAME                                             = "com.minecolonies.coremod.gui.workerhuts.enchanter";
     @NonNls

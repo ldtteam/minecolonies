@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -794,14 +793,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             .filter(building -> building instanceof BuildingHome).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
-        final Structure wrapper = new Structure(colony.getWorld(), workOrder.getStructureName(), new PlacementSettings());
+        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
-          wrapper,
+          wrapper.getBluePrint(),
           workOrder.getRotation(colony.getWorld()),
           workOrder.isMirrored());
-        this.setHeight(wrapper.getHeight());
+        this.setHeight(wrapper.getBluePrint().getSizeY());
         this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
         this.isBuilt = true;
 
