@@ -127,7 +127,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
         }
 
         findPaneByID(LABEL_NO_UPGRADE).hide();
-        if (structure == null || structure.isBluePrintMissing())
+        if (structure == null || !structure.hasBluePrint())
         {
             findPaneByID(BUTTON_BUILD).hide();
             findPaneByID(LABEL_NO_UPGRADE).show();
