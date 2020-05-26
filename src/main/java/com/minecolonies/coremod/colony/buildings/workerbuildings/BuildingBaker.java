@@ -17,7 +17,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -28,14 +27,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -280,72 +276,35 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public boolean canRecipeBeAdded(final IToken token)
     {
 
-        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        Optional<Boolean> isRecipeAllowed;
 
-        if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
-        {
+        if (!super.canRecipeBeAdded(token)) {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
-        {
-            return false;
-        }
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent()) {
+            return isRecipeAllowed.get();
+        } else {
+            // Additional recipe rules
 
-        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
-        {
-            if (recipe.getPrimaryOutput().isItemEqual(storage.getPrimaryOutput()))
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            boolean hasWheat = false;
+            for (final ItemStorage input : storage.getCleanedInput())
             {
-                return false;
+                if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
+                {
+                    hasWheat = true;
+                }
             }
+
+            return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
+
+            // End Additional recipe rules
         }
 
-        // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return false;
-        }
-
-        // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem()))
-            {
-                return false;
-            }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return true;
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
-            {
-                return true;
-            }
-        }
-
-        // Additional recipe rules
-        boolean hasWheat = false;
-        for (final ItemStorage input : storage.getCleanedInput())
-        {
-            if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
-            {
-                hasWheat = true;
-            }
-        }
-
-        return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
-        // End Additional recipe rules
+        //return false;
     }
 
     /**

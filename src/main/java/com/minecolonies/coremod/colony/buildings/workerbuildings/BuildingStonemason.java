@@ -11,26 +11,16 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -106,54 +96,28 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     public boolean canRecipeBeAdded(final IToken token)
     {
 
-        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        Optional<Boolean> isRecipeAllowed;
 
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            // End Additional recipe rules
         }
 
-        double amountOfValidBlocks = 0;
-        double blocks = 0;
-
-        // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
-            return false;
-        }
-
-        // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
-                return false;
-            }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
-            return true;
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
-                return true;
-            }
-        }
-
-        // Additional recipe rules
-
-        // End Additional recipe rules
-
-       return false;
+        return false;
     }
 
     @Override

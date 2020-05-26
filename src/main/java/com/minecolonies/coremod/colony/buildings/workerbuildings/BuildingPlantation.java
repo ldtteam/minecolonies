@@ -29,8 +29,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -40,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -209,50 +208,27 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     public boolean canRecipeBeAdded(final IToken token)
     {
 
-        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        Optional<Boolean> isRecipeAllowed;
 
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            // End Additional recipe rules
         }
 
-
-        // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
-            return false;
-        }
-
-        // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
-                return false;
-            }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
-            return true;
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
-                return true;
-            }
-        }
-
-        // Additional recipe rules
-
-        // End Additional recipe rules
         return false;
     }
 

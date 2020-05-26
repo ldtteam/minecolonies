@@ -29,6 +29,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -102,81 +104,62 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation builder_products_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation builder_ingredients_excluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        Optional<Boolean> isRecipeAllowed;
 
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
         }
-
-        final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+        else
         {
-            return true;
-        }
+            // Additional recipe rules
 
-        // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(builder_products_excluded).contains(storage.getPrimaryOutput().getItem())) {
-            return false;
-        }
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final Item item = storage.getPrimaryOutput().getItem();
 
-        // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients_excluded).contains(stack.getItem())) {
-                return false;
-            }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem())) {
-            return true;
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput()) {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem())) {
+            // TODO: Add tags to structurize and remove this code.
+            if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab
+                                                || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+            {
                 return true;
             }
-        }
 
-        // Additional recipe rules
 
-        double amountOfValidBlocks = 0;
-        double blocks = 0;
-        for(final ItemStack stack : storage.getInput())
-        {
-            if(!ItemStackUtils.isEmpty(stack))
+            double amountOfValidBlocks = 0;
+            double blocks = 0;
+            for (final ItemStack stack : storage.getInput())
             {
-                if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                if (!ItemStackUtils.isEmpty(stack))
                 {
-                    amountOfValidBlocks++;
-                    continue;
-                }
-                for (final ResourceLocation tag : stack.getItem().getTags())
-                {
-                    if(tag.getPath().contains("wood"))
+                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
                     {
                         amountOfValidBlocks++;
-                        break;
+                        continue;
                     }
+                    for (final ResourceLocation tag : stack.getItem().getTags())
+                    {
+                        if (tag.getPath().contains("wood"))
+                        {
+                            amountOfValidBlocks++;
+                            break;
+                        }
+                    }
+                    blocks++;
                 }
-                blocks++;
             }
+
+            return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
+
+            // End Additional recipe rules
         }
 
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
-
-        // End Additional recipe rules
-
+        //return false;
     }
 
     @Override
