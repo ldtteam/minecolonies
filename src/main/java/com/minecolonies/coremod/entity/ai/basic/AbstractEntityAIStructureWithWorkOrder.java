@@ -1,16 +1,15 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
-import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.StructurePlacementUtils;
-import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.ldtteam.structurize.placement.BlockPlacementResult;
+import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
+import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -19,25 +18,18 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
-import net.minecraft.block.*;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
+
 
 /**
  * AI class for the builder.
@@ -63,13 +55,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
-    public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(blockPos, stage);
     }
 
     @Override
-    public Tuple<BlockPos, StructureIterator.Stage> getProgressPos()
+    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos()
     {
         return getOwnBuilding(AbstractBuildingStructureBuilder.class).getProgress();
     }
@@ -79,7 +71,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     public void initiate()
     {
-        if (!job.hasStructure())
+        if (!job.hasBlueprint())
         {
             loadStructure();
             final WorkOrderBuildDecoration wo = job.getWorkOrder();
@@ -103,7 +95,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getBluePrint().getName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getBlueprint().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -147,10 +139,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         //We need to deal with materials
         requestMaterialsState();
-        if (getProgressPos() != null)
-        {
-            job.getStructure().setLocalPosition(getProgressPos().getA());
-        }
     }
 
     /**
@@ -185,85 +173,26 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
         buildingWorker.resetNeededResources();
 
-        for (final BlockInfo blockInfo : job.getStructure().getBluePrint().getBlockInfoAsList())
+        StructurePhasePlacementResult result;
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true);
+        final StructurePlacer placer = new StructurePlacer(structure);
+        BlockPos progressPos = NULL_POS;
+
+        Log.getLogger().warn("Reloading resource requirements");
+
+        do
         {
-            if (blockInfo == null)
-            {
-                continue;
-            }
-            final BlockPos worldPos = blockInfo.getPos().add(job.getStructure().getOffsetPosition());
+            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
+            progressPos = result.getIteratorPos();
 
-            @Nullable BlockState blockState = blockInfo.getState();
-            @Nullable Block block = blockState.getBlock();
-
-            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
-                  || (blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART).equals(BedPart.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER))
-                  || blockState.getBlock() instanceof AirBlock)
+            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
             {
-                continue;
+                getOwnBuilding(AbstractBuildingStructureBuilder.class).addNeededResource(stack, stack.getCount());
             }
 
-            @Nullable Block worldBlock = world.getBlockState(worldPos).getBlock();
-            for (final IPlacementHandler handler : PlacementHandlers.handlers)
-            {
-                if (handler.canHandle(world, worldPos, blockState))
-                {
-                    for (final ItemStack stack : handler.getRequiredItems(world, worldPos, blockState, blockInfo.getTileEntityData(), false))
-                    {
-                        if (!(block instanceof AirBlock)
-                              && worldBlock != Blocks.BEDROCK
-                              && !(worldBlock instanceof AbstractBlockHut)
-                              && !isBlockFree(block))
-                        {
-                            buildingWorker.addNeededResource(stack, stack.getCount());
-                        }
-                    }
-                    break;
-                }
-            }
         }
-
-        for (final CompoundNBT entityInfo : job.getStructure().getEntityData())
-        {
-            if (entityInfo != null)
-            {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
-                {
-                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
-                    {
-                        buildingWorker.addNeededResource(stack.getItemStack(), 1);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Add blocks to the builder building if he needs it.
-     *
-     * @param building   the building.
-     * @param blockState the block to add.
-     * @param blockInfo the complete blockinfo.
-     */
-    private void requestBlockToBuildingIfRequired(final AbstractBuildingStructureBuilder building, final BlockState blockState, final BlockInfo blockInfo)
-    {
-        if (blockInfo.getTileEntityData() != null)
-        {
-            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity());
-
-            for (final ItemStack stack : itemList)
-            {
-                building.addNeededResource(stack, stack.getCount());
-            }
-        }
-
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
-              && !(blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART) == BedPart.FOOT)
-              && !blockState.getBlock().isIn(BlockTags.BANNERS))
-        {
-            building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
-        }
+        while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
     }
 
     @Override
@@ -303,18 +232,18 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void executeSpecificCompleteActions()
     {
-        if (job.getStructure() == null && job.hasWorkOrder())
+        if (job.getBlueprint() == null && job.hasWorkOrder())
         {
             //fix for bad structures
             job.complete();
         }
 
-        if (job.getStructure() == null)
+        if (job.getBlueprint() == null)
         {
             return;
         }
 
-        final String structureName = job.getStructure().getBluePrint().getName();
+        final String structureName = job.getBlueprint().getName();
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
         if (wo instanceof WorkOrderBuildBuilding)
@@ -350,17 +279,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
         getOwnBuilding(AbstractBuildingStructureBuilder.class).resetNeededResources();
-        resetTask();
-    }
-
-    @Override
-    public List<ItemStack> getItemsFromTileEntity()
-    {
-        if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().getTileEntityData() != null)
-        {
-            return com.ldtteam.structurize.api.util.ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().getTileEntityData(), world);
-        }
-        return Collections.emptyList();
     }
 
     @Override
@@ -372,49 +290,19 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected boolean checkIfCanceled()
     {
-        if ((job.getWorkOrder() == null && job.getStructure() != null) || (currentStructure != null && currentStructure.isBluePrintMissing()))
+        if ((job.getWorkOrder() == null && job.getBlueprint() != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()))
         {
-            super.resetTask();
-            job.setStructure(null);
+            job.setBlueprint(null);
             if (job.hasWorkOrder())
             {
                 job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, StructureIterator.Stage.CLEAR);
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
-        else return job.getWorkOrder() != null
-                      && (!world.isBlockPresent(job.getWorkOrder().getBuildingLocation())
-                            || (currentStructure != null && !world.isBlockPresent(incrementBlock(currentStructure.getCurrentBlockPosition(),
-          new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight())))));
-    }
-
-    /**
-     * Increment the block position from an existing position and the size.
-     * @param pos the initital position.
-     * @param size the max size.
-     * @return the next position.
-     */
-    private static BlockPos incrementBlock(final BlockPos pos, final BlockPos size)
-    {
-        final BlockPos.Mutable progressPos = new BlockPos.Mutable(pos);
-        progressPos.setPos(progressPos.getX() + 1, progressPos.getY(), progressPos.getZ());
-        if (progressPos.getX() == size.getX())
-        {
-            progressPos.setPos(0, progressPos.getY(), progressPos.getZ() + 1);
-            if (progressPos.getZ() == size.getZ())
-            {
-                progressPos.setPos(progressPos.getX(), progressPos.getY() + 1, 0);
-                if (progressPos.getY() == size.getY())
-                {
-                    return pos;
-                }
-            }
-        }
-
-        return progressPos;
+        return job.getWorkOrder() != null && (!world.isBlockPresent(job.getWorkOrder().getBuildingLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     @Override

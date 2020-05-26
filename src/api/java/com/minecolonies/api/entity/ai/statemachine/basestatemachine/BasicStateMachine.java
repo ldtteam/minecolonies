@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
@@ -155,6 +156,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
             this.onException(e);
             return false;
         }
+
         if (newState != null)
         {
             if (transition instanceof IStateMachineOneTimeEvent && ((IStateMachineOneTimeEvent) transition).shouldRemove())

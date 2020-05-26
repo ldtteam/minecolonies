@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -13,10 +12,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.InstantStructurePlacer;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -246,8 +242,8 @@ public class BuildToolPlaceMessage implements IMessage
                         String schematic = sn.toString();
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
-                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
-                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
+                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayerEntity) player);
                         complete = true;
                     }
                 }
@@ -353,16 +349,16 @@ public class BuildToolPlaceMessage implements IMessage
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                 final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                   = ColonyUtils.calculateCorners(building.getPosition(),
                   world,
-                  wrapper,
+                  wrapper.getBluePrint(),
                   workOrder.getRotation(world),
                   workOrder.isMirrored());
 
                 building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
-                building.setHeight(wrapper.getHeight());
+                building.setHeight(wrapper.getBluePrint().getSizeY());
 
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
             }

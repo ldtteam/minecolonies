@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -27,21 +29,26 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
 import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 
@@ -173,8 +180,21 @@ public class BuildToolPasteMessage implements IMessage
             if (isHut)
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                final Blueprint blueprint = CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+
+                final TileEntity tileEntity = player.world.getTileEntity(pos);
+                if (tileEntity instanceof IBlueprintDataProvider && blueprint != null)
+                {
+                    final CompoundNBT teData = blueprint.getTileEntityData(blueprint.getPrimaryBlockOffset(), tileEntity.getPos());
+                    if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+                    {
+                        ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
+                        Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
+                        PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
+                        tileEntity.markDirty();
+                    }
+                }
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
@@ -186,8 +206,8 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                com.ldtteam.structurize.util.InstantStructurePlacer.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete, ctxIn.getSender());
+                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, ctxIn.getSender());
             }
         }
         else if (structureName.contains("supply"))
@@ -226,8 +246,8 @@ public class BuildToolPasteMessage implements IMessage
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
 
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
             }
             else
             {
@@ -340,16 +360,16 @@ public class BuildToolPasteMessage implements IMessage
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                 final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                   = ColonyUtils.calculateCorners(building.getPosition(),
                   world,
-                  wrapper,
+                  wrapper.getBluePrint(),
                   workOrder.getRotation(world),
                   workOrder.isMirrored());
 
                 building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
-                building.setHeight(wrapper.getHeight());
+                building.setHeight(wrapper.getBluePrint().getSizeY());
             }
 
             if (mirror)

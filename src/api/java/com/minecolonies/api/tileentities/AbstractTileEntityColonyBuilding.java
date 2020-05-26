@@ -222,4 +222,10 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         writeSchematicDataToNBT(compound);
         return compound;
     }
+
+    @Override
+    public BlockPos getTilePos()
+    {
+        return pos;
+    }
 }
