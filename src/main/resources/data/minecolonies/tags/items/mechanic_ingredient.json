@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:dusts/redstone",
+    "#forge:ores/redstone",
+    "#forge:storage_blocks/redstone"
+  ]
+}

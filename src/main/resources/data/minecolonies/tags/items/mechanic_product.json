@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:blue_ice",
+    "minecraft:enchanting_table",
+    "minecraft:jack_o_lantern",
+    "minecraft:lantern",
+    "minecraft:packed_ice",
+    "#minecraft:rails",
+    "#forge:storage_blocks"
+  ]
+}

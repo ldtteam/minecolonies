@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 
 /**
  * Common job object for all structure AIs.
@@ -118,14 +124,28 @@ public abstract class AbstractJobStructure extends AbstractJob
     public void complete()
     {
         getWorkOrder().onCompleted(getCitizen().getColony());
+
+        final TileEntity tileEntity = getColony().getWorld().getTileEntity(getWorkOrder().getBuildingLocation());
+
+        if (tileEntity instanceof IBlueprintDataProvider)
+        {
+            CompoundNBT teData = structure.getTileEntityData(structure.getBluePrint().getPrimaryBlockOffset());
+            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+            {
+                ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
+                Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
+                PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
+                tileEntity.markDirty();
+            }
+        }
+
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setStructure(null);
     }
 
     /**
-     * Get the Work Order for the Job.
-     * Warning: WorkOrder is not cached
+     * Get the Work Order for the Job. Warning: WorkOrder is not cached
      *
      * @return WorkOrderBuildDecoration for the Build
      */

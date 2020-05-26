@@ -109,6 +109,12 @@ public interface ICompatibilityManager
     Disease getDisease(String disease);
 
     /**
+     * Get the list of diseases.
+     * @return a copy of the list.
+     */
+    List<Disease> getDiseases();
+
+    /**
      * Checks if a certain Block is an ore.
      * @param block the block to check.
      * @return boolean if so.

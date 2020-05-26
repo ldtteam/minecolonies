@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
@@ -79,18 +80,20 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         {
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
             if (research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(),
-              colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)))
+              colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)) || player.isCreative())
             {
-                if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
-                {
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"));
-                    return;
-                }
-
                 if (player.isCreative())
                 {
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
-                    colony.getResearchManager().getResearchTree().getResearch(branch, researchId).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                    colony.getResearchManager()
+                      .getResearchTree()
+                      .getResearch(branch, research.getId())
+                      .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                }
+                else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
+                {
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"));
+                    return;
                 }
                 else
                 {
@@ -108,7 +111,15 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.alreadystarted"));
+            if (player.isCreative() && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
+            {
+                final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
+                colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+            }
+            else
+            {
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.alreadystarted"));
+            }
         }
     }
 }

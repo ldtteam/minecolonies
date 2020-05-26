@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -246,7 +245,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putInt(TAG_COLONY, colonyId);
+        write(compound);
         return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
@@ -255,6 +254,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public CompoundNBT getUpdateTag()
     {
         return write(new CompoundNBT());
+    }
+
+    @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
     }
 
     @Override
@@ -333,6 +338,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         mirror = compound.getBoolean(TAG_MIRROR);
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        buildingPos = pos;
     }
 
     @NotNull
