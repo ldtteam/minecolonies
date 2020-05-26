@@ -85,6 +85,11 @@ public class CitizenManager implements ICitizenManager
     private Random random = new Random();
 
     /**
+     * Whether all citizens excluding guards are sleeping
+     */
+    private boolean isCitizensSleeping;
+
+    /**
      * Creates the Citizenmanager for a colony.
      *
      * @param colony the colony.
