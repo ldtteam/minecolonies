@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -32,8 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.PIRATES_SAILING_OFF_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -141,11 +140,11 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
         spawnerCount = shipSize.spawnerCount;
 
-        final Structure structure =
-          new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(shipRotation), colony.getWorld(), spawnPoint, Mirror.NONE);
+        final CreativeBuildingStructureHandler structure =
+          new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings(), true);
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
-        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure, colony.getWorld()))
+        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
         {
             spawnPoint = spawnPoint.down();
         }
@@ -248,6 +247,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             {
                 daysToGo = 1;
                 status = EventStatus.WAITING;
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
     }
@@ -266,6 +266,10 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public void onEntityDeath(final LivingEntity entity)
     {
         pirates.remove(entity);
+        if (pirates.isEmpty() && spawnerCount == 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATES_KILLED_MESSAGE);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -32,7 +32,7 @@ public abstract class AbstractJobStructure extends AbstractJob
     /**
      * The structure the job should build.
      */
-    protected Structure structure;
+    protected Blueprint blueprint;
 
     /**
      * Initialize citizen data.
@@ -51,9 +51,9 @@ public abstract class AbstractJobStructure extends AbstractJob
      *
      * @return true if there is a loaded structure for this Job
      */
-    public boolean hasStructure()
+    public boolean hasBlueprint()
     {
-        return structure != null;
+        return blueprint != null;
     }
 
     /**
@@ -61,19 +61,19 @@ public abstract class AbstractJobStructure extends AbstractJob
      *
      * @return StructureProxy loaded by the Job
      */
-    public Structure getStructure()
+    public Blueprint getBlueprint()
     {
-        return structure;
+        return blueprint;
     }
 
     /**
      * Set the structure of the structure job.
      *
-     * @param structure {@link Structure} object
+     * @param blueprint {@link Blueprint} object
      */
-    public void setStructure(final Structure structure)
+    public void setBlueprint(final Blueprint blueprint)
     {
-        this.structure = structure;
+        this.blueprint = blueprint;
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class AbstractJobStructure extends AbstractJob
 
         if (tileEntity instanceof IBlueprintDataProvider)
         {
-            CompoundNBT teData = structure.getTileEntityData(structure.getBluePrint().getPrimaryBlockOffset());
+            CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
@@ -141,7 +141,7 @@ public abstract class AbstractJobStructure extends AbstractJob
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setStructure(null);
+        setBlueprint(null);
     }
 
     /**
