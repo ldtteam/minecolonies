@@ -456,4 +456,38 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     {
         envDamageImmunity = immunity;
     }
+
+    /**
+     * Initializes entity stats for a given raidlevel and difficulty
+     *
+     * @param baseHealth basehealth for this raid/difficulty
+     * @param difficulty difficulty
+     * @param baseDamage basedamage for this raid/difficulty
+     */
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
+    {
+        this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
+
+        if (this instanceof IChiefMobEntity)
+        {
+            final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
+            this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
+            this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage + 2.0);
+            this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
+        }
+        else
+        {
+            final double armor = difficulty * ARMOR;
+            this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+            this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
+        }
+
+        if (difficulty >= 1.4d)
+        {
+            this.setEnvDamageImmunity(true);
+        }
+
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
+        this.setHealth(this.getMaxHealth());
+    }
 }
