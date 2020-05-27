@@ -30,7 +30,7 @@ public class EntityAmazonChief extends AbstractEntityAmazon implements IAmazonCh
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
-        final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
+        final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR * 2;
         this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage + 1.0);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
