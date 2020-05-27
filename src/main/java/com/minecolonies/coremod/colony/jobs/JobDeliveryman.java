@@ -289,6 +289,7 @@ public class JobDeliveryman extends AbstractJob
         for (final IToken<?> t : getTaskQueue())
         {
             getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
+            getTaskQueueFromDataStore().remove(t);
         }
     }
 

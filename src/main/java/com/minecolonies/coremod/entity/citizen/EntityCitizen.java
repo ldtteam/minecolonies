@@ -1459,12 +1459,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
-            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
             if (citizenData.getJob() != null)
             {
                 citizenData.getJob().onRemoval();
             }
+            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
+
         }
         super.onDeath(damageSource);
     }
