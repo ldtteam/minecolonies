@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
 import static com.minecolonies.api.colony.buildings.PickUpPriorityState.NEVER;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -318,8 +319,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
         if (amount <= 0
-              || (building instanceof BuildingCook
-                    && stack.getItem().isFood()))
+              || (building instanceof BuildingCook && CAN_EAT.test(stack)))
         {
             return false;
         }

@@ -6,17 +6,17 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Progress stage of the builder.
      */
-    private StructureIterator.Stage progressStage;
+    private BuildingStructureHandler.Stage progressStage;
 
     /**
      * Contains all resources needed for a certain build.
@@ -95,13 +95,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new Tuple<>(stack.getAmount(), true));
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -140,7 +140,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
-            progressStage = StructureIterator.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+            progressStage = BuildingStructureHandler.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
         }
 
         if (compound.contains(TAG_FLUIDS_REMOVE))
@@ -394,7 +394,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param blockPos the last blockPos.
      * @param stage the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         this.progressPos = blockPos;
         this.progressStage = stage;
@@ -414,7 +414,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, StructureIterator.Stage> getProgress()
+    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgress()
     {
         if (this.progressPos == null)
         {
