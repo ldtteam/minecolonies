@@ -450,7 +450,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final Delivery delivery = (Delivery) currentTask.getRequest();
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          itemStack -> delivery.getStack().isItemEqual(itemStack)))
+          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
         {
             return DELIVERY;
         }
