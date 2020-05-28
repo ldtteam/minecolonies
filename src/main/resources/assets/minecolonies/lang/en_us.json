@@ -1388,6 +1388,7 @@
   "com.minecolonies.coremod.entity.citizen.no.idleatjob": "I'm idle at my job because of missing items, please take care of that!",
   "com.minecolonies.coremod.entity.citizen.demands.idleatjob": "I'm unable to work for more than two weeks already! Do something!",
   "com.minecolonies.coremod.entity.citizen.no.slepttonight": "I didn't have enough time to go to sleep in the last three days!",
+  "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Homelessness",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",

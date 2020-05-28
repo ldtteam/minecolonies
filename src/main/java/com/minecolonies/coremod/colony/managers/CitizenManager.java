@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -81,6 +82,11 @@ public class CitizenManager implements ICitizenManager
      * Random obj.
      */
     private Random random = new Random();
+
+    /**
+     * Whether all citizens excluding guards are sleeping
+     */
+    private boolean areCitizensSleeping;
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -547,5 +553,30 @@ public class CitizenManager implements ICitizenManager
     public ICitizenData getRandomCitizen()
     {
         return (ICitizenData) citizens.values().toArray()[random.nextInt(citizens.values().size())];
+    }
+
+    @Override
+    public void updateCitizenSleep(final boolean sleep)
+    {
+        this.areCitizensSleeping = sleep;
+    }
+
+    @Override
+    public void onCitizenSleep()
+    {
+        for (final ICitizenData citizenData : citizens.values())
+        {
+            if (!(citizenData.isAsleep() || citizenData.getJob() instanceof AbstractJobGuard))
+            {
+                return;
+            }
+        }
+
+        if (!this.areCitizensSleeping)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ALL_CITIZENS_ARE_SLEEPING);
+        }
+
+        this.areCitizensSleeping = true;
     }
 }
