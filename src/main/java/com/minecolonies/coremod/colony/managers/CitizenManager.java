@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -87,7 +86,7 @@ public class CitizenManager implements ICitizenManager
     /**
      * Whether all citizens excluding guards are sleeping
      */
-    private boolean isCitizensSleeping;
+    private boolean areCitizensSleeping;
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -559,7 +558,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void updateCitizenSleep(final boolean sleep)
     {
-        this.isCitizensSleeping = sleep;
+        this.areCitizensSleeping = sleep;
     }
 
     @Override
@@ -575,11 +574,11 @@ public class CitizenManager implements ICitizenManager
             }
         }
 
-        if (!this.isCitizensSleeping)
+        if (!this.areCitizensSleeping)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ALL_CITIZENS_ARE_SLEEPING);
         }
 
-        this.isCitizensSleeping = true;
+        this.areCitizensSleeping = true;
     }
 }
