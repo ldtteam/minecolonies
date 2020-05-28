@@ -564,8 +564,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void onCitizenSleep()
     {
-
-
         for (final ICitizenData citizenData : citizens.values())
         {
             if (!(citizenData.isAsleep() || citizenData.getJob() instanceof AbstractJobGuard))
