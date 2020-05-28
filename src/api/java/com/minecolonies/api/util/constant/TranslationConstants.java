@@ -385,6 +385,9 @@ public final class TranslationConstants
     public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
     @NonNls
     public static final String DEMANDS                                                             = "com.minecolonies.coremod.entity.citizen.demands.";
+    @NonNls  
+    public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
+
 
     private TranslationConstants()
     {

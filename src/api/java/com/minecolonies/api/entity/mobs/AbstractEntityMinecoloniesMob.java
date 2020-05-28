@@ -103,12 +103,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      */
     private boolean envDamageImmunity = false;
 
-
     /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
-     * @param type the entity type.
+     * @param type  the entity type.
      */
     public AbstractEntityMinecoloniesMob(final EntityType type, final World world)
     {
@@ -128,7 +127,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
         if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
+                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
         {
             return;
         }
@@ -156,7 +156,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public boolean canDespawn(final double distanceToClosestPlayer)
     {
-        return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null );
+        return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null);
     }
 
     /**
@@ -186,6 +186,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Get the stack counter.
+     *
      * @return the amount it got stuck already.
      */
     public int getStuckCounter()
@@ -195,6 +196,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Set the stack counter.
+     *
      * @param stuckCounter the amount.
      */
     public void setStuckCounter(final int stuckCounter)
@@ -204,6 +206,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Get the ladder counter.
+     *
      * @return the amount it got stuck and placed a ladder already.
      */
     public int getLadderCounter()
@@ -213,6 +216,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Set the ladder counter.
+     *
      * @param ladderCounter the amount.
      */
     public void setLadderCounter(final int ladderCounter)
@@ -353,6 +357,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Getter for the colony.
+     *
      * @return the colony the barbarian is assigned to attack.e
      */
     public IColony getColony()
@@ -417,6 +422,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Set the colony to raid.
+     *
      * @param colony the colony to set.
      */
     public void setColony(final IColony colony)
@@ -455,5 +461,29 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public void setEnvDamageImmunity(final boolean immunity)
     {
         envDamageImmunity = immunity;
+    }
+
+    /**
+     * Initializes entity stats for a given raidlevel and difficulty
+     *
+     * @param baseHealth basehealth for this raid/difficulty
+     * @param difficulty difficulty
+     * @param baseDamage basedamage for this raid/difficulty
+     */
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
+    {
+        this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
+
+        final double armor = difficulty * ARMOR;
+        this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+        this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
+
+        if (difficulty >= 1.4d)
+        {
+            this.setEnvDamageImmunity(true);
+        }
+
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
+        this.setHealth(this.getMaxHealth());
     }
 }

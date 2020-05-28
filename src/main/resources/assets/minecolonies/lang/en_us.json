@@ -1374,6 +1374,7 @@
   "com.minecolonies.coremod.gui.scan.select.stack": "Stack(s)",
   "com.minecolonies.coremod.gui.scan.select.title": "Stack Selection GUI",
   "com.minecolonies.coremod.gui.warehouse.limitreached": "Limit Reached",
+  "com.minecolonies.coremod.gui.warehouse.sorted": "Warehouse stock sorted!",
   "com.minecolonies.coremod.university.researchconcluded.0": "Your researchers just successfully concluded: %s",
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
