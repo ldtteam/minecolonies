@@ -28,6 +28,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE               = "entity.builder.messagebuildcomplete";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP             = "entity.deliveryman.forcepickup";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED      = "entity.deliveryman.forcepickupfailed";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST           = "entity.worker.inventoryfullchestfull";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST               = "entity.worker.pickaxerequest";
@@ -54,27 +58,27 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL                             = "com.minecolonies.coremod.warehouse.full";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_SATURATION_0     = "com.minecolonies.coremod.saturation.0";
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_0                               = "com.minecolonies.coremod.saturation.0";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_SATURATION_3     = "com.minecolonies.coremod.saturation.3";
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_3                               = "com.minecolonies.coremod.saturation.3";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_SATURATION_5     = "com.minecolonies.coremod.saturation.5";
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_5                               = "com.minecolonies.coremod.saturation.5";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_SATURATION_7     = "com.minecolonies.coremod.saturation.7";
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_7                               = "com.minecolonies.coremod.saturation.7";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GUI_BAKER        = "com.minecolonies.coremod.gui.workerhuts.bakery";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BAKER                                  = "com.minecolonies.coremod.gui.workerhuts.bakery";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_BAKER        = "com.minecolonies.coremod.job.bakery";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                                  = "com.minecolonies.coremod.job.bakery";
     @NonNls
-    public static final     String BAKER_HAS_NO_FURNACES_MESSAGE             = "com.minecolonies.coremod.bakery.nofurnace";
+    public static final String BAKER_HAS_NO_FURNACES_MESSAGE                                       = "com.minecolonies.coremod.bakery.nofurnace";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_BUILDER      = "com.minecolonies.coremod.job.builder";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BUILDER                                = "com.minecolonies.coremod.job.builder";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN  = "com.minecolonies.coremod.job.deliveryman";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                            = "com.minecolonies.coremod.job.deliveryman";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_MINER        = "com.minecolonies.coremod.job.miner";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_MINER                                  = "com.minecolonies.coremod.job.miner";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_JOB_FISHERMAN    = "com.minecolonies.coremod.job.fisherman";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_FISHERMAN                              = "com.minecolonies.coremod.job.fisherman";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_GUARD                                  = "com.minecolonies.coremod.job.guard";
     @NonNls
@@ -99,6 +103,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                             = "com.minecolonies.coremod.job.lumberjack";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                                  = "com.minecolonies.coremod.request.delivery";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_PICKUP                                    = "com.minecolonies.coremod.request.pickup";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_COOKED_FOOD                               = "com.minecolonies.coremod.request.cookedfood";
     @NonNls
@@ -298,7 +304,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE                             = "com.minecolonies.coremod.gui.hiring.buttonpaused";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE = "com.minecolonies.coremod.gui.hiring.buttonunpaused";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonunpaused";
     @NonNls
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL         = "com.minecolonies.coremod.gui.townhall.buildingLevel";
     @NonNls
@@ -310,77 +316,78 @@ public final class TranslationConstants
     @NonNls
     public static final String UNABLE_TO_ADD_RECIPE_MESSAGE            = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final String BAKER_HAS_NO_RECIPES                    = "com.minecolonies.coremod.bakery.norecipe";
+    public static final String BAKER_HAS_NO_RECIPES                                                = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
-    public static final String FERTLIZER                               = "com.minecolonies.coremod.request.fertilizer";
+    public static final String FERTLIZER                                                           = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
-    public static final String FURNACE_USER_NO_FUEL                    = "com.minecolonies.coremod.furnaceuser.nofuel";
+    public static final String FURNACE_USER_NO_FUEL                                                = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
-    public static final String WORKER_AI_EXCEPTION                     = "com.minecolonies.coremod.worker.ai.exception";
+    public static final String WORKER_AI_EXCEPTION                                                 = "com.minecolonies.coremod.worker.ai.exception";
     @NonNls
-    public static final String PATIENT_FULL_INVENTORY                  = "com.minecolonies.coremod.healer.fullinv";
+    public static final String PATIENT_FULL_INVENTORY                                              = "com.minecolonies.coremod.healer.fullinv";
     @NonNls
-    public static final String FURNACE_USER_NO_ORE                     = "com.minecolonies.coremod.furnaceuser.noore";
+    public static final String FURNACE_USER_NO_ORE                                                 = "com.minecolonies.coremod.furnaceuser.noore";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG  = "com.minecolonies.coremod.general.onbig";
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                              = "com.minecolonies.coremod.general.onbig";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG = "com.minecolonies.coremod.general.offbig";
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                             = "com.minecolonies.coremod.general.offbig";
     @NonNls
-    public static final String COM_MINECOLONIES_INFO_PREFIX = "com.minecolonies.coremod.info.";
+    public static final String COM_MINECOLONIES_INFO_PREFIX                                        = "com.minecolonies.coremod.info.";
     @NonNls
-    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED  = "com.minecolonies.coremod.general.canttakeequipped";
+    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                 = "com.minecolonies.coremod.general.canttakeequipped";
     @NonNls
-    public static final String TOO_LOW_LEVEL_TO_FILTER_FLORIST = "com.minecolonies.gui.workerhuts.florist.toolow";
+    public static final String TOO_LOW_LEVEL_TO_FILTER_FLORIST                                     = "com.minecolonies.gui.workerhuts.florist.toolow";
     @NonNls
-    public static final String TOO_MANY_FILTERED_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomany";
+    public static final String TOO_MANY_FILTERED_FLORIST                                           = "com.minecolonies.gui.workerhuts.florist.toomany";
     @NonNls
     public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
     @NonNls
     public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.florist";
     @NonNls
-    public static final String ENCHANTER_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.enchanter";
+    public static final String ENCHANTER_BUILDING_NAME                                             = "com.minecolonies.coremod.gui.workerhuts.enchanter";
     @NonNls
-    public static final String FLORIST_FLOWER_DESC = "com.minecolonies.gui.workerHuts.florist.flowers";
+    public static final String FLORIST_FLOWER_DESC                                                 = "com.minecolonies.gui.workerHuts.florist.flowers";
     @NonNls
-    public static final String NO_PLANT_GROUND_FLORIST = "com.minecolonies.coremod.florist.noplantground";
+    public static final String NO_PLANT_GROUND_FLORIST                                             = "com.minecolonies.coremod.florist.noplantground";
     @NonNls
-    public static final String NO_FLOWERS_IN_CONFIG = "com.minecolonies.coremod.florist.noflowers";
+    public static final String NO_FLOWERS_IN_CONFIG                                                = "com.minecolonies.coremod.florist.noflowers";
     @NonNls
-    public static final String NO_WORKERS_TO_DRAIN_SET = "com.minecolonies.coremod.enchanter.nodrainingsset";
+    public static final String NO_WORKERS_TO_DRAIN_SET                                             = "com.minecolonies.coremod.enchanter.nodrainingsset";
     @NonNls
-    public static final String NO_FREE_FIELDS = "entity.farmer.nofreefields";
+    public static final String NO_FREE_FIELDS                                                      = "entity.farmer.nofreefields";
     @NonNls
-    public static final String NO_SEED_SET    = "entity.farmer.noseedset";
+    public static final String NO_SEED_SET                                                         = "entity.farmer.noseedset";
     @NonNls
-    public static final String WATER_TOO_FAR = "entity.fisherman.messagewatertoofar";
+    public static final String WATER_TOO_FAR                                                       = "entity.fisherman.messagewatertoofar";
     @NonNls
-    public static final String NO_COMPOST = "com.minecolonies.coremod.florist.nocompost";
+    public static final String NO_COMPOST                                                          = "com.minecolonies.coremod.florist.nocompost";
     @NonNls
-    public static final String NEEDS_BETTER_HUT = "entity.miner.messagerequiresbetterhut";
+    public static final String NEEDS_BETTER_HUT                                                    = "entity.miner.messagerequiresbetterhut";
     @NonNls
-    public static final String RAW_FOOD      = "com.minecolonies.coremod.ai.wrongfood";
+    public static final String RAW_FOOD                                                            = "com.minecolonies.coremod.ai.wrongfood";
     @NonNls
-    public static final String NO_RESTAURANT = "com.minecolonies.coremod.ai.norestaurant";
+    public static final String NO_RESTAURANT                                                       = "com.minecolonies.coremod.ai.norestaurant";
     @NonNls
-    public static final String NO_HOSPITAL = "com.minecolonies.coremod.ai.nohospital";
+    public static final String NO_HOSPITAL                                                         = "com.minecolonies.coremod.ai.nohospital";
     @NonNls
-    public static final String ASYNC_REQUEST = "com.minecolonies.requestsystem.playerresolver.async";
+    public static final String ASYNC_REQUEST                                                       = "com.minecolonies.requestsystem.playerresolver.async";
     @NonNls
-    public static final String NORMAL_REQUEST = "com.minecolonies.requestsystem.playerresolver.normal";
+    public static final String NORMAL_REQUEST                                                      = "com.minecolonies.requestsystem.playerresolver.normal";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY = "com.minecolonies.coremod.gui.workerhuts.university";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY                             = "com.minecolonies.coremod.gui.workerhuts.university";
     @NonNls
-    public static final String PUPIL_NO_CARPET = "com.minecolonies.coremod.school.nocarpet";
+    public static final String PUPIL_NO_CARPET                                                     = "com.minecolonies.coremod.school.nocarpet";
     @NonNls
-    public static final String RESEARCH_CONCLUDED = "com.minecolonies.coremod.university.researchconcluded.";
+    public static final String RESEARCH_CONCLUDED                                                  = "com.minecolonies.coremod.university.researchconcluded.";
     @NonNls
-    public static final String OUT_OF_COLONY = "com.minecolonies.coremod.workorder.outofcolony";
+    public static final String OUT_OF_COLONY                                                       = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
-    public static final String NO = "com.minecolonies.coremod.entity.citizen.no.";
+    public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
     @NonNls
-    public static final String DEMANDS = "com.minecolonies.coremod.entity.citizen.demands.";
-    @NonNls
-    public static final String WAREHOUSE_SORTED = "com.minecolonies.coremod.gui.warehouse.sorted";
+    public static final String DEMANDS                                                             = "com.minecolonies.coremod.entity.citizen.demands.";
+    @NonNls  
+    public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
+
 
     private TranslationConstants()
     {

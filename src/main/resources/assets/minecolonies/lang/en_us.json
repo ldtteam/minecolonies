@@ -313,6 +313,9 @@
   "entity.builder.messageneedmaterial": "I need %s (Amount: %d)",
   "entity.builder.messagebuildernecessary": "Requiring a builder's hut of level %d in order to build or upgrade this building.",
 
+  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
+
   "entity.miner.messageneedtools": "Need tool %s!",
   "entity.miner.messageneedblockanditem": "I need %s!",
   "entity.miner.messageneedbettertools": "I need better tools!",
@@ -440,7 +443,6 @@
   "com.minecolonies.coremod.job.cook": "Cook",
   "com.minecolonies.coremod.job.bakery": "Baker",
   "com.minecolonies.coremod.job.researcher": "Researcher",
-
 
   "com.minecolonies.coremod.job.deliveryman": "Deliveryman",
   "com.minecolonies.coremod.job.farmer": "Farmer",
@@ -610,9 +612,8 @@
   "com.minecolonies.coremod.gui.structure.delete": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.title": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.body": "Do you want to delete %s?",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.static": "Pickup: Static",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.automatic": "Pickup: Automatic",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Pickup: Never",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Never",
+  "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request pickup now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a mercenary took the %s away!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A mercenary just stole %s from a building!",
 
@@ -759,6 +760,7 @@
   "item.minecolonies.scepterpermission": "PermissionScepter",
 
   "com.minecolonies.coremod.request.delivery": "Delivery of:",
+  "com.minecolonies.coremod.request.pickup": "Pickup",
   "com.minecolonies.coremod.request.food": "Food",
   "com.minecolonies.coremod.request.cookedfood": "Cooked Food",
   "com.minecolonies.coremod.request.burnable": "Fuel",
@@ -797,7 +799,7 @@
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Priority:",
+  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
   "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
