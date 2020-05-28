@@ -6,8 +6,8 @@ import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
@@ -100,7 +100,7 @@ public final class PirateEventUtils
                 setupSpawner(targetSpawnPoint.up(2).north(3), world, PIRATE, colony, eventID);
                 break;
             case MEDIUM_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).north(12), world, CHIEFPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).north(12), world, ARCHERPIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(1).north(2), world, PIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(5).south(4), world, ARCHERPIRATE, colony, eventID);
                 break;
@@ -112,7 +112,7 @@ public final class PirateEventUtils
                 setupSpawner(targetSpawnPoint.down(1).north(10), world, PIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(2).south(10), world, PIRATE, colony, eventID);
 
-                setupSpawner(targetSpawnPoint.up(3).north(12), world, CHIEFPIRATE, colony, eventID);
+                setupSpawner(targetSpawnPoint.up(3).north(12), world, ARCHERPIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(6).north(14), world, CHIEFPIRATE, colony, eventID);
 
                 setupSpawner(targetSpawnPoint.up(9).north(15), world, ARCHERPIRATE, colony, eventID);

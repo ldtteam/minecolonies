@@ -244,6 +244,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return true;
     }
 
+    @Override
+    public boolean isAfterDumpPickupAllowed()
+    {
+        return !checkForWorkOrder();
+    }
+
     private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())

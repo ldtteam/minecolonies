@@ -19,6 +19,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMi
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 
@@ -271,7 +273,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void sortWarehouse()
     {
+
         Network.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
+        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, WAREHOUSE_SORTED);
     }
 
     /**

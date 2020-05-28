@@ -221,7 +221,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     {
         if (structurePlacer.getB().getStage() == null)
         {
-            return IDLE;
+            return PICK_UP_RESIDUALS;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));

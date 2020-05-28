@@ -65,6 +65,11 @@ public abstract class AbstractColonyServerMessage implements IMessage
 
     protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony);
 
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     protected abstract void toBytesOverride(final PacketBuffer buf);
 
     protected void toBytesAbstractOverride(final PacketBuffer buf) {}
@@ -78,6 +83,11 @@ public abstract class AbstractColonyServerMessage implements IMessage
         toBytesOverride(buf);
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
     protected abstract void fromBytesOverride(final PacketBuffer buf);
 
     protected void fromBytesAbstractOverride(final PacketBuffer buf) {}

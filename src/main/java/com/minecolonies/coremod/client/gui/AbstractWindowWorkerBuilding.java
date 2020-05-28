@@ -7,19 +7,16 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.ChangePickUpPriorityStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.*;
 
 /**
  * Abstract class for window for worker building.
@@ -90,20 +87,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_DP_DOWN = "deliveryPrioDown";
 
     /**
-     * Button to set delivery prio state
+     * Button to force a pickup
      */
-    private static final String BUTTON_DP_STATE = "deliveryPrioState";
+    private static final String BUTTON_FORCE_PICKUP = "forcePickup";
 
     /**
      * Current pickup priority of the building.
      */
     private int prio = building.getBuildingDmPrio();
-
-    /**
-     * PickUp priority state of the building.
-     * Can be AUTOMATIC, STATIC, or NEVER.
-     */
-    private PickUpPriorityState state = building.getBuildingDmPrioState();
 
     /**
      * Constructor for the window of the worker building.
@@ -121,9 +112,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_RECIPES_LIST, this::recipeListClicked);
         super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
-        super.registerButton(BUTTON_DP_STATE, this::changeDPState);
-
-        updatePickUpButtons();
+        super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
 
         // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
         // The thought behind this is to show users player-thaught recipes and also built-in recipes.
@@ -133,6 +122,19 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
     }
 
+    private void updatePriorityLabel()
+    {
+        if (prio == 0)
+        {
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(
+              LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never"));
+        }
+        else
+        {
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + prio + "/10");
+        }
+    }
+
     private void deliveryPrioUp()
     {
         if (prio != 10)
@@ -140,59 +142,22 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             prio++;
         }
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
-        findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(prio + "/10");
+        updatePriorityLabel();
     }
 
     private void deliveryPrioDown()
     {
-        if (prio != 1)
+        if (prio != 0)
         {
             prio--;
         }
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
-        findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(prio + "/10");
+        updatePriorityLabel();
     }
 
-    private void changeDPState()
+    private void forcePickup()
     {
-        switch (state)
-        {
-            case AUTOMATIC:
-                state = NEVER;
-                break;
-            case STATIC:
-                state = AUTOMATIC;
-                break;
-            case NEVER:
-                state = STATIC;
-                break;
-        }
-
-        Network.getNetwork().sendToServer(new ChangePickUpPriorityStateMessage(building, state));
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(state.toString()));
-
-        updatePickUpButtons();
-    }
-
-    /**
-     * Hides and realigns the buttons based on the selected pickup priority state
-     */
-    private void updatePickUpButtons()
-    {
-        if (state == NEVER)
-        {
-            findPaneOfTypeByID(LABEL_PRIO_LABEL, Label.class).setVisible(false);
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setVisible(false);
-            findPaneOfTypeByID(BUTTON_DP_DOWN, ButtonImage.class).setVisible(false);
-            findPaneOfTypeByID(BUTTON_DP_UP, ButtonImage.class).setVisible(false);
-        }
-        else
-        {
-            findPaneOfTypeByID(LABEL_PRIO_LABEL, Label.class).setVisible(true);
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_DP_DOWN, ButtonImage.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_DP_UP, ButtonImage.class).setVisible(true);
-        }
+        Network.getNetwork().sendToServer(new ForcePickupMessage(building));
     }
 
     private void recipeListClicked()
@@ -285,7 +250,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             });
         }
 
-        findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(state.toString()));
+        updatePriorityLabel();
     }
 }
