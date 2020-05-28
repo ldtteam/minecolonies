@@ -529,12 +529,12 @@ public final class NbtTagConstants
     /**
      * Tags to store the needed resourced to nbt.
      */
-    public static final String TAG_PROGRESS_POS = "progressPos";
+    public static final String TAG_PROGRESS_POS = "newProgressPos";
 
     /**
      * Tags to store the needed resourced to nbt.
      */
-    public static final String TAG_PROGRESS_STAGE = "progressStage";
+    public static final String TAG_PROGRESS_STAGE = "newProgressStage";
 
     /**
      * Tags to store the needed resources to nbt.
