@@ -4,15 +4,22 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.sounds.RaidSounds;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
+import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.api.entity.ModEntities.*;
@@ -27,6 +34,11 @@ public class EgyptianRaidEvent extends HordeRaidEvent
      */
     public static final ResourceLocation EGYPTIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "egyptian_raid");
 
+    /**
+     * Cooldown for the music, to not play it too much/not overlap with itself
+     */
+    private int musicCooldown = 0;
+
     public EgyptianRaidEvent(IColony colony)
     {
         super(colony);
@@ -36,6 +48,46 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     public ResourceLocation getEventTypeID()
     {
         return EGYPTIAN_RAID_EVENT_TYPE_ID;
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
+        {
+            Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
+            getColony().getWorld().playSound(player, new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ()), RaidSounds.DESERT_RAID_WARNING, SoundCategory.AMBIENT, 0.5f, 1.0f);
+        }
+        musicCooldown = 2;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (--musicCooldown <= 0)
+        {
+            for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
+            {
+                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
+                getColony().getWorld()
+                  .playSound(player, player.getPosition(), RaidSounds.DESERT_RAID, SoundCategory.AMBIENT, 2f, 1.0f);
+            }
+            musicCooldown = 12;
+        }
+    }
+
+    @Override
+    public void onFinish()
+    {
+        super.onFinish();
+        for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
+        {
+            Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
+            getColony().getWorld().playSound(player, new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ()), RaidSounds.DESERT_RAID_VICTORY, SoundCategory.AMBIENT, 0.5f, 1.0f);
+        }
     }
 
     @Override

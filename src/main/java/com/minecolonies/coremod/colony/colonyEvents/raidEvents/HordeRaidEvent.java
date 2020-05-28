@@ -297,6 +297,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
           RAID_EVENT_MESSAGE + horde.getMessageID(), colony.getName(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint));
     }
 
+    /**
+     * Get the assigned colony.
+     * @return the colony.
+     */
+    public IColony getColony()
+    {
+        return colony;
+    }
+
     @Override
     public void onUpdate()
     {
