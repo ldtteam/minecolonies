@@ -346,8 +346,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                                   || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
                             {
                                 setBedOccupation(entry.getKey(), false);
+                                bedMap.put(entry.getKey(), 0);
                             }
-                            bedMap.put(entry.getKey(), 0);
                         }
                         else
                         {
@@ -359,7 +359,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                     }
                     else
                     {
-                        bedMap.remove(entry.getKey());
+                        bedMap.put(entry.getKey(), 0);
                     }
                 }
             }

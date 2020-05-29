@@ -445,6 +445,7 @@ public class Colony implements IColony
             {
                 mourning = false;
                 citizenManager.updateCitizenMourn(false);
+                citizenManager.updateCitizenSleep(false);
             }
         }
         else if (!isDay && world.isDaytime())
