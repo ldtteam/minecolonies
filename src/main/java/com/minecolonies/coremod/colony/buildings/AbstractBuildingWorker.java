@@ -274,6 +274,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
+        if (citizen.getWorkBuilding() != null)
+        {
+            citizen.getWorkBuilding().removeCitizen(citizen);
+        }
+
         if (!super.assignCitizen(citizen))
         {
             Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:" + this.getJobName());

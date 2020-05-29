@@ -185,6 +185,7 @@ public class NetworkChannel
         registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
         registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
+        registerMessage(++idx, PlayMusicMessage.class, PlayMusicMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);
