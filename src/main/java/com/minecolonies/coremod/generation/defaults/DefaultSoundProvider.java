@@ -89,6 +89,18 @@ public class DefaultSoundProvider implements IDataProvider
         tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
         sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
 
+        JsonObject desertRaidProperties = getDefaultProperties();
+        desertRaidProperties.addProperty("stream", true);
+        sounds.add("raid.desert.desert_raid", createSoundJson("music", desertRaidProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid")));
+
+        JsonObject desertRaidStartProperties = getDefaultProperties();
+        desertRaidStartProperties.addProperty("stream", true);
+        sounds.add("raid.desert.desert_raid_warning", createSoundJson("music", desertRaidStartProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid_warning")));
+
+        JsonObject desertRaidEndProperties = getDefaultProperties();
+        desertRaidEndProperties.addProperty("stream", true);
+        sounds.add("raid.desert.desert_raid_victory", createSoundJson("music", desertRaidEndProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid_victory")));
+
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
         IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
     }
