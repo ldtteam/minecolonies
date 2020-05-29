@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "DEF",
+    "GHG"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:feather"
+    },
+    "B": {
+      "item": "minecraft:red_banner"
+    },
+    "D": {
+      "item": "minecraft:golden_sword"
+    },
+    "E": {
+      "item": "minecolonies:blockhutfield"
+    },
+    "F": {
+      "item": "minecraft:shield"
+    },
+    "G": {
+      "item": "minecolonies:blockhutguardtower"
+    },
+    "H": {
+      "item": "minecraft:leather_horse_armor"
+    }
+  },
+  "result": {
+    "item": "minecolonies:banner_rally_guards"
+  }
+}
