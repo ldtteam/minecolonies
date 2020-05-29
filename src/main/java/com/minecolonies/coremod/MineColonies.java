@@ -26,6 +26,9 @@ import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
+import com.minecolonies.coremod.client.render.mobs.viking.amazon.RendererArcherNorsemen;
+import com.minecolonies.coremod.client.render.mobs.viking.amazon.RendererChiefNorsemen;
+import com.minecolonies.coremod.client.render.mobs.viking.amazon.RendererShieldmaidenNorsemen;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -38,9 +41,7 @@ import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -183,6 +184,10 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MUMMY, RendererMummy::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN, RendererArcherNorsemen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZON, RendererAmazon::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);

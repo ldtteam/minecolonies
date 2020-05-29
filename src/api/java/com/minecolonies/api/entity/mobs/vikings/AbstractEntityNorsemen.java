@@ -10,22 +10,35 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+import java.util.Random;
+
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all norsemen entities.
  */
-public abstract class AbstractEntityViking extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesMob
 {
+    /**
+     * Amount of unique norsemen textures.
+     */
+    private static final int NORSEMEN_TEXTURES = 3;
+
+    /**
+     * Texture id of the norsemen.
+     */
+    private int textureId;
+
     /**
      * Constructor method for Abstract norsemen..
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityViking(final EntityType type, final World world)
+    public AbstractEntityNorsemen(final EntityType type, final World world)
     {
         super(type, world);
+        this.textureId = new Random().nextInt(NORSEMEN_TEXTURES);
     }
 
     @Override
@@ -57,5 +70,14 @@ public abstract class AbstractEntityViking extends AbstractEntityMinecoloniesMob
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
+    }
+
+    /**
+     * Get the unique texture id.
+     * @return the texture id.
+     */
+    public int getTextureId()
+    {
+        return this.textureId;
     }
 }
