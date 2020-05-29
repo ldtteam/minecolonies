@@ -19,12 +19,22 @@
                     <text id="skillexplanation" pos="30 44" size="150 30" color="black"/>
 
                     <label id="primary" pos="45 74" size="136 11" color="black"/>
+                    <image id="primaryimg" pos="30 74" size="11 11"/>
+
                     <label id="comp1" pos="45 86" size="136 11" color="black"/>
+                    <image id="comp1img" pos="30 86" size="11 11"/>
+
                     <label id="adverse1" pos="45 98" size="136 11" color="black"/>
+                    <image id="adverse1img" pos="30 98" size="11 11"/>
 
                     <label id="secondary" pos="45 124" size="136 11" color="black"/>
+                    <image id="secondaryimg" pos="30 124" size="11 11"/>
+
                     <label id="comp2" pos="45 136" size="136 11" color="black"/>
+                    <image id="comp2img" pos="30 136" size="11 11"/>
+
                     <label id="adverse2" pos="45 148" size="136 11" color="black"/>
+                    <image id="adverse2img" pos="30 148" size="11 11"/>
                 </view>
 			</switch>
 
