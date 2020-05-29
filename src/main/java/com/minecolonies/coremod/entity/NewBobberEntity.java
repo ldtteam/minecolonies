@@ -7,10 +7,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -41,6 +39,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private              boolean                   inGround;
     private              int                       ticksInGround;
     private              EntityCitizen             angler;
+    private              int                       tickRemove = 100;
     private              int                       ticksInAir;
     private              int                       ticksCatchable;
     private              int                       ticksCaughtDelay;
@@ -66,7 +65,9 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     /**
      * Set the current angler.
-     * @param citizen
+     * @param citizen the citizen to set.
+     * @param luck the luck param.
+     * @param lureSpeed the lure speed param.
      */
     public void setAngler(final EntityCitizen citizen, final int luck, final int lureSpeed)
     {
@@ -143,7 +144,17 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     public void tick()
     {
+
         super.tick();
+        if(!this.world.isRemote())
+        {
+            if (--this.tickRemove <= 0)
+            {
+                this.remove();
+                return;
+            }
+        }
+
         if (this.angler == null)
         {
             if (world.isRemote)
@@ -160,6 +171,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
         else if (this.world.isRemote || !this.shouldStopFishing())
         {
+
             if (this.inGround)
             {
                 ++this.ticksInGround;
@@ -571,6 +583,14 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     public boolean isReadyToCatch()
     {
         return readyToCatch;
+    }
+
+    /**
+     * Sets tickRemove to 100 ticks to prevent bobber from staying in the water when Fisherman is not fishing.
+     */
+    public void setInUse()
+    {
+        this.tickRemove = 100;
     }
 
     enum State

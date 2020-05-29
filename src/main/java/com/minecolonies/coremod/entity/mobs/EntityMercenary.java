@@ -123,7 +123,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     
     /**
      * Constructor method for Mercenaries.
-     *
+     * @param type the type.
      * @param world the world.
      */
     public EntityMercenary(final EntityType<EntityMercenary> type, final World world)
@@ -268,6 +268,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     /**
      * Sets this mercenary as leader
+     * @param soldiers set a leader of the list.
      */
     public void setLeader(final List<EntityMercenary> soldiers)
     {
@@ -393,6 +394,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     /**
      * Creates and returns the proxy when needed.
+     * @return the walking proxy.
      */
     public GeneralEntityWalkToProxy getProxy()
     {

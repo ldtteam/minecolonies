@@ -49,6 +49,14 @@ public final class ModBlocks
     public static AbstractBlockHut blockHutEnchanter;
     public static AbstractBlockHut blockHutUniversity;
     public static AbstractBlockHut blockHutHospital;
+    public static AbstractBlockHut blockStash;
+    public static AbstractBlockHut blockHutSchool;
+    public static AbstractBlockHut blockHutGlassblower;
+    public static AbstractBlockHut blockHutDyer;
+    public static AbstractBlockHut blockHutFletcher;
+    public static AbstractBlockHut blockHutMechanic;
+    public static AbstractBlockHut blockHutPlantation;
+    public static AbstractBlockHut blockHutTavern;
 
     /**
      * Utility blocks.
@@ -104,6 +112,14 @@ public final class ModBlocks
           blockHutSwineHerder,
           blockHutTownHall,
           blockHutUniversity,
-          blockHutHospital};
+          blockHutHospital,
+          blockHutSchool,
+          blockHutEnchanter,
+          blockHutGlassblower,
+          blockHutDyer,
+          blockHutFletcher,
+          blockHutMechanic,
+          blockHutPlantation,
+          blockHutTavern};
     }
 }

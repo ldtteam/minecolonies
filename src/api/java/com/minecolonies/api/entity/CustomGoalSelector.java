@@ -7,7 +7,7 @@ import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.profiler.IProfiler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -144,10 +144,10 @@ public class CustomGoalSelector extends GoalSelector
     }
 
     /**
-     * Whether the goals flag are within the disabled flags.
+     * Whether one of the goals flags is within the disabled flags.
      *
-     * @param goal
-     * @return
+     * @param goal the goal to check.
+     * @return whether one of the goals flags is within the disabled flags.
      */
     private boolean goalContainsDisabledFlag(final PrioritizedGoal goal)
     {
@@ -233,7 +233,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Gets all goals currently running
      *
-     * @return
+     * @return the stream of running goals.
      */
     public Stream<PrioritizedGoal> getRunningGoals()
     {
@@ -243,7 +243,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Disables the given flag
      *
-     * @param flag
+     * @param flag the flag to disable.
      */
     public void disableFlag(Goal.Flag flag)
     {
@@ -253,7 +253,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Enables the given flag
      *
-     * @param flag
+     * @param flag the flag to enable.
      */
     public void enableFlag(Goal.Flag flag)
     {

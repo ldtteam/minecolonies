@@ -1,8 +1,8 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.inventory.container.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.containers.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;

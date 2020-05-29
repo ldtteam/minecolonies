@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.entity.LivingEntity;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.util.Pond;
+import com.minecolonies.api.util.Tuple;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class PathJobFindWater extends AbstractPathJob
     private static final int MAX_RANGE    = 250;
     private final BlockPos            hutLocation;
     @NotNull
-    private final ArrayList<BlockPos> ponds;
+    private final ArrayList<Tuple<BlockPos, BlockPos>> ponds;
 
     /**
      * AbstractPathJob constructor.
@@ -34,7 +35,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param ponds already visited fishing places.
      * @param entity the entity.
      */
-    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<BlockPos> ponds, final LivingEntity entity)
+    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<Tuple<BlockPos, BlockPos>> ponds, final LivingEntity entity)
     {
         super(world, start, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);
@@ -68,51 +69,49 @@ public class PathJobFindWater extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (n.parent == null)
-        {
-            return false;
-        }
-
         if (squareDistance(hutLocation, n.pos) > MAX_RANGE)
         {
             return false;
         }
 
-        if (n.pos.getX() == n.parent.pos.getX())
+        if (isWater(n))
         {
-            final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-            return isWater(n.pos.add(0, -1, dz)) || isWater(n.pos.add(-1, -1, 0)) || isWater(n.pos.add(1, -1, 0));
-        }
-        else
-        {
-            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, -1)) || isWater(n.pos.add(0, -1, 1));
-        }
-    }
-
-    /**
-     * Checks if a certain location is water.
-     *
-     * @param newPond the location.
-     * @return true if so.
-     */
-    private boolean isWater(@NotNull final BlockPos newPond)
-    {
-        if (ponds.contains(newPond) || pondsAreNear(ponds, newPond))
-        {
-            return false;
-        }
-
-        @Nullable final Pond pond = Pond.createWater(world, newPond);
-
-        if (pond != null)
-        {
-            getResult().pond = newPond;
+            getResult().parent = n.pos;
             getResult().isEmpty = ponds.isEmpty();
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Checks if a certain location is water.
+     *
+     * @param n the location.
+     * @return true if so.
+     */
+    private boolean isWater(@NotNull final Node n)
+    {
+        if (n.parent == null)
+        {
+            return false;
+        }
+
+        if(world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isAirBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
+        {
+            if (n.pos.getX() == n.parent.pos.getX())
+            {
+                final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
+                return Pond.checkWater(world, n.pos.add(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.add(-1, -1, 0), getResult()) || Pond.checkWater(world, n.pos.add(1, -1, 0), getResult());
+            }
+            else
+            {
+                final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+                return Pond.checkWater(world,n.pos.add(dx, -1, 0), getResult()) || Pond.checkWater(world,n.pos.add(0, -1, -1), getResult()) || Pond.checkWater(world,n.pos.add(0, -1, 1), getResult());
+            }
+        }
+
+        return !ponds.contains(n.pos) && !pondsAreNear(ponds, n.pos);
     }
 
     /**
@@ -134,14 +133,14 @@ public class PathJobFindWater extends AbstractPathJob
      * @param newPond the position.
      * @return true if so.
      */
-    private static boolean pondsAreNear(@NotNull final ArrayList<BlockPos> ponds, @NotNull final BlockPos newPond)
+    private static boolean pondsAreNear(@NotNull final ArrayList<Tuple<BlockPos, BlockPos>> ponds, @NotNull final BlockPos newPond)
     {
         if (ponds.isEmpty())
         {
             return false;
         }
         @NotNull final Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
-        return ponds.stream().anyMatch(compare);
+        return ponds.stream().anyMatch(p -> compare.test(p.getB()));
     }
 
     @Override

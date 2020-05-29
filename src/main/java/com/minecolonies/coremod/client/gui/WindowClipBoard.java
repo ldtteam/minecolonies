@@ -2,7 +2,11 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.minecolonies.api.colony.IColonyManager;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Image;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -11,13 +15,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -77,14 +76,17 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      * The divider for the life count.
      */
     private static final int LIFE_COUNT_DIVIDER = 30;
+
     /**
      * Scrollinglist of the resources.
      */
     private ScrollingList resourceList;
+
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private final IColonyView colony;
+
     /**
      * Life count.
      */
@@ -92,23 +94,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     /**
      * Constructor of the clipboard GUI.
-     * @param colonyId the colony id to check the requests for.
+     * @param colony the colony to check the requests for.
      */
-    public WindowClipBoard(final int colonyId)
+    public WindowClipBoard(final IColonyView colony)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
-        this.colonyId = colonyId;
-    }
-
-    /**
-     * Constructor of the clipboard GUI.
-     * @param s the description string of the style.
-     * @param colony the colony id.
-     */
-    public WindowClipBoard(final String s, final IColonyView colony)
-    {
-        super(s);
-        this.colonyId = colony.getID();
+        this.colony = colony;
     }
 
     /**
@@ -145,9 +136,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-              .setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+              .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
@@ -161,14 +151,13 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public ImmutableList<IRequest> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
 
-        if (view == null)
+        if (colony == null)
         {
             return ImmutableList.of();
         }
 
-        final IRequestManager requestManager = view.getRequestManager();
+        final IRequestManager requestManager = colony.getRequestManager();
 
         if (requestManager == null)
         {
@@ -230,7 +219,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colonyId);
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colony.getID());
             window.open();
         }
     }
@@ -242,7 +231,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         if (getOpenRequests().size() > row && row >= 0)
         {
             @NotNull final IRequest request = getOpenRequests().get(row);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getId(), RequestState.CANCELLED, null));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
     }
 }

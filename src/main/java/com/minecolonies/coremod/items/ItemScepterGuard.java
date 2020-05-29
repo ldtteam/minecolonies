@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -9,7 +10,6 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,6 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -41,6 +40,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.
+     * @param properties the properties.
      */
     public ItemScepterGuard(final Item.Properties properties)
     {

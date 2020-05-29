@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -32,8 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.PIRATES_SAILING_OFF_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -51,6 +50,8 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public static final String TAG_DAYS_LEFT     = "pirateDaysLeft";
     public static final String TAG_SPAWNER_COUNT = "spawnerCount";
     public static final String TAG_SHIPSIZE      = "shipSize";
+    public static final String TAG_SHIPROTATION  = "shipRotation";
+    public static final String TAG_KILLED        = "killed";
 
     /**
      * The max distance for spawning pirates when the ship is unloaded
@@ -113,7 +114,18 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
 
     /**
+     * If a citizen was killed during the raid.
+     */
+    private boolean killedCitizenInRaid = false;
+
+    /**
+     * Rotation of the ship to spawn
+     */
+    private int shipRotation = 0;
+
+    /**
      * Create a new Pirate raid event.
+     * @param colony the colony.
      */
     public PirateRaidEvent(@NotNull final IColony colony)
     {
@@ -124,20 +136,20 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     @Override
     public void onStart()
     {
-        status = EventStatus.PROGRESSING;
+        status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
         spawnerCount = shipSize.spawnerCount;
 
-        final Structure structure =
-          new Structure(colony.getWorld(), Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(0), colony.getWorld(), spawnPoint, Mirror.NONE);
+        final CreativeBuildingStructureHandler structure =
+          new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize.schematicName, new PlacementSettings(), true);
+        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
-        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure, colony.getWorld()))
+        if (!PirateEventUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
         {
             spawnPoint = spawnPoint.down();
         }
 
-        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, id))
+        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, id, shipRotation))
         {
             // Pirate event not successfully started.
             status = EventStatus.CANCELED;
@@ -154,6 +166,14 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     @Override
     public void onUpdate()
     {
+        // TODO: remove once schematics have spawners
+        if (getStatus() == EventStatus.PREPARING)
+        {
+            PirateEventUtils.loadSpawners(colony.getWorld(), spawnPoint, shipSize.schematicName, colony, id);
+            status = EventStatus.PROGRESSING;
+            return;
+        }
+
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
         if (!respawns.isEmpty())
@@ -173,9 +193,15 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         // Spawns landing troops.
         if (pirates.size() < spawnerCount * 2)
         {
-            final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint.add(0, 0, -2), colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
+                // Find nice position on the ship
+                if (spawnPos.distanceSq(spawnPoint) < 25)
+                {
+                    spawnPos = PirateEventUtils.findSpawnPosOnShip(spawnPos, colony.getWorld(), 3);
+                }
+
                 for (final EntityType mobType : shipSize.pirates)
                 {
                     RaiderMobUtils.spawn(mobType, 1, spawnPos, colony.getWorld(), colony, id);
@@ -220,6 +246,8 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             if (spawnerCount <= 0)
             {
                 daysToGo = 1;
+                status = EventStatus.WAITING;
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
     }
@@ -238,6 +266,10 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     public void onEntityDeath(final LivingEntity entity)
     {
         pirates.remove(entity);
+        if (pirates.isEmpty() && spawnerCount == 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATES_KILLED_MESSAGE);
+        }
     }
 
     @Override
@@ -262,7 +294,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Called when an entity is removed
      *
-     * @param entity
+     * @param entity the entity to unregister.
      */
     @Override
     public void unregisterEntity(final Entity entity)
@@ -280,7 +312,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Get the allowed amount of pirates this event can have.
      *
-     * @return
+     * @return the max number of pirates.
      */
     private int getMaxPirates()
     {
@@ -290,11 +322,21 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     /**
      * Sets the ship size for this event.
      *
-     * @param shipSize
+     * @param shipSize the ship size.
      */
     public void setShipSize(final ShipSize shipSize)
     {
         this.shipSize = shipSize;
+    }
+
+    /**
+     * Sets the ships rotation
+     *
+     * @param shipRotation the ship rotation.
+     */
+    public void setShipRotation(final int shipRotation)
+    {
+        this.shipRotation = shipRotation;
     }
 
     @Override
@@ -362,6 +404,8 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         compound.putInt(TAG_SPAWNER_COUNT, spawnerCount);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
+        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
+        compound.putInt(TAG_SHIPROTATION, shipRotation);
         return compound;
     }
 
@@ -374,6 +418,8 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         spawnerCount = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
+        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
+        shipRotation = compound.getInt(TAG_SHIPROTATION);
     }
 
     /**
@@ -381,12 +427,18 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
      *
      * @param colony   the events colony
      * @param compound the NBT compound
-     * @return
+     * @return the colony to load.
      */
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
         raidEvent.readFromNBT(compound);
         return raidEvent;
+    }
+
+    @Override
+    public void setKilledCitizenInRaid()
+    {
+        killedCitizenInRaid = true;
     }
 }

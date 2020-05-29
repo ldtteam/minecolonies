@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
@@ -177,7 +178,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openClipBoardWindow(final int colonyId)
+    public void openClipBoardWindow(final IColonyView colonyView)
     {
         /*
          * Intentionally left empty.
@@ -199,7 +200,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     /**
-     * Used for entity IDs, starts at 0 & increments for each call.
+     * Used for entity IDs, starts at 0 and increments for each call.
+     * <p>
+     * currently unused.
+     * 
+     * @return the next entity id.
      */
     private int getNextEntityId()
     {

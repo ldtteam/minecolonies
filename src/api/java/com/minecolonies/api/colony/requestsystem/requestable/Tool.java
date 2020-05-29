@@ -5,7 +5,6 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
@@ -57,6 +56,7 @@ public class Tool implements IDeliverable
      * Serializes this Tool into NBT.
      *
      * @param controller The IFactoryController used to serialize sub types.
+     * @param tool the tool to serialize.
      * @return The CompoundNBT containing the tool data.
      */
     @NotNull
@@ -142,8 +142,7 @@ public class Tool implements IDeliverable
                 && getToolClasses(stack).stream()
                 .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                 .map(ToolType::getToolType)
-                .filter(t -> t != ToolType.NONE)
-                .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+                .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
 
         if (!toolTypeResult)
         {
@@ -228,6 +227,12 @@ public class Tool implements IDeliverable
 
     @Override
     public int getCount()
+    {
+        return 1;
+    }
+
+    @Override
+    public int getMinimumCount()
     {
         return 1;
     }

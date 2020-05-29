@@ -12,9 +12,11 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheepsMessage;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -130,6 +132,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Returns current state of automatical sheep dyeing, true = enabled
+     * @return true if so.
      */
     public boolean isDyeSheeps()
     {
@@ -138,11 +141,22 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Sets state of automatical sheep dyeing, true = enabled
+     * @param dyeSheeps true if sheeps should be dyed.
      */
     public void setDyeSheeps(final boolean dyeSheeps)
     {
         this.dyeSheeps = dyeSheeps;
         markDirty();
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**
@@ -174,6 +188,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
         /**
          * Called from button handler
+         * @param dyeSheeps true if the sheeps should be dyed.
          */
         public void setDyeSheeps(final boolean dyeSheeps)
         {
@@ -182,7 +197,8 @@ public class BuildingShepherd extends AbstractBuildingWorker
         }
 
         /**
-         * Returns current state of automatical sheep dyeing, true = enabled
+         * Returns current state of automatical sheep dyeing.
+         * @return true if so.
          */
         public boolean isDyeSheeps()
         {

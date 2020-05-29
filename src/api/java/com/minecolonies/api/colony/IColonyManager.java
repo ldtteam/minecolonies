@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -54,9 +54,18 @@ public interface IColonyManager
     void deleteColonyByDimension(int id, boolean canDestroy, int dimension);
 
     /**
+     * Removes a colony view
+     *
+     * @param id the id of the colony.
+     * @param dimension the dimension it is in.
+     */
+    void removeColonyView(int id, int dimension);
+
+    /**
      * Get Colony by UUID.
      *
      * @param id ID of colony.
+     * @param world the world it is in.
      * @return Colony with given ID.
      */
     @Nullable
@@ -66,6 +75,7 @@ public interface IColonyManager
      * Get Colony by UUID.
      *
      * @param id ID of colony.
+     * @param dimension the dimension it is in.
      * @return Colony with given ID.
      */
     @Nullable
@@ -137,6 +147,7 @@ public interface IColonyManager
      * Get a AbstractBuilding by position.
      *
      * @param pos Block position.
+     * @param dimension the dimension it is in.
      * @return Returns the view belonging to the building at (x, y, z).
      */
     IBuildingView getBuildingView(int dimension, BlockPos pos);
@@ -296,6 +307,7 @@ public interface IColonyManager
      * @param colonyData        {@link PacketBuffer} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
+     * @param world the world it is in.
      */
     void handleColonyViewMessage(int colonyId, @NotNull PacketBuffer colonyData, @NotNull World world, boolean isNewSubscription, int dim);
 
@@ -386,17 +398,6 @@ public interface IColonyManager
      * @param dim         the dimension.
      */
     void handleColonyViewRemoveWorkOrderMessage(int colonyId, int workOrderId, int dim);
-
-    /**
-     * Handle a message about the hapiness.
-     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
-     *
-     * @param colonyId Id of the colony.
-     * @param data     Datas about the hapiness
-     * @param dim      the dimension.
-     */
-    void handleHappinessDataMessage(int colonyId, HappinessData data, int dim);
 
     /**
      * Whether or not a new schematic have been downloaded.

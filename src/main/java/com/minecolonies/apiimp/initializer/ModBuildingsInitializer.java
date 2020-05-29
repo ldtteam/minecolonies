@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -240,25 +241,81 @@ public final class ModBuildingsInitializer
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()
-                                 .setBuildingBlock(ModBlocks.blockHutEnchanter)
-                                 .setBuildingProducer(BuildingEnchanter::new)
-                                 .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
-                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
-                                 .createBuildingEntry();
-
-        ModBuildings.university = new BuildingEntry.Builder()
-                                   .setBuildingBlock(ModBlocks.blockHutUniversity)
-                                   .setBuildingProducer(BuildingUniversity::new)
-                                   .setBuildingViewProducer(() -> BuildingUniversity.View::new)
-                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
+                                   .setBuildingBlock(ModBlocks.blockHutEnchanter)
+                                   .setBuildingProducer(BuildingEnchanter::new)
+                                   .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                    .createBuildingEntry();
 
-        ModBuildings.hospital = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutHospital)
-                                    .setBuildingProducer(BuildingHospital::new)
-                                    .setBuildingViewProducer(() -> BuildingHospital.View::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
+        ModBuildings.university = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutUniversity)
+                                    .setBuildingProducer(BuildingUniversity::new)
+                                    .setBuildingViewProducer(() -> BuildingUniversity.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
                                     .createBuildingEntry();
+
+        ModBuildings.hospital = new BuildingEntry.Builder()
+                                  .setBuildingBlock(ModBlocks.blockHutHospital)
+                                  .setBuildingProducer(BuildingHospital::new)
+                                  .setBuildingViewProducer(() -> BuildingHospital.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
+                                  .createBuildingEntry();
+
+        ModBuildings.stash = new BuildingEntry.Builder()
+                               .setBuildingBlock(ModBlocks.blockStash)
+                               .setBuildingProducer(Stash::new)
+                               .setBuildingViewProducer(() -> EmptyView::new)
+                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STASH_ID))
+                               .createBuildingEntry();
+
+        ModBuildings.school = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutSchool)
+                                .setBuildingProducer(BuildingSchool::new)
+                                .setBuildingViewProducer(() -> BuildingSchool.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SCHOOL_ID))
+                                .createBuildingEntry();
+
+        ModBuildings.glassblower = new BuildingEntry.Builder()
+                                     .setBuildingBlock(ModBlocks.blockHutGlassblower)
+                                     .setBuildingProducer(BuildingGlassblower::new)
+                                     .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
+                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
+                                     .createBuildingEntry();
+
+        ModBuildings.dyer = new BuildingEntry.Builder()
+                              .setBuildingBlock(ModBlocks.blockHutDyer)
+                              .setBuildingProducer(BuildingDyer::new)
+                              .setBuildingViewProducer(() -> BuildingDyer.View::new)
+                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
+                              .createBuildingEntry();
+
+        ModBuildings.fletcher = new BuildingEntry.Builder()
+                              .setBuildingBlock(ModBlocks.blockHutFletcher)
+                              .setBuildingProducer(BuildingFletcher::new)
+                              .setBuildingViewProducer(() -> BuildingFletcher.View::new)
+                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
+                              .createBuildingEntry();
+
+        ModBuildings.tavern = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutTavern)
+                                .setBuildingProducer(BuildingTavern::new)
+                                .setBuildingViewProducer(() -> BuildingTavern.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
+                                .createBuildingEntry();
+
+        ModBuildings.mechanic = new BuildingEntry.Builder()
+                                  .setBuildingBlock(ModBlocks.blockHutMechanic)
+                                  .setBuildingProducer(BuildingMechanic::new)
+                                  .setBuildingViewProducer(() -> BuildingMechanic.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
+                                  .createBuildingEntry();
+
+        ModBuildings.plantation = new BuildingEntry.Builder()
+                                  .setBuildingBlock(ModBlocks.blockHutPlantation)
+                                  .setBuildingProducer(BuildingPlantation::new)
+                                  .setBuildingViewProducer(() -> BuildingPlantation.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
+                                  .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -294,5 +351,13 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.enchanter);
         reg.register(ModBuildings.university);
         reg.register(ModBuildings.hospital);
+        reg.register(ModBuildings.stash);
+        reg.register(ModBuildings.school);
+        reg.register(ModBuildings.glassblower);
+        reg.register(ModBuildings.dyer);
+        reg.register(ModBuildings.fletcher);
+        reg.register(ModBuildings.mechanic);
+        reg.register(ModBuildings.plantation);
+        reg.register(ModBuildings.tavern);
     }
 }

@@ -357,6 +357,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
         if (this.getTargetableArea() != null)
         {
             return new ArrayList<>(world.getEntitiesWithinAABB(
+
               ItemEntity.class,
               this.getTargetableArea()
             ));
@@ -366,6 +367,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
 
     /**
      * Get the Animal's class from the none Abstract.
+     * @return the class of the animal to work with.
      */
     public abstract Class<T> getAnimalClass();
 
@@ -390,7 +392,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
 
     /**
      * Lets the herder walk to the animal.
-     *
+     * @param animal the animal to walk to.
      * @return true if the herder is walking to the animal.
      */
     public boolean walkingToAnimal(final AnimalEntity animal)
@@ -426,7 +428,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
                 animal.setInLove(null);
                 worker.swingArm(Hand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
-                worker.decreaseSaturationForAction();
             }
         }
     }
@@ -434,7 +435,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
     /**
      * Returns true if animals list is above max.
      * Returns false if animals list is within max.
-     *
+     * @param allAnimals the list of animals.
      * @return if amount of animals is over max.
      */
     public boolean maxAnimals(final List<T> allAnimals)
@@ -461,6 +462,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
      * Sets the tool as held item.
      *
      * @param toolType the {@link ToolType} we want to equip
+     * @param hand the hand to equip it in.
      * @return true if the tool was equipped.
      */
     public boolean equipTool(final Hand hand, final ToolType toolType)
@@ -476,6 +478,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
     /**
      * Gets the slot in which the Tool is in.
      *
+     * @param toolType this herders tool type.
      * @return slot number.
      */
     private int getToolSlot(final ToolType toolType)
@@ -498,6 +501,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
      * Sets the {@link ItemStack} as held item or returns false.
      *
      * @param itemStack the {@link ItemStack} to equip.
+     * @param hand the hand to equip it in.
      * @return true if the item was equipped.
      */
     public boolean equipItem(final Hand hand, final ItemStack itemStack)
@@ -533,10 +537,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
         {
             worker.swingArm(Hand.MAIN_HAND);
             animal.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
-            worker.getHeldItemMainhand().damageItem(1, animal, (i) -> {
-                i.sendBreakAnimation(Hand.MAIN_HAND);
-            });
-            worker.decreaseSaturationForAction();
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
         }
     }
 

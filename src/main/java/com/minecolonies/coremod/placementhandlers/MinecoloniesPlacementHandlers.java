@@ -2,8 +2,8 @@ package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.blocks.PlaceholderBlock;
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.tileentities.TileEntityPlaceholder;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -19,13 +19,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -38,8 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
 /**
@@ -70,7 +67,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.FlowerPotPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.BlockSolidSubstitutionPlacementHandler());
+        PlacementHandlers.handlers.add(new FencePlacementHandler());
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
@@ -90,7 +87,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -111,7 +108,7 @@ public final class MinecoloniesPlacementHandlers
                     world.setBlockState(pos, blockState);
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -130,7 +127,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -140,7 +137,7 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
             {
-                return blockState;
+                return ActionProcessingResult.SUCCESS;
             }
 
             TileEntity entity = world.getTileEntity(pos);
@@ -163,7 +160,7 @@ public final class MinecoloniesPlacementHandlers
                     world.setBlockState(pos, newState);
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -172,7 +169,7 @@ public final class MinecoloniesPlacementHandlers
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-            for (final ItemStack stack : getItemsFromTileEntity(tileEntityData, world))
+            for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world))
             {
                 if (!ItemStackUtils.isEmpty(stack))
                 {
@@ -192,7 +189,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -220,7 +217,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -228,7 +225,7 @@ public final class MinecoloniesPlacementHandlers
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+            itemList.addAll(PlacementHandlers.getItemsFromTileEntity(tileEntityData, world));
 
             itemList.removeIf(ItemStackUtils::isEmpty);
 
@@ -245,7 +242,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -266,7 +263,7 @@ public final class MinecoloniesPlacementHandlers
                         {
                             if (world.getBlockState(pos).getBlock() == block)
                             {
-                                return blockState;
+                                return ActionProcessingResult.SUCCESS;
                             }
 
                             final TileEntity building = world.getTileEntity(centerPos);
@@ -287,7 +284,7 @@ public final class MinecoloniesPlacementHandlers
                     }
                 }
             }
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -328,7 +325,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -339,12 +336,12 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).equals(blockState))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (tileEntityData != null)
@@ -359,7 +356,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -372,8 +369,6 @@ public final class MinecoloniesPlacementHandlers
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
-        private static final Direction[] DIRS = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
-
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
         {
@@ -381,7 +376,7 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public Object handle(
+        public ActionProcessingResult handle(
           @NotNull final World world,
           @NotNull final BlockPos pos,
           @NotNull final BlockState blockState,
@@ -392,12 +387,12 @@ public final class MinecoloniesPlacementHandlers
         {
             if (world.getBlockState(pos).equals(blockState))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
-                return ActionProcessingResult.ACCEPT;
+                return ActionProcessingResult.PASS;
             }
 
             if (tileEntityData != null)
@@ -405,6 +400,7 @@ public final class MinecoloniesPlacementHandlers
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                    blockState.getBlock().onBlockPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
                 }
                 catch (final Exception ex)
                 {
@@ -412,7 +408,7 @@ public final class MinecoloniesPlacementHandlers
                 }
             }
 
-            return blockState;
+            return ActionProcessingResult.SUCCESS;
         }
 
         @Override
@@ -429,6 +425,57 @@ public final class MinecoloniesPlacementHandlers
             }
             itemList.removeIf(ItemStackUtils::isEmpty);
 
+            return itemList;
+        }
+    }
+
+    public static class FencePlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+        {
+            return BlockTags.FENCES.contains(blockState.getBlock());
+        }
+
+        @Override
+        public ActionProcessingResult handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos,
+          final PlacementSettings settings)
+        {
+            if (world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.PASS;
+            }
+
+            BlockState northState = world.getBlockState(pos.north());
+            BlockState eastState = world.getBlockState(pos.east());
+            BlockState southState = world.getBlockState(pos.south());
+            BlockState westState = world.getBlockState(pos.west());
+            final BlockState fence = blockState
+              .with(FenceBlock.NORTH, ((FenceBlock) blockState.getBlock()).func_220111_a(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
+              .with(FenceBlock.EAST, ((FenceBlock) blockState.getBlock()).func_220111_a(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
+              .with(FenceBlock.SOUTH, ((FenceBlock) blockState.getBlock()).func_220111_a(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
+              .with(FenceBlock.WEST, ((FenceBlock) blockState.getBlock()).func_220111_a(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
+
+            if (!world.setBlockState(pos, fence, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.PASS;
+            }
+
+            return ActionProcessingResult.SUCCESS;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            itemList.removeIf(ItemStackUtils::isEmpty);
             return itemList;
         }
     }

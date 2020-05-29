@@ -134,6 +134,7 @@ public interface IRequestHandler
      *
      * @param token The token to query
      * @throws IllegalArgumentException when the token is unknown to the given manager.
+     * @return the request.
      */
     @SuppressWarnings(RAWTYPES)
     IRequest getRequest(IToken<?> token);

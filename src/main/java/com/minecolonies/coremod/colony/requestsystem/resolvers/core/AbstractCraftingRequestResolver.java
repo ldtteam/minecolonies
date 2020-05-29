@@ -18,7 +18,9 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
@@ -139,7 +141,16 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (reqs.contains(request.getRequest()))
         {
-            return true;
+            for (final IRequestable requestable : reqs)
+            {
+                if (requestable.equals(request.getRequest())
+                      && request.getRequest() instanceof IDeliverable
+                      && requestable instanceof IDeliverable
+                      && ((IDeliverable) request.getRequest()).getCount() < ((IDeliverable) requestable).getCount() )
+                {
+                    return true;
+                }
+            }
         }
         reqs.add(request.getRequest());
 
@@ -150,7 +161,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
         {
-            return true;
+            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() < target.getRequest().getCount())
+            {
+                return true;
+            }
         }
 
         if (!request.hasParent())
@@ -181,11 +195,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack), request.getRequest().getCount());
+        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack), request.getRequest().getCount(), request.getRequest().getMinimumCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count, final int minCount)
     {
         final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
         if (craftableCrafting == null)
@@ -193,20 +207,30 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return null;
         }
 
-        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput(), count);
+        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput(), count, minCount);
     }
 
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
             @NotNull final IRequestManager manager,
             final ItemStack requestStack,
-            final int count)
+            final int count,
+            final int minCount)
     {
         final int recipeExecutionsCount = (int) Math.ceil( (double) count / requestStack.getCount());
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount)));
+        final int minRecipeExecutionsCount = (int) Math.ceil( (double) minCount / requestStack.getCount());
+
+        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount, Math.max(1, minRecipeExecutionsCount))));
     }
 
-    protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count);
+    /**
+     * Create a new requestable for a stack.
+     * @param stack the stack to request.
+     * @param count the count needed.
+     * @param minCount the min count to fulfill.
+     * @return the requestable.
+     */
+    protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count, final int minCount);
 
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)

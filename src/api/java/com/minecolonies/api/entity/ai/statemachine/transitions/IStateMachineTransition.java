@@ -16,6 +16,7 @@ public interface IStateMachineTransition<S extends IState>
 
     /**
      * Get the next state the Transition goes into
+     * @return the next state to go to.
      */
     S getNextState();
 

@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -22,26 +22,26 @@ public interface IEventStructureManager
      * @param mirror           structure mirror
      * @return true if successfully spawned
      */
-    boolean spawnTemporaryStructure(Structure structure, String schematicPath, BlockPos targetSpawnPoint, int eventID, int rotations, Mirror mirror);
+    boolean spawnTemporaryStructure(Blueprint structure, String schematicPath, BlockPos targetSpawnPoint, int eventID, int rotations, Mirror mirror);
 
     /**
      * Restores backup schematics for the given event ID, may be more than one.
      *
-     * @param eventID
+     * @param eventID the id of the event.
      */
     void loadBackupForEvent(int eventID);
 
     /**
      * Reads all saved schematics from nbt, needs to happen before the event managers nbt read.
      *
-     * @param compound
+     * @param compound the compound to read from.
      */
     void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Writes all backup schematics to NBT
      *
-     * @param compound
+     * @param compound the compound to write to.
      */
     void writeToNBT(@NotNull CompoundNBT compound);
 }

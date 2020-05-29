@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,14 +64,15 @@ public interface IProxy
     /**
      * Opens a clipboard window.
      *
-     * @param colonyId the colony id.
+     * @param colonyView the colony id.
      */
-    void openClipBoardWindow(int colonyId);
+    void openClipBoardWindow(IColonyView colonyView);
 
     /**
      * Opens the resource scroll window.
      *
      * @param colonyId the colony id.
+     * @param pos the position of the builder.
      */
     void openResourceScrollWindow(final int colonyId, final BlockPos pos);
 

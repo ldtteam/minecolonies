@@ -39,6 +39,14 @@ public final class ModBuildings
     public static final String        ENCHANTER_ID      = "enchanter";
     public static final String        UNIVERSITY_ID     = "university";
     public static final String        HOSPITAL_ID       = "hospital";
+    public static final String        STASH_ID          = "stash";
+    public static final String        SCHOOL_ID         = "school";
+    public static final String        GLASSBLOWER_ID    = "glassblower";
+    public static final String        DYER_ID           = "dyer";
+    public static final String        FLETCHER_ID       = "fletcher";
+    public static final String        MECHANIC_ID       = "mechanic";
+    public static final String        PLANTATION_ID     = "plantation";
+    public static final String        TAVERN_ID         = "tavern";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -74,6 +82,14 @@ public final class ModBuildings
     public static       BuildingEntry enchanter;
     public static       BuildingEntry university;
     public static       BuildingEntry hospital;
+    public static       BuildingEntry stash;
+    public static       BuildingEntry school;
+    public static       BuildingEntry glassblower;
+    public static       BuildingEntry dyer;
+    public static       BuildingEntry fletcher;
+    public static       BuildingEntry mechanic;
+    public static       BuildingEntry plantation;
+    public static       BuildingEntry tavern;
 
     private ModBuildings()
     {

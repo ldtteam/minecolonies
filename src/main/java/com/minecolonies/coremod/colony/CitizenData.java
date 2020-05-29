@@ -31,6 +31,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -54,6 +56,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 @SuppressWarnings({Suppression.BIG_CLASS, "PMD.ExcessiveClassLength"})
 public class CitizenData implements ICitizenData
 {
+    /**
+     * Citizen data's registry id
+     */
+    public static final ResourceLocation CITIZEN_DATA_TYPE = new ResourceLocation(MOD_ID, "colonycitizendata");
+
     /**
      * The max health.
      */
@@ -186,6 +193,11 @@ public class CitizenData implements ICitizenData
      * The citizen chat options on the server side.
      */
     private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+
+    /**
+     * If idle at job.
+     */
+    private boolean idle;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -633,7 +645,6 @@ public class CitizenData implements ICitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
 
-        citizenHappinessHandler.serializeViewNetworkData(buf);
         buf.writeCompoundTag(citizenSkillHandler.write());
 
         buf.writeString((job != null) ? job.getName() : "");
@@ -659,6 +670,10 @@ public class CitizenData implements ICitizenData
         {
             buf.writeInt(0);
         }
+
+        final CompoundNBT happinessCompound = new CompoundNBT();
+        citizenHappinessHandler.write(happinessCompound);
+        buf.writeCompoundTag(happinessCompound);
     }
 
     @Override
@@ -815,6 +830,8 @@ public class CitizenData implements ICitizenData
             nbtTagCompound.put("job", jobCompound);
         }
 
+        citizenHappinessHandler.write(nbtTagCompound);
+
         nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
         nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.OFF_HAND));
@@ -823,8 +840,6 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_ASLEEP, isAsleep);
         nbtTagCompound.putBoolean(TAG_JUST_ATE, justAte);
 
-        citizenHappinessHandler.write(nbtTagCompound);
-
         @NotNull final ListNBT chatTagList = new ListNBT();
         for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
@@ -832,7 +847,10 @@ public class CitizenData implements ICitizenData
             chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
             chatTagList.add(chatOptionCompound);
         }
+
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
+        nbtTagCompound.putBoolean(TAG_IDLE, idle);
+
         return nbtTagCompound;
     }
 
@@ -893,7 +911,8 @@ public class CitizenData implements ICitizenData
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }
-        citizenHappinessHandler.read(nbtTagCompound);
+
+        this.citizenHappinessHandler.read(nbtTagCompound);
 
         if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
         {
@@ -918,6 +937,8 @@ public class CitizenData implements ICitizenData
                 citizenSkillHandler.incrementLevel(secondary, entry.getValue() / 4);
             }
         }
+
+        this.idle = nbtTagCompound.getBoolean(TAG_IDLE);
     }
 
     @Override
@@ -984,6 +1005,18 @@ public class CitizenData implements ICitizenData
         return getCitizenSkillHandler().getJobModifier(this);
     }
 
+    @Override
+    public boolean isIdleAtJob()
+    {
+        return this.idle;
+    }
+
+    @Override
+    public void setIdleAtJob(final boolean idle)
+    {
+        this.idle = idle;
+    }
+
     // --------------------------- Request Handling --------------------------- //
 
     @Override
@@ -1015,5 +1048,19 @@ public class CitizenData implements ICitizenData
             return job.getAsyncRequests().contains(token);
         }
         return false;
+    }
+
+    /**
+     * Loads this citizen data from nbt
+     *
+     * @param colony colony to load for
+     * @param nbt    nbt compound to read from
+     * @return new CitizenData
+     */
+    public static CitizenData loadFromNBT(final IColony colony, final CompoundNBT nbt)
+    {
+        final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
+        data.deserializeNBT(nbt);
+        return data;
     }
 }

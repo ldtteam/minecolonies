@@ -1,19 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.util.Log;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
-import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMessage;
-import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
-import com.minecolonies.coremod.network.messages.RecallCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.math.BlockPos;
@@ -43,9 +42,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_RECALL = "recall";
 
     /**
-     * Id of the type label in the GUI.
+     * Id of the priority label in the GUI.
      */
-    private static final String LABEL_BUILDINGTYPE = "type";
+    private static final String LABEL_PRIO_LABEL = "prioLabel";
+
+    /**
+     * Id of the priority value label in the GUI.
+     */
+    private static final String LABEL_PRIO_VALUE = "prioValue";
 
     /**
      * Id of the name label in the GUI.
@@ -65,7 +69,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Button to access the crafting grid.
      */
-    private static final String BUTTON_CRAFTING  = "crafting";
+    private static final String BUTTON_CRAFTING = "crafting";
 
     /**
      * Button to access the recipe list.
@@ -83,20 +87,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_DP_DOWN = "deliveryPrioDown";
 
     /**
-     * Button to set delivery prio state
+     * Button to force a pickup
      */
-    private static final String BUTTON_DP_STATE = "deliveryPrioState";
+    private static final String BUTTON_FORCE_PICKUP = "forcePickup";
 
-    private static final String DP_MODE_STATIC = "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.static";
-
-    private static final String DP_MODE_AUTOMATIC = "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
-
+    /**
+     * Current pickup priority of the building.
+     */
     private int prio = building.getBuildingDmPrio();
-
-    private boolean state = building.isBuildingDmPrioState();
-
-    private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
-
 
     /**
      * Constructor for the window of the worker building.
@@ -114,7 +112,27 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_RECIPES_LIST, this::recipeListClicked);
         super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
-        super.registerButton(BUTTON_DP_STATE, this::changeDPState);
+        super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
+
+        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
+        // The thought behind this is to show users player-thaught recipes and also built-in recipes.
+        // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
+        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
+
+        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
+    }
+
+    private void updatePriorityLabel()
+    {
+        if (prio == 0)
+        {
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(
+              LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never"));
+        }
+        else
+        {
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + prio + "/10");
+        }
     }
 
     private void deliveryPrioUp()
@@ -124,31 +142,34 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             prio++;
         }
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
+        updatePriorityLabel();
     }
 
     private void deliveryPrioDown()
     {
-        if (prio != 1)
+        if (prio != 0)
         {
             prio--;
         }
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
+        updatePriorityLabel();
     }
 
-    private void changeDPState()
+    private void forcePickup()
     {
-        state = !state;
-        stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
-
-        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
-        Log.getLogger().info(state);
+        Network.getNetwork().sendToServer(new ForcePickupMessage(building));
     }
 
     private void recipeListClicked()
     {
+        if (!building.isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
+        {
+            /**
+             * @see #onOpened() for the reasoning behind this.
+             */
+            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
+            return;
+        }
         @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
         window.open();
     }
@@ -158,19 +179,24 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     public void craftingClicked()
     {
+        if (!building.isRecipeAlterationAllowed())
+        {
+            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
+            return;
+        }
         final BlockPos pos = building.getPosition();
         Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, building.canCraftComplexRecipes() ? 3 : 2));
+        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building));
     }
 
     /**
      * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) => Contract someone.
-     * Else => Fire the current worker.
+     * If there is no worker (worker.Id == 0) then Contract someone.
+     * Else then Fire the current worker.
      *
      * @param button the clicked button.
      */
-    private void hireClicked(@NotNull final Button button)
+    protected void hireClicked(@NotNull final Button button)
     {
         if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
         {
@@ -190,9 +216,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         Network.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
 
-    /**
-     * Called when the GUI has been opened.
-     */
     @Override
     public void onOpened()
     {
@@ -219,14 +242,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel", worker.getCitizenSkillHandler().getJobModifier(building)));
+                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel",
+                                worker.getCitizenSkillHandler().getJobModifier(building)));
                         }
                     }
                 }
             });
         }
 
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
-        findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
+        updatePriorityLabel();
     }
 }

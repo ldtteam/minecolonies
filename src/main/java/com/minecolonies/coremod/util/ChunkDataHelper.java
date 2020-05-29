@@ -10,7 +10,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -34,7 +34,7 @@ public final class ChunkDataHelper
     /**
      * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
      */
-    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK * 2 * 5;
+    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
 
     /**
      * Private constructor to hide implicit one.
@@ -117,6 +117,8 @@ public final class ChunkDataHelper
 
     /**
      * Called when a chunk is unloaded
+     * @param world the world it is unloading in.
+     * @param chunk the chunk that is unloading.
      */
     public static void unloadChunk(final Chunk chunk, final World world)
     {
@@ -201,8 +203,8 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final int range = getConfig().getCommon().townHallPaddingChunk.get();
-        final int buffer = getConfig().getCommon().minTownHallPadding.get();
+        final int range = getConfig().getCommon().initialColonySize.get();
+        final int buffer = getConfig().getCommon().minColonyDistance.get();
 
         claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }
@@ -212,16 +214,14 @@ public final class ChunkDataHelper
      *
      * --- This is only for dynamic claiming ---
      *
-     * @param world the world it was placed in.
+     * @param colony the colony to claim for
      * @param add if add or remove.
-     * @param id the id of the colony.
      * @param center the center position of the colony.
-     * @param dimension the dimension it was placed in.
      * @param range the range to claim.
      */
-    public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension, final int range)
+    public static void claimColonyChunks(final IColony colony, final boolean add, final BlockPos center, final int range)
     {
-        claimChunksInRange(id, dimension, add, range, world, center);
+        claimChunksInRange(colony, add, range, center, false);
     }
 
     /**
@@ -273,24 +273,25 @@ public final class ChunkDataHelper
 
     /**
      * Claim a number of chunks in a certain range around a position.
+     * Prevents the initial chunkradius from beeing unclaimed, unless forced.
      *
-     * --- This is only for dynamic claiming ---
-     *
-     * @param colonyId  the colony id.
-     * @param dimension the dimension.
+     * @param colony    the colony to claim for
      * @param add       if claim or unclaim.
      * @param range     the range.
-     * @param world     the world.
      * @param center    the center position to be claimed.
+     * @param force     whether to ignore restrictions.
      */
     public static void claimChunksInRange(
-      final int colonyId,
-      final int dimension,
+      final IColony colony,
       final boolean add,
       final int range,
-      final World world,
-      final BlockPos center)
+      final BlockPos center,
+      final boolean force)
     {
+        final World world = colony.getWorld();
+        final int colonyId = colony.getID();
+        final int dimension = colony.getDimension();
+
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
@@ -298,36 +299,37 @@ public final class ChunkDataHelper
             return;
         }
 
-        final Chunk centralChunk = (Chunk) world.getChunk(center);
-        loadChunkAndAddData(world, center, add, colonyId, center, chunkManager);
+        final int chunkColonyCenterX = colony.getCenter().getX() >> 4;
+        final int chunkColonyCenterZ = colony.getCenter().getZ() >> 4;
+        final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
 
-        final int chunkX = centralChunk.getPos().x;
-        final int chunkZ = centralChunk.getPos().z;
-
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
-        if (colony == null)
-        {
-            return;
-        }
+        final int chunkX = center.getX() >> 4;
+        final int chunkZ = center.getZ() >> 4;
 
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
+                // Initial chunk unclaim not allowed for dynamic(building removal)
+                if (!force && !add
+                      && (Math.abs(chunkColonyCenterX - i) <= getConfig().getCommon().initialColonySize.get() + 1
+                            && Math.abs(chunkColonyCenterZ - j) <= getConfig().getCommon().initialColonySize.get() + 1))
+                {
+                    Log.getLogger().debug("Unclaim of initial chunk prevented");
+                    continue;
+                }
+
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (getConfig().getCommon().workingRangeTownHallChunks.get() != 0
-                      && pos.distanceSq(colony.getCenter()) > Math.pow(getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, 2))
+                if (!force && getConfig().getCommon().maxColonySize.get() != 0
+                      && pos.distanceSq(colonyCenterCompare) > Math.pow(getConfig().getCommon().maxColonySize.get() * BLOCKS_PER_CHUNK, 2))
                 {
                     Log.getLogger()
-                      .warn("Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
+                      .debug(
+                        "Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
                               + " max is config workingRangeTownHall ^2");
                     continue;
                 }
 
-                if (i == chunkX && j == chunkZ)
-                {
-                    continue;
-                }
                 if (loadChunkAndAddData(world, pos, add, colonyId, center, chunkManager))
                 {
                     continue;
@@ -436,11 +438,12 @@ public final class ChunkDataHelper
      * @param pos   the position.
      * @param add   if add or delete.
      * @param id    the id.
+     * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */
     public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }
@@ -495,6 +498,7 @@ public final class ChunkDataHelper
      * @param add   if add or delete.
      * @param id    the id.
      * @param buildingPos the building pos.
+     * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */
     public static boolean loadChunkAndAddData(
@@ -505,7 +509,7 @@ public final class ChunkDataHelper
       final BlockPos buildingPos,
       final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockLoaded(pos))
+        if (!world.isBlockPresent(pos))
         {
             return false;
         }

@@ -97,7 +97,7 @@ public class Tree
     /**
      * The spaling the lj has to use to replant the tree.
      */
-    private ItemStack saplingToUse;
+    private ItemStack sapling;
 
     /**
      * The locations of the stumps (Some trees are connected to dirt by 4 logs).
@@ -156,6 +156,7 @@ public class Tree
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
+            sapling = calcSapling(world);
 
             // Calculate the Tree's variant IProperty, add mod compat for other property names later when needed
             variant = BlockStateUtils.getPropertyByNameFromState(world.getBlockState(location), "variant");
@@ -172,8 +173,13 @@ public class Tree
      * @param world world the tree is in
      * @return ItemStack of the sapling found
      */
-    public ItemStack calcSapling(final ServerWorld world)
+    private ItemStack calcSapling(final World world)
     {
+        if (topLog == null)
+        {
+            return ItemStack.EMPTY;
+        }
+
         ItemStack sapling;
 
         // Try leaf directly above the tree base first
@@ -211,8 +217,9 @@ public class Tree
      * @param world         world to use for accessing blocks
      * @param pos           Blockposition of the leaf
      * @param checkFitsBase boolean whether we should check leaf and tree's log compatibility
+     * @return the sapling to plant at the given position
      */
-    private ItemStack calcSaplingForPos(final ServerWorld world, final BlockPos pos, final boolean checkFitsBase)
+    private ItemStack calcSaplingForPos(final World world, final BlockPos pos, final boolean checkFitsBase)
     {
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
@@ -240,7 +247,7 @@ public class Tree
             }
             else
             {
-             list.addAll(getSaplingsForLeaf(world,pos));
+                list.addAll(getSaplingsForLeaf((ServerWorld) world, pos));
             }
 
             for (final ItemStack stack : list)
@@ -265,7 +272,7 @@ public class Tree
      * Fills the list of drops for a leaf.
      * @param world world reference
      * @param position position of the leaf
-     * @return
+     * @return the list of saplings.
      */
     public static List<ItemStack> getSaplingsForLeaf(ServerWorld world, BlockPos position)
     {
@@ -353,8 +360,11 @@ public class Tree
     /**
      * Adds a log and searches for further logs(Breadth first search).
      *
-     * @param world The world the log is in.
-     * @param log   the log to add.
+     * @param world        The world the log is in.
+     * @param log          The log to add.
+     * @param woodenBlocks The wooden blocks.
+     * @param bottomLog    The bottom most log.
+     * @param topLog       The top most log.
      * @return a tuple containing, first: bottom log and second: top log.
      */
     @NotNull
@@ -508,6 +518,15 @@ public class Tree
 
         tree.slimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
         tree.dynamicTree = compound.getBoolean(TAG_DYNAMIC_TREE);
+
+        if (compound.contains(TAG_SAPLING))
+        {
+            tree.sapling = ItemStack.read(compound.getCompound(TAG_SAPLING));
+        }
+        else
+        {
+            tree.isTree = false;
+        }
 
         return tree;
     }
@@ -683,6 +702,16 @@ public class Tree
     }
 
     /**
+     * Gets the trees sapling
+     *
+     * @return the sapling stack.
+     */
+    public ItemStack getSapling()
+    {
+        return sapling;
+    }
+
+    /**
      * Returns the next leaf block.
      *
      * @return the position.
@@ -845,6 +874,11 @@ public class Tree
 
         compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
+
+        CompoundNBT saplingNBT = new CompoundNBT();
+        sapling.write(saplingNBT);
+
+        compound.put(TAG_SAPLING, saplingNBT);
     }
 
     /**

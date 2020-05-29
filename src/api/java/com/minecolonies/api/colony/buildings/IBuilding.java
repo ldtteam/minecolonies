@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -33,6 +34,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 {
     /**
      * Getter for the custom name of a building.
+     *
      * @return the custom name.
      */
     @NotNull
@@ -46,12 +48,16 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Executed every time when citizen finish inventory cleanup called after citizen got paused.
      * Use for cleaning a state only.
+     *
+     * @param citizen cleanup for citizen.
      */
     void onCleanUp(ICitizenData citizen);
 
     /**
      * Executed when RestartCitizenMessage is called and worker is paused.
      * Use for reseting, onCleanUp is called before this
+     *
+     * @param citizen the citizen assigned to the building.
      */
     void onRestart(ICitizenData citizen);
 
@@ -61,12 +67,33 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void onPlacement();
 
     /**
+     * Called when a player comes close to the building.
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterNearby(final PlayerEntity player) {}
+
+    /**
+     * Called when a player enters the building area
+     *
+     * @param player entering player
+     */
+    default void onPlayerEnterBuilding(final PlayerEntity player) {}
+
+    /**
      * Checks if a block matches the current object.
      *
      * @param block Block you want to know whether it matches this class or not.
      * @return True if the block matches this class, otherwise false.
      */
     boolean isMatchingBlock(@NotNull Block block);
+
+    /**
+     * When the building is repositioned.
+     *
+     * @param oldBuilding the moved building.
+     */
+    void onBuildingMove(final IBuilding oldBuilding);
 
     /**
      * Destroys the block.
@@ -80,6 +107,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.
      *
+     * @param newLevel the new level of the building.
      * @return true if so.
      */
     boolean canBeBuiltByBuilder(int newLevel);
@@ -103,6 +131,8 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
+     *
+     * @param buildingLevel the building level.
      * @return the radius.
      */
     int getClaimRadius(int buildingLevel);
@@ -119,42 +149,30 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void serializeToView(@NotNull PacketBuffer buf);
 
     /**
-     * Check if a building is being gathered.
-     *
-     * @return true if so.
-     */
-    boolean isBeingGathered();
-
-    /**
      * Set the custom building name of the building.
+     *
      * @param name the name to set.
      */
     void setCustomBuildingName(String name);
 
     /**
      * Check if the building should be gathered by the dman.
+     *
      * @return true if so.
      */
     boolean canBeGathered();
 
     /**
-     * Set if a building is being gathered.
-     *
-     * @param gathering value to set.
-     */
-    void setBeingGathered(boolean gathering);
-
-    /**
      * Requests an upgrade for the current building.
      *
-     * @param player the requesting player.
+     * @param player  the requesting player.
      * @param builder the assigned builder.
      */
     void requestUpgrade(PlayerEntity player, BlockPos builder);
 
     /**
      * Requests a repair for the current building.
-     * @param builder
+     *
      * @param builder the assigned builder.
      */
     void requestRepair(BlockPos builder);
@@ -223,9 +241,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Create a request for the building.
      *
-     * @param requested   the request to create.
-     * @param async       if async or not.
-     * @param <R>         the type of the request.
+     * @param requested the request to create.
+     * @param async     if async or not.
+     * @param <R>       the type of the request.
      * @return the Token of the request.
      */
     <R extends IRequestable> IToken<?> createRequest(@NotNull R requested, boolean async);
@@ -282,6 +300,18 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull ICitizenData citizenData, @NotNull ItemStack stack);
 
+    /**
+     * Creates a pickup request for the building.
+     * It will make sure that only one pickup request exists per building,
+     * so it's safe to call multiple times.
+     * The call will return false if a pickup request already exists, or if the priority is not within
+     * the proper range, or if the pickup priority is set to NEVER (0).
+     *
+     * @param priority The priority of the pickup request.
+     * @return true if a pickup request could be created, false if not.
+     */
+    boolean createPickupRequest(final int priority);
+
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();
 
@@ -294,8 +324,24 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     BuildingEntry getBuildingRegistryEntry();
 
     /**
-     * Check if the building requires always all items to continue working or if a partial quantity would also solve it.
-     * @return true if so.
+     * Remove the minimum stock.
+     *
+     * @param itemStack the stack to remove.
      */
-    boolean requiresCompleteRequestFulfillment();
+    void removeMinimumStock(final ItemStack itemStack);
+
+    /**
+     * Add the minimum stock of the warehouse to this building.
+     *
+     * @param itemStack the itemStack to add.
+     * @param quantity  the quantity.
+     */
+    void addMinimumStock(final ItemStack itemStack, final int quantity);
+
+    /**
+     * Open the right crafting container.
+     *
+     * @param player the player opening it.
+     */
+    void openCraftingContainer(final ServerPlayerEntity player);
 }

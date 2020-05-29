@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -29,11 +28,11 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
-import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -42,6 +41,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -109,11 +109,6 @@ public class Colony implements IColony
      * Citizen manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager(this);
-
-    /**
-     * Colony happiness manager.
-     */
-    private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
 
     /**
      * Barbarian manager of the colony.
@@ -223,11 +218,6 @@ public class Colony implements IColony
     private final List<AttackingPlayer> attackingPlayers = new ArrayList<>();
 
     /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData happinessData = new HappinessData();
-
-    /**
      * The colonies state machine
      */
     private final ITickRateStateMachine<ColonyState> colonyStateMachine;
@@ -306,7 +296,7 @@ public class Colony implements IColony
             try
             {
                 final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && block != Blocks.AIR)
+                if (block != null && !(block instanceof AirBlock))
                 {
                     freeBlocks.add(block);
                 }
@@ -339,6 +329,8 @@ public class Colony implements IColony
 
     /**
      * Updates the state the colony is in.
+     *
+     * @return the new colony state.
      */
     private ColonyState updateState()
     {
@@ -365,6 +357,8 @@ public class Colony implements IColony
 
     /**
      * Updates the existing subscribers
+     *
+     * @return false
      */
     private boolean updateSubscribers()
     {
@@ -374,6 +368,8 @@ public class Colony implements IColony
 
     /**
      * Ticks the request manager.
+     *
+     * @return false
      */
     private boolean tickRequests()
     {
@@ -386,6 +382,8 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates.
+     *
+     * @return false
      */
     private boolean worldTickSlow()
     {
@@ -403,6 +401,8 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates. Only ticked when the colony is not loaded.
+     *
+     * @return false
      */
     private boolean worldTickUnloaded()
     {
@@ -413,7 +413,7 @@ public class Colony implements IColony
     /**
      * Adds 500 additional ticks to the child growth.
      */
-    private boolean updateChildTime()
+    private void updateChildTime()
     {
         if (hasChilds)
         {
@@ -423,11 +423,12 @@ public class Colony implements IColony
         {
             additionalChildTime = 0;
         }
-        return false;
     }
 
     /**
      * Updates the day and night detection.
+     *
+     * @return false
      */
     private boolean checkDayTime()
     {
@@ -440,11 +441,11 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
-            happinessData.processDeathModifiers();
             if (mourning)
             {
                 mourning = false;
                 citizenManager.updateCitizenMourn(false);
+                citizenManager.updateCitizenSleep(false);
             }
         }
         else if (!isDay && world.isDaytime())
@@ -463,7 +464,7 @@ public class Colony implements IColony
     /**
      * Updates the pvping playeres.
      */
-    public boolean updateAttackingPlayers()
+    public void updateAttackingPlayers()
     {
         final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
@@ -488,7 +489,6 @@ public class Colony implements IColony
                 }
             }
         }
-        return false;
     }
 
     /**
@@ -524,6 +524,7 @@ public class Colony implements IColony
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
+     * @param world the world to load it for.
      * @return loaded colony.
      */
     @Nullable
@@ -599,15 +600,6 @@ public class Colony implements IColony
             progressManager.read(compound);
         }
 
-        if (compound.keySet().contains(TAG_HAPPINESS_MODIFIER))
-        {
-            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
-        }
-        else
-        {
-            colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
-        }
-
         eventManager.readFromNBT(compound);
 
         if (compound.keySet().contains(TAG_RESEARCH))
@@ -647,7 +639,6 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        happinessData.read(compound);
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
@@ -740,8 +731,6 @@ public class Colony implements IColony
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.putDouble(TAG_HAPPINESS_MODIFIER, d));
-
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
         workManager.write(workManagerCompound);
@@ -783,7 +772,6 @@ public class Colony implements IColony
         }
         compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        happinessData.write(compound);
         compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.putBoolean(TAG_MOVE_IN, moveIn);
@@ -828,10 +816,16 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        this.world = w;
-        // Register a new event handler
-        eventHandler = new ColonyPermissionEventHandler(this);
-        MinecraftForge.EVENT_BUS.register(eventHandler);
+        if (w.getDimension().getType().getId() == dimensionId)
+        {
+            this.world = w;
+            // Register a new event handler
+            if (eventHandler == null)
+            {
+                eventHandler = new ColonyPermissionEventHandler(this);
+                MinecraftForge.EVENT_BUS.register(eventHandler);
+            }
+        }
     }
 
     /**
@@ -842,7 +836,7 @@ public class Colony implements IColony
     @Override
     public void onWorldUnload(@NotNull final World w)
     {
-        if (!w.equals(world))
+        if (w != world)
         {
             /**
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
@@ -940,17 +934,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    @Override
-    public HappinessData getHappinessData()
-    {
-        return happinessData;
-    }
-
-    /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
@@ -977,6 +960,7 @@ public class Colony implements IColony
      * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
      * @param world the world.
+     * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */
     public static boolean shallUpdate(final World world, final int averageTicks)
@@ -986,30 +970,34 @@ public class Colony implements IColony
 
     /**
      * Update the waypoints after worldTicks.
+     *
+     * @return false
      */
     private boolean updateWayPoints()
     {
-        if (!wayPoints.isEmpty())
+        if (!wayPoints.isEmpty() && world != null)
         {
-            final Object[] entries = wayPoints.entrySet().toArray();
-            final int stopAt = world.rand.nextInt(entries.length);
-            final Object obj = entries[stopAt];
-
-            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
+            final int randomPos = world.rand.nextInt(wayPoints.size());
+            int count = 0;
+            for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
             {
-                @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                if (world.isBlockLoaded(key))
+                if (count++ == randomPos)
                 {
-                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
-                    final Block worldBlock = world.getBlockState(key).getBlock();
-                    if (worldBlock != (value.getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
-                        wayPoints.remove(key);
-                        markDirty();
+                        final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
+                        if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        {
+                            wayPoints.remove(entry.getKey());
+                            markDirty();
+                        }
                     }
+                    return false;
                 }
             }
         }
+
         return false;
     }
 
@@ -1109,7 +1097,7 @@ public class Colony implements IColony
         return world;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public IRequestManager getRequestManager()
     {
@@ -1288,16 +1276,15 @@ public class Colony implements IColony
     {
         if (citizenManager.getCitizens().size() <= 0)
         {
-            return (HappinessData.MAX_HAPPINESS + HappinessData.MIN_HAPPINESS) / 2.0;
+            return 5.5;
         }
 
-        double happinesSum = 0;
+        double happinessSum = 0;
         for (final ICitizenData citizen : citizenManager.getCitizens())
         {
-            happinesSum += citizen.getCitizenHappinessHandler().getHappiness();
+            happinessSum += citizen.getCitizenHappinessHandler().getHappiness();
         }
-        final double happinessAverage = happinesSum / citizenManager.getCitizens().size();
-        return Math.min(happinessAverage + happinessData.getTotalHappinessModifier(), HappinessData.MAX_HAPPINESS);
+        return happinessSum / citizenManager.getCitizens().size();
     }
 
     /**
@@ -1364,17 +1351,6 @@ public class Colony implements IColony
     public ICitizenManager getCitizenManager()
     {
         return citizenManager;
-    }
-
-    /**
-     * Get the colony happiness manager.
-     *
-     * @return the colony happiness manager.
-     */
-    @Override
-    public IColonyHappinessManager getColonyHappinessManager()
-    {
-        return colonyHappinessManager;
     }
 
     /**

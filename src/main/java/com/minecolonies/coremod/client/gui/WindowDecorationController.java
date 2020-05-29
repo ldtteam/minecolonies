@@ -1,21 +1,22 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.TextField;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
-import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
+import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
+import com.minecolonies.coremod.network.messages.server.DecorationControllerUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -115,19 +116,21 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             findPaneByID(BUTTON_REPAIR).hide();
         }
 
-        com.ldtteam.structures.helpers.Structure structure = null;
+        LoadOnlyStructureHandler structure = null;
         try
         {
-            structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings());
+            structure = new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {
             Log.getLogger().info("Unable to load structure: " + controller.getSchematicName() + " for decoration controller!");
         }
 
-        if (structure == null || structure.isBluePrintMissing())
+        findPaneByID(LABEL_NO_UPGRADE).hide();
+        if (structure == null || !structure.hasBluePrint())
         {
             findPaneByID(BUTTON_BUILD).hide();
+            findPaneByID(LABEL_NO_UPGRADE).show();
         }
 
         if (!isCreative)
@@ -169,7 +172,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             try
             {
                 final int level = Integer.parseInt(levelString);
-                Network.getNetwork().sendToServer(new DecorationControllUpdateMessage(controller.getPos(), name, level));
+                Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getPos(), name, level));
                 controller.setSchematicName(name);
                 controller.setLevel(level);
                 close();

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -45,6 +46,13 @@ public interface IBuildingView extends IRequester
     int getBuildingLevel();
 
     /**
+     * Get the BlockPos of the Containers.
+     *
+     * @return containerList.
+     */
+    List<BlockPos> getContainerList();
+
+    /**
      * Get the max level of the building.
      *
      * @return AbstractBuilding max level.
@@ -74,6 +82,7 @@ public interface IBuildingView extends IRequester
 
     /**
      * Getter for the custom building name.
+     *
      * @return the name.
      */
     String getCustomName();
@@ -108,18 +117,21 @@ public interface IBuildingView extends IRequester
 
     /**
      * Check if the building is current being built.
+     *
      * @return true if so.
      */
     boolean isBuilding();
 
     /**
      * Check if the building is currently being repaired.
+     *
      * @return true if so.
      */
     boolean isRepairing();
 
     /**
      * Get the claim radius for the building.
+     *
      * @return the radius.
      */
     int getClaimRadius();
@@ -178,18 +190,12 @@ public interface IBuildingView extends IRequester
      */
     int getBuildingDmPrio();
 
-    /**
-     * Get the delivery priority state of the building.
-     *
-     * @return boolean, delivery priority state.
-     */
-    boolean isBuildingDmPrioState();
-
     ImmutableCollection<IToken<?>> getResolverIds();
 
     /**
      * Setter for the custom name.
      * Sets the name on the client side and sends it to the server.
+     *
      * @param name the new name.
      */
     void setCustomName(String name);

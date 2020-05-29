@@ -286,16 +286,6 @@ public final class WindowConstants
     public static final String HIDDEN_CITIZEN_ID = "hiddenCitizenId";
 
     /**
-     * Statistics label width.
-     */
-    public static final int STATISTICS_LABEL_WIDTH = 100;
-
-    /**
-     * Statistics label height.
-     */
-    public static final int STATISTICS_LABEL_HEIGHT = 11;
-
-    /**
      * Id of the total assignee label in the GUI.
      */
     public static final String ASSIGNEE_LABEL = "assignee";
@@ -344,11 +334,6 @@ public final class WindowConstants
      * The button to add a player or fakeplayer to a colony.
      */
     public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
-
-    /**
-     * Id of the switch view of the perm pages.
-     */
-    public static final String VIEW_PERM_PAGES = "permPages";
 
     /**
      * Id of the switch view of the different groups.
@@ -421,34 +406,9 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
-     * Button to remove a entity or position of the list.
-     */
-    public static final String BUTTON_REMOVE_ENTITY = "removeEntity";
-
-    /**
-     * Button to replace a block or position in th eworld..
-     */
-    public static final String BUTTON_REPLACE_BLOCK = "replaceBlock";
-
-    /**
      * Button to select a block for a replacement.
      */
     public static final String BUTTON_SELECT = "select";
-
-    /**
-     * This button is used to set the previous available building type.
-     */
-    public static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
-
-    /**
-     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
-     */
-    public static final String DROPDOWN_TYPE_ID = "buildingType";
-
-    /**
-     * This button is used to set the next available building type.
-     */
-    public static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
 
     /**
      * This button is used to set the previous available style.
@@ -484,26 +444,6 @@ public final class WindowConstants
      * This button is used to set the next available Color.
      */
     public static final String BUTTON_NEXT_COLOR_ID = "nextColor";
-
-    /**
-     * This button is used to set a specific Color.
-     */
-    public static final String BUTTON_PICK_COLOR_ID = "pickColor";
-
-    /**
-     * This button is used to set the previous available schematic.
-     */
-    public static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
-
-    /**
-     * This drop down list is used to set the schematic.
-     */
-    public static final String DROPDOWN_SCHEMATIC_ID = "schematic";
-
-    /**
-     * This button is used to set the next available schematic.
-     */
-    public static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
 
     /**
      * This button will send a packet to the server telling it to place this hut/decoration.
@@ -553,24 +493,13 @@ public final class WindowConstants
     /**
      * Resource suffix.
      */
-    public static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
-
-    /**
-     * Resource suffix.
-     */
     public static final String MOVE_BUILDING_SOURCE_SUFFIX = ":gui/windowmovebuilding.xml";
-
-    /**
-     * Hut prefix.
-     */
-    public static final String HUT_PREFIX = "blockhut";
 
     /**
      * The builders gui file.
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
-    public static final String LIST_ENTITIES               = "entities";
     public static final String PAGE_RESOURCES              = "resourceActions";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
@@ -579,6 +508,9 @@ public final class WindowConstants
     public static final String RESOURCE_ID                 = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
     public static final String RESOURCE_ICON               = "resourceIcon";
+    public static final String STOCK_ADD                   = "addStock";
+    public static final String STOCK_REMOVE                = "removeStock";
+    public static final String QUANTITY_LABEL              = "resourceQty";
 
     /**
      * Window resource list gui file.
@@ -586,21 +518,51 @@ public final class WindowConstants
     public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
 
     /**
+     *  Window all Items list gui file.
+     */
+    public static final String HUT_ALL_INVENTORY_SUFFIX = ":gui/windowhutallinventory.xml";
+    /**
+     * No Sorting stage. how it comes from Database so it gets feeded
+     */
+    public static final int NO_SORT         = 0;
+    /**
+     * Name Ascending
+     */
+    public static final int ASC_SORT        = 1;
+    /**
+     * Name Descending
+     */
+    public static final int DESC_SORT       = 2;
+    /**
+     * Itemcount Ascending
+     */
+    public static final int COUNT_ASC_SORT  = 3;
+    /**
+     * Itemcount Descending
+     */
+    public static final int COUNT_DESC_SORT = 4;
+    /**
+     * The Stringdefine for the GUI page
+     */
+    public static final String LIST_ALLINVENTORY          = "allinventorylist";
+    /**
+     *  The Sort Button
+     */
+     public static final String BUTTON_SORT = "sortStorageFilter";
+
+    /**
      * Window resource list gui file.
      */
     public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 
-    /**
-     * Id of the type label in the GUI.
-     */
-    public static final String LABEL_BUILDINGTYPE = "type";
-
     public static final String BUTTON_BUILD        = "build";
     public static final String BUTTON_REPAIR       = "repair";
     public static final String BUTTON_INVENTORY    = "inventory";
+    public static final String BUTTON_ALLINVENTORY = "allinventory";
     public static final String LABEL_BUILDING_NAME = "name";
     public static final String BUTTON_PREVPAGE     = "prevPage";
     public static final String BUTTON_NEXTPAGE     = "nextPage";
+    public static final String LABEL_NO_UPGRADE    = "infotextnoupgrade";
 
     /**
      * The GuardTower GUI file.
@@ -619,8 +581,6 @@ public final class WindowConstants
     public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
     public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
     public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
-    public static final String  GUI_BUTTON_NEXT_PAGE       = "nextPage";
-    public static final String  GUI_BUTTON_PREV_PAGE       = "prevPage";
     public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
     //GUI Switches
     public static final String  GUI_SWITCH_VIEW_PAGES      = "pages";
@@ -632,7 +592,6 @@ public final class WindowConstants
     public static final String  GUI_SWITCH_ON              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
     public static final String  GUI_SWITCH_OFF             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
     //GUI Pages
-    public static final String  GUI_PAGE_PAGE_ACTIONS      = "pageActions";
     public static final String  GUI_PAGE_LEVEL_ACTIONS     = "levelActions";
     public static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
     //GUI Resource
@@ -651,19 +610,9 @@ public final class WindowConstants
     public static final String LEVEL_LABEL    = "level";
 
     /**
-     * Name of the input range field.
-     */
-    public static final String INPUT_RANGE_NAME = "range";
-
-    /**
      * Id of the done button in the GUI.
      */
     public static final String BUTTON_REMOVE = "remove";
-
-    /**
-     * Id of the speed input field.
-     */
-    public static final String INPUT_SPEED = "speed";
 
     /**
      * This button will remove the currently rendered structure.
@@ -671,74 +620,19 @@ public final class WindowConstants
     public static final String BUTTON_MOVE_BUILDING = "reposition";
 
     /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String BUTTON_SHOW_RES = "showRes";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS1X_LABEL = "pos1x";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS1Y_LABEL = "pos1y";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS1Z_LABEL = "pos1z";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS2X_LABEL = "pos2x";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS2Y_LABEL = "pos2y";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    public static final String POS2Z_LABEL = "pos2z";
-
-    /**
-     * The filter field of the scan tool window.
-     */
-    public static final String FILTER_NAME = "filter";
-
-    /**
-     * The fields used into the happiness
-     */
-    public static final String GUARD_HAPPINESS_LEVEL      = "guardsLevel";
-    public static final String HOUSE_HAPPINESS_LEVEL      = "houseLevel";
-    public static final String SATURATION_HAPPINESS_LEVEL = "saturationLevel";
-
-    /**
      * Icons used to display the happiness
      */
     public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
     public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
     public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
+    public static final String BLUE_ICON = "minecolonies:textures/gui/blue_icon.png";
 
     public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
     public static final String LABEL_PROGRESS =  "progress";
+    public static final String LABEL_WORKERNAME = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
-
-    /**
-     * The fields used into the happiness
-     */
-    public static final String FOOD_MODIFIER    = "foodLevel";
-    public static final String HOUSE_MODIFIER   = "houseLevel";
-    public static final String DAMAGE_MODIFIER  = "damageLevel";
-    public static final String JOB_MODIFIER     = "jobLevel";
-    public static final String FIELDS_MODIFIER  = "farmsLevel";
-    public static final String TOOLS_MODIFIER   = "toolsLevel";
 
     /**
      * The label to find the inventory button.
@@ -749,31 +643,6 @@ public final class WindowConstants
      * The label to find the gui of the citizen.
      */
     public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/citizen/windowcitizen.xml";
-
-    /**
-     * The label to find strength in the gui.
-     */
-    public static final String STRENGTH = "strength";
-
-    /**
-     * The label to find endurance in the gui.
-     */
-    public static final String ENDURANCE = "endurance";
-
-    /**
-     * The label to find charisma in the gui.
-     */
-    public static final String CHARISMA = "charisma";
-
-    /**
-     * The label to find intelligence in the gui.
-     */
-    public static final String INTELLIGENCE = "intelligence";
-
-    /**
-     * The label to find dexterity in the gui.
-     */
-    public static final String DEXTERITY = "dexterity";
 
     /**
      * Id of the resource add button.
@@ -992,19 +861,9 @@ public final class WindowConstants
     public static final String WINDOW_ID_NAME = "name";
 
     /**
-     * The label to find xpLabel in the gui.
-     */
-    public static final String WINDOW_ID_XP = "xpLabel";
-
-    /**
      * The label to find the happiness label in the gui.
      */
     public static final String WINDOW_ID_HAPPINESS = "happinessLabel";
-
-    /**
-     * The label to find xpBar in the gui.
-     */
-    public static final String WINDOW_ID_XPBAR = "xpBar";
 
     /**
      * The label to find healthBar in the gui.
@@ -1102,19 +961,14 @@ public final class WindowConstants
     public static final String REQUESTER = "requester";
 
     /**
+     * Id of the parent label.
+     */
+    public static final String PARENT = "parent";
+
+    /**
      * The divider for the life count.
      */
     public static final int LIFE_COUNT_DIVIDER = 30;
-
-    /**
-     * Button leading the player to the next page.
-     */
-    public static final String BUTTON_PREV_PAGE = "prevPage";
-
-    /**
-     * Button leading the player to the previous page.
-     */
-    public static final String BUTTON_NEXT_PAGE = "nextPage";
 
     /**
      * ID for happiness modifier view
@@ -1236,6 +1090,16 @@ public final class WindowConstants
     public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
 
     /**
+     * String of the Townhall colony management GUI.
+     */
+    public static final String TOWNHALL_COLONY_MANAGEMENT_GUI = ":gui/townhall/windowcolonymanagement.xml";
+
+    /**
+     * String of the Townhall colony delete GUI.
+     */
+    public static final String TOWNHALL_COLONY_DELETE_GUI = ":gui/townhall/windowcolonymanagementdelete.xml";
+
+    /**
      * Interaction suffix.
      */
     public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
@@ -1263,7 +1127,6 @@ public final class WindowConstants
     public static final int INITITAL_X_OFFSET = 30;
     public static final int INITITAL_Y_OFFSET = 60;
     public static final int BUTTON_PADDING    = 10;
-    public static final String BUTTON_RIGHT_ARROW = "textures/gui/builderhut/builder_sketch_arrow_right_a.png";
 
     /**
      * The job modifier page.
@@ -1275,7 +1138,8 @@ public final class WindowConstants
     public static final String PRIMARY_SKILL_ADV = "adverse1";
     public static final String SECONDARY_SKILL_LABEL = "secondary";
     public static final String SECONDARY_SKILL_COM = "comp2";
-    public static final String SECONDARY_SKILL_ADV = "adverse2";
+    public static final String SECONDARY_SKILL_ADV    = "adverse2";
+
 
     /**
      * public constructor to hide implicit public one.

@@ -22,7 +22,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.ARISTOCRAT, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
         register(BipedModelType.BUILDER, new CitizenModel<>(), new ModelEntityBuilderFemale());
         register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        register(BipedModelType.MINER, new CitizenModel<>(), new ModelEntityMinerFemale());
+        register(BipedModelType.MINER, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
         register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
         register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
         register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
@@ -41,6 +41,10 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.KNIGHT_GUARD, new CitizenModel<>(), new CitizenModel<>());
         register(BipedModelType.CHILD, new ModelEntityChildMale(), new ModelEntityChildFemale());
         register(BipedModelType.HEALER, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
+        register(BipedModelType.TEACHER, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
+        register(BipedModelType.GLASSBLOWER, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
+        register(BipedModelType.DYER, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
+        register(BipedModelType.PLANTER, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
     }
 
     @Override

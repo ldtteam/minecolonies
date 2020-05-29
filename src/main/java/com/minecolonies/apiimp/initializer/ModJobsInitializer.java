@@ -169,6 +169,41 @@ public final class ModJobsInitializer
                                .setRegistryName(ModJobs.HEALER_ID)
                                .createJobEntry();
 
+        ModJobs.pupil     = new JobEntry.Builder()
+                               .setJobProducer(JobPupil::new)
+                               .setRegistryName(ModJobs.PUPIL_ID)
+                               .createJobEntry();
+
+        ModJobs.teacher     = new JobEntry.Builder()
+                               .setJobProducer(JobTeacher::new)
+                               .setRegistryName(ModJobs.TEACHER_ID)
+                               .createJobEntry();
+
+        ModJobs.glassblower  = new JobEntry.Builder()
+                                .setJobProducer(JobGlassblower::new)
+                                .setRegistryName(ModJobs.GLASSBLOWER_ID)
+                                .createJobEntry();
+
+        ModJobs.dyer        = new JobEntry.Builder()
+                                    .setJobProducer(JobDyer::new)
+                                    .setRegistryName(ModJobs.DYER_ID)
+                                    .createJobEntry();
+
+        ModJobs.fletcher    = new JobEntry.Builder()
+                                .setJobProducer(JobFletcher::new)
+                                .setRegistryName(ModJobs.FLETCHER_ID)
+                                .createJobEntry();
+
+        ModJobs.mechanic    = new JobEntry.Builder()
+                                .setJobProducer(JobMechanic::new)
+                                .setRegistryName(ModJobs.MECHANIC_ID)
+                                .createJobEntry();
+
+        ModJobs.planter    = new JobEntry.Builder()
+                                .setJobProducer(JobPlanter::new)
+                                .setRegistryName(ModJobs.PLANTER_ID)
+                                .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -199,5 +234,12 @@ public final class ModJobsInitializer
         reg.register(ModJobs.enchanter);
         reg.register(ModJobs.researcher);
         reg.register(ModJobs.healer);
+        reg.register(ModJobs.pupil);
+        reg.register(ModJobs.teacher);
+        reg.register(ModJobs.glassblower);
+        reg.register(ModJobs.dyer);
+        reg.register(ModJobs.fletcher);
+        reg.register(ModJobs.mechanic);
+        reg.register(ModJobs.planter);
     }
 }

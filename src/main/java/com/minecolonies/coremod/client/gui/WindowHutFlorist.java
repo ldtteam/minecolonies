@@ -16,7 +16,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.BUTTON_SWITCH;
+import static com.minecolonies.coremod.client.gui.ViewFilterableList.ON;
 
 /**
  * Florist window class. Specifies the extras the florist has for its list.
@@ -75,7 +76,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
 
             if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getLabel().equals(ON) && building.getSize(PAGE_ITEMS_VIEW) >= 1)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_FLORIST);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_BELOW_LVL4_FLORIST);
                 return;
             }
 

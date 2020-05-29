@@ -30,9 +30,9 @@ public enum ToolType implements IToolType
     HELMET("helmet", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HELMET)),
     LEGGINGS("leggings", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
     CHESTPLATE("chestplate", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
-    BOOTS("boots", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS));
+    BOOTS("boots", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS)),
+    FLINT_N_STEEL("flintandsteel", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LIGHTER));
 
-    
     static final private Map<String, IToolType> tools = new HashMap<>();
     static
     {

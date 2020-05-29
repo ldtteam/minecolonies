@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -17,25 +15,27 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
 
 /**
- * AI class for the builder.
- * Manages building and repairing buildings.
+ * AI class for the builder. Manages building and repairing buildings.
  */
 public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
 {
@@ -77,7 +77,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int ACTIONS_UNTIL_DUMP = 1024;
+    private static final int ACTIONS_UNTIL_DUMP = 4096;
 
     /**
      * Min distance from placing block.
@@ -97,7 +97,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Building level to purge mobs at the build site.
      */
-    private static final int LEVEL_TO_PURGE_MOBS    = 4;
+    private static final int LEVEL_TO_PURGE_MOBS = 4;
 
     /**
      * The id in the list of the last picked up item.
@@ -128,15 +128,50 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
     /**
      * State to pick up material before going back to work.
+     *
      * @return the next state to go to.
      */
     public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
-        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>();
-        for (final BuildingBuilderResource stack : building.getNeededResources().values())
+        final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
+        boolean only_64 = false;
+
+        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
+        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
         {
-            neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
+            only_64 = true;
+        }
+        else
+        {
+            int stackCount = 0;
+
+            for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+            {
+                int amount = stack.getAmount();
+                while (amount > 0)
+                {
+                    stackCount++;
+                    amount = amount - stack.getItemStack().getMaxStackSize();
+                }
+            }
+            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
+            {
+                only_64 = true;
+            }
+        }
+
+        for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+        {
+            int amount = stack.getAmount();
+            if (only_64)
+            {
+                if (amount > stack.getItemStack().getMaxStackSize())
+                {
+                    amount = stack.getItemStack().getMaxStackSize();
+                }
+            }
+            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
@@ -148,21 +183,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
 
-        if (currentStructure == null)
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
             return IDLE;
         }
 
-        if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
+        if (structurePlacer.getB().getStage() != BuildingStructureHandler.Stage.DECORATE)
         {
-            needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
+            needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
         }
 
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), needsCurrently))
-        {
-            return getState();
-        }
-        else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
+        if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
             return GATHERING_REQUIRED_MATERIALS;
         }
@@ -194,6 +225,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, null);
             return false;
         }
 
@@ -204,7 +236,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (!job.hasStructure())
+        if (!job.hasBlueprint())
         {
             super.initiate();
         }
@@ -213,13 +245,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public IAIState switchStage(final IAIState state)
+    public boolean isAfterDumpPickupAllowed()
     {
-        if (job.getWorkOrder() instanceof WorkOrderBuildRemoval && state.equals(BUILDING_STEP))
-        {
-            return COMPLETE_BUILD;
-        }
-        return super.switchStage(state);
+        return !checkForWorkOrder();
     }
 
     private IAIState startWorkingAtOwnBuilding()
@@ -314,23 +342,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return schemPos.up();
         }
         return targetPosition;
-    }
-
-    @Override
-    public void connectBlockToBuildingIfNecessary(@NotNull final BlockState blockState, @NotNull final BlockPos pos)
-    {
-        final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
-
-        if (building != null)
-        {
-            building.registerBlockPosition(blockState, pos, world);
-        }
-
-        if (blockState.getBlock() == ModBlocks.blockWayPoint)
-        {
-            worker.getCitizenColonyHandler().getColony().addWayPoint(pos, world.getBlockState(pos));
-        }
     }
 
     @Override

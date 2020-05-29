@@ -90,6 +90,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * Method used to reassign a given request.
      *
      * @param token The token of the request that should be reassigned.
+     * @param resolverTokenBlackList the blacklist.
      * @return The token of the resolver that has gotten the assignment, null if none was found.
      *
      * @throws IllegalArgumentException when the token is not known to this manager.
@@ -110,7 +111,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Method to get a resolver from its token.
-     *
+     * @param token the token.
      * @return The resolver registered with the given token.
      *
      * @throws IllegalArgumentException when the token is unknown.

@@ -23,8 +23,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.ContainerBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Class of the warehouse building.
@@ -127,14 +127,14 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             return true;
         }
 
-        if (registeredDeliverymen.size() >= getBuildingLevel())
+        if (registeredDeliverymen.size() >= getMaxAssignedDmen())
         {
             if (!registeredDeliverymen.isEmpty())
             {
                 checkForRegisteredDeliverymen();
             }
 
-            if (registeredDeliverymen.size() >= getBuildingLevel())
+            if (registeredDeliverymen.size() >= getMaxAssignedDmen())
             {
                 return false;
             }
@@ -145,11 +145,20 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     /**
+     * Get the maximimum number of dmen that can be assigned to the warehoue.
+     * @return the maximum amount.
+     */
+    private int getMaxAssignedDmen()
+    {
+        return getBuildingLevel() * 2;
+    }
+
+    /**
      * Check the registered deliverymen and see if one of their huts got destroyed.
      */
     private void checkForRegisteredDeliverymen()
     {
-        for (final Vec3d pos: new ArrayList<>(registeredDeliverymen))
+        for (final Vec3d pos : new ArrayList<>(registeredDeliverymen))
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
@@ -189,12 +198,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         super.deserializeNBT(compound);
 
         registeredDeliverymen.clear();
+
         final ListNBT deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
-            {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
@@ -212,7 +221,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
         compound.put(TAG_DELIVERYMAN, levelTagList);
         compound.putInt(TAG_STORAGE, storageUpgrade);
-
         return compound;
     }
 
@@ -251,7 +259,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
+        if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)
@@ -268,9 +276,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Handles the chest placement.
-     *  @param pos   at pos.
-     * @param chest the entity.
-     * @param world the world.
+     *
+     * @param pos            at pos.
+     * @param chest          the entity.
+     * @param world          the world.
      * @param tileEntityData the rack te data.
      */
     public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
@@ -314,7 +323,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

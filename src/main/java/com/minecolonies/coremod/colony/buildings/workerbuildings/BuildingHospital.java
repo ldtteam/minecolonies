@@ -18,8 +18,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -27,6 +29,7 @@ import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -103,12 +106,6 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     public String getJobName()
     {
         return "com.minecolonies.coremod.job.healer";
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
     }
 
     @NotNull
@@ -349,8 +346,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                                   || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
                             {
                                 setBedOccupation(entry.getKey(), false);
+                                bedMap.put(entry.getKey(), 0);
                             }
-                            bedMap.put(entry.getKey(), 0);
                         }
                         else
                         {
@@ -362,7 +359,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                     }
                     else
                     {
-                        bedMap.remove(entry.getKey());
+                        bedMap.put(entry.getKey(), 0);
                     }
                 }
             }
@@ -371,6 +368,35 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 bedMap.remove(entry.getKey());
             }
         }
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        for (final Disease disease : IColonyManager.getInstance().getCompatibilityManager().getDiseases())
+        {
+            for (final ItemStack cure : disease.getCure())
+            {
+                if (cure.isItemEqual(stack))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return super.canEat(stack);
+    }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Hospital", UnlockBuildingResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            return;
+        }
+        super.requestUpgrade(player, builder);
     }
 
     /**

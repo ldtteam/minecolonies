@@ -2,9 +2,9 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -58,6 +58,7 @@ public final class BlockPosUtil
      * @param compound Compound to write to.
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
+     * @return the resulting compound.
      */
     public static CompoundNBT write(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
     {
@@ -86,9 +87,11 @@ public final class BlockPosUtil
      * @param world           the world.
      * @param currentPosition the current position.
      * @param def             the default position if none was found.
+     * @param minDist the minimum distance of the pos.
+     * @param maxDist the maximum distance.
      * @return the BlockPos.
      */
-    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist)
+    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
         final Random random = new Random();
 
@@ -102,8 +105,8 @@ public final class BlockPosUtil
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =
               new BlockPos(currentPosition)
-                .offset(direction.getA(), random.nextInt(LENGTH_RANGE) + minDist)
-                .offset(direction.getB(), random.nextInt(LENGTH_RANGE) + minDist)
+                .offset(direction.getA(), random.nextInt(maxDist) + minDist)
+                .offset(direction.getB(), random.nextInt(maxDist) + minDist)
                 .up(random.nextInt(UP_DOWN_RANGE))
                 .down(random.nextInt(UP_DOWN_RANGE));
 
@@ -208,7 +211,7 @@ public final class BlockPosUtil
      */
     public static boolean isPositionSafe(@NotNull final World sender, final BlockPos blockPos)
     {
-        return sender.getBlockState(blockPos).getBlock() != Blocks.AIR
+        return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
           && sender.getWorldBorder().contains(blockPos);
@@ -234,8 +237,8 @@ public final class BlockPosUtil
         while (top >= bot)
         {
             tempPos = new BlockPos(tempPos.getX(), mid, tempPos.getZ());
-            final Block blocks = world.getBlockState(tempPos).getBlock();
-            if (blocks == Blocks.AIR && world.canBlockSeeSky(tempPos))
+            final Block block = world.getBlockState(tempPos).getBlock();
+            if (block instanceof AirBlock && world.canBlockSeeSky(tempPos))
             {
                 top = mid - 1;
                 foundland = tempPos;
@@ -378,6 +381,7 @@ public final class BlockPosUtil
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
      * @param fortune Level of fortune on the pickaxe.
+     * @param stack the tool.
      * @return List of {@link ItemStack} with possible drops.
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack)

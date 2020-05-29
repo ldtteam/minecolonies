@@ -248,7 +248,7 @@ public class BuildingHome extends AbstractBuilding
         }
         childCreationTimer += TWENTYFIVESEC;
 
-        if (getAssignedCitizen().size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
+        if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -363,12 +363,12 @@ public class BuildingHome extends AbstractBuilding
         final String[] lastName = parentName.split(" ");
         newName[newName.length - 1] = lastName[lastName.length - 1];
 
-        String combinedName = "";
+        final StringBuilder combinedName = new StringBuilder();
         for (final String namePart : newName)
         {
-            combinedName = combinedName + namePart + " ";
+            combinedName.append(namePart).append(" ");
         }
-        child.setName(combinedName.trim());
+        child.setName(combinedName.toString().trim());
     }
 
     @Override
@@ -413,6 +413,8 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Moves the citizen into his new hut
+     * 
+     * @param citizen the citizen to move
      */
     private void moveCitizenToHut(final ICitizenData citizen)
     {
@@ -430,6 +432,11 @@ public class BuildingHome extends AbstractBuilding
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
+        if (citizen.getHomeBuilding() != null)
+        {
+            citizen.getHomeBuilding().removeCitizen(citizen);
+        }
+
         if (!super.assignCitizen(citizen))
         {
             return false;
@@ -459,7 +466,7 @@ public class BuildingHome extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        for (final Optional<AbstractEntityCitizen> entityCitizen : getAssignedEntities())
+        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities()))
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {
@@ -499,20 +506,16 @@ public class BuildingHome extends AbstractBuilding
         return new ArrayList<>(bedList);
     }
 
-    /**
-     * Return the child creation interval
-     */
-    public int getCitizenCreationInterval()
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
     {
-        return childCreationInterval;
-    }
-
-    /**
-     * Sets the child creation interval in seconds
-     */
-    public void setCitizenCreationInterval(final int childCreationInterval)
-    {
-        this.childCreationTimer = childCreationInterval;
+        super.onBuildingMove(oldBuilding);
+        final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
+        for (final ICitizenData citizen : residents)
+        {
+            citizen.setHomeBuilding(this);
+            this.assignCitizen(citizen);
+        }
     }
 
     /**
@@ -577,6 +580,7 @@ public class BuildingHome extends AbstractBuilding
         {
             super.deserialize(buf);
 
+            residents.clear();
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {

@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -107,6 +106,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Alternative overriden constructor.
+     * @param type the entity type.
      */
     public TileEntityColonyBuilding(final TileEntityType type)
     {
@@ -209,8 +209,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof AbstractTileEntityRack
                        && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (entity instanceof ChestTileEntity
-                            && isInTileEntity(entity, notEmptyPredicate)))
+                      || (isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
                 }
@@ -246,7 +245,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putInt(TAG_COLONY, colonyId);
+        write(compound);
         return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
@@ -255,6 +254,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public CompoundNBT getUpdateTag()
     {
         return write(new CompoundNBT());
+    }
+
+    @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
     }
 
     @Override
@@ -333,6 +338,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         mirror = compound.getBoolean(TAG_MIRROR);
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        buildingPos = pos;
     }
 
     @NotNull
@@ -358,12 +364,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
-
-        /*
-         * We want a new inventory every tick.
-         * The accessed inventory in the same tick must be the same.
-         */
-        combinedInv = null;
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -435,7 +435,13 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @NotNull final Direction side)
+    public void markInvDirty()
+    {
+        combinedInv = null;
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
@@ -451,6 +457,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                        .map(world::getTileEntity)
                                        .collect(Collectors.toSet()));
                     providers.removeIf(Objects::isNull);
+                    building.getAdditionalCountainers().stream().map(world::getTileEntity).filter(entity -> entity instanceof TileEntityRack).forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
                 }
 
                 final List<IItemHandler> handlers = providers.stream()

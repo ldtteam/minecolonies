@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -20,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -83,8 +84,9 @@ public final class StandardRequests
 
         /**
          * Constructor of the request.
+         *
          * @param requester the requester.
-         * @param token the token assigned to this request.
+         * @param token     the token assigned to this request.
          * @param requested the request data.
          */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
@@ -96,9 +98,10 @@ public final class StandardRequests
 
         /**
          * Constructor of the request.
+         *
          * @param requester the requester.
-         * @param token the token assigned to this request.
-         * @param state the state of the request.
+         * @param token     the token assigned to this request.
+         * @param state     the state of the request.
          * @param requested the request data.
          */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StackList requested)
@@ -134,11 +137,6 @@ public final class StandardRequests
      */
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
-        {
-            super(requester, token, requested);
-        }
-
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
             super(requester, token, state, requested);
@@ -158,7 +156,8 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling( new StringTextComponent(getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(new StringTextComponent(
+              getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
             return result;
         }
 
@@ -177,9 +176,53 @@ public final class StandardRequests
         }
     }
 
-	/**
-	 * An abstract implementation for crafting requests
-	 */
+    /**
+     * Generic delivery request.
+     */
+    public static class PickupRequest extends AbstractRequest<Pickup>
+    {
+        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Pickup requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ImmutableList<ItemStack> getDeliveries()
+        {
+            //This request type has no deliverable.
+            //It is a pickup.
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP));
+            return result;
+        }
+
+        @NotNull
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public ResourceLocation getDisplayIcon()
+        {
+            // This can be just the delivery icon. For the user, it's no big deal.
+            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
+        }
+    }
+
+    /**
+     * An abstract implementation for crafting requests
+     */
     public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
     {
 
@@ -228,12 +271,11 @@ public final class StandardRequests
         }
 
         protected abstract String getDisplayIconFile();
-
     }
 
-	/**
-	 * The crafting request for private crafting of a citizen
-	 */
+    /**
+     * The crafting request for private crafting of a citizen
+     */
     public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting>
     {
 
@@ -266,9 +308,9 @@ public final class StandardRequests
         }
     }
 
-	/**
-	 * The public crafting requests, used for workers that perform crafting
-	 */
+    /**
+     * The public crafting requests, used for workers that perform crafting
+     */
     public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting>
     {
 
@@ -376,10 +418,10 @@ public final class StandardRequests
         }
 
         FoodRequest(
-                     @NotNull final IRequester requester,
-                     @NotNull final IToken token,
-                     @NotNull final RequestState state,
-                     @NotNull final Food requested)
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final Food requested)
         {
             super(requester, token, state, requested);
         }
@@ -399,7 +441,12 @@ public final class StandardRequests
         {
             if (foodExamples == null)
             {
-                foodExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(item -> item.getItem().isFood()).collect(Collectors.toList()));
+                foodExamples = ImmutableList.copyOf(IColonyManager.getInstance()
+                                                      .getCompatibilityManager()
+                                                      .getBlockList()
+                                                      .stream()
+                                                      .filter(item -> item.getItem().isFood())
+                                                      .collect(Collectors.toList()));
             }
 
             return foodExamples;
@@ -422,13 +469,12 @@ public final class StandardRequests
         }
 
         SmeltAbleOreRequest(
-                @NotNull final IRequester requester,
-                @NotNull final IToken token,
-                @NotNull final RequestState state,
-                @NotNull final SmeltableOre requested)
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final SmeltableOre requested)
         {
             super(requester, token, state, requested);
-
         }
 
         @NotNull
@@ -444,7 +490,12 @@ public final class StandardRequests
         {
             if (oreExamples == null)
             {
-                oreExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(IColonyManager.getInstance().getCompatibilityManager()::isOre).collect(Collectors.toList()));
+                oreExamples = ImmutableList.copyOf(IColonyManager.getInstance()
+                                                     .getCompatibilityManager()
+                                                     .getBlockList()
+                                                     .stream()
+                                                     .filter(IColonyManager.getInstance().getCompatibilityManager()::isOre)
+                                                     .collect(Collectors.toList()));
             }
             return oreExamples;
         }
@@ -466,10 +517,10 @@ public final class StandardRequests
         }
 
         BurnableRequest(
-                         @NotNull final IRequester requester,
-                         @NotNull final IToken token,
-                         @NotNull final RequestState state,
-                         @NotNull final Burnable requested)
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final Burnable requested)
         {
             super(requester, token, state, requested);
         }
@@ -489,11 +540,15 @@ public final class StandardRequests
         {
             if (burnableExamples == null)
             {
-                burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(FurnaceTileEntity::isFuel).collect(Collectors.toList()));
+                burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance()
+                                                          .getCompatibilityManager()
+                                                          .getBlockList()
+                                                          .stream()
+                                                          .filter(FurnaceTileEntity::isFuel)
+                                                          .collect(Collectors.toList()));
             }
 
             return burnableExamples;
         }
     }
-
 }

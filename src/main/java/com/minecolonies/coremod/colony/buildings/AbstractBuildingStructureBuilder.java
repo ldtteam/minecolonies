@@ -2,32 +2,35 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The structureBuilder building.
@@ -38,21 +41,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * The maximum upgrade of the building.
      */
     public static final  int    MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_RESOURCE_LIST = "resourcesItem";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_POS = "progressPos";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_PROGRESS_STAGE = "progressStage";
 
     /**
      * Progress amount to mark building dirty.
@@ -67,7 +55,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Progress stage of the builder.
      */
-    private StructureIterator.Stage progressStage;
+    private BuildingStructureHandler.Stage progressStage;
 
     /**
      * Contains all resources needed for a certain build.
@@ -78,6 +66,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * The progress counter of the builder.
      */
     private int progressCounter = 0;
+
+    /**
+     * all the fluids to be removed in fluids_remove.
+     */
+    private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -102,13 +95,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new Tuple<>(stack.getAmount(), true));
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -144,10 +137,26 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             }
         }
 
-        if (compound.keySet().contains(TAG_PROGRESS_POS))
+        if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
-            progressStage = StructureIterator.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+            progressStage = BuildingStructureHandler.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+        }
+
+        if (compound.contains(TAG_FLUIDS_REMOVE))
+        {
+            fluidsToRemove.clear();
+            ListNBT fluidsToRemove = (ListNBT) compound.get(TAG_FLUIDS_REMOVE);
+            fluidsToRemove.forEach(fluidsRemove -> {
+            	int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                ListNBT positions = (ListNBT) ((CompoundNBT) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
+                final List<BlockPos> fluids = new ArrayList<BlockPos>();
+                for (int i = 0; i < positions.size(); i++)
+                {
+                	fluids.add(BlockPosUtil.readFromListNBT(positions, i));
+                }
+                this.fluidsToRemove.put(y, fluids);
+            });
         }
     }
 
@@ -173,6 +182,17 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
+
+        final ListNBT fluidsToRemove = new ListNBT();
+        this.fluidsToRemove.forEach((y, fluids) -> {
+        	final CompoundNBT fluidsRemove = new CompoundNBT();
+            final ListNBT positions = new ListNBT();
+            fluids.forEach(fluid -> BlockPosUtil.writeToListNBT(positions, fluid));
+            fluidsRemove.put(TAG_FLUIDS_REMOVE_POSITIONS, positions);
+            fluidsRemove.putInt(TAG_FLUIDS_REMOVE_Y, y);
+            fluidsToRemove.add(fluidsRemove);
+        });
+        compound.put(TAG_FLUIDS_REMOVE, fluidsToRemove);
 
         return compound;
     }
@@ -374,7 +394,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param blockPos the last blockPos.
      * @param stage the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         this.progressPos = blockPos;
         this.progressStage = stage;
@@ -394,7 +414,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, StructureIterator.Stage> getProgress()
+    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgress()
     {
         if (this.progressPos == null)
         {
@@ -403,9 +423,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return new Tuple<>(this.progressPos, this.progressStage);
     }
 
-    @Override
-    public boolean requiresCompleteRequestFulfillment()
+    /**
+     * Getter for the blocks to be removed in fluids_remove.
+     * @return the blocks to be removed in fluids_remove.
+     */
+    public Map<Integer, List<BlockPos>> getFluidsToRemove()
     {
-        return false;
+        return fluidsToRemove;
     }
 }

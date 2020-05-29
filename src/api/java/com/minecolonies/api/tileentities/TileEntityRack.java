@@ -2,6 +2,9 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -73,8 +76,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a certain itemstack is present in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a certain itemstack is present in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack the stack to check.
      * @return true if so.
@@ -97,8 +99,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
      *
      * @return true if so.
      */
@@ -109,8 +110,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Get the amount of free slots in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
      */
@@ -127,8 +127,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a similar/same item as the stack is in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack             the stack to check.
      * @param ignoreDamageValue ignore the damage value.
@@ -149,8 +148,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Check if a similar/same item as the stack is in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param itemStackSelectionPredicate the predicate to test the stack against.
      * @return true if so.
@@ -167,6 +165,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
         return false;
     }
+
+    /**
+     * Gets the content of the Rack
+     * @return the map of content.
+     */
+    public Map<ItemStorage, Integer> getAllContent() {return content;}
 
     /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
@@ -189,6 +193,36 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
+    }
+
+    /**
+     * Notifies the parent building about inventory change.
+     */
+    private void notifyParentAboutInvChange()
+    {
+        if (!buildingPos.equals(BlockPos.ZERO))
+        {
+            TileEntity building = world.getTileEntity(buildingPos);
+            if (building instanceof TileEntityColonyBuilding)
+            {
+                ((TileEntityColonyBuilding) building).markInvDirty();
+            }
+        }
+        else if (inWarehouse && world != null)
+        {
+            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+            if (colony != null)
+            {
+                colony.getBuildingManager().getWareHouses().forEach(warehouse -> warehouse.getTileEntity().markInvDirty());
+            }
+        }
+    }
+
+    @Override
+    public void remove()
+    {
+        super.remove();
+        notifyParentAboutInvChange();
     }
 
     /* Get the amount of items matching a predicate in the inventory.
@@ -238,8 +272,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Update the blockState of the rack.
-     * Switch between connected, single, full and empty texture.
+     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
      */
     @Override
     protected void updateBlockState()
@@ -317,7 +350,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             return null;
         }
         final TileEntity tileEntity = world.getTileEntity(pos.subtract(relativeNeighbor));
-        if (tileEntity instanceof TileEntityRack)
+        if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
             if (!this.getPos().equals(((TileEntityRack) tileEntity).getNeighbor()))
             {
@@ -332,8 +365,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
      *
      * @return true if so.
      */
@@ -414,6 +446,10 @@ public class TileEntityRack extends AbstractTileEntityRack
         updateItemStorage();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
+        if (compound.contains(TAG_POS))
+        {
+            this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
+        }
     }
 
     @NotNull
@@ -445,6 +481,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putBoolean(TAG_MAIN, main);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
+        BlockPosUtil.write(compound, TAG_POS, buildingPos);
         return compound;
     }
 

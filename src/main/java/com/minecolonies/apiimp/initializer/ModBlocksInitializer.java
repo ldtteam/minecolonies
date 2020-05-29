@@ -1,8 +1,8 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.huts.*;
@@ -13,7 +13,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 /**
  * This class deals with the initialization of blocks and their items.
@@ -75,12 +74,20 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter = new BlockHutEnchanter().registerBlock(registry);
         ModBlocks.blockHutUniversity = new BlockHutUniversity().registerBlock(registry);
         ModBlocks.blockHutHospital = new BlockHutHospital().registerBlock(registry);
+        ModBlocks.blockHutSchool = new BlockHutSchool().registerBlock(registry);
+        ModBlocks.blockHutGlassblower = new BlockHutGlassblower().registerBlock(registry);
+        ModBlocks.blockHutDyer = new BlockHutDyer().registerBlock(registry);
+        ModBlocks.blockHutFletcher = new BlockHutFletcher().registerBlock(registry);
+        ModBlocks.blockHutMechanic = new BlockHutMechanic().registerBlock(registry);
+        ModBlocks.blockHutTavern = new BlockHutTavern().registerBlock(registry);
+        ModBlocks.blockHutPlantation = new BlockHutPlantation().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         ModBlocks.blockWayPoint = new BlockWaypoint().registerBlock(registry);
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
+        ModBlocks.blockStash = new BlockStash().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController().registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
@@ -135,6 +142,13 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutEnchanter.registerBlockItem(registry, properties);
         ModBlocks.blockHutUniversity.registerBlockItem(registry, properties);
         ModBlocks.blockHutHospital.registerBlockItem(registry, properties);
+        ModBlocks.blockHutSchool.registerBlockItem(registry, properties);
+        ModBlocks.blockHutGlassblower.registerBlockItem(registry, properties);
+        ModBlocks.blockHutDyer.registerBlockItem(registry, properties);
+        ModBlocks.blockHutFletcher.registerBlockItem(registry, properties);
+        ModBlocks.blockHutMechanic.registerBlockItem(registry, properties);
+        ModBlocks.blockHutTavern.registerBlockItem(registry, properties);
+        ModBlocks.blockHutPlantation.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
@@ -142,6 +156,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
+        ModBlocks.blockStash.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
     }

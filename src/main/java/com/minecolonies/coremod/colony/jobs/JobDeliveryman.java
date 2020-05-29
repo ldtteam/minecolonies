@@ -7,28 +7,31 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.sounds.DeliverymanSounds;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
 
 /**
  * Class of the deliveryman job.
@@ -41,7 +44,6 @@ public class JobDeliveryman extends AbstractJob
      * Walking speed bonus per level
      */
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
-
 
     /**
      * If the dman is currently active.
@@ -118,7 +120,7 @@ public class JobDeliveryman extends AbstractJob
     {
         super.deserializeNBT(compound);
 
-        if(compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
@@ -141,38 +143,6 @@ public class JobDeliveryman extends AbstractJob
         return new EntityAIWorkDeliveryman(this);
     }
 
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.badWeather : null;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getMoveAwaySound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.hostile : null;
-        }
-        return null;
-    }
-
     private IRequestSystemDeliveryManJobDataStore getDataStore()
     {
         return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
@@ -184,29 +154,20 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns whether or not the job has a currentTask.
-     *
-     * @return true if has currentTask, otherwise false.
-     */
-    public boolean hasTask()
-    {
-        return !getTaskQueueFromDataStore().isEmpty() || getDataStore().isReturning();
-    }
-
-    /**
      * Returns the {@link IRequest} of the current Task.
      *
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<Delivery> getCurrentTask()
+    public IRequest<IDeliverymanRequestable> getCurrentTask()
     {
-        if (getTaskQueueFromDataStore().isEmpty())
+        final IToken<?> request = getTaskQueueFromDataStore().peekFirst();
+        if (request == null)
         {
             return null;
         }
 
-        return (IRequest<Delivery>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        return (IRequest<IDeliverymanRequestable>) getColony().getRequestManager().getRequestForToken(request);
     }
 
     /**
@@ -216,7 +177,35 @@ public class JobDeliveryman extends AbstractJob
      */
     public void addRequest(@NotNull final IToken<?> token)
     {
-        getTaskQueueFromDataStore().add(token);
+        final IRequestManager requestManager = getColony().getRequestManager();
+        IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
+
+        LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
+        Iterator<IToken<?>> iterator = taskQueue.descendingIterator();
+
+        int insertionIndex = taskQueue.size();
+        while (iterator.hasNext())
+        {
+            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(iterator.next()));
+            if (request.getRequest().getPriority() < newRequest.getRequest().getPriority())
+            {
+                request.getRequest().incrementPriorityDueToAging();
+                insertionIndex--;
+            }
+            else
+            {
+                break;
+            }
+        }
+        getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
+
+        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == MAX_DELIVERYMAN_PLAYER_PRIORITY)
+        {
+            getCitizen().getCitizenEntity()
+              .get()
+              .getCitizenChatHandler()
+              .sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP);
+        }
     }
 
     /**
@@ -231,14 +220,17 @@ public class JobDeliveryman extends AbstractJob
             return;
         }
 
-        this.setReturning(true);
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 
         //Just to be sure lets delete them!
         if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+        {
             getTaskQueueFromDataStore().removeFirst();
+        }
+
+        getCitizen().getWorkBuilding().markDirty();
     }
 
     /**
@@ -250,13 +242,10 @@ public class JobDeliveryman extends AbstractJob
     {
         if (getTaskQueueFromDataStore().contains(token))
         {
-            if (getTaskQueueFromDataStore().peek().equals(token))
-            {
-                this.setReturning(true);
-            }
-
             getTaskQueueFromDataStore().remove(token);
         }
+
+        getCitizen().getWorkBuilding().markDirty();
     }
 
     /**
@@ -269,63 +258,55 @@ public class JobDeliveryman extends AbstractJob
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
-    /**
-     * Method used to check if this DMan is trying to return to the warehouse to clean up.
-     *
-     * @return True when this DMan is returning the warehouse to clean his inventory.
-     */
-    public boolean isReturning()
-    {
-        return getDataStore().isReturning();
-    }
-
-    /**
-     * Method used to set if this DMan needs to return and clear his inventory.
-     * A set task is preferred over the returning flag.
-     *
-     * @param returning True to return the DMan to the warehouse and clean, false not to.
-     */
-    public void setReturning(final boolean returning)
-    {
-        getDataStore().setReturning(returning);
-    }
-
-    /**
-     * Set if the dman can currently work.
-     * @param b true if so.
-     */
+    @Override
     public void setActive(final boolean b)
     {
-        if (!b && active)
+        try
         {
-            cancelAssignedRequests();
+            if (!b && active)
+            {
+                this.active = b;
+                cancelAssignedRequests();
+            }
+            else if (!active && b)
+            {
+                this.active = b;
+                getColony().getRequestManager().onColonyUpdate(request -> true);
+            }
         }
-        else if (!active && b)
+        catch (final Exception ex)
         {
-            this.active = b;
-            final ImmutableList<IToken<?>> tokenList = getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
-            getColony().getRequestManager()
-              .onColonyUpdate(request -> tokenList.contains(request.getId()));
+            Log.getLogger().warn("Active Triggered resulted in exception", ex);
         }
-        this.active = b;
     }
 
     private void cancelAssignedRequests()
     {
         for (final IToken<?> t : getTaskQueue())
         {
-            getColony().getRequestManager().updateRequestState(t,  RequestState.FAILED);
+            getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
+            getTaskQueueFromDataStore().remove(t);
         }
     }
 
     @Override
     public void onRemoval()
     {
-        cancelAssignedRequests();
+        this.active = false;
+        try
+        {
+            cancelAssignedRequests();
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Active Triggered resulted in exception", ex);
+        }
     }
 
     /**
      * Check if the dman can currently accept requests.
+     *
+     * @return true if active.
      */
     public boolean isActive()
     {

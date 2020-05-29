@@ -14,7 +14,7 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
-import com.minecolonies.coremod.network.messages.TryResearchMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -48,6 +48,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private final WindowHutUniversity last;
 
     /**
+     * If has a max research for this branch already.
+     */
+    private boolean hasMax;
+
+    /**
      * Create the research tree window.
      * @param branch the branch being researched.
      * @param building the associated university.
@@ -59,8 +64,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.branch = branch;
         this.building = building;
         this.last = last;
+        this.hasMax = false;
 
         final List<String> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
+        this.hasMax = building.getColony().getResearchManager().getResearchTree().branchFinishedHighestLevel(branch);
+
         final ZoomDragView view = findPaneOfTypeByID(DRAG_VIEW_ID, ZoomDragView.class);
 
         drawTree(0, 0, view, researchList, building.getColony().getResearchManager().getResearchTree(), true, false, 0);
@@ -81,9 +89,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         super.onButtonClicked(button);
 
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, button.getID());
-        if (research != null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() && research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+        if (research != null &&
+              building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
+              (building.getBuildingLevel() >= research.getDepth() || building.getBuildingLevel() == building.getBuildingMaxLevel()) &&
+              research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)) || (research != null && mc.player.isCreative()))
         {
-            Network.getNetwork().sendToServer(new TryResearchMessage(research.getId(), research.getBranch(), building.getColony().getID(), building.getColony().getDimension(), building.getID()));
+            Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
             close();
         }
 
@@ -103,6 +114,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param tree the local tree of the colony.
      * @param parentResearched if possibly can be researched.
      * @param abandoned if abandoned child.
+     * @param parentHeight the height of the parent.
      * @return the next y offset.
      */
     public int drawTree(final int height, final int depth, final ZoomDragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
@@ -116,6 +128,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchLabel);
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
             final ResearchState state = localResearch == null ? ResearchState.NOT_STARTED : localResearch.getState();
+            final IGlobalResearch parentResearch = IGlobalResearchTree.getInstance().getResearch(branch, research.getParent());
+
+            boolean trueAbandoned = abandoned;
+            if (depth != 0 && abandoned == false && state == ResearchState.NOT_STARTED && parentResearch.hasResearchedChild(tree) && parentResearch.hasOnlyChild())
+            {
+                trueAbandoned = true;
+            }
 
             final Gradient gradient = new Gradient();
             gradient.setSize(GRADIENT_WIDTH, GRADIENT_HEIGHT);
@@ -126,16 +145,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 gradient.setGradientEnd(227, 249, 184, 255);
                 view.addChild(gradient);
             }
+            else if (trueAbandoned && state != ResearchState.FINISHED)
+            {
+                gradient.setGradientStart(191, 184, 172, 255);
+                gradient.setGradientEnd(191, 184, 172, 255);
+                view.addChild(gradient);
+            }
             else if (!parentResearched)
             {
                 gradient.setGradientStart(239, 230, 215, 255);
                 gradient.setGradientEnd(239, 230, 215, 255);
-                view.addChild(gradient);
-            }
-            else if (abandoned && state != ResearchState.FINISHED)
-            {
-                gradient.setGradientStart(191, 184, 172, 255);
-                gradient.setGradientEnd(191, 184, 172, 255);
                 view.addChild(gradient);
             }
             else if (state != ResearchState.FINISHED)
@@ -159,6 +178,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             if (state == ResearchState.IN_PROGRESS)
             {
+                //The player will reach the end of the research if he is in creative mode and the research was in progress
+                if (mc.player.isCreative() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
+                {
+                    Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
+                }
                 //Calculates how much percent of the next level has been completed.
                 final double progressRatio = (localResearch.getProgress()+1)/(Math.pow(2, localResearch.getDepth()-1) * (double) BASE_RESEARCH_TIME) * 100;
 
@@ -198,7 +222,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             view.addChild(effectLabel);
 
-            if ( parentResearched && state == ResearchState.NOT_STARTED && !abandoned )
+            if ( parentResearched && state == ResearchState.NOT_STARTED && !trueAbandoned )
             {
                 final ButtonImage buttonImage = new ButtonImage();
                 buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -208,7 +232,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
                 buttonImage.setID(research.getId());
 
-                if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size())
+                if (mc.player.isCreative())
+                {
+                    if (research.getDepth() == 6
+                          && hasMax)
+                    {
+                        buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+                        buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
+                    }
+                }
+                else if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
@@ -218,10 +251,17 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.notenoughresources"));
                 }
-                else if (research.getDepth() > building.getBuildingLevel())
+                else if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.buildingleveltoolow"));
+                }
+                else if (research.getDepth() == 6
+                           && building.getBuildingLevel() == building.getBuildingMaxLevel()
+                            && hasMax)
+                {
+                    buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
                 }
 
                 view.addChild(buttonImage);
@@ -240,7 +280,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     storageOffset += COST_OFFSET;
                 }
             }
-            else if (!parentResearched)
+            else if (!parentResearched && !trueAbandoned)
             {
                 final Image lockIcon = new Image();
                 lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon.png"));
@@ -339,7 +379,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             if (!research.getChilds().isEmpty())
             {
-                nextHeight = drawTree(nextHeight + Math.min(i, 1), depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED, research.hasOnlyChild() && research.hasResearchedChild(tree), (nextHeight + Math.min(i, 1)));
+                nextHeight = drawTree(nextHeight + Math.min(i, 1), depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED, trueAbandoned, (nextHeight + Math.min(i, 1)));
             }
             else
             {

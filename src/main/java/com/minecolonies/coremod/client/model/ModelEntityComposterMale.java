@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,6 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         gloveL.setTextureSize(128, 64);
         gloveL.mirror = true;
         setRotation(gloveL, 0F, 0F, 0F);
-        gloveL.mirror = false;
 
         bootR = new ModelRenderer(this, 20, 38);
         bootR.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);

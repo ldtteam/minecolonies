@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +89,16 @@ public final class InteractionValidatorRegistry
     public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
     {
         tokenMap.put(key, predicate);
+    }
+
+    /**
+     * Check if there is a validator with a certain key.
+     * @param component the key to check.
+     * @return true if so.
+     */
+    public static boolean hasValidator(final TranslationTextComponent component)
+    {
+        return map.containsKey(component) || posMap.containsKey(component) || tokenMap.containsKey(component);
     }
 
     /**

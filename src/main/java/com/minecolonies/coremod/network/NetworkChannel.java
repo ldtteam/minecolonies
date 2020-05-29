@@ -3,7 +3,39 @@ package com.minecolonies.coremod.network;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.client.*;
+import com.minecolonies.coremod.network.messages.client.colony.*;
+import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
+import com.minecolonies.coremod.network.messages.server.*;
+import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.building.*;
+import com.minecolonies.coremod.network.messages.server.colony.building.composter.ComposterRetrievalMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -23,12 +55,12 @@ import java.util.function.Supplier;
  */
 public class NetworkChannel
 {
-    private static final String LATEST_PROTO_VER = "1.0";
-    private static final String ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
+    private static final String        LATEST_PROTO_VER    = "1.0";
+    private static final String        ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
     /**
      * Forge network channel
      */
-    private final SimpleChannel rawChannel;
+    private final        SimpleChannel rawChannel;
 
     /**
      * Creates a new instance of network channel.
@@ -38,7 +70,8 @@ public class NetworkChannel
      */
     public NetworkChannel(final String channelName)
     {
-        rawChannel = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> LATEST_PROTO_VER, ACCEPTED_PROTO_VERS::equals, ACCEPTED_PROTO_VERS::equals);
+        rawChannel =
+          NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> LATEST_PROTO_VER, ACCEPTED_PROTO_VERS::equals, ACCEPTED_PROTO_VERS::equals);
     }
 
     /**
@@ -61,7 +94,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
         registerMessage(++idx, GuardMobAttackListMessage.class, GuardMobAttackListMessage::new);
-        registerMessage(++idx, HappinessDataMessage.class, HappinessDataMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
@@ -93,6 +125,9 @@ public class NetworkChannel
         registerMessage(++idx, LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage::new);
         registerMessage(++idx, LumberjackRestrictionToggleMessage.class, LumberjackRestrictionToggleMessage::new);
         registerMessage(++idx, LumberjackScepterMessage.class, LumberjackScepterMessage::new);
+        registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
+        registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
+        registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
 
         registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
         registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);
@@ -101,7 +136,7 @@ public class NetworkChannel
         registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
         registerMessage(++idx, ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
-        registerMessage(++idx, ChangeDeliveryPriorityStateMessage.class, ChangeDeliveryPriorityStateMessage::new);
+        registerMessage(++idx, ForcePickupMessage.class, ForcePickupMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
         registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
@@ -110,7 +145,6 @@ public class NetworkChannel
         registerMessage(++idx, CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage::new);
         registerMessage(++idx, BuildingMoveMessage.class, BuildingMoveMessage::new);
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
-        registerMessage(++idx, RemoveEntityMessage.class, RemoveEntityMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
         registerMessage(++idx, ToggleHelpMessage.class, ToggleHelpMessage::new);
@@ -127,13 +161,16 @@ public class NetworkChannel
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
         registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
         registerMessage(++idx, DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
-        registerMessage(++idx, DecorationControllUpdateMessage.class, DecorationControllUpdateMessage::new);
+        registerMessage(++idx, DecorationControllerUpdateMessage.class, DecorationControllerUpdateMessage::new);
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
         registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
+        registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
+        registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
+        registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -147,6 +184,8 @@ public class NetworkChannel
         registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
         registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
+        registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
+        registerMessage(++idx, PlayMusicMessage.class, PlayMusicMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);
@@ -263,7 +302,7 @@ public class NetworkChannel
      * <pre>
      * Math.min(Entity.getType().getTrackingRange(), ChunkManager.this.viewDistance - 1) * 16;
      * </pre>
-     *
+     * <p>
      * as of 24-06-2019
      *
      * @param msg    message to send
@@ -280,7 +319,7 @@ public class NetworkChannel
      * <pre>
      * Math.min(Entity.getType().getTrackingRange(), ChunkManager.this.viewDistance - 1) * 16;
      * </pre>
-     *
+     * <p>
      * as of 24-06-2019
      *
      * @param msg    message to send

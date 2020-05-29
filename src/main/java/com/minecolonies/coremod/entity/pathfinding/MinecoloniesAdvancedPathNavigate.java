@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.MinecoloniesMinecart;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
@@ -9,7 +11,11 @@ import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -17,7 +23,9 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.pathfinding.WalkNodeProcessor;
+import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -37,6 +45,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     private static final double PIRATE_SWIM_BONUS        = 30;
     private static final double BARBARIAN_SWIM_BONUS     = 15;
+    private static final double CITIZEN_SWIM_BONUS       = 10;
     public static final  double MIN_Y_DISTANCE           = 0.001;
     public static final  int    MAX_SPEED_ALLOWED        = 100;
 
@@ -54,6 +63,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private long pathStartTime = 0;
 
     /**
+     * Spawn pos of minecart.
+     */
+    private BlockPos spawnedPos = BlockPos.ZERO;
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -65,8 +79,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.nodeProcessor = new WalkNodeProcessor();
         this.nodeProcessor.setCanEnterDoors(true);
+        getPathingOptions().setEnterDoors(true);
         this.nodeProcessor.setCanOpenDoors(true);
+        getPathingOptions().setCanOpenDoors(true);
         this.nodeProcessor.setCanSwim(true);
+        getPathingOptions().setCanSwim(true);
     }
 
     /**
@@ -118,6 +135,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
+        job.setPathingOptions(getPathingOptions());
         calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
         return pathResult;
@@ -153,6 +171,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         entity.setSneaking(false);
         this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
+        {
+            return;
+        }
+        if (handleRails())
         {
             return;
         }
@@ -222,7 +244,32 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // Auto dismount when trying to path.
         if (ourEntity.ridingEntity != null)
         {
-            ourEntity.stopRiding();
+            @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            if (pEx.isRailsExit())
+            {
+                final Entity entity = ourEntity.ridingEntity;
+                ourEntity.stopRiding();
+                entity.remove();
+            }
+            else if (!pEx.isOnRails())
+            {
+                if (ourEntity.ridingEntity instanceof MinecoloniesMinecart)
+                {
+                    final Entity entity = ourEntity.ridingEntity;
+                    ourEntity.stopRiding();
+                    entity.remove();
+                }
+                else
+                {
+                    ourEntity.stopRiding();
+                }
+            }
+            else if ((Math.abs(pEx.x - entity.posX) > 7 || Math.abs(pEx.z - entity.posZ) > 7) && ourEntity.ridingEntity != null)
+            {
+                final Entity entity = ourEntity.ridingEntity;
+                ourEntity.stopRiding();
+                entity.remove();
+            }
         }
         return true;
     }
@@ -259,6 +306,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         else if (ourEntity instanceof AbstractEntityBarbarian && ourEntity.isInWater())
         {
             speed = walkSpeed * BARBARIAN_SWIM_BONUS;
+            return speed;
+        }
+        else if (ourEntity instanceof EntityCitizen && ourEntity.isInWater())
+        {
+            speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
         }
 
@@ -307,7 +359,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         if (path == null)
         {
-            this.currentPath = null;
+            clearPath();
             return false;
         }
         pathStartTime = world.getGameTime();
@@ -410,6 +462,110 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return false;
     }
 
+    /**
+     * Handle rails navigation.
+     *
+     * @return true if block.
+     */
+    private boolean handleRails()
+    {
+        if (!this.noPath())
+        {
+            @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            final PathPointExtended pExNext = getPath().getCurrentPathLength() > this.getPath().getCurrentPathIndex() + 1
+                                                ? (PathPointExtended) this.getPath()
+                                                                        .getPathPointFromIndex(this.getPath()
+                                                                                                 .getCurrentPathIndex() + 1)
+                                                : null;
+
+            if (pEx.isOnRails() || pEx.isRailsExit())
+            {
+                return handlePathOnRails(pEx, pExNext);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Handle pathing on rails.
+     * @param pEx the current path point.
+     * @param pExNext the next path point.
+     * @return if go to next point.
+     */
+    private boolean handlePathOnRails(final PathPointExtended pEx, final PathPointExtended pExNext)
+    {
+        if (pEx.isRailsEntry())
+        {
+            final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
+            if (!spawnedPos.equals(blockPos))
+            {
+                final BlockState blockstate = world.getBlockState(blockPos);
+                RailShape railshape = blockstate.getBlock() instanceof AbstractRailBlock
+                                        ? ((AbstractRailBlock) blockstate.getBlock()).getRailDirection(blockstate, world, blockPos, null)
+                                        : RailShape.NORTH_SOUTH;
+                double yOffset = 0.0D;
+                if (railshape.isAscending())
+                {
+                    yOffset = 0.5D;
+                }
+
+                if (entity.ridingEntity instanceof MinecoloniesMinecart)
+                {
+                    ((MinecoloniesMinecart) entity.ridingEntity).setRollingDirection(1);
+                }
+                else
+                {
+                    MinecoloniesMinecart minecart = (MinecoloniesMinecart) ModEntities.MINECART.create(world);
+                    final double x = pEx.x + 0.5D;
+                    final double y = pEx.y + 0.625D + yOffset;
+                    final double z = pEx.z + 0.5D;
+                    minecart.setPosition(x, y, z);
+                    minecart.setMotion(Vec3d.ZERO);
+                    minecart.prevPosX = x;
+                    minecart.prevPosY = y;
+                    minecart.prevPosZ = z;
+
+
+                    world.addEntity(minecart);
+                    minecart.setRollingDirection(1);
+                    entity.startRiding(minecart, true);
+                }
+                spawnedPos = blockPos;
+            }
+        }
+        else
+        {
+            spawnedPos = BlockPos.ZERO;
+        }
+
+        if (entity.ridingEntity instanceof MinecoloniesMinecart && pExNext != null)
+        {
+            final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
+            final BlockPos blockPosNext = new BlockPos(pExNext.x, pExNext.y, pExNext.z);
+            final Vec3d motion = entity.ridingEntity.getMotion();
+            double forward;
+            switch (BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
+            {
+                case EAST:
+                    forward = Math.min(Math.max(motion.getX() - 1 * 0.01D, -1), 0);
+                    entity.ridingEntity.setMotion(motion.add(forward == -1 ? -1 : -1 * 0.01D, 0.0D, 0.0D));
+                    break;
+                case WEST:
+                    forward = Math.max(Math.min(motion.getX() + 0.01D, 1), 0);
+                    entity.ridingEntity.setMotion(motion.add(forward == 1 ? 1 : 0.01D, 0.0D, 0.0D));
+                    break;
+                case NORTH:
+                    forward = Math.max(Math.min(motion.getZ() + 0.01D, 1), 0);
+                    entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == 1 ? 1 : 0.01D));
+                    break;
+                case SOUTH:
+                    forward = Math.min(Math.max(motion.getZ() - 1 * 0.01D, -1), 0);
+                    entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -1 * 0.01D));
+            }
+        }
+        return false;
+    }
+
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)
     {
         Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
@@ -482,7 +638,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (vec3d.squareDistanceTo(new Vec3d(ourEntity.posX, vec3d.y, ourEntity.posZ)) < 0.1
               && Math.abs(ourEntity.posY - vec3d.y) < 0.5)
         {
-            this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
+            this.getPath().incrementPathIndex();
             if (this.noPath())
             {
                 return true;
@@ -499,6 +655,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected void pathFollow()
     {
+        getSpeed();
         final int curNode = currentPath.getCurrentPathIndex();
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
@@ -530,20 +687,54 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         super.pathFollow();
     }
 
+    public void updatePath() {}
+
     /**
      * Don't let vanilla rapidly discard paths, set a timeout before its allowed to use stuck.
-     *
-     * @param positionVec3
      */
     @Override
-    protected void checkForStuck(Vec3d positionVec3)
+    protected void checkForStuck(@NotNull final Vec3d positionVec3)
     {
         if (world.getGameTime() - pathStartTime < MIN_KEEP_TIME)
         {
             return;
         }
 
-        super.checkForStuck(positionVec3);
+        if (this.totalTicks - this.ticksAtLastPos > 100)
+        {
+            if (positionVec3.squareDistanceTo(this.lastPosCheck) < 2.25D)
+            {
+                this.clearPath();
+            }
+
+            this.ticksAtLastPos = this.totalTicks;
+            this.lastPosCheck = positionVec3;
+        }
+
+        if (this.currentPath != null && !this.currentPath.isFinished())
+        {
+            Vec3d vec3d = this.currentPath.getCurrentPos();
+            if (vec3d.equals(this.timeoutCachedNode))
+            {
+                this.timeoutTimer += Util.milliTime() - this.lastTimeoutCheck;
+            }
+            else
+            {
+                this.timeoutCachedNode = vec3d;
+                double d0 = positionVec3.distanceTo(this.timeoutCachedNode);
+                this.timeoutLimit = (this.entity.getAIMoveSpeed() > 0.0F ? d0 / (double) this.entity.getAIMoveSpeed() * 1000.0D : 0.0D) * 25;
+            }
+
+            if (this.timeoutLimit > 0.0D && (double) this.timeoutTimer > this.timeoutLimit * 3.0D)
+            {
+                this.timeoutCachedNode = Vec3d.ZERO;
+                this.timeoutTimer = 0L;
+                this.timeoutLimit = 0.0D;
+                this.clearPath();
+            }
+
+            this.lastTimeoutCheck = Util.milliTime();
+        }
     }
 
     /**
@@ -583,7 +774,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @return the result of the search.
      */
     @Nullable
-    public WaterPathResult moveToWater(final int range, final double speed, final List<BlockPos> ponds)
+    public WaterPathResult moveToWater(final int range, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (WaterPathResult) setPathJob(
@@ -662,5 +853,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
+    }
+
+    @Override
+    public void setCanSwim(boolean canSwim)
+    {
+        super.setCanSwim(canSwim);
+        getPathingOptions().setCanSwim(canSwim);
     }
 }

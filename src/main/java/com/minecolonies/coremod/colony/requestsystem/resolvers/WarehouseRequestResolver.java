@@ -6,15 +6,17 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
@@ -26,9 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
 
 /**
@@ -37,8 +41,8 @@ import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRI
 public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
     public WarehouseRequestResolver(
-                                     @NotNull final ILocation location,
-                                     @NotNull final IToken<?> token)
+      @NotNull final ILocation location,
+      @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -52,10 +56,22 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
+        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        {
+            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
+            final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
+            if (building.isPresent() && building.get() instanceof BuildingWareHouse)
+            {
+                return false;
+            }
+        }
+
         if (!manager.getColony().getWorld().isRemote)
         {
             if (!isRequestChainValid(manager, requestToCheck))
+            {
                 return false;
+            }
 
             final Colony colony = (Colony) manager.getColony();
             final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
@@ -63,7 +79,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             try
             {
-                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount()));
+                return wareHouses.stream()
+                         .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
+                           requestToCheck.getRequest().getCount()));
             }
             catch (Exception e)
             {
@@ -77,49 +95,66 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
         if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
+        {
             return false;
+        }
 
         if (!requestToCheck.hasParent())
+        {
             return true;
+        }
 
         final IRequest<?> parentRequest = manager.getRequestForToken(requestToCheck.getParent());
 
         //Should not happen but just to be sure.
         if (parentRequest == null)
+        {
             return true;
+        }
 
         return isRequestChainValid(manager, parentRequest);
     }
 
+    /*
+     * Moving the curly braces really makes the code hard to read.
+     */
     @Nullable
     @Override
     @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-    /**
-     * Moving the curly braces really makes the code hard to read.
-     */
-    public List<IToken<?>> attemptResolveRequest(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return Lists.newArrayList();
+        }
 
         if (!(manager.getColony() instanceof Colony))
+        {
             return Lists.newArrayList();
+        }
 
         final Colony colony = (Colony) manager.getColony();
 
         final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
         final int totalRequested = request.getRequest().getCount();
-        final int totalAvailable = wareHouses.stream()
-                                     .map(wareHouse -> wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack)))
-                                     .filter(itemStacks -> !itemStacks.isEmpty())
-                                     .flatMap(List::stream)
-                                     .mapToInt(ItemStack::getCount)
-                                     .sum();
+        int totalAvailable = 0;
+        for (final TileEntityWareHouse tile : wareHouses)
+        {
+            final List<ItemStack> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            for (final ItemStack stack : inv)
+            {
+                if (!stack.isEmpty())
+                {
+                    totalAvailable += stack.getCount();
+                }
+            }
+        }
 
-        if (totalAvailable >= totalRequested)
+        if (totalAvailable >= totalRequested || totalAvailable > request.getRequest().getMinimumCount())
+        {
             return Lists.newArrayList();
+        }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
         final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
@@ -134,8 +169,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -167,11 +201,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 completedRequest.addDelivery(deliveryStack.copy());
 
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
+                final ILocation itemStackLocation =
+                  manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
 
-                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy());
+                // Deliveries from the warehouse to some location requesting stuff from the warehouse always have MAX_DELIVERYMAN_STANDARD_PRIORITY.
+                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), MAX_DELIVERYMAN_STANDARD_PRIORITY);
 
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+                final IToken<?> requestToken =
+                  manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
 
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
@@ -186,16 +223,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return deliveries.isEmpty() ? null : deliveries;
     }
 
-    @Nullable
     @Override
-    public void onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
+
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
     }

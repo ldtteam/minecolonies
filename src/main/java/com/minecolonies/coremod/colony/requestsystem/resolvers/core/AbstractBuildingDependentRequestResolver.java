@@ -4,10 +4,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,17 +19,13 @@ import java.util.Optional;
  */
 public abstract class AbstractBuildingDependentRequestResolver<R extends IRequestable> extends AbstractRequestResolver<R> implements IBuildingBasedRequester
 {
-
-    public AbstractBuildingDependentRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
+    public AbstractBuildingDependentRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
     }
 
     @Override
-    public boolean canResolveRequest(
-      @NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -42,51 +36,28 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
-
         return false;
-    }
-
-    @Override
-    @Nullable
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.getRequester() instanceof BuildingBasedRequester)
-        {
-            final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-            final ILocation requesterLocation = requester.getLocation();
-            if (requesterLocation.equals(getLocation()))
-            {
-                return requester.getBuilding(manager, token);
-            }
-        }
-
-        return Optional.empty();
     }
 
     public abstract boolean canResolveForBuilding(@NotNull final IRequestManager manager, final @NotNull IRequest<? extends R> request, final @NotNull AbstractBuilding building);
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
-    public abstract List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+    public abstract List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 
     @Override
-    public void resolveRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
-    public abstract void resolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+    public abstract void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 }

@@ -1,9 +1,6 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import org.jetbrains.annotations.NotNull;
 
 public interface ICitizenChatHandler
 {

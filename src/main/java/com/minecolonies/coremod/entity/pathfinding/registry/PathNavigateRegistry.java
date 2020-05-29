@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 
 import java.util.ArrayList;

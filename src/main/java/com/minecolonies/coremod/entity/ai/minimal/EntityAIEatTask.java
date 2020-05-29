@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,11 +16,13 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Food;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -30,6 +33,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.EnumSet;
 
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
@@ -212,6 +216,17 @@ public class EntityAIEatTask extends Goal
     }
 
     /**
+     * Check if a citizen can eat something.
+     * @param citizenData the citizen to check.
+     * @param stack the stack to check.
+     * @return true if so.
+     */
+    private boolean canEat(final ICitizenData citizenData, final ItemStack stack)
+    {
+        return citizenData.getWorkBuilding() == null || citizenData.getWorkBuilding().canEat(stack);
+    }
+
+    /**
      * Actual action of eating.
      *
      * @param citizenData the citizen.
@@ -225,7 +240,7 @@ public class EntityAIEatTask extends Goal
         }
 
         final ItemStack stack = citizenData.getInventory().getStackInSlot(foodSlot);
-        if (!CAN_EAT.test(stack))
+        if (!CAN_EAT.test(stack) || !canEat(citizenData, stack))
         {
             return CHECK_FOR_FOOD;
         }
@@ -251,7 +266,15 @@ public class EntityAIEatTask extends Goal
 
 
         final Food itemFood = stack.getItem().getFood();
-        citizenData.increaseSaturation(itemFood.getHealing() / 2.0);
+
+        double satIncrease = itemFood.getHealing();
+        final AdditionModifierResearchEffect satLimitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
+        if (satLimitDecrease != null)
+        {
+            satIncrease *= (1.0 + satLimitDecrease.getEffect());
+        }
+
+        citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
@@ -299,7 +322,7 @@ public class EntityAIEatTask extends Goal
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
               cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-              CAN_EAT,
+              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack),
               AMOUNT_OF_FOOD_TO_SERVE,
               citizen.getInventoryCitizen());
             return WAIT_FOR_FOOD;
@@ -380,6 +403,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
+     * @param data the citizens data.
      * @return the next state to go to.
      */
     private EatingState goToHut(final ICitizenData data)
@@ -392,12 +416,12 @@ public class EntityAIEatTask extends Goal
 
         if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, CAN_EAT);
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
             if (slot != -1)
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                   buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-                  CAN_EAT,
+                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack),
                   buildingWorker.getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
                   citizen.getInventoryCitizen());
                 return CHECK_FOR_FOOD;
@@ -445,6 +469,12 @@ public class EntityAIEatTask extends Goal
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
+        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null)
+        {
+            job.setActive(false);
+        }
+
         if (placeToPath == null)
         {
             if (!complained)
@@ -469,11 +499,10 @@ public class EntityAIEatTask extends Goal
      */
     private EatingState checkForFood(final ICitizenData citizenData)
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, CAN_EAT);
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
 
         if (slot == -1)
         {
-            citizenData.getCitizenHappinessHandler().setFoodModifier(false);
             if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < HIGH_SATURATION)
             {
                 return GO_TO_HUT;

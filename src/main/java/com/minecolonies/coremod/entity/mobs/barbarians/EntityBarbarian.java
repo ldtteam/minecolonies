@@ -5,8 +5,6 @@ import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
  * Class for the Barbarian entity.
  */
@@ -16,6 +14,7 @@ public class EntityBarbarian extends AbstractEntityBarbarian implements IMeleeBa
     /**
      * Constructor of the entity.
      * @param worldIn world to construct it in.
+     * @param type the entity type.
      */
     public EntityBarbarian(final EntityType type, final World worldIn)
     {

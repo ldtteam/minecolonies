@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -26,12 +28,14 @@ public interface IBuildingManager
 {
     /**
      * Read the buildings from NBT.
+     *
      * @param compound the compound.
      */
     void read(@NotNull final CompoundNBT compound);
 
     /**
      * Write the buildings to NBT.
+     *
      * @param compound the compound.
      */
     void write(@NotNull final CompoundNBT compound);
@@ -43,25 +47,29 @@ public interface IBuildingManager
 
     /**
      * Send packets of the buildings to the subscribers.
+     *
      * @param closeSubscribers the old subs.
-     * @param newSubscribers new subs.
+     * @param newSubscribers   new subs.
      */
     void sendPackets(Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers);
 
     /**
      * Tick the buildings on colony tick.
+     *
      * @param colony the event.
      */
     void onColonyTick(IColony colony);
 
     /**
      * Clean up the buildings.
+     *
      * @param colony at the worldTick event.
      */
     void cleanUpBuildings(final IColony colony);
 
     /**
      * Get a certain building.
+     *
      * @param pos the id of the building.
      * @return the building.
      */
@@ -78,18 +86,21 @@ public interface IBuildingManager
 
     /**
      * Get the townhall from the colony.
+     *
      * @return the townhall building.
      */
     ITownHall getTownHall();
 
     /**
      * Check if the colony has a placed warehouse.
+     *
      * @return true if so.
      */
     boolean hasWarehouse();
 
     /**
      * Check if the colony has a placed townhall.
+     *
      * @return true if so.
      */
     boolean hasTownHall();
@@ -117,9 +128,9 @@ public interface IBuildingManager
     /**
      * Creates a field from a tile entity and adds it to the colony.
      *
-     * @param tileEntity      the scarecrow which contains the inventory.
-     * @param pos             Position where the field has been placed.
-     * @param world           the world of the field.
+     * @param tileEntity the scarecrow which contains the inventory.
+     * @param pos        Position where the field has been placed.
+     * @param world      the world of the field.
      */
     void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world);
 
@@ -127,6 +138,7 @@ public interface IBuildingManager
      * Returns a field which has not been taken yet.
      *
      * @param owner id of the owner of the field.
+     * @param world the world it is in.
      * @return a field if there is one available, else null.
      */
     @Nullable
@@ -135,7 +147,8 @@ public interface IBuildingManager
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
      *
-     * @param building IBuilding to remove.
+     * @param subscribers the subscribers of the colony to message.
+     * @param building    IBuilding to remove.
      */
     void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers);
 
@@ -148,6 +161,7 @@ public interface IBuildingManager
      * Creates a building from a tile entity and adds it to the colony.
      *
      * @param tileEntity Tile entity to build a building from.
+     * @param world      the world to add it to.
      * @return IBuilding that was created and added.
      */
     @Nullable
@@ -162,6 +176,7 @@ public interface IBuildingManager
 
     /**
      * Calculate a good cook for a certain citizen.
+     *
      * @param citizen the citizen.
      * @return the Position of it.
      */
@@ -169,6 +184,7 @@ public interface IBuildingManager
 
     /**
      * Calculate a good hospital for a certain citizen.
+     *
      * @param citizen the citizen.
      * @return the Position of it.
      */
@@ -177,25 +193,39 @@ public interface IBuildingManager
     /**
      * Returns a random building in the colony, matching the filter predicate.
      *
-     * @param filterPredicate
-     * @return
+     * @param filterPredicate the filter to apply.
+     * @return the random building. Returns null if no building matching the predicate was found.
      */
     BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
 
     /**
      * Set the townhall building.
+     *
      * @param building the building to set.
      */
     void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Removes a warehouse from the BuildingManager
+     *
+     * @param wareHouse the warehouse to remove.
      */
     void removeWareHouse(final IWareHouse wareHouse);
 
     /**
      * Get a list of the warehouses in this colony.
+     *
      * @return the warehouse.
      */
     List<IWareHouse> getWareHouses();
+
+    /**
+     * Checks whether we're allowed to place the block for a new building
+     *
+     * @param block  Block to check
+     * @param pos    position
+     * @param player the player trying to place
+     * @return true if placement allowed
+     */
+    boolean canPlaceAt(Block block, BlockPos pos, PlayerEntity player);
 }

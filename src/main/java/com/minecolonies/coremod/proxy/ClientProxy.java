@@ -4,6 +4,7 @@ import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 
 /**
@@ -96,9 +98,9 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openClipBoardWindow(final int colonyId)
+    public void openClipBoardWindow(final IColonyView colonyView)
     {
-        @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
+        @Nullable final WindowClipBoard window = new WindowClipBoard(colonyView);
         window.open();
     }
 

@@ -1,22 +1,22 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.HiringMode;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.HireFireMessage;
-import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
-import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -25,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -36,22 +37,22 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     /**
      * The view of the current building.
      */
-    private final AbstractBuildingWorker.View building;
+    protected final AbstractBuildingWorker.View building;
 
     /**
      * The colony.
      */
-    private final IColonyView colony;
+    protected final IColonyView colony;
 
     /**
      * Contains all the citizens.
      */
-    private List<ICitizenDataView> citizens = new ArrayList<>();
+    protected List<ICitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Holder of a list element
      */
-    private final ScrollingList citizenList;
+    protected final ScrollingList citizenList;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -187,16 +188,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     /**
      * Clears and resets/updates all citizens.
      */
-    private void updateCitizens()
+    protected void updateCitizens()
     {
         citizens.clear();
-        citizens.addAll(colony.getCitizens().values());
-
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
+                     .filter(citizen -> (citizen.getWorkBuilding() == null)
                                           || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
@@ -237,11 +236,19 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (citizen.getWorkBuilding() == null)
+                if (citizen.getWorkBuilding() == null && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
                     isPaused.off();
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
+                }
+                else if ((building.getWorkerId().size() >= building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
+                    isPaused.off();
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
                 else
                 {
@@ -290,7 +297,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                 }
                 attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
@@ -302,7 +309,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         return color + text + TextFormatting.RESET.toString();
     }
 
-    private static String createColor(final Skill primary, final Skill secondary, final Skill current)
+    /**
+     * Create the color scheme.
+     * @param primary the primary skill.
+     * @param secondary the secondary skill.
+     * @param current the current skill to compare.
+     * @return the modifier string.
+     */
+    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
     {
         if (primary == current)
         {

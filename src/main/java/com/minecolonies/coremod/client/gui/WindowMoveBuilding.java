@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
@@ -13,14 +12,15 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.coremod.network.messages.server.BuildingMoveMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -133,12 +133,12 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
             final PlacementSettings settings = new PlacementSettings( Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation()));
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
                     building.getSchematicName() + building.getBuildingLevel());
-            final Structure structure = new Structure(Minecraft.getInstance().world, structureName.toString(), settings);
+            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(Minecraft.getInstance().world, pos, structureName.toString(), settings, true);
 
             final String md5 = Structures.getMD5(structureName.toString());
-            if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
+            if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
             {
-                if (structure.isBluePrintMissing())
+                if (!structure.hasBluePrint())
                 {
                     Log.getLogger().info("Template structure " + structureName + " missing");
                 }
@@ -159,7 +159,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 }
             }
             Settings.instance.setStructureName(structureName.toString());
-            Settings.instance.setActiveSchematic(structure);
+            Settings.instance.setActiveSchematic(structure.getBluePrint());
         }
     }
 
@@ -264,7 +264,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint()).getA();
+            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
             final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
             com.minecolonies.coremod.Network.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
@@ -317,10 +317,6 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         }
         Settings.instance.setRotation(rotation);
         settings.setMirror(Settings.instance.getMirror());
-        if (Settings.instance.getActiveStructure() != null)
-        {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings);
-        }
     }
 
     /**

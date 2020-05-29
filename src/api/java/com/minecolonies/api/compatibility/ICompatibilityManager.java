@@ -109,6 +109,12 @@ public interface ICompatibilityManager
     Disease getDisease(String disease);
 
     /**
+     * Get the list of diseases.
+     * @return a copy of the list.
+     */
+    List<Disease> getDiseases();
+
+    /**
      * Checks if a certain Block is an ore.
      * @param block the block to check.
      * @return boolean if so.
@@ -184,9 +190,10 @@ public interface ICompatibilityManager
 
     /**
      * Get a random lucky ore from a luckyblock.
+     * @param chanceBonus the chance bonus.
      * @return the lucky ore.
      */
-    ItemStack getRandomLuckyOre();
+    ItemStack getRandomLuckyOre(final double chanceBonus);
 
     /**
      * Get a random enchantment book for a certain building level.

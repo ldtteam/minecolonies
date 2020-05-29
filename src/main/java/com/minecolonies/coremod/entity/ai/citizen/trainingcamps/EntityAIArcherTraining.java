@@ -48,7 +48,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE = 0.2;
+    private static final double XP_BASE_RATE = 2;
 
     /**
      * Time to wait before analyzing the shot.

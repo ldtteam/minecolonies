@@ -1,7 +1,9 @@
 <!-- If you are making a bug report, please fill out this template as best as possible, this will help 
      us to understand your issue much easier. -->
-### Minecolonies version
-<!-- Exact version, eg: 0.9.126-ALPHA or 0.9.2-RELEASE, please don't just give the Minecraft version you're playing. -->
+### Minecolonies version # Update to the newest minecolonies and structurize alpha first and see if your issue might be already fixed!
+<!-- Exact version, eg: 0.9.126-ALPHA or 0.9.2-RELEASE, please don't just give the Minecraft version you're playing.
+Before reporting: Update to the newest minecolonies alpha and see if your issue might be fixed already.
+-->
 
 Version: 
 

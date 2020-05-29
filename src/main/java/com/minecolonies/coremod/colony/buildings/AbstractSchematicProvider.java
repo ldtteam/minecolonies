@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.BuildingUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -18,6 +24,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public abstract class AbstractSchematicProvider implements ISchematicProvider
 {
     /**
+     * The Colony for this schematic Provider
+     */
+    private final IColony colony;
+
+    /**
      * The location of the building.
      */
     private final BlockPos location;
@@ -26,11 +37,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      * The level of the building.
      */
     private int buildingLevel = 0;
-
-    /**
-     * The rotation of the building.
-     */
-    private int rotation = 0;
 
     /**
      * The mirror of the building.
@@ -56,13 +62,24 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     private int cornerZ2;
 
     /**
+     * Cached rotation.
+     */
+    public int cachedRotation = -1;
+
+    /**
+     * The building area box of this building
+     */
+    private AxisAlignedBB buildingArea = null;
+
+    /**
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
 
-    public AbstractSchematicProvider(final BlockPos pos)
+    public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
-        location = pos;
+        this.location = pos;
+        this.colony = colony;
     }
 
     @Override
@@ -89,7 +106,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         }
 
         compound.putInt(TAG_SCHEMATIC_LEVEL, buildingLevel);
-        compound.putInt(TAG_ROTATION, rotation);
         compound.putString(TAG_STYLE, style);
 
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
@@ -101,6 +117,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         compound.putInt(TAG_HEIGHT, this.height);
 
+        compound.putInt(TAG_ROTATION, getRotation());
+
         return compound;
     }
 
@@ -109,7 +127,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     {
         buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
 
-        rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
         deserializerStructureInformationFrom(compound);
@@ -127,6 +144,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.keySet().contains(TAG_HEIGHT))
         {
             this.height = compound.getInt(TAG_HEIGHT);
+        }
+
+        if (compound.contains(TAG_ROTATION))
+        {
+            this.cachedRotation = compound.getInt(TAG_ROTATION);
         }
     }
 
@@ -198,7 +220,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Get all the corners of the building based on the schematic.
      *
-     * @return the corners.
+     * @return Tuple of X corners, Tuple of Z corners
      */
     @Override
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
@@ -227,7 +249,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
-        return BuildingUtils.getTargetAbleArea(world, this);
+        if (buildingArea == null)
+        {
+            buildingArea = BuildingUtils.getTargetAbleArea(world, this);
+        }
+        return buildingArea;
     }
 
     /**
@@ -238,18 +264,52 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public int getRotation()
     {
-        return rotation;
-    }
+        if (cachedRotation != -1)
+        {
+            return cachedRotation;
+        }
 
-    /**
-     * Sets the rotation of the current building.
-     *
-     * @param rotation integer value of the rotation.
-     */
-    @Override
-    public void setRotation(final int rotation)
-    {
-        this.rotation = rotation;
+        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel));
+        try
+        {
+            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName.toString(), new PlacementSettings(), true);
+
+            final Blueprint blueprint = structure.getBluePrint();
+
+            if (blueprint != null)
+            {
+                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
+                if (structureState != null)
+                {
+                    if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
+                    {
+                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
+                        return 0;
+                    }
+
+                    final int structureRotation = structureState.get(AbstractBlockHut.FACING).getHorizontalIndex();
+                    final int worldRotation = colony.getWorld().getBlockState(this.location).get(AbstractBlockHut.FACING).getHorizontalIndex();
+
+                    if (structureRotation <= worldRotation)
+                    {
+                        cachedRotation = worldRotation - structureRotation;;
+                    }
+                    else
+                    {
+                        cachedRotation = 4 + worldRotation - structureRotation;
+                    }
+                    return cachedRotation;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
+
+            return  0;
+        }
+
+        return 0;
     }
 
     /**

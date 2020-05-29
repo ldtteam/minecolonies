@@ -31,6 +31,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 {
     /**
      * Sets the name, creative tab, and registers the resource scroll item.
+     * @param properties the properties.
      */
     public ItemResourceScroll(final Item.Properties properties)
     {
@@ -117,6 +118,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * If not available create and return it.
      *
      * @param item the item to check in for.
+     * @return the compound of the item.
      */
     private static CompoundNBT checkForCompound(final ItemStack item)
     {

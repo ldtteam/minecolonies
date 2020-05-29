@@ -3,8 +3,8 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.block.Block;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 

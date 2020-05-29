@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
-import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -16,6 +16,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
 
                 if(!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false));
                 }
             }
         }

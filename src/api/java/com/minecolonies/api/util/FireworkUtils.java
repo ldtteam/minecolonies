@@ -55,7 +55,8 @@ public final class FireworkUtils
     /**
      * Generates random firework with various properties.
      *
-     * @return ItemStack of random firework
+     * @param explosionAmount the amount of explosions.
+     * @return ItemStack of random firework.
      */
     private static ItemStack genFireworkItemStack(final int explosionAmount)
     {
@@ -64,7 +65,7 @@ public final class FireworkUtils
         final CompoundNBT itemStackCompound = fireworkItem.getTag() != null ? fireworkItem.getTag() : new CompoundNBT();
         final CompoundNBT fireworksCompound = new CompoundNBT();
         final ListNBT explosionsTagList = new ListNBT();
-        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getId).collect(Collectors.toList());
+        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getFireworkColor).collect(Collectors.toList());
 
         for (int i = 0; i < explosionAmount; i++)
         {

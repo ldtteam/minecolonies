@@ -21,8 +21,9 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.network.messages.SleepingParticleMessage;
+import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -42,8 +43,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.research.util.ResearchConstants.FLEEING_SPEED;
-import static com.minecolonies.api.research.util.ResearchConstants.RETREAT;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -235,8 +235,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return false;
         }
 
+        double chance = 1;
+        final MultiplierModifierResearchEffect
+          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SLEEP_LESS, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            chance = 1 - effect.getEffect();
+        }
+
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
-        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getJobModifier() * 0.5) + 20) == 1)
+        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getJobModifier() * 0.5) + 20) == 1 && worker.getRandom().nextDouble() < chance)
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
@@ -256,6 +264,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Emits sleeping particles and regens hp when asleep
+     * 
+     * @return the next state to go into
      */
     private IAIState sleepParticles()
     {
@@ -271,6 +281,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Sleep activity
+     * 
+     * @return the next state to go into
      */
     private IAIState sleep()
     {
@@ -280,6 +292,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             worker.setRevengeTarget(null);
             worker.stopRiding();
             worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.getCitizenExperienceHandler().addExperience(1);
             return DECIDE;
         }
 
@@ -425,7 +438,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Sets the next patrol target, and moves to it if patrolling
      *
-     * @param target
+     * @param target the next patrol target.
      */
     public void setNextPatrolTarget(final BlockPos target)
     {
@@ -437,7 +450,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
     {
         return AbstractBuildingGuards.class;
     }
@@ -495,6 +508,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Helping out a citizen, moving into range and setting attack target.
+     * 
+     * @return the next state to go into
      */
     private IAIState helping()
     {
@@ -834,6 +849,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Calculates the dmg increase per level
+     * @return the level damage.
      */
     public int getLevelDamage()
     {
@@ -865,6 +881,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Returns the block distance at which a guard should chase his target
+     * 
+     * @return the block distance at which a guard should chase his target
      */
     private int getPersecutionDistance()
     {

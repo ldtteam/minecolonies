@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
+import com.minecolonies.coremod.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,6 +47,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      * - set max damage value
      * - set creative tab
      * - set max stack size
+     * @param properties the properties.
      */
     public ItemScepterPermission(final Item.Properties properties)
     {

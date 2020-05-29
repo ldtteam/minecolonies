@@ -21,8 +21,9 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
-import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
+import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -76,6 +77,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
 
     /**
+     * Base patrol range
+     */
+    private static final int PATROL_BASE_DIST = 50;
+
+    /**
      * The Bonus Health for each building level
      */
     private static final int BONUS_HEALTH_PER_LEVEL = 2;
@@ -89,7 +95,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Vision range per building level.
      */
-    private static final int VISION_RANGE_PER_LEVEL = 6;
+    private static final int VISION_RANGE_PER_LEVEL = 3;
+
+    /**
+     * Base Vision range per building level.
+     */
+    private static final int BASE_VISION_RANGE = 17;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -109,7 +120,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The task of the guard, following the {@link GuardTask} enum.
      */
-    private GuardTask task = GuardTask.GUARD;
+    private GuardTask task = GuardTask.PATROL;
 
     /**
      * The position at which the guard should guard at.
@@ -219,6 +230,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
+            // Start timeout to not be stuck with an old patrol target
+            patrolTimer = 5;
 
             return true;
         }
@@ -407,7 +420,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The guards which arrived at the patrol positions
      */
-    private Set<AbstractEntityCitizen> arrivedAtPatrol = new HashSet<>();
+    private final Set<AbstractEntityCitizen> arrivedAtPatrol = new HashSet<>();
 
     /**
      * The last patrol position
@@ -422,15 +435,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void onColonyTick(final IColony colony)
     {
-        if (patrolTimer > 0)
+        super.onColonyTick(colony);
+        if (patrolTimer > 0 && task == GuardTask.PATROL)
         {
             patrolTimer--;
-        }
-
-        if (!arrivedAtPatrol.isEmpty() && (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0))
-        {
-            // Next patrol point
-            startPatrolNext();
+            if (patrolTimer <= 0 && !getAssignedCitizen().isEmpty())
+            {
+                // Next patrol point
+                startPatrolNext();
+            }
         }
     }
 
@@ -458,12 +471,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private void startPatrolNext()
     {
         getNextPatrolTarget(true);
+        patrolTimer = 5;
 
         for (final ICitizenData curguard : getAssignedCitizen())
         {
             if (curguard.getCitizenEntity().isPresent())
             {
-                ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                if (curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                {
+                    ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                }
             }
         }
         arrivedAtPatrol.clear();
@@ -494,7 +511,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             BlockPos pos;
             if (colony.getWorld().rand.nextBoolean())
             {
-                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10);
+                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10, 16);
             }
             else
             {
@@ -534,7 +551,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public int getPatrolDistance()
     {
-        return this.getBuildingLevel() * PATROL_DISTANCE;
+        return PATROL_BASE_DIST + this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
     /**
@@ -561,7 +578,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         /**
          * The {@link GuardTask} of the guard.
          */
-        private GuardTask task = GuardTask.GUARD;
+        private GuardTask task = GuardTask.PATROL;
 
         /**
          * Position the guard should guard.
@@ -1015,7 +1032,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      *
      * @return the bonus health.
      */
-    private int getBonusHealth()
+    protected int getBonusHealth()
     {
         return getBuildingLevel() * BONUS_HEALTH_PER_LEVEL;
     }
@@ -1064,13 +1081,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public int getBonusVision()
     {
-        return getBuildingLevel() * VISION_RANGE_PER_LEVEL;
+        return BASE_VISION_RANGE + getBuildingLevel() * VISION_RANGE_PER_LEVEL;
     }
 
     /**
      * Populates the mobs list from the ForgeRegistries.
-     *
-     * @return the list of MobEntrys to attack.
      */
     @Override
     public void calculateMobs()

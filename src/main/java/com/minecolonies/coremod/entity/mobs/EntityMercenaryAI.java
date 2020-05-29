@@ -117,6 +117,8 @@ public class EntityMercenaryAI extends Goal
 
     /**
      * Initializes the AI
+     * 
+     * @return whether the ai was initialized successfully
      */
     private boolean initialize()
     {
@@ -131,6 +133,8 @@ public class EntityMercenaryAI extends Goal
 
     /**
      * Check if we got a target to fight
+     * 
+     * @return whether we got a target to fight 
      */
     private boolean hasTarget()
     {
@@ -144,6 +148,8 @@ public class EntityMercenaryAI extends Goal
 
     /**
      * Patrols the buildings and random points. Attempts to steal from buildings.
+     * 
+     * @return true
      */
     private boolean patrol()
     {
@@ -170,7 +176,7 @@ public class EntityMercenaryAI extends Goal
                 }
             }
 
-            if (rand.nextInt(4) == 0)
+            if (rand.nextInt(4) == 0 && !patrolPoints.isEmpty())
             {
                 movingToBuilding = true;
                 currentPatrolPos = patrolPoints.get(rand.nextInt(patrolPoints.size()));
@@ -178,7 +184,7 @@ public class EntityMercenaryAI extends Goal
             else
             {
                 movingToBuilding = false;
-                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getEntityWorld(), entity.getPosition(), entity.getPosition(), 10);
+                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getEntityWorld(), entity.getPosition(), entity.getPosition(), 10, 27);
             }
         }
 
@@ -205,6 +211,8 @@ public class EntityMercenaryAI extends Goal
 
     /**
      * Fighting against a target
+     * 
+     * @return false if we are still fighting
      */
     private boolean fighting()
     {

@@ -59,9 +59,9 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     {
         return super.canBeGathered() &&
                  this.getAssignedCitizen().stream()
-                    .map(c -> c.getJob(AbstractJobCrafter.class))
-                    .filter(Objects::nonNull)
-                    .allMatch(AbstractJobCrafter::hasTask);
+                   .map(c -> c.getJob(AbstractJobCrafter.class))
+                   .filter(Objects::nonNull)
+                   .allMatch(AbstractJobCrafter::hasTask);
     }
 
     @Override

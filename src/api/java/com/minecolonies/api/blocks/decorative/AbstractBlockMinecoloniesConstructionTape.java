@@ -81,6 +81,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
         /**
          * The color which represents this entry on a map.
+         * @return the material color.
          */
         public MaterialColor getMaterialColor()
         {

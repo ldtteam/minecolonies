@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.Log;
+import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import net.minecraft.client.Minecraft;
@@ -19,11 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.WindowConstants.LIST_RESOURCES;
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_ICON;
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_NAME;
-import static org.jline.utils.AttributedStyle.GREEN;
-import static org.jline.utils.AttributedStyle.WHITE;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the sifter hut.
@@ -131,13 +128,15 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
                 boolean isSet = false;
                 if (resource.isItemEqual(mesh.getItemStack()))
                 {
-                    resourceLabel.setColor(GREEN, GREEN);
-                    resourceLabel.setLabelText("§2" + resource.getDisplayName().getFormattedText() + "§r");
+                    int green = Color.getByName("green", 0);
+                    resourceLabel.setColor(green, green);
+                    resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
                     isSet = true;
                 }
                 else
                 {
-                    resourceLabel.setColor(WHITE, WHITE);
+                    int black = Color.getByName("black", 0);
+                    resourceLabel.setColor(black, black);
                     resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
                 }
 
@@ -145,7 +144,9 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(MESH_BUTTON, Button.class);
 
-                if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory), stack -> stack.isItemEqual(resource)) || isSet)
+                final boolean isCreative = Minecraft.getInstance().player.isCreative();
+
+                if (isSet || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory), stack -> stack.isItemEqual(resource))))
                 {
                     switchButton.hide();
                 }

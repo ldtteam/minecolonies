@@ -58,7 +58,7 @@ public interface ICitizenItemHandler
 
     /**
      * Damage the current held item.
-     *
+     * @param hand hand the item is in.
      * @param damage amount of damage.
      */
     void damageItemInHand(Hand hand, int damage);

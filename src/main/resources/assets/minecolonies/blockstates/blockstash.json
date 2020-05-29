@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "minecolonies:block/blockstash",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "minecolonies:block/blockstash",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "minecolonies:block/blockstash",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "minecolonies:block/blockstash",
+      "y": 180
+    }
+  }
+}

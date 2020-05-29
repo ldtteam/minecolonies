@@ -1,10 +1,8 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -40,25 +38,6 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
     void alterPickUpPriority(int value);
 
     /**
-     * Sets the pickup priority to the given value.
-     *
-     * @param pickUpPriority The new pickup priority.
-     */
-    void setPickUpPriority(int pickUpPriority);
-
-    /**
-     * Check if the priority is static and it shouldn't change.
-     *
-     * @return the priority state, a boolean.
-     */
-    boolean isPriorityStatic();
-
-    /**
-     * Change the current priority state.
-     */
-    void alterPriorityState();
-
-    /**
      * Add a new container to the building.
      *
      * @param pos position to add.
@@ -84,7 +63,8 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param blockState to be registered
-     * @param pos   of the blockState
+     * @param pos        of the blockState
+     * @param world      world to register it at.
      */
     void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
 
@@ -94,18 +74,10 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      *
      * @param block to be registered
      * @param pos   of the block
+     * @param world world to register it at.
      */
     @SuppressWarnings("squid:S1172")
     void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull World world);
-
-    /**
-     * Try to transfer a stack to one of the inventories of the building.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
-     */
-    ItemStack transferStack(@NotNull ItemStack stack, @NotNull World world);
 
     /**
      * Returns the tile entity that belongs to the colony building.

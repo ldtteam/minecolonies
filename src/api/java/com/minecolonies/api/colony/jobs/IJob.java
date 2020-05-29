@@ -6,13 +6,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,8 +71,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Generate your AI class to register.
      * <p>
-     * Suppressing Sonar Rule squid:S1452
-     * This rule does "Generic wildcard types should not be used in return parameters"
+     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters"
      * But in this case the rule does not apply because
      * We are fine with all AbstractJob implementations and need generics only for java
      *
@@ -110,27 +107,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param nameTag The name tag to display.
      */
     void setNameTag(String nameTag);
-
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getBedTimeSound();
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getBadWeatherSound();
-
-    /**
-     * Override this to let the worker return a hostile move away sound.
-     *
-     * @return soundEvent to be played.
-     */
-    SoundEvent getMoveAwaySound();
 
     /**
      * Override this to implement Job specific death achievements.
@@ -180,11 +156,16 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     int getActionsDone();
 
     /**
-     * Actions done since the last reset.
-     * Used for example to detect
-     * if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1
+     * Used for example to detect if and when the inventory has to be dumped.
      */
     void incrementActionsDone();
+
+    /**
+     * Increase the actions done since the last reset by numberOfActions
+     * Used for example to detect if and when the inventory has to be dumped.
+     */
+    void incrementActionsDone(int numberOfActions);
 
     /**
      * Clear the actions done counter.
@@ -213,12 +194,14 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Method to check if the colony job allows avoidance.
+     *
      * @return true if so.
      */
     boolean allowsAvoidance();
 
     /**
      * Disease modifier of the job.
+     *
      * @return the modifier of the job.
      */
     int getDiseaseModifier();
@@ -227,4 +210,18 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * When job removed (death of citizen or job change).
      */
     void onRemoval();
+
+    /**
+     * Set if the worker can currently work.
+     *
+     * @param b true if so.
+     */
+    void setActive(final boolean b);
+
+    /**
+     * Check if the particular job ignores a particular damage type.
+     * @param damageSource the damage source to check.
+     * @return true if so.
+     */
+    boolean ignoresDamage(@NotNull final DamageSource damageSource);
 }

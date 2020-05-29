@@ -1,6 +1,7 @@
 package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
+
 /**
  * Basic inventory for the citizens.
  */
@@ -28,9 +32,19 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     private static final int NO_SLOT = -1;
 
     /**
+     * The default inv size.
+     */
+    private static final int DEFAULT_INV_SIZE = 27;
+
+    /**
+     * Armor inv size.
+     */
+    private static final int ARMOR_SIZE = 5;
+
+    /**
      * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
      */
-    private final NonNullList<ItemStack> mainInventory = NonNullList.withSize(32, ItemStackUtils.EMPTY);
+    private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE + ARMOR_SIZE, ItemStackUtils.EMPTY);
 
     /**
      * The index of the currently held items (0-8).
@@ -91,6 +105,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     /**
      * Returns the item that is currently being held by citizen.
      *
+     * @param hand the hand it is held in.
      * @return {@link ItemStack} currently being held by citizen.
      */
     public ItemStack getHeldItem(final Hand hand)
@@ -106,6 +121,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     /**
      * Set item to be held by citizen.
      *
+     * @param hand the hand it is held in.
      * @param slot Slot index with item to be held by citizen.
      */
     public void setHeldItem(final Hand hand, final int slot)
@@ -121,6 +137,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     /**
      * Gets slot that hold item that is being held by citizen.
      *
+     * @param hand the hand it is held in.
      * @return Slot index of held item
      */
     public int getHeldItemSlot(final Hand hand)
@@ -136,8 +153,53 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public int getSlots()
     {
-        // Don't give armour and offhand slot.
-        return this.mainInventory.size() - 5;
+        return this.mainInventory.size() - ARMOR_SIZE;
+    }
+
+    /**
+     * Checks if the inventory has space
+     *
+     * @return true if the main inventory (without armor slots) has an empty slot.
+     */
+    public boolean hasSpace()
+    {
+        return this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> itemStack.isEmpty());
+    }
+
+    /**
+     * Checks if the inventory is completely empty.
+     *
+     * @return true if the main inventory (without armor slots) is completely empty.
+     */
+    public boolean isEmpty()
+    {
+        return !this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> !itemStack.isEmpty());
+    }
+
+    /**
+     * Resize this inventory.
+     *
+     * @param size       the current size.
+     * @param futureSize the future size.
+     */
+    private void resizeInventory(final int size, final int futureSize)
+    {
+        if (size < futureSize)
+        {
+            final NonNullList<ItemStack> inv = NonNullList.withSize(futureSize, ItemStackUtils.EMPTY);
+
+            for (int i = 0; i < mainInventory.size() - ARMOR_SIZE; i++)
+            {
+                inv.set(i, mainInventory.get(i));
+            }
+
+            int index = inv.size() - ARMOR_SIZE;
+            for (int i = mainInventory.size() - ARMOR_SIZE; i < mainInventory.size(); i++)
+            {
+                inv.set(index++, mainInventory.get(i));
+            }
+            mainInventory = inv;
+        }
     }
 
     /**
@@ -312,6 +374,20 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public ListNBT write(final ListNBT nbtTagList)
     {
+        if (citizen != null && citizen.getColony() != null)
+        {
+            final AbstractResearchEffect<Double> researchEffect =
+              citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+            if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
+            {
+                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));
+            }
+        }
+
+        final CompoundNBT sizeNbt = new CompoundNBT();
+        sizeNbt.putInt(TAG_SIZE, this.mainInventory.size());
+        nbtTagList.add(sizeNbt);
+
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
@@ -333,11 +409,15 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public void read(final ListNBT nbtTagList)
     {
-        this.mainInventory.clear();
+        if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
+        {
+            this.mainInventory = NonNullList.withSize(nbtTagList.getCompound(0).getInt(TAG_SIZE), ItemStackUtils.EMPTY);
+        }
 
-        for (int i = 0; i < nbtTagList.size(); ++i)
+        for (int i = 1; i < nbtTagList.size(); ++i)
         {
             final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
+
             final int j = compoundNBT.getByte("Slot") & 255;
             final ItemStack itemstack = ItemStack.read(compoundNBT);
 

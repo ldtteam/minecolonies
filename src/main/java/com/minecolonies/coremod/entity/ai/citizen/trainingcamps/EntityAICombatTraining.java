@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.Items;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +32,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE = 0.2;
+    private static final double XP_BASE_RATE = 2;
 
     /**
      * Chance for a guard to do partner training.

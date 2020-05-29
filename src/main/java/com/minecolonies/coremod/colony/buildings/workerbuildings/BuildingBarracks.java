@@ -180,6 +180,11 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public int getClaimRadius(final int newLevel)
     {
+        if (newLevel <= 0)
+        {
+            return 0;
+        }
+
         int sum = newLevel;
         for (final BlockPos pos : towers)
         {

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.controls.Text;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.DirectPlaceMessage;
+import com.minecolonies.coremod.network.messages.server.DirectPlaceMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +40,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      *
      * @param pos   the position of the placement.
      * @param state the block he is trying to place.
+     * @param stack the stack to suggest it for.
      */
     public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {

@@ -1,0 +1,25 @@
+{
+  "pools": [
+    {
+      "name": "minecolonies:archermummy",
+      "rolls": 1,
+      "bonus_rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 80
+        },
+        {
+          "type": "item",
+          "weight": 40,
+          "name": "minecraft:bow"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecolonies:ancienttome"
+        }
+      ]
+    }
+  ]
+}

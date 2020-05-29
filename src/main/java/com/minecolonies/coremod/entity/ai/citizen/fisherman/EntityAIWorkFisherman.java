@@ -6,11 +6,11 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
-import com.minecolonies.api.sounds.FishermanSounds;
+import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
@@ -28,7 +28,6 @@ import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -206,10 +205,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             playNeedRodSound();
             return getState();
         }
-        if (job.getWater() == null || world.getBlockState(job.getWater()).getBlock() == Blocks.WATER)
-        {
-            return FISHERMAN_SEARCHING_WATER;
-        }
+
         return FISHERMAN_WALKING_TO_WATER;
     }
 
@@ -218,31 +214,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playNeedRodSound()
     {
-        if (worker != null)
-        {
-            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
-        }
+        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.MISSING_EQUIPMENT, worker.getCitizenData());
     }
 
-    /**
-     * Returns the fisherman's work building.
-     *
-     * @return building instance
-     */
     @Override
     public BuildingFisherman getOwnBuilding()
     {
         return (BuildingFisherman) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
     @Override
     protected int getActionsDoneUntilDumping()
     {
@@ -250,8 +230,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Can be overridden in implementations.
-     * <p>
      * Here the AI can check if the fishes or rods have to be re rendered and do it.
      */
     @Override
@@ -318,7 +296,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean walkToWater()
     {
-        return job.getWater() != null && walkToBlock(job.getWater());
+        return job.getWater() != null && walkToBlock(job.getWater().getB());
     }
 
     /**
@@ -347,7 +325,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         //Try a different angle to throw the hook not that far
-        WorkerUtil.faceBlock(job.getWater(), worker);
+        WorkerUtil.faceBlock(job.getWater().getA(), worker);
         executedRotations++;
         return FISHERMAN_START_FISHING;
     }
@@ -399,7 +377,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return START_WORKING;
         }
         job.setWater(job.getPonds().get(worker.getRandom().nextInt(job.getPonds().size())));
-
         return FISHERMAN_CHECK_WATER;
     }
 
@@ -424,8 +401,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             if (pathResult.pond != null)
             {
-                job.setWater(pathResult.pond);
-                job.addToPonds(pathResult.pond);
+                job.setWater(new Tuple<>(pathResult.pond, pathResult.parent));
+                job.addToPonds(pathResult.pond, pathResult.parent);
             }
             lastPathResult = pathResult;
             pathResult = null;
@@ -473,7 +450,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             return FISHERMAN_WALKING_TO_WATER;
         }
-
         return throwOrRetrieveHook();
     }
 
@@ -482,11 +458,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playCaughtFishSound()
     {
-        if (worker != null)
-        {
-            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
-        }
+        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.SUCCESS, worker.getCitizenData());
     }
 
     /**
@@ -514,6 +486,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
                 retrieveRod();
                 return FISHERMAN_WALKING_TO_WATER;
             }
+            this.entityFishHook.setInUse();
         }
         return getState();
     }
@@ -525,7 +498,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (!world.isRemote)
         {
-            WorkerUtil.faceBlock(job.getWater(), worker);
+            WorkerUtil.faceBlock(job.getWater().getA(), worker);
             world.playSound(null,
               this.worker.getPosition(),
               SoundEvents.ENTITY_FISHING_BOBBER_THROW,
@@ -581,12 +554,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return PREPARING;
         }
 
-        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.WATER)
-        {
-            job.removeFromPonds(job.getWater());
-            job.setWater(null);
-            return FISHERMAN_SEARCHING_WATER;
-        }
         //If there is no close water, try to move closer
         if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getPosX(), (int) worker.getPosY(), (int) worker.getPosZ(), MIN_DISTANCE_TO_WATER))
         {
@@ -649,11 +616,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void retrieveRod()
     {
-        worker.swingArm(worker.getActiveHand());
-        final int i = entityFishHook.getDamage();
-        entityFishHook.remove();
-        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
-        entityFishHook = null;
+        if(entityFishHook != null)
+        {
+            worker.swingArm(worker.getActiveHand());
+            final int i = entityFishHook.getDamage();
+            entityFishHook.remove();
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
+            entityFishHook = null;
+        }
     }
 
     /**
@@ -666,12 +636,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
-
-    @Override 
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
-    { 
-        final boolean needTool = super.checkForToolOrWeapon(toolType); 
-        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType,needTool); 
-        return needTool; 
-    } 
 }

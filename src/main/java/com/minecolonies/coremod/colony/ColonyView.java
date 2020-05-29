@@ -26,7 +26,7 @@ import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
-import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
+import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,7 +55,7 @@ public final class ColonyView implements IColonyView
     /**
      * Max allowed CompoundNBT in bytes
      */
-    private static final int MAX_BYTES_NBTCOMPOUND = 250000;
+    private static final int MAX_BYTES_NBTCOMPOUND = 350000;
 
     //  General Attributes
     private final int                            id;
@@ -68,10 +68,6 @@ public final class ColonyView implements IColonyView
     //  Citizenry
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens      = new HashMap<>();
-    /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData                  happinessData = new HappinessData();
     private       String                         name          = "Unknown";
     private       int                            dimensionId;
 
@@ -852,10 +848,14 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewWorkOrderMessage(final PacketBuffer buf)
     {
-        @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
-        if (workOrder != null)
+        final int amount = buf.readInt();
+        for (int i = 0; i < amount; i++)
         {
-            workOrders.put(workOrder.getId(), workOrder);
+            @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+            if (workOrder != null)
+            {
+                workOrders.put(workOrder.getId(), workOrder);
+            }
         }
 
         return null;
@@ -943,29 +943,26 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final PacketBuffer buf)
     {
-        @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
-        if (building != null)
+        if (buildings.containsKey(buildingId))
         {
-            buildings.put(building.getID(), building);
-
-            if (building instanceof BuildingTownHall.View)
+            //Read the string first to set up the buffer.
+            buf.readString(32767);
+            buildings.get(buildingId).deserialize(buf);
+        }
+        else
+        {
+            @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
+            if (building != null)
             {
-                townHall = (ITownHallView) building;
+                buildings.put(building.getID(), building);
+
+                if (building instanceof BuildingTownHall.View)
+                {
+                    townHall = (ITownHallView) building;
+                }
             }
         }
 
-        return null;
-    }
-
-    /**
-     * Update the happiness values for a colony
-     * @param happinessData The new values for happiness
-     * @return null == no response.
-     */
-    @Override
-    public IMessage handleHappinessDataMessage(final HappinessData happinessData)
-    {
-        this.happinessData.setValues(happinessData);
         return null;
     }
 
@@ -1092,7 +1089,7 @@ public final class ColonyView implements IColonyView
         return world;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public IRequestManager getRequestManager()
     {
@@ -1174,17 +1171,6 @@ public final class ColonyView implements IColonyView
     public IWorkManager getWorkManager()
     {
         return null;
-    }
-
-    /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    @Override
-    public HappinessData getHappinessData()
-    {
-        return happinessData;
     }
 
     @Override
@@ -1300,6 +1286,7 @@ public final class ColonyView implements IColonyView
 
     }
 
+    @NotNull
     @Override
     public List<PlayerEntity> getImportantMessageEntityPlayers()
     {
@@ -1330,12 +1317,6 @@ public final class ColonyView implements IColonyView
 
     @Override
     public ICitizenManager getCitizenManager()
-    {
-        return null;
-    }
-
-    @Override
-    public IColonyHappinessManager getColonyHappinessManager()
     {
         return null;
     }

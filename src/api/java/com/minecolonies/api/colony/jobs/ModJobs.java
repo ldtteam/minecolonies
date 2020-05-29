@@ -37,6 +37,13 @@ public final class ModJobs
     public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation(Constants.MOD_ID,"enchanter");
     public static final ResourceLocation RESEARCHER_ID     = new ResourceLocation(Constants.MOD_ID,"researcher");
     public static final ResourceLocation HEALER_ID         = new ResourceLocation(Constants.MOD_ID,"healer");
+    public static final ResourceLocation PUPIL_ID          = new ResourceLocation(Constants.MOD_ID,"pupil");
+    public static final ResourceLocation TEACHER_ID        = new ResourceLocation(Constants.MOD_ID,"teacher");
+    public static final ResourceLocation GLASSBLOWER_ID    = new ResourceLocation(Constants.MOD_ID,"glassblower");
+    public static final ResourceLocation DYER_ID           = new ResourceLocation(Constants.MOD_ID,"dyer");
+    public static final ResourceLocation FLETCHER_ID       = new ResourceLocation(Constants.MOD_ID,"fletcher");
+    public static final ResourceLocation MECHANIC_ID       = new ResourceLocation(Constants.MOD_ID,"mechanic");
+    public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID,"planter");
 
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
@@ -68,6 +75,13 @@ public final class ModJobs
     public static       JobEntry         enchanter;
     public static       JobEntry         researcher;
     public static       JobEntry         healer;
+    public static       JobEntry         pupil;
+    public static       JobEntry         teacher;
+    public static       JobEntry         glassblower;
+    public static       JobEntry         dyer;
+    public static       JobEntry         fletcher;
+    public static       JobEntry         mechanic;
+    public static       JobEntry         planter;
 
     private ModJobs()
     {

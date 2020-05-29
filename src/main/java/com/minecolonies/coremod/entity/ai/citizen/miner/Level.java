@@ -89,6 +89,7 @@ public class Level
      *
      * @param buildingMiner reference to the miner building.
      * @param depth         the depth of this level.
+     * @param levelSign the position of the level sign.
      */
     public Level(@NotNull final BuildingMiner buildingMiner, final int depth, final BlockPos levelSign)
     {

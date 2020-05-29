@@ -22,29 +22,14 @@ public final class PathingConstants
     public static final   int      MIN_Y                 = 0;
 
     /**
-     * Additional cost of jumping and dropping - base 1.
+     * Distance which is considered to be on one side of the fence/glasspane/wall etc.
      */
-    public static final double JUMP_DROP_COST = 2.5D;
+    public static final double ONE_SIDE = 0.25D;
 
     /**
-     * Cost improvement of paths - base 1.
+     * Distance which is considered to be on the other side of the fence/glasspane/wall etc.
      */
-    public static final double ON_PATH_COST = 0.1D;
-
-    /**
-     * Additional cost of swimming - base 1.
-     */
-    public static final double SWIM_COST = 15D;
-
-    /**
-     * Distance which is considered to be too close to a fence.
-     */
-    public static final double TOO_CLOSE_TO_FENCE = 0.1D;
-
-    /**
-     * Distance which is considered to be too far from a fence.
-     */
-    public static final double TOO_FAR_FROM_FENCE = 0.9D;
+    public static final double OTHER_SIDE = 0.75D;
 
     /**
      * Shift x by this value to calculate the node key..

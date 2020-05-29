@@ -12,7 +12,6 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -76,6 +75,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
      *
      * @param target         the target.
      * @param distanceToPath the total distance.
+     * @param building       the building to walk to.
      * @return a proxy or, if not applicable null.
      */
     @NotNull

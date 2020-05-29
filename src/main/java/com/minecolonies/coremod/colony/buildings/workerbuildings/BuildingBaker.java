@@ -3,15 +3,21 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -23,12 +29,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -265,6 +273,40 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         checkFurnaces();
     }
 
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
+        {
+            return false;
+        }
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (storage == null)
+        {
+            return false;
+        }
+
+        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
+        {
+            if (recipe.getPrimaryOutput().isItemEqual(storage.getPrimaryOutput()))
+            {
+                return false;
+            }
+        }
+
+        boolean hasWheat = false;
+        for (final ItemStorage input : storage.getCleanedInput())
+        {
+            if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
+            {
+                hasWheat = true;
+            }
+        }
+
+        return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
+    }
+
     /**
      * Checks the furnaces of the bakery if they're ready.
      */
@@ -280,7 +322,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
         for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
         {
-            if(!worldObj.isBlockLoaded(entry.getKey()))
+            if (!worldObj.isBlockPresent(entry.getKey()))
             {
                 return;
             }
@@ -389,7 +431,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Add a task to the tasks list.
+     * Remove a task from the tasks list.
      *
      * @param state         the state of the task.
      * @param bakingProduct the regarding bakingProduct.
@@ -442,6 +484,55 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.bakery;
+    }
+
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
+        {
+            for (final BakingProduct product : task.getValue())
+            {
+                this.addToTasks(task.getKey(), product);
+            }
+        }
+    }
+
+    /**
+     * Get the recipe for an itemstorage.
+     * @param itemStorage the storage.
+     * @return the recipe.
+     */
+    public IRecipeStorage getRecipeForItemStack(final ItemStorage itemStorage)
+    {
+        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
+        {
+            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
+            {
+                return recipe;
+            }
+        }
+
+        for (final IToken token : getRecipes())
+        {
+            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
+            {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     /**

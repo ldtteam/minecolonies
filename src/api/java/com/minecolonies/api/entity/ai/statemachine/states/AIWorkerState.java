@@ -43,25 +43,9 @@ public enum AIWorkerState implements IAIState
      */
     START_BUILDING(false),
     /**
-     * Clears the building area.
-     */
-    CLEAR_STEP(false),
-    /**
-     * Cleans the building area.
-     */
-    REMOVE_STEP(false),
-    /**
      * Creates the solid structure.
      */
     BUILDING_STEP(false),
-    /**
-     * Sets decorative blocks.
-     */
-    DECORATION_STEP(false),
-    /**
-     * Spawns all entities.
-     */
-    SPAWN_STEP(false),
     /**
      * Completes the building.
      */
@@ -96,6 +80,10 @@ public enum AIWorkerState implements IAIState
 ###Lumberjack###
      */
     /**
+     * The lumberjack is starting up his/her routine.
+     */
+    LUMBERJACK_START_WORKING(true),
+    /**
      * The lumberjack is looking for trees.
      */
     LUMBERJACK_SEARCHING_TREE(true),
@@ -127,6 +115,10 @@ public enum AIWorkerState implements IAIState
      * The Miner walks to the ladder.
      */
     MINER_WALKING_TO_LADDER(true),
+    /**
+     * The Miner repairs its ladder.
+     */
+    MINER_REPAIRING_LADDER(true),
     /**
      * The Miner mines his shaft.
      */
@@ -237,9 +229,9 @@ public enum AIWorkerState implements IAIState
     DELIVERY(true),
 
     /**
-     * Gather not needed items and tools from others.
+     * Pickup unneeded items from buildings.
      */
-    GATHERING(true),
+    PICKUP(true),
 
     /**
      * Dump inventory over chests in warehouse.
@@ -414,7 +406,7 @@ public enum AIWorkerState implements IAIState
      */
 
     /**
-     *  Guard attack a dummy.
+     * Guard attack a dummy.
      */
     KNIGHT_ATTACK_DUMMY(true),
 
@@ -516,9 +508,9 @@ public enum AIWorkerState implements IAIState
 
     RUNNING(true),
 
-      /*
+    /*
 ### Healer ###
-     */
+   */
     REQUEST_CURE(true),
 
     CURE(true),
@@ -527,7 +519,21 @@ public enum AIWorkerState implements IAIState
 
     FREE_CURE(true),
 
-    CURE_PLAYER(true);
+    CURE_PLAYER(true),
+
+    /*
+### School related ###
+     */
+    TEACH(true),
+
+    RECESS(true),
+
+    /*
+### Plantation related ###
+     */
+    PLANTATION_FARM(true),
+
+    PLANTATION_PLANT(true);
 
     /**
      * Is it okay to eat.
@@ -536,6 +542,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Create a new one.
+     *
      * @param okayToEat if okay.
      */
     AIWorkerState(final boolean okayToEat)
@@ -545,6 +552,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Method to check if it is okay.
+     *
      * @return true if so.
      */
     public boolean isOkayToEat()

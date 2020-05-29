@@ -7,6 +7,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_SPEED;
 
 /**
  * This is the base class of all worker AIs.
@@ -154,19 +158,17 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     protected final boolean mineBlock(
       @NotNull final BlockPos blockToMine,
       @NotNull final BlockPos safeStand,
-      @NotNull final boolean damageTool,
-      @NotNull final boolean getDrops,
+      final boolean damageTool,
+      final boolean getDrops,
       final Runnable blockBreakAction)
     {
         final BlockState curBlockState = world.getBlockState(blockToMine);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if (curBlock == null
-              || curBlock.equals(Blocks.AIR)
+        if (curBlock instanceof AirBlock
               || curBlock instanceof IBuilderUndestroyable
               || curBlock == Blocks.BEDROCK)
         {
-            if (curBlock != null
-                  && curBlockState.getMaterial().isLiquid())
+            if (curBlockState.getMaterial().isLiquid())
             {
                 world.removeBlock(blockToMine, false);
             }
@@ -191,7 +193,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
 
             //create list for all item drops to be stored in
-            final List<ItemStack> localItems = new ArrayList<ItemStack>();
+            List<ItemStack> localItems = new ArrayList<ItemStack>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
             if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
@@ -206,12 +208,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
                 localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, tool));
             }
 
+            localItems = increaseBlockDrops(localItems);
+
             //add the drops to the citizen
             for (final ItemStack item : localItems)
             {
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
             }
         }
+
+        triggerMinedBlock(curBlockState);
 
         if (blockBreakAction == null)
         {
@@ -223,8 +229,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             blockBreakAction.run();
         }
 
-
-        if (tool != null && damageTool)
+        if (tool != ItemStack.EMPTY && damageTool)
         {
             tool.getItem().inventoryTick(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem()), true);
         }
@@ -234,10 +239,31 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     }
 
     /**
+     * Potentially increase the blockdrops.
+     * To be overriden by the worker.
+     * @param drops the drops.
+     * @return the list of additional drops.
+     */
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        return drops;
+    }
+
+    /**
+     * Trigger for miners if they want to do something specific per mined block.
+     * @param blockToMine the mined block.
+     */
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    {
+
+    }
+
+    /**
      * Checks for the right tools and waits for an appropriate delay.
      *
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (empty Block!)
+     * @return true if you should wait
      */
     private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
@@ -254,7 +280,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
         currentWorkingLocation = blockToMine;
-
 
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
     }
@@ -273,7 +298,25 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2 : MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())));
+        return MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2 : calculateWorkerMiningDelay(block, pos);
+    }
+
+    /**
+     * Calculate the worker mining delay for a block at a pos.
+     * @param block the block.
+     * @param pos the pos.
+     * @return the mining delay of the worker.
+     */
+    private int calculateWorkerMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    {
+        double reduction = 1;
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_BREAK_SPEED, MultiplierModifierResearchEffect.class);
+        if (effect != null)
+        {
+            reduction = 1 - effect.getEffect();
+        }
+
+        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState()))) * reduction);
     }
 
     /**

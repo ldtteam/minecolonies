@@ -32,6 +32,7 @@ public interface ICitizenDiseaseHandler
 
     /**
      * get the disease identifier.
+     * @return the disease identifier.
      */
     String getDisease();
 

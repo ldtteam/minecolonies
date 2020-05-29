@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -108,6 +109,20 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             citizen.setWorkBuilding(this);
         }
         return assignalResult;
+    }
+
+    @Override
+    public int getClaimRadius(final int newLevel)
+    {
+        return 0;
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        final IBuilding barrack = colony.getBuildingManager().getBuilding(barracks);
+        ChunkDataHelper.claimColonyChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
     }
 
     @Override

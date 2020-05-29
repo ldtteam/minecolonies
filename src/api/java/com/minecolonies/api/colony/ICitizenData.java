@@ -278,11 +278,13 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Schedule restart and cleanup.
+     * @param player the player scheduling it.
      */
     void scheduleRestart(ServerPlayerEntity player);
 
     /**
      * AI will be restarted, also restart building etc
+     * @return true if so.
      */
     boolean shouldRestart();
 
@@ -335,4 +337,16 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @return the int modifier.
      */
     int getJobModifier();
+
+    /**
+     * If is idle at job.
+     * @return true if so.
+     */
+    boolean isIdleAtJob();
+
+    /**
+     * Set idle at job.
+     * @param idle true if so.
+     */
+    void setIdleAtJob(final boolean idle);
 }

@@ -74,8 +74,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
-     * @param colonyID
-     * @param citizenID
+     * @param colonyID the id of the colony.
+     * @param citizenID the id of the citizen.
      */
     @Override
     public void registerWithColony(final int colonyID, final int citizenID)

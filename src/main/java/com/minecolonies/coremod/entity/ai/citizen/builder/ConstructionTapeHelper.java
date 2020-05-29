@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
@@ -48,7 +48,7 @@ public final class ConstructionTapeHelper
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-          new Structure(world, workOrder.getStructureName(), new PlacementSettings()), workOrder.getRotation(world), workOrder.isMirrored());
+          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
         placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
     }
 
@@ -171,11 +171,11 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        final Structure structure = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
-        if (!structure.isBluePrintMissing())
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
+        if (structure.hasBluePrint())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-              structure, workOrder.getRotation(world), workOrder.isMirrored());
+              structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
             removeConstructionTape(corners, world);
         }
     }

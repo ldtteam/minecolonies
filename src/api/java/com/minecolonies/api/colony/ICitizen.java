@@ -50,6 +50,7 @@ public interface ICitizen
 
     /**
      * Check if the citizen is paused.
+     * @param p true if paused, else false.
      */
     void setPaused(boolean p);
 

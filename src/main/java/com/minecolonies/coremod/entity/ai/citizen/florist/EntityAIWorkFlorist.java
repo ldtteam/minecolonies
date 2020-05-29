@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
@@ -34,12 +36,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     /**
      * Max 2d distance the florist should be from the hut.
      */
-    private static final long MAX_DISTANCE           = 50;
+    private static final long MAX_DISTANCE = 50;
 
     /**
      * Harvest actions to actually dump per building level.
      */
-    private static final int HARVEST_ACTIONS_TO_DUMP   = 10;
+    private static final int HARVEST_ACTIONS_TO_DUMP = 10;
 
     /**
      * The chance for something to grow per second on one of the fields.
@@ -49,12 +51,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     /**
      * Base XP gain for the florist for composting or harvesting.
      */
-    private static final double BASE_XP_GAIN     = 0.5;
+    private static final double BASE_XP_GAIN = 0.5;
 
     /**
      * Quantity of compost to request at a time.
      */
-    private static final int COMPOST_REQUEST_QTY     = 16;
+    private static final int COMPOST_REQUEST_QTY = 16;
 
     /**
      * Base block mining delay multiplier.
@@ -89,8 +91,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -133,7 +134,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
             final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_COMPOST);
             if (amountOfCompostInBuilding > 0)
             {
-                needsCurrently = IS_COMPOST;
+                needsCurrently = new Tuple<>(IS_COMPOST, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             else
@@ -166,6 +167,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     /**
      * Walk to the block to compost and apply compost to it.
+     *
      * @return the next state to go to.
      */
     private IAIState compost()
@@ -203,6 +205,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     /**
      * Walk to a piece of land and harvest the flower.
+     *
      * @return the next state to go to.
      */
     private IAIState harvest()
@@ -247,7 +250,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0,  MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
     }
 
     /**
@@ -270,13 +273,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
     /**
      * Check to get some not composted land and return its position.
+     *
      * @return the land to compost.
      */
     private BlockPos getFirstNotCompostedLand()
     {
         for (final BlockPos pos : getOwnBuilding(BuildingFlorist.class).getPlantGround())
         {
-            if (world.isBlockLoaded(pos))
+            if (world.isBlockPresent(pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

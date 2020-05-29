@@ -1,22 +1,22 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
-import com.minecolonies.api.colony.guardtype.GuardType;
-import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
-import com.minecolonies.coremod.network.messages.GuardScepterMessage;
-import com.minecolonies.coremod.network.messages.GuardTaskMessage;
-import com.minecolonies.coremod.network.messages.MobEntryChangeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.GuardScepterMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -498,7 +498,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void recalculate()
     {
-        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
+        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building));
         pullInfoFromHut();
     }
 
@@ -509,7 +509,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        Network.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
+        Network.getNetwork().sendToServer(new GuardScepterMessage(building, localTask.ordinal()));
     }
 
     /**

@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The interface of the citizen manager.
+ */
 public interface ICitizenManager
 {
     /**
@@ -79,6 +82,7 @@ public interface ICitizenManager
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
+     * @return the citizen data of the spawned citizen.
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world)
     {
@@ -91,6 +95,8 @@ public interface ICitizenManager
      * @param data     Data to use to spawn citizen.
      * @param world    the world to spawn it in.
      * @param spawnPos the Blockposition to spawn at
+     *
+     * @return the new citizen.
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos)
     {
@@ -102,8 +108,10 @@ public interface ICitizenManager
      * @param data Data to use when spawn, null when new generation.
      * @param world THe world.
      * @param force True to skip max citizen test, false when not.
+     * @param spawnPos the pos to spawn it at.
+     * @return the new citizen.
      */
-    ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos, final boolean force);
+    ICitizenData spawnOrCreateCitizen(final ICitizenData data, final World world, final BlockPos spawnPos, final boolean force);
 
     /**
      * Creates Citizen Data for a new citizen
@@ -198,14 +206,33 @@ public interface ICitizenManager
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.
-     * 
+     *
      * @param mourn boolean to indicate if citizen should mourn or not
      */
     void updateCitizenMourn(final boolean mourn);
+
+    /**
+     * Call this to set all citizens asleep
+     *
+     * @param sleep boolean to indicate whether the citizens are all asleep
+     */
+    void updateCitizenSleep(final boolean sleep);
 
     /**
      * Get a random citizen.
      * @return the random citizen.
      */
     ICitizenData getRandomCitizen();
+
+    /**
+     * Update a modifier for all citizens.
+     * @param id the name of it.
+     */
+    void updateModifier(final String id);
+
+    /**
+     *  Call this when citizens sleep
+     */
+    void onCitizenSleep();
+
 }

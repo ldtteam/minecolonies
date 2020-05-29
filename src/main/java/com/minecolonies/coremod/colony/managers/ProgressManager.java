@@ -77,10 +77,6 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FOUR_CITIZENS_SPAWNED);
         }
-        else if (total == 5)
-        {
-            trigger(FIVE_CITIZENS_SPAWNED);
-        }
         else if (total == 6)
         {
             trigger(SIX_CITIZENS_SPAWNED);
@@ -97,7 +93,11 @@ public class ProgressManager implements IProgressManager
         {
             trigger(NINE_CITIZENS_SPAWNED);
         }
-        else if (total >= 10 && employed >= 4)
+        else if (total == 10)
+        {
+            trigger(TEN_CITIZENS_SPAWNED);
+        }
+        else if (total >= 11 && employed >= 4)
         {
             trigger(NOT_ENOUGH_JOBS);
         }

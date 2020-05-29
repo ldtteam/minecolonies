@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -44,6 +45,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * DEPRECATED
+     * @param bp the position.
      */
     void setWorkBuilding(BlockPos bp);
 
@@ -152,4 +154,10 @@ public interface ICitizenDataView extends ICitizen
      * @return the instance.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
+
+    /**
+     * The citizen happiness handler.
+     * @return the handler.
+     */
+    ICitizenHappinessHandler getHappinessHandler();
 }

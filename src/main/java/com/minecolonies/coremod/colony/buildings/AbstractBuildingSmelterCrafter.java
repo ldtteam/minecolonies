@@ -11,21 +11,32 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.FurnaceBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -106,13 +117,16 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
-                    for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
+                    if (recipeStorage != null)
                     {
-                        if (recipeOutputs.containsKey(itemStorage))
+                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
-                            itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                            if (recipeOutputs.containsKey(itemStorage))
+                            {
+                                itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                            }
+                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                         }
-                        recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                     }
                 }
             }
@@ -201,6 +215,28 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     public void removeFromFurnaces(final BlockPos pos)
     {
         this.furnaces.remove(pos);
+    }
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Furnace Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBlockPos(getID());
+                return new ContainerCraftingFurnace(id, inv, buffer);
+            }
+        }, getID());
     }
 
     /**

@@ -5,17 +5,15 @@ import com.minecolonies.api.entity.mobs.pirates.IArcherPirateEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
  * Class for the Archer Pirate entity.
  */
 public class EntityArcherPirate extends AbstractEntityPirate implements IArcherPirateEntity
 {
-
     /**
      * Constructor of the entity.
      * @param worldIn world to construct it in.
+     * @param type the entity type.
      */
     public EntityArcherPirate(final EntityType type, final World worldIn)
     {

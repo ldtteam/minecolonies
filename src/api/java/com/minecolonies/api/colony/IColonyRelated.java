@@ -12,6 +12,7 @@ public interface IColonyRelated
 
     /**
      * Gets the colony this entity belongs to
+     * @return the colony.
      */
     IColony getColony();
 

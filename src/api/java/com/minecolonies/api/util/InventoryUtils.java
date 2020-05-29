@@ -492,8 +492,8 @@ public class InventoryUtils
      * @param provider  The provider to process all the
      * @param predicate The predicate to match the ItemStacks in the {@link
      *                  IItemHandler} for each side with.
-     * @return A combined {@link List<ItemStack>} as if the given predicate was
-     * called on all ItemStacks in all IItemHandlers of the given provider.
+     * @return A combined {@link List}<{@link ItemStack}> as if the given predicate was
+     * called on all ItemStacks in all {@link IItemHandler}s of the given provider.
      */
     @NotNull
     private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)
@@ -1755,7 +1755,7 @@ public class InventoryUtils
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetHandler) == 0;
     }
@@ -1763,7 +1763,7 @@ public class InventoryUtils
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
@@ -1838,7 +1838,6 @@ public class InventoryUtils
      * @param amount the max amount to extract
      * @param targetHandler the target.
      * @param slot the slot to put it in.
-     * @return true if succesful.
      */
     public static void transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
             final IItemHandler sourceHandler,
@@ -2280,7 +2279,8 @@ public class InventoryUtils
 
     /**
      * Calculates howmany items match the given predicate that are in the list.
-     *
+     * @param stacks the stacks to count in.
+     * @param stackPredicate the condition to count for.
      * @return The sum of the itemstack sizes that match the predicate
      */
     public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, @NotNull final Predicate<ItemStack> stackPredicate)

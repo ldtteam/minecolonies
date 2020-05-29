@@ -14,83 +14,82 @@ public interface IColonyEvent
     /**
      * Returns the events current status
      *
-     * @return
+     * @return the status.
      */
-    public EventStatus getStatus();
+    EventStatus getStatus();
 
     /**
      * Sets the current event status
-     *
-     * @return
+     * @param status the status to set.
      */
-    public void setStatus(final EventStatus status);
+    void setStatus(final EventStatus status);
 
     /**
      * Returns this events ID.
      *
-     * @return
+     * @return the event id.
      */
-    public int getID();
+    int getID();
 
     /**
      * The event type's id
      *
-     * @return
+     * @return the event type id.
      */
-    public ResourceLocation getEventTypeID();
+    ResourceLocation getEventTypeID();
 
     /**
      * Sets the colony
      *
-     * @param colony
+     * @param colony the colony to set.
      */
-    public void setColony(@NotNull final IColony colony);
+    void setColony(@NotNull final IColony colony);
 
     /**
      * Writes the event to NBT
      *
-     * @param compound
-     * @return
+     * @param compound the compound to write it to.
+     * @return the compound.
      */
-    public CompoundNBT writeToNBT(final CompoundNBT compound);
+    CompoundNBT writeToNBT(final CompoundNBT compound);
 
     /**
      * Reads the events values from NBT
      *
-     * @param compound
+     * @param compound the compound to read it from.
      */
-    public void readFromNBT(final CompoundNBT compound);
+    void readFromNBT(final CompoundNBT compound);
 
-    /**
+    /*
      *
      * Event triggers
      *
      */
 
     /**
-     * Onupdate function, called every 25s / 500 ticks. Comes from colony -> eventmanager -> event.
+     * Onupdate function, called every 25s / 500 ticks. Comes from colony then goes to the eventmanager and then to the event.
      */
-    default public void onUpdate() {}
+    default void onUpdate() { }
 
     /**
      * Actions which are done on the start of the event.
      */
-    default public void onStart() {}
+    default void onStart() { }
 
     /**
      * Actions which are done on the finish/removal of the event.
      */
-    default public void onFinish() {}
+    default void onFinish() { }
 
     /**
      * Called by tileentities relevant to the event on invalidation.
      *
-     * @param te
+     * @param te the broken Tile entity.
      */
-    default public void onTileEntityBreak(final TileEntity te) {}
+    default void onTileEntityBreak(final TileEntity te) { }
 
     /**
      * Called on night fall, to execute special day-based logic.
      */
-    default public void onNightFall() {}
+    default void onNightFall() { }
 }

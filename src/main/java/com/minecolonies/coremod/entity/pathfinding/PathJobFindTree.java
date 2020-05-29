@@ -48,7 +48,8 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home       the position of the worker hut.
      * @param range      maximum path range.
      * @param treesToCut the trees the lj is supposed to cut.
-     * @param entity the entity.
+     * @param entity     the entity.
+     * @param colony     the colony.
      */
     public PathJobFindTree(
                             final World world,
@@ -75,6 +76,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param endRestriction      end of the restricted area.
      * @param treesToCut the trees the lj is supposed to cut.
      * @param entity the entity.
+     * @param colony the colony.
      */
     public PathJobFindTree(
             final World world,

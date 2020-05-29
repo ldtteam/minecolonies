@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -112,17 +113,35 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     @Override
     public int getClaimRadius(final int newLevel)
     {
-        if (newLevel + 1 < MineColonies.getConfig().getCommon().minTownHallPadding.get())
+        switch (newLevel)
         {
-            return MineColonies.getConfig().getCommon().minTownHallPadding.get();
+            case 0:
+                return 0;
+            case 1:
+            case 2:
+                return 1;
+            case 3:
+                return 2;
+            case 4:
+                return 3;
+            case 5:
+                return 5;
+            default:
+                return 0;
         }
-        return newLevel + 1;
     }
 
     @Override
     public boolean canBeGathered()
     {
         return false;
+    }
+
+    @Override
+    public void onBuildingMove(final IBuilding oldBuilding)
+    {
+        super.onBuildingMove(oldBuilding);
+        colony.getBuildingManager().setTownHall(this);
     }
 
     /**

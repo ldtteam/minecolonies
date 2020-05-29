@@ -87,6 +87,7 @@ public interface ICitizenAssignable extends ISchematicProvider
      * Assign the citizen to the current building.
      *
      * @param citizen {@link ICitizenData} of the worker
+     * @return true if successful
      */
     boolean assignCitizen(ICitizenData citizen);
 

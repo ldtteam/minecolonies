@@ -41,8 +41,6 @@ public interface IColony
     @NotNull
     IWorkManager getWorkManager();
 
-    HappinessData getHappinessData();
-
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
@@ -207,8 +205,6 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
-    IColonyHappinessManager getColonyHappinessManager();
-
     IRaiderManager getRaiderManager();
 
     IEventManager getEventManager();
@@ -248,6 +244,7 @@ public interface IColony
 
     /**
      * Get the last time mercenaries were used.
+     * @return the mercenary use time.
      */
     long getMercenaryUseTime();
 
@@ -347,7 +344,7 @@ public interface IColony
     /**
      * Returns the colonies current state.
      *
-     * @return
+     * @return the state.
      */
     ColonyState getState();
 }

@@ -179,6 +179,7 @@ public final class EntityUtils
           1,
           2,
           Blocks.AIR,
+          Blocks.CAVE_AIR,
           Blocks.SNOW,
           Blocks.TALL_GRASS);
     }
@@ -256,6 +257,7 @@ public final class EntityUtils
                 new BlockPos(x, y, z),
                 SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
                 Blocks.AIR,
+                Blocks.CAVE_AIR,
                 Blocks.SNOW,
                 Blocks.TALL_GRASS);
 
@@ -281,6 +283,7 @@ public final class EntityUtils
      *
      * @param entity the entity.
      * @param world  the world.
+     * @param placer the entity to get the itemstacks from to check.
      * @return true if there.
      */
     public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)

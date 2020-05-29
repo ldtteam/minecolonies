@@ -1,50 +1,48 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import net.minecraft.block.Blocks;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a body of water used by the fisherman.
+ * Utility class to search for fisherman ponds.
  */
 public final class Pond
 {
-    private static final String TAG_LOCATION                  = "Location";
-    private static final int    WATER_POOL_WIDTH_REQUIREMENT  = 6;
-    private static final int    WATER_POOL_LENGTH_REQUIREMENT = 3;
-
-    private final BlockPos location;
-
-    private Pond(final BlockPos water)
-    {
-        this.location = water;
-    }
+    /**
+     * The minimum pond requirements.
+     */
+    private static final int WATER_POOL_WIDTH_REQUIREMENT  = 6;
+    private static final int WATER_POOL_LENGTH_REQUIREMENT = 3;
 
     /**
-     * Creates a new Pond iff water is a valid water block.
+     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).
      *
      * @param world The world the player is in.
-     * @param water the coordinates to check.
-     * @return a Pond object if the pond is valid, else null.
+     * @param water The coordinate to check.
+     * @param result the water path result.
+     * @return true if water.
      */
-    public static Pond createWater(@NotNull final IWorldReader world, @NotNull final BlockPos water)
+    public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final WaterPathResult result)
     {
         if (checkWater(world, water, WATER_POOL_WIDTH_REQUIREMENT, WATER_POOL_LENGTH_REQUIREMENT))
         {
-            return new Pond(water);
+            result.pond = water;
+            return true;
         }
-        return null;
+        return false;
     }
 
     /**
-     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20).
-     *  @param world The world the player is in.
-     * @param water The coordinate to check.
-     * @param width which has to be water.
+     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).
+     *
+     * @param world  The world the player is in.
+     * @param water  The coordinate to check.
+     * @param width  which has to be water.
      * @param length which has to be water.
+     * @return true if water.
      */
     public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final int width, final int length)
     {
@@ -73,7 +71,7 @@ public final class Pond
      * @param y      posY.
      * @param z      posZ.
      * @param vector direction.
-     * @param width which has to be water.
+     * @param width  which has to be water.
      * @param length length has to be water.
      * @return true if all blocks are water, else false.
      */
@@ -96,7 +94,7 @@ public final class Pond
         }
         //Takes the middle x block and searches 3 water blocks to both sides
         return checkWaterPoolInDirectionZ(world, x + length * vector, y, z, 1) && checkWaterPoolInDirectionZ(world, x + length
-                                                                                                                                                 * vector, y, z, -1);
+                                                                                                                          * vector, y, z, -1);
     }
 
     /**
@@ -108,7 +106,7 @@ public final class Pond
      * @param y      posY.
      * @param z      posZ.
      * @param vector direction.
-     * @param width which has to be water.
+     * @param width  which has to be water.
      * @param length length has to be water.
      * @return true if all blocks are water, else false.
      */
@@ -131,7 +129,7 @@ public final class Pond
         }
         //Takes the middle z block and searches 3 water blocks to both sides
         return checkWaterPoolInDirectionX(world, x, y, z + length * vector, 1) && checkWaterPoolInDirectionX(world, x, y, z + length
-                                                                                                                                                       * vector, -1);
+                                                                                                                                * vector, -1);
     }
 
     /**
@@ -178,50 +176,5 @@ public final class Pond
             }
         }
         return true;
-    }
-
-    /**
-     * Create a Pond object from NBT.
-     *
-     * @param compound NBT tag compound to read from.
-     * @return new Pond instance.
-     */
-    @NotNull
-    public static Pond read(@NotNull final CompoundNBT compound)
-    {
-        return new Pond(BlockPosUtil.read(compound, TAG_LOCATION));
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return location.hashCode();
-    }
-
-    @Override
-    public boolean equals(@Nullable final Object obj)
-    {
-        if (obj == null || obj.getClass() != this.getClass())
-        {
-            return false;
-        }
-
-        @NotNull final Pond wobj = (Pond) obj;
-        return location.equals(wobj.getLocation());
-    }
-
-    public BlockPos getLocation()
-    {
-        return location;
-    }
-
-    /**
-     * Serialize for NBT.
-     *
-     * @param compound nbt tag compound to write to.
-     */
-    public void write(@NotNull final CompoundNBT compound)
-    {
-        BlockPosUtil.write(compound, TAG_LOCATION, location);
     }
 }

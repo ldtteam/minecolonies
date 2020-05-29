@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,7 +11,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -19,11 +19,11 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -60,7 +60,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     private boolean clearedShaft = false;
 
     /**
-     * Here we can detect multiples of 5.
+     * The first y level to start the shaft at.
      */
     private int startingLevelShaft = 0;
 
@@ -363,7 +363,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Find given level in the levels array.
-     *
+     * @param level the level.
      * @return position in the levels array.
      */
     public int getLevelId(final Level level)
@@ -523,29 +523,29 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
-     * Getter of the starting level of the shaft.
+     * Getter of the starting level of the shaft. (Y position).
      *
      * @return the start level.
      */
     public int getStartingLevelShaft()
     {
-        return startingLevelShaft;
+        if (levels.isEmpty())
+        {
+            return startingLevelShaft;
+        }
+        else
+        {
+            return levels.get(levels.size() - 1).getDepth() - 6;
+        }
     }
 
     /**
      * Resets the starting level of the shaft to 0.
+     * @param level the level o set it to.
      */
-    public void resetStartingLevelShaft()
+    public void setStartingLevelShaft(final int level)
     {
-        this.startingLevelShaft = 1;
-    }
-
-    /**
-     * Increments the starting level of the shaft by one.
-     */
-    public void incrementStartingLevelShaft()
-    {
-        this.startingLevelShaft++;
+        this.startingLevelShaft = level;
     }
 
     /**

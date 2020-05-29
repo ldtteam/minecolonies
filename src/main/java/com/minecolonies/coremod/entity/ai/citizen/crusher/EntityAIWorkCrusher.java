@@ -10,7 +10,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -33,7 +33,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
 
     /**
      * Constructor for the crusher.
-     * Defines the tasks the cook executes.
+     * Defines the tasks the crusher executes.
      *
      * @param job a crusher job to use.
      */

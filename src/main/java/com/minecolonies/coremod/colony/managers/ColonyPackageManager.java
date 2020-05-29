@@ -9,17 +9,19 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
-import com.minecolonies.coremod.network.messages.ColonyViewMessage;
-import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewWorkOrderMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
@@ -39,8 +41,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     private Set<ServerPlayerEntity> closeSubscribers = new HashSet<>();
 
     /**
-     * List of players with global permissions, like receiving important messages from far away.
-     * Populated on player login and logoff.
+     * List of players with global permissions, like receiving important messages from far away. Populated on player login and logoff.
      */
     private Set<ServerPlayerEntity> importantColonyPlayers = new HashSet<>();
 
@@ -139,7 +140,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      */
     public void updateColonyViews()
     {
-        if (!closeSubscribers.isEmpty())
+        if (!closeSubscribers.isEmpty() || !newSubscribers.isEmpty())
         {
             //  Send each type of update packet as appropriate:
             //      - To close Subscribers if the data changes
@@ -160,7 +161,10 @@ public class ColonyPackageManager implements IColonyPackageManager
             sendSchematicsPackets();
         }
 
-        isDirty = false;
+        if (newSubscribers.isEmpty())
+        {
+            isDirty = false;
+        }
         colony.getPermissions().clearDirty();
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
@@ -174,7 +178,13 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             final PacketBuffer colonyPacketBuffer = new PacketBuffer(Unpooled.buffer());
             ColonyView.serializeNetworkData(colony, colonyPacketBuffer, !newSubscribers.isEmpty());
-            final Set<ServerPlayerEntity> players = isDirty ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+
             players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
         }
         colony.getRequestManager().setDirty(false);
@@ -186,7 +196,12 @@ public class ColonyPackageManager implements IColonyPackageManager
         final Permissions permissions = colony.getPermissions();
         if (permissions.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = permissions.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
         }
     }
@@ -197,14 +212,23 @@ public class ColonyPackageManager implements IColonyPackageManager
         final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = workManager.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+
+            List<IWorkOrder> workOrders = new ArrayList<>();
             for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                    workOrders.add(workOrder);
                 }
             }
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrders), player));
+
             workManager.setDirty(false);
         }
     }
@@ -214,7 +238,12 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = Structures.isDirty() ? closeSubscribers : newSubscribers;
+            final Set<ServerPlayerEntity> players = new HashSet<>();
+            if (isDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
             players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), player));
         }
         Structures.clearDirty();
@@ -233,8 +262,6 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             closeSubscribers.add(subscriber);
             newSubscribers.add(subscriber);
-            // Send view right away upon subscriber add.
-            updateSubscribers();
         }
     }
 
@@ -252,6 +279,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void addImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
     {
         importantColonyPlayers.add(subscriber);
+        newSubscribers.add(subscriber);
     }
 
     /**
@@ -261,6 +289,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void removeImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
     {
         importantColonyPlayers.remove(subscriber);
+        newSubscribers.remove(subscriber);
     }
 
     /**

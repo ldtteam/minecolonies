@@ -1,22 +1,44 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryFunctions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack
+public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProvider
 {
+    /**
+     * Corner positions of schematic, relative to te pos.
+     */
+    private BlockPos corner1 = BlockPos.ZERO;
+    private BlockPos corner2 = BlockPos.ZERO;
+
+    /**
+     * The TE's schematic name
+     */
+    private String schematicName = "";
+
+    /**
+     * Map of block positions relative to TE pos and string tags
+     */
+    private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
+
     public AbstractTileEntityColonyBuilding(final TileEntityType type)
     {
         super(type);
@@ -137,4 +159,73 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack
      * @return The buildings name.
      */
     public abstract ResourceLocation getBuildingName();
+
+    /**
+     * Mark the inventory dirty for rebuild.
+     */
+    public abstract void markInvDirty();
+
+    @Override
+    public String getSchematicName()
+    {
+        return schematicName;
+    }
+
+    @Override
+    public void setSchematicName(final String name)
+    {
+        schematicName = name;
+    }
+
+    @Override
+    public Map<BlockPos, List<String>> getPositionedTags()
+    {
+        return tagPosMap;
+    }
+
+    @Override
+    public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
+    {
+        tagPosMap = positionedTags;
+    }
+
+
+    @Override
+    public Tuple<BlockPos, BlockPos> getCornerPositions()
+    {
+        if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
+        {
+            return new Tuple<>(pos, pos);
+        }
+
+        return new Tuple<>(corner1, corner2);
+    }
+
+    @Override
+    public void setCorners(final BlockPos pos1, final BlockPos pos2)
+    {
+        corner1 = pos1;
+        corner2 = pos2;
+    }
+
+    @Override
+    public void read(@NotNull final CompoundNBT compound)
+    {
+        super.read(compound);
+        readSchematicDataFromNBT(compound);
+    }
+
+    @Override
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
+    {
+        super.write(compound);
+        writeSchematicDataToNBT(compound);
+        return compound;
+    }
+
+    @Override
+    public BlockPos getTilePos()
+    {
+        return pos;
+    }
 }

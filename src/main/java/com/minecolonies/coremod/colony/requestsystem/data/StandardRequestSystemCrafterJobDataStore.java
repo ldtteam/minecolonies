@@ -34,13 +34,13 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
      * The queue of the store.
      */
     private final LinkedList<IToken<?>> queue;
-    private final List<IToken<?>>             tasks;
+    private final List<IToken<?>> tasks;
 
     /**
      * Constructor to create the data store.
      * @param id the id of it.
      * @param queue the queue to start with.
-     * @param tasks
+     * @param tasks the task.
      */
     public StandardRequestSystemCrafterJobDataStore(
       final IToken<?> id,
@@ -120,6 +120,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemCrafterJobDataStore.id));
             compound.put(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_ASSIGNED_LIST, standardRequestSystemCrafterJobDataStore.tasks.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
 
             return compound;
         }

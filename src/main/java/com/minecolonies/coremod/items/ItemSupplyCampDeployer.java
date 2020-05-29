@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.placementhandlers.PlacementError;
+import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -52,6 +52,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
+     * @param properties the properties.
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
@@ -93,6 +94,12 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         return new ActionResult<>(ActionResultType.FAIL, stack);
     }
 
+    /**
+     * Places a supply camp on the given position looking to the given direction.
+     * 
+     * @param pos       the position to place the supply camp at.
+     * @param direction the direction the supply camp should face.
+     */
     private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         if (pos == null)
@@ -128,9 +135,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * Checks if the camp can be placed.
      *
-     * @param world the world.
-     * @param pos   the position.
-     * @param size  the size.
+     * @param world              the world.
+     * @param pos                the position.
+     * @param size               the size.
+     * @param placementErrorList the list of placement errors.
+     * @param placer             the placer.
      * @return true if so.
      */
     public static boolean canCampBePlaced(
@@ -166,8 +175,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * Check if the there is a solid block at a position and it's not in a colony.
      *
-     * @param world the world.
-     * @param pos   the position.
+     * @param world              the world.
+     * @param pos                the position.
+     * @param placementErrorList a list of placement errors.
+     * @param placer             the player placing the supply camp.
      */
     private static void checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
@@ -188,8 +199,9 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * Check if a coordinate is in any colony.
      *
-     * @param world the world to check in.
-     * @param pos   the position.
+     * @param world  the world to check in.
+     * @param pos    the position.
+     * @param placer the placer.
      * @return true if no colony found.
      */
     private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)

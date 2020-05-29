@@ -4,20 +4,25 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
-import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
@@ -117,6 +122,10 @@ public class CitizenDataView implements ICitizenDataView
     private final CitizenSkillHandler citizenSkillHandler;
 
     /**
+     * The citizen happiness handler.
+     */
+    private final CitizenHappinessHandler citizenHappinessHandler;
+    /**
      * Set View id.
      *
      * @param id
@@ -126,6 +135,7 @@ public class CitizenDataView implements ICitizenDataView
     {
         this.id = id;
         this.citizenSkillHandler = new CitizenSkillHandler();
+        this.citizenHappinessHandler = new CitizenHappinessHandler();
     }
 
     @Override
@@ -257,14 +267,6 @@ public class CitizenDataView implements ICitizenDataView
         saturation = buf.readDouble();
         happiness = buf.readDouble();
 
-        foodModifier = buf.readDouble();
-        damageModifier = buf.readDouble();
-        houseModifier = buf.readDouble();
-        jobModifier = buf.readDouble();
-        fieldsModifier = buf.readDouble();
-        toolsModifiers = buf.readDouble();
-        healthmodifier = buf.readDouble();
-
         citizenSkillHandler.read(buf.readCompoundTag());;
 
         job = buf.readString(32767);
@@ -301,6 +303,8 @@ public class CitizenDataView implements ICitizenDataView
             hasAnyPrimaryInteraction = false;
             hasPrimaryBlockingInteractions = false;
         }
+
+        citizenHappinessHandler.read(buf.readCompoundTag());
     }
 
     @Override
@@ -401,5 +405,11 @@ public class CitizenDataView implements ICitizenDataView
     public ICitizenSkillHandler getCitizenSkillHandler()
     {
         return citizenSkillHandler;
+    }
+
+    @Override
+    public ICitizenHappinessHandler getHappinessHandler()
+    {
+        return citizenHappinessHandler;
     }
 }

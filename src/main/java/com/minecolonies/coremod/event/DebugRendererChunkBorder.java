@@ -10,7 +10,8 @@ import com.minecolonies.coremod.client.render.MRenderTypes;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -54,7 +55,7 @@ public class DebugRendererChunkBorder
         {
             center = new Tuple<>(player.chunkCoordX, player.chunkCoordZ);
             colonies.clear();
-            final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
+            final int range = MineColonies.getConfig().getCommon().maxColonySize.get();
             for (int incX = -range; incX <= range; incX += 1)
             {
                 for (int incZ = -range; incZ <= range; incZ += 1)

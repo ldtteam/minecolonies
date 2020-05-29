@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.network.messages.BuyCitizenMessage;
-import net.minecraft.client.Minecraft;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.BuyCitizenMessage;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraftforge.items.IItemHandler;
