@@ -3,6 +3,7 @@ package com.minecolonies.coremod.event;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.util.BoxRenderer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -12,14 +13,22 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.coremod.items.ItemScepterGuard;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -30,8 +39,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Used to handle client events.
@@ -71,52 +79,148 @@ public class ClientEventHandler
         final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
         {
-            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-            if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
-            {
-                final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
-                if (tempView != null)
-                {
-                    if (wayPointTemplate == null)
-                    {
-                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
-                    }
-                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
-                }
-            }
+            handleRenderStructure(event, world, player);
         }
         else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
-            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-            final ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTag())
-            {
-                return;
-            }
-            final CompoundNBT compound = stack.getTag();
+            handleRenderScepterGuard(event, world, player);
+        }
+        else if (player.getHeldItemMainhand().getItem() == ModItems.bannerRallyGuards)
+        {
+            handleRenderBannerRallyGuards(event, world, player);
+        }
+    }
 
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimension().getType().getId());
-            if (colony == null)
+    private static void handleRenderStructure(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    {
+        final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+        if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
+        {
+            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+            if (tempView != null)
             {
-                return;
-            }
-
-            final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-            final IBuildingView hut = colony.getBuilding(guardTower);
-
-            if (partolPointTemplate == null)
-            {
-                partolPointTemplate = new LoadOnlyStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
-            }
-
-            if (hut instanceof AbstractBuildingGuards.View)
-            {
+                if (wayPointTemplate == null)
+                {
+                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                }
                 BlueprintHandler.getInstance()
-                  .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
-                    event.getPartialTicks(),
-                    partolPointTemplate,
-                    event.getMatrixStack());
+                  .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
             }
         }
+    }
+
+    private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    {
+        final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+        final ItemStack stack = player.getHeldItemMainhand();
+        if (!stack.hasTag())
+        {
+            return;
+        }
+        final CompoundNBT compound = stack.getTag();
+
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimension().getType().getId());
+        if (colony == null)
+        {
+            return;
+        }
+
+        final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
+        final IBuildingView hut = colony.getBuilding(guardTower);
+
+        if (partolPointTemplate == null)
+        {
+            partolPointTemplate = new LoadOnlyStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
+        }
+
+        if (hut instanceof AbstractBuildingGuards.View)
+        {
+            BlueprintHandler.getInstance()
+              .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
+                event.getPartialTicks(),
+                partolPointTemplate,
+                event.getMatrixStack());
+        }
+    }
+
+    private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    {
+        final ItemStack stack = player.getHeldItemMainhand();
+        if (!stack.hasTag())
+        {
+            return;
+        }
+        final CompoundNBT compound = stack.getTag();
+
+        final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);// BlockPosUtil.read(compound, TAG_RALLIED_GUARDTOWERS);
+        for (int i = 0; i < guardTowers.size(); i++)
+        {
+            final BlockPos ralliedBlockPos = NBTUtil.readBlockPos(guardTowers.getCompound(i));
+            RenderSystem.disableDepthTest();
+            RenderSystem.disableCull();
+            renderBox(ralliedBlockPos, ralliedBlockPos, event, 0, 0, 1);
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableCull();
+        }
+    }
+
+    // TODO: Use the Structurize function for this!
+    private static void renderBox(
+      final BlockPos posA,
+      final BlockPos posB,
+      final RenderWorldLastEvent event,
+      final float red,
+      final float green,
+      final float blue)
+    {
+        int x1 = posA.getX();
+        int y1 = posA.getY();
+        int z1 = posA.getZ();
+
+        int x2 = posB.getX();
+        int y2 = posB.getY();
+        int z2 = posB.getZ();
+
+        if (x1 > x2)
+        {
+            x1++;
+        }
+        else
+        {
+            x2++;
+        }
+
+        if (y1 > y2)
+        {
+            y1++;
+        }
+        else
+        {
+            y2++;
+        }
+
+        if (z1 > z2)
+        {
+            z1++;
+        }
+        else
+        {
+            z2++;
+        }
+
+        RenderSystem.enableDepthTest();
+
+        final ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().getRenderManager().info;
+        final Vec3d viewPosition = activeRenderInfo.getProjectedView();
+        final MatrixStack matrix = event.getMatrixStack();
+        matrix.push();
+        matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);
+
+        final Matrix4f matrix4f = matrix.getLast().getPositionMatrix();
+        final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        BoxRenderer.drawSelectionBoundingBox(matrix4f, axisalignedbb.grow(0.002D), red, green, blue, 1.0F);
+        matrix.pop();
+
+        RenderSystem.disableDepthTest();
     }
 }

@@ -42,9 +42,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     /**
      * The compound tag for the activity status of the banner
      */
-    private static final String TAG_IS_ACTIVE = "isActive";
-
-    private static final String TAG_GUARDTOWERS = "guardtowers";
+    private static final String TAG_IS_ACTIVE           = "isActive";
 
     @Nullable
     private ITextComponent cachedTooltip = null;
@@ -71,7 +69,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
         {
             final BlockPos position = ((AbstractTileEntityColonyBuilding) entity).getPosition();
-            final ListNBT guardTowers = (ListNBT) compound.get(TAG_GUARDTOWERS);
+            final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
             int indexToRemove = -1;
             for (int i = 0; i < guardTowers.size(); i++)
             {
@@ -160,14 +158,14 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     private static CompoundNBT checkForCompound(final ItemStack item)
     {
-        if (!item.hasTag() || item.getTag().get(TAG_IS_ACTIVE) == null || item.getTag().get(TAG_GUARDTOWERS) == null)
+        if (!item.hasTag() || item.getTag().get(TAG_IS_ACTIVE) == null || item.getTag().get(TAG_RALLIED_GUARDTOWERS) == null)
         {
             final CompoundNBT compound = new CompoundNBT();
 
             compound.putBoolean(TAG_IS_ACTIVE, false);
 
             @NotNull final ListNBT guardTowerList = new ListNBT();
-            compound.put(TAG_GUARDTOWERS, guardTowerList);
+            compound.put(TAG_RALLIED_GUARDTOWERS, guardTowerList);
             item.setTag(compound);
         }
         return item.getTag();
@@ -178,7 +176,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
       final ItemStack stack, @Nullable final World worldIn, final List<ITextComponent> tooltip, final ITooltipFlag flagIn)
     {
         final CompoundNBT compound = checkForCompound(stack);
-        final ListNBT guardTowers = (ListNBT) compound.get(TAG_GUARDTOWERS);
+        final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
 
         // The isEmpty is in there because the tooltip is sometimes loaded before NBT is loaded.
         // Worst case, the 0-towers-tooltip spams allocations, but compared to the rest of Minecraft, that's negligible.
