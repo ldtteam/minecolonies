@@ -15,10 +15,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -53,6 +55,7 @@ public class RaidManager implements IRaiderManager
      */
     private static final String DESERT_BIOME_ID = "desert";
     private static final String JUNGLE_BIOME_ID = "jungle";
+    private static final String TAIGA_BIOME_ID = "taiga";
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -224,27 +227,32 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(pirateShipRotation);
                 colony.getEventManager().addEvent(event);
             }
-            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(DESERT_BIOME_ID))
-            {
-                final EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new Horde(amount));
-                colony.getEventManager().addEvent(event);
-            }
-            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(JUNGLE_BIOME_ID))
-            {
-                final AmazonRaidEvent event = new AmazonRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new Horde(amount));
-                colony.getEventManager().addEvent(event);
-            }
             else
             {
-                final BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
+                final HordeRaidEvent event;
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
+                if (biomePath.contains(DESERT_BIOME_ID))
+                {
+                    event = new EgyptianRaidEvent(colony);
+                }
+                else if (biomePath.contains(JUNGLE_BIOME_ID))
+                {
+                    event = new AmazonRaidEvent(colony);
+                }
+                else if (biomePath.contains(TAIGA_BIOME_ID))
+                {
+                    event = new NorsemenRaidEvent(colony);
+                }
+                else
+                {
+                    event = new BarbarianRaidEvent(colony);
+                }
+
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
                 colony.getEventManager().addEvent(event);
             }
+
             addRaiderSpawnPoint(targetSpawnPoint);
         }
         colony.markDirty();

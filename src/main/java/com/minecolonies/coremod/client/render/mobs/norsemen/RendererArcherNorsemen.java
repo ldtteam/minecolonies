@@ -1,9 +1,7 @@
-package com.minecolonies.coremod.client.render.mobs.viking.amazon;
+package com.minecolonies.coremod.client.render.mobs.norsemen;
 
-import com.minecolonies.api.client.render.modeltype.NorsemenModel;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import com.minecolonies.coremod.client.model.raiders.ArcherNorsemen;
-import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
+import com.minecolonies.coremod.client.model.raiders.ModelArcherNorsemen;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
@@ -28,7 +26,7 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen
      */
     public RendererArcherNorsemen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new ArcherNorsemen(), 0.5F);
+        super(renderManagerIn, new ModelArcherNorsemen(), 0.5F);
     }
 
     @NotNull

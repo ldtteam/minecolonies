@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.mobs.IMeleeMobEntity;
 import com.minecolonies.api.entity.mobs.egyptians.IEgyptianEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 
-public interface IMeleeVikingEntity extends IVikingEntity, IMeleeMobEntity
+public interface IMeleeNorsemenEntity extends IVikingEntity, IMeleeMobEntity
 {
 
 }

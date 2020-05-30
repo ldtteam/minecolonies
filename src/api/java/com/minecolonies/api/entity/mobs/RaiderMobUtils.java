@@ -9,8 +9,8 @@ import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
 import com.minecolonies.api.entity.mobs.egyptians.IPharaoEntity;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
-import com.minecolonies.api.entity.mobs.vikings.IMeleeVikingEntity;
-import com.minecolonies.api.entity.mobs.vikings.IVikingChief;
+import com.minecolonies.api.entity.mobs.vikings.IMeleeNorsemenEntity;
+import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -171,7 +171,7 @@ public final class RaiderMobUtils
      */
     public static void setEquipment(final AbstractEntityMinecoloniesMob mob)
     {
-        if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeVikingEntity || mob instanceof IVikingChief)
+        if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
         {
             mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
         }

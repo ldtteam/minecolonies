@@ -1,7 +1,7 @@
-package com.minecolonies.coremod.client.render.mobs.viking.amazon;
+package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import com.minecolonies.coremod.client.model.raiders.VikingShieldmaiden;
+import com.minecolonies.coremod.client.model.raiders.ModelShieldmaiden;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen
      */
     public RendererShieldmaidenNorsemen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new VikingShieldmaiden(), 0.5F);
+        super(renderManagerIn, new ModelShieldmaiden(), 0.5F);
     }
 
     @NotNull

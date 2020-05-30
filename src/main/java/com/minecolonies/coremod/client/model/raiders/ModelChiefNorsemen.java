@@ -1,82 +1,73 @@
-package com.minecolonies.coremod.client.model.raiders;// Made with Blockbench 3.5.2
-// Exported for Minecraft version 1.15
-// Paste this class into your mod and generate all required imports
+package com.minecolonies.coremod.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.NorsemenModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class ChiefNorsemen extends NorsemenModel
+public class ModelChiefNorsemen extends NorsemenModel
 {
-
-	private final ModelRenderer bone;
-	private final ModelRenderer FurWaist;
-	private final ModelRenderer bone10;
-	private final ModelRenderer bone11;
-	private final ModelRenderer FurCape;
-	private final ModelRenderer bone12;
-	private final ModelRenderer Helmet;
-	private final ModelRenderer Helmet_Horn_L;
-	private final ModelRenderer bone5;
-	private final ModelRenderer bone3;
-	private final ModelRenderer bone2;
-	private final ModelRenderer bone4;
-	private final ModelRenderer Helmet_Horn_L2;
-	private final ModelRenderer bone6;
-	private final ModelRenderer bone7;
-	private final ModelRenderer bone8;
-	private final ModelRenderer bone9;
-
-	public ChiefNorsemen()
+	public ModelChiefNorsemen()
     {
+        ModelRenderer bone;
+        ModelRenderer FurWaist;
+        ModelRenderer bone10;
+        ModelRenderer bone11;
+        ModelRenderer FurCape;
+        ModelRenderer bone12;
+        ModelRenderer Helmet;
+        ModelRenderer Helmet_Horn_L;
+        ModelRenderer bone5;
+        ModelRenderer bone3;
+        ModelRenderer bone2;
+        ModelRenderer bone4;
+        ModelRenderer Helmet_Horn_L2;
+        ModelRenderer bone6;
+        ModelRenderer bone7;
+        ModelRenderer bone8;
+        ModelRenderer bone9;
+        
 		textureWidth = 128;
 		textureHeight = 128;
 
-		Head = new ModelRenderer(this);
-		Head.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Head);
-		Head.setTextureOffset(40, 18).addBox(4.0F, -23.5F, -12.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
-		Head.setTextureOffset(28, 36).addBox(3.8F, -19.0F, -12.3F, 8.0F, 9.0F, 8.0F, 0.0F, false);
-		Head.setTextureOffset(30, 89).addBox(4.0F, -19.0F, -12.1F, 8.0F, 9.0F, 8.0F, 0.0F, false);
-		Head.setTextureOffset(62, 86).addBox(3.7F, -19.0F, -12.1F, 8.0F, 3.0F, 8.0F, 0.0F, false);
+        bipedBody = new ModelRenderer(this);
+        bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedBody.setTextureOffset(0, 44).addBox(3.9F, -16.03F, -10.5F, 8.0F, 13.0F, 5.0F, 0.0F, false);
 
-		Left_Leg = new ModelRenderer(this);
-		Left_Leg.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Left_Leg);
-		Left_Leg.setTextureOffset(0, 61).addBox(7.5F, -4.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
-		Left_Leg.setTextureOffset(70, 44).addBox(8.0F, -3.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+        bipedHead = new ModelRenderer(this);
+		bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedHead.setTextureOffset(40, 18).addBox(4.0F, -23.5F, -12.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+		bipedHead.setTextureOffset(28, 36).addBox(3.8F, -19.0F, -12.3F, 8.0F, 9.0F, 8.0F, 0.0F, false);
+		bipedHead.setTextureOffset(30, 89).addBox(4.0F, -19.0F, -12.1F, 8.0F, 9.0F, 8.0F, 0.0F, false);
+		bipedHead.setTextureOffset(62, 86).addBox(3.7F, -19.0F, -12.1F, 8.0F, 3.0F, 8.0F, 0.0F, false);
 
-		Right_Leg = new ModelRenderer(this);
-		Right_Leg.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Right_Leg);
-		Right_Leg.setTextureOffset(50, 53).addBox(3.5F, -4.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
-		Right_Leg.setTextureOffset(38, 69).addBox(4.0F, -3.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+		bipedLeftLeg = new ModelRenderer(this);
+		bipedLeftLeg.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedLeftLeg.setTextureOffset(0, 61).addBox(7.5F, -4.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
+		bipedLeftLeg.setTextureOffset(70, 44).addBox(8.0F, -3.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-		Left_Arm = new ModelRenderer(this);
-		Left_Arm.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Left_Arm);
-		Left_Arm.setTextureOffset(65, 66).addBox(11.5F, -16.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
-		Left_Arm.setTextureOffset(0, 80).addBox(12.0F, -15.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+		bipedRightLeg = new ModelRenderer(this);
+		bipedRightLeg.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedRightLeg.setTextureOffset(50, 53).addBox(3.5F, -4.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
+		bipedRightLeg.setTextureOffset(38, 69).addBox(4.0F, -3.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-		Right_Arm = new ModelRenderer(this);
-		Right_Arm.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Right_Arm);
-		Right_Arm.setTextureOffset(20, 69).addBox(-0.49F, -16.0F, -10.5F, 4.0F, 13.0F, 5.0F, 0.0F, false);
-		Right_Arm.setTextureOffset(72, 14).addBox(0.0F, -15.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+		bipedLeftArm = new ModelRenderer(this);
+		bipedLeftArm.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedLeftArm.setTextureOffset(65, 66).addBox(11.5F, -16.0F, -10.5F, 5.0F, 13.0F, 5.0F, 0.0F, false);
+		bipedLeftArm.setTextureOffset(0, 80).addBox(12.0F, -15.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-		Body = new ModelRenderer(this);
-		Body.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(Body);
-		Body.setTextureOffset(0, 44).addBox(3.9F, -16.03F, -10.5F, 8.0F, 13.0F, 5.0F, 0.0F, false);
+		bipedRightArm = new ModelRenderer(this);
+		bipedRightArm.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedRightArm.setTextureOffset(20, 69).addBox(-0.49F, -16.0F, -10.5F, 4.0F, 13.0F, 5.0F, 0.0F, false);
+		bipedRightArm.setTextureOffset(72, 14).addBox(0.0F, -15.5F, -10.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
 		bone = new ModelRenderer(this);
 		bone.setRotationPoint(8.0F, 0.0F, -8.0F);
-		Body.addChild(bone);
+		bipedBody.addChild(bone);
 		setRotationAngle(bone, 0.0F, 3.1416F, 0.0F);
 		bone.setTextureOffset(26, 53).addBox(-4.0F, -15.5F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
 		FurWaist = new ModelRenderer(this);
 		FurWaist.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(FurWaist);
+		bipedBody.addChild(FurWaist);
 		FurWaist.setTextureOffset(52, 34).addBox(2.9F, -5.25F, -11.25F, 10.0F, 4.0F, 6.0F, 0.0F, false);
 		FurWaist.setTextureOffset(72, 0).addBox(4.9F, -2.25F, -6.35F, 6.0F, 9.0F, 1.0F, 0.0F, false);
 
@@ -94,7 +85,7 @@ public class ChiefNorsemen extends NorsemenModel
 
 		FurCape = new ModelRenderer(this);
 		FurCape.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(FurCape);
+		bipedBody.addChild(FurCape);
 		FurCape.setTextureOffset(0, 13).addBox(-1.4F, -13.7F, -12.9F, 18.0F, 7.0F, 6.0F, 0.0F, false);
 
 		bone12 = new ModelRenderer(this);
@@ -105,7 +96,7 @@ public class ChiefNorsemen extends NorsemenModel
 
 		Helmet = new ModelRenderer(this);
 		Helmet.setRotationPoint(0.0F, 0.0F, 0.0F);
-		steve.addChild(Helmet);
+		bipedHead.addChild(Helmet);
 		Helmet.setTextureOffset(0, 26).addBox(3.5F, -24.0F, -12.5F, 9.0F, 9.0F, 9.0F, 0.0F, false);
 
 		Helmet_Horn_L = new ModelRenderer(this);
@@ -168,4 +159,11 @@ public class ChiefNorsemen extends NorsemenModel
 		setRotationAngle(bone9, 0.0F, 0.0F, 0.4363F);
 		bone9.setTextureOffset(27, 27).addBox(-1.0434F, -1.5462F, -0.5F, 3.0F, 3.0F, 3.0F, 0.0F, true);
 	}
+
+    private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    {
+        modelRenderer.rotateAngleX = x;
+        modelRenderer.rotateAngleY = y;
+        modelRenderer.rotateAngleZ = z;
+    }
 }

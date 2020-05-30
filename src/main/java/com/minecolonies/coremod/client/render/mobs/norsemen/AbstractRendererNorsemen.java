@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.render.mobs.viking.amazon;
+package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import net.minecraft.client.renderer.entity.BipedRenderer;
