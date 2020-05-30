@@ -58,7 +58,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -1022,7 +1022,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             // Note that this will not create a pickup request when another request is already in progress.
             if (building.getPickUpPriority() > 0)
             {
-                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                building.createPickupRequest(getMaxBuildingPriority(true));
             }
             alreadyKept.clear();
             slotAt = 0;
@@ -1042,7 +1042,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             // Worker is not currently crafting, pickup is allowed.
             // Note that this will not create a pickup request when another request is already in progress.
-            building.createPickupRequest(building.getPickUpPriority());
+            building.createPickupRequest(scaledPriority(building.getPickUpPriority()));
         }
         return afterDump();
     }
