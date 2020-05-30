@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -16,7 +15,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -184,12 +183,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
 
-        if (currentStructure == null)
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
             return IDLE;
         }
 
-        if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
+        if (structurePlacer.getB().getStage() != BuildingStructureHandler.Stage.DECORATE)
         {
             needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
         }
@@ -226,6 +225,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, null);
             return false;
         }
 
@@ -236,7 +236,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (!job.hasStructure())
+        if (!job.hasBlueprint())
         {
             super.initiate();
         }
@@ -245,13 +245,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public IAIState switchStage(final IAIState state)
+    public boolean isAfterDumpPickupAllowed()
     {
-        if (job.getWorkOrder() instanceof WorkOrderBuildRemoval && state.equals(BUILDING_STEP))
-        {
-            return COMPLETE_BUILD;
-        }
-        return super.switchStage(state);
+        return !checkForWorkOrder();
     }
 
     private IAIState startWorkingAtOwnBuilding()
@@ -346,23 +342,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return schemPos.up();
         }
         return targetPosition;
-    }
-
-    @Override
-    public void connectBlockToBuildingIfNecessary(@NotNull final BlockState blockState, @NotNull final BlockPos pos)
-    {
-        final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
-
-        if (building != null)
-        {
-            building.registerBlockPosition(blockState, pos, world);
-        }
-
-        if (blockState.getBlock() == ModBlocks.blockWayPoint)
-        {
-            worker.getCitizenColonyHandler().getColony().addWayPoint(pos, world.getBlockState(pos));
-        }
     }
 
     @Override

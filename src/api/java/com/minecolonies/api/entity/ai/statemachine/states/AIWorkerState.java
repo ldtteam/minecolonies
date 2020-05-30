@@ -43,33 +43,9 @@ public enum AIWorkerState implements IAIState
      */
     START_BUILDING(false),
     /**
-     * Clears the building area.
-     */
-    CLEAR_STEP(false),
-    /**
-     * Cleans the building area.
-     */
-    REMOVE_STEP(false),
-    /**
      * Creates the solid structure.
      */
     BUILDING_STEP(false),
-    /**
-     * Checks for fluids to remove.
-     */
-    FLUID_DETECT_STEP(false),
-    /**
-     * Removes all fluids.
-     */
-    FLUID_REMOVE_STEP(false),
-    /**
-     * Sets decorative blocks.
-     */
-    DECORATION_STEP(false),
-    /**
-     * Spawns all entities.
-     */
-    SPAWN_STEP(false),
     /**
      * Completes the building.
      */
@@ -253,9 +229,9 @@ public enum AIWorkerState implements IAIState
     DELIVERY(true),
 
     /**
-     * Gather not needed items and tools from others.
+     * Pickup unneeded items from buildings.
      */
-    GATHERING(true),
+    PICKUP(true),
 
     /**
      * Dump inventory over chests in warehouse.

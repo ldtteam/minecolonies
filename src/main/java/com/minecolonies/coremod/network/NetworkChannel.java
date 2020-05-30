@@ -136,7 +136,7 @@ public class NetworkChannel
         registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
         registerMessage(++idx, ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
-        registerMessage(++idx, ChangePickUpPriorityStateMessage.class, ChangePickUpPriorityStateMessage::new);
+        registerMessage(++idx, ForcePickupMessage.class, ForcePickupMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
         registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
@@ -185,6 +185,7 @@ public class NetworkChannel
         registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
         registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
+        registerMessage(++idx, PlayMusicMessage.class, PlayMusicMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);

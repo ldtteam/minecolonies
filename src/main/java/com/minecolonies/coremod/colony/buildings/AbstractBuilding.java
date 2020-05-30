@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -21,6 +20,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -73,6 +73,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -99,11 +100,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * The ID of the building. Needed in the request system to identify it.
      */
     private IRequester requester;
-
-    /**
-     * Is being gathered right now
-     */
-    private boolean beingGathered = false;
 
     /**
      * If the building has been built already.
@@ -499,7 +495,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
-        buf.writeInt(getPriorityState().getIntRepresentation());
         buf.writeInt(getCurrentWorkOrderLevel());
         buf.writeString(getStyle());
         buf.writeString(this.getSchematicName());
@@ -660,17 +655,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Check if a building is being gathered.
-     *
-     * @return true if so.
-     */
-    @Override
-    public boolean isBeingGathered()
-    {
-        return this.beingGathered;
-    }
-
-    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.
@@ -691,17 +675,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public boolean canBeGathered()
     {
         return true;
-    }
-
-    /**
-     * Set if a building is being gathered.
-     *
-     * @param gathering value to set.
-     */
-    @Override
-    public void setBeingGathered(final boolean gathering)
-    {
-        this.beingGathered = gathering;
     }
 
     /**
@@ -820,14 +793,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             .filter(building -> building instanceof BuildingHome).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
-        final Structure wrapper = new Structure(colony.getWorld(), workOrder.getStructureName(), new PlacementSettings());
+        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
-          wrapper,
+          wrapper.getBluePrint(),
           workOrder.getRotation(colony.getWorld()),
           workOrder.isMirrored());
-        this.setHeight(wrapper.getHeight());
+        this.setHeight(wrapper.getBluePrint().getSizeY());
         this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
         this.isBuilt = true;
 
@@ -1142,6 +1115,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
+    public boolean createPickupRequest(final int priority)
+    {
+        if (priority < 0 || priority > MAX_DELIVERYMAN_PLAYER_PRIORITY)
+        {
+            return false;
+        }
+
+        if (getOpenRequestsByRequestableType().containsKey(TypeConstants.PICKUP))
+        {
+            return false;
+        }
+
+        createRequest(new Pickup(priority), true);
+        return true;
+    }
+
+    @Override
     public boolean hasCitizenCompletedRequests(@NotNull final ICitizenData data)
     {
         return !getCompletedRequests(data).isEmpty();
@@ -1269,7 +1259,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             if (target == null
                   || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
-                  && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
+                        && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
             {
                 continue;
             }

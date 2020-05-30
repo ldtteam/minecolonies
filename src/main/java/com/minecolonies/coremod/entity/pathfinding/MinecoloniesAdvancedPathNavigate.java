@@ -264,7 +264,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ourEntity.stopRiding();
                 }
             }
-            else if ((Math.abs(pEx.x - entity.posX) > 5 || Math.abs(pEx.z - entity.posZ) > 5) && ourEntity.ridingEntity != null)
+            else if ((Math.abs(pEx.x - entity.posX) > 7 || Math.abs(pEx.z - entity.posZ) > 7) && ourEntity.ridingEntity != null)
             {
                 final Entity entity = ourEntity.ridingEntity;
                 ourEntity.stopRiding();

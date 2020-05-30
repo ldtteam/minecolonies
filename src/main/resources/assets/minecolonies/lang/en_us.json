@@ -313,6 +313,9 @@
   "entity.builder.messageneedmaterial": "I need %s (Amount: %d)",
   "entity.builder.messagebuildernecessary": "Requiring a builder's hut of level %d in order to build or upgrade this building.",
 
+  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
+
   "entity.miner.messageneedtools": "Need tool %s!",
   "entity.miner.messageneedblockanditem": "I need %s!",
   "entity.miner.messageneedbettertools": "I need better tools!",
@@ -440,7 +443,6 @@
   "com.minecolonies.coremod.job.cook": "Cook",
   "com.minecolonies.coremod.job.bakery": "Baker",
   "com.minecolonies.coremod.job.researcher": "Researcher",
-
 
   "com.minecolonies.coremod.job.deliveryman": "Deliveryman",
   "com.minecolonies.coremod.job.farmer": "Farmer",
@@ -610,9 +612,8 @@
   "com.minecolonies.coremod.gui.structure.delete": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.title": "Delete Structure",
   "com.minecolonies.coremod.gui.structure.delete.body": "Do you want to delete %s?",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.static": "Pickup: Static",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.automatic": "Pickup: Automatic",
-  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Pickup: Never",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never": "Never",
+  "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request pickup now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a mercenary took the %s away!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A mercenary just stole %s from a building!",
 
@@ -759,6 +760,7 @@
   "item.minecolonies.scepterpermission": "PermissionScepter",
 
   "com.minecolonies.coremod.request.delivery": "Delivery of:",
+  "com.minecolonies.coremod.request.pickup": "Pickup",
   "com.minecolonies.coremod.request.food": "Food",
   "com.minecolonies.coremod.request.cookedfood": "Cooked Food",
   "com.minecolonies.coremod.request.burnable": "Fuel",
@@ -797,7 +799,7 @@
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Priority:",
+  "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
   "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
@@ -920,6 +922,8 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
   "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
+  "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.reposition": "Reposition",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away.",
@@ -1120,6 +1124,7 @@
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
   "com.minecolonies.coremod.gui.deco.name": "The name of the decoration:",
   "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
+  "com.minecolonies.coremod.gui.deco.level.none": "This schematic is already at the highest level or not upgradeable.",
 
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
@@ -1369,6 +1374,7 @@
   "com.minecolonies.coremod.gui.scan.select.stack": "Stack(s)",
   "com.minecolonies.coremod.gui.scan.select.title": "Stack Selection GUI",
   "com.minecolonies.coremod.gui.warehouse.limitreached": "Limit Reached",
+  "com.minecolonies.coremod.gui.warehouse.sorted": "Warehouse stock sorted!",
   "com.minecolonies.coremod.university.researchconcluded.0": "Your researchers just successfully concluded: %s",
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
@@ -1382,6 +1388,7 @@
   "com.minecolonies.coremod.entity.citizen.no.idleatjob": "I'm idle at my job because of missing items, please take care of that!",
   "com.minecolonies.coremod.entity.citizen.demands.idleatjob": "I'm unable to work for more than two weeks already! Do something!",
   "com.minecolonies.coremod.entity.citizen.no.slepttonight": "I didn't have enough time to go to sleep in the last three days!",
+  "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Homelessness",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",

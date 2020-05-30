@@ -132,6 +132,9 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             citizen.getCitizenData().setBedPos(bedLocation);
         }
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
+
+        citizen.getCitizenData().getColony().getCitizenManager().onCitizenSleep();
+
         return true;
     }
 

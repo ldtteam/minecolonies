@@ -329,7 +329,7 @@ public class Colony implements IColony
 
     /**
      * Updates the state the colony is in.
-     * 
+     *
      * @return the new colony state.
      */
     private ColonyState updateState()
@@ -357,7 +357,7 @@ public class Colony implements IColony
 
     /**
      * Updates the existing subscribers
-     * 
+     *
      * @return false
      */
     private boolean updateSubscribers()
@@ -368,7 +368,7 @@ public class Colony implements IColony
 
     /**
      * Ticks the request manager.
-     * 
+     *
      * @return false
      */
     private boolean tickRequests()
@@ -382,7 +382,7 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates.
-     * 
+     *
      * @return false
      */
     private boolean worldTickSlow()
@@ -401,7 +401,7 @@ public class Colony implements IColony
 
     /**
      * Called every 500 ticks, for slower updates. Only ticked when the colony is not loaded.
-     * 
+     *
      * @return false
      */
     private boolean worldTickUnloaded()
@@ -427,7 +427,7 @@ public class Colony implements IColony
 
     /**
      * Updates the day and night detection.
-     * 
+     *
      * @return false
      */
     private boolean checkDayTime()
@@ -441,10 +441,14 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
+
+            citizenManager.updateCitizenSleep(false);
+
             if (mourning)
             {
                 mourning = false;
                 citizenManager.updateCitizenMourn(false);
+                citizenManager.updateCitizenSleep(false);
             }
         }
         else if (!isDay && world.isDaytime())
@@ -969,7 +973,7 @@ public class Colony implements IColony
 
     /**
      * Update the waypoints after worldTicks.
-     * 
+     *
      * @return false
      */
     private boolean updateWayPoints()
@@ -1275,7 +1279,7 @@ public class Colony implements IColony
     {
         if (citizenManager.getCitizens().size() <= 0)
         {
-            return 0.0;
+            return 5.5;
         }
 
         double happinessSum = 0;

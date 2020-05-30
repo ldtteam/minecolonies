@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -56,9 +58,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
@@ -589,6 +590,22 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Checks whether automatic pickups after dumps are allowed.
+     * Usually we want this, but if the worker is currently crafting/building,
+     * he will handle deliveries/afterdumps in their resolvers, so we can disable automatic pickups in that time.
+     * Note that this is just a efficiency-thing. It doesn't hurt when the dman does a pickup
+     * during crafting, it's just a wasted run.
+     * Therefore, this flag is only considered for *automatic* pickups after dump.
+     * It is *ignored* for player-triggered forcePickups, and when the inventory is full.
+     *
+     * @return true if after-dump pickups are allowed currently.
+     */
+    public boolean isAfterDumpPickupAllowed()
+    {
+        return true;
+    }
+
+    /**
      * What to do after picking up a request.
      *
      * @return the next state to go to.
@@ -830,7 +847,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolType type of tool we check for.
      * @return false if we have the tool
      */
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
+    public boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {
         final boolean needTool = checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
         worker.getCitizenData().setIdleAtJob(needTool);
@@ -978,23 +995,39 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private IAIState dumpInventory()
     {
-        if (!worker.isWorkerAtSiteWithMove(getOwnBuilding().getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        final IBuilding building = getOwnBuilding();
+        if (building == null)
         {
+            // Uh oh, that shouldn't happen. Restart AI.
+            return afterDump();
+        }
+
+        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            setDelay(WALK_DELAY);
             return INVENTORY_FULL;
         }
 
-        if (InventoryUtils.isProviderFull(getOwnBuilding()))
+        if (InventoryUtils.isProviderFull(building))
         {
-            if (getOwnBuilding().getPriorityState() == AUTOMATIC)
+            final ICitizenData citizenData = worker.getCitizenData();
+            if (citizenData != null)
             {
-                getOwnBuilding().alterPickUpPriority(MAX_PRIO);
-            }
-            if (worker.getCitizenData() != null)
-            {
-                worker.getCitizenData()
+                citizenData
                   .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
             }
+
+            // In this case, pickup during crafting is ok, since cleaning a full inventory is very important.
+            // Note that this will not create a pickup request when another request is already in progress.
+            if (building.getPickUpPriority() > 0)
+            {
+                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+            }
+            alreadyKept.clear();
+            slotAt = 0;
+            this.clearActionsDone();
+            return afterDump();
         }
         else if (dumpOneMoreSlot())
         {
@@ -1003,12 +1036,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         alreadyKept.clear();
         slotAt = 0;
-        this.itemsNiceToHave().forEach(this::isInHut);
-        // we dumped the inventory, reset actions done
         this.clearActionsDone();
-        if (getOwnBuilding().getPriorityState() == AUTOMATIC)
+
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
         {
-            getOwnBuilding().alterPickUpPriority(1);
+            // Worker is not currently crafting, pickup is allowed.
+            // Note that this will not create a pickup request when another request is already in progress.
+            building.createPickupRequest(building.getPickUpPriority());
         }
         return afterDump();
     }
