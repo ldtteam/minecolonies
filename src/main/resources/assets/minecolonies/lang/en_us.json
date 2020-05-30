@@ -1415,6 +1415,7 @@
   "block.minecolonies.blockhutdyer.name": "Dyer",
   "block.minecolonies.blockhutdyer": "Dyer",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.priority": "Priority: ",
 
   "entity.mummy": "Mummy",
   "entity.archermummy": "Mummy Archer",
