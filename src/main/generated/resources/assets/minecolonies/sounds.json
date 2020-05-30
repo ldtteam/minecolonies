@@ -20601,5 +20601,32 @@
         "comment": "Credits to Darren Curtis - Fireside Tales"
       }
     ]
+  },
+  "raid.desert.desert_raid": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/desert/desert_raid",
+        "stream": true
+      }
+    ]
+  },
+  "raid.desert.desert_raid_warning": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/desert/desert_raid_warning",
+        "stream": true
+      }
+    ]
+  },
+  "raid.desert.desert_raid_victory": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/desert/desert_raid_victory",
+        "stream": true
+      }
+    ]
   }
 }
