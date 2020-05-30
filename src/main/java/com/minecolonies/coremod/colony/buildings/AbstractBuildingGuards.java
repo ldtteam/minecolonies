@@ -664,6 +664,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 patrolTargets.add(buf.readBlockPos());
             }
 
+            mobsToAttack.clear();
             final int mobSize = buf.readInt();
             for (int i = 0; i < mobSize; i++)
             {
@@ -673,6 +674,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
             guardPos = buf.readBlockPos();
 
+            guards.clear();
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
