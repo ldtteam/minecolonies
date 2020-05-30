@@ -355,7 +355,10 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public List<ItemStorage> getCopyOfPlantables()
     {
-        return ImmutableList.copyOf(plantables);
+        return ImmutableList.copyOf(plantables)
+                 .stream()
+                 .filter(storage -> storage.getItem() != Items.CACTUS && storage.getItem() != Items.BAMBOO && storage.getItem() != Items.SUGAR_CANE)
+                 .collect(Collectors.toList());
     }
 
     @Override
