@@ -200,6 +200,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     /**
      * Get the plantables from the compatibility manager the florist can build at the current level.
+     *
      * @param level the building level.
      * @return the restricted list.
      */
@@ -221,7 +222,9 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
             case 4:
             case 5:
             default:
-                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables();
+                return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
+                         .filter(storage -> storage.getItem() != Items.CACTUS && storage.getItem() != Items.BAMBOO && storage.getItem() != Items.SUGAR_CANE)
+                         .collect(Collectors.toList());
         }
     }
 
