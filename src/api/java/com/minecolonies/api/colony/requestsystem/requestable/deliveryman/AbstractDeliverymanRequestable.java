@@ -10,9 +10,9 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private static final int MAX_BUILDING_PRIORITY     = 10;
-    private static final int DEFAULT_DELIVERY_PRIORITY = 11;
-    private static final int MAX_AGING_PRIORITY        = 12;
-    private static final int PLAYER_ACTION_PRIORITY    = 13;
+    private static final int DEFAULT_DELIVERY_PRIORITY = 13;
+    private static final int MAX_AGING_PRIORITY        = 14;
+    private static final int PLAYER_ACTION_PRIORITY    = 15;
 
     protected int priority = 0;
 
@@ -35,7 +35,10 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      */
     public static int scaledPriority(final int priority)
     {
-        return (int) Math.pow(priority, 2);
+        // This version makes the increase quadratic
+        // return (int) Math.pow(priority, 2);
+
+        return priority;
     }
 
     /**
