@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDelive
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY;
@@ -80,8 +79,12 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-                rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Label.class)
-                  .setLabelText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY) + ((IDeliverymanRequestable)(request.getRequest())).getPriority());
+                if (request.getRequest() instanceof IDeliverymanRequestable)
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Label.class)
+                      .setLabelText(
+                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY) + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
+                }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
                 logo.setImage(request.getDisplayIcon());
