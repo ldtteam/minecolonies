@@ -304,6 +304,7 @@
   "item.minecolonies.pharaoscepter": "Pharao Scepter",
   "item.minecolonies.firearrow": "Fire Arrow",
   "item.minecolonies.banner_rally_guards": "Rallying Banner",
+  "item.minecolonies.banner_rally_guards.activated": "You have summoned your army. %d guards are on their way!",
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 

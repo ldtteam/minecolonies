@@ -148,6 +148,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private PlayerEntity followPlayer;
 
     /**
+     * The player the guard has been set to rally to.
+     */
+    private PlayerEntity rallyPlayer;
+
+    /**
      * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
      */
     private boolean tightGrouping;
@@ -400,22 +405,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         this.markDirty();
     }
 
-    /**
-     * Entity of player to follow.
-     *
-     * @return the PlayerEntity reference.
-     */
     @Override
-    public PlayerEntity getPlayerToFollow()
+    public PlayerEntity getPlayerToFollowOrRally()
     {
-        return followPlayer;
+        return rallyPlayer != null ? rallyPlayer : followPlayer;
     }
 
-    //// ---- Overrides ---- \\\\
-
-    //// ---- Abstract Methods ---- \\\\
-
-    //// ---- Abstract Methods ---- \\\\
+    @Override
+    public PlayerEntity getPlayerToRally()
+    {
+        return rallyPlayer;
+    }
 
     /**
      * The guards which arrived at the patrol positions
@@ -486,11 +486,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         arrivedAtPatrol.clear();
     }
 
-    /**
-     * Returns a patrolTarget to patrol to.
-     *
-     * @return the position of the next target.
-     */
     @Override
     @Nullable
     public BlockPos getNextPatrolTarget(final boolean newTarget)
@@ -543,11 +538,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return lastPatrolPoint;
     }
 
-    /**
-     * Getter for the patrol distance the guard currently has.
-     *
-     * @return The distance in whole numbers.
-     */
     @Override
     public int getPatrolDistance()
     {
@@ -786,11 +776,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
     }
 
-    /**
-     * Get the guard's {@link GuardType}.
-     *
-     * @return The guardType of the guard.
-     */
     @Override
     public GuardType getGuardType()
     {
@@ -802,11 +787,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return this.job;
     }
 
-    /**
-     * Set the guard's {@link GuardType}.
-     *
-     * @param job The guardType to set.
-     */
     @Override
     public void setGuardType(final GuardType job)
     {
@@ -839,132 +819,72 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return new ArrayList<>(patrolTargets);
     }
 
-    /**
-     * Get the guard's RetrieveOnLowHeath.
-     *
-     * @return if so.
-     */
     @Override
     public boolean shallRetrieveOnLowHealth()
     {
         return retrieveOnLowHealth;
     }
 
-    /**
-     * Set the guard's RetrieveOnLowHealth.
-     *
-     * @param retrieve true if retrieve.
-     */
     @Override
     public void setRetrieveOnLowHealth(final boolean retrieve)
     {
         this.retrieveOnLowHealth = retrieve;
     }
 
-    /**
-     * Get whether the guard should patrol manually.
-     *
-     * @return if so.
-     */
     @Override
     public boolean shallPatrolManually()
     {
         return patrolManually;
     }
 
-    /**
-     * Set whether the guard should patrol manually.
-     *
-     * @param patrolManually true if manual.
-     */
     @Override
     public void setPatrolManually(final boolean patrolManually)
     {
         this.patrolManually = patrolManually;
     }
 
-    /**
-     * Whether the player will assign guards manually or not.
-     *
-     * @return true if so
-     */
     @Override
     public boolean shallAssignManually()
     {
         return assignManually;
     }
 
-    /**
-     * Set whether the player is assigning guards manually.
-     *
-     * @param assignManually true if so
-     */
     @Override
     public void setAssignManually(final boolean assignManually)
     {
         this.assignManually = assignManually;
     }
 
-    /**
-     * Returns whether tight grouping in Follow mode is being used.
-     *
-     * @return whether tight grouping is being used.
-     */
     @Override
     public boolean isTightGrouping()
     {
         return tightGrouping;
     }
 
-    /**
-     * Set whether to use tight grouping or lose grouping.
-     *
-     * @param tightGrouping - indicates if you are using tight grouping
-     */
     @Override
     public void setTightGrouping(final boolean tightGrouping)
     {
         this.tightGrouping = tightGrouping;
     }
 
-    /**
-     * Get the position the guard should guard.
-     *
-     * @return the {@link BlockPos} of the guard position.
-     */
     @Override
     public BlockPos getGuardPos()
     {
         return guardPos;
     }
 
-    /**
-     * Set where the guard should guard.
-     *
-     * @param guardPos the {@link BlockPos} to guard.
-     */
     @Override
     public void setGuardPos(final BlockPos guardPos)
     {
         this.guardPos = guardPos;
     }
 
-    /**
-     * Get the Map of mobs to attack.
-     *
-     * @return the map.
-     */
     @Override
     public Map<ResourceLocation, MobEntryView> getMobsToAttack()
     {
         return mobsToAttack;
     }
 
-    /**
-     * Set the Map of mobs to attack.
-     *
-     * @param list The new map.
-     */
     @Override
     public void setMobsToAttack(final List<MobEntryView> list)
     {
@@ -975,14 +895,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
     }
 
-    /**
-     * Gets the player to follow.
-     *
-     * @return the entity player.
-     */
     @Override
     public BlockPos getPositionToFollow()
     {
+        if (rallyPlayer != null)
+        {
+            return rallyPlayer.getPosition();
+        }
+
         if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
         {
             return followPlayer.getPosition();
@@ -992,11 +912,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return this.getPosition();
     }
 
-    /**
-     * Sets the player to follow.
-     *
-     * @param player the player to follow.
-     */
     @Override
     public void setPlayerToFollow(final PlayerEntity player)
     {
@@ -1025,6 +940,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
         this.followPlayer = player;
+    }
+
+    @Override
+    public void setPlayerToRally(final PlayerEntity player)
+    {
+        this.rallyPlayer = player;
     }
 
     /**

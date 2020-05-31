@@ -569,6 +569,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected IAIState decide()
     {
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
+
+        if (buildingGuards.getPlayerToRally() != null)
+        {
+            return rally();
+        }
+
         switch (buildingGuards.getTask())
         {
             case PATROL:
@@ -889,7 +895,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private BlockPos getTaskReferencePoint()
     {
-        if (buildingGuards.getPlayerToFollow() != null)
+        if (buildingGuards.getPlayerToFollowOrRally() != null)
         {
             return buildingGuards.getPositionToFollow();
         }
@@ -911,6 +917,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private int getPersecutionDistance()
     {
+        if (buildingGuards.getPlayerToFollowOrRally() != null)
+        {
+            return MAX_FOLLOW_DERIVATION;
+        }
         switch (buildingGuards.getTask())
         {
             case PATROL:

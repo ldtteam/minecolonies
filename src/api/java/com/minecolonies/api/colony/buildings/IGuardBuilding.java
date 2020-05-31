@@ -31,7 +31,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof IGuardBuilding) || ((IGuardBuilding) buildingWorker).getTask() != GuardTask.FOLLOW
-                 || !player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollow());
+                 || !player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally());
     }
 
     /**
@@ -190,7 +190,14 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      *
      * @return the PlayerEntity reference.
      */
-    PlayerEntity getPlayerToFollow();
+    PlayerEntity getPlayerToFollowOrRally();
+
+    /**
+     * Entity of player to rally.
+     *
+     * @return the PlayerEntity reference.
+     */
+    PlayerEntity getPlayerToRally();
 
     /**
      * Sets the player to follow.
@@ -200,8 +207,15 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     void setPlayerToFollow(PlayerEntity player);
 
     /**
+     * Sets the player to rally.
+     *
+     * @param player the player to rally.
+     */
+    void setPlayerToRally(PlayerEntity player);
+
+    /**
      * Gets the position to follow.
-     * This is a utility helper for {@link #getPlayerToFollow()}
+     * This is a utility helper for {@link #getPlayerToFollowOrRally()}
      *
      * @return the position the guard is supposed to be while following.
      */

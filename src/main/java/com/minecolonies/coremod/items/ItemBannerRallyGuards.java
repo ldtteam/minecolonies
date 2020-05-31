@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -10,7 +9,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -42,7 +40,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     /**
      * The compound tag for the activity status of the banner
      */
-    private static final String TAG_IS_ACTIVE           = "isActive";
+    private static final String TAG_IS_ACTIVE = "isActive";
 
     @Nullable
     private ITextComponent cachedTooltip = null;
@@ -66,6 +64,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final CompoundNBT compound = checkForCompound(scepter);
         final TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
 
+        // TODO: Check barracks tower
         if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
         {
             final BlockPos position = ((AbstractTileEntityColonyBuilding) entity).getPosition();
@@ -115,29 +114,96 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Override
     public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, @NotNull final Hand hand)
     {
-        final ItemStack stack = playerIn.getHeldItem(hand);
-        if (!stack.hasTag())
-        {
-            stack.setTag(new CompoundNBT());
-        }
-        final CompoundNBT compound = stack.getTag();
+        final ItemStack banner = playerIn.getHeldItem(hand);
+        final CompoundNBT compound = checkForCompound(banner);
 
-        if (worldIn.isRemote && compound != null)
-        {
-            if (!compound.keySet().contains(TAG_ID))
-            {
-                return ActionResult.func_226251_d_(stack);
-            }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.getDimension().getType().getId());
-            if (colony == null)
-            {
-                return ActionResult.func_226251_d_(stack);
-            }
 
+        if (!worldIn.isRemote && compound != null)
+        {
             if (playerIn.isShiftKeyDown())
             {
                 // TODO: Activate item here.
-                Log.getLogger().info("Item activation toggle");
+                if (compound.getBoolean(TAG_IS_ACTIVE))
+                {
+                    compound.putBoolean(TAG_IS_ACTIVE, false);
+                    final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
+                    for (int i = 0; i < guardTowers.size(); i++)
+                    {
+                        final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
+                        if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
+                        {
+                            final IGuardBuilding building = (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
+                            if (building == null)
+                            {
+                                Log.getLogger().info("Building not found!");
+                                continue;
+                            }
+                            building.setPlayerToRally(null);
+                        }
+                    }
+                }
+                else
+                {
+                    compound.putBoolean(TAG_IS_ACTIVE, true);
+                    final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
+                    int numGuards = 0;
+                    for (int i = 0; i < guardTowers.size(); i++)
+                    {
+                        final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
+                        if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
+                        {
+                            final IGuardBuilding building = (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
+                            if (building == null)
+                            {
+                                Log.getLogger().info("Building not found!");
+                                continue;
+                            }
+                            building.setPlayerToRally(playerIn);
+                            numGuards += building.getAssignedCitizen().size();
+                        }
+                    }
+                    if (numGuards > 0)
+                    {
+                        LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated", numGuards);
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+
+                    // TODO
+                    /*
+                            if (this.getColony().getWorld() != null)
+        {
+            if (player != null)
+            {
+                this.getColony()
+                  .getWorld()
+                  .getScoreboard()
+                  .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
+                player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
+            }
+
+            if (rallyPlayer != null)
+            {
+                try
+                {
+                    this.getColony()
+                      .getWorld()
+                      .getScoreboard()
+                      .removePlayerFromTeam(rallyPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                    player.removePotionEffect(GLOW_EFFECT);
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().warn("Unable to remove player " + rallyPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                }
+            }
+        }
+                     */
+
+
+                }
             }
             else
             {
@@ -146,7 +212,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             }
         }
 
-        return ActionResult.func_226248_a_(stack);
+        return ActionResult.func_226248_a_(banner);
     }
 
     /**
