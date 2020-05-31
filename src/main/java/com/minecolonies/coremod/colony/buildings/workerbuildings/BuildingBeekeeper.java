@@ -175,6 +175,14 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
                 storage.getPrimaryOutput().getItem() == Items.HONEYCOMB;
     }
 
+    public void setHives(List<BlockPos> hives) {
+        this.hives = hives;
+    }
+
+    public List<BlockPos> getHives() {
+        return hives;
+    }
+
     public static class View extends AbstractBuildingWorker.View
     {
         /**
