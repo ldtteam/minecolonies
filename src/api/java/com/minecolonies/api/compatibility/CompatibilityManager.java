@@ -355,10 +355,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public List<ItemStorage> getCopyOfPlantables()
     {
-        return ImmutableList.copyOf(plantables)
-                 .stream()
-                 .filter(storage -> storage.getItem() != Items.CACTUS && storage.getItem() != Items.BAMBOO && storage.getItem() != Items.SUGAR_CANE)
-                 .collect(Collectors.toList());
+        return ImmutableList.copyOf(plantables);
     }
 
     @Override
@@ -568,15 +565,20 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compostable items.
+     * Create complete list of plantable items.
      */
     private void discoverPlantables()
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
+            plantables.addAll(ImmutableList.copyOf(allBlocks.stream()
+                                                     .filter(this::isPlantable)
+                                                     .filter(storage -> storage.getItem() != Items.CACTUS && storage.getItem() != Items.BAMBOO
+                                                                          && storage.getItem() != Items.SUGAR_CANE)
+                                                     .map(ItemStorage::new)
+                                                     .collect(Collectors.toList())));
         }
-        Log.getLogger().info("Finished discovering compostables");
+        Log.getLogger().info("Finished discovering plantables");
     }
 
     /**
