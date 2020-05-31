@@ -2,28 +2,33 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
-import static com.minecolonies.api.entity.ModEntities.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 
 /**
@@ -58,7 +63,7 @@ public final class PirateEventUtils
      * @param world            the target world.
      * @param colony           the target colony.
      * @param shipSize         the size of the ship.
-     * @param eventID          the id of the raids event.
+     * @param event            the raids event.
      * @param shipRotation     the shiprotation.
      * @return true if successful.
      */
@@ -67,62 +72,20 @@ public final class PirateEventUtils
       final World world,
       final IColony colony,
       final String shipSize,
-      final int eventID,
+      final IColonyRaidEvent event,
       final int shipRotation)
     {
-        final CreativeBuildingStructureHandler
-          structure = new CreativeBuildingStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        final CreativeRaiderStructureHandler
+          structure = new CreativeRaiderStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true, event, colony.getID());
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
 
         if (!colony.getEventManager()
                .getStructureManager()
-               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, shipRotation, Mirror.NONE))
+               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, event.getID(), shipRotation, Mirror.NONE))
         {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Load pirate spawners on the ship.
-     *
-     * @param world            the world to load it in.
-     * @param targetSpawnPoint the initital spawn point.
-     * @param shipSize         the size of the ship.
-     * @param colony           the attacked colony.
-     * @param eventID          the events id.
-     */
-    public static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize, final IColony colony, final int eventID)
-    {
-        switch (shipSize)
-        {
-            case SMALL_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(2).north(3), world, PIRATE, colony, eventID);
-                break;
-            case MEDIUM_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).north(12), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(1).north(2), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(5).south(4), world, ARCHERPIRATE, colony, eventID);
-                break;
-            case BIG_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).south().north(2), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(3).north(3), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).south(3), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).north(7).east(2), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.down(1).north(10), world, PIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(2).south(10), world, PIRATE, colony, eventID);
-
-                setupSpawner(targetSpawnPoint.up(3).north(12), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(6).north(14), world, CHIEFPIRATE, colony, eventID);
-
-                setupSpawner(targetSpawnPoint.up(9).north(15), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(22).south().north(2), world, ARCHERPIRATE, colony, eventID);
-                setupSpawner(targetSpawnPoint.up(6).south(9), world, ARCHERPIRATE, colony, eventID);
-                break;
-            default:
-                Log.getLogger().warn("Invalid ship size detected!");
-                break;
-        }
     }
 
     /**
@@ -131,19 +94,20 @@ public final class PirateEventUtils
      * @param location the location to set it up at.
      * @param world    the world to place it in.
      * @param mob      the mob to spawn.
-     * @param colony   the colony to attack.  
-     * @param eventID  the events id.
+     * @param event    the event.
+     * @param colonyId the colony id.
      */
-    private static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColony colony, final int eventID)
+    public static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColonyRaidEvent event, final int colonyId)
     {
+        world.removeBlock(location, false);
         world.setBlockState(location, Blocks.SPAWNER.getDefaultState());
         final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
 
         spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = SPAWNER_DISTANCE;
         spawner.getSpawnerBaseLogic().setEntityType(mob);
         // Sets nbt for mobs to spawn, assumes colony in same dimension as mob.
-        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_EVENT_ID, eventID);
-        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_COLONY_ID, colony.getID());
+        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_EVENT_ID, event.getID());
+        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_COLONY_ID, colonyId);
 
         world.setTileEntity(location, spawner);
     }
@@ -185,7 +149,8 @@ public final class PirateEventUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
-        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world,
+
+        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY() - zeroPos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
           0.6);
@@ -194,17 +159,18 @@ public final class PirateEventUtils
     /**
      * Returns true when most parts of the given area are water, more then 90%
      *
+     * @param materials the materials.
      * @param world Blockacces to use
+     * @param baseY the base y pos.
      * @param from  First corner of search rectangle
      * @param to    Second corner of search rectangle
-     * @param materials the materials.
      * @param percentRequired the required percentage.
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyMaterial(
       @NotNull final List<Material> materials,
       @NotNull final World world,
-      @NotNull final BlockPos from,
+      final int baseY, @NotNull final BlockPos from,
       @NotNull final BlockPos to,
       final double percentRequired)
     {
@@ -233,7 +199,7 @@ public final class PirateEventUtils
             for (int z = 0; z < zDist; z++)
             {
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial()) || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
+                if (!materials.contains(world.getBlockState(from.add(x * xDir, baseY - 1, z * zDir)).getMaterial()) || !world.isAirBlock(from.add(x * xDir, baseY, z * zDir)))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks

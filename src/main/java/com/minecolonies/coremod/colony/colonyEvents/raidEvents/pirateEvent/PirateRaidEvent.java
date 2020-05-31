@@ -149,7 +149,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             spawnPoint = spawnPoint.down();
         }
 
-        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, id, shipRotation))
+        if (!PirateEventUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicName, this, shipRotation))
         {
             // Pirate event not successfully started.
             status = EventStatus.CANCELED;
@@ -169,7 +169,6 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
         // TODO: remove once schematics have spawners
         if (getStatus() == EventStatus.PREPARING)
         {
-            PirateEventUtils.loadSpawners(colony.getWorld(), spawnPoint, shipSize.schematicName, colony, id);
             status = EventStatus.PROGRESSING;
             return;
         }
