@@ -406,7 +406,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the PlayerEntity reference.
      */
     @Override
-    public PlayerEntity getFollowPlayer()
+    public PlayerEntity getPlayerToFollow()
     {
         return followPlayer;
     }
@@ -981,7 +981,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @return the entity player.
      */
     @Override
-    public BlockPos getPlayerToFollow()
+    public BlockPos getPositionToFollow()
     {
         if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
         {
