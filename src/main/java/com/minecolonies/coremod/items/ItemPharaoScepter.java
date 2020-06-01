@@ -33,7 +33,7 @@ public class ItemPharaoScepter extends BowItem
      */
     public ItemPharaoScepter(final Properties properties)
     {
-        super(properties.group(ModCreativeTabs.MINECOLONIES));
+        super(properties.group(ModCreativeTabs.MINECOLONIES).maxDamage(384));
         setRegistryName("pharaoscepter");
     }
 

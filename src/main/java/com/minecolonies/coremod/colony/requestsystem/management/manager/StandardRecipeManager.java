@@ -29,16 +29,26 @@ public class StandardRecipeManager implements IRecipeManager
      */
     private final BiMap<IToken, IRecipeStorage> recipes = HashBiMap.create();
 
+    /**
+     * Immutable cache.
+     */
+    private ImmutableMap<IToken, IRecipeStorage> cache = null;
+
     @Override
     public ImmutableMap<IToken, IRecipeStorage> getRecipes()
     {
-        return ImmutableMap.copyOf(recipes);
+         if (cache == null)
+        {
+            cache = ImmutableMap.copyOf(recipes);
+        }
+        return cache;
     }
 
     @Override
     public IToken addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
+        cache = null;
         return storage.getToken();
     }
 
@@ -81,5 +91,6 @@ public class StandardRecipeManager implements IRecipeManager
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
+        cache = null;
     }
 }
