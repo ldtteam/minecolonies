@@ -250,6 +250,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                      = "com.minecolonies.coremod.gui.beekeeper.collect";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerhuts.modeM";

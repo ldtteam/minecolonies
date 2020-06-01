@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,19 +11,25 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.WindowHutBeekeeper;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +49,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      * List of hives.
      */
     private List<BlockPos> hives = new ArrayList<>();
+    private boolean harvestHoneycombs = true;
 
     /**
      * The abstract constructor of the building.
@@ -197,8 +205,23 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         this.hives = hives;
     }
 
+    public void setHarvestHoneycombs(final boolean harvestHoneycombs)
+    {
+        this.harvestHoneycombs = harvestHoneycombs;
+    }
+
+    public boolean shouldHarvestHoneycombs()
+    {
+        return harvestHoneycombs;
+    }
+
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * Harvest honeycombs or not.
+         */
+        private boolean harvestHoneycombs = true;
+
         /**
          * Creates a building view.
          *
@@ -208,6 +231,31 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         public View(IColonyView c, @NotNull BlockPos l)
         {
             super(c, l);
+        }
+
+        @Nullable
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutBeekeeper(this);
+        }
+
+        public void setHarvestHoneycombs(final boolean harvestHoneycombs)
+        {
+            Network.getNetwork().sendToServer(new BeekeeperSetHarvestHoneycombsMessage(this, harvestHoneycombs));
+            this.harvestHoneycombs = harvestHoneycombs;
+        }
+
+        public boolean isHarvestHoneycombs()
+        {
+            return harvestHoneycombs;
+        }
+
+        @Override
+        public void deserialize(@NotNull final PacketBuffer buf)
+        {
+            super.deserialize(buf);
+            harvestHoneycombs = buf.readBoolean();
         }
     }
 }
