@@ -122,11 +122,16 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         {
             if (playerIn.isShiftKeyDown())
             {
-                // TODO: Activate item here.
+                final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
+                if (guardTowers.size() == 0)
+                {
+                    // TODO: Open management window
+                    return ActionResult.func_226248_a_(banner);
+                }
+
                 if (compound.getBoolean(TAG_IS_ACTIVE))
                 {
                     compound.putBoolean(TAG_IS_ACTIVE, false);
-                    final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
                     for (int i = 0; i < guardTowers.size(); i++)
                     {
                         final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
@@ -141,11 +146,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                             building.setPlayerToRally(null);
                         }
                     }
+                    LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.deactivated");
                 }
                 else
                 {
                     compound.putBoolean(TAG_IS_ACTIVE, true);
-                    final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
                     int numGuards = 0;
                     for (int i = 0; i < guardTowers.size(); i++)
                     {
@@ -168,7 +173,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                     }
                     else
                     {
-                        // TODO
+                        LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated.noguards");
                     }
 
                     // TODO

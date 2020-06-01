@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -153,6 +154,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * The sleeping guard we found
      */
     private WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
+
+    /**
+     * Random generator for this AI.
+     */
+    private Random randomGenerator = new Random();
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -431,7 +437,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         this.world.getScoreboard()
           .addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
 
-        worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
+        worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
+                                        .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
+                                          0,
+                                          randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
+          GUARD_FOLLOW_TIGHT_RANGE);
         return GUARD_RALLY;
     }
 
