@@ -790,6 +790,7 @@
   "com.minecolonies.coremod.tooltype.leggings": "Leggings",
   "com.minecolonies.coremod.tooltype.chestplate": "Chest Plate",
   "com.minecolonies.coremod.tooltype.boots": "Boots",
+  "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
 
   "com.minecolonies.coremod.gui.citizen.requests": "Open requests:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "Requests",
@@ -1426,6 +1427,7 @@
   "block.minecolonies.blockhutdyer.name": "Dyer",
   "block.minecolonies.blockhutdyer": "Dyer",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.priority": "Priority: ",
 
   "entity.mummy": "Mummy",
   "entity.archermummy": "Mummy Archer",
