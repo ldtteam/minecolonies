@@ -927,8 +927,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             return followPlayer.getPosition();
         }
-        task = GuardTask.GUARD;
-        markDirty();
+
         return this.getPosition();
     }
 
@@ -965,6 +964,33 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void setPlayerToRally(final PlayerEntity player)
     {
+        // TODO: Add Glow effect to player
+        /*
+        if (this.getColony().getWorld() != null)
+        {
+            if (rallyPlayer != null)
+            {
+                try
+                {
+                    this.getColony()
+                      .getWorld()
+                      .getScoreboard()
+                      .removePlayerFromTeam(rallyPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                    player.removePotionEffect(GLOW_EFFECT);
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().warn("Unable to remove player " + rallyPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                }
+            }
+
+            this.getColony()
+              .getWorld()
+              .getScoreboard()
+              .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
+            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
+        }
+        */
         this.rallyPlayer = player;
         this.markDirty();
     }

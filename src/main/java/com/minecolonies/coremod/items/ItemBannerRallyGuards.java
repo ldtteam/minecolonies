@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -9,11 +8,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -108,6 +103,14 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                   ((AbstractTileEntityColonyBuilding) entity).getDisplayName().getUnformattedComponentText(), BlockPosUtil.getString(position));
             }
         }
+        else
+        {
+            if (!ctx.getWorld().isRemote)
+            {
+                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            }
+        }
 
         return ActionResultType.SUCCESS;
     }
@@ -126,7 +129,8 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
                 if (guardTowers.size() == 0)
                 {
-                    // TODO: Open management window
+                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
                 }
                 else if (compound.getBoolean(TAG_IS_ACTIVE))
                 {
@@ -188,38 +192,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             }
         }
         return numGuards;
-        // TODO
-                    /*
-                            if (this.getColony().getWorld() != null)
-        {
-            if (player != null)
-            {
-                this.getColony()
-                  .getWorld()
-                  .getScoreboard()
-                  .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
-                player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
-            }
-
-            if (rallyPlayer != null)
-            {
-                try
-                {
-                    this.getColony()
-                      .getWorld()
-                      .getScoreboard()
-                      .removePlayerFromTeam(rallyPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
-                    player.removePotionEffect(GLOW_EFFECT);
-                }
-                catch (final Exception e)
-                {
-                    Log.getLogger().warn("Unable to remove player " + rallyPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
-                }
-            }
-        }
-                     */
-
-
     }
 
     public boolean isActiveForGuardTower(final ItemStack banner, IGuardBuilding guardTower)
