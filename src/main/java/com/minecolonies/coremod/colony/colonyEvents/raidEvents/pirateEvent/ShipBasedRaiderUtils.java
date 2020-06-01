@@ -8,6 +8,7 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.coremod.MineColonies;
@@ -34,12 +35,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 /**
  * Utils for Colony pirate events
  */
-public final class PirateEventUtils
+public final class ShipBasedRaiderUtils
 {
     /**
      * Folder name for the pirate ship schematics
      */
-    public static final String PIRATESHIP_FOLDER = "/ships/";
+    public static final String SHIP_FOLDER = "/ships/";
 
     /**
      * Distance at which spawners are active
@@ -49,7 +50,7 @@ public final class PirateEventUtils
     /**
      * Private constructor to hide the implicit public one.
      */
-    private PirateEventUtils()
+    private ShipBasedRaiderUtils()
     {
         /*
          * Intentionally left empty.
@@ -76,12 +77,11 @@ public final class PirateEventUtils
       final int shipRotation)
     {
         final CreativeRaiderStructureHandler
-          structure = new CreativeRaiderStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true, event, colony.getID());
-        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
+          structure = new CreativeRaiderStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation)), true, event, colony.getID());
 
         if (!colony.getEventManager()
                .getStructureManager()
-               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, event.getID(), shipRotation, Mirror.NONE))
+               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, targetSpawnPoint, event.getID(), shipRotation, Mirror.NONE))
         {
             return false;
         }
@@ -121,7 +121,7 @@ public final class PirateEventUtils
      * @param rotation the rotation.
      * @return true if successful.
      */
-    public static boolean canSpawnPirateEventAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation)
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final IColonyStructureSpawnEvent event)
     {
         if (spawnPoint.equals(colony.getCenter()) || spawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
         {
@@ -129,10 +129,10 @@ public final class PirateEventUtils
         }
 
         final World world = colony.getWorld();
-        final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicName;
+        final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicPrefix + event.getShipDesc();
 
         final CreativeBuildingStructureHandler
-          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
         return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);
@@ -150,7 +150,28 @@ public final class PirateEventUtils
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
-        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY() - zeroPos.getY(),
+        int y = 3;
+        final BlockInfo info = ship.getBlockInfoAsMap().getOrDefault(ship.getPrimaryBlockOffset(), null);
+        if (info.getTileEntityData() != null)
+        {
+            final CompoundNBT teData = ship.getTileEntityData(pos, ship.getPrimaryBlockOffset());
+            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+            {
+                final TileEntity entity = TileEntity.create(info.getTileEntityData());
+                if (entity instanceof IBlueprintDataProvider)
+                {
+                    for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
+                    {
+                        if (entry.getValue().contains("groundlevel"))
+                        {
+                            y = entry.getKey().getY() + 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
           0.6);
@@ -199,7 +220,7 @@ public final class PirateEventUtils
             for (int z = 0; z < zDist; z++)
             {
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(from.add(x * xDir, baseY - 1, z * zDir)).getMaterial()) || !world.isAirBlock(from.add(x * xDir, baseY, z * zDir)))
+                if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x*xDir), baseY, from.getZ() + (z*zDir))).getMaterial()) || !world.isAirBlock(new BlockPos(from.getX() + (x*xDir), baseY + 1, from.getZ() + (z*zDir))))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks

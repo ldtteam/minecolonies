@@ -11,8 +11,8 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.entity.ModEntities.*;
 
 /**
  * Raider specific creative structure handler.
@@ -66,6 +65,8 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     public CreativeRaiderStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement, final IColonyRaidEvent event, final int colonyId)
     {
         super(world, pos, structureName, settings, fancyPlacement);
+        getBluePrint().rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
+
         this.event = event;
         this.colonyId = colonyId;
         final BlockInfo info = getBluePrint().getBlockInfoAsMap().getOrDefault(getBluePrint().getPrimaryBlockOffset(), null);
@@ -77,7 +78,8 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
                 final TileEntity entity = TileEntity.create(info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
-                    this.map = ((IBlueprintDataProvider) entity).getPositionedTags();
+                    entity.setPos(pos);
+                    this.map = ((IBlueprintDataProvider) entity).getWorldTagPosMap();
                 }
             }
         }
@@ -90,19 +92,19 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
         final BlockPos worldPos = getProgressPosInWorld(pos);
         if (getWorld().getBlockState(worldPos).getBlock() == Blocks.GOLD_BLOCK)
         {
-            final List<String> tags = map.getOrDefault(pos.subtract(getBluePrint().getPrimaryBlockOffset()), Collections.emptyList());
+            final List<String> tags = map.getOrDefault(worldPos, Collections.emptyList());
             for (final String tag: tags)
             {
                 switch (tag)
                 {
                     case "normal":
-                        PirateEventUtils.setupSpawner(worldPos, getWorld(), PIRATE, event, colonyId);
+                        ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getNormalRaiderType(), event, colonyId);
                         return;
                     case "archer":
-                        PirateEventUtils.setupSpawner(worldPos, getWorld(), ARCHERPIRATE, event, colonyId);
+                        ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getArcherRaiderType(), event, colonyId);
                         return;
                     case "boss":
-                        PirateEventUtils.setupSpawner(worldPos, getWorld(), CHIEFPIRATE, event, colonyId);
+                        ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getBossRaiderType(), event, colonyId);
                         return;
                 }
             }
@@ -136,8 +138,6 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
             if (structure.hasBluePrint())
             {
-                structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
-
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
                 Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
             }

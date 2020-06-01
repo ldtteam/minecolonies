@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
+package com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -11,20 +11,20 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The Pirate raid event, spawns a ship with pirate spawners onboard.
+ * The Norsemen raid event, spawns a ship with Norsemen spawners onboard.
  */
-public class PirateRaidEvent extends AbstractShipRaidEvent
+public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
 {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_raid");
+    public static final ResourceLocation NORSEMEN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "norsemen_ship_raid");
 
     /**
-     * Create a new Pirate raid event.
+     * Create a new Norsemen raid event.
      * @param colony the colony.
      */
-    public PirateRaidEvent(@NotNull final IColony colony)
+    public NorsemenShipRaidEvent(@NotNull final IColony colony)
     {
         super(colony);
     }
@@ -32,13 +32,13 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     @Override
     public String getShipDesc()
     {
-        return "pirate_ship";
+        return "norsemen_ship";
     }
 
     @Override
     public ResourceLocation getEventTypeID()
     {
-        return PIRATE_RAID_EVENT_TYPE_ID;
+        return NORSEMEN_RAID_EVENT_TYPE_ID;
     }
 
     /**
@@ -50,7 +50,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      */
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {
-        final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
+        final NorsemenShipRaidEvent raidEvent = new NorsemenShipRaidEvent(colony);
         raidEvent.readFromNBT(compound);
         return raidEvent;
     }
@@ -58,18 +58,18 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     @Override
     public EntityType<?> getNormalRaiderType()
     {
-        return ModEntities.PIRATE;
+        return ModEntities.SHIELDMAIDEN;
     }
 
     @Override
     public EntityType<?> getArcherRaiderType()
     {
-        return ModEntities.ARCHERPIRATE;
+        return ModEntities.NORSEMEN_ARCHER;
     }
 
     @Override
     public EntityType<?> getBossRaiderType()
     {
-        return ModEntities.CHIEFPIRATE;
+        return ModEntities.NORSEMEN_CHIEF;
     }
 }

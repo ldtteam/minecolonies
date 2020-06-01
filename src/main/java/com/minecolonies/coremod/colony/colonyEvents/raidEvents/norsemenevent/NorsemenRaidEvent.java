@@ -10,6 +10,7 @@ import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenArcher;
 import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenChief;
 import com.minecolonies.coremod.entity.mobs.norsemen.EntityShieldmaiden;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -104,14 +105,6 @@ public class NorsemenRaidEvent extends HordeRaidEvent
         sendHordeMessage();
     }
 
-    @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
-    {
-        RaiderMobUtils.spawn(SHIELDMAIDEN, numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(NORSEMEN_CHIEF, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(NORSEMEN_ARCHER, numberOfArchers, spawnPos, colony.getWorld(), colony, id);
-    }
-
     /**
      * Loads the event from the nbt compound.
      *
@@ -125,5 +118,23 @@ public class NorsemenRaidEvent extends HordeRaidEvent
           event = new NorsemenRaidEvent(colony);
         event.readFromNBT(compound);
         return event;
+    }
+
+    @Override
+    public EntityType<?> getNormalRaiderType()
+    {
+        return SHIELDMAIDEN;
+    }
+
+    @Override
+    public EntityType<?> getArcherRaiderType()
+    {
+        return NORSEMEN_ARCHER;
+    }
+
+    @Override
+    public EntityType<?> getBossRaiderType()
+    {
+        return NORSEMEN_CHIEF;
     }
 }

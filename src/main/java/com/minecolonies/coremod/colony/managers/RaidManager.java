@@ -21,7 +21,8 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Bar
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.util.Direction;
@@ -218,19 +219,29 @@ public class RaidManager implements IRaiderManager
             }
 
             // No rotation till spawners are moved into schematics
-            final int pirateShipRotation = 0;
-            if (PirateEventUtils.canSpawnPirateEventAt(colony, targetSpawnPoint, amount, pirateShipRotation))
+            final int shipRotation = new Random().nextInt(3);
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath();
+
+            if (homeBiomePath.contains(TAIGA_BIOME_ID) && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new NorsemenShipRaidEvent(colony)))
+            {
+                final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                event.setShipRotation(shipRotation);
+                colony.getEventManager().addEvent(event);
+            }
+            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new PirateRaidEvent(colony)))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaidLevel(amount));
-                event.setShipRotation(pirateShipRotation);
+                event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
             else
             {
-                final HordeRaidEvent event;
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
+                final HordeRaidEvent event;
                 if (biomePath.contains(DESERT_BIOME_ID))
                 {
                     event = new EgyptianRaidEvent(colony);
