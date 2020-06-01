@@ -113,7 +113,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Slot he is currently trying to dump.
      */
-    private int slotAt = 0;
+    protected int slotAt = 0;
 
     /**
      * Delay for walking.
@@ -133,7 +133,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Already kept items during the dumping cycle.
      */
-    private final List<ItemStorage> alreadyKept = new ArrayList<>();
+    protected final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -993,7 +993,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return INVENTORY_FULL | IDLE
      */
     @NotNull
-    private IAIState dumpInventory()
+    protected IAIState dumpInventory()
     {
         final IBuilding building = getOwnBuilding();
         if (building == null)
@@ -1069,7 +1069,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if is has to dump more.
      */
     @SuppressWarnings("PMD.PrematureDeclaration")
-    private boolean dumpOneMoreSlot()
+    protected boolean dumpOneMoreSlot()
     {
         if (walkToBuilding())
         {
@@ -1137,7 +1137,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Clear the actions done counter. Call this when dumping into the chest.
      */
-    private void clearActionsDone()
+    protected void clearActionsDone()
     {
         job.clearActionsDone();
     }

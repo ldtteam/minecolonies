@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -12,7 +14,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.pathfinding.AbstractPathJob;
@@ -26,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -34,13 +39,15 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.DEFAULT_RANGE_FOR_DELAY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+
+import com.minecolonies.api.util.Log;
 
 /**
  * The lumberjack AI class.
@@ -194,9 +201,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     @Override
     protected IAIState decide()
     {
+
         if (walkToBuilding())
         {
-            return START_WORKING;
+            return LUMBERJACK_START_WORKING;
         }
 
         if (job.getActionsDone() >= getActionsDoneUntilDumping())
@@ -247,6 +255,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (walkToBuilding())
         {
+            if(checkIfStuck()){
+                tryUnstuck();
+            }
             return getState();
         }
         return PREPARING;
@@ -262,7 +273,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (checkForToolOrWeapon(ToolType.AXE))
         {
             // Reset everything, maybe there are new crafting requests
-            return START_WORKING;
+            return LUMBERJACK_START_WORKING;
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -280,7 +291,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
 
         // Reset everything, maybe there are new crafting requests
-        return START_WORKING;
+        return LUMBERJACK_START_WORKING;
     }
 
     /**
@@ -298,6 +309,65 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
 
         return LUMBERJACK_CHOP_TREE;
+    }
+
+    @NotNull
+    @Override
+    protected IAIState dumpInventory() {
+
+        final IBuilding building = getOwnBuilding();
+        if (building == null)
+        {
+            // Uh oh, that shouldn't happen. Restart AI.
+            return afterDump();
+        }
+
+        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        {
+            if(checkIfStuck()){
+                tryUnstuck();
+            }
+            setDelay(WALK_DELAY);
+            return INVENTORY_FULL;
+        }
+
+        if (InventoryUtils.isProviderFull(building))
+        {
+            final ICitizenData citizenData = worker.getCitizenData();
+            if (citizenData != null)
+            {
+                citizenData
+                        .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
+                                ChatPriority.IMPORTANT));
+            }
+
+            // In this case, pickup during crafting is ok, since cleaning a full inventory is very important.
+            // Note that this will not create a pickup request when another request is already in progress.
+            if (building.getPickUpPriority() > 0)
+            {
+                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+            }
+            alreadyKept.clear();
+            slotAt = 0;
+            this.clearActionsDone();
+            return afterDump();
+        }
+        else if (dumpOneMoreSlot())
+        {
+            return INVENTORY_FULL;
+        }
+
+        alreadyKept.clear();
+        slotAt = 0;
+        this.clearActionsDone();
+
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
+        {
+            // Worker is not currently crafting, pickup is allowed.
+            // Note that this will not create a pickup request when another request is already in progress.
+            building.createPickupRequest(building.getPickUpPriority());
+        }
+        return afterDump();
     }
 
     /**
@@ -413,7 +483,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
-                checkIfStuckOnLeaves();
+                if(checkIfStuck()) {
+                    tryUnstuck();
+                }
                 return getState();
             }
         }
@@ -544,30 +616,92 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return blockState.getMaterial() == Material.LEAVES;
     }
 
+
     /**
      * Check if distance to block changed and if we are not moving for too long, try to get unstuck.
      *
      * @return false
      */
-    private boolean checkIfStuckOnLeaves()
+    private boolean checkIfStuck()
     {
         if (!worker.getNavigator().noPath())
         {
-            Path pathToTree = worker.getNavigator().getPath();
-            if (pathToTree != null && pathToTree.getCurrentPathLength() > pathToTree.getCurrentPathIndex())
-            {
-                PathPoint next = pathToTree.getPathPointFromIndex(pathToTree.getCurrentPathIndex());
-                BlockPos nextPos = new BlockPos(next.x, next.y, next.z);
-                BlockPos nextPosUp = new BlockPos(next.x, next.y + 1, next.z);
+            Path path = worker.getNavigator().getPath();
+            if(path != null) {
+                if (path.getCurrentPathLength() > path.getCurrentPathIndex()) {
+                    return true;
+                }
+                if(path.getCurrentPathLength() == 0){
+                    return true;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        return false;
+    }
 
-                if (world.getBlockState(nextPos).getBlock().isIn(BlockTags.LEAVES))
-                {
-                    mineBlock(nextPos);
-                }
-                else if (world.getBlockState(nextPosUp).getBlock().isIn(BlockTags.LEAVES))
-                {
-                    mineBlock(nextPosUp);
-                }
+    /**
+     * Mines leaves on path and above.
+     */
+    private void tryUnstuck(){
+
+        if (!worker.getNavigator().noPath()) {
+            Path path = worker.getNavigator().getPath();
+            if (path != null) {
+                // Unstuck with path
+                ArrayList<BlockPos> checkPositions = new ArrayList<>();
+                PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
+                // Blocks in front of the worker
+                checkPositions.add(new BlockPos(next.x, next.y, next.z));
+                checkPositions.add(new BlockPos(next.x, next.y + 1, next.z));
+                // Block above the worker
+                checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 2, worker.getCurrentPosition().getZ()));
+
+                mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
+                return;
+            }
+        }
+
+        // General unstuck
+        ArrayList<BlockPos> checkPositions = new ArrayList<>();
+        // Blocks in front of the worker
+        checkPositions.add(new BlockPos(worker.getForward().getX(), worker.getForward().getY(), worker.getForward().getZ()));
+        checkPositions.add(new BlockPos(worker.getForward().getX(), worker.getForward().getY() + 1, worker.getForward().getZ()));
+
+        // blocks in north of the player
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).north());
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).north());
+
+        // blocks in east of the player
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).east());
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).east());
+
+        // blocks in south of the player
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).south());
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).south());
+
+        // blocks in west of the player
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).west());
+        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).west());
+
+        mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
+    }
+
+    /**
+     * Checks blocks for tag and mines the first it fines if its the same
+     * @param blockPositions block positions
+     * @param tag tag to check
+     */
+    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag){
+        for (BlockPos currentPos : blockPositions) {
+            if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > 0) {
+                Log.getLogger().info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s", currentPos.getX(), currentPos.getY(), currentPos.getZ(), tag.toString(), world.getBlockState(currentPos).getBlock().isIn(tag)));
+            }
+            if (world.getBlockState(currentPos).getBlock().isIn(tag)) {
+                mineBlock(currentPos);
+                return true;
             }
         }
         return false;
