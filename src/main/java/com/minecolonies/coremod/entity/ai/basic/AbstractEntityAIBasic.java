@@ -1522,12 +1522,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        final List<ItemStack> stacks = tag.getAllElements().stream().map(itemIn -> new ItemStack(itemIn, count)).collect(Collectors.toList());
+        List<ItemStack> stacks = tag.getAllElements().stream().map(itemIn -> new ItemStack(itemIn, count)).collect(Collectors.toList());
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> stacks.stream().anyMatch((ItemStack stack) -> r.getRequest().matches(stack))).isEmpty())
+                (IRequest<? extends IDeliverable> r) -> stacks.stream().anyMatch(r.getRequest()::matches)).isEmpty())
         {
-            final IDeliverable stackListRequest = new StackList(stacks, description, count, count);
-            worker.getCitizenData().createRequestAsync(stackListRequest);
+            final StackList stackRequest = new StackList(stacks, description, count, count);
+            worker.getCitizenData().createRequestAsync(stackRequest);
         }
 
         return false;
