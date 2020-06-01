@@ -11,13 +11,14 @@
                 label="$(com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries):"/>
 
             <list id="deliveries" size="164 185" pos="13 29">
-                <box size="100% 40" linewidth="2">
+                <box size="100% 52" linewidth="2">
                     <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3"/>
 
 
                     <label id="shortDetail" size="50 12" pos="20 1" color="black"/>
                     <label id="requester" size="50 12" pos="20 13" color="black"/>
                     <label id="parent" size="50 12" pos="20 25" color="black"/>
+                    <label id="priority" size="50 12" pos="20 37" color="black"/>
                 </box>
             </list>
         </view>
