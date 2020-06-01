@@ -234,9 +234,9 @@ public enum AIWorkerState implements IAIState
     DELIVERY(true),
 
     /**
-     * Gather not needed items and tools from others.
+     * Pickup unneeded items from buildings.
      */
-    GATHERING(true),
+    PICKUP(true),
 
     /**
      * Dump inventory over chests in warehouse.

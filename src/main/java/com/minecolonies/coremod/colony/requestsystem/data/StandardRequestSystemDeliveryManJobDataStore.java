@@ -16,44 +16,31 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LIST;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
 
 public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSystemDeliveryManJobDataStore
 {
 
-    private IToken<?> id;
+    private       IToken<?>             id;
     private final LinkedList<IToken<?>> queue;
-    private boolean returning;
 
-    public StandardRequestSystemDeliveryManJobDataStore(final IToken<?> id, final LinkedList<IToken<?>> queue, final boolean returning) {
+    public StandardRequestSystemDeliveryManJobDataStore(final IToken<?> id, final LinkedList<IToken<?>> queue)
+    {
         this.id = id;
         this.queue = queue;
-        this.returning = returning;
     }
 
     public StandardRequestSystemDeliveryManJobDataStore()
     {
         this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          new LinkedList<>(),
-      false );
+          new LinkedList<>());
     }
 
     @Override
     public LinkedList<IToken<?>> getQueue()
     {
         return queue;
-    }
-
-    @Override
-    public boolean isReturning()
-    {
-        return returning;
-    }
-
-    @Override
-    public void setReturning(final boolean returning)
-    {
-        this.returning = returning;
     }
 
     @Override
@@ -99,11 +86,8 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemDeliveryManJobDataStore standardRequestSystemDeliveryManJobDataStore)
         {
             final CompoundNBT compound = new CompoundNBT();
-
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
             compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
-            compound.putBoolean(TAG_VALUE, standardRequestSystemDeliveryManJobDataStore.returning);
-
             return compound;
         }
 
@@ -113,11 +97,9 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                          .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
-                                          .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
-            final boolean returning = nbt.getBoolean(TAG_VALUE);
-
-            return new StandardRequestSystemDeliveryManJobDataStore(token, queue, returning);
+                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                                  .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
+            return new StandardRequestSystemDeliveryManJobDataStore(token, queue);
         }
     }
 }

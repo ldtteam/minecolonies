@@ -432,6 +432,11 @@ public class BuildingHome extends AbstractBuilding
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
+        if (citizen.getHomeBuilding() != null)
+        {
+            citizen.getHomeBuilding().removeCitizen(citizen);
+        }
+
         if (!super.assignCitizen(citizen))
         {
             return false;

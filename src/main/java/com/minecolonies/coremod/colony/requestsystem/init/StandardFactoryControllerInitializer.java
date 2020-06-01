@@ -40,12 +40,14 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackListRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PickupRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ToolRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.FoodRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.SmeltableOreRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.BurnableRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingBasedRequesterFactory());
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PickupRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PublicWorkerCraftingRequestResolverFactory());
@@ -74,6 +76,8 @@ public final class StandardFactoryControllerInitializer
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 
-        StandardFactoryController.getInstance().registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver", "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
+        StandardFactoryController.getInstance()
+          .registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver",
+            "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
     }
 }

@@ -6,7 +6,6 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.PickUpPriorityState;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -34,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
 import static com.minecolonies.api.util.constant.Suppression.*;
@@ -70,11 +68,6 @@ public abstract class AbstractBuildingView implements IBuildingView
      * The dm priority.
      */
     private int buildingDmPrio = 1;
-
-    /**
-     * The dm priority.
-     */
-    private PickUpPriorityState buildingDmPrioState = AUTOMATIC;
 
     /**
      * Rotation of the building.
@@ -377,7 +370,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
-        buildingDmPrioState = PickUpPriorityState.fromIntRepresentation(buf.readInt());
         workOrderLevel = buf.readInt();
         style = buf.readString(32767);
         schematicName = buf.readString(32767);
@@ -603,12 +595,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
-    }
-
-    @Override
-    public PickUpPriorityState getBuildingDmPrioState()
-    {
-        return buildingDmPrioState;
     }
 
     @Override

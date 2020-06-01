@@ -217,13 +217,13 @@ public class StackList implements IDeliverable
     @Override
     public int getMinimumCount()
     {
-        return count;
+        return minCount;
     }
 
     @Override
     public int getCount()
     {
-        return minCount;
+        return count;
     }
 
     @NotNull

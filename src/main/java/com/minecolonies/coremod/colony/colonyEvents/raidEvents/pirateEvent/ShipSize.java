@@ -26,7 +26,6 @@ public enum ShipSize
       PIRATE,
       ARCHERPIRATE,
       ARCHERPIRATE,
-      CHIEFPIRATE,
       CHIEFPIRATE);
 
     /**
@@ -57,7 +56,7 @@ public enum ShipSize
     /**
      * The amount of barbarians up to which a medium pirate ship spawns
      */
-    private static final int MEDIUM_SHIP_SIZE_AMOUNT = 15;
+    private static final int MEDIUM_SHIP_SIZE_AMOUNT = 18;
 
 
     /**

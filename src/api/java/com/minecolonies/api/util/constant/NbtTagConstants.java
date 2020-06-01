@@ -31,11 +31,9 @@ public final class NbtTagConstants
     public static final String TAG_PRIO                   = "prio";
 
     /**
-     * @deprecated Superseeded by {@link NbtTagConstants#TAG_PRIO_STATE}
+     * @deprecated Superseeded by request-based pickup system.
      */
     @Deprecated
-    public static final String TAG_PRIO_MODE              = "prioMode";
-
     public static final String TAG_PRIO_STATE             = "prioState";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";
@@ -534,12 +532,12 @@ public final class NbtTagConstants
     /**
      * Tags to store the needed resourced to nbt.
      */
-    public static final String TAG_PROGRESS_POS = "progressPos";
+    public static final String TAG_PROGRESS_POS = "newProgressPos";
 
     /**
      * Tags to store the needed resourced to nbt.
      */
-    public static final String TAG_PROGRESS_STAGE = "progressStage";
+    public static final String TAG_PROGRESS_STAGE = "newProgressStage";
 
     /**
      * Tags to store the needed resources to nbt.

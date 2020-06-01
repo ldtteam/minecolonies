@@ -77,10 +77,6 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FOUR_CITIZENS_SPAWNED);
         }
-        else if (total == 5)
-        {
-            trigger(FIVE_CITIZENS_SPAWNED);
-        }
         else if (total == 6)
         {
             trigger(SIX_CITIZENS_SPAWNED);
