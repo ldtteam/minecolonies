@@ -204,6 +204,11 @@ public final class ModJobsInitializer
                                 .setRegistryName(ModJobs.PLANTER_ID)
                                 .createJobEntry();
 
+        ModJobs.beekeeper  = new JobEntry.Builder()
+                                .setJobProducer(JobBeekeeper::new)
+                                .setRegistryName(ModJobs.BEEKEEPER_ID)
+                                .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -241,5 +246,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.fletcher);
         reg.register(ModJobs.mechanic);
         reg.register(ModJobs.planter);
+        reg.register(ModJobs.beekeeper);
     }
 }

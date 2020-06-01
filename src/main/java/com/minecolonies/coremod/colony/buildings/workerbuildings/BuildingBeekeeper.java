@@ -49,9 +49,10 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      * @param c the colony
      * @param l the position
      */
-    public BuildingBeekeeper(@NotNull IColony c, BlockPos l) {
+    public BuildingBeekeeper(@NotNull IColony c, BlockPos l)
+    {
         super(c, l);
-        keepX.put(stack -> Items.SHEARS       == stack.getItem(), new Tuple<>(1, true));
+        keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
     }
 
@@ -63,7 +64,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public IJob createJob(ICitizenData citizen) {
+    public IJob createJob(ICitizenData citizen)
+    {
         return new JobBeekeeper(citizen);
     }
 
@@ -74,7 +76,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public String getJobName() {
+    public String getJobName()
+    {
         return BEEKEEPER;
     }
 
@@ -85,7 +88,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public Skill getPrimarySkill() {
+    public Skill getPrimarySkill()
+    {
         return Skill.Stamina; //TODO
     }
 
@@ -96,12 +100,14 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public Skill getSecondarySkill() {
+    public Skill getSecondarySkill()
+    {
         return Skill.Focus; //TODO
     }
 
     @Override
-    public BuildingEntry getBuildingRegistryEntry() {
+    public BuildingEntry getBuildingRegistryEntry()
+    {
         return ModBuildings.beekeeper;
     }
 
@@ -111,7 +117,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      * @return StructureProxy name.
      */
     @Override
-    public String getSchematicName() {
+    public String getSchematicName()
+    {
         return BEEKEEPER;
     }
 
@@ -121,12 +128,14 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      * @return Max building level.
      */
     @Override
-    public int getMaxBuildingLevel() {
+    public int getMaxBuildingLevel()
+    {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull World world) {
+    public void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull World world)
+    {
         super.registerBlockPosition(block, pos, world);
         if (block == Blocks.BEEHIVE)
         {
@@ -135,7 +144,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound) {
+    public void deserializeNBT(CompoundNBT compound)
+    {
         super.deserializeNBT(compound);
         ListNBT list = compound.getList(TAG_HIVES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
@@ -145,7 +155,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
+    public CompoundNBT serializeNBT()
+    {
         CompoundNBT nbt = super.serializeNBT();
         ListNBT hives = new ListNBT();
         for (BlockPos hive : this.hives)
@@ -157,14 +168,15 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean canRecipeBeAdded(IToken token) {
-        if(!super.canRecipeBeAdded(token))
+    public boolean canRecipeBeAdded(IToken token)
+    {
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
@@ -175,12 +187,14 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
                 storage.getPrimaryOutput().getItem() == Items.HONEYCOMB;
     }
 
-    public void setHives(List<BlockPos> hives) {
-        this.hives = hives;
+    public List<BlockPos> getHives()
+    {
+        return hives;
     }
 
-    public List<BlockPos> getHives() {
-        return hives;
+    public void setHives(List<BlockPos> hives)
+    {
+        this.hives = hives;
     }
 
     public static class View extends AbstractBuildingWorker.View
@@ -191,7 +205,8 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(IColonyView c, @NotNull BlockPos l) {
+        public View(IColonyView c, @NotNull BlockPos l)
+        {
             super(c, l);
         }
     }

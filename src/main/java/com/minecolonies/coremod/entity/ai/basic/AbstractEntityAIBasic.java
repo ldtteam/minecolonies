@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -38,8 +39,10 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -57,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -1479,6 +1483,40 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack);
+            worker.getCitizenData().createRequestAsync(stackRequest);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a tag has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param tag the requested tag.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count, final String description)
+    {
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), s -> s.getItem().isIn(tag) && s.getCount() >= count))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+                itemStack -> itemStack.getItem().isIn(tag)) >= count &&
+                InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                        getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
+                        count,
+                        worker.getInventoryCitizen()))
+        {
+            return true;
+        }
+
+        List<ItemStack> stacks = tag.getAllElements().stream().map(itemIn -> new ItemStack(itemIn, count)).collect(Collectors.toList());
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+                (IRequest<? extends IDeliverable> r) -> stacks.stream().anyMatch(r.getRequest()::matches)).isEmpty())
+        {
+            final StackList stackRequest = new StackList(stacks, description, count, count);
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 

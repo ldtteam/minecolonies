@@ -276,6 +276,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingbarrels";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING                = "com.minecolonies.coremod.status.harvestinghives";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noitems";
     @NonNls
     public static final String TOWNHALL_BREAKING_MESSAGE                                           = "com.minecolonies.coremod.pvp.townhall.broke";
@@ -319,6 +321,8 @@ public final class TranslationConstants
     public static final String BAKER_HAS_NO_RECIPES                                                = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
     public static final String FERTLIZER                                                           = "com.minecolonies.coremod.request.fertilizer";
+    @NonNls
+    public static final String FLOWERS                                                             = "com.minecolonies.coremod.request.flowers";
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
