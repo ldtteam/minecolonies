@@ -784,6 +784,7 @@
   "com.minecolonies.coremod.tooltype.leggings": "Leggings",
   "com.minecolonies.coremod.tooltype.chestplate": "Chest Plate",
   "com.minecolonies.coremod.tooltype.boots": "Boots",
+  "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
 
   "com.minecolonies.coremod.gui.citizen.requests": "Open requests:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "Requests",

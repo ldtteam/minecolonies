@@ -183,7 +183,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             requestSmeltable();
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+
+        if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
           req -> req.getShortDisplayString().getString().equals(
             LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE))))
         {

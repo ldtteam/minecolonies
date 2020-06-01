@@ -56,7 +56,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Make this amount of products until dumping
      */
-    private static final int UNTIL_DUMP = 3;
+    private static final int UNTIL_DUMP = 6;
 
     /**
      * Increase this value to make the product creation progress way slower.

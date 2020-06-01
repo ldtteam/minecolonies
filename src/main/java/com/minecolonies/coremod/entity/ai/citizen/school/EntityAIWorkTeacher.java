@@ -177,7 +177,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 5;
+        return 50;
     }
 
     /**
