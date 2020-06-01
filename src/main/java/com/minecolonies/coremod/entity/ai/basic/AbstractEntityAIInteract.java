@@ -122,7 +122,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, worker.getCurrentPosition());
+        return mineBlock(blockToMine, worker.getPosition());
     }
 
     /**
