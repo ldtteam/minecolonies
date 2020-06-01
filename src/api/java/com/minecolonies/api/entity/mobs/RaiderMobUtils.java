@@ -86,39 +86,20 @@ public final class RaiderMobUtils
     {
         final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                                         / (double) DEFAULT_BARBARIAN_DIFFICULTY);
-        mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
         mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
-
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
+        // Base damage
         final double attackDamage =
           difficultyModifier * (ATTACK_DAMAGE + Math.min(
             raidLevel / DAMAGE_PER_X_RAID_LEVEL,
             MAX_RAID_LEVEL_DAMAGE));
 
-        mob.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage);
+        // Base health
+        final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;
 
-        if (mob instanceof IChiefMobEntity)
-        {
-            final double chiefArmor = difficultyModifier * CHIEF_BONUS_ARMOR;
-            mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
-            mob.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(attackDamage + 2.0);
-            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficultyModifier));
-        }
-        else
-        {
-            final double armor = difficultyModifier * ARMOR;
-            mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
-            mob.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficultyModifier));
-        }
-
-        if (difficultyModifier >= 1.4d)
-        {
-            mob.setEnvDamageImmunity(true);
-        }
-
-        mob.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier);
-        mob.setHealth(mob.getMaxHealth());
+        mob.initStatsFor(baseHealth, difficultyModifier, attackDamage);
     }
 
     /**
@@ -127,7 +108,7 @@ public final class RaiderMobUtils
      * @param raidLevel the raid level.
      * @return returns the health in the form of a double
      */
-    private static double getHealthBasedOnRaidLevel(final int raidLevel)
+    public static double getHealthBasedOnRaidLevel(final int raidLevel)
     {
         return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel * BARBARIAN_HEALTH_MULTIPLIER));
     }

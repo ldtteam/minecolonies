@@ -4,7 +4,7 @@ import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.placementhandlers.PlacementError;
+import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
@@ -62,7 +62,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
@@ -89,7 +89,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
         final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())
         {
@@ -116,7 +116,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(Rotation.NONE, Mirror.NONE),
+              new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
               placementErrorList,
               Minecraft.getInstance().player))
             {
@@ -130,7 +130,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(Rotation.NONE, Mirror.NONE),
+              new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
               placementErrorList,
               Minecraft.getInstance().player))
             {

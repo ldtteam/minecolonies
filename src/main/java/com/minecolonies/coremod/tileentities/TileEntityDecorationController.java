@@ -120,8 +120,6 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     private void update()
     {
         this.markDirty();
-        final BlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
     @Override
@@ -195,5 +193,11 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);
+    }
+
+    @Override
+    public BlockPos getTilePos()
+    {
+        return pos;
     }
 }

@@ -6,11 +6,12 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
@@ -23,6 +24,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Resolver that handles delivery requests.
+ * Delivery requests always have a start, a target and an itemstack to be delivered.
+ * These resolvers are supposed to be provided by deliverymen.
+ * <p>
+ * Currently, this resolver will iterate through all available deliverymen and find
+ * the one with the least amount of open requests, followed by the one that is nearest.
+ * <p>
+ * There is a tiny bit of (known) code-smell in here, since this resolver should either be global
+ * or specific to a hut. Currently, it is a hut-specific resolver that acts as if it were global.
+ * The performance impact is negligible though.
+ */
 public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 {
     public DeliveryRequestResolver(
@@ -35,7 +48,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Override
     public TypeToken<? extends Delivery> getRequestType()
     {
-        return TypeToken.of(Delivery.class);
+        return TypeConstants.DELIVERY;
     }
 
     @Override

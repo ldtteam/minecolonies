@@ -6,15 +6,14 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -24,6 +23,7 @@ import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -47,11 +47,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     private static final String DELIVERYMAN = "deliveryman";
 
     /**
-     * Building the deliveryman will deliver somethingTo
-     */
-    private ILocation buildingToDeliver;
-
-    /**
      * Instantiates a new warehouse building.
      *
      * @param c the colony.
@@ -60,28 +55,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     public BuildingDeliveryman(final IColony c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    /**
-     * Get the building the deliveryman should deliver to.
-     *
-     * @return the building.
-     */
-    @Override
-    public ILocation getBuildingToDeliver()
-    {
-        return this.buildingToDeliver;
-    }
-
-    /**
-     * Set the building the deliveryman should deliver to.
-     *
-     * @param building building to deliver to.
-     */
-    @Override
-    public void setBuildingToDeliver(final ILocation building)
-    {
-        this.buildingToDeliver = building;
     }
 
     @NotNull
@@ -105,8 +78,9 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
 
         builder.addAll(supers);
         builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
-                                                 getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PickupRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         return builder.build();
     }
 
@@ -150,7 +124,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         super.serializeToView(buf);
 
         final List<IToken<?>> tasks = new ArrayList<>();
-        for (final ICitizenData citizenData :getAssignedCitizen())
+        for (final ICitizenData citizenData : getAssignedCitizen())
         {
             tasks.addAll(((JobDeliveryman) citizenData.getJob()).getTaskQueue());
         }
@@ -175,31 +149,21 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     }
 
     @Override
-    public void onBuildingMove(final IBuilding oldBuilding)
-    {
-        super.onBuildingMove(oldBuilding);
-        this.setBuildingToDeliver(((IBuildingDeliveryman) oldBuilding).getBuildingToDeliver());
-    }
-
-    @Override
     public boolean canEat(final ItemStack stack)
     {
-        if (buildingToDeliver != null)
+        final ICitizenData citizenData = getMainCitizen();
+        if (citizenData != null)
         {
-            final ICitizenData citizenData = getMainCitizen();
-            if (citizenData != null)
+            final JobDeliveryman job = (JobDeliveryman) citizenData.getJob();
+            final IRequest<? extends IRequestable> currentTask = job.getCurrentTask();
+            if (currentTask == null)
             {
-                final JobDeliveryman job = (JobDeliveryman) citizenData.getJob();
-                final IRequest<Delivery> request = job.getCurrentTask();
-                if (request == null)
-                {
-                    return super.canEat(stack);
-                }
-
-                if (request.getRequest().getStack().isItemEqual(stack))
-                {
-                    return false;
-                }
+                return super.canEat(stack);
+            }
+            final IRequestable request = currentTask.getRequest();
+            if (request instanceof Delivery && ((Delivery) request).getStack().isItemEqual(stack))
+            {
+                return false;
             }
         }
         return super.canEat(stack);
@@ -238,6 +202,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         {
             super.deserialize(buf);
             final int size = buf.readInt();
+            tasks.clear();
             for (int i = 0; i < size; i++)
             {
                 tasks.add(StandardFactoryController.getInstance().deserialize(buf.readCompoundTag()));
@@ -246,7 +211,8 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
 
         /**
          * Get the list of tasks.
-         * @return the list of delivery tasks.
+         *
+         * @return the list of delivery/pickup tasks.
          */
         public List<IToken<?>> getTasks()
         {
