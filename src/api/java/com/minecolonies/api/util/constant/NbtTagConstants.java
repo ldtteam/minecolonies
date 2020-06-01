@@ -482,6 +482,11 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
     public static final String TAG_WAITING_TICKS = "waitingticks";
 
+    /**
+     * BannerRallyGuards tags
+     */
+    public static final String TAG_RALLIED_GUARDTOWERS = "guardtowers";
+
     // --------------------- Chat handling tags --------------------- //
 
     /**

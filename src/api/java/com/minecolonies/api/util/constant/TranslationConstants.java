@@ -160,6 +160,14 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                               = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                       = "com.minecolonies.coremod.item.bannerrallyguards.selected";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                     = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP                        = "com.minecolonies.coremod.item.bannerrallyguards.tooltip";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY                  = "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty";
+    @NonNls
     public static final String CITIZEN_RENAME_SAME                                                 = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                          = "com.minecolonies.coremod.citizen.rename.notallowed";
@@ -385,8 +393,10 @@ public final class TranslationConstants
     public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
     @NonNls
     public static final String DEMANDS                                                             = "com.minecolonies.coremod.entity.citizen.demands.";
-    @NonNls  
+    @NonNls
     public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
+    @NonNls
+    public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
 
 
     private TranslationConstants()

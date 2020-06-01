@@ -303,6 +303,10 @@
   "item.minecolonies.iron_scimitar": "Iron Scimitar",
   "item.minecolonies.pharaoscepter": "Pharao Scepter",
   "item.minecolonies.firearrow": "Fire Arrow",
+  "item.minecolonies.banner_rally_guards": "Rallying Banner",
+  "item.minecolonies.banner_rally_guards.activated": "You have rallied your army. %d guards are answering your call!",
+  "item.minecolonies.banner_rally_guards.activated.noguards": "You have no guards on duty. Employ guards in your guardtowers!",
+  "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your guards will return to regular duty.",
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 
@@ -735,6 +739,8 @@
   "com.minecolonies.coremod.gui.workerhuts.spies": "Hire spies",
 
   "com.minecolonies.coremod.permission.teleport_to_colony": "Teleport to Colony",
+  "com.minecolonies.coremod.permission.rally_guards": "Rally guards",
+
   "com.minecolonies.coremod.gui.hiring.buttonfire": "Fire",
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
@@ -796,6 +802,11 @@
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
+
+  "com.minecolonies.coremod.item.bannerrallyguards.selected": "Added %s at %s to rallying list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.tooltip": "Rallied guard towers: %d",
+  "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Shift-Rightlick on guard towers to add them to the rally list.",
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
@@ -1388,6 +1399,7 @@
   "com.minecolonies.coremod.entity.citizen.no.idleatjob": "I'm idle at my job because of missing items, please take care of that!",
   "com.minecolonies.coremod.entity.citizen.demands.idleatjob": "I'm unable to work for more than two weeks already! Do something!",
   "com.minecolonies.coremod.entity.citizen.no.slepttonight": "I didn't have enough time to go to sleep in the last three days!",
+  "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Homelessness",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",

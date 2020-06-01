@@ -31,7 +31,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof IGuardBuilding) || ((IGuardBuilding) buildingWorker).getTask() != GuardTask.FOLLOW
-                 || !player.equals(((IGuardBuilding) buildingWorker).getFollowPlayer());
+                 || !player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally());
     }
 
     /**
@@ -49,14 +49,8 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     void setTask(GuardTask task);
 
     /**
-     * Entity of player to follow.
-     *
-     * @return the PlayerEntity reference.
-     */
-    PlayerEntity getFollowPlayer();
-
-    /**
      * Returns a patrolTarget to patrol to.
+     *
      * @param newTarget whether to search a new target
      * @return the position of the next target.
      */
@@ -192,11 +186,18 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     void setMobsToAttack(List<MobEntryView> list);
 
     /**
-     * Gets the player to follow.
+     * Entity of player to follow.
      *
-     * @return the entity player.
+     * @return the PlayerEntity reference.
      */
-    BlockPos getPlayerToFollow();
+    PlayerEntity getPlayerToFollowOrRally();
+
+    /**
+     * Entity of player to rally.
+     *
+     * @return the PlayerEntity reference.
+     */
+    PlayerEntity getPlayerToRally();
 
     /**
      * Sets the player to follow.
@@ -204,6 +205,21 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      * @param player the player to follow.
      */
     void setPlayerToFollow(PlayerEntity player);
+
+    /**
+     * Sets the player to rally.
+     *
+     * @param player the player to rally.
+     */
+    void setPlayerToRally(PlayerEntity player);
+
+    /**
+     * Gets the position to follow.
+     * This is a utility helper for {@link #getPlayerToFollowOrRally()}
+     *
+     * @return the position the guard is supposed to be while following.
+     */
+    BlockPos getPositionToFollow();
 
     /**
      * Adds new patrolTargets.
