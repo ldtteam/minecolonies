@@ -387,7 +387,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private IAIState guard()
     {
         worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
-        return GUARD_GUARD;
+        return DECIDE;
     }
 
     /**
@@ -404,7 +404,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
         {
             TeleportHelper.teleportCitizen(worker, worker.getEntityWorld(), buildingGuards.getPositionToFollow());
-            return GUARD_FOLLOW;
+            return DECIDE;
         }
 
         if (buildingGuards.isTightGrouping())
@@ -423,7 +423,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
             }
         }
-        return GUARD_FOLLOW;
+        return DECIDE;
     }
 
     /**
@@ -452,7 +452,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        return GUARD_RALLY;
+        return DECIDE;
     }
 
     /**
@@ -471,7 +471,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             buildingGuards.arrivedAtPatrolPoint(worker);
         }
-        return GUARD_PATROL;
+        return DECIDE;
     }
 
     /**

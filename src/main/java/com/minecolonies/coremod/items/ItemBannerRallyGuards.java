@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -8,8 +9,11 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -30,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -42,9 +46,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     private static final String TAG_IS_ACTIVE = "isActive";
 
-    @Nullable
-    private ITextComponent cachedTooltip = null;
-
     /**
      * Guard Scepter constructor. Sets max stack to 1, like other tools.
      *
@@ -53,6 +54,15 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     public ItemBannerRallyGuards(final Properties properties)
     {
         super("banner_rally_guards", properties.maxStackSize(1).maxDamage(0).group(ModCreativeTabs.MINECOLONIES));
+    }
+
+    @Override
+    public boolean onDroppedByPlayer(final ItemStack item, final PlayerEntity player)
+    {
+        final CompoundNBT compound = checkForCompound(item);
+        compound.putBoolean(TAG_IS_ACTIVE, false);
+        broadcastRallyState(item, player.getEntityWorld(), null);
+        return super.onDroppedByPlayer(item, player);
     }
 
     @NotNull
@@ -97,14 +107,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                   message,
                   ((AbstractTileEntityColonyBuilding) entity).getDisplayName().getUnformattedComponentText(), BlockPosUtil.getString(position));
             }
-            cachedTooltip = null; // Reset the tooltip here, it will be regenerated during the next tooltip update.
-        }
-        else
-        {
-            // TODO: Toggle banner activation state
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
         }
 
         return ActionResultType.SUCCESS;
@@ -117,7 +119,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final ItemStack banner = playerIn.getHeldItem(hand);
         final CompoundNBT compound = checkForCompound(banner);
 
-
         if (!worldIn.isRemote && compound != null)
         {
             if (playerIn.isShiftKeyDown())
@@ -126,47 +127,18 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 if (guardTowers.size() == 0)
                 {
                     // TODO: Open management window
-                    return ActionResult.func_226248_a_(banner);
                 }
-
-                if (compound.getBoolean(TAG_IS_ACTIVE))
+                else if (compound.getBoolean(TAG_IS_ACTIVE))
                 {
                     compound.putBoolean(TAG_IS_ACTIVE, false);
-                    for (int i = 0; i < guardTowers.size(); i++)
-                    {
-                        final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
-                        if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
-                        {
-                            final IGuardBuilding building = (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
-                            if (building == null)
-                            {
-                                Log.getLogger().info("Building not found!");
-                                continue;
-                            }
-                            building.setPlayerToRally(null);
-                        }
-                    }
+                    broadcastRallyState(banner, worldIn, null);
                     LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.deactivated");
                 }
                 else
                 {
                     compound.putBoolean(TAG_IS_ACTIVE, true);
-                    int numGuards = 0;
-                    for (int i = 0; i < guardTowers.size(); i++)
-                    {
-                        final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
-                        if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
-                        {
-                            final IGuardBuilding building = (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
-                            if (building == null)
-                            {
-                                Log.getLogger().info("Building not found!");
-                                continue;
-                            }
-                            building.setPlayerToRally(playerIn);
-                            numGuards += building.getAssignedCitizen().size();
-                        }
-                    }
+                    final int numGuards = broadcastRallyState(banner, worldIn, playerIn);
+
                     if (numGuards > 0)
                     {
                         LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated", numGuards);
@@ -175,8 +147,48 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                     {
                         LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated.noguards");
                     }
+                }
+            }
+            else
+            {
+                // TODO: Open configuration window here.
+                Log.getLogger().info("Item configuration opened");
+            }
+        }
 
-                    // TODO
+        return ActionResult.func_226248_a_(banner);
+    }
+
+    public int broadcastRallyState(final ItemStack banner, final World worldIn, @Nullable final PlayerEntity playerIn)
+    {
+        final CompoundNBT compound = checkForCompound(banner);
+        PlayerEntity rallyTarget = playerIn;
+        if (!compound.getBoolean(TAG_IS_ACTIVE))
+        {
+            rallyTarget = null;
+        }
+
+        final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
+
+
+        int numGuards = 0;
+        for (int i = 0; i < guardTowers.size(); i++)
+        {
+            final TileEntity entity = worldIn.getTileEntity(NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)));
+            if (entity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) entity).registryName.getPath().equalsIgnoreCase("guardtower"))
+            {
+                final IGuardBuilding building = (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
+                if (building == null)
+                {
+                    Log.getLogger().info("Building not found!");
+                    continue;
+                }
+                building.setPlayerToRally(rallyTarget);
+                numGuards += building.getAssignedCitizen().size();
+            }
+        }
+        return numGuards;
+        // TODO
                     /*
                             if (this.getColony().getWorld() != null)
         {
@@ -208,16 +220,27 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                      */
 
 
-                }
-            }
-            else
+    }
+
+    public boolean isActiveForGuardTower(final ItemStack banner, IGuardBuilding guardTower)
+    {
+        final CompoundNBT compound = checkForCompound(banner);
+        final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
+        for (int i = 0; i < guardTowers.size(); i++)
+        {
+            if (NBTUtil.readBlockPos((CompoundNBT) guardTowers.get(i)).equals(guardTower.getPosition()))
             {
-                // TODO: Open configuration window here.
-                Log.getLogger().info("Item configuration opened");
+                return true;
             }
         }
+        return false;
+    }
 
-        return ActionResult.func_226248_a_(banner);
+    @Override
+    public boolean hasEffect(final ItemStack stack)
+    {
+        final CompoundNBT compound = checkForCompound(stack);
+        return compound.getBoolean(TAG_IS_ACTIVE);
     }
 
     /**
@@ -259,12 +282,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
         else
         {
-            if (cachedTooltip == null)
-            {
-                cachedTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowers.size());
-                cachedTooltip.setStyle(new Style().setItalic(true).setColor(TextFormatting.DARK_AQUA));
-            }
-            tooltip.add(cachedTooltip);
+            final ITextComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowers.size());
+            numGuardTowers.setStyle(new Style().setItalic(true).setColor(TextFormatting.DARK_AQUA));
+            tooltip.add(numGuardTowers);
         }
 
 

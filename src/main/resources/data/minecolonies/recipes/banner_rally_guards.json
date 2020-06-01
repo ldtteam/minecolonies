@@ -1,31 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "ABA",
-    "DEF",
-    "GHG"
+    "AAA",
+    "BXB",
+    "CCC"
   ],
   "key": {
     "A": {
-      "item": "minecraft:feather"
+      "item": "minecraft:iron_sword"
     },
     "B": {
-      "item": "minecraft:red_banner"
-    },
-    "D": {
-      "item": "minecraft:golden_sword"
-    },
-    "E": {
-      "item": "minecolonies:blockhutfield"
-    },
-    "F": {
-      "item": "minecraft:shield"
-    },
-    "G": {
       "item": "minecolonies:blockhutguardtower"
     },
-    "H": {
-      "item": "minecraft:leather_horse_armor"
+    "X": {
+      "item": "minecraft:yellow_banner"
+    },
+    "C": {
+      "item": "minecraft:bow"
     }
   },
   "result": {

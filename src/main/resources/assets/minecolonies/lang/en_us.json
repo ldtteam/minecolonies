@@ -304,7 +304,7 @@
   "item.minecolonies.pharaoscepter": "Pharao Scepter",
   "item.minecolonies.firearrow": "Fire Arrow",
   "item.minecolonies.banner_rally_guards": "Rallying Banner",
-  "item.minecolonies.banner_rally_guards.activated": "You have summoned your army. %d guards are on their way!",
+  "item.minecolonies.banner_rally_guards.activated": "You have rallied your army. %d guards are answering your call!",
   "item.minecolonies.banner_rally_guards.activated.noguards": "You have no guards on duty. Employ guards in your guardtowers!",
   "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your guards will return to regular duty.",
 

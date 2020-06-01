@@ -23,6 +23,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
@@ -31,6 +32,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -408,13 +410,31 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public PlayerEntity getPlayerToFollowOrRally()
     {
-        return rallyPlayer != null ? rallyPlayer : followPlayer;
+        return getPlayerToRally() != null ? getPlayerToRally() : followPlayer;
     }
 
     @Override
     public PlayerEntity getPlayerToRally()
     {
-        return rallyPlayer;
+        if (rallyPlayer == null)
+        {
+            return null;
+        }
+
+        int size = rallyPlayer.inventory.getSizeInventory();
+        for (int i = 0; i < size; i++)
+        {
+            ItemStack stack = rallyPlayer.inventory.getStackInSlot(i);
+            if (stack.getItem() instanceof ItemBannerRallyGuards)
+            {
+                if (((ItemBannerRallyGuards)(stack.getItem())).isActiveForGuardTower(stack, this))
+                {
+                    return rallyPlayer;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -946,6 +966,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public void setPlayerToRally(final PlayerEntity player)
     {
         this.rallyPlayer = player;
+        this.markDirty();
     }
 
     /**
