@@ -437,11 +437,21 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         this.world.getScoreboard()
           .addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
 
-        worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
+        if (!worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
                                         .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                           0,
                                           randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
-          GUARD_FOLLOW_TIGHT_RANGE);
+          GUARD_FOLLOW_TIGHT_RANGE))
+        {
+            if (!worker.isPotionActive(Effects.SPEED))
+            {
+                // Guards will rally faster with higher skill.
+                // Considering 99 is the maximum for any skill, the maximum theoretical getJobModifier() = 99 + 99/4 = 124. We want them to have Speed 3
+                // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
+                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 5 * TICKS_SECOND, Math.min(3, (worker.getCitizenData().getJobModifier() / 20)), false, false));
+            }
+        }
+
         return GUARD_RALLY;
     }
 
