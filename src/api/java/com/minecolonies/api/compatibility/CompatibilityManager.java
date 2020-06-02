@@ -262,7 +262,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE)
+        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE || itemStack.getItem() == Items.CACTUS || itemStack.getItem() == Items.BAMBOO
+              || itemStack.getItem() == Items.SUGAR_CANE)
         {
             return false;
         }
@@ -573,8 +574,6 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             plantables.addAll(ImmutableList.copyOf(allBlocks.stream()
                                                      .filter(this::isPlantable)
-                                                     .filter(storage -> storage.getItem() != Items.CACTUS && storage.getItem() != Items.BAMBOO
-                                                                          && storage.getItem() != Items.SUGAR_CANE)
                                                      .map(ItemStorage::new)
                                                      .collect(Collectors.toList())));
         }
