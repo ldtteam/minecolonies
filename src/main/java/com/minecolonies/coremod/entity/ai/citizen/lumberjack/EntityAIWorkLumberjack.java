@@ -316,58 +316,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     protected IAIState dumpInventory() {
 
         final IBuilding building = getOwnBuilding();
-        if (building == null)
+        if (building != null)
         {
-            // Uh oh, that shouldn't happen. Restart AI.
-            return afterDump();
-        }
-
-        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
-        {
-            if(checkIfStuck()){
-                tryUnstuck();
-            }
-            setDelay(WALK_DELAY);
-            return INVENTORY_FULL;
-        }
-
-        if (InventoryUtils.isProviderFull(building))
-        {
-            final ICitizenData citizenData = worker.getCitizenData();
-            if (citizenData != null)
+            if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
             {
-                citizenData
-                        .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
-                                ChatPriority.IMPORTANT));
+                if(checkIfStuck()){
+                    tryUnstuck();
+                }
+                setDelay(WALK_DELAY);
+                return INVENTORY_FULL;
             }
-
-            // In this case, pickup during crafting is ok, since cleaning a full inventory is very important.
-            // Note that this will not create a pickup request when another request is already in progress.
-            if (building.getPickUpPriority() > 0)
-            {
-                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
-            }
-            alreadyKept.clear();
-            slotAt = 0;
-            this.clearActionsDone();
-            return afterDump();
         }
-        else if (dumpOneMoreSlot())
-        {
-            return INVENTORY_FULL;
-        }
-
-        alreadyKept.clear();
-        slotAt = 0;
-        this.clearActionsDone();
-
-        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
-        {
-            // Worker is not currently crafting, pickup is allowed.
-            // Note that this will not create a pickup request when another request is already in progress.
-            building.createPickupRequest(building.getPickUpPriority());
-        }
-        return afterDump();
+        return super.dumpInventory();
     }
 
     /**
