@@ -278,14 +278,18 @@ public class BuildingBaker extends AbstractFilterableListBuilding
 
         Optional<Boolean> isRecipeAllowed;
 
-        if (!super.canRecipeBeAdded(token)) {
+        if (!super.canRecipeBeAdded(token))
+        {
             return false;
         }
 
         isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent()) {
+        if (isRecipeAllowed.isPresent())
+        {
             return isRecipeAllowed.get();
-        } else {
+        }
+        else
+        {
             // Additional recipe rules
 
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
