@@ -263,7 +263,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
         }
 
-        return Optional.ofNullable(false);
+        return Optional.empty();
     }
 
     @Override
