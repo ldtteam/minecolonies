@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJ
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -27,7 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -199,7 +200,7 @@ public class JobDeliveryman extends AbstractJob
         }
         getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
 
-        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == MAX_DELIVERYMAN_PLAYER_PRIORITY)
+        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
         {
             getCitizen().getCitizenEntity()
               .get()
@@ -213,7 +214,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(@NotNull final boolean successful)
+    public void finishRequest(final boolean successful)
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
@@ -221,6 +222,15 @@ public class JobDeliveryman extends AbstractJob
         }
 
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
+
+        if (getColony().getRequestManager().getRequestForToken(current) == null)
+        {
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+            {
+                getTaskQueueFromDataStore().removeFirst();
+            }
+            return;
+        }
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 

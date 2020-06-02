@@ -545,29 +545,43 @@ public class WindowCitizen extends AbstractWindowRequestTree
             final Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Label.class)
               .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
+            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
+              .setImage(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png");
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Label.class)
                   .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
+                  .setImage(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Label.class)
                   .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
+                  .setImage(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
 
             final Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Label.class)
               .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
+            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
+              .setImage(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png");
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Label.class)
                   .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
+                  .setImage(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Label.class)
                   .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
+                  .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
         }
     }

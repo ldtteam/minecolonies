@@ -956,6 +956,11 @@ public final class WindowConstants
     public static final String REQUEST_SHORT_DETAIL = "shortDetail";
 
     /**
+     * Id of the short detail label.
+     */
+    public static final String REQUEST_PRIORITY = "priority";
+
+    /**
      * Id of the requester label.
      */
     public static final String REQUESTER = "requester";
@@ -1131,15 +1136,16 @@ public final class WindowConstants
     /**
      * The job modifier page.
      */
-    public static final String JOB_TITLE_LABEL = "jobLabel";
-    public static final String JOB_DESC_LABEL = "skillexplanation";
-    public static final String PRIMARY_SKILL_LABEL = "primary";
-    public static final String PRIMARY_SKILL_COM = "comp1";
-    public static final String PRIMARY_SKILL_ADV = "adverse1";
+    public static final String JOB_TITLE_LABEL       = "jobLabel";
+    public static final String JOB_DESC_LABEL        = "skillexplanation";
+    public static final String PRIMARY_SKILL_LABEL   = "primary";
+    public static final String PRIMARY_SKILL_COM     = "comp1";
+    public static final String PRIMARY_SKILL_ADV     = "adverse1";
     public static final String SECONDARY_SKILL_LABEL = "secondary";
-    public static final String SECONDARY_SKILL_COM = "comp2";
-    public static final String SECONDARY_SKILL_ADV    = "adverse2";
-
+    public static final String SECONDARY_SKILL_COM   = "comp2";
+    public static final String SECONDARY_SKILL_ADV   = "adverse2";
+    public static final String IMAGE_APPENDIX        = "img";
+    public static final String BASE_IMG_SRC          = "minecolonies:textures/entity/skills/small/";
 
     /**
      * public constructor to hide implicit public one.
