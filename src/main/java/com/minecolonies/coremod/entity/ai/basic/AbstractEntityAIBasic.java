@@ -62,7 +62,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.scaledPriority;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -118,6 +119,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Slot he is currently trying to dump.
      */
     private int slotAt = 0;
+
+    /**
+     * Indicator if something has actually been dumped.
+     */
+    private boolean hasDumpedItems = false;
 
     /**
      * Delay for walking.
@@ -1026,7 +1032,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             // Note that this will not create a pickup request when another request is already in progress.
             if (building.getPickUpPriority() > 0)
             {
-                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                building.createPickupRequest(getMaxBuildingPriority(true));
+                hasDumpedItems = false;
             }
             alreadyKept.clear();
             slotAt = 0;
@@ -1042,11 +1049,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
 
-        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && hasDumpedItems)
         {
             // Worker is not currently crafting, pickup is allowed.
             // Note that this will not create a pickup request when another request is already in progress.
-            building.createPickupRequest(building.getPickUpPriority());
+            building.createPickupRequest(scaledPriority(building.getPickUpPriority()));
+            hasDumpedItems = false;
         }
         return afterDump();
     }
@@ -1119,6 +1127,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
+                hasDumpedItems = true;
             }
         }
         slotAt++;

@@ -307,10 +307,10 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * The call will return false if a pickup request already exists, or if the priority is not within
      * the proper range, or if the pickup priority is set to NEVER (0).
      *
-     * @param priority The priority of the pickup request.
+     * @param scaledPriority The priority of the pickup request. This value is considered already scaled!
      * @return true if a pickup request could be created, false if not.
      */
-    boolean createPickupRequest(final int priority);
+    boolean createPickupRequest(final int scaledPriority);
 
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();

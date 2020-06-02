@@ -10,6 +10,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Pickup extends AbstractDeliverymanRequestable
 {
+
+    /**
+     * Constructor for Delivery requests
+     *
+     * @param priority The priority of the request.
+     */
     public Pickup(final int priority)
     {
         super(priority);
