@@ -54,9 +54,8 @@ public interface ICitizenInventoryHandler
     boolean hasItemInInventory(Item item);
 
     /**
-     * On Inventory change, mark the building dirty.
+     * Checks whether or not the inventory is full
+     * @return true if the inventory is full
      */
-    void onInventoryChanged();
-
     boolean isInventoryFull();
 }

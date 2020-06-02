@@ -1,12 +1,12 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
 /**
@@ -29,24 +29,6 @@ public class TileEntityStash extends TileEntityColonyBuilding
     }
 
     /**
-     * Called when the inventory of the tileEntity it holds it's changed
-     *
-     * @param isEmpty whether the inventory is empty.
-     */
-    private void buildingInventoryChanged(boolean isEmpty)
-    {
-        IBuildingContainer building = getBuilding();
-        if (!isEmpty && building instanceof IBuilding && building.getPriorityState() == AUTOMATIC)
-        {
-            IBuilding iBuilding = (IBuilding) building;
-            if (!iBuilding.isBeingGathered())
-            {
-                iBuilding.alterPickUpPriority(MAX_PRIO);
-            }
-        }
-    }
-
-    /**
      * An {@link ItemStackHandler} that notifies the container TileEntity when it's inventory has changed.
      */
     public class NotifyingRackInventory extends RackInventory
@@ -57,10 +39,23 @@ public class TileEntityStash extends TileEntityColonyBuilding
         }
 
         @Override
-        protected void onContentsChanged(int slot)
+        protected void onContentsChanged(final int slot)
         {
             super.onContentsChanged(slot);
-            buildingInventoryChanged(isEmpty());
+
+            if (world != null && !world.isRemote && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+            {
+                final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                if (colony != null)
+                {
+                    final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                    if (!freeStacks())
+                    {
+                        // Note that createPickupRequest will make sure to only create on request per building.
+                        building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                    }
+                }
+            }
         }
     }
 }

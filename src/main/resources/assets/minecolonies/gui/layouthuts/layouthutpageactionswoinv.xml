@@ -20,18 +20,16 @@
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 
-    <buttonimage id="deliveryPrioState" size="129 17" pos="30 135" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <label id="prioValue" size="95 15" pos="30 135" textalign="MIDDLE_LEFT" color="black"/>
 
-    <label id="prioLabel" size="64 15" pos="30 154" textalign="MIDDLE_RIGHT" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.buildPrio)"/>
-    <label id="prioValue" size="27 15" pos="96 154" textalign="MIDDLE" color="black"/>
-
-    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 154" textcolor="black"
+    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 135" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="-"/>
-    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 154" textcolor="black"
+    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 135" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="+"/>
 
+    <buttonimage id="forcePickup" size="129 17" pos="30 154" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.forcepickup)"/>
 
     <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"

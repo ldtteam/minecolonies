@@ -632,7 +632,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
             {
                 p.setOnRails(node.isOnRails());
-                if (p.isOnRails() && !node.parent.isOnRails())
+                if (p.isOnRails() && (!node.parent.isOnRails() || node.parent.parent == null))
                 {
                     p.setRailsEntry();
                 }

@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.CraftingUpdate;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.InitialUpdate;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.ResetRSToAddDelivermanPickups;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.ResetRSToFixBuildingId;
 
 import java.util.Comparator;
@@ -19,7 +20,8 @@ public class UpdateHandler implements IUpdateHandler
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
       new InitialUpdate(),
       new CraftingUpdate(),
-      new ResetRSToFixBuildingId()
+      new ResetRSToFixBuildingId(),
+      new ResetRSToAddDelivermanPickups()
     );
 
     private final IStandardRequestManager manager;
