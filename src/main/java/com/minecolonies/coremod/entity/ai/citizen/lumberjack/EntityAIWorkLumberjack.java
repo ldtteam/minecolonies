@@ -235,6 +235,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return GET_RECIPE;
     }
 
+    @Override
+    protected boolean walkToBlock(@NotNull BlockPos stand, int range) {
+        boolean walking = super.walkToBlock(stand, range);
+        if(walking){
+            if(checkIfStuck()){
+                tryUnstuck();
+            }
+        }
+        return walking;
+    }
+
     /**
      * Checks if a stack is a type of log.
      *
@@ -255,9 +266,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (walkToBuilding())
         {
-            if(checkIfStuck()){
-                tryUnstuck();
-            }
             return getState();
         }
         return PREPARING;
@@ -309,25 +317,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
 
         return LUMBERJACK_CHOP_TREE;
-    }
-
-    @NotNull
-    @Override
-    protected IAIState dumpInventory() {
-
-        final IBuilding building = getOwnBuilding();
-        if (building != null)
-        {
-            if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
-            {
-                if(checkIfStuck()){
-                    tryUnstuck();
-                }
-                setDelay(WALK_DELAY);
-                return INVENTORY_FULL;
-            }
-        }
-        return super.dumpInventory();
     }
 
     /**
