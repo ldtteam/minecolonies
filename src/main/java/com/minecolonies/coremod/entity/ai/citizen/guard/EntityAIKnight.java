@@ -30,8 +30,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
-import static com.minecolonies.api.research.util.ResearchConstants.MELEE_DAMAGE;
-import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -197,7 +196,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                                                  .getColony()
                                                  .getResearchManager()
                                                  .getResearchEffects()
-                                                 .getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class)
+                                                 .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class)
                                                  .getEffect())
             {
                 ((MobEntity) target).setAttackTarget(worker);
