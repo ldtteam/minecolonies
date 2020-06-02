@@ -15,6 +15,7 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -192,6 +193,16 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
+            if (target instanceof MobEntity && worker.getCitizenColonyHandler()
+                                                 .getColony()
+                                                 .getResearchManager()
+                                                 .getResearchEffects()
+                                                 .getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class)
+                                                 .getEffect())
+            {
+                ((MobEntity) target).setAttackTarget(worker);
+            }
+
             worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
