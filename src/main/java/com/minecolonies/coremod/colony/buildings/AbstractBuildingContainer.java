@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -57,9 +58,9 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     protected AbstractTileEntityColonyBuilding tileEntity;
 
     /**
-     * Priority of the building in the pickUpList.
+     * Priority of the building in the pickUpList. This is the unscaled value (mainly for a more intuitive GUI).
      */
-    private int pickUpPriority = 1;
+    private int unscaledPickUpPriority = 1;
 
     /**
      * The constructor for the building container.
@@ -85,14 +86,14 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
         if (compound.keySet().contains(TAG_PRIO))
         {
-            this.pickUpPriority = compound.getInt(TAG_PRIO);
+            this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
         if (compound.keySet().contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never
             if (compound.getInt(TAG_PRIO_STATE) == 0)
             {
-                this.pickUpPriority = 0;
+                this.unscaledPickUpPriority = 0;
             }
         }
     }
@@ -108,7 +109,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             containerTagList.add(NBTUtil.writeBlockPos(pos));
         }
         compound.put(TAG_CONTAINERS, containerTagList);
-        compound.putInt(TAG_PRIO, this.pickUpPriority);
+        compound.putInt(TAG_PRIO, this.unscaledPickUpPriority);
 
         return compound;
     }
@@ -116,13 +117,13 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public int getPickUpPriority()
     {
-        return this.pickUpPriority;
+        return this.unscaledPickUpPriority;
     }
 
     @Override
     public void alterPickUpPriority(final int value)
     {
-        this.pickUpPriority = MathHelper.clamp(this.pickUpPriority + value, 0, MAX_DELIVERYMAN_STANDARD_PRIORITY);
+        this.unscaledPickUpPriority = MathHelper.clamp(this.unscaledPickUpPriority + value, 0, getMaxBuildingPriority(false));
     }
 
     @Override
