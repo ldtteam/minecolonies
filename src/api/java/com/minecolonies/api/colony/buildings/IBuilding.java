@@ -34,6 +34,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 {
     /**
      * Getter for the custom name of a building.
+     *
      * @return the custom name.
      */
     @NotNull
@@ -47,6 +48,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Executed every time when citizen finish inventory cleanup called after citizen got paused.
      * Use for cleaning a state only.
+     *
      * @param citizen cleanup for citizen.
      */
     void onCleanUp(ICitizenData citizen);
@@ -54,6 +56,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Executed when RestartCitizenMessage is called and worker is paused.
      * Use for reseting, onCleanUp is called before this
+     *
      * @param citizen the citizen assigned to the building.
      */
     void onRestart(ICitizenData citizen);
@@ -87,6 +90,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * When the building is repositioned.
+     *
      * @param oldBuilding the moved building.
      */
     void onBuildingMove(final IBuilding oldBuilding);
@@ -102,6 +106,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.
+     *
      * @param newLevel the new level of the building.
      * @return true if so.
      */
@@ -126,6 +131,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
+     *
      * @param buildingLevel the building level.
      * @return the radius.
      */
@@ -143,41 +149,30 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void serializeToView(@NotNull PacketBuffer buf);
 
     /**
-     * Check if a building is being gathered.
-     *
-     * @return true if so.
-     */
-    boolean isBeingGathered();
-
-    /**
      * Set the custom building name of the building.
+     *
      * @param name the name to set.
      */
     void setCustomBuildingName(String name);
 
     /**
      * Check if the building should be gathered by the dman.
+     *
      * @return true if so.
      */
     boolean canBeGathered();
 
     /**
-     * Set if a building is being gathered.
-     *
-     * @param gathering value to set.
-     */
-    void setBeingGathered(boolean gathering);
-
-    /**
      * Requests an upgrade for the current building.
      *
-     * @param player the requesting player.
+     * @param player  the requesting player.
      * @param builder the assigned builder.
      */
     void requestUpgrade(PlayerEntity player, BlockPos builder);
 
     /**
      * Requests a repair for the current building.
+     *
      * @param builder the assigned builder.
      */
     void requestRepair(BlockPos builder);
@@ -246,9 +241,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     /**
      * Create a request for the building.
      *
-     * @param requested   the request to create.
-     * @param async       if async or not.
-     * @param <R>         the type of the request.
+     * @param requested the request to create.
+     * @param async     if async or not.
+     * @param <R>       the type of the request.
      * @return the Token of the request.
      */
     <R extends IRequestable> IToken<?> createRequest(@NotNull R requested, boolean async);
@@ -305,6 +300,18 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull ICitizenData citizenData, @NotNull ItemStack stack);
 
+    /**
+     * Creates a pickup request for the building.
+     * It will make sure that only one pickup request exists per building,
+     * so it's safe to call multiple times.
+     * The call will return false if a pickup request already exists, or if the priority is not within
+     * the proper range, or if the pickup priority is set to NEVER (0).
+     *
+     * @param scaledPriority The priority of the pickup request. This value is considered already scaled!
+     * @return true if a pickup request could be created, false if not.
+     */
+    boolean createPickupRequest(final int scaledPriority);
+
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();
 
@@ -318,19 +325,22 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
 
     /**
      * Remove the minimum stock.
+     *
      * @param itemStack the stack to remove.
      */
     void removeMinimumStock(final ItemStack itemStack);
 
     /**
      * Add the minimum stock of the warehouse to this building.
+     *
      * @param itemStack the itemStack to add.
-     * @param quantity the quantity.
+     * @param quantity  the quantity.
      */
     void addMinimumStock(final ItemStack itemStack, final int quantity);
 
     /**
      * Open the right crafting container.
+     *
      * @param player the player opening it.
      */
     void openCraftingContainer(final ServerPlayerEntity player);

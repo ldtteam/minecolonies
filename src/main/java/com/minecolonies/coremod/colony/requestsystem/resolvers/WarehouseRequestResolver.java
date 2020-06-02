@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
 
 /**
@@ -40,8 +41,8 @@ import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRI
 public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
     public WarehouseRequestResolver(
-                                     @NotNull final ILocation location,
-                                     @NotNull final IToken<?> token)
+      @NotNull final ILocation location,
+      @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -68,7 +69,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         if (!manager.getColony().getWorld().isRemote)
         {
             if (!isRequestChainValid(manager, requestToCheck))
+            {
                 return false;
+            }
 
             final Colony colony = (Colony) manager.getColony();
             final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
@@ -76,7 +79,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             try
             {
-                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount()));
+                return wareHouses.stream()
+                         .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
+                           requestToCheck.getRequest().getCount()));
             }
             catch (Exception e)
             {
@@ -90,16 +95,22 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
         if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
+        {
             return false;
+        }
 
         if (!requestToCheck.hasParent())
+        {
             return true;
+        }
 
         final IRequest<?> parentRequest = manager.getRequestForToken(requestToCheck.getParent());
 
         //Should not happen but just to be sure.
         if (parentRequest == null)
+        {
             return true;
+        }
 
         return isRequestChainValid(manager, parentRequest);
     }
@@ -113,10 +124,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return Lists.newArrayList();
+        }
 
         if (!(manager.getColony() instanceof Colony))
+        {
             return Lists.newArrayList();
+        }
 
         final Colony colony = (Colony) manager.getColony();
 
@@ -186,11 +201,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 completedRequest.addDelivery(deliveryStack.copy());
 
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
+                final ILocation itemStackLocation =
+                  manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
 
-                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy());
+                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+                final IToken<?> requestToken =
+                  manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
 
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);

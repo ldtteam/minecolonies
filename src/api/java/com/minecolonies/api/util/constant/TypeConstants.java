@@ -4,9 +4,14 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.requestable.*;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -27,16 +32,16 @@ public class TypeConstants
     public static final TypeToken<Class>     CLASS     = TypeToken.of(Class.class);
 
     /////General purpose
-    public static final TypeToken<IToken>                 ITOKEN             = TypeToken.of(IToken.class);
-    public static final TypeToken<ILocation>              ILOCATION          = TypeToken.of(ILocation.class);
-    public static final TypeToken<UUID>                   UUID               = TypeToken.of(UUID.class);
-    public static final TypeToken<FactoryVoidInput>       FACTORYVOIDINPUT   = TypeToken.of(FactoryVoidInput.class);
-    public static final TypeToken<Object>                 OBJECT             = TypeToken.of(Object.class);
-    public static final TypeToken<IRequestable>           REQUESTABLE        = TypeToken.of(IRequestable.class);
-    public static final TypeToken<IRetryable>             RETRYABLE          = TypeToken.of(IRetryable.class);
-    public static final TypeToken<RecipeStorage>          RECIPE             = TypeToken.of(RecipeStorage.class);
-    public static final TypeToken<IDeliverable>           DELIVERABLE        = TypeToken.of(IDeliverable.class);
-    public static final TypeToken<ItemStorage>            ITEMSTORAGE     = TypeToken.of(ItemStorage.class);
+    public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
+    public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
+    public static final TypeToken<UUID>             UUID             = TypeToken.of(UUID.class);
+    public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);
+    public static final TypeToken<Object>           OBJECT           = TypeToken.of(Object.class);
+    public static final TypeToken<IRequestable>     REQUESTABLE      = TypeToken.of(IRequestable.class);
+    public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
+    public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
+    public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
+    public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>                             PLAYER_REQUEST_RESOLVER                         = TypeToken.of(IPlayerRequestResolver.class);
@@ -67,5 +72,6 @@ public class TypeConstants
     public static final TypeToken<PrivateCrafting> PRIVATE_CRAFTING = TypeToken.of(PrivateCrafting.class);
     public static final TypeToken<PublicCrafting>  PUBLIC_CRAFTING  = TypeToken.of(PublicCrafting.class);
     public static final TypeToken<Delivery>        DELIVERY         = TypeToken.of(Delivery.class);
+    public static final TypeToken<Pickup>          PICKUP           = TypeToken.of(Pickup.class);
     public static final TypeToken<Tool>            TOOL             = TypeToken.of(Tool.class);
 }

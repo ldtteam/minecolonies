@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -327,6 +328,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
+        if (citizen.getWorkBuilding() != null)
+        {
+            citizen.getWorkBuilding().removeCitizen(citizen);
+        }
+
         if (!super.assignCitizen(citizen))
         {
             Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:" + this.getJobName());
@@ -434,6 +440,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             recipes.add(token);
             markDirty();
+            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipeStorage != null)
+            {
+                colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+            }
             return true;
         }
         return false;

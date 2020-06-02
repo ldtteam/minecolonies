@@ -10,10 +10,13 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -32,13 +35,13 @@ public final class StandardRequestFactories
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_REQUESTER = "Requester";
-    private static final String NBT_TOKEN     = "Token";
-    private static final String NBT_STATE     = "State";
-    private static final String NBT_REQUESTED = "Requested";
-    private static final String NBT_RESULT    = "Result";
-    private static final String NBT_PARENT    = "Parent";
-    private static final String NBT_CHILDREN  = "Children";
+    private static final String NBT_REQUESTER  = "Requester";
+    private static final String NBT_TOKEN      = "Token";
+    private static final String NBT_STATE      = "State";
+    private static final String NBT_REQUESTED  = "Requested";
+    private static final String NBT_RESULT     = "Result";
+    private static final String NBT_PARENT     = "Parent";
+    private static final String NBT_CHILDREN   = "Children";
     private static final String NBT_DELIVERIES = "Deliveries";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -56,10 +59,10 @@ public final class StandardRequestFactories
          */
         @Override
         public StandardRequests.ItemStackRequest getNewInstance(
-                                                                 @NotNull final Stack input,
-                                                                 @NotNull final IRequester location,
-                                                                 @NotNull final IToken token,
-                                                                 @NotNull final RequestState initialState)
+          @NotNull final Stack input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
         }
@@ -205,7 +208,7 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public TypeToken<Delivery> getFactoryInputType()
         {
-            return TypeToken.of(Delivery.class);
+            return TypeConstants.DELIVERY;
         }
 
         /**
@@ -253,12 +256,86 @@ public final class StandardRequestFactories
          */
         @Override
         public StandardRequests.DeliveryRequest getNewInstance(
-                                                                @NotNull final Delivery input,
-                                                                @NotNull final IRequester location,
-                                                                @NotNull final IToken token,
-                                                                @NotNull final RequestState initialState)
+          @NotNull final Delivery input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class PickupRequestFactory implements IRequestFactory<Pickup, StandardRequests.PickupRequest>
+    {
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.PickupRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.PickupRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<Pickup> getFactoryInputType()
+        {
+            return TypeConstants.PICKUP;
+        }
+
+        /**
+         * Method to serialize a given constructable.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
+        {
+            return serializeToNBT(controller, request, Pickup::serialize);
+        }
+
+        /**
+         * Method to deserialize a given constructable.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.PickupRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        {
+            return deserializeFromNBT(controller, nbt, Pickup::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.PickupRequest getNewInstance(
+          @NotNull final Pickup input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.PickupRequest(location, token, initialState, input);
         }
     }
 
@@ -266,8 +343,8 @@ public final class StandardRequestFactories
     public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>> implements IRequestFactory<C, R>
     {
         private final IObjectConstructor<C, R> constructor;
-        private final Class<C> cClass;
-        private final Class<R> rClass;
+        private final Class<C>                 cClass;
+        private final Class<R>                 rClass;
         private final IObjectToNBTConverter<C> serializer;
         private final INBTToObjectConverter<C> deserializer;
 
@@ -275,7 +352,8 @@ public final class StandardRequestFactories
           final IObjectConstructor<C, R> constructor,
           final Class<C> cClass,
           final Class<R> rClass,
-          final IObjectToNBTConverter<C> serializer, final INBTToObjectConverter<C> deserializer) {
+          final IObjectToNBTConverter<C> serializer, final INBTToObjectConverter<C> deserializer)
+        {
             this.constructor = constructor;
             this.cClass = cClass;
             this.rClass = rClass;
@@ -324,7 +402,8 @@ public final class StandardRequestFactories
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
-    public static final class PrivateCraftingRequestFactory extends StandardRequestFactories.AbstractCraftingRequestFactory<PrivateCrafting, StandardRequests.PrivateCraftingRequest>
+    public static final class PrivateCraftingRequestFactory
+      extends StandardRequestFactories.AbstractCraftingRequestFactory<PrivateCrafting, StandardRequests.PrivateCraftingRequest>
     {
 
         public PrivateCraftingRequestFactory()
@@ -357,10 +436,10 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.ToolRequest getNewInstance(
-                                                            @NotNull final Tool input,
-                                                            @NotNull final IRequester location,
-                                                            @NotNull final IToken token,
-                                                            @NotNull final RequestState initialState)
+          @NotNull final Tool input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.ToolRequest(location, token, initialState, input);
         }
@@ -405,10 +484,10 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.FoodRequest getNewInstance(
-                                                            @NotNull final Food input,
-                                                            @NotNull final IRequester location,
-                                                            @NotNull final IToken token,
-                                                            @NotNull final RequestState initialState)
+          @NotNull final Food input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.FoodRequest(location, token, initialState, input);
         }
@@ -453,10 +532,10 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.SmeltAbleOreRequest getNewInstance(
-                @NotNull final SmeltableOre input,
-                @NotNull final IRequester location,
-                @NotNull final IToken token,
-                @NotNull final RequestState initialState)
+          @NotNull final SmeltableOre input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.SmeltAbleOreRequest(location, token, initialState, input);
         }
@@ -487,11 +566,11 @@ public final class StandardRequestFactories
         public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return deserializeFromNBT(controller, nbt, SmeltableOre::deserialize,
-                    (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
-                            requested,
-                            token,
-                            requester,
-                            requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -501,10 +580,10 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.BurnableRequest getNewInstance(
-                                                                @NotNull final Burnable input,
-                                                                @NotNull final IRequester location,
-                                                                @NotNull final IToken token,
-                                                                @NotNull final RequestState initialState)
+          @NotNull final Burnable input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
         {
             return new StandardRequests.BurnableRequest(location, token, initialState, input);
         }
@@ -550,7 +629,10 @@ public final class StandardRequestFactories
     {
     }
 
-    public static <T extends IRequestable> CompoundNBT serializeToNBT(final IFactoryController controller, final IRequest<T> request, final IObjectToNBTConverter<T> typeSerialization)
+    public static <T extends IRequestable> CompoundNBT serializeToNBT(
+      final IFactoryController controller,
+      final IRequest<T> request,
+      final IObjectToNBTConverter<T> typeSerialization)
     {
         final CompoundNBT compound = new CompoundNBT();
 
@@ -591,10 +673,10 @@ public final class StandardRequestFactories
     }
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
-                                                                                        final IFactoryController controller,
-                                                                                        final CompoundNBT compound,
-                                                                                        final INBTToObjectConverter<T> typeDeserialization,
-                                                                                        final IObjectConstructor<T, R> objectConstructor)
+      final IFactoryController controller,
+      final CompoundNBT compound,
+      final INBTToObjectConverter<T> typeDeserialization,
+      final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompound(NBT_TOKEN));

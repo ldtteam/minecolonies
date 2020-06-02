@@ -104,6 +104,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Returns the item that is currently being held by citizen.
+     *
      * @param hand the hand it is held in.
      * @return {@link ItemStack} currently being held by citizen.
      */
@@ -119,6 +120,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Set item to be held by citizen.
+     *
      * @param hand the hand it is held in.
      * @param slot Slot index with item to be held by citizen.
      */
@@ -134,6 +136,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Gets slot that hold item that is being held by citizen.
+     *
      * @param hand the hand it is held in.
      * @return Slot index of held item
      */
@@ -155,6 +158,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
     /**
      * Checks if the inventory has space
+     *
      * @return true if the main inventory (without armor slots) has an empty slot.
      */
     public boolean hasSpace()
@@ -163,8 +167,19 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
+     * Checks if the inventory is completely empty.
+     *
+     * @return true if the main inventory (without armor slots) is completely empty.
+     */
+    public boolean isEmpty()
+    {
+        return !this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> !itemStack.isEmpty());
+    }
+
+    /**
      * Resize this inventory.
-     * @param size the current size.
+     *
+     * @param size       the current size.
      * @param futureSize the future size.
      */
     private void resizeInventory(final int size, final int futureSize)

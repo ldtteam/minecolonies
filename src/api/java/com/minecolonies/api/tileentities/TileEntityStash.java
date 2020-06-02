@@ -1,49 +1,38 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
-import static com.minecolonies.api.colony.buildings.PickUpPriorityState.AUTOMATIC;
-import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
 /**
  * Class which handles the tileEntity for the Stash block.
  */
-
 public class TileEntityStash extends TileEntityColonyBuilding
 {
 
+    /**
+     * Constructor of the stash based on a tile entity type
+     *
+     * @param type tile entity type
+     */
     public TileEntityStash(final TileEntityType type)
     {
         super(type);
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);
     }
 
+    /**
+     * Default constructor of the stash
+     */
     public TileEntityStash()
     {
         super(MinecoloniesTileEntities.STASH);
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);
-    }
-
-    /**
-     * Called when the inventory of the tileEntity it holds it's changed
-     *
-     * @param isEmpty whether the inventory is empty.
-     */
-    private void buildingInventoryChanged(boolean isEmpty)
-    {
-        IBuildingContainer building = getBuilding();
-        if (!isEmpty && building instanceof IBuilding && building.getPriorityState() == AUTOMATIC)
-        {
-            IBuilding iBuilding = (IBuilding) building;
-            if (!iBuilding.isBeingGathered())
-            {
-                iBuilding.alterPickUpPriority(MAX_PRIO);
-            }
-        }
     }
 
     /**
@@ -57,10 +46,23 @@ public class TileEntityStash extends TileEntityColonyBuilding
         }
 
         @Override
-        protected void onContentsChanged(int slot)
+        protected void onContentsChanged(final int slot)
         {
             super.onContentsChanged(slot);
-            buildingInventoryChanged(isEmpty());
+
+            if (world != null && !world.isRemote && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+            {
+                final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                if (colony != null)
+                {
+                    final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                    if (!freeStacks())
+                    {
+                        // Note that createPickupRequest will make sure to only create on request per building.
+                        building.createPickupRequest(getMaxBuildingPriority(true));
+                    }
+                }
+            }
         }
     }
 }

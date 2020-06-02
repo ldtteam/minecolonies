@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 
 /**
  * A work order that the build can take to build decorations.
@@ -231,6 +232,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                     AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE,getStructureName());
         }
 
         if (this.levelUp)
