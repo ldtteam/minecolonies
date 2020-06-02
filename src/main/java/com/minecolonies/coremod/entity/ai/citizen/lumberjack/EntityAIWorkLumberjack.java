@@ -235,17 +235,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return GET_RECIPE;
     }
 
-    @Override
-    protected boolean walkToBlock(@NotNull BlockPos stand, int range) {
-        boolean walking = super.walkToBlock(stand, range);
-        if(walking){
-            if(checkIfStuck()){
-                tryUnstuck();
-            }
-        }
-        return walking;
-    }
-
     /**
      * Checks if a stack is a type of log.
      *
@@ -605,6 +594,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 // Blocks in front of the worker
                 checkPositions.add(new BlockPos(next.x, next.y, next.z));
                 checkPositions.add(new BlockPos(next.x, next.y + 1, next.z));
+                checkPositions.add(new BlockPos(next.x, next.y + 2, next.z));
                 // Block above the worker
                 checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 2, worker.getCurrentPosition().getZ()));
 
