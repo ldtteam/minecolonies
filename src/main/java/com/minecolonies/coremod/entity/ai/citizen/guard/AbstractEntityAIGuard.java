@@ -36,6 +36,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -387,7 +388,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private IAIState guard()
     {
         worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
-        return DECIDE;
+        return GUARD_GUARD;
     }
 
     /**
@@ -404,7 +405,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
         {
             TeleportHelper.teleportCitizen(worker, worker.getEntityWorld(), buildingGuards.getPositionToFollow());
-            return DECIDE;
+            return GUARD_FOLLOW;
         }
 
         if (buildingGuards.isTightGrouping())
@@ -423,7 +424,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
             }
         }
-        return DECIDE;
+        return GUARD_FOLLOW;
     }
 
     /**
@@ -433,11 +434,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState rally()
     {
-        if (buildingGuards.getPlayerToRally() == null)
-        {
-            return DECIDE;
-        }
-
         // TODO: Move this from here, this just causes lag.
         worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         this.world.getScoreboard()
@@ -446,21 +442,25 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         buildingGuards.getPlayerToRally().addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
 
         if (!worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
-                                        .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
-                                          0,
-                                          randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
+                                             .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
+                                               0,
+                                               randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
           GUARD_FOLLOW_TIGHT_RANGE))
         {
             if (!worker.isPotionActive(Effects.SPEED))
             {
                 // Guards will rally faster with higher skill.
-                // Considering 99 is the maximum for any skill, the maximum theoretical getJobModifier() = 99 + 99/4 = 124. We want them to have Speed 3
+                // Considering 99 is the maximum for any skill, the maximum theoretical getJobModifier() = 99 + 99/4 = 124. We want them to have Speed 5
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
-                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 5 * TICKS_SECOND, Math.min(3, (worker.getCitizenData().getJobModifier() / 20)), false, false));
+                worker.addPotionEffect(new EffectInstance(Effects.SPEED,
+                  5 * TICKS_SECOND,
+                  MathHelper.clamp((worker.getCitizenData().getJobModifier() / 20) + 2, 2, 5),
+                  false,
+                  false));
             }
         }
 
-        return DECIDE;
+        return GUARD_RALLY;
     }
 
     /**
@@ -479,7 +479,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             buildingGuards.arrivedAtPatrolPoint(worker);
         }
-        return DECIDE;
+        return GUARD_PATROL;
     }
 
     /**
@@ -612,11 +612,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             case FOLLOW:
                 return follow();
             default:
-                worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getPosition(), GUARD_POS_RANGE);
-                break;
+                return PREPARING;
         }
-
-        return DECIDE;
     }
 
     /**

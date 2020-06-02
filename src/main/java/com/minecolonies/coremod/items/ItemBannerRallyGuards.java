@@ -129,7 +129,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
                 if (guardTowers.size() == 0)
                 {
-                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                    LanguageHandler.sendPlayerMessage(playerIn,
                       TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
                 }
                 else if (compound.getBoolean(TAG_IS_ACTIVE))
