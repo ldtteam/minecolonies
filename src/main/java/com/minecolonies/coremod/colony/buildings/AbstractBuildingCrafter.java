@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
@@ -19,8 +18,6 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
@@ -177,54 +174,9 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
     }
 
-    /**
-     * @param token
-     * @return whether the recipe can bee added based on tokens.
-     */
+    @Override
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
-
-        ResourceLocation products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation productsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation ingredientsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
-
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
-        {
-            return Optional.of(false);
-        }
-
-        // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(productsExcluded).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(false);
-        }
-
-        // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(ingredientsExcluded).contains(stack.getItem()))
-            {
-                return Optional.of(false);
-            }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(true);
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(ingredients).contains(stack.getItem()))
-            {
-                return Optional.of(true);
-            }
-        }
-
-        return Optional.ofNullable(false);
+        return super.canRecipeBeAddedBasedOnTags(token);
     }
 }
