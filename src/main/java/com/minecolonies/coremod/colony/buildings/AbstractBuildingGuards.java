@@ -12,6 +12,8 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -427,7 +429,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             ItemStack stack = rallyPlayer.inventory.getStackInSlot(i);
             if (stack.getItem() instanceof ItemBannerRallyGuards)
             {
-                if (((ItemBannerRallyGuards)(stack.getItem())).isActiveForGuardTower(stack, this))
+                if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))
                 {
                     return rallyPlayer;
                 }
@@ -674,6 +676,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 patrolTargets.add(buf.readBlockPos());
             }
 
+            mobsToAttack.clear();
             final int mobSize = buf.readInt();
             for (int i = 0; i < mobSize; i++)
             {
@@ -683,6 +686,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
             guardPos = buf.readBlockPos();
 
+            guards.clear();
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
@@ -958,7 +962,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 }
             }
         }
+
         this.followPlayer = player;
+
+        for (final ICitizenData iCitizenData : getAssignedCitizen())
+        {
+            AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
+            if (job != null)
+            {
+                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
+            }
+        }
     }
 
     @Override
@@ -992,7 +1006,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
         */
         this.rallyPlayer = player;
-        this.markDirty();
+
+        for (final ICitizenData iCitizenData : getAssignedCitizen())
+        {
+            AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
+            if (job != null)
+            {
+                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
+            }
+        }
     }
 
     /**

@@ -214,7 +214,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(@NotNull final boolean successful)
+    public void finishRequest(final boolean successful)
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
@@ -222,6 +222,15 @@ public class JobDeliveryman extends AbstractJob
         }
 
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
+
+        if (getColony().getRequestManager().getRequestForToken(current) == null)
+        {
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+            {
+                getTaskQueueFromDataStore().removeFirst();
+            }
+            return;
+        }
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 

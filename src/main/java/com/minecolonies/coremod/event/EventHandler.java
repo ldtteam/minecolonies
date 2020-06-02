@@ -390,13 +390,13 @@ public class EventHandler
                 }
             }
 
-            int size = player.inventory.getSizeInventory();
+            final int size = player.inventory.getSizeInventory();
             for (int i = 0; i < size; i++)
             {
-                ItemStack stack = player.inventory.getStackInSlot(i);
+                final ItemStack stack = player.inventory.getStackInSlot(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
-                    ((ItemBannerRallyGuards)(stack.getItem())).broadcastRallyState(stack, player.world, player);
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.world, player);
                 }
             }
         }

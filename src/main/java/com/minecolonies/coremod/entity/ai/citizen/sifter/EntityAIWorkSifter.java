@@ -118,7 +118,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 1;
+        return 10;
     }
 
     /**
@@ -140,8 +140,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
-            incrementActionsDone();
-            return START_WORKING;
+            return DUMPING;
         }
 
         if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
