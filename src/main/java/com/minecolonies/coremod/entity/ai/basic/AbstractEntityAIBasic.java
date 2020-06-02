@@ -1008,7 +1008,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return afterDump();
         }
 
-        if (!walkToBlock(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        if (walkToBlock(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
         {
             setDelay(WALK_DELAY);
             return INVENTORY_FULL;
