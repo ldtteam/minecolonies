@@ -163,6 +163,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PROGRESSING;
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
+        if (spawnerCount <= 0 && raiders.size() == 0)
+        {
+            status = EventStatus.WAITING;
+            return;
+        }
+
         if (!respawns.isEmpty())
         {
             for (final Tuple<EntityType, BlockPos> entry : respawns)
@@ -232,7 +238,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawnerCount <= 0)
             {
                 daysToGo = 1;
-                status = EventStatus.WAITING;
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
