@@ -150,27 +150,6 @@ public final class ShipBasedRaiderUtils
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
-        int y = 3;
-        final BlockInfo info = ship.getBlockInfoAsMap().getOrDefault(ship.getPrimaryBlockOffset(), null);
-        if (info.getTileEntityData() != null)
-        {
-            final CompoundNBT teData = ship.getTileEntityData(pos, ship.getPrimaryBlockOffset());
-            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-            {
-                final TileEntity entity = TileEntity.create(info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProvider)
-                {
-                    for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
-                    {
-                        if (entry.getValue().contains("groundlevel"))
-                        {
-                            y = entry.getKey().getY() + 1;
-                        }
-                    }
-                }
-            }
-        }
-
         return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),

@@ -89,6 +89,6 @@ public enum ShipSize
         {
             shipSize = BIG;
         }
-        return BIG;
+        return shipSize;
     }
 }

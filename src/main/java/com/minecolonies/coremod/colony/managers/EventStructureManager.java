@@ -109,7 +109,7 @@ public class EventStructureManager implements IEventStructureManager
                     {
                         if (entry.getValue().contains("groundlevel"))
                         {
-                            y = entry.getKey().getY() + 1;
+                            y = entry.getKey().getY();
                         }
                     }
                 }
