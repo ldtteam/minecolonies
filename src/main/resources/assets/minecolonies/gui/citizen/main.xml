@@ -11,7 +11,7 @@
     <view id="saturationBar" size="120 11" pos="35 54"/>
     <view id="happinessBar" size="120 11" pos="35 64"/>
     <label id="happinessLabel" size="30 11" color="black" pos="150 73"/>
-
+    
     <label id="title" size="70 11" pos="20 92" color="black" textalign="MIDDLE"
         label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
     <group size="90 115" pos="36 105">
