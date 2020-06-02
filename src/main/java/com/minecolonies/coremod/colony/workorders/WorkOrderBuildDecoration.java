@@ -232,6 +232,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                     AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE,getStructureName());
         }
 
         if (this.levelUp)
@@ -242,7 +243,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                 ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
             }
         }
-        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE,getStructureName());
     }
 
     @Override

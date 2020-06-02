@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 
 public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PublicCrafting>
 {
@@ -80,8 +80,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
             completedRequest.getDeliveries().forEach(itemStack -> {
-                // Followup-Deliveries for crafting requests have the highest possible priority. They are important after all!
-                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(this,

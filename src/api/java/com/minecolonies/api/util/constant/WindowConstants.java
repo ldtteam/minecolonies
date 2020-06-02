@@ -956,6 +956,11 @@ public final class WindowConstants
     public static final String REQUEST_SHORT_DETAIL = "shortDetail";
 
     /**
+     * Id of the short detail label.
+     */
+    public static final String REQUEST_PRIORITY = "priority";
+
+    /**
      * Id of the requester label.
      */
     public static final String REQUESTER = "requester";
