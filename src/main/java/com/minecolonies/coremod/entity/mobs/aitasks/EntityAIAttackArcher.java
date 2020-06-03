@@ -74,7 +74,7 @@ public class EntityAIAttackArcher extends Goal
     public boolean shouldContinueExecuting()
     {
         target = entity.getAttackTarget();
-        if (target != null && target.isAlive() && entity.isAlive())
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;
