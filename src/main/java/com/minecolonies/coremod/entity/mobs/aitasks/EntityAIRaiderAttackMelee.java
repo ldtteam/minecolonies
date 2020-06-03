@@ -61,7 +61,8 @@ public class EntityAIRaiderAttackMelee extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
+        target = entity.getAttackTarget();
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;

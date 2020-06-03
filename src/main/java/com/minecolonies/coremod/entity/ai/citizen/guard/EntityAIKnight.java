@@ -15,6 +15,7 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -29,8 +30,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
-import static com.minecolonies.api.research.util.ResearchConstants.MELEE_DAMAGE;
-import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -192,6 +192,16 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
+            if (target instanceof MobEntity && worker.getCitizenColonyHandler()
+                                                 .getColony()
+                                                 .getResearchManager()
+                                                 .getResearchEffects()
+                                                 .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class)
+                                                 .getEffect())
+            {
+                ((MobEntity) target).setAttackTarget(worker);
+            }
+
             worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
