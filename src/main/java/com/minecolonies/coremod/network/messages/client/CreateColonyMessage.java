@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.client;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -13,6 +14,7 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -72,6 +74,12 @@ public class CreateColonyMessage implements IMessage
 
         if (sender == null)
         {
+            return;
+        }
+
+        if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative())
+        {
+            LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.supplyneed");
             return;
         }
 
