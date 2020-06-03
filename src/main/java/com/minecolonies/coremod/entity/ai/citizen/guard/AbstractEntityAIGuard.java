@@ -314,6 +314,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return null;
     }
 
+
     /**
      * Regen at the building and continue when more than half health.
      *
@@ -434,11 +435,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState rally()
     {
-        // TODO: Move this from here, this just causes lag.
-        worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         this.world.getScoreboard()
           .addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
 
+        worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         buildingGuards.getPlayerToRally().addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
 
         if (!worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()

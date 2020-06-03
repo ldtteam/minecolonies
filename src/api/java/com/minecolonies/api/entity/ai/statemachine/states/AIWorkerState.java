@@ -207,7 +207,7 @@ public enum AIWorkerState implements IAIState
     /**
      * Rally to a player.
      */
-    GUARD_RALLY(true),
+    GUARD_RALLY(false),
 
     /**
      * Regen at the building.
