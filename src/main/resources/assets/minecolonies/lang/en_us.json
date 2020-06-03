@@ -451,6 +451,7 @@
   "com.minecolonies.coremod.job.guard": "GuardTower",
 
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a supply ship or supply camp!",
+  "com.minecolonies.coremod.supplyneed": "Start off MineColonies by crafting a Supply Camp or Ship and placing it via right clicking the item on the ground before trying to create a colony!",
 
   "com.minecolonies.coremod.gui.citizen.skills": "Skills",
   "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
