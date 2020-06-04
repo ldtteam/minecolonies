@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public interface ISimpleModelType extends IModelType {
 
@@ -29,9 +30,14 @@ public interface ISimpleModelType extends IModelType {
      * @param entityCitizen The citizen in question to get the path.
      * @return The path to the citizen.
      */
-    default ResourceLocation getTexture(AbstractEntityCitizen entityCitizen)
+    default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
-        final String textureBase = "textures/entity/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
+        String folder = "default/";
+        if (entityCitizen.getCitizenDataView() != null && entityCitizen.getCitizenDataView().getStyle().contains("medieval"))
+        {
+            folder = "medieval/";
+        }
+        final String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
     }

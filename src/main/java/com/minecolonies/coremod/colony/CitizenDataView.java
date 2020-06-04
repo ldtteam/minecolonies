@@ -65,18 +65,6 @@ public class CitizenDataView implements ICitizenDataView
     private double happiness;
 
     /**
-     * holds the current citizen happiness modifiers for
-     * each type of modifier.
-     */
-    private double foodModifier;
-    private double healthmodifier;
-    private double damageModifier;
-    private double houseModifier;
-    private double jobModifier;
-    private double fieldsModifier;
-    private double toolsModifiers;
-
-    /**
      * The position of the guard.
      */
     private BlockPos position;
@@ -125,6 +113,17 @@ public class CitizenDataView implements ICitizenDataView
      * The citizen happiness handler.
      */
     private final CitizenHappinessHandler citizenHappinessHandler;
+
+    /**
+     * The style.
+     */
+    private String style;
+
+    /**
+     * If the colony style changed.
+     */
+    private boolean styleChanged;
+
     /**
      * Set View id.
      *
@@ -305,75 +304,19 @@ public class CitizenDataView implements ICitizenDataView
         }
 
         citizenHappinessHandler.read(buf.readCompoundTag());
+
+        String newStyle = buf.readString(32767);
+        if (style != null && !style.equals(newStyle))
+        {
+            styleChanged = true;
+        }
+        this.style = newStyle;
     }
 
     @Override
     public InventoryCitizen getInventory()
     {
         return inventory;
-    }
-
-    /**
-     * @return returns the current modifier related to food.
-     */
-    @Override
-    public double getFoodModifier()
-    {
-        return foodModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to food.
-     */
-    @Override
-    public double getHealthmodifier()
-    {
-        return healthmodifier;
-    }
-
-    /**
-     * @return returns the current modifier related to damage.
-     */
-    @Override
-    public double getDamageModifier()
-    {
-        return damageModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to house.
-     */
-    @Override
-    public double getHouseModifier()
-    {
-        return houseModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to job.
-     */
-    @Override
-    public double getJobModifier()
-    {
-        return jobModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to fields.
-     */
-    @Override
-    public double getFieldsModifier()
-    {
-        return fieldsModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to tools.
-     */
-    @Override
-    public double getToolsModifiers()
-    {
-        return toolsModifiers;
     }
 
     @Override
@@ -411,5 +354,17 @@ public class CitizenDataView implements ICitizenDataView
     public ICitizenHappinessHandler getHappinessHandler()
     {
         return citizenHappinessHandler;
+    }
+
+    @Override
+    public String getStyle()
+    {
+        return this.style;
+    }
+
+    @Override
+    public boolean hasStyleChanged()
+    {
+        return this.styleChanged;
     }
 }

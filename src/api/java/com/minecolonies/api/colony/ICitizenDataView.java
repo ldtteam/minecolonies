@@ -79,16 +79,6 @@ public interface ICitizenDataView extends ICitizen
     void deserialize(@NotNull PacketBuffer buf);
 
     /**
-     * @return returns the current modifier related to food.
-     */
-    double getFoodModifier();
-
-    /**
-     * @return returns the current modifier related to health.
-     */
-    double getHealthmodifier();
-
-    /**
      * @return current health.
      */
     double getHealth();
@@ -97,31 +87,6 @@ public interface ICitizenDataView extends ICitizen
      * @return max health.
      */
     double getMaxHealth();
-
-    /**
-     * @return returns the current modifier related to damage.
-     */
-    double getDamageModifier();
-
-    /**
-     * @return returns the current modifier related to house.
-     */
-    double getHouseModifier();
-
-    /**
-     * @return returns the current modifier related to job.
-     */
-    double getJobModifier();
-
-    /**
-     * @return returns the current modifier related to fields.
-     */
-    double getFieldsModifier();
-
-    /**
-     * @return returns the current modifier related to tools.
-     */
-    double getToolsModifiers();
 
     /**
      * Get the list of ordered interactions.
@@ -160,4 +125,16 @@ public interface ICitizenDataView extends ICitizen
      * @return the handler.
      */
     ICitizenHappinessHandler getHappinessHandler();
+
+    /**
+     * Get the style of the citizen.
+     * @return the style string.
+     */
+    String getStyle();
+
+    /**
+     * If the colony style changed.
+     * @return true if so.
+     */
+    boolean hasStyleChanged();
 }

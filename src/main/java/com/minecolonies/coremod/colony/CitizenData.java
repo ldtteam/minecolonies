@@ -674,6 +674,8 @@ public class CitizenData implements ICitizenData
         final CompoundNBT happinessCompound = new CompoundNBT();
         citizenHappinessHandler.write(happinessCompound);
         buf.writeCompoundTag(happinessCompound);
+
+        buf.writeString(colony.getStyle());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.minecolonies.api.entity.citizen;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -13,11 +14,9 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
@@ -84,6 +83,11 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * The texture.
      */
     private ResourceLocation texture;
+
+    /**
+     * Was the texture initiated with the citizen view.
+     */
+    private boolean completeTextureInit = false;
 
     private AbstractAdvancedPathNavigate pathNavigate;
 
@@ -199,8 +203,19 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             return;
         }
 
+        if (getCitizenDataView() != null)
+        {
+            completeTextureInit = true;
+        }
+
         texture = getModelType().getTexture(this);
     }
+
+    /**
+     * Get the citizen data view.
+     * @return the view.
+     */
+    public abstract ICitizenDataView getCitizenDataView();
 
     /**
      * Getter of the resource location of the texture.
@@ -210,7 +225,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @NotNull
     public ResourceLocation getTexture()
     {
-        if (texture == null)
+        if (texture == null || !completeTextureInit || (getCitizenDataView() != null && getCitizenDataView().hasStyleChanged()))
         {
             setTexture();
         }

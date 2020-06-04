@@ -298,6 +298,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the view.
      */
+    @Override
     public ICitizenDataView getCitizenDataView()
     {
         if (this.citizenDataView == null)
@@ -1719,6 +1720,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         buffer.writeVarInt(citizenColonyHandler.getColonyId());
         buffer.writeVarInt(citizenId);
         return new ContainerCitizenInventory(id, inv, buffer);
+    }
+
+    @Override
+    public void setTexture()
+    {
+        super.setTexture();
     }
 
     /**
