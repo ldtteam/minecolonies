@@ -63,7 +63,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingSmelterCrafter> getExpectedBuildingClass()
     {
         return AbstractBuildingSmelterCrafter.class;
     }

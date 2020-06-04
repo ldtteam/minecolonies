@@ -115,7 +115,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingSmeltery> getExpectedBuildingClass()
     {
         return BuildingSmeltery.class;
     }

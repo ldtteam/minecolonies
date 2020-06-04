@@ -112,7 +112,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingDeliveryman> getExpectedBuildingClass()
     {
         return BuildingDeliveryman.class;
     }

@@ -67,7 +67,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingShepherd> getExpectedBuildingClass()
     {
         return BuildingShepherd.class;
     }
