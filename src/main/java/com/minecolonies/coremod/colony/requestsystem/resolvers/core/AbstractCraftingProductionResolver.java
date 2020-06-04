@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -21,7 +20,6 @@ import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRe
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,19 +27,19 @@ import java.util.Optional;
 /**
  * Abstract crafting resolver for all crafting tasks.
  */
-public abstract class AbstractCraftingProductionResolver<C extends AbstractCrafting> extends AbstractRequestResolver<C> implements IBuildingBasedRequester
+public abstract class AbstractCraftingProductionResolver<C extends AbstractCrafting> extends AbstractRequestResolver<C>
+    implements IBuildingBasedRequester
 {
     private final Class<C> cClass;
 
     /**
      * Constructor to initialize.
+     * 
      * @param location the location.
-     * @param token the id.
-     * @param cClass the class.
+     * @param token    the id.
+     * @param cClass   the class.
      */
-    public AbstractCraftingProductionResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token, final Class<C> cClass)
+    public AbstractCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, final Class<C> cClass)
     {
         super(location, token);
         this.cClass = cClass;
@@ -85,19 +83,24 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     }
 
     @Nullable
-    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends C> request,
+        @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(
-          manager,
-          buildingWorker,
-          request.getRequest().getStack(),
-          request.getRequest().getCount(),
-          request.getRequest().getMinCount());
+        return attemptResolveForBuildingAndStack(manager,
+            buildingWorker,
+            request.getRequest().getStack(),
+            request.getRequest().getCount(),
+            request.getRequest().getMinCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count, final int minCount)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager,
+        @NotNull final AbstractBuildingWorker building,
+        final ItemStack stack,
+        final int count,
+        final int minCount)
     {
         if (!canBuildingCraftStack(manager, building, stack))
         {
@@ -119,32 +122,39 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return createRequestsForRecipe(manager, count, minCount, craftableCrafting);
     }
 
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager,
+        @NotNull final AbstractBuildingWorker building,
+        @NotNull final ItemStack stack)
     {
         return true;
     }
 
     @Nullable
-    protected List<IToken<?>> createRequestsForRecipe(
-            @NotNull final IRequestManager manager,
-            final int count,
-            final int minCount,
-            @NotNull final IRecipeStorage storage)
+    protected List<IToken<?>> createRequestsForRecipe(@NotNull final IRequestManager manager,
+        final int count,
+        final int minCount,
+        @NotNull final IRecipeStorage storage)
     {
         final List<IToken<?>> materialRequests = new ArrayList<>();
-        for (final ItemStorage ingredient: storage.getCleanedInput())
+        for (final ItemStorage ingredient : storage.getCleanedInput())
         {
             if (!ItemStackUtils.isEmpty(ingredient.getItemStack()))
             {
                 final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
-                materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount));
+                materialRequests.add(createNewRequestForStack(manager,
+                    craftingHelperStack,
+                    ingredient.getAmount() * count,
+                    ingredient.getAmount() * minCount));
             }
         }
         return materialRequests;
     }
 
     @Nullable
-    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count, final int minCount)
+    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager,
+        final ItemStack stack,
+        final int count,
+        final int minCount)
     {
         final Stack stackRequest = new Stack(stack, count, minCount);
         return manager.createRequest(this, stackRequest);
@@ -157,13 +167,12 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         resolveForBuilding(manager, request, building);
     }
 
-    protected void onAssignedToThisResolverForBuilding(
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<? extends C> request,
-      final boolean simulation,
-      @NotNull final AbstractBuilding building)
+    protected void onAssignedToThisResolverForBuilding(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends C> request,
+        final boolean simulation,
+        @NotNull final AbstractBuilding building)
     {
-        //Noop
+        // Noop
     }
 
     /**
@@ -174,7 +183,9 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      * @param simulation True when simulating.
      */
     @Override
-    public void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
+    public void onRequestAssigned(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends C> request,
+        final boolean simulation)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         onAssignedToThisResolverForBuilding(manager, request, simulation, building);
@@ -182,14 +193,18 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
     /**
      * Resolve the request in a building.
-     * @param manager the request manager.
-     * @param request the request.
+     * 
+     * @param manager  the request manager.
+     * @param request  the request.
      * @param building the building.
      */
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends C> request,
+        @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount());
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(),
+            request.getRequest().getCount());
 
         if (storage == null)
         {

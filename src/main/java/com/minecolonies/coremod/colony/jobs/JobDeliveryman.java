@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJ
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -23,11 +22,9 @@ import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDelive
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
@@ -65,14 +62,12 @@ public class JobDeliveryman extends AbstractJob
     private void setupRsDataStore()
     {
         rsDataStoreToken = this.getCitizen()
-                             .getColony()
-                             .getRequestManager()
-                             .getDataStoreManager()
-                             .get(
-                               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                               TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE
-                             )
-                             .getId();
+            .getColony()
+            .getRequestManager()
+            .getDataStoreManager()
+            .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE)
+            .getId();
     }
 
     @Override
@@ -82,8 +77,7 @@ public class JobDeliveryman extends AbstractJob
         {
             final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
-              .setBaseValue(
-                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
+                .setBaseValue(BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
         }
     }
 
@@ -123,7 +117,8 @@ public class JobDeliveryman extends AbstractJob
 
         if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
-            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+            rsDataStoreToken = StandardFactoryController.getInstance()
+                .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -146,7 +141,10 @@ public class JobDeliveryman extends AbstractJob
 
     private IRequestSystemDeliveryManJobDataStore getDataStore()
     {
-        return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
+        return getCitizen().getColony()
+            .getRequestManager()
+            .getDataStoreManager()
+            .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
     }
 
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
@@ -179,7 +177,8 @@ public class JobDeliveryman extends AbstractJob
     public void addRequest(@NotNull final IToken<?> token)
     {
         final IRequestManager requestManager = getColony().getRequestManager();
-        IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
+        IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager
+            .getRequestForToken(token));
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
         Iterator<IToken<?>> iterator = taskQueue.descendingIterator();
@@ -187,7 +186,8 @@ public class JobDeliveryman extends AbstractJob
         int insertionIndex = taskQueue.size();
         while (iterator.hasNext())
         {
-            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(iterator.next()));
+            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager
+                .getRequestForToken(iterator.next()));
             if (request.getRequest().getPriority() < newRequest.getRequest().getPriority())
             {
                 request.getRequest().incrementPriorityDueToAging();
@@ -203,9 +203,9 @@ public class JobDeliveryman extends AbstractJob
         if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
         {
             getCitizen().getCitizenEntity()
-              .get()
-              .getCitizenChatHandler()
-              .sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP);
+                .get()
+                .getCitizenChatHandler()
+                .sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP);
         }
     }
 
@@ -234,7 +234,7 @@ public class JobDeliveryman extends AbstractJob
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 
-        //Just to be sure lets delete them!
+        // Just to be sure lets delete them!
         if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
         {
             getTaskQueueFromDataStore().removeFirst();

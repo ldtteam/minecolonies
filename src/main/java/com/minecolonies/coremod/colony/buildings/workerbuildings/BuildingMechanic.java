@@ -22,9 +22,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -122,8 +120,8 @@ public class BuildingMechanic extends AbstractBuildingCrafter
         }
 
         // Additional rules for valid recipe
-        if (storage.getPrimaryOutput().getItem() instanceof MinecartItem
-              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
+        if (storage.getPrimaryOutput().getItem() instanceof MinecartItem || (storage.getPrimaryOutput().getItem() instanceof BlockItem
+            && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
         {
             return true;
         }
@@ -142,7 +140,9 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Mechanic", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Mechanic", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -156,7 +156,6 @@ public class BuildingMechanic extends AbstractBuildingCrafter
      */
     public static class View extends AbstractBuildingCrafter.View
     {
-
         /**
          * Instantiate the mechanic view.
          *

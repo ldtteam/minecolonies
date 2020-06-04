@@ -21,15 +21,12 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ConcretePowderBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
@@ -40,7 +37,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -63,15 +59,14 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     {
         super(c, l);
 
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
-          1,
-          new ItemStack(Items.GREEN_DYE, 1),
-          Blocks.FURNACE);
+        final IRecipeStorage storage = StandardFactoryController.getInstance()
+            .getNewInstance(TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
+                1,
+                new ItemStack(Items.GREEN_DYE, 1),
+                Blocks.FURNACE);
         recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-
     }
 
     @NotNull
@@ -89,7 +84,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobDyer(citizen);
     }
@@ -189,7 +184,9 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Dyer", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Dyer", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -203,7 +200,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
      */
     public static class View extends AbstractBuildingSmelterCrafter.View
     {
-
         /**
          * Instantiate the dyer view.
          *

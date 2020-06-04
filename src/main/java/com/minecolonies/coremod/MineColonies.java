@@ -38,9 +38,7 @@ import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -60,7 +58,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 
 @Mod(Constants.MOD_ID)
@@ -93,7 +90,8 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
+        DistExecutor.runWhenOn(Dist.CLIENT,
+            () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
@@ -139,8 +137,10 @@ public class MineColonies
     {
         StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
-        CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
-        CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
+        CapabilityManager.INSTANCE
+            .register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
+        CapabilityManager.INSTANCE
+            .register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
 
         Network.getNetwork().registerCommonMessages();
 
@@ -195,7 +195,9 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+        Arrays.stream(ModBlocks.getHuts())
+            .forEach(hut -> RenderTypeLookup.setRenderLayer(hut,
+                renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
         RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());

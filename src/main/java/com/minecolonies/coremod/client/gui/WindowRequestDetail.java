@@ -18,10 +18,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
-import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -101,7 +98,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Player inventory
      */
-    private final PlayerInventory inventory  = this.mc.player.inventory;
+    private final PlayerInventory inventory = this.mc.player.inventory;
     /**
      * Is the player in creative or not.
      */
@@ -185,13 +182,15 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+        final IColonyView view = IColonyManager.getInstance()
+            .getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
+        findPaneOfTypeByID(REQUESTER, Label.class)
+            .setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
+        final IColonyView colony = IColonyManager.getInstance()
+            .getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -207,7 +206,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class)
+                .setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {
@@ -217,13 +217,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
         }
 
-        //Checks if fulfill button should be displayed
+        // Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
         if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request))
         {
             fulfillButton.hide();
         }
-        //Checks if cancel button should be displayed
+        // Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
         if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
         {

@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
@@ -8,7 +7,6 @@ import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineOneT
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
 import com.minecolonies.api.util.Log;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +14,8 @@ import java.util.function.Consumer;
 
 /**
  * Basic statemachine class, can be used for any Transition typed which extends the transition interface.
- * It contains the current state and a hashmap for events and transitions, which are the minimal requirements to have a working statemachine.
+ * It contains the current state and a hashmap for events and transitions, which are the minimal requirements to have a working
+ * statemachine.
  */
 public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends IState> implements IStateMachine<T, S>
 {
@@ -24,7 +23,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * The lists of transitions and events
      */
     @NotNull
-    protected final Map<S, ArrayList<T>>               transitionMap;
+    protected final Map<S, ArrayList<T>> transitionMap;
     @NotNull
     protected final Map<IStateEventType, ArrayList<T>> eventTransitionMap;
 
@@ -48,7 +47,8 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
 
     /**
      * Construct a new StateMachine
-     * @param initialState the initial state.
+     * 
+     * @param initialState     the initial state.
      * @param exceptionHandler the exception handler.
      */
     protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)

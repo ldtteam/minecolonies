@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -24,7 +23,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -32,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -103,8 +100,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final ListNBT containerTagList = new ListNBT();
-        for (@NotNull final BlockPos pos : containerList)
+        @NotNull
+        final ListNBT containerTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos pos : containerList)
         {
             containerTagList.add(NBTUtil.writeBlockPos(pos));
         }
@@ -179,7 +178,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         tileEntity = te;
     }
 
-    //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
+    // ------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
 
     @Nonnull
     @Override
@@ -192,5 +191,5 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         return LazyOptional.empty();
     }
 
-    //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
+    // ------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
 }

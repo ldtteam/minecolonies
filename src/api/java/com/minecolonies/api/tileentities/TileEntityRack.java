@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -33,13 +32,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -65,7 +62,7 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private CombinedInvWrapper combinedHandler;
 
-    public TileEntityRack(final TileEntityType type)
+    public TileEntityRack(final TileEntityType<?> type)
     {
         super(type);
     }
@@ -168,9 +165,13 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     /**
      * Gets the content of the Rack
+     * 
      * @return the map of content.
      */
-    public Map<ItemStorage, Integer> getAllContent() {return content;}
+    public Map<ItemStorage, Integer> getAllContent()
+    {
+        return content;
+    }
 
     /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
@@ -225,7 +226,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         notifyParentAboutInvChange();
     }
 
-    /* Get the amount of items matching a predicate in the inventory.
+    /*
+     * Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.
      * @return the total count.
      */
@@ -290,12 +292,13 @@ public class TileEntityRack extends AbstractTileEntityRack
                 final BlockState typeNeighbor;
                 if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
                 {
-                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    if (getOtherChest() != null
+                        && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
-
                         typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor))
+                            .with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                            .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                     }
                     else
                     {
@@ -305,11 +308,13 @@ public class TileEntityRack extends AbstractTileEntityRack
                 }
                 else
                 {
-                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    if (getOtherChest() != null
+                        && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
                         typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor))
+                            .with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                            .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                     }
                     else
                     {
@@ -463,10 +468,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             BlockPosUtil.write(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
         }
-        @NotNull final ListNBT inventoryTagList = new ListNBT();
+        @NotNull
+        final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {

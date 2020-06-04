@@ -5,7 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -56,7 +55,11 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
      * @param mesh          the mesh.
      * @param buy           if its a buy action.
      */
-    public SifterSettingsMessage(@NotNull final BuildingSifter.View building, final ItemStorage block, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
+    public SifterSettingsMessage(@NotNull final BuildingSifter.View building,
+        final ItemStorage block,
+        final ItemStorage mesh,
+        final int dailyQuantity,
+        final boolean buy)
     {
         super(building);
         this.quantity = dailyQuantity;
@@ -68,7 +71,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         quantity = buf.readInt();
         block = buf.readItemStack();
         mesh = buf.readItemStack();
@@ -78,7 +80,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeInt(quantity);
         buf.writeItemStack(block);
         buf.writeItemStack(mesh);
@@ -86,8 +87,10 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingSifter building)
+    protected void onExecute(final NetworkEvent.Context ctxIn,
+        final boolean isLogicalServer,
+        final IColony colony,
+        final BuildingSifter building)
     {
         int qty = quantity;
         if (qty > building.getMaxDailyQuantity())
@@ -111,14 +114,13 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
                 return;
             }
 
-            if(!player.isCreative())
+            if (!player.isCreative())
             {
-                final int slot = InventoryUtils.
-                        findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                                itemStack -> itemStack.isItemEqual(mesh));
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                    itemStack -> itemStack.isItemEqual(mesh));
 
-                //If the player doesn't have the item in the inventory, do not change anything
-                if(slot < 0)
+                // If the player doesn't have the item in the inventory, do not change anything
+                if (slot < 0)
                 {
                     return;
                 }

@@ -19,12 +19,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,16 +59,17 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
-        Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
-          structureName.toString(),
-          structureName.toString(),
-          Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
-          structureName.isHut(),
-          Settings.instance.getMirror(),
-          state));
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        ;
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        Network.getNetwork()
+            .sendToServer(new BuildToolPlaceMessage(structureName.toString(),
+                structureName.toString(),
+                Settings.instance.getPosition(),
+                Settings.instance.getRotation(),
+                structureName.isHut(),
+                Settings.instance.getMirror(),
+                state));
     }
 
     @Override
@@ -89,19 +87,20 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        ;
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())
         {
-            Network.getNetwork().sendToServer(new BuildToolPasteMessage(
-              name.toString(),
-              name.toString(),
-              Settings.instance.getPosition(),
-              Settings.instance.getRotation(),
-              name.isHut(),
-              Settings.instance.getMirror(),
-              complete,
-              state));
+            Network.getNetwork()
+                .sendToServer(new BuildToolPasteMessage(name.toString(),
+                    name.toString(),
+                    Settings.instance.getPosition(),
+                    Settings.instance.getRotation(),
+                    name.isHut(),
+                    Settings.instance.getMirror(),
+                    complete,
+                    state));
         }
         else
         {
@@ -115,10 +114,13 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         final List<PlacementError> placementErrorList = new ArrayList<>();
         if (Settings.instance.getStaticSchematicName().contains("supplyship"))
         {
-            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
-              placementErrorList,
-              Minecraft.getInstance().player))
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world,
+                Settings.instance.getPosition(),
+                new BlockPos(Settings.instance.getActiveStructure().getSizeX(),
+                    Settings.instance.getActiveStructure().getSizeY(),
+                    Settings.instance.getActiveStructure().getSizeZ()),
+                placementErrorList,
+                Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }
@@ -129,10 +131,13 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         }
         else if (Settings.instance.getStaticSchematicName().contains("supplycamp"))
         {
-            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
-              new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
-              placementErrorList,
-              Minecraft.getInstance().player))
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world,
+                Settings.instance.getPosition(),
+                new BlockPos(Settings.instance.getActiveStructure().getSizeX(),
+                    Settings.instance.getActiveStructure().getSizeY(),
+                    Settings.instance.getActiveStructure().getSizeZ()),
+                placementErrorList,
+                Minecraft.getInstance().player))
             {
                 super.pasteNice();
             }
@@ -140,8 +145,8 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
 
         if (!placementErrorList.isEmpty())
         {
-            final Map<PlacementError.PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
-              placementErrorList);
+            final Map<PlacementError.PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError
+                .partitionPlacementErrorsByErrorType(placementErrorList);
             for (final Map.Entry<PlacementError.PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
             {
                 final PlacementError.PlacementErrorType placementErrorType = entry.getKey();
@@ -161,18 +166,22 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                         errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
+
                     case NOT_SOLID:
                         errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
+
                     case NEEDS_AIR_ABOVE:
                         errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
+
                     case INSIDE_COLONY:
                         errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
                         break;
+
                     default:
                         errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
@@ -190,6 +199,8 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
     {
-        return InventoryUtils.hasItemInProvider(inventory.player, item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock().getRegistryName().getPath().contains(hut));
+        return InventoryUtils.hasItemInProvider(inventory.player,
+            item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut
+                && ((BlockItem) item.getItem()).getBlock().getRegistryName().getPath().contains(hut));
     }
 }

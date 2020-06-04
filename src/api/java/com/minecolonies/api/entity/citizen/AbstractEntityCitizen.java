@@ -13,11 +13,9 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
@@ -38,27 +36,35 @@ import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 
 /**
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider, INPC
+public abstract class AbstractEntityCitizen extends AgeableEntity
+    implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider, INPC
 {
-    public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
+    public static final DataParameter<Integer> DATA_LEVEL = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.VARINT);
+    public static final DataParameter<Integer> DATA_TEXTURE = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.VARINT);
+    public static final DataParameter<Integer> DATA_IS_FEMALE = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.VARINT);
+    public static final DataParameter<Integer> DATA_COLONY_ID = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.VARINT);
+    public static final DataParameter<Integer> DATA_CITIZEN_ID = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.VARINT);
+    public static final DataParameter<String> DATA_MODEL = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String> DATA_RENDER_METADATA = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.STRING);
+    public static final DataParameter<Boolean> DATA_IS_ASLEEP = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> DATA_IS_CHILD = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.BOOLEAN);
+    public static final DataParameter<BlockPos> DATA_BED_POS = EntityDataManager.createKey(AbstractEntityCitizen.class,
+        DataSerializers.BLOCK_POS);
 
     /**
      * The default model.
@@ -90,7 +96,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     /**
      * Constructor for a new citizen typed entity.
      *
-     * @param type the Entity type.
+     * @param type  the Entity type.
      * @param world the world.
      */
     public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
@@ -173,7 +179,10 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     {
         if (!player.world.isRemote())
         {
-            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), EventType.INTERACTION, this.getCitizenData());
+            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this),
+                this.getPosition(),
+                EventType.INTERACTION,
+                this.getCitizenData());
         }
 
         return super.applyPlayerInteraction(player, vec, hand);
@@ -364,7 +373,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
         getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
 
-        //path finding search range
+        // path finding search range
         getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
@@ -412,9 +421,10 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             final int py = (int) getPosY();
             final int pz = MathHelper.floor(getPosZ());
 
-            this.onGround =
-              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(
-                new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz), this);
+            this.onGround = CompatibilityUtils.getWorldFromCitizen(this)
+                .getBlockState(new BlockPos(px, py, pz))
+                .getBlock()
+                .isLadder(world.getBlockState(new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz), this);
         }
 
         super.updateFallState(y, onGroundIn, state, pos);
@@ -634,7 +644,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * @return the instance of the handler.
      */
     public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
 
     public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
 

@@ -12,7 +12,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -25,10 +24,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -71,7 +68,8 @@ public class ClientEventHandler
         final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
         {
-            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
+                BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
             if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
             {
                 final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
@@ -79,15 +77,24 @@ public class ClientEventHandler
                 {
                     if (wayPointTemplate == null)
                     {
-                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                        wayPointTemplate = new LoadOnlyStructureHandler(world,
+                            BlockPos.ZERO,
+                            "schematics/infrastructure/waypoint",
+                            settings,
+                            true).getBluePrint();
                     }
-                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
+                    BlueprintHandler.getInstance()
+                        .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()),
+                            event.getPartialTicks(),
+                            wayPointTemplate,
+                            event.getMatrixStack());
                 }
             }
         }
         else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
-            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+            final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
+                BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
             final ItemStack stack = player.getHeldItemMainhand();
             if (!stack.hasTag())
             {
@@ -95,7 +102,8 @@ public class ClientEventHandler
             }
             final CompoundNBT compound = stack.getTag();
 
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimension().getType().getId());
+            final IColonyView colony = IColonyManager.getInstance()
+                .getColonyView(compound.getInt(TAG_ID), player.world.getDimension().getType().getId());
             if (colony == null)
             {
                 return;
@@ -106,16 +114,21 @@ public class ClientEventHandler
 
             if (partolPointTemplate == null)
             {
-                partolPointTemplate = new LoadOnlyStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
+                partolPointTemplate = new LoadOnlyStructureHandler(world,
+                    hut.getPosition(),
+                    "schematics/infrastructure/patrolpoint",
+                    settings,
+                    true).getBluePrint();
             }
 
             if (hut instanceof AbstractBuildingGuards.View)
             {
                 BlueprintHandler.getInstance()
-                  .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
-                    event.getPartialTicks(),
-                    partolPointTemplate,
-                    event.getMatrixStack());
+                    .drawBlueprintAtListOfPositions(
+                        ((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
+                        event.getPartialTicks(),
+                        partolPointTemplate,
+                        event.getMatrixStack());
             }
         }
     }

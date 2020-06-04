@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.RaidSounds;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
@@ -20,9 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-
 import static com.minecolonies.api.entity.ModEntities.*;
 
 /**
@@ -156,7 +153,12 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
+    protected void spawnHorde(final BlockPos spawnPos,
+        final IColony colony,
+        final int id,
+        final int numberOfBosses,
+        final int numberOfArchers,
+        final int numberOfRaiders)
     {
         RaiderMobUtils.spawn(MUMMY, numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(PHARAO, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
