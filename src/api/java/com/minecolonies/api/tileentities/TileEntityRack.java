@@ -69,7 +69,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     public TileEntityRack()
     {
-        super(MinecoloniesTileEntities.RACK);
+        super(ModTileEntities.RACK);
     }
 
     /**

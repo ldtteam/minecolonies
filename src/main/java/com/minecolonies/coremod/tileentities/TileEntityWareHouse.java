@@ -5,7 +5,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,14 +16,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
@@ -34,7 +32,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
     public TileEntityWareHouse()
     {
-        super(MinecoloniesTileEntities.WAREHOUSE);
+        super(ModTileEntities.WAREHOUSE);
     }
 
     /**
@@ -66,10 +64,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             tileEntities.add(this);
 
             return tileEntities.stream()
-                     .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
-                     .filter(itemStacks -> !itemStacks.isEmpty())
-              .collect(Collectors.toList());
-
+                .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
+                .filter(itemStacks -> !itemStacks.isEmpty())
+                .collect(Collectors.toList());
         }
 
         return Lists.newArrayList();
@@ -86,14 +83,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         if (getBuilding() != null)
         {
-            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
+            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers()
+                .stream()
+                .map(pos -> getWorld().getTileEntity(pos))
+                .collect(Collectors.toSet());
             tileEntities.removeIf(Objects::isNull);
             tileEntities.add(this);
 
             return tileEntities.stream()
-                     .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
-                     .map(TileEntity::getPos)
-                     .findFirst().orElse(null);
+                .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
+                .map(TileEntity::getPos)
+                .findFirst()
+                .orElse(null);
         }
 
         return null;
@@ -115,7 +116,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             {
                 continue;
             }
-            @Nullable final TileEntity chest = searchRightChestForStack(stack);
+            @Nullable
+            final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
                 LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
@@ -143,7 +145,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             return this;
         }
 
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull
+        final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (isInRack(stack, entity, false) || isInChest(stack, entity, false))
@@ -152,7 +155,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
         }
 
-        @Nullable final TileEntity chest = searchChestWithSimilarItem(stack);
+        @Nullable
+        final TileEntity chest = searchChestWithSimilarItem(stack);
         return chest == null ? searchMostEmptySlot() : chest;
     }
 
@@ -166,8 +170,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      */
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
+        return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty()
+            && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue) && InventoryUtils
+                .findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
     }
 
     /**
@@ -180,8 +185,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      */
     private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof ChestTileEntity
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
+        return entity instanceof ChestTileEntity && InventoryUtils
+            .findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
     }
 
     /**
@@ -193,7 +198,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Nullable
     private TileEntity searchChestWithSimilarItem(final ItemStack stack)
     {
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull
+        final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (isInRack(stack, entity, true) || isInChest(stack, entity, true))
@@ -214,7 +220,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         int freeSlots = 0;
         TileEntity emptiestChest = null;
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull
+        final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (entity == null)

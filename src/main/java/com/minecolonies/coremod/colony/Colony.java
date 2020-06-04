@@ -52,9 +52,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
-
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -226,7 +224,7 @@ public class Colony implements IColony
      * Mournign parameters.
      */
     private boolean needToMourn = false;
-    private boolean mourning    = false;
+    private boolean mourning = false;
 
     /**
      * If the colony is dirty.
@@ -301,7 +299,7 @@ public class Colony implements IColony
                     freeBlocks.add(block);
                 }
             }
-            catch(final Exception ex)
+            catch (final Exception ex)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
                 if (pos != null)
@@ -311,15 +309,17 @@ public class Colony implements IColony
             }
         }
 
-
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
-
-        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> {
+            this.getCitizenManager().tickCitizenData();
+            return null;
+        }, TICKS_SECOND));
+        colonyStateMachine
+            .addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
@@ -340,7 +340,8 @@ public class Colony implements IColony
         }
         packageManager.updateAwayTime();
 
-        if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
+        if (!packageManager.getCloseSubscribers().isEmpty()
+            || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
         {
             isActive = true;
             return ACTIVE;
@@ -470,7 +471,7 @@ public class Colony implements IColony
     {
         final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
-        //Clean up visiting player.
+        // Clean up visiting player.
         for (final PlayerEntity player : visitors)
         {
             if (!packageManager.getCloseSubscribers().contains(player))
@@ -487,7 +488,8 @@ public class Colony implements IColony
                 player.refreshList(this);
                 if (player.getGuards().isEmpty())
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
+                        "You successfully defended your colony against, " + player.getPlayer().getName());
                 }
             }
         }
@@ -526,7 +528,7 @@ public class Colony implements IColony
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
-     * @param world the world to load it for.
+     * @param world    the world to load it for.
      * @return loaded colony.
      */
     @Nullable
@@ -535,14 +537,15 @@ public class Colony implements IColony
         try
         {
             final int id = compound.getInt(TAG_ID);
-            @NotNull final Colony c = new Colony(id, world);
+            @NotNull
+            final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
             c.setRequestManager();
             c.read(compound);
 
             if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
-                                                                  || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+                || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
             {
                 c.getProgressManager().togglePrintProgress();
             }
@@ -609,7 +612,7 @@ public class Colony implements IColony
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
         }
 
-        //  Workload
+        // Workload
         workManager.read(compound.getCompound(TAG_WORK));
 
         wayPoints.clear();
@@ -703,11 +706,11 @@ public class Colony implements IColony
      */
     public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
-        //  Core attributes
+        // Core attributes
         compound.putInt(TAG_ID, id);
         compound.putInt(TAG_DIMENSION, dimensionId);
 
-        //  Basic data
+        // Basic data
         compound.putString(TAG_NAME, name);
         BlockPosUtil.write(compound, TAG_CENTER, center);
 
@@ -733,23 +736,28 @@ public class Colony implements IColony
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        //  Workload
-        @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
+        // Workload
+        @NotNull
+        final CompoundNBT workManagerCompound = new CompoundNBT();
         workManager.write(workManagerCompound);
         compound.put(TAG_WORK, workManagerCompound);
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
 
-        @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
+        @NotNull
+        final CompoundNBT researchManagerCompound = new CompoundNBT();
         researchManager.writeToNBT(researchManagerCompound);
         compound.put(TAG_RESEARCH, researchManagerCompound);
 
         // Waypoints
-        @NotNull final ListNBT wayPointTagList = new ListNBT();
-        for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
+        @NotNull
+        final ListNBT wayPointTagList = new ListNBT();
+        for (@NotNull
+        final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
         {
-            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
             wayPointCompound.put(TAG_BLOCK, NBTUtil.writeBlockState(entry.getValue()));
             wayPointTagList.add(wayPointCompound);
@@ -757,18 +765,23 @@ public class Colony implements IColony
         compound.put(TAG_WAYPOINT, wayPointTagList);
 
         // Free blocks
-        @NotNull final ListNBT freeBlocksTagList = new ListNBT();
-        for (@NotNull final Block block : freeBlocks)
+        @NotNull
+        final ListNBT freeBlocksTagList = new ListNBT();
+        for (@NotNull
+        final Block block : freeBlocks)
         {
             freeBlocksTagList.add(StringNBT.valueOf(block.getRegistryName().toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 
         // Free positions
-        @NotNull final ListNBT freePositionsTagList = new ListNBT();
-        for (@NotNull final BlockPos pos : freePositions)
+        @NotNull
+        final ListNBT freePositionsTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos pos : freePositions)
         {
-            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, TAG_FREE_POSITIONS, pos);
             freePositionsTagList.add(wayPointCompound);
         }
@@ -961,7 +974,7 @@ public class Colony implements IColony
      * Calculate randomly if the colony should update the citizens.
      * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
-     * @param world the world.
+     * @param world        the world.
      * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */
@@ -989,7 +1002,7 @@ public class Colony implements IColony
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
-                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                            || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1232,7 +1245,7 @@ public class Colony implements IColony
      */
     public void removeWorkOrderInView(final int orderId)
     {
-        //  Inform Subscribers of removed workOrder
+        // Inform Subscribers of removed workOrder
         for (final ServerPlayerEntity player : packageManager.getCloseSubscribers())
         {
             Network.getNetwork().sendToPlayer(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
@@ -1413,11 +1426,15 @@ public class Colony implements IColony
     public void addVisitingPlayer(final PlayerEntity player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
+        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player)
+            && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
+                ENTERING_COLONY_MESSAGE_NOTIFY,
+                player.getName().getFormattedText(),
+                this.getName());
         }
     }
 
@@ -1428,7 +1445,10 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
+                LEAVING_COLONY_MESSAGE_NOTIFY,
+                player.getName().getFormattedText(),
+                this.getName());
         }
     }
 
@@ -1550,7 +1570,8 @@ public class Colony implements IColony
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
                     LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
-                      "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
+                        "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size()
+                            + " guards!");
                 }
                 return;
             }
@@ -1563,7 +1584,8 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
+                    "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
             }
         }
     }

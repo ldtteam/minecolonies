@@ -131,7 +131,7 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @Override
-    @SuppressWarnings({UNCHECKED})
+    @SuppressWarnings(UNCHECKED)
     public IToken<?> assignRequestDefault(final IRequest<?> request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         // Check if the request is registered
@@ -313,7 +313,6 @@ public class RequestHandler implements IRequestHandler
      * @param token The token of the request that got finished successfully.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void onRequestCompleted(final IToken<?> token)
     {
         final IRequest<?> request = getRequest(token);
@@ -389,7 +388,6 @@ public class RequestHandler implements IRequestHandler
      * @param token The token of the request that got cancelled or overruled
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void onRequestCancelled(final IToken<?> token)
     {
         final IRequest<?> request = manager.getRequestHandler().getRequest(token);

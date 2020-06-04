@@ -16,10 +16,8 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_PERMISSION_EVENTS;
 
 /**
@@ -40,7 +38,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * List of permission events of the colony.
      */
-    private final LinkedList<PermissionEvent> permissionEvents = new LinkedList();
+    private final LinkedList<PermissionEvent> permissionEvents = new LinkedList<>();
 
     /**
      * Instantiates the building.
@@ -81,12 +79,13 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * Add a colony permission event to the colony.
      * Reduce the list by one if bigger than a treshhold.
+     * 
      * @param event the event to add.
      */
     @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
-        if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
+        if (getBuildingLevel() >= 1 && !permissionEvents.contains(event))
         {
             if (permissionEvents.size() >= MAX_PERMISSION_EVENTS)
             {
@@ -104,7 +103,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         buf.writeBoolean(MineColonies.getConfig().getCommon().canPlayerUseAllyTHTeleport.get());
         buf.writeInt(permissionEvents.size());
-        for(final PermissionEvent event: permissionEvents)
+        for (final PermissionEvent event : permissionEvents)
         {
             event.serialize(buf);
         }
@@ -117,15 +116,20 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         {
             case 0:
                 return 0;
+
             case 1:
             case 2:
                 return 1;
+
             case 3:
                 return 2;
+
             case 4:
                 return 3;
+
             case 5:
                 return 5;
+
             default:
                 return 0;
         }
@@ -152,7 +156,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         /**
          * List of permission events of the colony.
          */
-        private final List<PermissionEvent> permissionEvents = new LinkedList();
+        private final List<PermissionEvent> permissionEvents = new LinkedList<>();
 
         /**
          * If the player is allowed to do townHall teleport.
@@ -184,7 +188,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
             canPlayerUseTP = buf.readBoolean();
             final int size = buf.readInt();
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 permissionEvents.add(new PermissionEvent(buf));
             }
@@ -192,6 +196,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         /**
          * Get a list of permission events.
+         * 
          * @return a copy of the list of events.
          */
         @Override
@@ -202,6 +207,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         /**
          * Check if the player can use the teleport command.
+         * 
          * @return true if so.
          */
         @Override

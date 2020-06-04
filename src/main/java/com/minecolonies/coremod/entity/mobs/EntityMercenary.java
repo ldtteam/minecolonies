@@ -44,11 +44,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
@@ -63,23 +61,23 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     /**
      * The minimum time inbetween, in ticks.
      */
-    private static final int                          SLAP_INTERVAL = 100;
+    private static final int SLAP_INTERVAL = 100;
     /**
      * Reference to the colony the mercenary spawned in.
      */
-    private              IColony                       colony;
+    private IColony colony;
     /**
      * This entities minecolonies-Navigator.
      */
-    private              AbstractAdvancedPathNavigate newNavigator;
+    private AbstractAdvancedPathNavigate newNavigator;
     /**
      * Proxy for cheaper pathing.
      */
-    private              GeneralEntityWalkToProxy     proxy;
+    private GeneralEntityWalkToProxy proxy;
     /**
      * The timer used to check if it is ready again.
      */
-    private              int                          slapTimer     = 0;
+    private int slapTimer = 0;
 
     /**
      * Random instance for rolls
@@ -120,10 +118,11 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * The entities name.
      */
     private static final String ENTITY_NAME = "Mercenary";
-    
+
     /**
      * Constructor method for Mercenaries.
-     * @param type the type.
+     * 
+     * @param type  the type.
      * @param world the world.
      */
     public EntityMercenary(final EntityType<EntityMercenary> type, final World world)
@@ -136,7 +135,13 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
         this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(4, new EntityAIOpenFenceGate(this, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
+        this.targetSelector.addGoal(5,
+            new NearestAttackableTargetGoal<>(this,
+                MonsterEntity.class,
+                10,
+                true,
+                false,
+                e -> e instanceof IMob && !(e instanceof LlamaEntity)));
 
         this.forceSpawn = true;
         setCustomNameVisible(true);
@@ -167,9 +172,12 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.setHealth(this.getMaxHealth());
 
         stateMachine = new TickRateStateMachine<>(EntityMercenaryAI.State.INIT, this::handleStateException);
-        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.INIT, this::isInitialized, () -> EntityMercenaryAI.State.SPAWN_EVENT, 20));
-        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.SPAWN_EVENT, this::spawnEvent, () -> EntityMercenaryAI.State.ALIVE, 30));
-        stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.ALIVE, this::shouldDespawn, () -> EntityMercenaryAI.State.DEAD, 100));
+        stateMachine.addTransition(
+            new TickingTransition<>(EntityMercenaryAI.State.INIT, this::isInitialized, () -> EntityMercenaryAI.State.SPAWN_EVENT, 20));
+        stateMachine.addTransition(
+            new TickingTransition<>(EntityMercenaryAI.State.SPAWN_EVENT, this::spawnEvent, () -> EntityMercenaryAI.State.ALIVE, 30));
+        stateMachine.addTransition(
+            new TickingTransition<>(EntityMercenaryAI.State.ALIVE, this::shouldDespawn, () -> EntityMercenaryAI.State.DEAD, 100));
         stateMachine.addTransition(new TickingTransition<>(EntityMercenaryAI.State.DEAD, () -> true, this::getState, 500));
     }
 
@@ -268,6 +276,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     /**
      * Sets this mercenary as leader
+     * 
      * @param soldiers set a leader of the list.
      */
     public void setLeader(final List<EntityMercenary> soldiers)
@@ -326,7 +335,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     @Override
     public void registerWithColony()
     {
-        //Does not need to register.
+        // Does not need to register.
     }
 
     @Override
@@ -385,15 +394,16 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             {
                 this.swingArm(Hand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
-                  entityIn.getName(),
-                  stack.getDisplayName());
+                    "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
+                    entityIn.getName(),
+                    stack.getDisplayName());
             }
         }
     }
 
     /**
      * Creates and returns the proxy when needed.
+     * 
      * @return the walking proxy.
      */
     public GeneralEntityWalkToProxy getProxy()

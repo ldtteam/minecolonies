@@ -27,9 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
-
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyConstants.NUMBER_OF_CITIZENS_NEEDED;
 
@@ -189,7 +187,8 @@ public class RaidManager implements IRaiderManager
         for (int i = 0; i < raidCount; i++)
         {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
-            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
+            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter())
+                || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
             {
                 continue;
             }
@@ -209,9 +208,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "Horde Spawn Point: " + targetSpawnPoint);
             }
 
             // No rotation till spawners are moved into schematics
@@ -324,7 +321,10 @@ public class RaidManager implements IRaiderManager
      * @param loadedBuildings a list of loaded buildings
      * @return the calculated position
      */
-    private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
+    private BlockPos findSpawnPointInDirections(final BlockPos center,
+        final Direction dir1,
+        final Direction dir2,
+        final List<IBuilding> loadedBuildings)
     {
         final Random random = colony.getWorld().rand;
 
@@ -456,20 +456,8 @@ public class RaidManager implements IRaiderManager
     public int calcBarbarianAmount()
     {
         return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
-          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
-    }
-
-    /**
-     * Check if a certain vector matches two directions.
-     *
-     * @param directionX the direction x.
-     * @param directionZ the direction z.
-     * @param vector     the vector.
-     * @return true if so.
-     */
-    private static boolean isInDirection(final Direction directionX, final Direction directionZ, final BlockPos vector)
-    {
-        return Direction.getFacingFromVector(vector.getX(), 0, 0) == directionX && Direction.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
+            (int) ((getColonyRaidLevel() / SPAWN_MODIFIER)
+                * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
     }
 
     @Override
@@ -527,10 +515,8 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
-        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL
-                 && MineColonies.getConfig().getCommon().doBarbariansSpawn.get()
-                 && colony.getRaiderManager().canHaveRaiderEvents()
-                 && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
+        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL && MineColonies.getConfig().getCommon().doBarbariansSpawn.get()
+            && colony.getRaiderManager().canHaveRaiderEvents() && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
 
     @Override
@@ -549,28 +535,26 @@ public class RaidManager implements IRaiderManager
                 final boolean raid = raidThisNight(colony.getWorld(), colony);
                 if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
                 {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getImportantMessageEntityPlayers(),
-                      "Will raid tonight: " + raid);
+                    LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
 
-                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert") && colony.getWorld().isRaining())
+                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert")
+                    && colony.getWorld().isRaining())
                 {
                     return true;
                 }
             }
             return false;
         }
-        else if (colony.getRaiderManager().willRaidTonight() && !colony.getWorld().isDaytime() && colony.getRaiderManager().hasRaidBeenCalculated())
+        else if (colony.getRaiderManager().willRaidTonight() && !colony.getWorld().isDaytime()
+            && colony.getRaiderManager().hasRaidBeenCalculated())
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
             colony.getRaiderManager().setWillRaidTonight(false);
             if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Night reached: raiding");
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "Night reached: raiding");
             }
             return true;
         }
@@ -590,8 +574,10 @@ public class RaidManager implements IRaiderManager
     public int getColonyRaidLevel()
     {
         int levels = 0;
-        @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
-        for (@NotNull final ICitizenData citizen : citizensList)
+        @NotNull
+        final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
+        for (@NotNull
+        final ICitizenData citizen : citizensList)
         {
             levels += citizen.getJobModifier() / 5;
         }
@@ -625,8 +611,8 @@ public class RaidManager implements IRaiderManager
             return true;
         }
 
-        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
-                                                                                                                                 .getCommon().minimumNumberOfNightsBetweenRaids.get());
+        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get()
+            - MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override

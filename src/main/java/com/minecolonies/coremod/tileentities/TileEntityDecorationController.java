@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -52,7 +52,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     public TileEntityDecorationController()
     {
-        super(MinecoloniesTileEntities.DECO_CONTROLLER);
+        super(ModTileEntities.DECO_CONTROLLER);
     }
 
     /**

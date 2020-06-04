@@ -17,43 +17,45 @@ public class TileEntityInitializer
     @SubscribeEvent
     public static void registerTileEntity(final RegistryEvent.Register<TileEntityType<?>> event)
     {
-        MinecoloniesTileEntities.SCARECROW = (TileEntityType<AbstractScarescrowTileEntity>) TileEntityType.Builder.create(ScarecrowTileEntity::new,
-          ModBlocks.blockScarecrow).build(null).setRegistryName(Constants.MOD_ID, "scarecrow");
+        ModTileEntities.SCARECROW = TileEntityType.Builder.create(ScarecrowTileEntity::new, ModBlocks.blockScarecrow).build(null);
+        ModTileEntities.SCARECROW.setRegistryName(Constants.MOD_ID, "scarecrow");
 
-        MinecoloniesTileEntities.BARREL = TileEntityType.Builder.create(TileEntityBarrel::new,
-          ModBlocks.blockBarrel).build(null).setRegistryName(Constants.MOD_ID, "barrel");
+        ModTileEntities.BARREL = TileEntityType.Builder.create(TileEntityBarrel::new, ModBlocks.blockBarrel).build(null);
+        ModTileEntities.BARREL.setRegistryName(Constants.MOD_ID, "barrel");
 
-        MinecoloniesTileEntities.BUILDING = (TileEntityType<AbstractTileEntityColonyBuilding>) TileEntityType.Builder.create(TileEntityColonyBuilding::new,
-          ModBlocks.getHuts()).build(null).setRegistryName(Constants.MOD_ID, "colonybuilding");
+        ModTileEntities.BUILDING = TileEntityType.Builder.create(TileEntityColonyBuilding::new, ModBlocks.getHuts()).build(null);
+        ModTileEntities.BUILDING.setRegistryName(Constants.MOD_ID, "colonybuilding");
 
-        MinecoloniesTileEntities.DECO_CONTROLLER = TileEntityType.Builder.create(TileEntityDecorationController::new,
-          ModBlocks.blockDecorationPlaceholder).build(null).setRegistryName(Constants.MOD_ID, "decorationcontroller");
+        ModTileEntities.DECO_CONTROLLER = TileEntityType.Builder
+            .create(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
+            .build(null);
+        ModTileEntities.DECO_CONTROLLER.setRegistryName(Constants.MOD_ID, "decorationcontroller");
 
-        MinecoloniesTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new,
-          ModBlocks.blockRack).build(null).setRegistryName(Constants.MOD_ID, "rack");
+        ModTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new, ModBlocks.blockRack).build(null);
+        ModTileEntities.RACK.setRegistryName(Constants.MOD_ID, "rack");
 
-        MinecoloniesTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new,
-          ModBlocks.blockHutWareHouse).build(null).setRegistryName(Constants.MOD_ID, "warehouse");
+        ModTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new, ModBlocks.blockHutWareHouse).build(null);
+        ModTileEntities.WAREHOUSE.setRegistryName(Constants.MOD_ID, "warehouse");
 
-        MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new,
-          ModBlocks.blockCompostedDirt).build(null).setRegistryName(Constants.MOD_ID, "composteddirt");
+        ModTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt)
+            .build(null);
+        ModTileEntities.COMPOSTED_DIRT.setRegistryName(Constants.MOD_ID, "composteddirt");
 
-        MinecoloniesTileEntities.ENCHANTER = (TileEntityType<? extends TileEntityColonyBuilding>) TileEntityType.Builder.create(TileEntityEnchanter::new,
-          ModBlocks.blockHutEnchanter).build(null).setRegistryName(Constants.MOD_ID, "enchanter");
+        ModTileEntities.ENCHANTER = TileEntityType.Builder.create(TileEntityEnchanter::new, ModBlocks.blockHutEnchanter).build(null);
+        ModTileEntities.ENCHANTER.setRegistryName(Constants.MOD_ID, "enchanter");
 
-        MinecoloniesTileEntities.STASH = TileEntityType.Builder.create(TileEntityStash::new,
-          ModBlocks.blockStash).build(null).setRegistryName(Constants.MOD_ID, "stash");
+        ModTileEntities.STASH = TileEntityType.Builder.create(TileEntityStash::new, ModBlocks.blockStash).build(null);
+        ModTileEntities.STASH.setRegistryName(Constants.MOD_ID, "stash");
 
-
-        event.getRegistry().registerAll(
-          MinecoloniesTileEntities.SCARECROW,
-          MinecoloniesTileEntities.BARREL,
-          MinecoloniesTileEntities.BUILDING,
-          MinecoloniesTileEntities.DECO_CONTROLLER,
-          MinecoloniesTileEntities.RACK,
-          MinecoloniesTileEntities.WAREHOUSE,
-          MinecoloniesTileEntities.COMPOSTED_DIRT,
-          MinecoloniesTileEntities.ENCHANTER,
-          MinecoloniesTileEntities.STASH);
+        event.getRegistry()
+            .registerAll(ModTileEntities.SCARECROW,
+                ModTileEntities.BARREL,
+                ModTileEntities.BUILDING,
+                ModTileEntities.DECO_CONTROLLER,
+                ModTileEntities.RACK,
+                ModTileEntities.WAREHOUSE,
+                ModTileEntities.COMPOSTED_DIRT,
+                ModTileEntities.ENCHANTER,
+                ModTileEntities.STASH);
     }
 }

@@ -29,7 +29,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
      */
     public TileEntityEnchanter()
     {
-        this(MinecoloniesTileEntities.ENCHANTER);
+        this(ModTileEntities.ENCHANTER);
     }
 
     /**

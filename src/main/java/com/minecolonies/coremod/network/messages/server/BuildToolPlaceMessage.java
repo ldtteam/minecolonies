@@ -38,7 +38,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OTHER_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
 
@@ -59,12 +58,12 @@ public class BuildToolPlaceMessage implements IMessage
      */
     private BlockState state;
 
-    private String   structureName;
-    private String   workOrderName;
-    private int      rotation;
+    private String structureName;
+    private String workOrderName;
+    private int rotation;
     private BlockPos pos;
-    private boolean  isHut;
-    private boolean  mirror;
+    private boolean isHut;
+    private boolean mirror;
 
     /**
      * Empty constructor used when registering the
@@ -85,14 +84,13 @@ public class BuildToolPlaceMessage implements IMessage
      * @param mirror        the mirror of the building or decoration.
      * @param state         the state.
      */
-    public BuildToolPlaceMessage(
-      final String structureName,
-      final String workOrderName,
-      final BlockPos pos,
-      final int rotation,
-      final boolean isHut,
-      final Mirror mirror,
-      final BlockState state)
+    public BuildToolPlaceMessage(final String structureName,
+        final String workOrderName,
+        final BlockPos pos,
+        final int rotation,
+        final boolean isHut,
+        final Mirror mirror,
+        final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -188,24 +186,21 @@ public class BuildToolPlaceMessage implements IMessage
      * @param mirror   Whether or not the strcture is mirrored.
      * @param state    the state.
      */
-    private static void handleHut(
-      @NotNull final World world,
-      @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation,
-      @NotNull final BlockPos buildPos,
-      final boolean mirror,
-      final BlockState state)
+    private static void handleHut(@NotNull final World world,
+        @NotNull final PlayerEntity player,
+        final StructureName sn,
+        final int rotation,
+        @NotNull final BlockPos buildPos,
+        final boolean mirror,
+        final BlockState state)
     {
         final String hut = sn.getSection();
         final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
         final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
-        if (tempColony != null
-              && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                    && !(block instanceof BlockHutTownHall
-                           && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
+        if (tempColony != null && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+            && !(block instanceof BlockHutTownHall && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
         {
             return;
         }
@@ -216,7 +211,8 @@ public class BuildToolPlaceMessage implements IMessage
             {
                 if (tempColony != null)
                 {
-                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, sn));
+                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony,
+                        playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, sn));
                 }
                 else
                 {
@@ -225,7 +221,8 @@ public class BuildToolPlaceMessage implements IMessage
 
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, state);
-                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                ((AbstractBlockHut<?>) block)
+                    .onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
                 int level = 0;
@@ -242,8 +239,13 @@ public class BuildToolPlaceMessage implements IMessage
                         String schematic = sn.toString();
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
-                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
-                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayerEntity) player);
+                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world,
+                            schematic,
+                            buildPos,
+                            BlockPosUtil.getRotationFromRotations(rotation),
+                            mirror ? Mirror.FRONT_BACK : Mirror.NONE,
+                            true,
+                            (ServerPlayerEntity) player);
                         complete = true;
                     }
                 }
@@ -268,12 +270,16 @@ public class BuildToolPlaceMessage implements IMessage
      * @param buildPos      The location the decoration will be built.
      * @param mirror        Whether or not the strcture is mirrored.
      */
-    private static void handleDecoration(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn, final String workOrderName,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    private static void handleDecoration(@NotNull final World world,
+        @NotNull final PlayerEntity player,
+        final StructureName sn,
+        final String workOrderName,
+        final int rotation,
+        @NotNull final BlockPos buildPos,
+        final boolean mirror)
     {
-        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
+        @Nullable
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             String schem = sn.toString();
@@ -283,7 +289,6 @@ public class BuildToolPlaceMessage implements IMessage
             {
                 if (schem.matches("^.*[a-zA-Z_-]\\d$"))
                 {
-
                     schem = schem.replaceAll("\\d$", "");
                     schem += '1';
                 }
@@ -315,12 +320,17 @@ public class BuildToolPlaceMessage implements IMessage
      * @param level    the future initial building level.
      * @param complete if pasted.
      */
-    private static void setupBuilding(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level, final boolean complete)
+    private static void setupBuilding(@NotNull final World world,
+        @NotNull final PlayerEntity player,
+        final StructureName sn,
+        final int rotation,
+        @NotNull final BlockPos buildPos,
+        final boolean mirror,
+        final int level,
+        final boolean complete)
     {
-        @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
+        @Nullable
+        final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
         if (building == null)
         {
@@ -341,7 +351,6 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-
             building.setStyle(sn.getStyle());
             building.setBuildingLevel(level);
 
@@ -349,13 +358,13 @@ public class BuildToolPlaceMessage implements IMessage
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                  = ColonyUtils.calculateCorners(building.getPosition(),
-                  world,
-                  wrapper.getBluePrint(),
-                  workOrder.getRotation(world),
-                  workOrder.isMirrored());
+                final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world,
+                    building.getPosition(),
+                    workOrder.getStructureName(),
+                    new PlacementSettings(),
+                    true);
+                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(building
+                    .getPosition(), world, wrapper.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
 
                 building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
                 building.setHeight(wrapper.getBluePrint().getSizeY());

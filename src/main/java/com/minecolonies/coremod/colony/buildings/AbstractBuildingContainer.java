@@ -85,6 +85,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         {
             this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
+        // TODO: fix me
         if (compound.keySet().contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never

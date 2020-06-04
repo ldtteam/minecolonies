@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -45,7 +45,8 @@ import org.jetbrains.annotations.Nullable;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B>
+    implements IBuilderUndestroyable, IAnchorBlock
 {
     /**
      * Hardness factor of the pvp mode.
@@ -115,7 +116,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.create();
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) ModTileEntities.BUILDING.create();
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }
@@ -141,20 +142,20 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public ActionResultType onBlockActivated(
-      final BlockState state,
-      final World worldIn,
-      final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+    public ActionResultType onBlockActivated(final BlockState state,
+        final World worldIn,
+        final BlockPos pos,
+        final PlayerEntity player,
+        final Hand hand,
+        final BlockRayTraceResult ray)
     {
-       /*
-        If the world is client, open the gui of the building
+        /*
+         * If the world is client, open the gui of the building
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
+            @Nullable
+            final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
 
             if (building == null)
             {
@@ -183,7 +184,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction facing = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
+        @NotNull
+        final Direction facing = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
         return this.getDefaultState().with(FACING, facing);
     }
 
@@ -206,13 +208,17 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @see Block#onBlockPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn,
+        @NotNull final BlockPos pos,
+        final BlockState state,
+        final LivingEntity placer,
+        final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
         /*
-        Only work on server side
-        */
+         * Only work on server side
+         */
         if (worldIn.isRemote)
         {
             return;
@@ -221,8 +227,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
-            @NotNull final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
+            @NotNull
+            final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
+            @Nullable
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
             {
@@ -252,9 +260,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param style   the style of the building
      * @see Block#onBlockPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
      */
-    public void onBlockPlacedByBuildTool(
-      @NotNull final World worldIn, @NotNull final BlockPos pos,
-      final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
+    public void onBlockPlacedByBuildTool(@NotNull final World worldIn,
+        @NotNull final BlockPos pos,
+        final BlockState state,
+        final LivingEntity placer,
+        final ItemStack stack,
+        final boolean mirror,
+        final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)

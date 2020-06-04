@@ -1461,7 +1461,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance
-                    && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                    && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1471,7 +1471,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 

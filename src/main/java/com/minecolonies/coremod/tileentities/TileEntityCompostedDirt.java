@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.item.BlockItem;
@@ -57,7 +57,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
      */
     public TileEntityCompostedDirt()
     {
-        super(MinecoloniesTileEntities.COMPOSTED_DIRT);
+        super(ModTileEntities.COMPOSTED_DIRT);
     }
 
     @Override

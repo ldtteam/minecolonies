@@ -18,14 +18,31 @@ public class ModContainerInitializers
     @SubscribeEvent
     public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event)
     {
-        ModContainers.craftingFurnace = (ContainerType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::new).setRegistryName("crafting_furnace");
-        ModContainers.buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::new).setRegistryName("bulding_inv");
-        ModContainers.citizenInv =  (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
-        ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::new).setRegistryName("rack_inv");
-        ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::new).setRegistryName("crafting_building");
-        ModContainers.field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::new).setRegistryName("field");
+        ModContainers.craftingFurnace = IForgeContainerType.create(ContainerCraftingFurnace::new);
+        ModContainers.craftingFurnace.setRegistryName("crafting_furnace");
 
-        event.getRegistry().registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.craftingGrid, ModContainers.field);
+        ModContainers.buildingInv = IForgeContainerType.create(ContainerBuildingInventory::new);
+        ModContainers.buildingInv.setRegistryName("bulding_inv");
+
+        ModContainers.citizenInv = IForgeContainerType.create(ContainerCitizenInventory::new);
+        ModContainers.citizenInv.setRegistryName("citizen_inv");
+
+        ModContainers.rackInv = IForgeContainerType.create(ContainerRack::new);
+        ModContainers.rackInv.setRegistryName("rack_inv");
+
+        ModContainers.craftingGrid = IForgeContainerType.create(ContainerCrafting::new);
+        ModContainers.craftingGrid.setRegistryName("crafting_building");
+
+        ModContainers.field = IForgeContainerType.create(ContainerField::new);
+        ModContainers.field.setRegistryName("field");
+
+        event.getRegistry()
+            .registerAll(ModContainers.craftingFurnace,
+                ModContainers.buildingInv,
+                ModContainers.citizenInv,
+                ModContainers.rackInv,
+                ModContainers.craftingGrid,
+                ModContainers.field);
     }
 
     @SubscribeEvent

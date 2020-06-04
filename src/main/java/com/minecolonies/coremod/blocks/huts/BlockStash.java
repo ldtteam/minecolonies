@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
@@ -43,21 +43,20 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     }
 
     @Override
-    public ActionResultType onBlockActivated(
-            final BlockState state,
-            final World worldIn,
-            final BlockPos pos,
-            final PlayerEntity player,
-            final Hand hand,
-            final BlockRayTraceResult ray)
+    public ActionResultType onBlockActivated(final BlockState state,
+        final World worldIn,
+        final BlockPos pos,
+        final PlayerEntity player,
+        final Hand hand,
+        final BlockRayTraceResult ray)
     {
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
+            @Nullable
+            final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
 
-            if (building != null
-                    && building.getColony() != null
-                    && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            if (building != null && building.getColony() != null
+                && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
             }
@@ -69,7 +68,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create();
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) ModTileEntities.STASH.create();
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }

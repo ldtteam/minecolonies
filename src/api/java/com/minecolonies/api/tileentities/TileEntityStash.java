@@ -29,7 +29,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
      */
     public TileEntityStash()
     {
-        super(MinecoloniesTileEntities.STASH);
+        super(ModTileEntities.STASH);
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);
     }
 

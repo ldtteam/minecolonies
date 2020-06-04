@@ -27,7 +27,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -258,7 +258,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         final CompoundNBT compound = super.serializeNBT();
         final ListNBT list = new ListNBT();
-        for (final IRequestResolver requestResolver : getResolvers())
+        for (final IRequestResolver<?> requestResolver : getResolvers())
         {
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
         }
@@ -769,8 +769,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
-                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(
-                    MinecoloniesTileEntities.BUILDING);
+                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(ModTileEntities.BUILDING);
                 colony.getWorld().setTileEntity(getPosition(), tileEntityColonyBuilding);
                 this.tileEntity = tileEntityColonyBuilding;
             }
@@ -1333,7 +1332,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             if (citizenData.getJob() instanceof AbstractJobCrafter)
             {
-                final AbstractJobCrafter crafterJob = citizenData.getJob(AbstractJobCrafter.class);
+                final AbstractJobCrafter<?, ?> crafterJob = citizenData.getJob(AbstractJobCrafter.class);
 
                 if (!crafterJob.getAssignedTasks().isEmpty())
                 {

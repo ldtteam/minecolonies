@@ -17,7 +17,7 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
      */
     public AbstractScarescrowTileEntity()
     {
-        super(MinecoloniesTileEntities.SCARECROW);
+        super(ModTileEntities.SCARECROW);
     }
 
     /**
@@ -164,6 +164,7 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
 
     /**
      * Getter for the ownerId of the field.
+     * 
      * @return the int id.
      */
     public abstract int getOwnerId();
@@ -171,13 +172,14 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
     /**
      * Sets the owner of the field.
      *
-     * @param ownerId the name of the citizen.
+     * @param ownerId    the name of the citizen.
      * @param tempColony the colony view.
      */
     public abstract void setOwner(int ownerId, IColonyView tempColony);
 
     /**
      * Get the inventory of the scarecrow.
+     * 
      * @return the IItemHandler.
      */
     public abstract IItemHandlerModifiable getInventory();

@@ -31,10 +31,8 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-
 import java.util.EnumSet;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITAL;
@@ -164,7 +162,7 @@ public class EntityAISickTask extends Goal
             return;
         }
 
-        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null)
         {
             job.setActive(false);
@@ -176,24 +174,31 @@ public class EntityAISickTask extends Goal
             case CHECK_FOR_CURE:
                 currentState = checkForCure(citizenData);
                 return;
+
             case GO_TO_HUT:
                 currentState = goToHut(citizenData);
                 return;
+
             case SEARCH_HOSPITAL:
                 currentState = searchHospital(citizenData);
                 return;
+
             case GO_TO_HOSPITAL:
                 currentState = goToHospital();
                 return;
+
             case WAIT_FOR_CURE:
                 currentState = waitForCure(citizenData);
                 return;
+
             case APPLY_CURE:
                 currentState = applyCure(citizenData);
                 return;
+
             case FIND_EMPTY_BED:
                 currentState = findEmptyBed();
                 return;
+
             default:
                 reset();
                 break;
@@ -235,10 +240,8 @@ public class EntityAISickTask extends Goal
                     final World world = citizen.world;
                     BlockState state = world.getBlockState(pos);
                     state = state.getBlock().getExtendedState(state, world, pos);
-                    if (state.getBlock().isIn(BlockTags.BEDS)
-                          && !state.get(BedBlock.OCCUPIED)
-                          && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                          && world.isAirBlock(pos.up()))
+                    if (state.getBlock().isIn(BlockTags.BEDS) && !state.get(BedBlock.OCCUPIED)
+                        && state.get(BedBlock.PART).equals(BedPart.HEAD) && world.isAirBlock(pos.up()))
                     {
                         usedBed = pos;
                         ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCitizenId());
@@ -285,18 +288,18 @@ public class EntityAISickTask extends Goal
             return CHECK_FOR_CURE;
         }
 
-        final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
+        final List<ItemStack> list = IColonyManager.getInstance()
+            .getCompatibilityManager()
+            .getDisease(citizen.getCitizenDiseaseHandler().getDisease())
+            .getCure();
         citizen.setHeldItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
-
 
         citizen.swingArm(Hand.MAIN_HAND);
         citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                citizen.getPositionVec().add(0, 2, 0),
-                ParticleTypes.HAPPY_VILLAGER,
-                waitingTicks), citizen);
-
+        Network.getNetwork()
+            .sendToTrackingEntity(
+                new CircleParticleEffectMessage(citizen.getPositionVec().add(0, 2, 0), ParticleTypes.HAPPY_VILLAGER, waitingTicks),
+                citizen);
 
         waitingTicks++;
         if (waitingTicks < REQUIRED_TIME_TO_CURE)
@@ -315,7 +318,9 @@ public class EntityAISickTask extends Goal
      */
     private void cure(final ICitizenData citizenData)
     {
-        final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
+        final Disease disease = IColonyManager.getInstance()
+            .getCompatibilityManager()
+            .getDisease(citizen.getCitizenDiseaseHandler().getDisease());
         if (disease != null)
         {
             for (final ItemStack cure : disease.getCure())
@@ -377,7 +382,8 @@ public class EntityAISickTask extends Goal
             return IDLE;
         }
 
-        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
+        if (!citizen.getCitizenSleepHandler().isAsleep()
+            && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
         {
             return GO_TO_HOSPITAL;
         }
@@ -423,7 +429,8 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigator().noPath() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
+        if (citizen.getCitizenSleepHandler().isAsleep()
+            || (citizen.getNavigator().noPath() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
         {
             return WAIT_FOR_CURE;
         }
@@ -449,8 +456,10 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()), new TranslationTextComponent(NO_HOSPITAL),
-              ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(
+                new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+                new TranslationTextComponent(NO_HOSPITAL),
+                ChatPriority.BLOCKING));
             return IDLE;
         }
 

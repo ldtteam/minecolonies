@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.ModTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
@@ -191,9 +191,9 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINECART, MinecartRenderer::new);
 
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
             .forEach(hut -> RenderTypeLookup.setRenderLayer(hut,

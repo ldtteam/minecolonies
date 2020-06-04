@@ -21,14 +21,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -40,12 +38,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * The maximum upgrade of the building.
      */
-    public static final  int    MAX_BUILDING_LEVEL = 5;
+    public static final int MAX_BUILDING_LEVEL = 5;
 
     /**
      * Progress amount to mark building dirty.
      */
-    private static final int COUNT_TO_STORE_POS  = 50;
+    private static final int COUNT_TO_STORE_POS = 50;
 
     /**
      * Progress position of the builder.
@@ -97,11 +95,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     @Override
     public Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(
+            super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true),
+                new net.minecraft.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -148,12 +148,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             fluidsToRemove.clear();
             ListNBT fluidsToRemove = (ListNBT) compound.get(TAG_FLUIDS_REMOVE);
             fluidsToRemove.forEach(fluidsRemove -> {
-            	int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
                 ListNBT positions = (ListNBT) ((CompoundNBT) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
                 final List<BlockPos> fluids = new ArrayList<BlockPos>();
                 for (int i = 0; i < positions.size(); i++)
                 {
-                	fluids.add(BlockPosUtil.readFromListNBT(positions, i));
+                    fluids.add(BlockPosUtil.readFromListNBT(positions, i));
                 }
                 this.fluidsToRemove.put(y, fluids);
             });
@@ -165,10 +165,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final ListNBT neededResTagList = new ListNBT();
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
+        @NotNull
+        final ListNBT neededResTagList = new ListNBT();
+        for (@NotNull
+        final BuildingBuilderResource resource : neededResources.values())
         {
-            @NotNull final CompoundNBT neededRes = new CompoundNBT();
+            @NotNull
+            final CompoundNBT neededRes = new CompoundNBT();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount());
             itemStack.setTag(resource.getItemStack().getTag());
             itemStack.write(neededRes);
@@ -185,7 +188,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         final ListNBT fluidsToRemove = new ListNBT();
         this.fluidsToRemove.forEach((y, fluids) -> {
-        	final CompoundNBT fluidsRemove = new CompoundNBT();
+            final CompoundNBT fluidsRemove = new CompoundNBT();
             final ListNBT positions = new ListNBT();
             fluids.forEach(fluid -> BlockPosUtil.writeToListNBT(positions, fluid));
             fluidsRemove.put(TAG_FLUIDS_REMOVE_POSITIONS, positions);
@@ -210,7 +213,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         updateAvailableResources();
         buf.writeInt(neededResources.size());
         double qty = 0;
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
+        for (@NotNull
+        final BuildingBuilderResource resource : neededResources.values())
         {
             buf.writeItemStack(resource.getItemStack());
             buf.writeInt(resource.getAvailable());
@@ -219,19 +223,20 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         }
 
         final ICitizenData data = this.getMainCitizen();
-        if(data != null && data.getJob() instanceof AbstractJobStructure)
+        if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
-            final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
+            final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
             final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
-            if(workOrderBuildDecoration != null)
+            if (workOrderBuildDecoration != null)
             {
                 final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
-                final String name =
-                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                final String name = workOrderBuildDecoration instanceof WorkOrderBuild
+                    ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName()
+                    : workOrderBuildDecoration.getName();
                 buf.writeString(name);
 
                 final String desc;
-                if(pos.equals(getPosition()))
+                if (pos.equals(getPosition()))
                 {
                     desc = "here";
                 }
@@ -244,7 +249,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
 
                 buf.writeString(desc);
-                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty/workOrderBuildDecoration.getAmountOfRes());
+                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
             }
             else
             {
@@ -259,8 +264,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeString("");
             buf.writeDouble(0.0);
         }
-        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
-
+        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? ""
+            : getMainCitizen().getName());
     }
 
     /**
@@ -270,7 +275,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     private void updateAvailableResources()
     {
-
         getMainCitizenEntity().ifPresent(structureBuilder -> {
             final InventoryCitizen structureBuilderInventory = getMainCitizen().getInventory();
             if (structureBuilderInventory == null)
@@ -278,7 +282,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 return;
             }
 
-            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+            for (@NotNull
+            final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
             {
                 final BuildingBuilderResource resource = entry.getValue();
 
@@ -286,15 +291,15 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
                 if (structureBuilderInventory != null)
                 {
-
                     resource.addAvailable(InventoryUtils.getItemCountInItemHandler(structureBuilderInventory,
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 if (getTileEntity() != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                    resource.addAvailable(
+                        InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
             }
         });
@@ -391,8 +396,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Set the progress position of the builder.
+     * 
      * @param blockPos the last blockPos.
-     * @param stage the stage to set.
+     * @param stage    the stage to set.
      */
     public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
@@ -411,6 +417,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Getter for the progress position.
+     * 
      * @return the current progress and stage.
      */
     @Nullable
@@ -425,6 +432,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Getter for the blocks to be removed in fluids_remove.
+     * 
      * @return the blocks to be removed in fluids_remove.
      */
     public Map<Integer, List<BlockPos>> getFluidsToRemove()

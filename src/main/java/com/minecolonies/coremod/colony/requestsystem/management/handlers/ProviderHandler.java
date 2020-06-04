@@ -5,11 +5,9 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -18,10 +16,12 @@ import java.util.Collection;
  */
 public class ProviderHandler implements IProviderHandler
 {
-
     private final IStandardRequestManager manager;
 
-    public ProviderHandler(final IStandardRequestManager manager) {this.manager = manager;}
+    public ProviderHandler(final IStandardRequestManager manager)
+    {
+        this.manager = manager;
+    }
 
     @Override
     public IRequestManager getManager()
@@ -34,7 +34,6 @@ public class ProviderHandler implements IProviderHandler
      *
      * @param provider The provider you are requesting the resolvers for.
      * @return The registered resolvers that belong to the given provider.
-     *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
@@ -74,21 +73,21 @@ public class ProviderHandler implements IProviderHandler
     /**
      * Internal method that handles the reassignment
      *
-     * @param token   The token of the provider that is being removed.
-     * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
+     * @param token The token of the provider that is being removed.
+     * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is
+     *                                  in conflict.
      */
     @VisibleForTesting
-    @SuppressWarnings(Suppression.UNCHECKED)
     void removeProviderInternal(final IToken<?> token)
     {
         manager.getLogger().info(String.format("Removing provider: %s", token));
 
-        //Get the resolvers that are being removed.
+        // Get the resolvers that are being removed.
         final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(token);
 
         processResolversForRemoval(assignedResolvers);
 
-        //Removing the data from the maps.
+        // Removing the data from the maps.
         manager.getProviderResolverAssignmentDataStore().getAssignments().remove(token);
         manager.getColony().markDirty();
         manager.getLogger().debug(String.format("Removed provider: %s", token));
@@ -102,10 +101,10 @@ public class ProviderHandler implements IProviderHandler
     @VisibleForTesting
     void processResolversForRemoval(final Collection<IToken<?>> assignedResolvers)
     {
-        //Check if we have resolvers that need to be processed.
+        // Check if we have resolvers that need to be processed.
         if (assignedResolvers != null && !assignedResolvers.isEmpty())
         {
-            //For each resolver process them.
+            // For each resolver process them.
             for (final IToken<?> resolverToken : assignedResolvers)
             {
                 processResolverForRemoval(assignedResolvers, resolverToken);
@@ -117,24 +116,24 @@ public class ProviderHandler implements IProviderHandler
      * Internal method that handles the removal of a single resolvers that is attached to a provider that is being removed.
      *
      * @param assignedResolvers The list of resolvers which are being removed.
-     * @param resolverToken The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
+     * @param resolverToken     The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
      */
     @VisibleForTesting
     void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
     {
-        //Make sure that the resolver is actually supposed to be deleted.
+        // Make sure that the resolver is actually supposed to be deleted.
         Validate.isTrue(assignedResolvers.contains(resolverToken));
 
-        //Skip if the resolver has no requests assigned.
+        // Skip if the resolver has no requests assigned.
         if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
-              || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
+            || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
         {
-            //No requests assigned so lets process this resolver as such.
+            // No requests assigned so lets process this resolver as such.
             removeResolverWithoutAssignedRequests(resolverToken);
             return;
         }
 
-        //This resolver has currently requests assigned, which needs to be handled separately
+        // This resolver has currently requests assigned, which needs to be handled separately
         removeResolverWithAssignedRequests(assignedResolvers, resolverToken);
     }
 
@@ -157,19 +156,21 @@ public class ProviderHandler implements IProviderHandler
      * Reassigns the assigned requests, using the provided list as blacklist.
      *
      * @param assignedResolvers The resolvers from the provider that is being removed.
-     * @param resolverToken The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
+     * @param resolverToken     The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
      */
     @VisibleForTesting
     void removeResolverWithAssignedRequests(@NotNull final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
     {
-        //Make sure that the resolver is actually supposed to be deleted
+        // Make sure that the resolver is actually supposed to be deleted
         Validate.isTrue(assignedResolvers.contains(resolverToken));
 
-        //Clone the original list to modify it during iteration, if need be.
-        final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
-        manager.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        // Clone the original list to modify it during iteration, if need be.
+        final Collection<IToken<?>> assignedRequests = new ArrayList<>(
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
+        manager.getLogger()
+            .debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
-        //Get all assigned requests and reassign them.
+        // Get all assigned requests and reassign them.
         for (final IToken<?> requestToken : assignedRequests)
         {
             manager.reassignRequest(requestToken, assignedResolvers);
@@ -177,21 +178,21 @@ public class ProviderHandler implements IProviderHandler
 
         removeResolverWithoutAssignedRequests(resolverToken);
 
-        manager.getLogger().debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        manager.getLogger()
+            .debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
     }
 
     /**
      * Method used to get the registered resolvers for a given provider.
      *
-     * @param token   The token of the provider you are requesting the resolvers for.
+     * @param token The token of the provider you are requesting the resolvers for.
      * @return The registered resolvers that belong to the given provider.
-     *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
     public Collection<IToken<?>> getRegisteredResolvers(@NotNull final IToken<?> token)
     {
-        Collection<IToken<?>> result =  manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
+        Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
 
         if (result == null)
         {

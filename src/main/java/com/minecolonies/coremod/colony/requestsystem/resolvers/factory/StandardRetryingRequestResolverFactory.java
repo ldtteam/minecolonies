@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingR
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,11 +41,9 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public StandardRetryingRequestResolver getNewInstance(
-                                                           @NotNull final IFactoryController factoryController,
-                                                           @NotNull final IRequestManager iRequestManager,
-                                                           @NotNull final Object... context)
-      throws IllegalArgumentException
+    public StandardRetryingRequestResolver getNewInstance(@NotNull final IFactoryController factoryController,
+        @NotNull final IRequestManager iRequestManager,
+        @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {
@@ -58,8 +55,8 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final StandardRetryingRequestResolver standardRetryingRequestResolver)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller,
+        @NotNull final StandardRetryingRequestResolver standardRetryingRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
 
@@ -90,19 +87,23 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     @Override
     public StandardRetryingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Constants.NBT.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
-            Integer tries = assignmentCompound.getInt(NBT_VALUE);
+        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Constants.NBT.TAG_COMPOUND))
+            .map(assignmentCompound -> {
+                IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
+                Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
-            return new HashMap.SimpleEntry<>(token, tries);
-        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
+                return new HashMap.SimpleEntry<>(token, tries);
+            })
+            .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Constants.NBT.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
-            Integer tries = assignmentCompound.getInt(NBT_VALUE);
+        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Constants.NBT.TAG_COMPOUND))
+            .map(assignmentCompound -> {
+                IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
+                Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
-            return new HashMap.SimpleEntry<>(token, tries);
-        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
+                return new HashMap.SimpleEntry<>(token, tries);
+            })
+            .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));

@@ -99,7 +99,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      */
     public TileEntityColonyBuilding()
     {
-        this(MinecoloniesTileEntities.BUILDING);
+        this(ModTileEntities.BUILDING);
     }
 
     /**

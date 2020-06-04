@@ -18,10 +18,8 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Comparator;
 import java.util.List;
-
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 
 public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PublicCrafting>
@@ -32,21 +30,20 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
      * @param location the location.
      * @param token    the id.
      */
-    public PublicWorkerCraftingProductionResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
+    public PublicWorkerCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token, PublicCrafting.class);
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends PublicCrafting> request)
     {
-
     }
 
     @Override
-    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends PublicCrafting> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -57,17 +54,18 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends PublicCrafting> completedRequest)
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony || !completedRequest.hasParent())
         {
-            //Remove it from the task list.
+            // Remove it from the task list.
             removeRequestFromTaskList(completedRequest, colony);
 
-            //This is the crafting that got completed.
-            //We go up the tree one level to get the actual request.
-            //Get the requester for that request and ask where he wants his stuff delivered.
+            // This is the crafting that got completed.
+            // We go up the tree one level to get the actual request.
+            // Get the requester for that request and ask where he wants his stuff delivered.
             final IRequest<?> parentRequest = manager.getRequestForToken(completedRequest.getParent());
             final IRequester parentRequestRequester = parentRequest.getRequester();
 
@@ -80,11 +78,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
             completedRequest.getDeliveries().forEach(itemStack -> {
-                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, getDefaultDeliveryPriority(true));
+                final Delivery delivery = new Delivery(getLocation(),
+                    parentRequestRequester.getLocation(),
+                    itemStack,
+                    getDefaultDeliveryPriority(true));
 
-                final IToken<?> requestToken =
-                  manager.createRequest(this,
-                    delivery);
+                final IToken<?> requestToken = manager.createRequest(this, delivery);
 
                 deliveries.add(manager.getRequestForToken(requestToken));
             });
@@ -96,17 +95,18 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
     private void removeRequestFromTaskList(@NotNull final IRequest<? extends PublicCrafting> completedRequest, final IColony colony)
     {
-        final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
-                                              .stream()
-                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter && (
-                                                ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(completedRequest.getId())
-                                                  || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
-                                              .findFirst()
-                                              .orElse(null);
+        final ICitizenData holdingCrafter = colony.getCitizenManager()
+            .getCitizens()
+            .stream()
+            .filter(c -> c.getJob() instanceof AbstractJobCrafter
+                && (((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().contains(completedRequest.getId())
+                    || ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
+            .findFirst()
+            .orElse(null);
 
         if (holdingCrafter != null)
         {
-            final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
+            final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) holdingCrafter.getJob();
             job.onTaskDeletion(completedRequest.getId());
         }
     }
@@ -115,36 +115,34 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //Nice!
+        // Nice!
     }
 
     @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-
     }
 
     @Override
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager,
+        @NotNull final AbstractBuildingWorker building,
+        @NotNull final ItemStack stack)
     {
         if (manager.getColony().getWorld().isRemote)
         {
             return false;
         }
 
-        //Check if we even have a worker available
-        return building.getAssignedCitizen()
-                 .stream()
-                 .anyMatch(c -> c.getJob() instanceof AbstractJobCrafter);
+        // Check if we even have a worker available
+        return building.getAssignedCitizen().stream().anyMatch(c -> c.getJob() instanceof AbstractJobCrafter);
     }
 
     @Override
-    protected void onAssignedToThisResolverForBuilding(
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<? extends PublicCrafting> request,
-      final boolean simulation,
-      @NotNull final AbstractBuilding building)
+    protected void onAssignedToThisResolverForBuilding(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends PublicCrafting> request,
+        final boolean simulation,
+        @NotNull final AbstractBuilding building)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -152,12 +150,11 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         final ICitizenData freeCrafter = building.getAssignedCitizen()
-                                           .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                           .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob())
-                                                                                                                                                     .getAssignedTasks()
-                                                                                                                                                     .size()))
-                                           .orElse(null);
+            .stream()
+            .filter(c -> c.getJob() instanceof AbstractJobCrafter)
+            .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size()
+                + ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().size()))
+            .orElse(null);
 
         if (freeCrafter == null)
         {
@@ -165,12 +162,14 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
+        final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) freeCrafter.getJob();
         job.onTaskBeingScheduled(request.getId());
     }
 
     @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends PublicCrafting> request,
+        @NotNull final AbstractBuilding building)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -178,10 +177,11 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         final ICitizenData freeCrafter = building.getAssignedCitizen()
-                                           .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
-                                           .findFirst()
-                                           .orElse(null);
+            .stream()
+            .filter(c -> c.getJob() instanceof AbstractJobCrafter
+                && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(request.getId()))
+            .findFirst()
+            .orElse(null);
 
         if (freeCrafter == null)
         {
@@ -189,7 +189,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
+        final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) freeCrafter.getJob();
         job.onTaskBeingResolved(request.getId());
     }
 }

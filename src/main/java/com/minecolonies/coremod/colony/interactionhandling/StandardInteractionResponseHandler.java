@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHan
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -17,40 +16,38 @@ import java.util.List;
  */
 public class StandardInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
 {
-    private static final Tuple[] tuples = {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
-    };
+    @SuppressWarnings("unchecked")
+    private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The server interaction response handler with custom validator.
-     * @param inquiry the client inquiry.
+     * 
+     * @param inquiry   the client inquiry.
      * @param validator the id of the validator.
-     * @param priority the interaction priority.
+     * @param priority  the interaction priority.
      */
-    public StandardInteractionResponseHandler(
-      final ITextComponent inquiry,
-      final ITextComponent validator,
-      final IChatPriority priority)
+    public StandardInteractionResponseHandler(final ITextComponent inquiry, final ITextComponent validator, final IChatPriority priority)
     {
         super(inquiry, true, priority, InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validator), validator, tuples);
     }
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
+     * 
+     * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
      */
-    public StandardInteractionResponseHandler(
-      final ITextComponent inquiry,
-      final IChatPriority priority)
+    public StandardInteractionResponseHandler(final ITextComponent inquiry, final IChatPriority priority)
     {
         super(inquiry, true, priority, InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(inquiry), inquiry, tuples);
     }
 
     /**
      * Way to load the response handler for a citizen.
+     * 
      * @param data the citizen owning this handler.
      */
     public StandardInteractionResponseHandler(final ICitizen data)

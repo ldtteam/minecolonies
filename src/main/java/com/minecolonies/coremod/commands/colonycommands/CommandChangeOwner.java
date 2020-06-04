@@ -12,7 +12,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.GameProfileArgument;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;

@@ -34,7 +34,7 @@ public class Tuple<A, B>
     @Override
     public int hashCode()
     {
-        return getA().hashCode() * 31 + getB().hashCode() * 31;
+        return getA().hashCode() + getB().hashCode() * 31;
     }
 
     @Override
