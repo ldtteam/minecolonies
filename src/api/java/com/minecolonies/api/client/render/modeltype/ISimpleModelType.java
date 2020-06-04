@@ -3,6 +3,7 @@ package com.minecolonies.api.client.render.modeltype;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +38,15 @@ public interface ISimpleModelType extends IModelType {
         {
             folder = "medieval/";
         }
-        final String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
+        String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
+        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
+        if (Minecraft.getInstance().getResourceManager().hasResource(modified))
+        {
+            return modified;
+        }
+        textureBase = "textures/entity/citizen/default/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
+
         return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
     }
 }

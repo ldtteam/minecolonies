@@ -233,6 +233,14 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     }
 
     /**
+     * Set the texture dirty.
+     */
+    public void setTextureDirty()
+    {
+        this.completeTextureInit = false;
+    }
+
+    /**
      * Get the model assigned to the citizen.
      *
      * @return the model.
