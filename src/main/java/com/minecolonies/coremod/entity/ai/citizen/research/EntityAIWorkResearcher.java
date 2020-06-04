@@ -40,7 +40,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingUniversity> getExpectedBuildingClass()
     {
         return BuildingUniversity.class;
     }

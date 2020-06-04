@@ -518,7 +518,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingHospital> getExpectedBuildingClass()
     {
         return BuildingHospital.class;
     }

@@ -1,16 +1,12 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.entity.FireArrowEntity;
-import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -77,7 +73,8 @@ public class EntityAIAttackArcher extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (target != null && target.isAlive() && entity.isAlive())
+        target = entity.getAttackTarget();
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;

@@ -173,7 +173,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingFisherman> getExpectedBuildingClass()
     {
         return BuildingFisherman.class;
     }
