@@ -126,7 +126,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingCook> getExpectedBuildingClass()
     {
         return BuildingCook.class;
     }
