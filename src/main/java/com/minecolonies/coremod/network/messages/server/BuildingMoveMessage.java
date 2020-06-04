@@ -52,11 +52,11 @@ public class BuildingMoveMessage implements IMessage
      */
     private BlockState state;
 
-    private String   structureName;
-    private String   workOrderName;
-    private int      rotation;
+    private String structureName;
+    private String workOrderName;
+    private int rotation;
     private BlockPos pos;
-    private boolean  mirror;
+    private boolean mirror;
 
     /**
      * Empty constructor used when registering the
@@ -77,14 +77,13 @@ public class BuildingMoveMessage implements IMessage
      * @param building      the building.
      * @param state         the state.
      */
-    public BuildingMoveMessage(
-      final String structureName,
-      final String workOrderName,
-      final BlockPos pos,
-      final int rotation,
-      final Mirror mirror,
-      final IBuildingView building,
-      final BlockState state)
+    public BuildingMoveMessage(final String structureName,
+        final String workOrderName,
+        final BlockPos pos,
+        final int rotation,
+        final Mirror mirror,
+        final IBuildingView building,
+        final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -163,32 +162,32 @@ public class BuildingMoveMessage implements IMessage
      * @param oldBuildingId The old building id.
      * @param state         the hut state.
      */
-    private static void handleHut(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
+    private static void handleHut(@NotNull final World world,
+        @NotNull final PlayerEntity player,
+        final StructureName sn,
+        final int rotation,
+        @NotNull final BlockPos buildPos,
+        final boolean mirror,
+        final BlockPos oldBuildingId,
+        final BlockState state)
     {
         final BlockState blockState = world.getBlockState(buildPos);
-        if (blockState.getBlock() instanceof IBuilderUndestroyable
-              || blockState.getBlock() == Blocks.BEDROCK)
+        if (blockState.getBlock() instanceof IBuilderUndestroyable || blockState.getBlock() == Blocks.BEDROCK)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.movebuilding.invalid"));
             return;
         }
 
-        final String hut = sn.getSection();
-
         final Block block = world.getBlockState(oldBuildingId).getBlock();
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
-        if (tempColony != null
-              && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                    && !(block instanceof BlockHutTownHall
-                           && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
+        if (tempColony != null && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+            && !(block instanceof BlockHutTownHall && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
         {
             return;
         }
 
-        @Nullable final IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
+        @Nullable
+        final IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
         if (oldBuilding instanceof BuildingTownHall)
         {
             if (tempColony != null)
@@ -213,7 +212,8 @@ public class BuildingMoveMessage implements IMessage
             world.destroyBlock(buildPos, true);
 
             world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
-            ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+            ((AbstractBlockHut) block)
+                .onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
         }
     }
@@ -229,12 +229,16 @@ public class BuildingMoveMessage implements IMessage
      * @param mirror      Whether or not the strcture is mirrored.
      * @param oldBuilding The old building id.
      */
-    private static void setupBuilding(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, @Nullable final IBuilding oldBuilding)
+    private static void setupBuilding(@NotNull final World world,
+        @NotNull final PlayerEntity player,
+        final StructureName sn,
+        final int rotation,
+        @NotNull final BlockPos buildPos,
+        final boolean mirror,
+        @Nullable final IBuilding oldBuilding)
     {
-        @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
+        @Nullable
+        final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
         if (building == null)
         {

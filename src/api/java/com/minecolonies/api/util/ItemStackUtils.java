@@ -30,7 +30,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * Utility methods for the inventories.

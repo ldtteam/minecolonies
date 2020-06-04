@@ -10,7 +10,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -26,20 +25,20 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
+        final IColony colony = IColonyManager.getInstance()
+            .getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource()
+                .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         context.getSource()
-          .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
-            colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true).getName()), true);
+            .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
+                colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true).getName()), true);
         return 1;
     }
 
@@ -56,6 +55,6 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSource> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+            .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
     }
 }

@@ -8,43 +8,39 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles moving to a location.
  */
-public class PathJobMoveToLocation extends AbstractPathJob {
+public class PathJobMoveToLocation extends AbstractPathJob
+{
     private static final float DESTINATION_SLACK_NONE = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     private static final float DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
-    private static final double TIE_BREAKER = 1.001D;
     @NotNull
     private final BlockPos destination;
     // 0 = exact match
     private float destinationSlack = DESTINATION_SLACK_NONE;
 
     /**
-     * The manhattan distance between start and end.
-     */
-    private final double startEndDist;
-
-    /**
      * Prepares the PathJob for the path finding system.
      *
-     * @param world world the entity is in.
-     * @param start starting location.
-     * @param end   target location.
-     * @param range max search range.
+     * @param world  world the entity is in.
+     * @param start  starting location.
+     * @param end    target location.
+     * @param range  max search range.
      * @param entity the entity.
      */
-    public PathJobMoveToLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)
+    public PathJobMoveToLocation(final World world,
+        @NotNull final BlockPos start,
+        @NotNull final BlockPos end,
+        final int range,
+        final LivingEntity entity)
     {
         super(world, start, end, range, entity);
 
         this.destination = new BlockPos(end);
-
-        startEndDist = Math.sqrt(start.distanceSq(end));
     }
 
     /**
@@ -58,11 +54,17 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     {
         if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
-            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
+            Log.getLogger()
+                .info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
+                    start.getX(),
+                    start.getY(),
+                    start.getZ(),
+                    destination.getX(),
+                    destination.getY(),
+                    destination.getZ()));
         }
 
-        //  Compute destination slack - if the destination point cannot be stood in
+        // Compute destination slack - if the destination point cannot be stood in
         if (getGroundHeight(null, destination) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
@@ -88,9 +90,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.pos.getX() == destination.getX()
-                     && n.pos.getY() == destination.getY()
-                     && n.pos.getZ() == destination.getZ();
+            return n.pos.getX() == destination.getX() && n.pos.getY() == destination.getY() && n.pos.getZ() == destination.getZ();
         }
 
         return destination.withinDistance(n.pos, DESTINATION_SLACK_ADJACENT);
@@ -105,7 +105,7 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        //  For Result Score lower is better
+        // For Result Score lower is better
         return destination.distanceSq(n.pos);
     }
 }

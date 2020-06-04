@@ -19,9 +19,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -35,16 +33,6 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
      * Max level which should have an effect on the speed of the worker.
      */
     private static final int MAX_LEVEL = 50;
-
-    /**
-     * How often should strength factor into the sifter's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
-     * How often should endurance factor into the sifter's skill modifier.
-     */
-    private static final int ENDURANCE_MULTIPLIER = 2;
 
     /**
      * Delay for each of the craftings.
@@ -69,11 +57,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     public EntityAIWorkSifter(@NotNull final JobSifter job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, SIFT, 1),
-          new AITarget(START_WORKING, SIFT, 1),
-          new AITarget(SIFT, this::sift, TICK_DELAY)
-        );
+        super.registerTargets(new AITarget(IDLE, SIFT, 1),
+            new AITarget(START_WORKING, SIFT, 1),
+            new AITarget(SIFT, this::sift, TICK_DELAY));
         worker.setCanPickUpLoot(true);
     }
 
@@ -155,13 +141,15 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
             if (check == SIFT)
             {
                 sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
-                if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
+                if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity()
+                    || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
                 {
                     incrementActionsDoneAndDecSaturation();
                 }
 
-                final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
+                final ItemStack result = IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
@@ -187,9 +175,14 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         if (check == SIFT)
         {
             Network.getNetwork()
-              .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
+                .sendToTrackingEntity(
+                    new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()),
+                    worker);
             Network.getNetwork()
-              .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+                .sendToTrackingEntity(
+                    new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(),
+                        sifterBuilding.getID().down()),
+                    worker);
 
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
         }

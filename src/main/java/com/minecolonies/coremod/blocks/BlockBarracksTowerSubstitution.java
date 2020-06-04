@@ -13,7 +13,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<BlockBarracksTowerSubstitution>
 {

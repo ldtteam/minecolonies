@@ -14,13 +14,11 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.GameProfileArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
 public class CommandChangeOwner implements IMCColonyOfficerCommand
 {
-
     /**
      * What happens when the command is executed after preConditions are successful.
      *
@@ -29,13 +27,13 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
+        final IColony colony = IColonyManager.getInstance()
+            .getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource()
+                .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -53,13 +51,17 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
         if (player == null)
         {
             // could not find player with given name.
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
+            context.getSource()
+                .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
 
         colony.getPermissions().setOwner(player);
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName()), true);
+        context.getSource()
+            .sendFeedback(
+                LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName()),
+                true);
         return 1;
     }
 
@@ -76,7 +78,8 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
     public LiteralArgumentBuilder<CommandSource> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
+            .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                .then(
+                    IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
     }
 }

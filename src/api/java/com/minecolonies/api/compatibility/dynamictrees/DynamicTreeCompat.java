@@ -8,25 +8,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
 {
-
     private static DynamicTreeCompat instance = new DynamicTreeCompat();
 
-    private static final String DYNAMIC_MODID = "dynamictrees";
-
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
-
-    /**
-     * Hashmap of fakeplayers, dimension-id as key
-     */
-    private static Map<Integer, FakePlayer> fakePlayers = new HashMap<>();
 
     private DynamicTreeCompat()
     {
@@ -37,6 +25,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     /**
      * Check whether dynamic tree's mod is present
+     * 
      * @return true
      */
     @Override
@@ -132,12 +121,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param leaf       The leaf to check
      */
     @Override
-    protected NonNullList<ItemStack> getDropsForLeaf(
-      @NotNull final IWorld world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      final int fortune,
-      @NotNull final Block leaf)
+    protected NonNullList<ItemStack> getDropsForLeaf(@NotNull final IWorld world,
+        @NotNull final BlockPos pos,
+        @NotNull final BlockState blockState,
+        final int fortune,
+        @NotNull final Block leaf)
     {
         return NonNullList.create();
     }
@@ -152,7 +140,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param leaf       The leaf to check
      * @return the list of drops.
      */
-    public static NonNullList<ItemStack> getDropsForLeafCompat(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForLeafCompat(final IWorld world,
+        final BlockPos pos,
+        final BlockState blockState,
+        final int fortune,
+        final Block leaf)
     {
         return instance.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
@@ -200,11 +192,12 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return Runnable to break the Tree
      */
     @Override
-    protected Runnable getTreeBreakActionCompat(@NotNull final World world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
+    protected Runnable getTreeBreakActionCompat(@NotNull final World world,
+        @NotNull final BlockPos blockToBreak,
+        final ItemStack toolToUse,
+        final BlockPos workerPos)
     {
-        return () ->
-        {
-
+        return () -> {
         };
     }
 
@@ -217,7 +210,10 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param workerPos    The position the fakeplayer breaks the tree from, optional
      * @return Runnable to break the Tree
      */
-    public static Runnable getTreeBreakAction(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
+    public static Runnable getTreeBreakAction(final World world,
+        final BlockPos blockToBreak,
+        final ItemStack toolToUse,
+        final BlockPos workerPos)
     {
         return instance.getTreeBreakActionCompat(world, blockToBreak, toolToUse, workerPos);
     }
@@ -231,7 +227,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if successful
      */
     @Override
-    protected boolean plantDynamicSaplingCompat(@NotNull final World world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
+    protected boolean plantDynamicSaplingCompat(@NotNull final World world,
+        @NotNull final BlockPos location,
+        @NotNull final ItemStack saplingStack)
     {
         return false;
     }
@@ -267,7 +265,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true when same family
      */
     @Override
-    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)
+    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1,
+        @NotNull final BlockPos block2,
+        @NotNull final IWorld world)
     {
         return false;
     }
@@ -277,7 +277,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      *
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
-     * @param world the world.
+     * @param world  the world.
      * @return true when same family
      */
     public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)

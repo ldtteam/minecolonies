@@ -11,7 +11,6 @@ import net.minecraft.world.World;
  */
 public class SleepingParticle extends SpriteTexturedParticle
 {
-
     /**
      * Spawn coords
      */
@@ -29,11 +28,18 @@ public class SleepingParticle extends SpriteTexturedParticle
      */
     public static final ResourceLocation SLEEPING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
 
-    public SleepingParticle(IAnimatedSprite spriteSet, World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    public SleepingParticle(IAnimatedSprite spriteSet,
+        World worldIn,
+        double xCoordIn,
+        double yCoordIn,
+        double zCoordIn,
+        double xSpeedIn,
+        double ySpeedIn,
+        double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
-        //this.setSprite(Minecraft.getInstance().getTextureMap().getSprite(SLEEPING_TEXTURE));
+        // this.setSprite(Minecraft.getInstance().getTextureMap().getSprite(SLEEPING_TEXTURE));
         selectSpriteWithAge(spriteSet);
         this.motionX = xSpeedIn * 0.5;
         this.motionY = ySpeedIn;
@@ -52,7 +58,8 @@ public class SleepingParticle extends SpriteTexturedParticle
         this.particleRed = 0.9F * f;
         this.particleGreen = 0.9F * f;
         this.particleBlue = f;
-        // particles max age in ticks, random causes them to appear a bit more dynamic, as they get faster/slower with shorter/longer lifetime
+        // particles max age in ticks, random causes them to appear a bit more dynamic, as they get faster/slower with shorter/longer
+        // lifetime
         this.maxAge = (int) (Math.random() * 30.0D) + 40;
         // starting scale to fit
         this.particleScale = (float) ((0.8 * Math.sin(0) + 1.3) * 0.1);
@@ -76,6 +83,7 @@ public class SleepingParticle extends SpriteTexturedParticle
         // Moves the particle in relation to movespeed and age
         this.posX = this.coordX + this.motionX * f;
         this.posY = this.coordY + this.motionY * f;
+        // TODO: potential bug, missing posZ
 
         if (this.age++ >= this.maxAge)
         {
@@ -105,7 +113,14 @@ public class SleepingParticle extends SpriteTexturedParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType particleType, World world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType particleType,
+            World world,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed)
         {
             return new SleepingParticle(spriteSet, world, x, y, z, xSpeed, ySpeed, zSpeed);
         }

@@ -45,7 +45,12 @@ public class RenderFishHook extends EntityRenderer
     }
 
     @Override
-    public void render(Entity entity, float ratio, float partialTicks, @NotNull MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int light)
+    public void render(Entity entity,
+        float ratio,
+        float partialTicks,
+        @NotNull MatrixStack matrixStack,
+        IRenderTypeBuffer iRenderTypeBuffer,
+        int light)
     {
         EntityCitizen citizen = entity instanceof NewBobberEntity ? ((NewBobberEntity) entity).getAngler() : null;
         if (citizen != null)
@@ -77,7 +82,6 @@ public class RenderFishHook extends EntityRenderer
             double d0 = (double) MathHelper.sin(f2);
             double d1 = (double) MathHelper.cos(f2);
             double d2 = (double) i * 0.35D;
-            double d3 = 0.8D;
             double d4;
             double d5;
             double d6;
@@ -87,8 +91,10 @@ public class RenderFishHook extends EntityRenderer
                 double d7 = this.renderManager.options.fov;
                 d7 = d7 / 100.0D;
                 Vec3d vec3d = new Vec3d((double) i * -0.36D * d7, -0.045D * d7, 0.4D);
-                vec3d = vec3d.rotatePitch(-MathHelper.lerp(partialTicks, citizen.prevRotationPitch, citizen.rotationPitch) * ((float) Math.PI / 180F));
-                vec3d = vec3d.rotateYaw(-MathHelper.lerp(partialTicks, citizen.prevRotationYaw, citizen.rotationYaw) * ((float) Math.PI / 180F));
+                vec3d = vec3d.rotatePitch(
+                    -MathHelper.lerp(partialTicks, citizen.prevRotationPitch, citizen.rotationPitch) * ((float) Math.PI / 180F));
+                vec3d = vec3d
+                    .rotateYaw(-MathHelper.lerp(partialTicks, citizen.prevRotationYaw, citizen.rotationYaw) * ((float) Math.PI / 180F));
                 vec3d = vec3d.rotateYaw(f1 * 0.5F);
                 vec3d = vec3d.rotatePitch(-f1 * 0.7F);
                 d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.posX) + vec3d.x;
@@ -112,7 +118,6 @@ public class RenderFishHook extends EntityRenderer
             float f6 = (float) (d6 - d8);
             IVertexBuilder ivertexbuilder1 = iRenderTypeBuffer.getBuffer(RenderType.lines());
             Matrix4f matrix4f1 = matrixStack.getLast().getPositionMatrix();
-            int j = 16;
 
             for (int k = 0; k < 16; ++k)
             {
@@ -130,25 +135,38 @@ public class RenderFishHook extends EntityRenderer
         return (float) p_229105_0_ / (float) p_229105_1_;
     }
 
-    private static void func_229106_a_(
-      IVertexBuilder p_229106_0_,
-      Matrix4f p_229106_1_,
-      Matrix3f p_229106_2_,
-      int p_229106_3_,
-      float p_229106_4_,
-      int p_229106_5_,
-      int p_229106_6_,
-      int p_229106_7_)
+    private static void func_229106_a_(IVertexBuilder p_229106_0_,
+        Matrix4f p_229106_1_,
+        Matrix3f p_229106_2_,
+        int p_229106_3_,
+        float p_229106_4_,
+        int p_229106_5_,
+        int p_229106_6_,
+        int p_229106_7_)
     {
-        p_229106_0_.pos(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F).color(255, 255, 255, 255).tex((float) p_229106_6_, (float) p_229106_7_).overlay(
-          OverlayTexture.DEFAULT_LIGHT).lightmap(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
+        p_229106_0_.pos(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F)
+            .color(255, 255, 255, 255)
+            .tex((float) p_229106_6_, (float) p_229106_7_)
+            .overlay(OverlayTexture.DEFAULT_LIGHT)
+            .lightmap(p_229106_3_)
+            .normal(p_229106_2_, 0.0F, 1.0F, 0.0F)
+            .endVertex();
     }
 
-    private static void func_229104_a_(float p_229104_0_, float p_229104_1_, float p_229104_2_, IVertexBuilder p_229104_3_, Matrix4f p_229104_4_, float p_229104_5_)
+    private static void func_229104_a_(float p_229104_0_,
+        float p_229104_1_,
+        float p_229104_2_,
+        IVertexBuilder p_229104_3_,
+        Matrix4f p_229104_4_,
+        float p_229104_5_)
     {
-        p_229104_3_.pos(p_229104_4_, p_229104_0_ * p_229104_5_, p_229104_1_ * (p_229104_5_ * p_229104_5_ + p_229104_5_) * 0.5F + 0.25F, p_229104_2_ * p_229104_5_)
-          .color(0, 0, 0, 255)
-          .endVertex();
+        p_229104_3_
+            .pos(p_229104_4_,
+                p_229104_0_ * p_229104_5_,
+                p_229104_1_ * (p_229104_5_ * p_229104_5_ + p_229104_5_) * 0.5F + 0.25F,
+                p_229104_2_ * p_229104_5_)
+            .color(0, 0, 0, 255)
+            .endVertex();
     }
 
     /**

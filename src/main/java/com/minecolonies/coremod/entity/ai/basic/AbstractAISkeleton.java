@@ -15,7 +15,6 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -28,13 +27,11 @@ import java.util.EnumSet;
  */
 public abstract class AbstractAISkeleton<J extends IJob> extends Goal
 {
-
-    private static final Flag                  MUTEX_MASK =  Flag.MOVE;
     @NotNull
-    protected final      J                     job;
+    protected final J job;
     @NotNull
-    protected final      AbstractEntityCitizen worker;
-    protected final      World                 world;
+    protected final AbstractEntityCitizen worker;
+    protected final World world;
 
     /**
      * The statemachine this AI uses

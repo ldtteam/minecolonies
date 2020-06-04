@@ -42,11 +42,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_RECALL = "recall";
 
     /**
-     * Id of the priority label in the GUI.
-     */
-    private static final String LABEL_PRIO_LABEL = "prioLabel";
-
-    /**
      * Id of the priority value label in the GUI.
      */
     private static final String LABEL_PRIO_VALUE = "prioValue";
@@ -114,10 +109,12 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
         super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
 
-        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
+        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of
+        // allowRecipeAlterations())
         // The thought behind this is to show users player-thaught recipes and also built-in recipes.
         // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
-        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
+        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class)
+            .setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
 
         findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
     }
@@ -126,12 +123,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         if (prio == 0)
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(
-              LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never"));
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class)
+                .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio")
+                    + LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never"));
         }
         else
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + prio + "/10");
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Label.class)
+                .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + prio + "/10");
         }
     }
 
@@ -170,7 +169,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
             return;
         }
-        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
+        @NotNull
+        final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
         window.open();
     }
 
@@ -204,7 +204,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             return;
         }
 
-        @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getPosition());
+        @NotNull
+        final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getPosition());
         window.open();
     }
 
@@ -242,8 +243,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel",
-                                worker.getCitizenSkillHandler().getJobModifier(building)));
+                                .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel",
+                                    worker.getCitizenSkillHandler().getJobModifier(building)));
                         }
                     }
                 }

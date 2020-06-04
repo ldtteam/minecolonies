@@ -14,7 +14,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,15 +93,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * The previous window.
      */
     private final Window prevWindow;
-
-    /**
-     * Player inventory
-     */
-    private final PlayerInventory inventory = this.mc.player.inventory;
-    /**
-     * Is the player in creative or not.
-     */
-    private final boolean isCreative = this.mc.player.isCreative();
 
     /**
      * Open the request detail.

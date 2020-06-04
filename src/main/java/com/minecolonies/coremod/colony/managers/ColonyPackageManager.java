@@ -18,22 +18,15 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
 {
-    /**
-     * 1 in x chance to update the permissions.
-     */
-    private static final int CHANCE_TO_UPDATE = 1000;
-
     /**
      * List of players close to the colony receiving updates. Populated by chunk entry events
      */
@@ -142,17 +135,17 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (!closeSubscribers.isEmpty() || !newSubscribers.isEmpty())
         {
-            //  Send each type of update packet as appropriate:
-            //      - To close Subscribers if the data changes
-            //      - To New Subscribers even if it hasn't changed
+            // Send each type of update packet as appropriate:
+            // - To close Subscribers if the data changes
+            // - To New Subscribers even if it hasn't changed
 
-            //ColonyView
+            // ColonyView
             sendColonyViewPackets();
 
-            //Permissions
+            // Permissions
             sendPermissionsPackets();
 
-            //WorkOrders
+            // WorkOrders
             sendWorkOrderPackets();
 
             colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
@@ -185,7 +178,8 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
             players.addAll(newSubscribers);
 
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
+            players.forEach(player -> Network.getNetwork()
+                .sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
         }
         colony.getRequestManager().setDirty(false);
     }
@@ -202,7 +196,8 @@ public class ColonyPackageManager implements IColonyPackageManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
+            players.forEach(
+                player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
         }
     }
 

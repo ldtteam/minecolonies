@@ -7,7 +7,6 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -21,10 +20,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -35,14 +32,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Color constants for builder list.
      */
-    public static final int RED       = Color.getByName("red", 0);
+    public static final int RED = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK     = Color.getByName("black", 0);
-
-    /**
-     * Current Building view
-     */
-    private IBuildingView builder;
+    public static final int BLACK = Color.getByName("black", 0);
 
     /**
      * List of resources needed.
@@ -63,7 +55,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        this.builder = building;
         pullResourcesFromHut();
         registerButton(RESOURCE_ADD, this::transferItems);
     }
@@ -87,8 +78,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             }
             else
             {
-                amountToSet =
-                  InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
                     stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
             }
             resource.setPlayerAmount(amountToSet);
@@ -119,7 +109,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             }
         });
 
-        //Make sure we have a fresh view
+        // Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
@@ -149,18 +139,21 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
+
             case NEED_MORE:
                 addButton.enable();
                 resourceLabel.setColor(RED, RED);
                 resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
+
             case HAVE_ENOUGH:
                 addButton.enable();
                 resourceLabel.setColor(DARKGREEN, DARKGREEN);
                 resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
                 neededLabel.setColor(DARKGREEN, DARKGREEN);
                 break;
+
             case NOT_NEEDED:
             default:
                 addButton.disable();
@@ -170,7 +163,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 break;
         }
 
-        //position the addResource Button to the right
+        // position the addResource Button to the right
         final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
         final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
         addButton.setPosition(buttonX, buttonY);
@@ -188,7 +181,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class)
+            .setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());
@@ -244,7 +238,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
-            @NotNull final ItemStack itemStack = res.getItemStack().copy();
+            @NotNull
+            final ItemStack itemStack = res.getItemStack().copy();
             itemStack.setCount(1);
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());

@@ -47,11 +47,6 @@ public class ClientEventHandler
     private static Blueprint partolPointTemplate;
 
     /**
-     * The colony view required here.
-     */
-    private final IColonyView view = null;
-
-    /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
      * @param event the catched event.

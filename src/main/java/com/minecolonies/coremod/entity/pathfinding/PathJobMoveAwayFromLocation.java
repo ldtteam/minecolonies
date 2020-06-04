@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
@@ -16,8 +15,6 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
  */
 public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
-    private static final double TIE_BREAKER = 1.001D;
-
     /**
      * Position to run to, in order to avoid something.
      */
@@ -36,9 +33,14 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param avoid         location to avoid.
      * @param avoidDistance how far to move away.
      * @param range         max range to search.
-     * @param entity the entity.
+     * @param entity        the entity.
      */
-    public PathJobMoveAwayFromLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos avoid, final int avoidDistance, final int range, final LivingEntity entity)
+    public PathJobMoveAwayFromLocation(final World world,
+        @NotNull final BlockPos start,
+        @NotNull final BlockPos avoid,
+        final int avoidDistance,
+        final int range,
+        final LivingEntity entity)
     {
         super(world, start, avoid, range, entity);
 
@@ -57,8 +59,14 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     {
         if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
-            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
+            Log.getLogger()
+                .info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
+                    start.getX(),
+                    start.getY(),
+                    start.getZ(),
+                    avoid.getX(),
+                    avoid.getY(),
+                    avoid.getZ()));
         }
 
         return super.search();

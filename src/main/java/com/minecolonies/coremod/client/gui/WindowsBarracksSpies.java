@@ -57,16 +57,10 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
      */
     private final IBuildingView buildingView;
 
-    /**
-     * The buildings position.
-     */
-    private final BlockPos buildingPos;
-
     public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos)
     {
         super(Constants.MOD_ID + SPIES_GUI_XML);
         this.buildingView = buildingView;
-        this.buildingPos = buildingPos;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
         findPaneOfTypeByID(GOLD_COST_LABEL, Label.class).setLabelText("x5");
@@ -93,6 +87,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
                 this.close();
                 break;
             }
+
             case BUTTON_HIRE:
             {
                 findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();

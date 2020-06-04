@@ -372,11 +372,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
             return false;
         }
 
-        int depth = requestWrappers.stream()
-            .filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest))
-            .findFirst()
-            .get()
-            .getDepth();
+        /*
+         * int depth = requestWrappers.stream()
+         * .filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest))
+         * .findFirst()
+         * .get()
+         * .getDepth();
+         */
 
         if (wrapper.overruleable && canFulFill())
         {

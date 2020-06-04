@@ -19,11 +19,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_SPEED;
 
 /**
@@ -65,11 +63,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private static final int STUCK_WAIT_TICKS = 20;
 
     /**
-     * The amount of time to wait while walking to items.
-     */
-    private static final int WAIT_WHILE_WALKING = 5;
-
-    /**
      * Horizontal range in which the worker picks up items.
      */
     public static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
@@ -106,7 +99,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         super(job);
         super.registerTargets(
-          //no new targets for now
+        // no new targets for now
         );
     }
 
@@ -155,30 +148,28 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockBreakAction Runnable that is used instead of the default block break action, can be null
      * @return true once we're done
      */
-    protected final boolean mineBlock(
-      @NotNull final BlockPos blockToMine,
-      @NotNull final BlockPos safeStand,
-      final boolean damageTool,
-      final boolean getDrops,
-      final Runnable blockBreakAction)
+    protected final boolean mineBlock(@NotNull final BlockPos blockToMine,
+        @NotNull final BlockPos safeStand,
+        final boolean damageTool,
+        final boolean getDrops,
+        final Runnable blockBreakAction)
     {
         final BlockState curBlockState = world.getBlockState(blockToMine);
-        @Nullable final Block curBlock = curBlockState.getBlock();
-        if (curBlock instanceof AirBlock
-              || curBlock instanceof IBuilderUndestroyable
-              || curBlock == Blocks.BEDROCK)
+        @Nullable
+        final Block curBlock = curBlockState.getBlock();
+        if (curBlock instanceof AirBlock || curBlock instanceof IBuilderUndestroyable || curBlock == Blocks.BEDROCK)
         {
             if (curBlockState.getMaterial().isLiquid())
             {
                 world.removeBlock(blockToMine, false);
             }
-            //no need to mine block...
+            // no need to mine block...
             return true;
         }
 
         if (checkMiningLocation(blockToMine, safeStand))
         {
-            //we have to wait for delay
+            // we have to wait for delay
             return false;
         }
 
@@ -186,23 +177,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (getDrops)
         {
-            //calculate fortune enchantment
+            // calculate fortune enchantment
             final int fortune = ItemStackUtils.getFortuneOf(tool);
 
-            //check if tool has Silk Touch
+            // check if tool has Silk Touch
             final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
 
-            //create list for all item drops to be stored in
+            // create list for all item drops to be stored in
             List<ItemStack> localItems = new ArrayList<ItemStack>();
 
-            //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
+            // Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
             if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
             {
-                //Stores Silk Touch Block in localItems
+                // Stores Silk Touch Block in localItems
                 final ItemStack silkItem = new ItemStack(Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
                 localItems.add(silkItem);
             }
-            //If Silk Touch doesn't work, get blocks with Fortune value as normal.
+            // If Silk Touch doesn't work, get blocks with Fortune value as normal.
             else
             {
                 localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, tool));
@@ -210,7 +201,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
             localItems = increaseBlockDrops(localItems);
 
-            //add the drops to the citizen
+            // add the drops to the citizen
             for (final ItemStack item : localItems)
             {
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
@@ -221,7 +212,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (blockBreakAction == null)
         {
-            //Break the block
+            // Break the block
             worker.getCitizenItemHandler().breakBlockWithToolInHand(blockToMine);
         }
         else
@@ -231,7 +222,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != ItemStack.EMPTY && damageTool)
         {
-            tool.getItem().inventoryTick(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem()), true);
+            tool.getItem()
+                .inventoryTick(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem()), true);
         }
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
@@ -241,6 +233,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Potentially increase the blockdrops.
      * To be overriden by the worker.
+     * 
      * @param drops the drops.
      * @return the list of additional drops.
      */
@@ -251,11 +244,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
     /**
      * Trigger for miners if they want to do something specific per mined block.
+     * 
      * @param blockToMine the mined block.
      */
     protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
     {
-
     }
 
     /**
@@ -271,7 +264,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (!holdEfficientTool(curBlock, blockToMine))
         {
-            //We are missing a tool to harvest this block...
+            // We are missing a tool to harvest this block...
             return true;
         }
 
@@ -298,25 +291,35 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2 : calculateWorkerMiningDelay(block, pos);
+        return MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2
+            : calculateWorkerMiningDelay(block, pos);
     }
 
     /**
      * Calculate the worker mining delay for a block at a pos.
+     * 
      * @param block the block.
-     * @param pos the pos.
+     * @param pos   the pos.
      * @return the mining delay of the worker.
      */
     private int calculateWorkerMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         double reduction = 1;
-        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_BREAK_SPEED, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler()
+            .getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(BLOCK_BREAK_SPEED, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             reduction = 1 - effect.getEffect();
         }
 
-        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState()))) * reduction);
+        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get()
+            * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier()))
+            * (double) world.getBlockState(pos).getBlockHardness(world, pos)
+            / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
+            * reduction);
     }
 
     /**
@@ -325,8 +328,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     public void fillItemsList()
     {
         searchForItems(worker.getBoundingBox()
-                         .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                         .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+            .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+            .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
@@ -338,11 +341,12 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     public void searchForItems(final AxisAlignedBB boundingBox)
     {
         items = world.getEntitiesWithinAABB(ItemEntity.class, boundingBox)
-                  .stream()
-                  .filter(item -> item != null && item.isAlive() &&
-                                    (!item.getPersistentData().keySet().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")))
-                  .map(BlockPosUtil::fromEntity)
-                  .collect(Collectors.toList());
+            .stream()
+            .filter(item -> item != null && item.isAlive()
+                && (!item.getPersistentData().keySet().contains("PreventRemoteMovement")
+                    || !item.getPersistentData().getBoolean("PreventRemoteMovement")))
+            .map(BlockPosUtil::fromEntity)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -359,7 +363,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
 
         final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
-        //We moved a bit, not stuck
+        // We moved a bit, not stuck
         if (currentIndex != previousIndex)
         {
             stillTicks = 0;
@@ -368,10 +372,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
 
         stillTicks++;
-        //Stuck for too long
+        // Stuck for too long
         if (stillTicks > STUCK_WAIT_TICKS)
         {
-            //Skip this item
+            // Skip this item
             worker.getNavigator().clearPath();
             if (items != null && !items.isEmpty())
             {
