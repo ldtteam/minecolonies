@@ -170,6 +170,14 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY                  = "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty";
     @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING               = "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_REMOVE                     = "com.minecolonies.coremod.item.bannerrallyguards.gui.remove";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY                      = "com.minecolonies.coremod.item.bannerrallyguards.gui.rally";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                    = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";
+    @NonNls
     public static final String CITIZEN_RENAME_SAME                                                 = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                          = "com.minecolonies.coremod.citizen.rename.notallowed";

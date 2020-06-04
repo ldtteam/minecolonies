@@ -62,6 +62,13 @@ public interface IProxy
     void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation);
 
     /**
+     * Opens a rally banner window.
+     *
+     * @param colonyView the colony id.
+     */
+    void openBannerRallyGuardsWindow(final ItemStack banner, final World worldIn);
+
+    /**
      * Opens a clipboard window.
      *
      * @param colonyView the colony id.

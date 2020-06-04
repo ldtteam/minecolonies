@@ -19,6 +19,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -160,6 +161,14 @@ public abstract class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openBannerRallyGuardsWindow(final ItemStack banner, final World worldIn)
     {
         /*
          * Intentionally left empty.

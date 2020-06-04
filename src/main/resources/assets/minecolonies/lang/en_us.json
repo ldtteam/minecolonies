@@ -809,6 +809,10 @@
   "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.tooltip": "Rallied guard towers: %d",
   "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Shift-Rightlick on guard towers to add them to the rally list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing": "Cannot find tower!",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.remove": "Remove",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.rally": "Rally %d towers",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss": "Dismiss guards",
 
   "block.minecolonies.blockpaperwall": "Paper wall",
 
