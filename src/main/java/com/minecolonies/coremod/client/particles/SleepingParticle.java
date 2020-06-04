@@ -83,7 +83,7 @@ public class SleepingParticle extends SpriteTexturedParticle
         // Moves the particle in relation to movespeed and age
         this.posX = this.coordX + this.motionX * f;
         this.posY = this.coordY + this.motionY * f;
-        // TODO: potential bug, missing posZ
+        this.posZ = this.coordZ + this.motionZ * f;
 
         if (this.age++ >= this.maxAge)
         {
