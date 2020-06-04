@@ -178,8 +178,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final StructurePlacer placer = new StructurePlacer(structure);
         BlockPos progressPos = NULL_POS;
 
-        Log.getLogger().warn("Reloading resource requirements");
-
         do
         {
             result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,

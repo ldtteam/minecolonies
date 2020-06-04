@@ -117,7 +117,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.experienceValue = BARBARIAN_EXP_DROP;
-        //RaiderMobUtils.setupMobAi(this);
+        RaiderMobUtils.setupMobAi(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
         getAttributes().registerAttribute(MOB_ATTACK_DAMAGE);
@@ -281,11 +281,6 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public void livingTick()
     {
-        if (true)
-        {
-            super.livingTick();
-            return;
-        }
         if (invulTime > 0)
         {
             invulTime--;

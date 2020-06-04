@@ -17,7 +17,6 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen
      */
     private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies:textures/entity/raiders/norsemen_archer1.png");
     private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies:textures/entity/raiders/norsemen_archer2.png");
-    private static final ResourceLocation TEXTURE3 = new ResourceLocation("minecolonies:textures/entity/raiders/norsemen_archer3.png");
 
     /**
      * Constructor method for renderer
@@ -33,14 +32,10 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen
     @Override
     public ResourceLocation getEntityTexture(final MobEntity entity)
     {
-        switch (((AbstractEntityNorsemen) entity).getTextureId())
+        if (((AbstractEntityNorsemen) entity).getTextureId() == 1)
         {
-            case 1:
-                return TEXTURE2;
-            case 2:
-                return TEXTURE3;
-            default:
-                return TEXTURE1;
+            return TEXTURE2;
         }
+        return TEXTURE1;
     }
 }

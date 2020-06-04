@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Renderer used for Chief amazons.
+ * Renderer used for Chief norsemen.
  */
 public class RendererChiefNorsemen extends AbstractRendererNorsemen
 {

@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Renderer used for archer amazons.
+ * Renderer used for the shieldmaiden.
  */
 public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen
 {
