@@ -18,7 +18,6 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 import java.util.Map;
 
@@ -30,8 +29,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     /**
      * Railshape matrix.
      */
-    private static final Map<RailShape, Pair<Vec3i, Vec3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
-    {
+    private static final Map<RailShape, Pair<Vec3i, Vec3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) -> {
         Vec3i westVec = Direction.WEST.getDirectionVec();
         Vec3i eastVec = Direction.EAST.getDirectionVec();
         Vec3i northVec = Direction.NORTH.getDirectionVec();
@@ -59,7 +57,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     {
         super(type, world);
     }
-    
+
     @Override
     protected void moveAlongTrack(BlockPos pos, BlockState state)
     {
@@ -86,6 +84,10 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             case ASCENDING_NORTH:
             case ASCENDING_SOUTH:
                 ++y;
+                break;
+
+            default:
+                break;
         }
 
         Vec3d motion = this.getMotion();
@@ -157,11 +159,13 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         z = zInDif + zDif * xzDif;
         this.setPosition(x, y, z);
         this.moveMinecartOnRail(pos);
-        if (vecIn.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecIn.getX() && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecIn.getZ())
+        if (vecIn.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecIn.getX()
+            && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecIn.getZ())
         {
             this.setPosition(this.getPosX(), this.getPosY() + (double) vecIn.getY(), this.getPosZ());
         }
-        else if (vecOut.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecOut.getX() && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecOut.getZ())
+        else if (vecOut.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecOut.getX()
+            && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecOut.getZ())
         {
             this.setPosition(this.getPosX(), this.getPosY() + (double) vecOut.getY(), this.getPosZ());
         }

@@ -27,11 +27,9 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
@@ -56,15 +54,15 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
+    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.
      */
-    private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
-    private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
-    public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
-    public static final  IntegerProperty TREE_DISTANCE = IntegerProperty.create("distance", 1, 7);
+    private static final BooleanProperty checkDecay = BooleanProperty.create("check_decay");
+    private static final BooleanProperty decayable = BooleanProperty.create("decayable");
+    public static final IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
+    public static final IntegerProperty TREE_DISTANCE = IntegerProperty.create("distance", 1, 7);
 
     /**
      * List of all ore-like blocks.
@@ -150,7 +148,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all blocks.
      */
-    private static ImmutableList<ItemStack> allBlocks = ImmutableList.<ItemStack>builder().build();
+    private static ImmutableList<ItemStack> allBlocks = ImmutableList.<ItemStack> builder().build();
 
     /**
      * Instantiates the compatibilityManager.
@@ -212,9 +210,10 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverBlockList()
     {
-        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                           .map(ItemStack::new)
-                                           .collect(Collectors.toList()));
+        allBlocks = ImmutableList
+            .copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+                .map(ItemStack::new)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -236,7 +235,9 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
+        if (itemStack.getItem().isFood()
+            || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
+                || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
         {
             return true;
         }
@@ -443,14 +444,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Map<ItemStorage, ItemStorage> getCrusherModes()
     {
-        return ImmutableMap.<ItemStorage, ItemStorage>builder().putAll(this.crusherModes).build();
+        return ImmutableMap.<ItemStorage, ItemStorage> builder().putAll(this.crusherModes).build();
     }
 
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
-        @NotNull final ListNBT saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet()
+        @NotNull
+        final ListNBT saplingsLeavesTagList = leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
             .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
@@ -462,9 +463,9 @@ public class CompatibilityManager implements ICompatibilityManager
     public void read(@NotNull final CompoundNBT compound)
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
-          .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
-          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
+            .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
+            .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
+            .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
     @Override
@@ -486,7 +487,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ItemStack getRandomLuckyOre(final double chanceBonus)
     {
-        if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get() * chanceBonus)
+        if (random.nextDouble() * ONE_HUNDRED_PERCENT
+            <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get() * chanceBonus)
         {
             return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
@@ -507,24 +509,27 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation(ench.getA())).get(), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(
+            new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())), ench.getB());
     }
 
-    //------------------------------- Private Utility Methods -------------------------------//
+    // ------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres()
     {
         if (smeltableOres.isEmpty())
         {
-            smeltableOres.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
+            smeltableOres
+                .addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
         }
 
         if (oreBlocks.isEmpty())
         {
-            oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
-                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
-                                                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
-                                                    .collect(Collectors.toList())));
+            oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream()
+                .filter(this::isMineableOre)
+                .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
+                .map(stack -> ((BlockItem) stack.getItem()).getBlock())
+                .collect(Collectors.toList())));
 
             for (final String oreString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().extraOres.get())
             {
@@ -541,7 +546,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private void discoverSaplings()
     {
-
         for (final Item item : ItemTags.SAPLINGS.getAllElements())
         {
             final ItemStack stack = new ItemStack(item);
@@ -559,7 +563,8 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostableItems.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            compostableItems.addAll(
+                ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -571,7 +576,8 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
+            plantables.addAll(
+                ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -583,7 +589,8 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            fuel.addAll(ImmutableList
+                .copyOf(allBlocks.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering fuel");
     }
@@ -595,7 +602,8 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(
+                ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }
@@ -882,7 +890,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String enchantment = split[1];
-                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation(enchantment)).isPresent())
+                if (ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(enchantment)) == null)
                 {
                     Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
                     continue;

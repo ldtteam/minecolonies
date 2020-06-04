@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui.containers;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -120,7 +121,10 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
         this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F, (float)(this.ySize - (inventoryRows > 6 ? 110 : 94)), 4210752);
+        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(),
+            8.0F,
+            (float) (this.ySize - (inventoryRows > 6 ? 110 : 94)),
+            4210752);
     }
 
     /**
@@ -129,7 +133,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     @Override
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));
         final int i = (this.width - this.xSize) / 2;
         final int j = (this.height - this.ySize) / 2;
@@ -137,14 +141,34 @@ public class WindowRack extends ContainerScreen<ContainerRack>
         if (inventoryRows < SLOTS_EACH_ROW)
         {
             blit(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
-              TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(i,
+                j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1,
+                0,
+                TEXTURE_OFFSET,
+                this.xSize,
+                TEXTURE_HEIGHT,
+                TEXTURE_SIZE,
+                TEXTURE_SIZE);
         }
         else
         {
             final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
-            blit(i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(i, j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1, 0, textureOffset, (this.xSize * SIZE_MULTIPLIER) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(i,
+                j,
+                0,
+                0,
+                (this.xSize * SIZE_MULTIPLIER) / 2,
+                this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1,
+                TEXTURE_SIZE,
+                TEXTURE_SIZE);
+            blit(i,
+                j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1,
+                0,
+                textureOffset,
+                (this.xSize * SIZE_MULTIPLIER) / 2,
+                TEXTURE_HEIGHT + EXTRA_HEIGHT,
+                TEXTURE_SIZE,
+                TEXTURE_SIZE);
         }
     }
 

@@ -9,6 +9,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
@@ -16,7 +17,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,9 +25,11 @@ import java.util.List;
  */
 public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 {
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
+    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID,
+        "textures/gui/crafting2x2.png");
 
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting3x3.png");
+    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(Constants.MOD_ID,
+        "textures/gui/crafting3x3.png");
 
     /**
      * X offset of the button.
@@ -86,14 +88,16 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 
     /**
      * Create a crafting gui window.
-     * @param container the container.
+     * 
+     * @param container       the container.
      * @param playerInventory the player inv.
-     * @param iTextComponent the display text component.
+     * @param iTextComponent  the display text component.
      */
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), container.getPos());
+        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance()
+            .getBuildingView(playerInventory.player.dimension.getId(), container.getPos());
         completeCrafting = building.canCraftComplexRecipes();
     }
 
@@ -101,14 +105,15 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done")
+            : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button
-          doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
+        final Button doneButton = new Button(guiLeft
+            + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
-        if(!building.canRecipeBeAdded())
+        if (!building.canRecipeBeAdded())
         {
             doneButton.active = false;
         }
@@ -123,7 +128,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
             {
                 final List<ItemStack> input = new LinkedList<>();
 
-                for(int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
+                for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
                 {
                     final ItemStack stack = container.craftMatrix.getStackInSlot(i);
                     final ItemStack copy = stack.copy();
@@ -132,11 +137,12 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
                     input.add(copy);
                 }
 
-                final ItemStack primaryOutput =  container.craftResult.getStackInSlot(0).getStack().copy();
+                final ItemStack primaryOutput = container.craftResult.getStackInSlot(0).getStack().copy();
 
-                if(!ItemStackUtils.isEmpty(primaryOutput))
+                if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, false));
+                    Network.getNetwork()
+                        .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, false));
                 }
             }
             onClose();
@@ -158,8 +164,8 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     @Override
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        if(completeCrafting)
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        if (completeCrafting)
         {
             this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES3X3);
         }

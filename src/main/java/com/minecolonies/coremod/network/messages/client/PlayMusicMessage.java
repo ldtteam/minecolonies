@@ -32,6 +32,7 @@ public class PlayMusicMessage implements IMessage
 
     /**
      * Create a play music message with a specific sound event.
+     * 
      * @param event the sound event.
      */
     public PlayMusicMessage(final SoundEvent event)
@@ -43,6 +44,7 @@ public class PlayMusicMessage implements IMessage
     @Override
     public void toBytes(final PacketBuffer buf)
     {
+        // TODO: move to RL id
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
     }
 
