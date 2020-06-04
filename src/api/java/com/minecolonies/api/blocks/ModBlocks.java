@@ -1,5 +1,9 @@
 package com.minecolonies.api.blocks;
 
+import com.minecolonies.coremod.blocks.*;
+import com.minecolonies.coremod.blocks.decorative.*;
+import com.minecolonies.coremod.blocks.huts.*;
+import com.minecolonies.coremod.blocks.schematic.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,111 +19,76 @@ public final class ModBlocks
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-    public static AbstractBlockHut blockHutTownHall;
-    public static AbstractBlockHut blockHutHome;
-    public static AbstractBlockHut blockHutMiner;
-    public static AbstractBlockHut blockHutLumberjack;
-    public static AbstractBlockHut blockHutBaker;
-    public static AbstractBlockHut blockHutBuilder;
-    public static AbstractBlockHut blockHutDeliveryman;
-    public static AbstractBlockHut blockHutBlacksmith;
-    public static AbstractBlockHut blockHutStonemason;
-    public static AbstractBlockHut blockHutFarmer;
-    public static AbstractBlockHut blockHutFisherman;
-    public static AbstractBlockHut blockHutGuardTower;
-    public static AbstractBlockHut blockHutWareHouse;
-    public static AbstractBlockHut blockHutShepherd;
-    public static AbstractBlockHut blockHutCowboy;
-    public static AbstractBlockHut blockHutSwineHerder;
-    public static AbstractBlockHut blockHutChickenHerder;
-    public static AbstractBlockHut blockHutBarracks;
-    public static AbstractBlockHut blockHutBarracksTower;
-    public static AbstractBlockHut blockHutCook;
-    public static AbstractBlockHut blockHutSmeltery;
-    public static AbstractBlockHut blockHutComposter;
-    public static AbstractBlockHut blockHutLibrary;
-    public static AbstractBlockHut blockHutArchery;
-    public static AbstractBlockHut blockHutCombatAcademy;
-    public static AbstractBlockHut blockHutSawmill;
-    public static AbstractBlockHut blockHutStoneSmeltery;
-    public static AbstractBlockHut blockHutCrusher;
-    public static AbstractBlockHut blockHutSifter;
-    public static AbstractBlockHut blockPostBox;
-    public static AbstractBlockHut blockHutFlorist;
-    public static AbstractBlockHut blockHutEnchanter;
-    public static AbstractBlockHut blockHutUniversity;
-    public static AbstractBlockHut blockHutHospital;
-    public static AbstractBlockHut blockStash;
-    public static AbstractBlockHut blockHutSchool;
-    public static AbstractBlockHut blockHutGlassblower;
-    public static AbstractBlockHut blockHutDyer;
-    public static AbstractBlockHut blockHutFletcher;
-    public static AbstractBlockHut blockHutMechanic;
-    public static AbstractBlockHut blockHutPlantation;
-    public static AbstractBlockHut blockHutTavern;
+    public static BlockHutTownHall blockHutTownHall;
+    public static BlockHutCitizen blockHutHome;
+    public static BlockHutMiner blockHutMiner;
+    public static BlockHutLumberjack blockHutLumberjack;
+    public static BlockHutBaker blockHutBaker;
+    public static BlockHutBuilder blockHutBuilder;
+    public static BlockHutDeliveryman blockHutDeliveryman;
+    public static BlockHutBlacksmith blockHutBlacksmith;
+    public static BlockHutStonemason blockHutStonemason;
+    public static BlockHutFarmer blockHutFarmer;
+    public static BlockHutFisherman blockHutFisherman;
+    public static BlockHutGuardTower blockHutGuardTower;
+    public static BlockHutWareHouse blockHutWareHouse;
+    public static BlockHutShepherd blockHutShepherd;
+    public static BlockHutCowboy blockHutCowboy;
+    public static BlockHutSwineHerder blockHutSwineHerder;
+    public static BlockHutChickenHerder blockHutChickenHerder;
+    public static BlockHutBarracks blockHutBarracks;
+    public static BlockHutBarracksTower blockHutBarracksTower;
+    public static BlockHutCook blockHutCook;
+    public static BlockHutSmeltery blockHutSmeltery;
+    public static BlockHutComposter blockHutComposter;
+    public static BlockHutLibrary blockHutLibrary;
+    public static BlockHutArchery blockHutArchery;
+    public static BlockHutCombatAcademy blockHutCombatAcademy;
+    public static BlockHutSawmill blockHutSawmill;
+    public static BlockHutStoneSmeltery blockHutStoneSmeltery;
+    public static BlockHutCrusher blockHutCrusher;
+    public static BlockHutSifter blockHutSifter;
+    public static BlockPostBox blockPostBox;
+    public static BlockHutFlorist blockHutFlorist;
+    public static BlockHutEnchanter blockHutEnchanter;
+    public static BlockHutUniversity blockHutUniversity;
+    public static BlockHutHospital blockHutHospital;
+    public static BlockStash blockStash;
+    public static BlockHutSchool blockHutSchool;
+    public static BlockHutGlassblower blockHutGlassblower;
+    public static BlockHutDyer blockHutDyer;
+    public static BlockHutFletcher blockHutFletcher;
+    public static BlockHutMechanic blockHutMechanic;
+    public static BlockHutPlantation blockHutPlantation;
+    public static BlockHutTavern blockHutTavern;
 
     /**
      * Utility blocks.
      */
-    public static AbstractBlockMinecoloniesFalling    blockConstructionTape;
-    public static AbstractBlockMinecolonies           blockRack;
-    public static AbstractBlockMinecolonies           blockWayPoint;
-    public static AbstractBlockBarrel                 blockBarrel;
-    public static AbstractBlockMinecoloniesHorizontal blockDecorationPlaceholder;
-    public static AbstractBlockMinecolonies           blockScarecrow;
-    public static AbstractBlockMinecolonies           blockBarracksTowerSubstitution;
-    public static AbstractBlockMinecolonies           blockCompostedDirt;
+    public static BlockConstructionTape blockConstructionTape;
+    public static BlockMinecoloniesRack blockRack;
+    public static BlockWaypoint blockWayPoint;
+    public static BlockBarrel blockBarrel;
+    public static BlockDecorationController blockDecorationPlaceholder;
+    public static BlockScarecrow blockScarecrow;
+    public static BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
+    public static BlockCompostedDirt blockCompostedDirt;
 
     /**
      * Private constructor to hide the implicit public one.
      */
     private ModBlocks()
     {
-
     }
 
     @NotNull
-    public static AbstractBlockHut[] getHuts()
+    public static AbstractBlockHut<?>[] getHuts()
     {
-        return new AbstractBlockHut[] {
-          blockHutStoneSmeltery,
-          blockHutStonemason,
-          blockHutGuardTower,
-          blockHutArchery,
-          blockHutBaker,
-          blockHutBarracks,
-          blockHutBarracksTower,
-          blockHutBlacksmith,
-          blockHutBuilder,
-          blockHutChickenHerder,
-          blockHutHome,
-          blockHutCombatAcademy,
-          blockHutComposter,
-          blockHutCook,
-          blockHutCowboy,
-          blockHutCrusher,
-          blockHutArchery,
-          blockHutDeliveryman,
-          blockHutFarmer,
-          blockHutFisherman,
-          blockHutLibrary,
-          blockHutLumberjack,
-          blockHutMiner,
-          blockHutSawmill,
-          blockHutSifter,
-          blockHutShepherd,
-          blockHutSmeltery,
-          blockHutSwineHerder,
-          blockHutTownHall,
-          blockHutUniversity,
-          blockHutHospital,
-          blockHutSchool,
-          blockHutEnchanter,
-          blockHutGlassblower,
-          blockHutDyer,
-          blockHutFletcher,
-          blockHutMechanic,
-          blockHutPlantation,
-          blockHutTavern};
+        return new AbstractBlockHut[] {blockHutStoneSmeltery, blockHutStonemason, blockHutGuardTower, blockHutArchery, blockHutBaker,
+            blockHutBarracks, blockHutBarracksTower, blockHutBlacksmith, blockHutBuilder, blockHutChickenHerder, blockHutHome,
+            blockHutCombatAcademy, blockHutComposter, blockHutCook, blockHutCowboy, blockHutCrusher, blockHutArchery, blockHutDeliveryman,
+            blockHutFarmer, blockHutFisherman, blockHutLibrary, blockHutLumberjack, blockHutMiner, blockHutSawmill, blockHutSifter,
+            blockHutShepherd, blockHutSmeltery, blockHutSwineHerder, blockHutTownHall, blockHutUniversity, blockHutHospital, blockHutSchool,
+            blockHutEnchanter, blockHutGlassblower, blockHutDyer, blockHutFletcher, blockHutMechanic, blockHutPlantation, blockHutTavern};
     }
 }

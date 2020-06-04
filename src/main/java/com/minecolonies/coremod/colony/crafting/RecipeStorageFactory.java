@@ -49,7 +49,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     @Override
     public TypeToken<? extends IToken<?>> getFactoryInputType()
     {
-        return (TypeToken<? extends IToken<?>>) TypeConstants.ITOKEN;
+        return TypeConstants.ITOKEN;
     }
 
     @NotNull

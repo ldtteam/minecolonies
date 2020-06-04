@@ -1067,7 +1067,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     private void addRequestToMaps(@NotNull final Integer citizenId,
         @NotNull final IToken<?> requestToken,
-        @NotNull final TypeToken requested)
+        @NotNull final TypeToken<?> requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1124,7 +1124,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream().filter(request -> {
-            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
             return requestTypes.contains(requestType);
         }).map(request -> (IRequest<? extends R>) request).iterator());
     }
@@ -1173,7 +1173,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream().filter(request -> {
-            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
             return requestTypes.contains(requestType);
         }).map(request -> (IRequest<? extends R>) request).iterator());
     }
@@ -1185,7 +1185,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream().filter(request -> {
-            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
             return requestTypes.contains(requestType);
         }).map(request -> (IRequest<? extends R>) request).filter(filter).iterator());
     }
@@ -1312,7 +1312,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream().filter(request -> {
-            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
             return requestTypes.contains(requestType);
         }).map(request -> (IRequest<? extends R>) request).filter(filter).iterator());
     }

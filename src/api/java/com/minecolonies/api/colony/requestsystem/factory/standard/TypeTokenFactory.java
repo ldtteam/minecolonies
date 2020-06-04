@@ -10,33 +10,34 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
-public class TypeTokenFactory implements IFactory<Class, TypeToken>
+public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
 {
     @NotNull
     @Override
-    public TypeToken<? extends TypeToken> getFactoryOutputType()
+    public TypeToken<? extends TypeToken<?>> getFactoryOutputType()
     {
         return TypeConstants.TYPETOKEN;
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends Class> getFactoryInputType()
+    public TypeToken<? extends Class<?>> getFactoryInputType()
     {
         return TypeConstants.CLASS;
     }
 
     @NotNull
     @Override
-    public TypeToken getNewInstance(
-      @NotNull final IFactoryController factoryController, @NotNull final Class aClass, @NotNull final Object... context) throws IllegalArgumentException
+    public TypeToken<?> getNewInstance(@NotNull final IFactoryController factoryController,
+        @NotNull final Class<?> aClass,
+        @NotNull final Object... context) throws IllegalArgumentException
     {
         return TypeToken.of(aClass);
     }
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final TypeToken typeToken)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final TypeToken<?> typeToken)
     {
         CompoundNBT compound = new CompoundNBT();
 
@@ -47,7 +48,7 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken>
 
     @NotNull
     @Override
-    public TypeToken deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
+    public TypeToken<?> deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
     {
         try
         {
@@ -59,9 +60,8 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken>
         }
     }
 
-    public static class TypeTokenSubTypeOverrideHandler implements ITypeOverrideHandler<TypeToken>
+    public static class TypeTokenSubTypeOverrideHandler implements ITypeOverrideHandler<TypeToken<?>>
     {
-
         @Override
         public boolean matches(final TypeToken<?> inputType)
         {
@@ -69,7 +69,7 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken>
         }
 
         @Override
-        public TypeToken<TypeToken> getOutputType()
+        public TypeToken<TypeToken<?>> getOutputType()
         {
             return TypeConstants.TYPETOKEN;
         }

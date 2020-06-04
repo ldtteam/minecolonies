@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 
