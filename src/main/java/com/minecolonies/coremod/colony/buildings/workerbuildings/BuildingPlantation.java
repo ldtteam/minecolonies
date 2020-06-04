@@ -35,10 +35,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -52,7 +50,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String PLANTATION     = "plantation";
+    private static final String PLANTATION = "plantation";
 
     /**
      * List of sand blocks to grow onto.
@@ -73,7 +71,8 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     public BuildingPlantation(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
     }
 
     @NotNull
@@ -119,10 +118,13 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT sandCompoundList = new ListNBT();
-        for (@NotNull final BlockPos entry : sand)
+        @NotNull
+        final ListNBT sandCompoundList = new ListNBT();
+        for (@NotNull
+        final BlockPos entry : sand)
         {
-            @NotNull final CompoundNBT sandCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT sandCompound = new CompoundNBT();
             sandCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             sandCompoundList.add(sandCompound);
         }
@@ -133,6 +135,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get a list of positions to check for crops for the current phase.
+     * 
      * @param world the world.
      * @return the list of positions.
      */
@@ -144,10 +147,10 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             if (currentPhase == Items.SUGAR_CANE)
             {
                 if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
+                    && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
+                        || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
+                        || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
+                        || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
                 {
                     filtered.add(pos);
                 }
@@ -155,17 +158,17 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             else if (currentPhase == Items.CACTUS)
             {
                 if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
+                    && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
+                    && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
+                    && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
+                    && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
                 {
                     filtered.add(pos);
                 }
             }
             else
             {
-                //Bamboo
+                // Bamboo
                 if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
                 {
                     filtered.add(pos);
@@ -204,15 +207,15 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
@@ -229,7 +232,9 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Plantation", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Plantation", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -240,6 +245,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Set the current phase.
+     * 
      * @param phase the phase to set.
      */
     public void setPhase(final Item phase)
@@ -256,6 +262,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get the current phase.
+     * 
      * @return the current phase item.
      */
     public Item getCurrentPhase()
@@ -294,6 +301,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the list of all phases.
+         * 
          * @return the list.
          */
         public List<Item> getPhases()
@@ -317,6 +325,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the current phase.
+         * 
          * @return the phase.
          */
         public Item getCurrentPhase()
@@ -326,6 +335,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Set a new phase.
+         * 
          * @param phase the phase to set.
          */
         public void setPhase(final Item phase)

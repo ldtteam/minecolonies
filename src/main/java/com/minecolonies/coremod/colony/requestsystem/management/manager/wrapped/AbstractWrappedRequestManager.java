@@ -19,7 +19,6 @@ import net.minecraft.nbt.CompoundNBT;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -67,12 +66,12 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param requester The requester.
      * @param object    The Object that is being requested.
      * @return The token representing the request.
-     *
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
+        throws IllegalArgumentException
     {
         return wrappedManager.createRequest(requester, object);
     }
@@ -84,7 +83,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         wrappedManager.assignRequest(token);
     }
@@ -95,12 +94,12 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param requester The requester of the requestable.
      * @param object    The requestable
      * @return The token that represents the request.
-     *
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
+        throws IllegalArgumentException
     {
         final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
@@ -108,7 +107,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
+        throws IllegalArgumentException
     {
         return wrappedManager.reassignRequest(token, resolverTokenBlackList);
     }
@@ -118,8 +118,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @param token The token to get a request for.
      * @return The request of the given type for that token.
-     *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the
+     *                                  given type T.
      */
     @Nullable
     @Override
@@ -147,7 +147,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @param requestToken The token of the request to get resolver for.
      * @return Null if the request is not yet resolved, or else the assigned resolver.
-     *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
     @Nullable
@@ -264,7 +263,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         throw new UnsupportedOperationException("This method cannot be used by Wrapped Request Managers!");
     }

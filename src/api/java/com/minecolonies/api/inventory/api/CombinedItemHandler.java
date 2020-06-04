@@ -12,10 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import javax.annotation.Nonnull;
-
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
@@ -24,10 +21,10 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable
 {
 
-    ///NBT Constants
-    private static final String NBT_KEY_HANDLERS           = "Handlers";
+    /// NBT Constants
+    private static final String NBT_KEY_HANDLERS = "Handlers";
     private static final String NBT_KEY_HANDLERS_INDEXLIST = "Index";
-    private static final String NBT_KEY_NAME               = "Name";
+    private static final String NBT_KEY_NAME = "Name";
 
     private final IItemHandlerModifiable[] handlers;
 
@@ -58,14 +55,15 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      *                    CombinedItemHandler}.
      * @param handlers    The combinging {@link IItemHandlerModifiable}.
      */
-    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
+    public CombinedItemHandler(@NotNull final String defaultName,
+        @NotNull final String customName,
+        @NotNull final IItemHandlerModifiable... handlers)
     {
         this.handlers = handlers;
         this.customName = customName;
         this.defaultName = defaultName;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Override
     public CompoundNBT serializeNBT()
     {
@@ -78,7 +76,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         {
             if (handlerModifiable instanceof INBTSerializable)
             {
-                final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
+                final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
                 indexList.add(IntNBT.valueOf(index));
             }
@@ -97,7 +95,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         return compound;
     }
 
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
+    @SuppressWarnings(UNCHECKED)
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
@@ -112,7 +110,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
                 final IItemHandlerModifiable modifiable = handlers[indexList.getInt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
-                    final INBTSerializable serializable = (INBTSerializable) modifiable;
+                    final INBTSerializable<CompoundNBT> serializable = (INBTSerializable<CompoundNBT>) modifiable;
                     serializable.deserializeNBT(handlerCompound);
                 }
             }
@@ -237,8 +235,8 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param stack    ItemStack to insert.
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire
-     * stack is accepted, then return null). May be the same as the input
-     * ItemStack if unchanged, otherwise a new ItemStack.
+     *         stack is accepted, then return null). May be the same as the input
+     *         ItemStack if unchanged, otherwise a new ItemStack.
      **/
     @Override
     public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate)
@@ -268,7 +266,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      *                 max limit)
      * @param simulate If true, the extraction is only simulated
      * @return ItemStack extracted from the slot, must be null, if nothing can
-     * be extracted
+     *         be extracted
      **/
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NonNls;
  */
 public final class Suppression
 {
-
     /**
      * Suppress warnings for unchecked type conversions.
      * <p>
@@ -15,14 +14,6 @@ public final class Suppression
      */
     @NonNls
     public static final String UNCHECKED = "unchecked";
-
-    /**
-     * Suppress warnings for raw type annotation.
-     * <p>
-     * We sometimes need this for complicated typings.
-     */
-    @NonNls
-    public static final String RAWTYPES = "rawtypes";
 
     /**
      * Suppress warnings for deprecations.
@@ -153,6 +144,6 @@ public final class Suppression
 
     private Suppression()
     {
-        //empty default
+        // empty default
     }
 }

@@ -13,12 +13,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
 
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 {
-
     /**
      * The {@link JobEntry} for this job.
      *
@@ -59,7 +57,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return a set of ITokens.
      */
-    Set<IToken> getAsyncRequests();
+    Set<IToken<?>> getAsyncRequests();
 
     /**
      * Override to add Job-specific AI tasks to the given EntityAITask list.
@@ -220,6 +218,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Check if the particular job ignores a particular damage type.
+     * 
      * @param damageSource the damage source to check.
      * @return true if so.
      */

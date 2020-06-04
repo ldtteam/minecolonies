@@ -12,12 +12,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Suppression.*;
 
 public interface IBuildingView extends IRequester
@@ -161,14 +159,12 @@ public interface IBuildingView extends IRequester
 
     Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull ICitizenDataView citizenData, Class<R> requestType);
 
-    @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequests(@NotNull ICitizenDataView data);
+    ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenDataView data);
 
-    @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequestsOfBuilding();
+    ImmutableList<IRequest<?>> getOpenRequestsOfBuilding();
 
     /**
      * Gets the ColonyView that this building belongs to.
@@ -177,11 +173,10 @@ public interface IBuildingView extends IRequester
      */
     IColonyView getColony();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull ICitizenDataView citizenData,
-      Class<R> requestType,
-      Predicate<IRequest<? extends R>> filter);
+    @SuppressWarnings(GENERIC_WILDCARD)
+    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(@NotNull ICitizenDataView citizenData,
+        Class<R> requestType,
+        Predicate<IRequest<? extends R>> filter);
 
     /**
      * Get the delivery priority of the building.

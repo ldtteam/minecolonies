@@ -29,9 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -59,7 +57,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     {
         super(c, l);
     }
-
 
     @NotNull
     @Override
@@ -103,15 +100,15 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
@@ -119,16 +116,12 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         double amountOfValidBlocks = 0;
         double blocks = 0;
 
-
         if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
         {
             final Item item = storage.getPrimaryOutput().getItem();
-            if (item.isIn(Tags.Items.STONE) ||
-                    item.isIn(Tags.Items.COBBLESTONE) ||
-                    item.isIn(ItemTags.STONE_BRICKS) ||
-                    item.getRegistryName().getPath().contains("prismarine") ||
-                    item.getRegistryName().getPath().contains("end_stone") ||
-                    item.getRegistryName().getPath().contains("brick"))
+            if (item.isIn(Tags.Items.STONE) || item.isIn(Tags.Items.COBBLESTONE) || item.isIn(ItemTags.STONE_BRICKS)
+                || item.getRegistryName().getPath().contains("prismarine") || item.getRegistryName().getPath().contains("end_stone")
+                || item.getRegistryName().getPath().contains("brick"))
             {
                 return true;
             }
@@ -138,20 +131,19 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             return true;
         }
 
-        for(final ItemStack stack : storage.getInput())
+        for (final ItemStack stack : storage.getInput())
         {
-            if(!ItemStackUtils.isEmpty(stack))
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 blocks++;
                 if (stack.getItem() instanceof BlockItem)
                 {
                     final Block block = ((BlockItem) stack.getItem()).getBlock();
-                    if (block.isIn(Tags.Blocks.STONE) ||
-                            block.isIn(Tags.Blocks.COBBLESTONE) ||
-                            block.isIn(BlockTags.STONE_BRICKS) ||
-                            block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
-                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") ||
-                            block.asItem().getRegistryName().getPath().contains("brick"));
+                    if (block.isIn(Tags.Blocks.STONE) || block.isIn(Tags.Blocks.COBBLESTONE) || block.isIn(BlockTags.STONE_BRICKS)
+                        || block.asItem().getRegistryName().getPath().contains("smooth_stone")
+                        || block.asItem().getRegistryName().getPath().contains("sandstone_slab")
+                        || block.asItem().getRegistryName().getPath().contains("brick"))
+                        ;
                     {
                         amountOfValidBlocks++;
                         continue;
@@ -160,12 +152,14 @@ public class BuildingStonemason extends AbstractBuildingCrafter
 
                 for (final ResourceLocation tag : stack.getItem().getTags())
                 {
-                    if(tag.getPath().contains("stone"))
+                    if (tag.getPath().contains("stone"))
                     {
                         amountOfValidBlocks++;
                         break;
                     }
-                    else if(tag.getPath().contains("stick") || tag.getPath().contains("wood") || tag.getPath().toLowerCase(Locale.US).contains("redstone") || tag.getPath().contains("string") || tag.getPath().contains("gunpowder"))
+                    else if (tag.getPath().contains("stick") || tag.getPath().contains("wood")
+                        || tag.getPath().toLowerCase(Locale.US).contains("redstone") || tag.getPath().contains("string")
+                        || tag.getPath().contains("gunpowder"))
                     {
                         return false;
                     }
@@ -173,7 +167,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             }
         }
 
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     @Override
@@ -185,7 +179,9 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonemason", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Stonemason", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -199,7 +195,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
      */
     public static class View extends AbstractBuildingCrafter.View
     {
-
         /**
          * Instantiate the stonemason view.
          *

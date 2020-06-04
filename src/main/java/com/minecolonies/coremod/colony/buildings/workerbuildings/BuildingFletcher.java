@@ -26,7 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -50,17 +49,16 @@ public class BuildingFletcher extends AbstractBuildingCrafter
         super(c, l);
         if (recipes.isEmpty())
         {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-                      1,
-                      new ItemStack(Items.STRING, 4),
-                      Blocks.AIR);
+            final IRecipeStorage storage = StandardFactoryController.getInstance()
+                .getNewInstance(TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
+                    1,
+                    new ItemStack(Items.STRING, 4),
+                    Blocks.AIR);
             recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
         }
     }
-
 
     @NotNull
     @Override
@@ -104,29 +102,28 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
 
         boolean hasValidItem = false;
 
-        if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
-              || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-              && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
+        if (storage.getPrimaryOutput().getItem() instanceof ArrowItem || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
+            && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
         {
             return true;
         }
 
-        for(final ItemStack stack : storage.getInput())
+        for (final ItemStack stack : storage.getInput())
         {
             if (Tags.Items.DYES.contains(stack.getItem()))
             {
@@ -151,7 +148,9 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Fletcher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Fletcher", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -165,7 +164,6 @@ public class BuildingFletcher extends AbstractBuildingCrafter
      */
     public static class View extends AbstractBuildingCrafter.View
     {
-
         /**
          * Instantiate the fletcher view.
          *

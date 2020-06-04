@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -24,7 +23,6 @@ import java.util.function.Predicate;
  */
 public interface IRequestResolver<R extends IRequestable> extends IRequester
 {
-
     /**
      * Used to determine which type of requests can be resolved by this Resolver.
      *
@@ -57,7 +55,8 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *
      * @param manager The manager that is attempting to resolve using this resolver.
      * @param request The request to resolve.
-     * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
+     * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if
+     *         the attempt failed.
      */
     @Nullable
     List<IToken<?>> attemptResolveRequest(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
@@ -73,7 +72,8 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *
      * @param request The request to resolve.
      * @param manager The manager that is resolving this request, under normal conditions this is the colony manager.
-     * @throws RuntimeException is thrown when the resolver could not resolve the request. Should never happen as attemptResolve should be called first,
+     * @throws RuntimeException is thrown when the resolver could not resolve the request. Should never happen as attemptResolve should be
+     *                          called first,
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
@@ -81,13 +81,14 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
 
     /**
      * Called by the manager given to indicate that this request has been assigned to you.
-     * @param manager The systems manager.
-     * @param request The request assigned.
+     * 
+     * @param manager    The systems manager.
+     * @param request    The request assigned.
      * @param simulation True when simulating.
      */
     default void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation)
     {
-        //Noop
+        // Noop
     }
 
     /**
@@ -110,16 +111,18 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
 
     /**
      * Called by manager given to indicate that a colony has updated their available items.
-     * @param manager The systems manager.
+     * 
+     * @param manager               The systems manager.
      * @param shouldTriggerReassign The request assigned
      */
-    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
-        //Noop
+        // Noop
     }
 
     @Nullable
-    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest)
+    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager,
+        @NotNull IRequest<? extends R> completedRequest)
     {
         return Lists.newArrayList();
     }

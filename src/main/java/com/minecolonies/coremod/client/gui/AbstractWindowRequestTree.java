@@ -23,11 +23,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -129,7 +127,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
-            @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            @NotNull
+            final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             building.onRequestedRequestCancelled(colony.getRequestManager(), request);
             Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
@@ -141,9 +140,10 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to cancel.
      */
-    public void cancel(@NotNull final IRequest tRequest)
+    public void cancel(@NotNull final IRequest<?> tRequest)
     {
-        @NotNull final IRequest<?> request = (IRequest<?>) tRequest;
+        @NotNull
+        final IRequest<?> request = (IRequest<?>) tRequest;
         building.onRequestedRequestCancelled(colony.getRequestManager(), request);
         Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
 
@@ -183,12 +183,11 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param list         the list which is returned.
      * @param currentDepth the current depth.
      */
-    private void constructTreeFromRequest(
-      @NotNull final IBuildingView buildingView,
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<?> request,
-      @NotNull final List<RequestWrapper> list,
-      final int currentDepth)
+    private void constructTreeFromRequest(@NotNull final IBuildingView buildingView,
+        @NotNull final IRequestManager manager,
+        @NotNull final IRequest<?> request,
+        @NotNull final List<RequestWrapper> list,
+        final int currentDepth)
     {
         list.add(new RequestWrapper(request, currentDepth, buildingView));
         if (request.hasChildren())
@@ -215,7 +214,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param building the building to get them from.
      * @return the requests.
      */
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequestsOfBuilding();
     }
@@ -231,7 +230,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            @NotNull
+            final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             fulfill(request);
         }
         button.disable();
@@ -243,7 +243,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param request the request to fulfill.
      */
-    public void fulfill(@NotNull final IRequest request)
+    public void fulfill(@NotNull final IRequest<?> request)
     {
         /*
          * Override if can fulfill.
@@ -271,7 +271,10 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfBuilding().size() > row)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequestTreeOfBuilding().get(row).getRequest(), colony.getID());
+            @NotNull
+            final WindowRequestDetail window = new WindowRequestDetail(this,
+                getOpenRequestTreeOfBuilding().get(row).getRequest(),
+                colony.getID());
             window.open();
         }
     }
@@ -326,16 +329,16 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+                    .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+                    .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-                if(!cancellable(request))
+                if (!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
 
-                if(!fulfillable(request))
+                if (!fulfillable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                 }
@@ -348,7 +351,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to check if it's fulfillable
      */
-    public boolean fulfillable(final IRequest tRequest)
+    public boolean fulfillable(final IRequest<?> tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {
@@ -357,26 +360,32 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         final Predicate<ItemStack> requestPredicate = stack -> ((IRequest<? extends IDeliverable>) tRequest).getRequest().matches(stack);
         List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
-        //RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get();
+        // RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper ->
+        // requestWrapper.getRequest().equals(tRequest)).findFirst().get();
 
-        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        RequestWrapper wrapper = requestWrappers.stream()
+            .filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest))
+            .findFirst()
+            .orElse(null);
         if (wrapper == null)
         {
             return false;
         }
 
-        int depth = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get().getDepth();
+        int depth = requestWrappers.stream()
+            .filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest))
+            .findFirst()
+            .get()
+            .getDepth();
 
         if (wrapper.overruleable && canFulFill())
         {
             if (wrapper.getDepth() > 0)
             {
                 if (!(tRequest.getRequester() instanceof IBuildingBasedRequester)
-                      || !((IBuildingBasedRequester) tRequest.getRequester())
-                            .getBuilding(colony.getRequestManager(),
-                              tRequest.getId()).map(
-                    iRequester -> iRequester.getLocation()
-                                    .equals(building.getLocation())).isPresent())
+                    || !((IBuildingBasedRequester) tRequest.getRequester()).getBuilding(colony.getRequestManager(), tRequest.getId())
+                        .map(iRequester -> iRequester.getLocation().equals(building.getLocation()))
+                        .isPresent())
                 {
                     return false;
                 }
@@ -414,10 +423,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to check if it's cancellable
      */
-    public boolean cancellable(final IRequest tRequest)
+    public boolean cancellable(final IRequest<?> tRequest)
     {
         List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
-        RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
+        RequestWrapper wrapper = requestWrappers.stream()
+            .filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest))
+            .findFirst()
+            .orElse(null);
         if (wrapper == null)
         {
             return false;
@@ -441,7 +453,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         /**
          * The request.
          */
-        private final IRequest request;
+        private final IRequest<?> request;
 
         /**
          * The depth in the tree.
@@ -460,13 +472,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          * @param depth        the depth.
          * @param buildingView the building it belongs to.
          */
-        public RequestWrapper(@NotNull final IRequest request, final int depth, @NotNull final IBuildingView buildingView)
+        public RequestWrapper(@NotNull final IRequest<?> request, final int depth, @NotNull final IBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;
             this.overruleable = request.getRequester().getId().equals(buildingView.getId())
-                                  || buildingView.getResolverIds().contains(request.getRequester().getId())
-                                  || buildingView.getPosition().equals(request.getRequester().getLocation().getInDimensionLocation());
+                || buildingView.getResolverIds().contains(request.getRequester().getId())
+                || buildingView.getPosition().equals(request.getRequester().getLocation().getInDimensionLocation());
         }
 
         /**
@@ -474,7 +486,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          *
          * @return the request.
          */
-        public IRequest getRequest()
+        public IRequest<?> getRequest()
         {
             return request;
         }

@@ -5,7 +5,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public interface IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
-     * @param qty the quantity to craft.
+     * @param qty         the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
@@ -69,6 +68,7 @@ public interface IRecipeStorage
 
     /**
      * Check for space, remove items, and insert crafted items.
+     * 
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
@@ -76,7 +76,8 @@ public interface IRecipeStorage
 
     /**
      * Get the unique token of the recipe.
+     * 
      * @return the IToken.
      */
-    IToken getToken();
+    IToken<?> getToken();
 }

@@ -2,7 +2,6 @@ package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
 import org.apache.logging.log4j.core.config.AppenderControl;
-
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -12,7 +11,6 @@ import java.util.Set;
  */
 public final class ReflectionUtils
 {
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -33,8 +31,7 @@ public final class ReflectionUtils
         final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
         final Set<TypeToken> resultingSet = new LinkedHashSet<>();
 
-        directSet.forEach(t ->
-        {
+        directSet.forEach(t -> {
             resultingSet.add(t);
             resultingSet.add(TypeToken.of(t.getRawType()));
         });
@@ -42,8 +39,7 @@ public final class ReflectionUtils
         return resultingSet;
     }
 
-    public static void setFMLLoggingLevelOnConsoleToDebug(final AppenderControl control)
-      throws NoSuchFieldException, IllegalAccessException
+    public static void setFMLLoggingLevelOnConsoleToDebug(final AppenderControl control) throws NoSuchFieldException, IllegalAccessException
     {
         final Field levelField = control.getClass().getField("level");
         levelField.setAccessible(true);

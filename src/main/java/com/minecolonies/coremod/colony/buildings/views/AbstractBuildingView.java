@@ -29,16 +29,15 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
 import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
- * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
+ * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is
+ * relevant to a Client, in a more
  * client-friendly form. Mutable operations on a View result in a message to the server to perform the operation.
  */
 public abstract class AbstractBuildingView implements IBuildingView
@@ -339,7 +338,8 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
         else
         {
-            @Nullable final Window window = getWindow();
+            @Nullable
+            final Window window = getWindow();
             if (window != null)
             {
                 window.open();
@@ -455,21 +455,18 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData,
+        final Class<R> requestType)
     {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
-                                      .map(request -> (IRequest<? extends R>) request)
-                                      .iterator());
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream().filter(request -> {
+            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            return requestTypes.contains(TypeToken.of(requestType));
+        }).map(request -> (IRequest<? extends R>) request).iterator());
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenDataView data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenDataView data)
     {
         if (data == null || getColony() == null || getColony().getRequestManager() == null)
         {
@@ -488,20 +485,23 @@ public abstract class AbstractBuildingView implements IBuildingView
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(list
-                                      .stream().filter(Objects::nonNull)
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(Objects::nonNull).iterator());
+        return ImmutableList.copyOf(list.stream()
+            .filter(Objects::nonNull)
+            .map(getColony().getRequestManager()::getRequestForToken)
+            .filter(Objects::nonNull)
+            .iterator());
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequestsOfBuilding()
+    public ImmutableList<IRequest<?>> getOpenRequestsOfBuilding()
     {
-        return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
-                                      .filter(Objects::nonNull)
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(Objects::nonNull).iterator());
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().values()
+            .stream()
+            .flatMap(Collection::stream)
+            .filter(Objects::nonNull)
+            .map(getColony().getRequestManager()::getRequestForToken)
+            .filter(Objects::nonNull)
+            .iterator());
     }
 
     /**
@@ -516,20 +516,15 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull final ICitizenDataView citizenData,
-      final Class<R> requestType,
-      final Predicate<IRequest<? extends R>> filter)
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(@NotNull final ICitizenDataView citizenData,
+        final Class<R> requestType,
+        final Predicate<IRequest<? extends R>> filter)
     {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
-                                      .map(request -> (IRequest<? extends R>) request)
-                                      .filter(filter)
-                                      .iterator());
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream().filter(request -> {
+            final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+            return requestTypes.contains(TypeToken.of(requestType));
+        }).map(request -> (IRequest<? extends R>) request).filter(filter).iterator());
     }
 
     @Override
@@ -570,7 +565,8 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         try
         {
-            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
+            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId())
+                || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
                 return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
             }

@@ -48,11 +48,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -64,7 +62,6 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
-
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
@@ -168,7 +165,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count)
     {
-        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount());
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack),
+            count * tempStack.getCount());
     }
 
     @Override
@@ -208,7 +206,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken ignored)
+    public boolean canRecipeBeAdded(final IToken<?> ignored)
     {
         return hasSpaceForMoreRecipes();
     }
@@ -227,7 +225,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     private boolean hasSpaceForMoreRecipes()
     {
         double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect(RECIPES, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             increase = 1 + effect.getEffect();
@@ -240,7 +240,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
 
     @Override
-    public List<IToken> getRecipes()
+    public List<IToken<?>> getRecipes()
     {
         return new ArrayList<>(recipes);
     }
@@ -282,7 +282,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         if (!super.assignCitizen(citizen))
         {
-            Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:" + this.getJobName());
+            Log.getLogger()
+                .warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:"
+                    + this.getJobName());
             return false;
         }
 
@@ -292,7 +294,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             citizen.setWorkBuilding(this);
             citizen.getJob().onLevelUp();
             colony.getProgressManager()
-              .progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
+                .progressEmploy(colony.getCitizenManager()
+                    .getCitizens()
+                    .stream()
+                    .filter(citizenData -> citizenData.getJob() != null)
+                    .collect(Collectors.toList())
+                    .size());
         }
         return true;
     }
@@ -342,7 +349,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token  = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -354,8 +361,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT workersTagList = new ListNBT();
-        for (@NotNull final ICitizenData data : getAssignedCitizen())
+        @NotNull
+        final ListNBT workersTagList = new ListNBT();
+        for (@NotNull
+        final ICitizenData data : getAssignedCitizen())
         {
             if (data != null)
             {
@@ -367,9 +376,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         compound.put(TAG_WORKER, workersTagList);
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final ListNBT recipesTagList = recipes.stream()
-                                                  .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
-                                                  .collect(NBTUtils.toListNBT());
+        @NotNull
+        final ListNBT recipesTagList = recipes.stream()
+            .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
         return compound;
     }
@@ -377,11 +387,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public void onWakeUp()
     {
-
     }
 
     @Override
-    public boolean addRecipe(final IToken token)
+    public boolean addRecipe(final IToken<?> token)
     {
         if (canRecipeBeAdded(token))
         {
@@ -390,7 +399,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                colony.getRequestManager()
+                    .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable
+                        && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }
@@ -398,7 +409,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void removeRecipe(final IToken token)
+    public void removeRecipe(final IToken<?> token)
     {
         recipes.remove(token);
         markDirty();
@@ -411,7 +422,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
-              && (this.hiringMode == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
+            && (this.hiringMode == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
         {
             final ICitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
@@ -497,12 +508,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(
-          new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                                   .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+            new BuildingRequestResolver(getRequester().getLocation(),
+                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(),
+                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(),
+                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
     }
 
     @Override

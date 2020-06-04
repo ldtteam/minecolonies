@@ -16,24 +16,20 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
-
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
-    private       IRequestManager manager;
-    private final ILocation       location;
-    private final IToken<?>       id;
-    private       IToken<?>       current;
-    private final HashMap<IToken<?>, Integer> delays           = new HashMap<>();
+    private IRequestManager manager;
+    private final ILocation location;
+    private final IToken<?> id;
+    private IToken<?> current;
+    private final HashMap<IToken<?>, Integer> delays = new HashMap<>();
     private final HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
     public StandardRetryingRequestResolver(final IFactoryController factoryController, final IRequestManager manager)
@@ -41,7 +37,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         this.updateManager(manager);
 
         this.id = factoryController.getNewInstance(TypeConstants.ITOKEN, manager.getColony().getID() * CONST_RETRYING_ID_SCALE);
-        this.location = factoryController.getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getDimension());
+        this.location = factoryController
+            .getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getDimension());
     }
 
     public StandardRetryingRequestResolver(final IToken<?> id, final ILocation location)
@@ -91,35 +88,39 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
         return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getId() != getCurrentlyBeingReassignedRequest()
-                 || getCurrentReassignmentAttempt() < getMaximalTries();
+            || getCurrentReassignmentAttempt() < getMaximalTries();
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends IRetryable> request)
     {
         return ImmutableList.of();
     }
 
     @Override
-    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+        throws RuntimeException
     {
         delays.put(request.getId(), getMaximalDelayBetweenRetriesInTicks());
-        assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
+        assignedRequests.put(request.getId(),
+            assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends IRetryable> completedRequest)
     {
-        //Gets never called, since these will never get completed, only overruled or reassigned.
+        // Gets never called, since these will never get completed, only overruled or reassigned.
         return null;
     }
 
     @Nullable
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager,
+        @NotNull final IRequest<? extends IRetryable> request)
     {
         if (assignedRequests.containsKey(request.getId()))
         {
@@ -129,10 +130,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onAssignedRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-
     }
 
     @Override
@@ -146,13 +145,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     {
         manager.getLogger().debug("Starting reassignment.");
 
-        //Lets decrement all delays
+        // Lets decrement all delays
         getAllAssignedRequests().forEach(t -> {
             Integer current = delays.remove(t);
             delays.put(t, --current);
         });
 
-        //Lets get all keys with 0 residual delay:
+        // Lets get all keys with 0 residual delay:
         final Set<IToken<?>> retryables = delays.keySet().stream().filter(t -> delays.get(t) == 0).collect(Collectors.toSet());
         final Set<IToken<?>> successfully = retryables.stream().filter(t -> {
             final Set<IToken<?>> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
@@ -227,13 +226,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //Noop, we do not schedule child requests. So this is never called.
+        // Noop, we do not schedule child requests. So this is never called.
     }
 
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //Noop, see onRequestComplete.
+        // Noop, see onRequestComplete.
     }
 
     @NotNull
@@ -263,20 +262,19 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests.keySet()).stream()
-                .map(manager::getRequestForToken)
-                .filter(shouldTriggerReassign)
-                .filter(Objects::nonNull)
-                .forEach(request ->
-                {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+            .map(manager::getRequestForToken)
+            .filter(shouldTriggerReassign)
+            .filter(Objects::nonNull)
+            .forEach(request -> {
+                final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
 
-                    if (newResolverToken != getId())
-                    {
-                        assignedRequests.remove(request.getId());
-                    }
-                });
+                if (newResolverToken != getId())
+                {
+                    assignedRequests.remove(request.getId());
+                }
+            });
     }
 }

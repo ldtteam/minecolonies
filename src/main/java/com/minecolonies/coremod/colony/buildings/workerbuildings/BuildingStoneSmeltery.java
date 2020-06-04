@@ -28,7 +28,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -94,7 +93,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if (!super.canRecipeBeAdded(token))
         {
@@ -112,7 +111,8 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
+        return isBlockForThisSmelter(storage.getPrimaryOutput())
+            && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
     }
 
     /**
@@ -127,13 +127,9 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         if (item instanceof BlockItem)
         {
             final Block block = ((BlockItem) item).getBlock();
-            if (block.isIn(BlockTags.STONE_BRICKS) ||
-                    block == Blocks.STONE         ||
-                    block == Blocks.STONE_BRICKS  ||
-                    block == Blocks.SMOOTH_STONE  ||
-                    block instanceof GlazedTerracottaBlock)
+            if (block.isIn(BlockTags.STONE_BRICKS) || block == Blocks.STONE || block == Blocks.STONE_BRICKS || block == Blocks.SMOOTH_STONE
+                || block instanceof GlazedTerracottaBlock)
             {
-
                 return true;
             }
         }
@@ -150,7 +146,9 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonesmeltery", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Stonesmeltery", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -164,7 +162,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
      */
     public static class View extends AbstractBuildingSmelterCrafter.View
     {
-
         /**
          * Instantiate the stone smeltery view.
          *

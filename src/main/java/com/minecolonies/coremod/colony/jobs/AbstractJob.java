@@ -18,12 +18,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_JOB_TYPE;
 import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION;
 
@@ -39,7 +37,7 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
 {
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
-    private static final String TAG_ACTIONS_DONE   = "actionsDone";
+    private static final String TAG_ACTIONS_DONE = "actionsDone";
 
     /**
      * A counter to dump the inventory after x actions.
@@ -64,7 +62,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     /**
      * A set of tokens that point to requests for which we do not wait.
      */
-    private final Set<IToken> asyncRequests = new HashSet<>();
+    private final Set<IToken<?>> asyncRequests = new HashSet<>();
 
     /**
      * Check if the worker has searched for food today.
@@ -111,10 +109,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
         compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
         compound.put(TAG_ASYNC_REQUESTS,
-          getAsyncRequests().stream()
-            .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
-            .map(StandardFactoryController.getInstance()::serialize)
-            .collect(NBTUtils.toListNBT()));
+            getAsyncRequests().stream()
+                .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
+                .map(StandardFactoryController.getInstance()::serialize)
+                .collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
@@ -127,9 +125,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         if (compound.keySet().contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
-                                        .map(StandardFactoryController.getInstance()::deserialize)
-                                        .map(o -> (IToken) o)
-                                        .collect(Collectors.toSet()));
+                .map(StandardFactoryController.getInstance()::deserialize)
+                .map(o -> (IToken<?>) o)
+                .collect(Collectors.toSet()));
         }
         if (compound.keySet().contains(TAG_ACTIONS_DONE))
         {
@@ -143,7 +141,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      * @return a set of ITokens.
      */
     @Override
-    public Set<IToken> getAsyncRequests()
+    public Set<IToken<?>> getAsyncRequests()
     {
         return asyncRequests;
     }
@@ -162,10 +160,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
                 return;
             }
             Log.getLogger()
-              .error(
-                "Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob() + " jobForAICreation:" + nameTag + " class:" + this.getClass()
-                  + " entityPresent:"
-                  + citizen.getCitizenEntity().isPresent());
+                .error("Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob()
+                    + " jobForAICreation:" + nameTag + " class:" + this.getClass() + " entityPresent:"
+                    + citizen.getCitizenEntity().isPresent());
             return;
         }
 
@@ -201,7 +198,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
-
     }
 
     @Override
@@ -226,7 +222,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void onLevelUp()
     {
-
     }
 
     @Override
@@ -307,13 +302,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void onRemoval()
     {
-
     }
 
     @Override
     public void setActive(final boolean b)
     {
-
     }
 
     @Override

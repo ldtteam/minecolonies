@@ -1020,19 +1020,19 @@ public class CitizenData implements ICitizenData
     // --------------------------- Request Handling --------------------------- //
 
     @Override
-    public <R extends IRequestable> IToken createRequest(@NotNull final R requested)
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, false);
     }
 
     @Override
-    public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
+    public <R extends IRequestable> IToken<?> createRequestAsync(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, true);
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         if (isRequestAsync(token))
         {
@@ -1041,7 +1041,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public boolean isRequestAsync(@NotNull final IToken token)
+    public boolean isRequestAsync(@NotNull final IToken<?> token)
     {
         if (job != null)
         {

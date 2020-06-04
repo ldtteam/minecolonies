@@ -28,7 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -56,7 +55,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     {
         super(c, l);
     }
-
 
     @NotNull
     @Override
@@ -100,30 +98,31 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
 
         final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle
+            || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
         {
             return true;
         }
 
         double amountOfValidBlocks = 0;
         double blocks = 0;
-        for(final ItemStack stack : storage.getInput())
+        for (final ItemStack stack : storage.getInput())
         {
-            if(!ItemStackUtils.isEmpty(stack))
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
                 {
@@ -132,12 +131,13 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                 }
                 for (final ResourceLocation tag : stack.getItem().getTags())
                 {
-                    if(tag.getPath().contains("wood"))
+                    if (tag.getPath().contains("wood"))
                     {
                         amountOfValidBlocks++;
                         break;
                     }
-                    else if(tag.getPath().contains("ingot") || tag.getPath().contains("stone") || tag.getPath().contains("redstone") || tag.getPath().contains("string"))
+                    else if (tag.getPath().contains("ingot") || tag.getPath().contains("stone") || tag.getPath().contains("redstone")
+                        || tag.getPath().contains("string"))
                     {
                         return false;
                     }
@@ -146,7 +146,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             }
         }
 
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     @Override
@@ -158,7 +158,9 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Sawmill", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Sawmill", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -172,7 +174,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
      */
     public static class View extends AbstractBuildingCrafter.View
     {
-
         /**
          * Instantiate the sawmill view.
          *

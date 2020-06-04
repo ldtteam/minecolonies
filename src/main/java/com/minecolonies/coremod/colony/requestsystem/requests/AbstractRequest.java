@@ -19,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,28 +29,27 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractRequest<R extends IRequestable> implements IRequest<R>
 {
-
     @NotNull
-    private final IToken       token;
+    private final IToken<?> token;
     @NotNull
-    private final R            requested;
+    private final R requested;
     @NotNull
-    private final List<IToken> children;
+    private final List<IToken<?>> children;
     @NotNull
-    private final IRequester   requester;
+    private final IRequester requester;
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
-    private R      result;
+    private R result;
     @Nullable
-    private IToken parent;
+    private IToken<?> parent;
     @SuppressWarnings("squid:S1170")
 
     private List<ItemStack> deliveries = Lists.newArrayList();
 
     private ImmutableList<ItemStack> itemExamples;
 
-    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -60,7 +58,10 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         children = new ArrayList<>();
     }
 
-    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester,
+        @NotNull final IToken<?> token,
+        @NotNull final RequestState state,
+        @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -69,8 +70,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         children = new ArrayList<>();
     }
-
-    
 
     /**
      * Used to determine which type of request this is.
@@ -106,7 +105,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getId()
+    public <T extends IToken<?>> T getId()
     {
         return (T) token;
     }
@@ -145,7 +144,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             }
             catch (final IllegalArgumentException ex)
             {
-                //Something went wrong... Logging. Continuing however. Might cause parent request to get stuck however......
+                // Something went wrong... Logging. Continuing however. Might cause parent request to get stuck however......
                 Log.getLogger().error(new IllegalStateException("Failed to update parent state.", ex));
             }
         }
@@ -210,7 +209,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getParent()
+    public <T extends IToken<?>> T getParent()
     {
         return (T) parent;
     }
@@ -221,7 +220,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param parent The new parent, or null to clear the existing one.
      */
     @Override
-    public <T extends IToken> void setParent(@Nullable final T parent)
+    public <T extends IToken<?>> void setParent(@Nullable final T parent)
     {
         this.parent = parent;
     }
@@ -243,7 +242,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child The new child request to add.
      */
     @Override
-    public <T extends IToken> void addChild(@NotNull final T child)
+    public <T extends IToken<?>> void addChild(@NotNull final T child)
     {
         this.children.add(child);
     }
@@ -254,9 +253,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children An array of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull final T... children)
+    public <T extends IToken<?>> void addChildren(@NotNull final T... children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             addChild(theToken);
         }
@@ -268,9 +267,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children A collection of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull final Collection<T> children)
+    public <T extends IToken<?>> void addChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             addChild(theToken);
         }
@@ -282,7 +281,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child The new child request to remove.
      */
     @Override
-    public <T extends IToken> void removeChild(@NotNull final T child)
+    public <T extends IToken<?>> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
     }
@@ -293,9 +292,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children An array of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull final T... children)
+    public <T extends IToken<?>> void removeChildren(@NotNull final T... children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             if (this.children.contains(theToken))
             {
@@ -310,9 +309,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children A collection of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull final Collection<T> children)
+    public <T extends IToken<?>> void removeChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             if (this.children.contains(theToken))
             {
@@ -338,9 +337,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @NotNull
     @Override
-    public ImmutableCollection<IToken> getChildren()
+    public ImmutableCollection<IToken<?>> getChildren()
     {
-        final ImmutableCollection.Builder<IToken> builder = new ImmutableList.Builder<>();
+        final ImmutableCollection.Builder<IToken<?>> builder = new ImmutableList.Builder<>();
 
         builder.addAll(this.children);
 
@@ -354,11 +353,11 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child   The child that was updated.
      */
     @Override
-    public void childStateUpdated(@NotNull final IRequestManager manager, @NotNull final IToken child)
+    public void childStateUpdated(@NotNull final IRequestManager manager, @NotNull final IToken<?> child)
     {
         if (!this.children.contains(child))
         {
-            //WHAT? log and return.
+            // WHAT? log and return.
             Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getId() + " as it was not registered.");
         }
 
@@ -434,7 +433,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         if (itemExamples == null)
         {
-            itemExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(deliverable::matches).collect(Collectors.toList()));
+            itemExamples = ImmutableList.copyOf(IColonyManager.getInstance()
+                .getCompatibilityManager()
+                .getBlockList()
+                .stream()
+                .filter(deliverable::matches)
+                .collect(Collectors.toList()));
         }
 
         return itemExamples;

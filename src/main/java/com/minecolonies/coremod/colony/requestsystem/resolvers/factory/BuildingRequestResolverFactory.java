@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class BuildingRequestResolverFactory implements IRequestResolverFactory<BuildingRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -36,17 +36,17 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public BuildingRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
-      throws IllegalArgumentException
+    public BuildingRequestResolver getNewInstance(@NotNull final IFactoryController factoryController,
+        @NotNull final ILocation iLocation,
+        @NotNull final Object... context) throws IllegalArgumentException
     {
         return new BuildingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
-    public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller,
+        @NotNull final BuildingRequestResolver buildingRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(buildingRequestResolver.getId()));
@@ -58,7 +58,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     @Override
     public BuildingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final IToken token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
+        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         return new BuildingRequestResolver(location, token);

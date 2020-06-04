@@ -31,11 +31,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -86,11 +84,11 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL = 5;
+    private static final int MAX_BUILDING_LEVEL = 5;
     /**
      * The job description.
      */
-    private static final String LUMBERJACK         = "lumberjack";
+    private static final String LUMBERJACK = "lumberjack";
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -102,7 +100,8 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
 
         if (recipes.isEmpty())
         {
@@ -123,13 +122,13 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
 
     public final void addStrippedWoodRecipe(final Item baseVariant, final Item strippedVariant)
     {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(baseVariant, 1)),
-          1,
-          new ItemStack(strippedVariant, 1),
-          Blocks.AIR);
+        final IRecipeStorage storage = StandardFactoryController.getInstance()
+            .getNewInstance(TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                ImmutableList.of(new ItemStack(baseVariant, 1)),
+                1,
+                new ItemStack(strippedVariant, 1),
+                Blocks.AIR);
         recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
@@ -312,7 +311,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return false;
     }

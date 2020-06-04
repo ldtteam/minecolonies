@@ -24,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -90,15 +89,15 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
@@ -106,7 +105,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         final int size = storage.getCleanedInput().size();
         int ingots = 0;
         int nuggets = 0;
-        for(final ItemStorage itemStorage : storage.getCleanedInput())
+        for (final ItemStorage itemStorage : storage.getCleanedInput())
         {
             final ItemStack stack = itemStorage.getItemStack();
             if (!ItemStackUtils.isEmpty(stack))
@@ -125,14 +124,9 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         }
 
         final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ToolItem ||
-                output.getItem() instanceof SwordItem ||
-                output.getItem() instanceof ArmorItem ||
-                output.getItem() instanceof HoeItem ||
-                output.getItem() instanceof ShieldItem ||
-                Compatibility.isTinkersWeapon(output) ||
-                ingots == size ||
-                nuggets == size;
+        return output.getItem() instanceof ToolItem || output.getItem() instanceof SwordItem || output.getItem() instanceof ArmorItem
+            || output.getItem() instanceof HoeItem || output.getItem() instanceof ShieldItem || Compatibility.isTinkersWeapon(output)
+            || ingots == size || nuggets == size;
     }
 
     @Override
@@ -144,7 +138,9 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Blacksmith", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Blacksmith", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

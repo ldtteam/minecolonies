@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -35,29 +34,29 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController     INSTANCE              = new StandardFactoryController();
+    private static final StandardFactoryController INSTANCE = new StandardFactoryController();
     /**
      * Primary (main) INPUT mappings.
      */
     @NotNull
-    private final        Map<TypeToken, Set<IFactory>> primaryInputMappings  = new HashMap<>();
+    private final Map<TypeToken, Set<IFactory>> primaryInputMappings = new HashMap<>();
     /**
      * Primary (main) OUTPUT mappings.
      */
     @NotNull
-    private final        Map<TypeToken, Set<IFactory>> primaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken, Set<IFactory>> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
-    private final Map<TypeToken, Set<IFactory>>                secondaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken, Set<IFactory>> secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary types.
      */
     @NotNull
-    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
+    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache = CacheBuilder.newBuilder().build();
 
     /**
      * List of the override handlers.
@@ -73,10 +72,8 @@ public final class StandardFactoryController implements IFactoryController
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
-     *
      * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields.
      * In this case it makes sense since we need to make sure.
-     *
      */
     @SuppressWarnings("squid:S2583")
     private StandardFactoryController()
@@ -112,18 +109,24 @@ public final class StandardFactoryController implements IFactoryController
 
     @SuppressWarnings(Suppression.UNCHECKED)
     @Override
-    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
+    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass,
+        @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
-        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream()
+            .filter(h -> h.matches(inputClass))
+            .findFirst()
+            .orElse(null);
+        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream()
+            .filter(h -> h.matches(outputClass))
+            .findFirst()
+            .orElse(null);
 
         final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
         final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
         try
         {
-            //Request from cache or search.
-            return secondaryMappingsCache.get(new Tuple<>(input, output), () ->
-            {
+            // Request from cache or search.
+            return secondaryMappingsCache.get(new Tuple<>(input, output), () -> {
                 final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
 
                 for (final TypeToken secondaryInputClass : secondaryInputSet)
@@ -149,14 +152,19 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final ExecutionException e)
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("No factory found with the given IO types: " + input + " ->" + output).initCause(e);
+            throw (IllegalArgumentException) new IllegalArgumentException(
+                "No factory found with the given IO types: " + input + " ->" + output).initCause(e);
         }
     }
 
     @Override
-    public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass) throws IllegalArgumentException
+    public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass)
+        throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream()
+            .filter(h -> h.matches(inputClass))
+            .findFirst()
+            .orElse(null);
 
         final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
 
@@ -176,9 +184,13 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
+    public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass)
+        throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream()
+            .filter(h -> h.matches(outputClass))
+            .findFirst()
+            .orElse(null);
 
         final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
 
@@ -189,7 +201,7 @@ public final class StandardFactoryController implements IFactoryController
                 throw new IllegalArgumentException("The given output type is not a output of a factory");
             }
 
-            //Exists as the type exists in the secondary mapping. No specific output is requested, so we will take the first one.
+            // Exists as the type exists in the secondary mapping. No specific output is requested, so we will take the first one.
             return secondaryOutputMappings.get(output).stream().findFirst().get();
         }
 
@@ -219,8 +231,7 @@ public final class StandardFactoryController implements IFactoryController
 
         if (!outputSuperTypes.isEmpty())
         {
-            outputSuperTypes.forEach(t ->
-            {
+            outputSuperTypes.forEach(t -> {
                 if (!secondaryOutputMappings.containsKey(t))
                 {
                     secondaryOutputMappings.put(t, new HashSet<>());
@@ -245,7 +256,6 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings(Suppression.UNCHECKED)
     public <OUTPUT> OUTPUT deserialize(@NotNull final CompoundNBT compound) throws IllegalArgumentException
     {
         String className = compound.getString(NBT_TYPE);
@@ -259,7 +269,8 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final IllegalArgumentException e)
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+            throw (IllegalArgumentException) new IllegalArgumentException(
+                "The given compound holds an unknown output type for this Controller").initCause(e);
         }
 
         try
@@ -280,7 +291,7 @@ public final class StandardFactoryController implements IFactoryController
             return previousClassName;
         }
 
-        //See if we renamed something again.
+        // See if we renamed something again.
         return processClassRenaming(this.classRenamingHandlers.get(previousClassName));
     }
 
@@ -299,8 +310,9 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <INPUT, OUTPUT> OUTPUT getNewInstance(@NotNull final TypeToken<? extends OUTPUT> requestedType, @NotNull final INPUT input, @NotNull final Object... context)
-      throws IllegalArgumentException, ClassCastException
+    public <INPUT, OUTPUT> OUTPUT getNewInstance(@NotNull final TypeToken<? extends OUTPUT> requestedType,
+        @NotNull final INPUT input,
+        @NotNull final Object... context) throws IllegalArgumentException, ClassCastException
     {
         final TypeToken<? extends INPUT> inputToken = TypeToken.of((Class<? extends INPUT>) input.getClass());
         final IFactory<INPUT, OUTPUT> factory = getFactoryForIO(inputToken, requestedType);
@@ -311,7 +323,7 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <OUTPUT> OUTPUT getNewInstance(@NotNull final TypeToken<? extends OUTPUT> requestedType) throws IllegalArgumentException
     {
-        //Creating a new instance with VoidInput.
+        // Creating a new instance with VoidInput.
         return getNewInstance(requestedType, FactoryVoidInput.INSTANCE);
     }
 

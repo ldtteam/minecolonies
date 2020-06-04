@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -29,10 +28,11 @@ public final class InteractionValidatorRegistry
     /**
      * Map of all IToken based validator predicates.
      */
-    private static Map<ITextComponent, BiPredicate<ICitizenData, IToken>> tokenMap = new HashMap<>();
+    private static Map<ITextComponent, BiPredicate<ICitizenData, IToken<?>>> tokenMap = new HashMap<>();
 
     /**
      * Get the StandardInteractionValidatorPredicate.
+     * 
      * @param key the key of it.
      * @return the predicate.
      */
@@ -43,6 +43,7 @@ public final class InteractionValidatorRegistry
 
     /**
      * Get the PosBasedInteractionValidatorPredicate.
+     * 
      * @param key the key of it.
      * @return the predicate.
      */
@@ -53,17 +54,19 @@ public final class InteractionValidatorRegistry
 
     /**
      * Get the PosBasedInteractionValidatorPredicate.
+     * 
      * @param key the key of it.
      * @return the predicate.
      */
-    public static BiPredicate<ICitizenData, IToken> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
+    public static BiPredicate<ICitizenData, IToken<?>> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
     {
         return tokenMap.get(key);
     }
 
     /**
      * Add a new StandardInteractionValidatorPredicate.
-     * @param key it's key.
+     * 
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
     public static void registerStandardPredicate(final ITextComponent key, final Predicate<ICitizenData> predicate)
@@ -73,7 +76,8 @@ public final class InteractionValidatorRegistry
 
     /**
      * Add a new PosBasedInteractionValidatorPredicate.
-     * @param key it's key.
+     * 
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
     public static void registerPosBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
@@ -83,16 +87,18 @@ public final class InteractionValidatorRegistry
 
     /**
      * Add a new TokenBasedInteractionValidatorPredicate.
-     * @param key it's key.
+     * 
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
-    public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
+    public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken<?>> predicate)
     {
         tokenMap.put(key, predicate);
     }
 
     /**
      * Check if there is a validator with a certain key.
+     * 
      * @param component the key to check.
      * @return true if so.
      */

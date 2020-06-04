@@ -12,14 +12,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
-
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<BlockBarracksTowerSubstitution>
 {
-
     /**
      * Our Substitution bock's Facing.
      */
@@ -56,7 +53,6 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
      *
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
-    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -68,7 +64,6 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
-    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -81,12 +76,14 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction direction = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
+        @NotNull
+        final Direction direction = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
         return this.getDefaultState().with(FACING, direction);
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(FACING);
     }
 }

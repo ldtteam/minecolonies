@@ -30,13 +30,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -96,7 +94,10 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     private void loadCrusherMode()
     {
-        for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
+        for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance()
+            .getCompatibilityManager()
+            .getCrusherModes()
+            .entrySet())
         {
             if (this.crusherMode == null)
             {
@@ -104,16 +105,20 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             }
             final List<ItemStack> input = new ArrayList<>();
             input.add(mode.getKey().getItemStack());
-            final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input, 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
+            final IRecipeStorage recipe = StandardFactoryController.getInstance()
+                .getNewInstance(TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    2,
+                    mode.getValue().getItemStack(),
+                    ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
     }
 
     /**
      * Get the recipe storage of the current mode.
+     * 
      * @return the storage.
      */
     public IRecipeStorage getCurrentRecipe()
@@ -202,6 +207,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Calculate the max quantity to be crafted per day.
+     * 
      * @return the max.
      */
     public int getMaxDailyQuantity()
@@ -247,7 +253,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }
@@ -298,7 +304,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        for(final IRecipeStorage storage : crusherRecipes.values())
+        for (final IRecipeStorage storage : crusherRecipes.values())
         {
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
@@ -311,12 +317,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
     {
-        for(final IRecipeStorage storage : crusherRecipes.values())
+        for (final IRecipeStorage storage : crusherRecipes.values())
         {
-            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }
@@ -334,7 +340,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Crusher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Crusher", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -418,6 +426,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         /**
          * Get all the possible crusher modes.
+         * 
          * @return the modes.
          */
         public List<ItemStorage> getCrusherModes()

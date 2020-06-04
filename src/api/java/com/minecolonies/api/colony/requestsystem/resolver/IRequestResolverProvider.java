@@ -11,13 +11,12 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
  */
 public interface IRequestResolverProvider
 {
-
     /**
      * Unique token identifying this provider inside the request management system.
      *
      * @return the token.
      */
-    IToken getId();
+    IToken<?> getId();
 
     /**
      * Method to get the resolvers that this provider provides.

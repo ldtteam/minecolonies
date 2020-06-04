@@ -36,11 +36,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
@@ -111,27 +109,26 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Override
     public boolean canBeGathered()
     {
-        return super.canBeGathered() &&
-                 this.getAssignedCitizen().stream()
-                   .map(c -> c.getJob(AbstractJobCrafter.class))
-                   .filter(Objects::nonNull)
-                   .allMatch(AbstractJobCrafter::hasTask);
+        return super.canBeGathered() && this.getAssignedCitizen()
+            .stream()
+            .map(c -> c.getJob(AbstractJobCrafter.class))
+            .filter(Objects::nonNull)
+            .allMatch(AbstractJobCrafter::hasTask);
     }
 
     @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        final Collection<IRequestResolver<?>> supers =
-          super.createResolvers().stream()
+        final Collection<IRequestResolver<?>> supers = super.createResolvers().stream()
             .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
             .collect(Collectors.toList());
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
         builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+            getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+            getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -145,9 +142,10 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
                 final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
-                for (final IToken taskToken : assignedTasks)
+                for (final IToken<?> taskToken : assignedTasks)
                 {
-                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager()
+                        .getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
                     if (recipeStorage != null)
                     {
@@ -173,12 +171,14 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(recipeOutputs.entrySet()
+            .stream()
+            .collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
         {
@@ -199,7 +199,8 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             }
         }
 
-       return ItemStackUtils.CAN_EAT.test(storage.getPrimaryOutput()) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput()));
+        return ItemStackUtils.CAN_EAT.test(storage.getPrimaryOutput())
+            || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput()));
     }
 
     @NotNull
@@ -235,7 +236,10 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        if (ISFOOD.test(stack)
+            && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum()
+                < STACKSIZE
+            || !inventory)
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))
@@ -246,8 +250,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             return 0;
         }
 
-        final Predicate<ItemStack> allowedFuel = theStack -> getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(theStack));
-        if (allowedFuel.test(stack) && localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        final Predicate<ItemStack> allowedFuel = theStack -> getAllowedFuel().stream()
+            .anyMatch(fuelStack -> fuelStack.isItemEqual(theStack));
+        if (allowedFuel.test(stack)
+            && localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum()
+                < STACKSIZE
+            || !inventory)
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))

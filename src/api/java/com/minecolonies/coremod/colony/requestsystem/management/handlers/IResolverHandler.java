@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -21,7 +20,8 @@ public interface IResolverHandler
      *
      * @param resolvers The resolvers to register.
      * @return The tokens of the resolvers that when registered.
-     * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
+     * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the
+     *                                  given Resolvers.
      */
     Collection<IToken<?>> registerResolvers(IRequestResolver<?>... resolvers);
 
@@ -33,7 +33,8 @@ public interface IResolverHandler
      *
      * @param resolver The resolver to register
      * @return The token of the newly registered resolver
-     * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different token
+     * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is
+     *                                  already registered with a different token
      */
     IToken<?> registerResolver(IRequestResolver<? extends IRequestable> resolver);
 
@@ -45,7 +46,8 @@ public interface IResolverHandler
      *
      * @param resolvers The resolvers to register.
      * @return The tokens of the resolvers that when registered.
-     * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
+     * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the
+     *                                  given Resolvers.
      */
     Collection<IToken<?>> registerResolvers(Collection<IRequestResolver<?>> resolvers);
 
@@ -56,7 +58,8 @@ public interface IResolverHandler
      * </p>
      *
      * @param token The token of the resolver to remove.
-     * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
+     * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not
+     *                                  registered to the same resolver.
      */
     void removeResolver(IToken<?> token);
 
@@ -67,7 +70,8 @@ public interface IResolverHandler
      * </p>
      *
      * @param resolver The resolver to remove
-     * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
+     * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not
+     *                                  registered to the same resolver.
      */
     void removeResolver(IRequestResolver<?> resolver);
 
@@ -134,7 +138,8 @@ public interface IResolverHandler
      *
      * @param resolver The resolver to remove the given request from.
      * @param request  The request to remove.
-     * @throws IllegalArgumentException is thrown when the resolver is unknown, or when the given request is not registered to the given resolver.
+     * @throws IllegalArgumentException is thrown when the resolver is unknown, or when the given request is not registered to the given
+     *                                  resolver.
      */
     void removeRequestFromResolver(IRequestResolver<?> resolver, IRequest<?> request);
 
@@ -161,5 +166,5 @@ public interface IResolverHandler
      *
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
-    void onColonyUpdate(Predicate<IRequest> shouldTriggerReassign);
+    void onColonyUpdate(Predicate<IRequest<?>> shouldTriggerReassign);
 }

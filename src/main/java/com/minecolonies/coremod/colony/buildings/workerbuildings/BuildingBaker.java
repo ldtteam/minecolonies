@@ -39,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 /**
@@ -211,18 +210,24 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final ListNBT tasksTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
+        @NotNull
+        final ListNBT tasksTagList = new ListNBT();
+        for (@NotNull
+        final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
             if (!entry.getValue().isEmpty())
             {
-                @NotNull final CompoundNBT taskCompound = new CompoundNBT();
+                @NotNull
+                final CompoundNBT taskCompound = new CompoundNBT();
                 taskCompound.putInt(TAG_STATE, entry.getKey().ordinal());
 
-                @NotNull final ListNBT productsTaskList = new ListNBT();
-                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
+                @NotNull
+                final ListNBT productsTaskList = new ListNBT();
+                for (@NotNull
+                final BakingProduct bakingProduct : entry.getValue())
                 {
-                    @NotNull final CompoundNBT productCompound = new CompoundNBT();
+                    @NotNull
+                    final CompoundNBT productCompound = new CompoundNBT();
                     bakingProduct.write(productCompound);
                 }
                 taskCompound.put(TAG_PRODUCTS, productsTaskList);
@@ -231,10 +236,13 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
         compound.put(TAG_TASKS, tasksTagList);
 
-        @NotNull final ListNBT furnacesTagList = new ListNBT();
-        for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
+        @NotNull
+        final ListNBT furnacesTagList = new ListNBT();
+        for (@NotNull
+        final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
-            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT furnaceCompound = new CompoundNBT();
             BlockPosUtil.write(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
             if (entry.getValue() != null)
@@ -274,9 +282,10 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
+        if (!super.canRecipeBeAdded(token)
+            || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
         {
             return false;
         }
@@ -342,11 +351,15 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
             {
                 bakingProduct.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)).with(FurnaceBlock.LIT, true));
+                worldObj.setBlockState(entry.getKey(),
+                    Blocks.FURNACE.getDefaultState()
+                        .with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING))
+                        .with(FurnaceBlock.LIT, true));
             }
             else
             {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
+                worldObj.setBlockState(entry.getKey(),
+                    Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
             }
         }
     }
@@ -501,6 +514,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
 
     /**
      * Get the recipe for an itemstorage.
+     * 
      * @param itemStorage the storage.
      * @return the recipe.
      */
@@ -514,7 +528,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             }
         }
 
-        for (final IToken token : getRecipes())
+        for (final IToken<?> token : getRecipes())
         {
             final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))

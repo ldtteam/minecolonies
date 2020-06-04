@@ -17,7 +17,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getId();
+    IToken<?> getId();
 
     /**
      * Method to get the location of this locatable.
@@ -29,6 +29,7 @@ public interface IRequester
 
     /**
      * Method called by the request system to notify this requester that a request is complete.
+     * 
      * @param manager the request manager.
      * @param request the request.
      */
@@ -36,6 +37,7 @@ public interface IRequester
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
+     * 
      * @param manager the request manager.
      * @param request the request.
      */

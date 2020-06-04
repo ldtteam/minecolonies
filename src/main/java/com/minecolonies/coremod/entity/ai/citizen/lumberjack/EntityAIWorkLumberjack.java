@@ -33,12 +33,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -64,7 +62,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * If this limit is reached, no trees are found.
      */
-    private static final int SEARCH_LIMIT     = 150;
+    private static final int SEARCH_LIMIT = 150;
 
     /**
      * List of saplings.
@@ -84,21 +82,21 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE      = 2;
+    private static final int MIN_WORKING_RANGE = 2;
     /**
      * Time in ticks to wait before placing a sapling. Is used to collect falling saplings from the ground.
      */
-    private static final int    WAIT_BEFORE_SAPLING    = 50;
+    private static final int WAIT_BEFORE_SAPLING = 50;
     /**
      * Time in ticks to wait before placing a sapling. Is used to collect falling saplings from the ground.
      */
-    private static final int    MAX_WAITING_TIME       = 50;
+    private static final int MAX_WAITING_TIME = 50;
 
     /**
      * Number of ticks to wait for tree.
      */
-    private static final int TIMEOUT_DELAY      = 10;
-    private static final int LEAVES_RADIUS      = 1;
+    private static final int TIMEOUT_DELAY = 10;
+    private static final int LEAVES_RADIUS = 1;
     /**
      * Time in ticks to wait before rechecking if there are trees in the range of the lumberjack.
      */
@@ -117,7 +115,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * Delay before going to gather after cutting a tree.
      */
-    private static final int GATHERING_DELAY       = 3;
+    private static final int GATHERING_DELAY = 3;
 
     /**
      * Position where the Builders constructs from.
@@ -163,17 +161,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     public EntityAIWorkLumberjack(@NotNull final JobLumberjack job)
     {
-
         // Override state machine, otherwise the lumberjack will never check for wood to cut.
         super(job);
-        super.registerTargets(
-          new AITarget(LUMBERJACK_START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
-          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
-          new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(LUMBERJACK_START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+            new AITarget(PREPARING, this::prepareForWoodcutting, TICKS_SECOND),
+            new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
+            new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
+            new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
+            new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
     }
 
@@ -218,7 +213,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return LUMBERJACK_START_WORKING;
         }
 
-
         if (currentRequest != null && currentRecipeStorage != null)
         {
             return QUERY_ITEMS;
@@ -235,7 +229,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().isIn(BlockTags.LOGS);
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem
+            && ((BlockItem) stack.getItem()).getBlock().isIn(BlockTags.LOGS);
     }
 
     /**
@@ -311,7 +306,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
-
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
             final Map<String, List<ItemStorage>> copy = buildingLumberjack.getCopyOfAllowedItems();
             if (buildingLumberjack.shouldRestrict())
@@ -319,20 +313,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();
                 final BlockPos endPos = buildingLumberjack.getEndRestriction();
 
-                pathResult = worker.getNavigator().moveToTree(
-                  startPos, endPos,
-                  1.0D,
-                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
-                  worker.getCitizenColonyHandler().getColony()
-                );
+                pathResult = worker.getNavigator()
+                    .moveToTree(startPos,
+                        endPos,
+                        1.0D,
+                        copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                        worker.getCitizenColonyHandler().getColony());
             }
             else
             {
                 pathResult = worker.getNavigator()
-                               .moveToTree(SEARCH_RANGE + searchIncrement,
-                                 1.0D,
-                                 copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
-                                 worker.getCitizenColonyHandler().getColony());
+                    .moveToTree(SEARCH_RANGE + searchIncrement,
+                        1.0D,
+                        copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                        worker.getCitizenColonyHandler().getColony());
             }
         }
         if (pathResult.isPathReachingDestination())
@@ -401,7 +395,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * Work on the tree. First find your way to the tree trunk. Then chop away and wait for saplings to drop then place a sapling if shouldReplant is true
+     * Work on the tree. First find your way to the tree trunk. Then chop away and wait for saplings to drop then place a sapling if
+     * shouldReplant is true
      *
      * @return LUMBERJACK_GATHERING if tree is done
      */
@@ -443,29 +438,25 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (isOnSapling())
         {
-            @Nullable final BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint
-                      (world, workFrom, 1, 1, 1, 3,
-                        Blocks.AIR,
-                        Blocks.CAVE_AIR,
-                        Blocks.SNOW,
-                        Blocks.TALL_GRASS);
+            @Nullable
+            final BlockPos spawnPoint = Utils
+                .scanForBlockNearPoint(world, workFrom, 1, 1, 1, 3, Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS);
             WorkerUtil.setSpawnPoint(spawnPoint, worker);
         }
 
         if (job.getTree().hasLogs())
         {
-            //take first log from queue
+            // take first log from queue
             final BlockPos log = job.getTree().peekNextLog();
 
             if (job.getTree().isDynamicTree())
             {
                 // Dynamic Trees handles drops/tool dmg upon tree break, so those are set to false here
-                if (!mineBlock(log, workFrom, false, false, Compatibility.getDynamicTreeBreakAction(
-                  world,
-                  log,
-                  worker.getHeldItem(Hand.MAIN_HAND),
-                  worker.getPosition())))
+                if (!mineBlock(log,
+                    workFrom,
+                    false,
+                    false,
+                    Compatibility.getDynamicTreeBreakAction(world, log, worker.getHeldItem(Hand.MAIN_HAND), worker.getPosition())))
                 {
                     return getState();
                 }
@@ -489,7 +480,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else if (job.getTree().hasLeaves() && job.getTree().isSlimeTree())
         {
-            //take first leaf from queue
+            // take first leaf from queue
             final BlockPos leaf = job.getTree().peekNextLeaf();
             if (!mineBlock(leaf, workFrom))
             {
@@ -510,7 +501,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     public boolean walkToTree(final BlockPos workAt)
     {
-        if (workFrom == null || world.getBlockState(workFrom.up()).getBlock().isIn(BlockTags.SAPLINGS) || world.getBlockState(workFrom).getBlock().isIn(BlockTags.SAPLINGS))
+        if (workFrom == null || world.getBlockState(workFrom.up()).getBlock().isIn(BlockTags.SAPLINGS)
+            || world.getBlockState(workFrom).getBlock().isIn(BlockTags.SAPLINGS))
         {
             workFrom = getWorkingPosition(workAt);
         }
@@ -522,12 +514,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (pathToTree == null || !pathToTree.isInProgress())
         {
-            pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobMoveToWithPassable(world,
-              AbstractPathJob.prepareStart(worker),
-              workAt,
-              SEARCH_RANGE,
-              worker,
-              this::isPassable), workAt, 1.0d);
+            pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(
+                new PathJobMoveToWithPassable(world, AbstractPathJob.prepareStart(worker), workAt, SEARCH_RANGE, worker, this::isPassable),
+                workAt,
+                1.0d);
         }
 
         return false;
@@ -593,8 +583,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private boolean isOnSapling()
     {
         return world.getBlockState(worker.getPosition()).getBlock().isIn(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.getPosition().up()).getBlock().isIn(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.getPosition().down()).getBlock().isIn(BlockTags.SAPLINGS);
+            || world.getBlockState(worker.getPosition().up()).getBlock().isIn(BlockTags.SAPLINGS)
+            || world.getBlockState(worker.getPosition().down()).getBlock().isIn(BlockTags.SAPLINGS);
     }
 
     /**
@@ -618,7 +608,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
         if (saplingSlot != -1 && ((job.getTree().isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
-                                    || (!job.getTree().isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
+            || (!job.getTree().isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, saplingSlot);
@@ -639,11 +629,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 placeSaplings(saplingSlot, stack, block);
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
-                  this.worker.getPosition(),
-                  soundType.getPlaceSound(),
-                  SoundCategory.BLOCKS,
-                  soundType.getVolume(),
-                  soundType.getPitch());
+                    this.worker.getPosition(),
+                    soundType.getPlaceSound(),
+                    SoundCategory.BLOCKS,
+                    soundType.getVolume(),
+                    soundType.getPitch());
             }
 
             worker.swingArm(worker.getActiveHand());
@@ -672,14 +662,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (job.getTree() != null)
         {
             searchForItems(new AxisAlignedBB(job.getTree().getLocation())
-                             .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                             .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
         else
         {
             searchForItems(worker.getBoundingBox()
-                             .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                             .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
     }
 
@@ -702,7 +692,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    @NotNull final BlockPos pos = new BlockPos(x, y, z);
+                    @NotNull
+                    final BlockPos pos = new BlockPos(x, y, z);
                     if (world.getBlockState(pos).getBlock().isIn(BlockTags.LEAVES))
                     {
                         return pos;
@@ -726,17 +717,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return -1;
     }
 
-    //todo: we need to use a different way to get Metadata, check other Mods like BOP for compatibility then
-    @SuppressWarnings("deprecation")
+    // todo: we need to use a different way to get Metadata, check other Mods like BOP for compatibility then
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
         while (!job.getTree().getStumpLocations().isEmpty())
         {
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
-                  || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
+                || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
             {
-
                 getInventory().extractItem(saplingSlot, 1, false);
                 job.getTree().removeStump(pos);
             }

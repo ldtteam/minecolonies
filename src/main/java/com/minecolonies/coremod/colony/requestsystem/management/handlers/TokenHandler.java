@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-
 import java.util.UUID;
 
 /**
@@ -12,10 +11,12 @@ import java.util.UUID;
  */
 public class TokenHandler implements ITokenHandler
 {
-
     private final IStandardRequestManager manager;
 
-    public TokenHandler(final IStandardRequestManager manager) {this.manager = manager;}
+    public TokenHandler(final IStandardRequestManager manager)
+    {
+        this.manager = manager;
+    }
 
     @Override
     public IRequestManager getManager()
@@ -29,9 +30,9 @@ public class TokenHandler implements ITokenHandler
      * @return The new token.
      */
     @Override
-    public IToken generateNewToken()
+    public IToken<?> generateNewToken()
     {
-        //Force generic type to be correct.
+        // Force generic type to be correct.
         return manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());
     }
 }

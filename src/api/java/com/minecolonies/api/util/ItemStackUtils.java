@@ -22,14 +22,12 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
@@ -134,7 +132,6 @@ public final class ItemStackUtils
                     return entity;
                 }
             }
-
         }
         catch (final RuntimeException e)
         {
@@ -177,7 +174,9 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final AbstractEntityCitizen placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData,
+        final World world,
+        final AbstractEntityCitizen placer)
     {
         if (placer instanceof Entity)
         {
@@ -217,11 +216,12 @@ public final class ItemStackUtils
             }
 
             /*
-            todo: deactivated until forge fixes this problem.
-            else if (!(entity instanceof MobEntity))
-            {
-                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
-            }*/
+             * todo: deactivated until forge fixes this problem.
+             * else if (!(entity instanceof MobEntity))
+             * {
+             * request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
+             * }
+             */
 
             return request.stream().filter(stack -> !stack.getItemStack().isEmpty()).collect(Collectors.toList());
         }
@@ -238,7 +238,10 @@ public final class ItemStackUtils
      * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean hasToolLevel(@Nullable final ItemStack stack,
+        final IToolType toolType,
+        final int minimalLevel,
+        final int maximumLevel)
     {
         if (isEmpty(stack))
         {
@@ -274,19 +277,18 @@ public final class ItemStackUtils
      * @param toolType the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
-    @SuppressWarnings(DEPRECATION)
     public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
     {
         if (toolType == ToolType.NONE)
         {
-            //empty hand is best on blocks who don't care (0 better 1)
+            // empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
         if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
         {
             return -1;
         }
-        //todo: use 'better' version of this thing
+        // todo: use 'better' version of this thing
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)
@@ -307,10 +309,8 @@ public final class ItemStackUtils
                 return Compatibility.getToolLevel(stack);
             }
         }
-        else if (ToolType.HELMET.equals(toolType)
-                   || ToolType.BOOTS.equals(toolType)
-                   || ToolType.CHESTPLATE.equals(toolType)
-                   || ToolType.LEGGINGS.equals(toolType))
+        else if (ToolType.HELMET.equals(toolType) || ToolType.BOOTS.equals(toolType) || ToolType.CHESTPLATE.equals(toolType)
+            || ToolType.LEGGINGS.equals(toolType))
         {
             if (stack.getItem() instanceof ArmorItem)
             {
@@ -320,7 +320,7 @@ public final class ItemStackUtils
         }
         else if (!toolType.hasVariableMaterials())
         {
-            //We need a hut level 1 minimum
+            // We need a hut level 1 minimum
             return 1;
         }
         else
@@ -405,7 +405,10 @@ public final class ItemStackUtils
      * @param maximumLevel the maximum level needed (usually the worker's hut level)
      * @return true if tool is acceptable
      */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
+    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack,
+        final int toolLevel,
+        final int minimalLevel,
+        final int maximumLevel)
     {
         if (toolLevel < minimalLevel)
         {
@@ -423,17 +426,13 @@ public final class ItemStackUtils
     public static boolean isDecoration(final ItemStack stack)
     {
         final Item item = stack.getItem();
-        return item == Items.ITEM_FRAME
-                 || item == Items.ARMOR_STAND
-                 || item instanceof BannerItem
-                 || !(item instanceof BlockItem)
-                 || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
+        return item == Items.ITEM_FRAME || item == Items.ARMOR_STAND || item instanceof BannerItem || !(item instanceof BlockItem)
+            || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 
     private static int getToolLevel(final String material)
     {
-        if ("WOOD".equals(material)
-              || "GOLD".equals(material))
+        if ("WOOD".equals(material) || "GOLD".equals(material))
         {
             return 0;
         }
@@ -466,7 +465,8 @@ public final class ItemStackUtils
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EquipmentSlotType.CHEST) && material != ArmorMaterial.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EquipmentSlotType.CHEST)
+            && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
@@ -527,7 +527,7 @@ public final class ItemStackUtils
         {
             return 0;
         }
-        //calculate fortune enchantment
+        // calculate fortune enchantment
         int fortune = 0;
         if (tool.isEnchanted())
         {
@@ -591,14 +591,19 @@ public final class ItemStackUtils
         {
             case 0:
                 return "Leather";
+
             case 1:
                 return "Gold";
+
             case 2:
                 return "Chain";
+
             case 3:
                 return "Iron";
+
             case 4:
                 return "Diamond";
+
             default:
                 return "Better than Diamond";
         }
@@ -616,12 +621,16 @@ public final class ItemStackUtils
         {
             case 0:
                 return "Wood or Gold";
+
             case 1:
                 return "Stone";
+
             case 2:
                 return "Iron";
+
             case 3:
                 return "Diamond";
+
             default:
                 return "Better than Diamond";
         }
@@ -686,17 +695,18 @@ public final class ItemStackUtils
      * @return True when they are equal except the stacksize, false when not.
      */
     @NotNull
-    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1,
+        final ItemStack itemStack2,
+        final boolean matchMeta,
+        final boolean matchNBT)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
             return true;
         }
 
-        if (!isEmpty(itemStack1) &&
-              !isEmpty(itemStack2) &&
-              itemStack1.getItem() == itemStack2.getItem() &&
-              (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
+        if (!isEmpty(itemStack1) && !isEmpty(itemStack2) && itemStack1.getItem() == itemStack2.getItem()
+            && (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
         {
             if (!matchNBT)
             {
@@ -712,8 +722,7 @@ public final class ItemStackUtils
             }
             else
             {
-                return (!itemStack1.hasTag() || itemStack1.getTag().isEmpty())
-                         && (!itemStack2.hasTag() || itemStack2.getTag().isEmpty());
+                return (!itemStack1.hasTag() || itemStack1.getTag().isEmpty()) && (!itemStack2.hasTag() || itemStack2.getTag().isEmpty());
             }
         }
         return false;
@@ -740,7 +749,10 @@ public final class ItemStackUtils
      * @param matchNBT  if nbt has to match.
      * @return true if so.
      */
-    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks,
+        final ItemStack stack,
+        final boolean matchMeta,
+        final boolean matchNBT)
     {
         for (final ItemStack tempStack : stacks)
         {
@@ -812,8 +824,7 @@ public final class ItemStackUtils
      */
     public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceTileEntity entity)
     {
-        return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT)) && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 
     /**
@@ -824,8 +835,7 @@ public final class ItemStackUtils
      */
     public static boolean hasNeitherFuelNorSmeltAble(final FurnaceTileEntity entity)
     {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT)) && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 
     /**
@@ -836,8 +846,6 @@ public final class ItemStackUtils
      */
     public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceTileEntity entity)
     {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT)) && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 }
-

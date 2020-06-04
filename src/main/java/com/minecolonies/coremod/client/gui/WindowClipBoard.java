@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,6 +93,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     /**
      * Constructor of the clipboard GUI.
+     * 
      * @param colony the colony to check the requests for.
      */
     public WindowClipBoard(final IColonyView colony)
@@ -110,21 +110,20 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public void onOpened()
     {
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
-        {
-            final ImmutableList<IRequest> openRequests = getOpenRequests();
+        resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) -> {
+            final ImmutableList<IRequest<?>> openRequests = getOpenRequests();
             if (index < 0 || index >= openRequests.size())
             {
                 return;
             }
 
-            final IRequest request = openRequests.get(index);
+            final IRequest<?> request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
             if (!displayStacks.isEmpty())
             {
-                if(exampleStackDisplay != null)
+                if (exampleStackDisplay != null)
                 {
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                 }
@@ -137,18 +136,19 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
 
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-              .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+                .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-              .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+                .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
         });
     }
 
     /**
      * The requests to display.
+     * 
      * @return the list of requests.
      */
-    public ImmutableList<IRequest> getOpenRequests()
+    public ImmutableList<IRequest<?>> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
 
@@ -167,16 +167,20 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
         final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
-        final Set<IToken> requestTokens = new HashSet<>();
+        final Set<IToken<?>> requestTokens = new HashSet<>();
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
+        requests
+            .addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
+        requests.sort(Comparator
+            .comparing((IRequest<?> request) -> request.getRequester()
+                .getLocation()
+                .getInDimensionLocation()
                 .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                .thenComparingInt((IRequest request) -> request.getId().hashCode()));
+            .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
@@ -204,9 +208,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             case REQUEST_DETAIL:
                 detailedClicked(button);
                 break;
+
             case REQUEST_CANCEL:
                 cancel(button);
                 break;
+
             default:
                 super.onButtonClicked(button);
                 break;
@@ -219,7 +225,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colony.getID());
+            @NotNull
+            final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colony.getID());
             window.open();
         }
     }
@@ -230,7 +237,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequests().get(row);
+            @NotNull
+            final IRequest<?> request = getOpenRequests().get(row);
             Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
     }

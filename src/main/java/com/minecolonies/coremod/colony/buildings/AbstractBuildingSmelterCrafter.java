@@ -38,14 +38,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 
@@ -98,8 +96,10 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
+            getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
+            getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -115,7 +115,8 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
                 final List<IToken<?>> assignedTaskIds = ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore();
                 for (final IToken<?> taskToken : assignedTaskIds)
                 {
-                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager()
+                        .getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
                     if (recipeStorage != null)
                     {
@@ -133,7 +134,9 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(recipeOutputs.entrySet()
+            .stream()
+            .collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
@@ -163,10 +166,13 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final ListNBT furnacesTagList = new ListNBT();
-        for (@NotNull final BlockPos entry : furnaces)
+        @NotNull
+        final ListNBT furnacesTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos entry : furnaces)
         {
-            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT furnaceCompound = new CompoundNBT();
             furnaceCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             furnacesTagList.add(furnaceCompound);
         }
@@ -189,11 +195,16 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
 
     /**
      * Getter for all allowed fuel from the building.
+     * 
      * @return the list of itemStacks.
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+        return getCopyOfAllowedItems().get(FUEL_LIST)
+            .stream()
+            .map(ItemStorage::getItemStack)
+            .peek(stack -> stack.setCount(stack.getMaxStackSize()))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -203,13 +214,14 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
 
     /**
      * Remove the furnace from the list.
+     * 
      * @param pos the pos of the furnace.
      */
     public void removeFromFurnaces(final BlockPos pos)
@@ -257,18 +269,20 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
 
         /**
          * Check if an additional recipe can be added.
+         * 
          * @return true if so.
          */
         public boolean canRecipeBeAdded()
         {
-            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
         }
     }
 
     /**
      * Check if an additional recipe can be added.
+     * 
      * @param learnedRecipes the learned recipes.
-     * @param buildingLevel the building level.
+     * @param buildingLevel  the building level.
      * @return true if so.
      */
     public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)

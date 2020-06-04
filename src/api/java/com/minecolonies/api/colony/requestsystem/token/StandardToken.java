@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
 
 /**
@@ -10,7 +9,6 @@ import java.util.UUID;
  */
 public class StandardToken implements IToken<UUID>
 {
-
     @NotNull
     private final UUID id;
 
@@ -61,7 +59,7 @@ public class StandardToken implements IToken<UUID>
             return false;
         }
 
-        final IToken that = (IToken) o;
+        final IToken<?> that = (IToken<?>) o;
 
         return id.equals(that.getIdentifier());
     }
@@ -69,8 +67,6 @@ public class StandardToken implements IToken<UUID>
     @Override
     public String toString()
     {
-        return "StandardToken{" +
-                 "id=" + id +
-                 '}';
+        return "StandardToken{" + "id=" + id + '}';
     }
 }

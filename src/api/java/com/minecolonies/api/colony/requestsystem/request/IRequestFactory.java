@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> extends IFactory<T, R>
 {
-
     int NUMBER_OF_PROPERTIES = 2;
 
     /**
@@ -26,12 +25,12 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
      * @param t                 The input to build a new output for.
      * @param context           The context of the request.
      * @return The new output instance for a given input.
-     *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull
     @Override
-    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context)
+        throws IllegalArgumentException
     {
         if (context.length != 2 && context.length != 3)
         {
@@ -51,7 +50,7 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
         if (context.length == NUMBER_OF_PROPERTIES)
         {
             final IRequester requester = (IRequester) context[1];
-            final IToken token = (IToken) context[0];
+            final IToken<?> token = (IToken<?>) context[0];
 
             return this.getNewInstance(t, requester, token);
         }
@@ -62,7 +61,7 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
         }
 
         final IRequester requester = (IRequester) context[1];
-        final IToken token = (IToken) context[0];
+        final IToken<?> token = (IToken<?>) context[0];
         final RequestState state = (RequestState) context[2];
 
         return this.getNewInstance(t, requester, token, state);

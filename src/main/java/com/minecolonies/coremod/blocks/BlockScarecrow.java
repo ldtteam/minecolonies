@@ -28,7 +28,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.Direction.NORTH;
 import static net.minecraft.util.Direction.fromAngle;
@@ -39,7 +38,6 @@ import static net.minecraft.util.Direction.fromAngle;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
 {
-
     /**
      * Constructor called on block placement.
      */
@@ -52,22 +50,20 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @NotNull
     @Override
-    @SuppressWarnings(DEPRECATION)
     public BlockRenderType getRenderType(final BlockState state)
     {
         return BlockRenderType.INVISIBLE;
     }
 
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
         return VoxelShapes.create((float) START_COLLISION,
-          (float) BOTTOM_COLLISION,
-          (float) START_COLLISION,
-          (float) END_COLLISION,
-          (float) HEIGHT_COLLISION,
-          (float) END_COLLISION);
+            (float) BOTTOM_COLLISION,
+            (float) START_COLLISION,
+            (float) END_COLLISION,
+            (float) HEIGHT_COLLISION,
+            (float) END_COLLISION);
     }
 
     @Nullable
@@ -78,15 +74,14 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public ActionResultType onBlockActivated(
-      final BlockState state,
-      final World worldIn,
-      final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+    public ActionResultType onBlockActivated(final BlockState state,
+        final World worldIn,
+        final BlockPos pos,
+        final PlayerEntity player,
+        final Hand hand,
+        final BlockRayTraceResult ray)
     {
-        //If the world is server, open the inventory of the field.
+        // If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
             final TileEntity entity = worldIn.getTileEntity(pos);
@@ -103,12 +98,17 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
+        @NotNull
+        final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
         return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
-    public void onBlockAdded(final BlockState state, final World worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
+    public void onBlockAdded(final BlockState state,
+        final World worldIn,
+        final BlockPos pos,
+        final BlockState oldState,
+        final boolean isMoving)
     {
         super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
         if (worldIn.isRemote)
@@ -116,7 +116,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             return;
         }
 
-        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+        @Nullable
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
             final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
@@ -135,7 +136,10 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void onBlockHarvested(final World worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final PlayerEntity player)
+    public void onBlockHarvested(final World worldIn,
+        @NotNull final BlockPos pos,
+        final BlockState state,
+        @NotNull final PlayerEntity player)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onBlockHarvested(worldIn, pos, state, player);
@@ -150,14 +154,16 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     /**
      * Notify the colony about the destruction of the field.
+     * 
      * @param worldIn the world.
-     * @param pos the position.
+     * @param pos     the position.
      */
     private static void notifyColonyAboutDestruction(final IWorld worldIn, final BlockPos pos)
     {
         if (!worldIn.isRemote())
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld((World) worldIn, pos);
+            @Nullable
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld((World) worldIn, pos);
             if (colony != null)
             {
                 colony.getBuildingManager().removeField(pos);
@@ -166,7 +172,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(FACING);
     }
 

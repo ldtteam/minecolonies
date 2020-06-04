@@ -38,13 +38,11 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
@@ -76,17 +74,20 @@ public class WindowCitizen extends AbstractWindowRequestTree
         HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
         BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
 
-        public final int              X;
-        public final int              Y;
-        public final int              hpValue;
-        public final HeartsEnum       prevHeart;
-        public final HeartsEnum       halfHeart;
-        public       boolean          isHalfHeart = false;
+        public final int X;
+        public final int Y;
+        public final int hpValue;
+        public final HeartsEnum prevHeart;
+        public final HeartsEnum halfHeart;
+        public boolean isHalfHeart = false;
         public final ResourceLocation Image;
 
-        HeartsEnum(
-          final ResourceLocation heartImage, final int x, final int y, final int hpValue,
-          final HeartsEnum halfHeart, final HeartsEnum prevHeart)
+        HeartsEnum(final ResourceLocation heartImage,
+            final int x,
+            final int y,
+            final int hpValue,
+            final HeartsEnum halfHeart,
+            final HeartsEnum prevHeart)
         {
             this.Image = heartImage;
             this.X = x;
@@ -119,8 +120,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public WindowCitizen(final ICitizenDataView citizen)
     {
         super(citizen.getWorkBuilding(),
-          Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
-          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
+            Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
+            IColonyManager.getInstance()
+                .getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
     }
 
@@ -154,7 +156,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         {
             updateJobPage(citizen, this, colony);
         }
-        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
+        // Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
         if (citizen.isFemale())
         {
@@ -210,7 +212,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
             }
 
             // Add half heart
-            if (health % 2 == 1 && heartPos < MAX_HEART_ICONS && heart.halfHeart != null && health > heart.prevHeart.hpValue * MAX_HEART_ICONS)
+            if (health % 2 == 1 && heartPos < MAX_HEART_ICONS && heart.halfHeart != null
+                && health > heart.prevHeart.hpValue * MAX_HEART_ICONS)
             {
                 addHeart(healthBarView, heartPos, heart.prevHeart);
                 addHeart(healthBarView, heartPos, heart.halfHeart);
@@ -235,7 +238,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
     {
-        @NotNull final Image heartImage = new Image();
+        @NotNull
+        final Image heartImage = new Image();
         heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
         heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         healthBarView.addChild(heartImage);
@@ -251,36 +255,49 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
 
-        //Max saturation (Black food items).
+        // Max saturation (Black food items).
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
-            @NotNull final Image saturation = new Image();
+            @NotNull
+            final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION,
-              EMPTY_SATURATION_ITEM_ROW_POS,
-              SATURATION_ICON_COLUMN,
-              SATURATION_ICON_HEIGHT_WIDTH,
-              SATURATION_ICON_HEIGHT_WIDTH,
-              false);
+                EMPTY_SATURATION_ITEM_ROW_POS,
+                SATURATION_ICON_COLUMN,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                false);
 
             saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
-        //Current saturation (Full food hearts).
+        // Current saturation (Full food hearts).
         int saturationPos;
         for (saturationPos = 0; saturationPos < ((int) citizen.getSaturation()); saturationPos++)
         {
-            @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            @NotNull
+            final Image saturation = new Image();
+            saturation.setImage(Screen.GUI_ICONS_LOCATION,
+                FULL_SATURATION_ITEM_ROW_POS,
+                SATURATION_ICON_COLUMN,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
-        //Half food items.
+        // Half food items.
         if (citizen.getSaturation() / 2 % 1 > 0)
         {
-            @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            @NotNull
+            final Image saturation = new Image();
+            saturation.setImage(Screen.GUI_ICONS_LOCATION,
+                HALF_SATURATION_ITEM_ROW_POS,
+                SATURATION_ICON_COLUMN,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                SATURATION_ICON_HEIGHT_WIDTH,
+                false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
@@ -300,13 +317,19 @@ public class WindowCitizen extends AbstractWindowRequestTree
         view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
-
-        @NotNull final Image xpBar = new Image();
+        @NotNull
+        final Image xpBar = new Image();
         xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        @NotNull
+        final Image xpBar2 = new Image();
+        xpBar2.setImage(Screen.GUI_ICONS_LOCATION,
+            XP_BAR_ICON_COLUMN_END,
+            HAPPINESS_BAR_EMPTY_ROW,
+            XP_BAR_ICON_COLUMN_END_WIDTH,
+            XP_HEIGHT,
+            false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
@@ -314,8 +337,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
         if (experienceRatio > 0)
         {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            @NotNull
+            final Image xpBarFull = new Image();
+            xpBarFull
+                .setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
@@ -329,17 +354,24 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public static void createHappinessBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        //Calculates how much percent of the next level has been completed. 
+        // Calculates how much percent of the next level has been completed.
         final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
-        @NotNull final Image xpBar = new Image();
+        @NotNull
+        final Image xpBar = new Image();
         xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        @NotNull
+        final Image xpBar2 = new Image();
+        xpBar2.setImage(Screen.GUI_ICONS_LOCATION,
+            XP_BAR_ICON_COLUMN_END,
+            HAPPINESS_BAR_EMPTY_ROW,
+            XP_BAR_ICON_COLUMN_END_WIDTH,
+            XP_HEIGHT,
+            false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
@@ -347,8 +379,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
         if (experienceRatio > 0)
         {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            @NotNull
+            final Image xpBarFull = new Image();
+            xpBarFull
+                .setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
@@ -365,13 +399,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final Label label = window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Label.class);
-            label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
+            label.setLabelText(
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US),
+                    entry.getValue().getA()));
             label.setScale(0.8f);
         }
     }
 
     @Override
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequests(citizen);
     }
@@ -400,13 +436,16 @@ public class WindowCitizen extends AbstractWindowRequestTree
             case BUTTON_REQUESTS:
                 goToRequestList();
                 break;
+
             case BUTTON_BACK:
                 findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
                 setPage("");
                 break;
+
             case INVENTORY_BUTTON_ID:
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()));
                 break;
+
             default:
                 super.onButtonClicked(button);
                 break;
@@ -414,14 +453,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public void fulfill(@NotNull final IRequest tRequest)
+    public void fulfill(@NotNull final IRequest<?> tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {
             return;
         }
 
-        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+        @NotNull
+        final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
 
         final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
         final int amount = request.getRequest().getCount();
@@ -435,7 +475,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
         // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
         // and use quantity for the size
-        @NotNull final ItemStack itemStack;
+        @NotNull
+        final ItemStack itemStack;
         if (isCreative)
         {
             itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
@@ -456,10 +497,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
             if (slot == -1)
             {
-                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
-                                                     );
+                final ITextComponent chatMessage = new StringTextComponent(
+                    "<" + citizen.getName() + "> " + LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                        .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE));
                 Minecraft.getInstance().player.sendMessage(chatMessage);
 
                 return; // We don't have one that isn't in our armour slot
@@ -467,13 +507,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
             itemStack = inventory.getStackInSlot(slot);
         }
 
-
         if (citizen.getWorkBuilding() != null)
         {
             colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
         }
-        Network.getNetwork().sendToServer(
-          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+        Network.getNetwork()
+            .sendToServer(
+                new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
         Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
     }
 
@@ -486,7 +526,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         final View pane = window.findPaneOfTypeByID("happinessModifierView", View.class);
-        window.findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
+        window.findPaneOfTypeByID("happinessModifier", Label.class)
+            .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -535,8 +576,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
     private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
     {
         windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class)
-          .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
-        windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+            .setLabelText(
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
+        windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class)
+            .setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
@@ -544,44 +587,52 @@ public class WindowCitizen extends AbstractWindowRequestTree
         {
             final Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
+                .setLabelText(
+                    LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US))
+                        + " (100% XP)");
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png");
+                .setImage(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png");
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
-                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                    .setLabelText(LanguageHandler.format(
+                        "com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US))
+                        + " (" + PRIMARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+                    .setImage(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
-                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                    .setLabelText(LanguageHandler
+                        .format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US))
+                        + " (-" + PRIMARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png");
+                    .setImage(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
 
             final Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Label.class)
-              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
+                .setLabelText(
+                    LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US))
+                        + " (50% XP)");
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png");
+                .setImage(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png");
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
-                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                    .setLabelText(LanguageHandler.format(
+                        "com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US))
+                        + " (" + SECONDARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+                    .setImage(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
-                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                    .setLabelText(LanguageHandler
+                        .format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US))
+                        + " (-" + SECONDARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
+                    .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
         }
     }

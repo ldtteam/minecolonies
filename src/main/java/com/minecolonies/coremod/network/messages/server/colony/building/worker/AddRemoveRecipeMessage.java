@@ -19,9 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.UNABLE_TO_ADD_RECIPE_MESSAGE;
 
 /**
@@ -70,27 +68,32 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param remove        true if remove.
      * @param building      the building we're executing on.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final boolean remove)
+    public AddRemoveRecipeMessage(final IBuildingView building,
+        final List<ItemStack> input,
+        final int gridSize,
+        final ItemStack primaryOutput,
+        final boolean remove)
     {
         super(building);
         this.remove = remove;
         if (gridSize == 1)
         {
-            storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, Blocks.FURNACE);
+            storage = StandardFactoryController.getInstance()
+                .getNewInstance(TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    gridSize,
+                    primaryOutput,
+                    Blocks.FURNACE);
         }
         else
         {
-            storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput);
+            storage = StandardFactoryController.getInstance()
+                .getNewInstance(TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    gridSize,
+                    primaryOutput);
         }
     }
 
@@ -102,7 +105,6 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         storage = StandardFactoryController.getInstance().readFromBuffer(buf);
         remove = buf.readBoolean();
     }
@@ -115,13 +117,15 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         StandardFactoryController.getInstance().writeToBuffer(buf, storage);
         buf.writeBoolean(remove);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+    public void onExecute(final NetworkEvent.Context ctxIn,
+        final boolean isLogicalServer,
+        final IColony colony,
+        final IBuildingWorker building)
     {
         final PlayerEntity player = ctxIn.getSender();
         if (player == null)
@@ -129,7 +133,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             return;
         }
 
-        @SuppressWarnings("rawtypes") final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
+        final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
 
         if (remove)
         {
@@ -143,7 +147,8 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             }
             else
             {
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+                    playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.recipe.done");
             }
         }

@@ -28,12 +28,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
 /**
@@ -46,17 +44,17 @@ import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 @SuppressWarnings(BIG_CLASS)
 public class StandardRequestManager implements IStandardRequestManager
 {
-    ////---------------------------NBTTags-------------------------\\\\
-    private static final String NBT_DATASTORE                       = "DataStores";
-    private static final String NBT_ID_REQUEST_IDENTITIES           = "RequestIdentitiesStoreId";
-    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES  = "RequestResolverIdentitiesStoreId";
-    private static final String NBT_ID_PROVIDER_ASSIGNMENTS         = "ProviderAssignmentsStoreId";
+    //// ---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_DATASTORE = "DataStores";
+    private static final String NBT_ID_REQUEST_IDENTITIES = "RequestIdentitiesStoreId";
+    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES = "RequestResolverIdentitiesStoreId";
+    private static final String NBT_ID_PROVIDER_ASSIGNMENTS = "ProviderAssignmentsStoreId";
     private static final String NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS = "RequestResolverAssignmentsStoreId";
     private static final String NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS = "RequestableTypeAssignmentsStoreId";
-    private static final String NBT_ID_PLAYER                       = "PlayerRequestResolverId";
-    private static final String NBT_ID_RETRYING                     = "RetryingRequestResolverId";
-    private static final String NBT_VERSION                         = "Version";
-    ////---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_ID_PLAYER = "PlayerRequestResolverId";
+    private static final String NBT_ID_RETRYING = "RetryingRequestResolverId";
+    private static final String NBT_VERSION = "Version";
+    //// ---------------------------NBTTags-------------------------\\\\
 
     private IToken<?> requestIdentitiesDataStoreId;
 
@@ -120,10 +118,13 @@ public class StandardRequestManager implements IStandardRequestManager
         requestResolverIdentitiesDataStoreId = registerDataStore(TypeConstants.REQUEST_RESOLVER_IDENTITIES_DATA_STORE);
         providerRequestResolverAssignmentDataStoreId = registerDataStore(TypeConstants.PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
         requestResolverRequestAssignmentDataStoreId = registerDataStore(TypeConstants.REQUEST_RESOLVER_REQUEST_ASSIGNMENT_DATA_STORE);
-        requestableTypeRequestResolverAssignmentDataStoreId = registerDataStore(TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
+        requestableTypeRequestResolverAssignmentDataStoreId = registerDataStore(
+            TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
 
-        final IRequestResolver<?> playerRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, this);
-        final IRequestResolver<?> retryingRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
+        final IRequestResolver<?> playerRequestResolver = StandardFactoryController.getInstance()
+            .getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, this);
+        final IRequestResolver<?> retryingRequestResolver = StandardFactoryController.getInstance()
+            .getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
 
         getResolverHandler().registerResolver(playerRequestResolver);
         getResolverHandler().registerResolver(retryingRequestResolver);
@@ -134,8 +135,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
     {
-        return dataStoreManager.get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), typeToken)
-                 .getId();
+        return dataStoreManager.get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), typeToken).getId();
     }
 
     /**
@@ -168,7 +168,6 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param requester The requester.
      * @param object    The Object that is being requested.
      * @return The token representing the request.
-     *
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
@@ -230,7 +229,6 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param requester The requester of the requestable.
      * @param object    The requestable
      * @return The token that represents the request.
-     *
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
@@ -299,26 +297,32 @@ public class StandardRequestManager implements IStandardRequestManager
                 getLogger().debug("Request resolved: " + token + ". Determining followup requests...");
                 getRequestHandler().onRequestResolved(token);
                 return;
+
             case COMPLETED:
                 getLogger().debug("Request completed: " + token + ". Notifying parent and requester...");
                 getRequestHandler().onRequestCompleted(token);
                 return;
+
             case OVERRULED:
                 getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestOverruled(token);
                 return;
+
             case FAILED:
                 getLogger().debug("Request failed: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
                 return;
+
             case CANCELLED:
                 getLogger().debug("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
                 return;
+
             case RECEIVED:
                 getLogger().debug("Request received: " + token + ". Removing from system...");
                 getRequestHandler().cleanRequestData(token);
                 return;
+
             default:
         }
     }
@@ -364,7 +368,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
      */
     @Override
-    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         getResolverHandler().onColonyUpdate(shouldTriggerReassign);
     }
@@ -424,8 +428,10 @@ public class StandardRequestManager implements IStandardRequestManager
         systemCompound.put(NBT_ID_REQUEST_IDENTITIES, getFactoryController().serialize(requestIdentitiesDataStoreId));
         systemCompound.put(NBT_ID_REQUEST_RESOLVER_IDENTITIES, getFactoryController().serialize(requestResolverIdentitiesDataStoreId));
         systemCompound.put(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serialize(providerRequestResolverAssignmentDataStoreId));
-        systemCompound.put(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
-        systemCompound.put(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
+            getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
+            getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
 
         systemCompound.put(NBT_ID_PLAYER, getFactoryController().serialize(playerRequestResolverId));
         systemCompound.put(NBT_ID_RETRYING, getFactoryController().serialize(retryingRequestResolverId));
@@ -441,46 +447,43 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
-        executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_VERSION,
-          CompoundNBT::getInt,
-          v -> version = v);
+        executeDeserializationStepOrMarkForUpdate(nbt, NBT_VERSION, CompoundNBT::getInt, v -> version = v);
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_DATASTORE,
-          CompoundNBT::getCompound,
-          c -> dataStoreManager = getFactoryController().deserialize(c));
+            NBT_DATASTORE,
+            CompoundNBT::getCompound,
+            c -> dataStoreManager = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_IDENTITIES,
-          CompoundNBT::getCompound,
-          c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
+            NBT_ID_REQUEST_IDENTITIES,
+            CompoundNBT::getCompound,
+            c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          CompoundNBT::getCompound,
-          c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
+            NBT_ID_REQUEST_RESOLVER_IDENTITIES,
+            CompoundNBT::getCompound,
+            c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_PROVIDER_ASSIGNMENTS,
-          CompoundNBT::getCompound,
-          c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
+            NBT_ID_PROVIDER_ASSIGNMENTS,
+            CompoundNBT::getCompound,
+            c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          CompoundNBT::getCompound,
-          c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
+            NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
+            CompoundNBT::getCompound,
+            c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          CompoundNBT::getCompound,
-          c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
+            NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
+            CompoundNBT::getCompound,
+            c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_PLAYER,
-          CompoundNBT::getCompound,
-          c -> playerRequestResolverId = getFactoryController().deserialize(c));
+            NBT_ID_PLAYER,
+            CompoundNBT::getCompound,
+            c -> playerRequestResolverId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_RETRYING,
-          CompoundNBT::getCompound,
-          c -> retryingRequestResolverId = getFactoryController().deserialize(c));
+            NBT_ID_RETRYING,
+            CompoundNBT::getCompound,
+            c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
         if (dataStoreManager == null)
         {
@@ -490,11 +493,10 @@ public class StandardRequestManager implements IStandardRequestManager
         updateIfRequired();
     }
 
-    private <T> void executeDeserializationStepOrMarkForUpdate(
-      @NotNull final CompoundNBT nbt,
-      @NotNull final String key,
-      @NotNull final BiFunction<CompoundNBT, String, T> extractor,
-      @NotNull final Consumer<T> valueConsumer)
+    private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final CompoundNBT nbt,
+        @NotNull final String key,
+        @NotNull final BiFunction<CompoundNBT, String, T> extractor,
+        @NotNull final Consumer<T> valueConsumer)
     {
         if (!nbt.keySet().contains(key))
         {
@@ -552,21 +554,24 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public IProviderResolverAssignmentDataStore getProviderResolverAssignmentDataStore()
     {
-        return dataStoreManager.get(providerRequestResolverAssignmentDataStoreId, TypeConstants.PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
+        return dataStoreManager.get(providerRequestResolverAssignmentDataStoreId,
+            TypeConstants.PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
     }
 
     @NotNull
     @Override
     public IRequestResolverRequestAssignmentDataStore getRequestResolverRequestAssignmentDataStore()
     {
-        return dataStoreManager.get(requestResolverRequestAssignmentDataStoreId, TypeConstants.REQUEST_RESOLVER_REQUEST_ASSIGNMENT_DATA_STORE);
+        return dataStoreManager.get(requestResolverRequestAssignmentDataStoreId,
+            TypeConstants.REQUEST_RESOLVER_REQUEST_ASSIGNMENT_DATA_STORE);
     }
 
     @NotNull
     @Override
     public IRequestableTypeRequestResolverAssignmentDataStore getRequestableTypeRequestResolverAssignmentDataStore()
     {
-        return dataStoreManager.get(requestableTypeRequestResolverAssignmentDataStoreId, TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
+        return dataStoreManager.get(requestableTypeRequestResolverAssignmentDataStoreId,
+            TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
     }
 
     @Override

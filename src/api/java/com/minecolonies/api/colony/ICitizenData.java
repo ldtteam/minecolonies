@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 
 public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
@@ -237,7 +236,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param <R>       the Type
      * @return the token of the request.
      */
-    <R extends IRequestable> IToken createRequest(@NotNull R requested);
+    <R extends IRequestable> IToken<?> createRequest(@NotNull R requested);
 
     /**
      * Create an async request.
@@ -246,14 +245,14 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param <R>       the Type
      * @return the token of the request.
      */
-    <R extends IRequestable> IToken createRequestAsync(@NotNull R requested);
+    <R extends IRequestable> IToken<?> createRequestAsync(@NotNull R requested);
 
     /**
      * Called on request canceled.
      *
      * @param token the token to be canceled.
      */
-    void onRequestCancelled(@NotNull IToken token);
+    void onRequestCancelled(@NotNull IToken<?> token);
 
     /**
      * Check if a request is async.
@@ -261,7 +260,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param token the token to check.
      * @return true if it is.
      */
-    boolean isRequestAsync(@NotNull IToken token);
+    boolean isRequestAsync(@NotNull IToken<?> token);
 
     /**
      * The Handler for the citizens happiness.
@@ -272,18 +271,21 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Get the citizen skill handler.
+     * 
      * @return the handler.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
 
     /**
      * Schedule restart and cleanup.
+     * 
      * @param player the player scheduling it.
      */
     void scheduleRestart(ServerPlayerEntity player);
 
     /**
      * AI will be restarted, also restart building etc
+     * 
      * @return true if so.
      */
     boolean shouldRestart();
@@ -302,21 +304,24 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Check if the citizen just ate.
+     * 
      * @return true if so.
      */
     boolean justAte();
 
     /**
      * Set or reset if the citizen just ate.
+     * 
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
 
     /**
      * Trigger the response on the server side.
-     * @param key the key of the component.
+     * 
+     * @param key      the key of the component.
      * @param response the triggered response.
-     * @param world the world it was triggered in.
+     * @param world    the world it was triggered in.
      */
     void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world);
 
@@ -327,6 +332,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Trigger a possible interaction.
+     * 
      * @param handler the new handler.
      */
     void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
@@ -334,18 +340,21 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     /**
      * Get the clean job modifier.
      * Primary skill + secondary divided by 4.
+     * 
      * @return the int modifier.
      */
     int getJobModifier();
 
     /**
      * If is idle at job.
+     * 
      * @return true if so.
      */
     boolean isIdleAtJob();
 
     /**
      * Set idle at job.
+     * 
      * @param idle true if so.
      */
     void setIdleAtJob(final boolean idle);

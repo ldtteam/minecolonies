@@ -37,10 +37,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -106,7 +104,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if (!super.canRecipeBeAdded(token))
         {
@@ -115,7 +113,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
 
         if (recipes.isEmpty())
         {
-            for (final Item item: Tags.Items.SAND.getAllElements())
+            for (final Item item : Tags.Items.SAND.getAllElements())
             {
                 final ItemStack stack = new ItemStack(item);
                 final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
@@ -124,13 +122,13 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
                     final List<ItemStack> list = new ArrayList<>();
                     list.add(stack);
 
-                    final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                      TypeConstants.RECIPE,
-                      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                      list,
-                      1,
-                      output,
-                      Blocks.FURNACE);
+                    final IRecipeStorage storage = StandardFactoryController.getInstance()
+                        .getNewInstance(TypeConstants.RECIPE,
+                            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                            list,
+                            1,
+                            output,
+                            Blocks.FURNACE);
                     recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
                 }
             }
@@ -146,7 +144,8 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
 
         for (final ItemStorage stack : storage.getCleanedInput())
         {
-            if (Tags.Items.GLASS.contains(stack.getItemStack().getItem()) || Tags.Items.GLASS_PANES.contains(stack.getItemStack().getItem()))
+            if (Tags.Items.GLASS.contains(stack.getItemStack().getItem())
+                || Tags.Items.GLASS_PANES.contains(stack.getItemStack().getItem()))
             {
                 hasGlass = true;
             }
@@ -198,7 +197,9 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         super.requestUpgrade(player, builder);
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Glassblower", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Glassblower", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
