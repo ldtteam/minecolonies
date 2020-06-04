@@ -122,7 +122,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
     }
 
     @Override
-    public Class<BuildingFarmer> getExpectedBuildingClass()
+    public Class<? extends BuildingFarmer> getExpectedBuildingClass()
     {
         return BuildingFarmer.class;
     }
