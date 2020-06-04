@@ -11,20 +11,18 @@ import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMess
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the replace block GUI.
  */
-public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHandler
+public class WindowPostBox extends AbstractWindowRequestTree
 {
     /**
      * List of all item stacks in the game.
@@ -48,6 +46,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
 
     /**
      * Create the postBox GUI.
+     * 
      * @param buildingView the building view.
      */
     public WindowPostBox(final AbstractBuildingView buildingView)
@@ -61,6 +60,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
 
     /**
      * Action executed when request is clicked.
+     * 
      * @param button the clicked button.
      */
     private void requestClicked(final Button button)
@@ -78,7 +78,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
                 }
                 catch (final NumberFormatException ex)
                 {
-                    //Be quiet about it.
+                    // Be quiet about it.
                 }
             }
         }
@@ -104,8 +104,8 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
     private void updateResources()
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+            || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+            || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         updateResourceList();
@@ -123,7 +123,12 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
         {
             return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
         }
-        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        return IColonyManager.getInstance()
+            .getCompatibilityManager()
+            .getBlockList()
+            .stream()
+            .filter(filterPredicate)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -143,11 +148,12 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
         stackList.show();
         final List<ItemStack> tempRes = new ArrayList<>(allItems);
 
-        //Creates a dataProvider for the unemployed stackList.
+        // Creates a dataProvider for the unemployed stackList.
         stackList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
              * The number of rows of the list.
+             * 
              * @return the number.
              */
             @Override
@@ -158,7 +164,8 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
 
             /**
              * Inserts the elements into each row.
-             * @param index the index of the row/list element.
+             * 
+             * @param index   the index of the row/list element.
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override

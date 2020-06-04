@@ -15,23 +15,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
 
-public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowSelectRes extends AbstractWindowSkeleton
 {
     /**
      * Static vars.
      */
-    private static final String BUTTON_DONE   = "done";
+    private static final String BUTTON_DONE = "done";
     private static final String BUTTON_CANCEL = "cancel";
-    private static final String INPUT_NAME    = "name";
-    private static final int    WHITE         = Color.getByName("white", 0);
+    private static final String INPUT_NAME = "name";
+    private static final int WHITE = Color.getByName("white", 0);
 
     /**
      * All game items in a list.
@@ -65,9 +63,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
 
     /**
      * Create a selection window with the origin window as input.
-     * @param origin the origin.
+     * 
+     * @param origin   the origin.
      * @param building the building.
-     * @param test the testing predicate for the selector.
+     * @param test     the testing predicate for the selector.
      */
     public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test)
     {
@@ -79,13 +78,15 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
         registerButton(BUTTON_SELECT, this::selectClicked);
         this.findPaneOfTypeByID("qty", TextField.class).setText("1");
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(new ItemStack(Items.AIR));
-        this.findPaneOfTypeByID("resourceName", Label.class).setLabelText(new ItemStack(Items.AIR).getDisplayName().getUnformattedComponentText());
+        this.findPaneOfTypeByID("resourceName", Label.class)
+            .setLabelText(new ItemStack(Items.AIR).getDisplayName().getUnformattedComponentText());
         this.building = building;
         this.test = test;
     }
 
     /**
      * Select button clicked.
+     * 
      * @param button the clicked button.
      */
     private void selectClicked(final Button button)
@@ -141,11 +142,12 @@ public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHan
     private void updateResources()
     {
         this.allItems.clear();
-        this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                                                 .map(ItemStack::new)
-                                                                 .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
-                                                                                                                .contains(this.filter.toLowerCase(Locale.US)))))
-                                                                 .collect(Collectors.toList())));
+        this.allItems.addAll(ImmutableList
+            .copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+                .map(ItemStack::new)
+                .filter((stack) -> (test.test(stack) && (this.filter.isEmpty()
+                    || stack.getTranslationKey().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US)))))
+                .collect(Collectors.toList())));
         this.updateResourceList();
     }
 

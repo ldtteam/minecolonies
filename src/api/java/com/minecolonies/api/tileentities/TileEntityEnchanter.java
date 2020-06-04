@@ -1,19 +1,17 @@
 package com.minecolonies.api.tileentities;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;
-
 import java.util.Random;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITickableTileEntity
+public class TileEntityEnchanter extends TileEntityColonyBuilding
 {
-    public int   tickCount;
+    public int tickCount;
     public float pageFlip;
     public float pageFlipPrev;
     public float flipT;
@@ -36,6 +34,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
 
     /**
      * Alternative overriden constructor.
+     * 
      * @param type the entity type.
      */
     public TileEntityEnchanter(final TileEntityType type)
@@ -48,7 +47,11 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
     {
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;
-        PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F), ((float) this.pos.getY() + 0.5F), ((float) this.pos.getZ() + 0.5F), 3.0D, false);
+        PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F),
+            ((float) this.pos.getY() + 0.5F),
+            ((float) this.pos.getZ() + 0.5F),
+            3.0D,
+            false);
         if (player != null)
         {
             double playerXPos = player.posX - (double) ((float) this.pos.getX() + 0.5F);
@@ -62,8 +65,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
                 do
                 {
                     this.flipT += (float) (rand.nextInt(4) - rand.nextInt(4));
-                }
-                while (flip == this.flipT);
+                } while (flip == this.flipT);
             }
         }
         else

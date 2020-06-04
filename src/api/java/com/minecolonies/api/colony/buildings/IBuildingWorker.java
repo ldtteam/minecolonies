@@ -9,11 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface IBuildingWorker extends IBuildingContainer, IBuilding
+public interface IBuildingWorker extends IBuilding
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -130,7 +129,7 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
      * and also hide the recipe list altogether if no recipes are present.
      * </p>
      *
-     * @return true if player is allowed to alter  recipes, false if not
+     * @return true if player is allowed to alter recipes, false if not
      */
     boolean isRecipeAlterationAllowed();
 
@@ -212,6 +211,7 @@ public interface IBuildingWorker extends IBuildingContainer, IBuilding
 
     /**
      * Check if the worker is allowed to eat the following stack.
+     * 
      * @param stack the stack to test.
      * @return true if so.
      */

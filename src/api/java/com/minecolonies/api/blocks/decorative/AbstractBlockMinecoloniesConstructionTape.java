@@ -1,7 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.state.DirectionProperty;
@@ -9,7 +8,8 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>>
+    extends AbstractBlockMinecoloniesFalling<B>
 {
     /**
      * The variants of the shingle slab.
@@ -42,9 +42,9 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
                 META_LOOKUP[enumtype.getMetadata()] = enumtype;
             }
         }
-        private final int           meta;
-        private final String        name;
-        private final String        unlocalizedName;
+        private final int meta;
+        private final String name;
+        private final String unlocalizedName;
         /**
          * The color that represents this entry on a map.
          */
@@ -81,6 +81,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
         /**
          * The color which represents this entry on a map.
+         * 
          * @return the material color.
          */
         public MaterialColor getMaterialColor()

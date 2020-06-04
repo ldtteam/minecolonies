@@ -8,11 +8,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
 
-public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding, IBuildingWorker
+public interface IGuardBuilding extends IBuildingWorker
 {
     /**
      * Worker gets this distance times building level away from his/her hut to
@@ -31,7 +30,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof IGuardBuilding) || ((IGuardBuilding) buildingWorker).getTask() != GuardTask.FOLLOW
-                 || !player.equals(((IGuardBuilding) buildingWorker).getFollowPlayer());
+            || !player.equals(((IGuardBuilding) buildingWorker).getFollowPlayer());
     }
 
     /**
@@ -57,6 +56,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
 
     /**
      * Returns a patrolTarget to patrol to.
+     * 
      * @param newTarget whether to search a new target
      * @return the position of the next target.
      */

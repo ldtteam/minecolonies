@@ -6,15 +6,14 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.function.BiFunction;
 
 /**
- * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
+ * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to
+ * create the right event object.
  */
-public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventTypeRegistryEntry> implements IForgeRegistryEntry<ColonyEventTypeRegistryEntry>
+public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventTypeRegistryEntry>
 {
     /**
      * Function for creating the event objects.
@@ -25,9 +24,10 @@ public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEvent
      * Creates a new registry entry for the given function and registry name
      *
      * @param eventCreator the event creator.
-     * @param registryID the registry id.
+     * @param registryID   the registry id.
      */
-    public ColonyEventTypeRegistryEntry(@NotNull final BiFunction<IColony, CompoundNBT, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
+    public ColonyEventTypeRegistryEntry(@NotNull final BiFunction<IColony, CompoundNBT, IColonyEvent> eventCreator,
+        @NotNull final ResourceLocation registryID)
     {
         if (registryID.getPath().isEmpty())
         {

@@ -22,15 +22,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Suppression.*;
 
-public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IRequestResolverProvider, IRequester
+public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester
 {
     /**
      * Getter for the custom name of a building.
@@ -71,14 +69,18 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      *
      * @param player entering player
      */
-    default void onPlayerEnterNearby(final PlayerEntity player) {}
+    default void onPlayerEnterNearby(final PlayerEntity player)
+    {
+    }
 
     /**
      * Called when a player enters the building area
      *
      * @param player entering player
      */
-    default void onPlayerEnterBuilding(final PlayerEntity player) {}
+    default void onPlayerEnterBuilding(final PlayerEntity player)
+    {
+    }
 
     /**
      * Checks if a block matches the current object.
@@ -259,9 +261,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     <R> boolean hasWorkerOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
-      @NotNull ICitizenData citizenData,
-      TypeToken<R> requestType);
+    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
     boolean hasCitizenCompletedRequests(@NotNull ICitizenData data);
 
@@ -272,10 +272,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
     @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
-    <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
-      @NotNull ICitizenData citizenData,
-      TypeToken<R> requestType,
-      Predicate<IRequest<? extends R>> filter);
+    <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(@NotNull ICitizenData citizenData,
+        TypeToken<R> requestType,
+        Predicate<IRequest<? extends R>> filter);
 
     void markRequestAsAccepted(@NotNull ICitizenData data, @NotNull IToken<?> token);
 
@@ -293,10 +292,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     void overruleNextOpenRequestWithStack(@NotNull ItemStack stack);
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
-    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull ICitizenData citizenData,
-      TypeToken<R> requestType,
-      Predicate<IRequest<? extends R>> filter);
+    <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(@NotNull ICitizenData citizenData,
+        TypeToken<R> requestType,
+        Predicate<IRequest<? extends R>> filter);
 
     boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull ICitizenData citizenData, @NotNull ItemStack stack);
 

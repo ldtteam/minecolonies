@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -21,10 +20,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -32,7 +29,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowHireWorker extends AbstractWindowSkeleton
 {
     /**
      * The view of the current building.
@@ -79,6 +76,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Canceled clicked to exit the GUI.
+     * 
      * @param button the clicked button.
      */
     private void cancelClicked(@NotNull final Button button)
@@ -91,6 +89,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Hiring mode switch clicked.
+     * 
      * @param button the clicked button.
      */
     private void modeClicked(@NotNull final Button button)
@@ -123,11 +122,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setLabel(LanguageHandler
+            .format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
      * Restart citizen clicked to restart its AI.
+     * 
      * @param button the clicked button.
      */
     private void restartClicked(@NotNull final Button button)
@@ -141,13 +142,15 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Pause citizen clicked to pause the citizen.
+     * 
      * @param button the clicked button.
      */
     private void pauseClicked(@NotNull final Button button)
     {
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
-        @NotNull final ICitizenDataView citizen = citizens.get(row);
+        @NotNull
+        final ICitizenDataView citizen = citizens.get(row);
 
         Network.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
         citizen.setPaused(!citizen.isPaused());
@@ -155,13 +158,15 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Fire citizen clicked to fire a citizen.
+     * 
      * @param button the clicked button.
      */
     private void fireClicked(@NotNull final Button button)
     {
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
-        @NotNull final ICitizenDataView citizen = citizens.get(row);
+        @NotNull
+        final ICitizenDataView citizen = citizens.get(row);
 
         Network.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
         building.removeWorkerId(id);
@@ -171,13 +176,15 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Done clicked to persist the changes.
+     * 
      * @param button the clicked button.
      */
     private void doneClicked(@NotNull final Button button)
     {
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.get(row).getId();
-        @NotNull final ICitizenDataView citizen = citizens.get(row);
+        @NotNull
+        final ICitizenDataView citizen = citizens.get(row);
 
         building.addWorkerId(id);
         Network.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
@@ -192,12 +199,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     {
         citizens.clear();
 
-        //Removes all citizens which already have a job.
-        citizens = colony.getCitizens().values().stream()
-                     .filter(citizen -> !citizen.isChild())
-                     .filter(citizen -> (citizen.getWorkBuilding() == null)
-                                          || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
-                     .collect(Collectors.toList());
+        // Removes all citizens which already have a job.
+        citizens = colony.getCitizens()
+            .values()
+            .stream()
+            .filter(citizen -> !citizen.isChild())
+            .filter(citizen -> (citizen.getWorkBuilding() == null) || building.getPosition().equals(citizen.getWorkBuilding()))
+            .sorted(Comparator.comparing(ICitizenDataView::getName))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -214,6 +223,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         {
             /**
              * The number of rows of the list.
+             * 
              * @return the number.
              */
             @Override
@@ -224,26 +234,30 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
             /**
              * Inserts the elements into each row.
-             * @param index the index of the row/list element.
+             * 
+             * @param index   the index of the row/list element.
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final ICitizenDataView citizen = citizens.get(index);
+                @NotNull
+                final ICitizenDataView citizen = citizens.get(index);
                 final Skill primary = building.getPrimarySkill();
                 final Skill secondary = building.getSecondarySkill();
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (citizen.getWorkBuilding() == null && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()))
+                if (citizen.getWorkBuilding() == null && building.canAssign(citizen)
+                    && (building.getWorkerId().size() < building.getMaxInhabitants()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
                     isPaused.off();
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
-                else if ((building.getWorkerId().size() >= building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                else if ((building.getWorkerId().size() >= building.getMaxInhabitants())
+                    && !building.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
@@ -255,14 +269,16 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
 
-                    if ((!building.getColony().isManualHiring() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.AUTO))
+                    if ((!building.getColony().isManualHiring() && building.getHiringMode() == HiringMode.DEFAULT)
+                        || (building.getHiringMode() == HiringMode.AUTO))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
                         findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).on();
                     }
 
                     isPaused.on();
-                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                    isPaused.setLabel(LanguageHandler
+                        .format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 if (citizen.isPaused())
@@ -277,12 +293,16 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                 StringBuilder attributes = new StringBuilder();
                 final String intermString = " | ";
 
-                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
+                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(
+                    citizen.getCitizenSkillHandler().getSkills().entrySet());
                 for (int i = 0; i < 5; i++)
                 {
                     final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                    @NotNull
+                    final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
+                        LanguageHandler.format(
+                            "com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US),
+                            entry.getValue().getA()));
                     attributes.append(text).append(intermString);
                 }
                 attributes.delete(attributes.length() - intermString.length(), attributes.length());
@@ -291,13 +311,17 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
                 for (int i = 5; i < list.size(); i++)
                 {
                     final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                    @NotNull
+                    final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
+                        LanguageHandler.format(
+                            "com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US),
+                            entry.getValue().getA()));
                     attributes2.append(text).append(intermString);
                 }
                 attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class)
+                    .setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
@@ -311,9 +335,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     /**
      * Create the color scheme.
-     * @param primary the primary skill.
+     * 
+     * @param primary   the primary skill.
      * @param secondary the secondary skill.
-     * @param current the current skill to compare.
+     * @param current   the current skill to compare.
      * @return the modifier string.
      */
     protected String createColor(final Skill primary, final Skill secondary, final Skill current)

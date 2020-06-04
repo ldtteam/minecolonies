@@ -1,6 +1,5 @@
 package com.minecolonies.api.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import net.minecraft.block.BlockState;
@@ -9,14 +8,14 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B>
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 
     /**
      * The position it faces.
      */
-    public static final DirectionProperty        FACING  = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
     public AbstractBlockBarrel(final Properties properties)
     {
@@ -29,7 +28,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
          * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
          * So items/12.8 -> meta of the state we should get
          */
-        BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
+        BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems() / 12.8));
 
         /*
          * We check if the barrel is marked as empty but it have items inside. If so, means that it
@@ -37,7 +36,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
          * knows it have some items inside
          */
 
-        if(type.equals(BarrelType.ZERO) && te.getItems() > 0)
+        if (type.equals(BarrelType.ZERO) && te.getItems() > 0)
         {
             type = BarrelType.TWENTY;
         }
@@ -45,11 +44,12 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
         {
             type = BarrelType.WORKING;
         }
-        if(te.isDone())
+        if (te.isDone())
         {
             type = BarrelType.DONE;
         }
 
-        return blockState.with(AbstractBlockBarrel.VARIANT, type).with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
+        return blockState.with(AbstractBlockBarrel.VARIANT, type)
+            .with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
     }
 }

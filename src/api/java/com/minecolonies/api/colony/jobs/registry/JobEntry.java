@@ -4,18 +4,15 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
-
 import java.util.function.Function;
 
 /**
  * Entry for the {@link IJob} registry.
  */
-@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IForgeRegistryEntry<JobEntry>
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") // Use the builder to create one.
+public final class JobEntry extends ForgeRegistryEntry<JobEntry>
 {
-
     private final Function<ICitizenData, IJob<?>> jobProducer;
 
     /**
@@ -24,7 +21,7 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IFor
     public static final class Builder
     {
         private Function<ICitizenData, IJob<?>> jobProducer;
-        private ResourceLocation                registryName;
+        private ResourceLocation registryName;
 
         /**
          * Setter the for the producer.
@@ -55,7 +52,7 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IFor
          *
          * @return The created {@link JobEntry}.
          */
-        @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
+        @SuppressWarnings("PMD.AccessorClassGeneration") // The builder is explicitly allowed to create one.
         public JobEntry createJobEntry()
         {
             Validate.notNull(jobProducer);

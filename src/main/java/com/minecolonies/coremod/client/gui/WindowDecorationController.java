@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -21,15 +20,13 @@ import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import java.util.Optional;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for a hut name entry.
  */
-public class WindowDecorationController extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowDecorationController extends AbstractWindowSkeleton
 {
     /**
      * The max length of the name.
@@ -87,10 +84,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
 
         if (view != null)
         {
-            final Optional<WorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getPos().equals(this.controller.getPos())).findFirst();
+            final Optional<WorkOrderView> wo = view.getWorkOrders()
+                .stream()
+                .filter(w -> w.getPos().equals(this.controller.getPos()))
+                .findFirst();
             if (wo.isPresent())
             {
-
                 if (wo.get().getType() == WorkOrderType.BUILD)
                 {
                     if (controller.getLevel() == 0)
@@ -119,7 +118,11 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
         LoadOnlyStructureHandler structure = null;
         try
         {
-            structure = new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings(), true);
+            structure = new LoadOnlyStructureHandler(world,
+                b,
+                controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1),
+                new PlacementSettings(),
+                true);
         }
         catch (final Exception e)
         {
@@ -190,7 +193,10 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     private void confirmClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.getDimension().getType().getId()));
+            .sendToServer(new DecorationBuildRequestMessage(controller.getPos(),
+                controller.getSchematicName(),
+                controller.getLevel() + 1,
+                world.getDimension().getType().getId()));
         close();
     }
 
@@ -200,7 +206,10 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     private void repairClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.getDimension().getType().getId()));
+            .sendToServer(new DecorationBuildRequestMessage(controller.getPos(),
+                controller.getSchematicName(),
+                controller.getLevel(),
+                world.getDimension().getType().getId()));
         close();
     }
 }
