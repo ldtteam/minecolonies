@@ -11,7 +11,6 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.minecolonies.api.util.constant.StructureTagConstants.*;
 
 /**
  * Raider specific creative structure handler.
@@ -97,13 +97,13 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             {
                 switch (tag)
                 {
-                    case "normal":
+                    case NORMAL_RAIDER:
                         ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getNormalRaiderType(), event, colonyId);
                         return;
-                    case "archer":
+                    case ARCHER_RAIDER:
                         ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getArcherRaiderType(), event, colonyId);
                         return;
-                    case "boss":
+                    case BOSS_RAIDER:
                         ShipBasedRaiderUtils.setupSpawner(worldPos, getWorld(), event.getBossRaiderType(), event, colonyId);
                         return;
                 }

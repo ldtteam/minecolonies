@@ -5,7 +5,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public interface IVikingEntity extends IMob, ICommandSource, ICapabilitySerializable<CompoundNBT>
+public interface INorsemenEntity extends IMob, ICommandSource, ICapabilitySerializable<CompoundNBT>
 {
     
 }
