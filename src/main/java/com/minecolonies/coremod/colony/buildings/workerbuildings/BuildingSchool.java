@@ -29,11 +29,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
@@ -54,7 +52,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     /**
      * NBT value to store the carpet pos.
      */
-    private static final String TAG_CARPET  = "carpet";
+    private static final String TAG_CARPET = "carpet";
 
     /**
      * If the school has a teacher.
@@ -74,6 +72,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     * 
      * @param c the colony.
      * @param l the location.
      */
@@ -171,7 +170,7 @@ public class BuildingSchool extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         if (citizen.isChild())
         {
@@ -189,7 +188,6 @@ public class BuildingSchool extends AbstractBuildingWorker
             carpet.add(pos);
         }
     }
-
 
     @Override
     public void deserializeNBT(final CompoundNBT compound)
@@ -213,8 +211,10 @@ public class BuildingSchool extends AbstractBuildingWorker
         final CompoundNBT compound = super.serializeNBT();
         if (!carpet.isEmpty())
         {
-            @NotNull final ListNBT carpetTagList = new ListNBT();
-            for (@NotNull final BlockPos pos : carpet)
+            @NotNull
+            final ListNBT carpetTagList = new ListNBT();
+            for (@NotNull
+            final BlockPos pos : carpet)
             {
                 final CompoundNBT carpetCompound = new CompoundNBT();
                 BlockPosUtil.write(carpetCompound, NbtTagConstants.TAG_POS, pos);
@@ -244,7 +244,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     {
         // School auto hiring
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()))
-              && (getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || getHiringMode() == HiringMode.AUTO))
+            && (getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || getHiringMode() == HiringMode.AUTO))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
@@ -255,7 +255,7 @@ public class BuildingSchool extends AbstractBuildingWorker
             }
         }
 
-        for (final ICitizenData citizenData: getAssignedCitizen())
+        for (final ICitizenData citizenData : getAssignedCitizen())
         {
             if (citizenData.getJob() instanceof JobPupil && !citizenData.isChild())
             {
@@ -266,6 +266,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Get a random place to sit from the school.
+     * 
      * @return the place to sit.
      */
     @Nullable
@@ -287,7 +288,9 @@ public class BuildingSchool extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("School", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("School", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -308,6 +311,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         * 
          * @param c the colonyView.
          * @param l the location of the block.
          */

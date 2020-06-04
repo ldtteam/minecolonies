@@ -16,12 +16,12 @@ public final class JobDataManager implements IJobDataManager
 {
     @Nullable
     @Override
-    public IJob createFrom(
-      final ICitizenData citizen, @NotNull final CompoundNBT compound)
+    public IJob<?> createFrom(final ICitizenData citizen, @NotNull final CompoundNBT compound)
     {
-        final ResourceLocation jobType =
-          compound.keySet().contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
-        final IJob job = IJobRegistry.getInstance().getValue(jobType).getHandlerProducer().apply(citizen);
+        final ResourceLocation jobType = compound.keySet().contains(NbtTagConstants.TAG_JOB_TYPE)
+            ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE))
+            : ModJobs.PLACEHOLDER_ID;
+        final IJob<?> job = IJobRegistry.getInstance().getValue(jobType).getHandlerProducer().apply(citizen);
 
         if (job != null)
         {
@@ -31,8 +31,10 @@ public final class JobDataManager implements IJobDataManager
             }
             catch (final RuntimeException ex)
             {
-                Log.getLogger().error(String.format("A Job %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  jobType), ex);
+                Log.getLogger()
+                    .error(String.format(
+                        "A Job %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                        jobType), ex);
                 return null;
             }
         }

@@ -16,13 +16,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
+public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining, BuildingCombatAcademy>
 {
     /**
      * How many actions on one target are done per building level.
@@ -72,16 +71,14 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     public EntityAICombatTraining(@NotNull final JobCombatTraining job)
     {
-        //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
+        // Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
-        super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType, 1),
-          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner, 1),
-          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner, 1),
-          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner, 1),
-          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 1),
-          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, 1)
-        );
+        super.registerTargets(new AITarget(COMBAT_TRAINING, this::decideOnTrainingType, 1),
+            new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner, 1),
+            new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner, 1),
+            new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner, 1),
+            new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 1),
+            new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, 1));
     }
 
     /**
@@ -92,7 +89,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private IAIState decideOnTrainingType()
     {
         setDelay(STANDARD_DELAY);
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
+        if (getOwnBuilding().hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
         {
             return FIND_TRAINING_PARTNER;
         }
@@ -102,7 +99,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     @Override
     public IAIState decide()
     {
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        if (getOwnBuilding().hasCombatPartner(worker))
         {
             setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
@@ -137,6 +134,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Train with a partner. Find the partner and path to him.
+     * 
      * @return the next state to go to.
      */
     private IAIState trainWithPartner()
@@ -147,7 +145,8 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return COMBAT_TRAINING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN && walkToBlock(trainingPartner.getPosition()))
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN
+            && walkToBlock(trainingPartner.getPosition()))
         {
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
@@ -157,6 +156,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the training partner or block.
+     * 
      * @return the next state to go to.
      */
     private IAIState attack()
@@ -187,7 +187,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK,
+                        (float) BASIC_VOLUME,
+                        (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                     worker.setActiveHand(Hand.OFF_HAND);
                     worker.getLookController().setLookPositionWithEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -196,7 +198,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             else
             {
                 worker.swingArm(Hand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                    (float) BASIC_VOLUME,
+                    (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 trainingPartner.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
@@ -205,7 +209,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
             {
-                getOwnBuilding(BuildingCombatAcademy.class).resetPartner(worker);
+                getOwnBuilding().resetPartner(worker);
                 targetCounter = 0;
                 return START_WORKING;
             }
@@ -223,6 +227,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Find a dummy partner.
+     * 
      * @return the next state to go to.
      */
     private IAIState findDummyPartner()
@@ -236,7 +241,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return DECIDE;
         }
 
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        if (getOwnBuilding().hasCombatPartner(worker))
         {
             setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
@@ -259,6 +264,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the dummy.
+     * 
      * @return the next state to go to.
      */
     private IAIState attackDummy()
@@ -278,11 +284,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (worker.getRandom().nextBoolean())
             {
-                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
-                  Items.SHIELD);
+                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK,
+                        (float) BASIC_VOLUME,
+                        (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                     worker.setActiveHand(Hand.OFF_HAND);
                 }
@@ -290,7 +297,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             else
             {
                 worker.swingArm(Hand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                    (float) BASIC_VOLUME,
+                    (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
 
@@ -321,11 +330,18 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
+        final int weaponSlot = InventoryUtils
+            .getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
         if (weaponSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
         }
         return true;
+    }
+
+    @Override
+    public Class<BuildingCombatAcademy> getExpectedBuildingClass()
+    {
+        return BuildingCombatAcademy.class;
     }
 }

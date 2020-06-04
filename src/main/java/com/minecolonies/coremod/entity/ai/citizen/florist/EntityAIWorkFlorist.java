@@ -20,7 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -31,7 +30,7 @@ import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
 /**
  * Florist AI class.
  */
-public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
+public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, BuildingFlorist>
 {
     /**
      * Max 2d distance the florist should be from the hut.
@@ -84,10 +83,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     private BlockPos compostPosition;
 
     /*
-       Florist uses compost on them if not composted yet
-       Block which is composted produces flowers in an interval for a certain time (For 1 minute it produces 1 flower randomly between 1-60s),
-        so it might make 10 flowers but average it's 2 flowers per minute.                                                                                                                                                                       - Flourist checks if on top of block is flower and harvests it.
-       Depending on the florists level he has smaller delays so he harvests faster
+     * Florist uses compost on them if not composted yet
+     * Block which is composted produces flowers in an interval for a certain time (For 1 minute it produces 1 flower randomly between
+     * 1-60s),
+     * so it might make 10 flowers but average it's 2 flowers per minute. - Flourist checks if on top of block is flower and harvests it.
+     * Depending on the florists level he has smaller delays so he harvests faster
      */
 
     /**
@@ -98,13 +98,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     public EntityAIWorkFlorist(@NotNull final JobFlorist job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
-          new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
-          new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 1),
+            new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
+            new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
+            new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
     }
 
@@ -115,9 +113,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private IAIState decide()
     {
-        if (getOwnBuilding(BuildingFlorist.class).getPlantGround().isEmpty())
+        if (getOwnBuilding().getPlantGround().isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
+            worker.getCitizenData()
+                .triggerInteraction(
+                    new StandardInteractionResponseHandler(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -151,9 +151,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
 
         if (amountOfCompostInInv <= 0)
         {
-            if (!isThereCompostedLand(getOwnBuilding(BuildingFlorist.class), world))
+            if (!isThereCompostedLand(getOwnBuilding(), world))
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
+                worker.getCitizenData()
+                    .triggerInteraction(
+                        new StandardInteractionResponseHandler(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;
@@ -185,14 +187,17 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
         final TileEntity entity = world.getTileEntity(compostPosition);
         if (entity instanceof TileEntityCompostedDirt)
         {
-            @Nullable final ItemStack stack = getOwnBuilding(BuildingFlorist.class).getFlowerToGrow();
+            @Nullable
+            final ItemStack stack = getOwnBuilding().getFlowerToGrow();
             if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
             {
-                ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding(BuildingFlorist.class).getFlowerToGrow());
+                ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
             }
             else
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
+                worker.getCitizenData()
+                    .triggerInteraction(
+                        new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
             }
         }
 
@@ -261,7 +266,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
     @Nullable
     private BlockPos areThereFlowersToGather()
     {
-        for (final BlockPos pos : getOwnBuilding(BuildingFlorist.class).getPlantGround())
+        for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
             if (!world.isAirBlock(pos.up()))
             {
@@ -278,7 +283,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
      */
     private BlockPos getFirstNotCompostedLand()
     {
-        for (final BlockPos pos : getOwnBuilding(BuildingFlorist.class).getPlantGround())
+        for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
             if (world.isBlockPresent(pos))
             {
@@ -292,10 +297,16 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist>
                 }
                 else
                 {
-                    getOwnBuilding(BuildingFlorist.class).removePlantableGround(pos);
+                    getOwnBuilding().removePlantableGround(pos);
                 }
             }
         }
         return null;
+    }
+
+    @Override
+    public Class<BuildingFlorist> getExpectedBuildingClass()
+    {
+        return BuildingFlorist.class;
     }
 }

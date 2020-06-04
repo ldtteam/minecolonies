@@ -220,7 +220,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(@NotNull final ICitizenData citizen)
+    public IJob<?> createJob(@NotNull final ICitizenData citizen)
     {
         if (!farmerFields.isEmpty())
         {

@@ -9,6 +9,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
@@ -23,18 +24,17 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_DAMAGE;
 import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
+public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards>
 {
-    private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
-    private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
-    private static final double STRAFING_SPEED                            = 0.7f;
+    private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
+    private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
+    private static final double STRAFING_SPEED = 0.7f;
 
     /**
      * Whether the guard is moving towards his target
@@ -95,9 +95,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged, 10)
-        );
+        super.registerTargets(new AITarget(GUARD_ATTACK_RANGED, this::attackRanged, 10));
         toolsNeeded.add(ToolType.BOW);
     }
 
@@ -158,7 +156,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public void wearWeapon()
     {
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
+        final int bowSlot = InventoryUtils
+            .getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
         if (bowSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
@@ -307,8 +306,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(Hand.MAIN_HAND);
 
                 int amountOfArrows = 1;
-                final MultiplierModifierResearchEffect
-                  effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(DOUBLE_ARROWS, MultiplierModifierResearchEffect.class);
+                final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler()
+                    .getColony()
+                    .getResearchManager()
+                    .getResearchEffects()
+                    .getEffect(DOUBLE_ARROWS, MultiplierModifierResearchEffect.class);
                 if (effect != null)
                 {
                     if (worker.getRandom().nextDouble() < effect.getEffect())
@@ -318,8 +320,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 }
 
                 double extraDamage = 0.0D;
-                final AdditionModifierResearchEffect
-                  dmgEffect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_DAMAGE, AdditionModifierResearchEffect.class);
+                final AdditionModifierResearchEffect dmgEffect = worker.getCitizenColonyHandler()
+                    .getColony()
+                    .getResearchManager()
+                    .getResearchEffects()
+                    .getEffect(ARCHER_DAMAGE, AdditionModifierResearchEffect.class);
                 if (dmgEffect != null)
                 {
                     extraDamage += dmgEffect.getEffect();
@@ -337,7 +342,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                     final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                     double damage = getRangedAttackDamage() + extraDamage;
 
-
                     // Add bow enchant effects: Knocback and fire
                     final ItemStack bow = worker.getHeldItem(Hand.MAIN_HAND);
 
@@ -353,7 +357,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                     final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
 
-                    arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
+                    arrow.shoot(xVector,
+                        yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER,
+                        zVector,
+                        RANGED_VELOCITY,
+                        (float) chance);
 
                     if (worker.getHealth() <= worker.getMaxHealth() * 0.2D)
                     {
@@ -361,7 +369,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                     }
 
                     arrow.setDamage(damage);
-                    worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT,
+                        (float) BASIC_VOLUME,
+                        (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.world.addEntity(arrow);
                 }
 
@@ -448,7 +458,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * Gets the aim height for ranged guards.
      *
      * @return the aim height.
-     * Suppression because the method already explains the value.
+     *         Suppression because the method already explains the value.
      */
     @SuppressWarnings({"squid:S3400", "squid:S109"})
     private double getAimHeight()
@@ -460,6 +470,14 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     public void moveInAttackPosition()
     {
         worker.getNavigator()
-          .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
+            .tryMoveToBlockPos(
+                worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8),
+                getCombatMovementSpeed());
+    }
+
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
     }
 }

@@ -33,20 +33,18 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Cook AI class.
  */
-public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
+public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, BuildingCook>
 {
     /**
      * The amount of food which should be served to the worker.
@@ -116,17 +114,15 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     public EntityAIWorkCook(@NotNull final JobCook job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY),
-          new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
-          new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
-          new AITarget(CRAFT, this::craft, HIT_DELAY)
-        );
+        super.registerTargets(new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY),
+            new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
+            new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
+            new AITarget(CRAFT, this::craft, HIT_DELAY));
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingCook> getExpectedBuildingClass()
     {
         return BuildingCook.class;
     }
@@ -139,9 +135,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     @Override
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
-          worker.getInventoryCitizen());
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(new InvWrapper(furnace), RESULT_SLOT, worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -156,7 +150,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     protected boolean reachedMaxToKeep()
     {
         return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD)
-                 > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+            > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 
     @Override
@@ -171,15 +165,19 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * Serve food to customer
      * <p>
-     * If no customer, transition to START_WORKING. If we need to walk to the customer, repeat this state with tiny delay. If the customer has a full inventory, report and remove
-     * customer, delay and repeat this state. If we have food, then COOK_SERVE. If no food in the building, transition to START_WORKING. If we were able to get the stored food,
-     * then COOK_SERVE. If food is no longer available, delay and transition to START_WORKING. Otherwise, give the customer some food, then delay and repeat this state.
+     * If no customer, transition to START_WORKING. If we need to walk to the customer, repeat this state with tiny delay. If the customer
+     * has a full inventory, report and remove
+     * customer, delay and repeat this state. If we have food, then COOK_SERVE. If no food in the building, transition to START_WORKING. If
+     * we were able to get the stored food,
+     * then COOK_SERVE. If food is no longer available, delay and transition to START_WORKING. Otherwise, give the customer some food, then
+     * delay and repeat this state.
      *
      * @return next IAIState
      */
     private IAIState serveFoodToCitizen()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
+        worker.getCitizenStatusHandler()
+            .setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
         if (citizenToServe.isEmpty() && playerToServe.isEmpty())
         {
@@ -210,7 +208,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return getState();
         }
 
-        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).inventory) : citizenToServe.get(0).getInventoryCitizen();
+        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).inventory)
+            : citizenToServe.get(0).getInventoryCitizen();
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
@@ -230,11 +229,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             removeFromQueue();
             return getState();
         }
-        InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-          worker.getInventoryCitizen(),
-          ItemStackUtils.CAN_EAT,
-          getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
-        );
+        InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(),
+            ItemStackUtils.CAN_EAT,
+            getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
+            handler);
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -268,8 +266,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     }
 
     /**
-     * Checks if the cook has anything important to do before going to the default furnace user jobs. First calculate the building range if not cached yet. Then check for citizens
-     * around the building. If no citizen around switch to default jobs. If citizens around check if food in inventory, if not, switch to gather job. If food in inventory switch to
+     * Checks if the cook has anything important to do before going to the default furnace user jobs. First calculate the building range if
+     * not cached yet. Then check for citizens
+     * around the building. If no citizen around switch to default jobs. If citizens around check if food in inventory, if not, switch to
+     * gather job. If food in inventory switch to
      * serve job.
      *
      * @return the next IAIState to transfer to.
@@ -284,15 +284,16 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<AbstractEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
-                                                          .stream()
-                                                          .filter(e -> e instanceof AbstractEntityCitizen)
-                                                          .map(e -> (AbstractEntityCitizen) e)
-                                                          .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
-                                                          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
-                                                          .collect(Collectors.toList());
+            .stream()
+            .filter(e -> e instanceof AbstractEntityCitizen)
+            .map(e -> (AbstractEntityCitizen) e)
+            .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
+            .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
+            .collect(Collectors.toList());
 
         final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
-          range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
+            range,
+            player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
 
         if (!citizenList.isEmpty() || !playerList.isEmpty())
         {
@@ -312,7 +313,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        //todo add to the building a .isMinimumStockRequest to not solve it in the buildingBasedResolver
+        // todo add to the building a .isMinimumStockRequest to not solve it in the buildingBasedResolver
         if (job.getTaskQueue().isEmpty())
         {
             return START_WORKING;
@@ -408,7 +409,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
+            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack)
+                && new Stack(stack).matches(inputStorage.getItemStack());
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) < inputStorage.getAmount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
@@ -450,13 +452,17 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         job.setProgress(job.getProgress() + 1);
 
         worker.setHeldItem(Hand.MAIN_HAND,
-          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+            currentRecipeStorage.getCleanedInput()
+                .get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size()))
+                .getItemStack()
+                .copy());
         worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         currentRequest = job.getCurrentTask();
 
-        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
+        if (currentRequest != null
+            && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
             currentRequest = null;
             incrementActionsDone();
@@ -489,7 +495,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
                     if (inventoryNeedsDump())
                     {
-                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
+                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0
+                            && currentRequest != null)
                         {
                             job.finishRequest(true);
                             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);

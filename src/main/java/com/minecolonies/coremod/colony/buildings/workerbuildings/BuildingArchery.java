@@ -25,12 +25,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -71,7 +69,7 @@ public class BuildingArchery extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobArcherTraining(citizen);
     }
@@ -93,7 +91,9 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Archery", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Archery", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -110,10 +110,14 @@ public class BuildingArchery extends AbstractBuildingWorker
         shootingStands.clear();
 
         final ListNBT targetList = compound.getList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
-        shootingTargets.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+        shootingTargets.addAll(NBTUtils.streamCompound(targetList)
+            .map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET))
+            .collect(Collectors.toList()));
 
         final ListNBT standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
-        shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_STAND)).collect(Collectors.toList()));
+        shootingStands.addAll(NBTUtils.streamCompound(standTagList)
+            .map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_STAND))
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -121,10 +125,14 @@ public class BuildingArchery extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        final ListNBT targetList = shootingTargets.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        final ListNBT targetList = shootingTargets.stream()
+            .map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_TARGET, target))
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_TARGETS, targetList);
 
-        final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
+        final ListNBT standTagList = shootingStands.stream()
+            .map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_STAND, target))
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_STANDS, standTagList);
 
         return compound;

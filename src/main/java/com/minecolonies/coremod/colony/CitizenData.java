@@ -39,11 +39,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
@@ -151,7 +149,7 @@ public class CitizenData implements ICitizenData
     /**
      * The job of the citizen.
      */
-    private IJob job;
+    private IJob<?> job;
 
     /**
      * If the citizen is dirty (Has to be updated on client side).
@@ -331,7 +329,7 @@ public class CitizenData implements ICitizenData
     public void initForNewCitizen()
     {
         final Random rand = new Random();
-        //Assign the gender before name
+        // Assign the gender before name
         female = rand.nextBoolean();
         paused = false;
         name = generateName(rand);
@@ -543,10 +541,10 @@ public class CitizenData implements ICitizenData
 
             if (workBuilding != null)
             {
-                //  We have a place to work, do we have the assigned Job?
+                // We have a place to work, do we have the assigned Job?
                 if (job == null)
                 {
-                    //  No job, create one!
+                    // No job, create one!
                     setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
@@ -554,14 +552,13 @@ public class CitizenData implements ICitizenData
             else if (job != null)
             {
                 getCitizenEntity().ifPresent(entityCitizen -> {
-                    entityCitizen.getTasks()
-                      .goals.stream()
-                      .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
-                      .findFirst()
-                      .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));
+                    entityCitizen.getTasks().goals.stream()
+                        .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
+                        .findFirst()
+                        .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));
                 });
 
-                //  No place of employment, get rid of our job
+                // No place of employment, get rid of our job
                 setJob(null);
                 colony.getWorkManager().clearWorkForCitizen(this);
             }
@@ -578,18 +575,17 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-
         colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
     }
 
     @Override
-    public IJob getJob()
+    public IJob<?> getJob()
     {
         return job;
     }
 
     @Override
-    public void setJob(final IJob job)
+    public void setJob(final IJob<?> job)
     {
         if (this.job != null && job == null)
         {
@@ -604,7 +600,7 @@ public class CitizenData implements ICitizenData
 
     @Override
     @Nullable
-    public <J extends IJob> J getJob(@NotNull final Class<J> type)
+    public <J extends IJob<?>> J getJob(@NotNull final Class<J> type)
     {
         if (type.isInstance(job))
         {
@@ -658,7 +654,10 @@ public class CitizenData implements ICitizenData
 
         if (colony.getWorld() != null)
         {
-            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).collect(Collectors.toList());
+            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values()
+                .stream()
+                .filter(e -> e.isVisible(colony.getWorld()))
+                .collect(Collectors.toList());
 
             buf.writeInt(subInteractions.size());
             for (final IInteractionResponseHandler interactionHandler : subInteractions)
@@ -685,7 +684,8 @@ public class CitizenData implements ICitizenData
     @Override
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
+        this.saturation = Math.max(MIN_SATURATION,
+            this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
         this.justAte = false;
     }
 
@@ -826,7 +826,8 @@ public class CitizenData implements ICitizenData
 
         if (job != null)
         {
-            @NotNull final INBT jobCompound = job.serializeNBT();
+            @NotNull
+            final INBT jobCompound = job.serializeNBT();
             nbtTagCompound.put("job", jobCompound);
         }
 
@@ -840,10 +841,13 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_ASLEEP, isAsleep);
         nbtTagCompound.putBoolean(TAG_JUST_ATE, justAte);
 
-        @NotNull final ListNBT chatTagList = new ListNBT();
-        for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
+        @NotNull
+        final ListNBT chatTagList = new ListNBT();
+        for (@NotNull
+        final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
-            @NotNull final CompoundNBT chatOptionCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT chatOptionCompound = new CompoundNBT();
             chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
             chatTagList.add(chatOptionCompound);
         }
@@ -898,16 +902,16 @@ public class CitizenData implements ICitizenData
             justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
         }
 
-        //  Citizen chat options.
+        // Citizen chat options.
         if (nbtTagCompound.keySet().contains(TAG_CHAT_OPTIONS))
         {
             final ListNBT handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
-                final ServerCitizenInteractionResponseHandler handler =
-                  (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance()
-                                                              .getInteractionResponseHandlerDataManager()
-                                                              .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                final ServerCitizenInteractionResponseHandler handler = (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy
+                    .getInstance()
+                    .getInteractionResponseHandlerDataManager()
+                    .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }

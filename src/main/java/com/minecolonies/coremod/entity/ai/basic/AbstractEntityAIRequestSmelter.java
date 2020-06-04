@@ -36,7 +36,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Crafts furnace stone related block when needed.
  */
-public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingSmelterCrafter>
+    extends AbstractEntityAICrafting<J, B>
 {
     /**
      * Base xp gain for the smelter.
@@ -57,12 +58,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
              */
             new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
             new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
-    }
-
-    @Override
-    public Class getExpectedBuildingClass()
-    {
-        return AbstractBuildingSmelterCrafter.class;
     }
 
     @Override
@@ -363,7 +358,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return super.craft();
         }
 
-        if (getOwnBuilding(AbstractBuildingSmelterCrafter.class).getCopyOfAllowedItems().isEmpty())
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -401,10 +396,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData()
-                .createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingSmelterCrafter.class).getAllowedFuel(),
-                    COM_MINECOLONIES_REQUESTS_BURNABLE,
-                    STACKSIZE,
-                    1));
+                .createRequestAsync(new StackList(getOwnBuilding().getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
         }
 
         if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)

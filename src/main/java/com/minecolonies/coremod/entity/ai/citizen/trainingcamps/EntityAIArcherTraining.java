@@ -17,13 +17,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
+public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery>
 {
     /**
      * Xp per successful shot.
@@ -78,13 +77,12 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     public EntityAIArcherTraining(@NotNull final JobArcherTraining job)
     {
-        //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
+        // Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
-        super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, 1),
-          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, 1),
-          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, 1),
-          new AITarget(ARCHER_SHOOT, this::shoot, 1)
+        super.registerTargets(new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, 1),
+            new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, 1),
+            new AITarget(ARCHER_CHECK_SHOT, this::checkShot, 1),
+            new AITarget(ARCHER_SHOOT, this::shoot, 1)
 
         );
     }
@@ -164,7 +162,8 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
-            worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+            worker
+                .playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
             worker.world.addEntity(arrow);
 
             final double xDiff = currentShootingTarget.getX() - worker.getPosX();
@@ -219,8 +218,15 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return false;
         }
 
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
+        final int bowSlot = InventoryUtils
+            .getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         return true;
+    }
+
+    @Override
+    public Class<BuildingArchery> getExpectedBuildingClass()
+    {
+        return BuildingArchery.class;
     }
 }

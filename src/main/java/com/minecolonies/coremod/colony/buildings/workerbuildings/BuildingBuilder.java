@@ -28,10 +28,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -42,7 +40,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER     = "builder";
+    private static final String BUILDER = "builder";
 
     /**
      * NBT tag to store if mobs already got purged.
@@ -64,9 +62,12 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
     }
 
     /**
@@ -105,7 +106,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        //Only the chests and racks because he shouldn't fill up the furnaces.
+        // Only the chests and racks because he shouldn't fill up the furnaces.
         if (block instanceof ChestBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
@@ -130,6 +131,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Set if mobs have been purged by this builder at his hut already today.
+     * 
      * @param purgedMobsToday true if so.
      */
     public void setPurgedMobsToday(final boolean purgedMobsToday)
@@ -139,6 +141,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Check if the builder has purged the mobs already.
+     * 
      * @return true if so.
      */
     public boolean hasPurgedMobsToday()
@@ -154,7 +157,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobBuilder(citizen);
     }
@@ -200,7 +203,10 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
-        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final WorkOrderBuildDecoration order = list.stream()
+            .filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition()))
+            .findFirst()
+            .orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
@@ -208,7 +214,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        for (final WorkOrderBuildDecoration wo: list)
+        for (final WorkOrderBuildDecoration wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 
@@ -217,7 +223,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 continue;
             }
 
-            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
+            for (@NotNull
+            final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
             {
                 final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
 

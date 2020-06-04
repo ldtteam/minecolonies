@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
 
 /**
@@ -17,7 +16,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_M
  *
  * @author Asherslab
  */
-public class JobRanger extends AbstractJobGuard
+public class JobRanger extends AbstractJobGuard<JobRanger>
 {
     /**
      * The name associated with the job.
@@ -40,7 +39,7 @@ public class JobRanger extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    public AbstractEntityAIGuard generateGuardAI()
+    public EntityAIRanger generateGuardAI()
     {
         return new EntityAIRanger(this);
     }
@@ -57,8 +56,9 @@ public class JobRanger extends AbstractJobGuard
             final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
 
             // +1 half heart every 5 level
-            final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 5, AttributeModifier.Operation.ADDITION);
+            final AttributeModifier healthModLevel = new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                getCitizen().getJobModifier() / 5,
+                AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

@@ -79,13 +79,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import javax.annotation.Nonnull;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Objects;
-
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
@@ -144,11 +142,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen chat handler.
      */
-    private ICitizenChatHandler      citizenChatHandler;
+    private ICitizenChatHandler citizenChatHandler;
     /**
      * The citizen item handler.
      */
-    private ICitizenItemHandler      citizenItemHandler;
+    private ICitizenItemHandler citizenItemHandler;
     /**
      * The citizen inv handler.
      */
@@ -156,7 +154,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen stuck handler.
      */
-    private ICitizenStuckHandler     citizenStuckHandler;
+    private ICitizenStuckHandler citizenStuckHandler;
     /**
      * The citizen colony handler.
      */
@@ -176,7 +174,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The path-result of trying to move away
      */
-    private       PathResult           moveAwayPath;
+    private PathResult moveAwayPath;
     /**
      * Indicate if the citizen is mourning or not.
      */
@@ -205,7 +203,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Constructor for a new citizen typed entity.
      *
-     * @param type the entity type.
+     * @param type  the entity type.
      * @param world the world.
      */
     public EntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
@@ -242,14 +240,19 @@ public class EntityCitizen extends AbstractEntityCitizen
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
         this.goalSelector.addGoal(++priority,
-          new EntityAICitizenAvoidEntity(this, MonsterEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
+            new EntityAICitizenAvoidEntity(this,
+                MonsterEntity.class,
+                (float) DISTANCE_OF_ENTITY_AVOID,
+                LATER_RUN_SPEED_AVOID,
+                INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority,
+            new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
@@ -264,7 +267,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.getDimension().getType().getId());
+        final IColonyView iColonyView = IColonyManager.getInstance()
+            .getColonyView(citizenColonyHandler.getColonyId(), player.world.getDimension().getType().getId());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -279,7 +283,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (player.isShiftKeyDown())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
+                Network.getNetwork()
+                    .sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
             }
             else
             {
@@ -304,7 +309,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                final IColonyView colonyView = IColonyManager.getInstance()
+                    .getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
@@ -365,12 +371,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             this.dataBackup = compound;
         }
 
-
         citizenDiseaseHandler.read(compound);
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons. use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons. use this to react to
+     * sunlight and start to burn.
      */
     @Override
     public void livingTick()
@@ -389,7 +395,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                final IColonyView colonyView = IColonyManager.getInstance()
+                    .getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
@@ -422,16 +429,20 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * A boolean check to test if the citizen can path on rails.
+     * 
      * @return true if so.
      */
     public boolean canPathOnRails()
     {
         if (world.isRemote)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+            final IColonyView colonyView = IColonyManager.getInstance()
+                .getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
             if (colonyView != null)
             {
-                final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+                final UnlockAbilityResearchEffect effect = colonyView.getResearchManager()
+                    .getResearchEffects()
+                    .getEffect(RAILS, UnlockAbilityResearchEffect.class);
                 if (effect != null)
                 {
                     return effect.getEffect();
@@ -439,7 +450,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             return false;
         }
-        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
+        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(RAILS, UnlockAbilityResearchEffect.class);
         if (effect != null)
         {
             return effect.getEffect();
@@ -526,7 +540,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (citizenData != null && getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
         {
             double limitDecrease = 0;
-            final AdditionModifierResearchEffect satLimitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATLIMIT, AdditionModifierResearchEffect.class);
+            final AdditionModifierResearchEffect satLimitDecrease = getCitizenColonyHandler().getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(SATLIMIT, AdditionModifierResearchEffect.class);
             if (satLimitDecrease != null)
             {
                 limitDecrease = satLimitDecrease.getEffect();
@@ -542,7 +559,10 @@ public class EntityCitizen extends AbstractEntityCitizen
                 healAmount = 0;
             }
 
-            final AdditionModifierResearchEffect healEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(REGENERATION, AdditionModifierResearchEffect.class);
+            final AdditionModifierResearchEffect healEffect = getCitizenColonyHandler().getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(REGENERATION, AdditionModifierResearchEffect.class);
             if (healEffect != null)
             {
                 healAmount *= (1.0 + healEffect.getEffect());
@@ -560,8 +580,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         final ItemStack hat = getItemStackFromSlot(EquipmentSlotType.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
-              && MineColonies.getConfig().getCommon().holidayFeatures.get()
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
+            && MineColonies.getConfig().getCommon().holidayFeatures.get() && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
         {
             if (hat.isEmpty())
             {
@@ -583,16 +602,25 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenData.setLastPosition(getPosition());
         }
 
-        final MultiplierModifierResearchEffect speedEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect speedEffect = getCitizenColonyHandler().getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(WALKING, MultiplierModifierResearchEffect.class);
         if (speedEffect != null)
         {
-            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                .setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
         }
 
-        final AdditionModifierResearchEffect healthEffect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
+        final AdditionModifierResearchEffect healthEffect = getCitizenColonyHandler().getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(HEALTH, AdditionModifierResearchEffect.class);
         if (healthEffect != null)
         {
-            final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
+            final AttributeModifier healthModLevel = new AttributeModifier(HEALTH,
+                healthEffect.getEffect(),
+                AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(this, healthModLevel);
         }
     }
@@ -611,7 +639,8 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     private void onLivingSoundUpdate()
     {
-        if (CompatibilityUtils.getWorldFromCitizen(this).isDaytime() && !CompatibilityUtils.getWorldFromCitizen(this).isRaining() && citizenData != null)
+        if (CompatibilityUtils.getWorldFromCitizen(this).isDaytime() && !CompatibilityUtils.getWorldFromCitizen(this).isRaining()
+            && citizenData != null)
         {
             SoundUtils.playRandomSound(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), citizenData);
         }
@@ -641,14 +670,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         super.setRenderMetadata(metadata);
 
-        //Display some debug info always available while testing
-        //Will help track down some hard to find bugs (Pathfinding etc.)
-        //TODO: Is this actually needed here?
+        // Display some debug info always available while testing
+        // Will help track down some hard to find bugs (Pathfinding etc.)
+        // TODO: Is this actually needed here?
         if (citizenData != null)
         {
             if (citizenJobHandler.getColonyJob() != null && MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
             {
-                setCustomName(new StringTextComponent(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]"));
+                setCustomName(new StringTextComponent(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")["
+                    + citizenJobHandler.getColonyJob().getNameTagDescription() + "]"));
             }
             else
             {
@@ -969,7 +999,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setCitizenInventoryHandler(final ICitizenInventoryHandler citizenInventoryHandler) {
+    public void setCitizenInventoryHandler(final ICitizenInventoryHandler citizenInventoryHandler)
+    {
         this.citizenInventoryHandler = citizenInventoryHandler;
     }
 
@@ -985,7 +1016,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setCitizenColonyHandler(final ICitizenColonyHandler citizenColonyHandler) {
+    public void setCitizenColonyHandler(final ICitizenColonyHandler citizenColonyHandler)
+    {
         this.citizenColonyHandler = citizenColonyHandler;
     }
 
@@ -1034,7 +1066,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler) {
+    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
+    {
         this.citizenDiseaseHandler = citizenDiseaseHandler;
     }
 
@@ -1046,8 +1079,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean isOkayToEat()
     {
-        return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP && (citizenJobHandler.getColonyJob() == null
-                                                                                                           || citizenJobHandler.getColonyJob().isOkayToEat());
+        return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP
+            && (citizenJobHandler.getColonyJob() == null || citizenJobHandler.getColonyJob().isOkayToEat());
     }
 
     /**
@@ -1058,7 +1091,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean shouldBeFed()
     {
-        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte();
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION
+            && !this.getCitizenData().justAte();
     }
 
     /**
@@ -1080,7 +1114,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote
+            && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
             return DesiredActivity.SLEEP;
@@ -1111,19 +1146,17 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.SLEEP;
         }
 
-
         if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())
         {
             citizenSleepHandler.onWakeUp();
         }
         isDay = true;
 
-
         if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining())
         {
             hidingFromRain = true;
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
-              new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
+                new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
         else
@@ -1133,8 +1166,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 this.getNavigator().clearPath();
             }
-
-
 
             return DesiredActivity.WORK;
         }
@@ -1147,14 +1178,17 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
-        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WORKING_IN_RAIN, UnlockAbilityResearchEffect.class);
+        final UnlockAbilityResearchEffect effect = getCitizenColonyHandler().getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(WORKING_IN_RAIN, UnlockAbilityResearchEffect.class);
         if (effect != null)
         {
             return effect.getEffect();
         }
 
-        return MineColonies.getConfig().getCommon().workersAlwaysWorkInRain.get() ||
-                 (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
+        return MineColonies.getConfig().getCommon().workersAlwaysWorkInRain.get()
+            || (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
     }
 
     /**
@@ -1198,32 +1232,38 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setCitizenStuckHandler(final ICitizenStuckHandler citizenStuckHandler) {
+    public void setCitizenStuckHandler(final ICitizenStuckHandler citizenStuckHandler)
+    {
         this.citizenStuckHandler = citizenStuckHandler;
     }
 
     @Override
-    public void setCitizenSleepHandler(final ICitizenSleepHandler citizenSleepHandler) {
+    public void setCitizenSleepHandler(final ICitizenSleepHandler citizenSleepHandler)
+    {
         this.citizenSleepHandler = citizenSleepHandler;
     }
 
     @Override
-    public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler) {
+    public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
+    {
         this.citizenJobHandler = citizenJobHandler;
     }
 
     @Override
-    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler) {
+    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
+    {
         this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
-    public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler) {
+    public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler)
+    {
         this.citizenChatHandler = citizenChatHandler;
     }
 
     @Override
-    public void setCitizenExperienceHandler(final ICitizenExperienceHandler citizenExperienceHandler) {
+    public void setCitizenExperienceHandler(final ICitizenExperienceHandler citizenExperienceHandler)
+    {
         this.citizenExperienceHandler = citizenExperienceHandler;
     }
 
@@ -1262,7 +1302,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         return damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep()
-                 || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()) || this.isInvulnerable();
+            || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage())
+            || this.isInvulnerable();
     }
 
     private boolean handleSourceEntityForDamage(final Entity sourceEntity)
@@ -1305,8 +1346,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    final MultiplierModifierResearchEffect effect =
-                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
+                    final MultiplierModifierResearchEffect effect = citizenColonyHandler.getColony()
+                        .getResearchManager()
+                        .getResearchEffects()
+                        .getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
                     if (effect != null)
                     {
                         if (getRandom().nextDouble() < effect.getEffect())
@@ -1316,11 +1359,14 @@ public class EntityCitizen extends AbstractEntityCitizen
                     }
                 }
 
-                if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
-                      && getHealth() < ((int) getMaxHealth() * 0.2D))
+                if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards
+                    && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
+                    && getHealth() < ((int) getMaxHealth() * 0.2D))
                 {
-                    final MultiplierModifierResearchEffect effect =
-                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
+                    final MultiplierModifierResearchEffect effect = citizenColonyHandler.getColony()
+                        .getResearchManager()
+                        .getResearchEffects()
+                        .getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
                     if (effect != null)
                     {
                         damageInc *= 1 - effect.getEffect();
@@ -1389,13 +1435,15 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getCommon().citizenCallForHelp.get() || callForHelpCooldown != 0)
+        if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getCommon().citizenCallForHelp.get()
+            || callForHelpCooldown != 0)
         {
             return;
         }
 
         // Don't call for help when a guard gets woken up
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard && citizenJobHandler.getColonyJob(AbstractJobGuard.class).isAsleep())
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard
+            && citizenJobHandler.getColonyJob(AbstractJobGuard.class).isAsleep())
         {
             return;
         }
@@ -1412,8 +1460,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
 
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
-                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance
+                    && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1454,8 +1502,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
-            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
-                  && (damageSource != DamageSource.IN_WALL))
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard) && (damageSource != DamageSource.IN_WALL))
             {
                 citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
@@ -1465,7 +1512,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
-
         }
         super.onDeath(damageSource);
     }
@@ -1476,7 +1522,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final IJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob<?> job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)
@@ -1488,7 +1534,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     protected void dropInventory()
     {
-        //Drop actual inventory
+        // Drop actual inventory
         for (int i = 0; i < getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
@@ -1504,17 +1550,21 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            final MultiplierModifierResearchEffect
-              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(MELEE_ARMOR, MultiplierModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect effect = citizenColonyHandler.getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(MELEE_ARMOR, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
             }
         }
-        else if(citizenJobHandler.getColonyJob() instanceof JobRanger)
+        else if (citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            final MultiplierModifierResearchEffect
-              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_ARMOR, MultiplierModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect effect = citizenColonyHandler.getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(ARCHER_ARMOR, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
@@ -1531,8 +1581,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (getHealth() > damage * GUARD_BLOCK_DAMAGE)
             {
                 final float blockDamage = CombatRules.getDamageAfterAbsorb(damage * GUARD_BLOCK_DAMAGE,
-                  (float) this.getTotalArmorValue(),
-                  (float) this.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
+                    (float) this.getTotalArmorValue(),
+                    (float) this.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
                 setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
             }
             citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
@@ -1565,7 +1615,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (obj instanceof EntityCitizen)
         {
             final EntityCitizen citizen = (EntityCitizen) obj;
-            return citizen.citizenColonyHandler.getColonyId() == this.citizenColonyHandler.getColonyId() && citizen.citizenId == this.citizenId;
+            return citizen.citizenColonyHandler.getColonyId() == this.citizenColonyHandler.getColonyId()
+                && citizen.citizenId == this.citizenId;
         }
         return false;
     }
@@ -1601,17 +1652,18 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
-            if (!name.getFormattedText().contains(citizenData.getName()) && MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() >= 0)
+            if (!name.getFormattedText().contains(citizenData.getName())
+                && MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() >= 0)
             {
-                if (MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() == 0 &&
-                      MineColonies.getConfig().getCommon().specialPermGroup.get()
+                if (MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() == 0
+                    && MineColonies.getConfig().getCommon().specialPermGroup.get()
                         .stream()
                         .noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_NOT_ALLOWED);
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(),
+                        CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
-
 
                 if (citizenColonyHandler.getColony() != null)
                 {
@@ -1619,7 +1671,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                     {
                         if (citizen.getName().equals(name.getFormattedText()))
                         {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(),
+                                CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
@@ -1662,7 +1715,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable final IBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
+        @Nullable
+        final IBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
         if (homeBuilding != null)
         {
             return homeBuilding.getPosition();
@@ -1694,6 +1748,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Get if the citizen is fleeing from an attacker.
+     * 
      * @return true if so.
      */
     public boolean isCurrentlyFleeing()
@@ -1723,6 +1778,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Setter for the citizen pose.
+     * 
      * @param pose the pose to set.
      */
     public void updatePose(final Pose pose)

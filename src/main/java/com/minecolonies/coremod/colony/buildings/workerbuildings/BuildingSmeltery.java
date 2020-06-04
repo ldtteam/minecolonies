@@ -24,9 +24,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
@@ -63,9 +61,10 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         super(c, l);
         keepX.put(IColonyManager.getInstance().getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(Integer.MAX_VALUE, true));
-        keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
-                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof ArmorItem)
-                , new Tuple<>(STUFF_TO_KEEP, true));
+        keepX.put(
+            stack -> !ItemStackUtils.isEmpty(stack)
+                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof ArmorItem),
+            new Tuple<>(STUFF_TO_KEEP, true));
     }
 
     @NotNull
@@ -83,7 +82,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobSmelter(citizen);
     }
@@ -112,17 +111,21 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
     public int ingotMultiplier(final int citizenLevel, final Random random)
     {
-        switch(getBuildingLevel())
+        switch (getBuildingLevel())
         {
             case 1:
                 return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel) == 0 ? DOUBLE : 1;
+
             case 2:
                 return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel * DOUBLE) == DOUBLE ? 2 : 1;
+
             case 3:
                 return 2;
+
             case 4:
             case 5:
                 return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel) == 0 ? TRIPLE : DOUBLE;
+
             default:
                 return 1;
         }
@@ -137,7 +140,9 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Smeltery", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Smeltery", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

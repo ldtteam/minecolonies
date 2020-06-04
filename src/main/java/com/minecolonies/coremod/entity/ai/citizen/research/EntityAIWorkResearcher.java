@@ -7,11 +7,10 @@ import com.minecolonies.coremod.colony.jobs.JobResearch;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch>
+public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch, BuildingUniversity>
 {
     /**
      * Delay for each subject study.
@@ -31,16 +30,14 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     public EntityAIWorkResearcher(@NotNull final JobResearch job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STUDY_DELAY)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 1),
+            new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+            new AITarget(STUDY, this::study, STUDY_DELAY));
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingUniversity> getExpectedBuildingClass()
     {
         return BuildingUniversity.class;
     }
@@ -55,7 +52,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     {
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding(BuildingUniversity.class).getRandomBookShelf();
+            studyPos = getOwnBuilding().getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))

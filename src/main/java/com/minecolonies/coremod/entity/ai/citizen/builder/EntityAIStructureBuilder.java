@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -25,19 +24,17 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
  */
-public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
+public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder, BuildingBuilder>
 {
     /**
      * over this y level the builder will be faster.
@@ -112,11 +109,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public EntityAIStructureBuilder(@NotNull final JobBuilder job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 100),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100),
-          new AITarget(PICK_UP, this::pickUpMaterial, 5)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 100),
+            new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100),
+            new AITarget(PICK_UP, this::pickUpMaterial, 5));
         worker.setCanPickUpLoot(true);
     }
 
@@ -171,7 +166,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                     amount = stack.getItemStack().getMaxStackSize();
                 }
             }
-            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
+            neededItemsList
+                .add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true),
+                    amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
@@ -202,7 +199,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingBuilder> getExpectedBuildingClass()
     {
         return BuildingBuilder.class;
     }
@@ -216,7 +213,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).searchWorkOrder();
+            getOwnBuilding().searchWorkOrder();
             return false;
         }
 
@@ -225,7 +222,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, null);
+            getOwnBuilding().setProgressPos(null, null);
             return false;
         }
 
@@ -278,10 +275,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void checkForExtraBuildingActions()
     {
-        if (!getOwnBuilding(BuildingBuilder.class).hasPurgedMobsToday())
+        if (!getOwnBuilding().hasPurgedMobsToday())
         {
             killMobs();
-            getOwnBuilding(BuildingBuilder.class).setPurgedMobsToday(true);
+            getOwnBuilding().setPurgedMobsToday(true);
         }
     }
 
@@ -300,12 +297,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public boolean walkToConstructionSite(final BlockPos targetPos)
     {
-        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < MIN_DISTANCE || MathUtils.twoDimDistance(targetPos, workFrom) > ACCEPTANCE_DISTANCE)
+        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < MIN_DISTANCE
+            || MathUtils.twoDimDistance(targetPos, workFrom) > ACCEPTANCE_DISTANCE)
         {
             workFrom = getWorkingPosition(targetPos);
         }
 
-        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= ACCEPTANCE_DISTANCE;
+        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE)
+            || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= ACCEPTANCE_DISTANCE;
     }
 
     /**
@@ -325,7 +324,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
             final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
-            final int yEnd = targetPosition.getY() < schemPos.getY() ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE) : schemPos.getY();
+            final int yEnd = targetPosition.getY() < schemPos.getY()
+                ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE)
+                : schemPos.getY();
             final Direction direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
             for (int i = MIN_DISTANCE + 1; i < MAX_DISTANCE; i++)
             {

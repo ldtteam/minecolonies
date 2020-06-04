@@ -24,11 +24,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
@@ -60,6 +58,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     * 
      * @param c the colony.
      * @param l the location.
      */
@@ -123,10 +122,13 @@ public class BuildingUniversity extends AbstractBuildingWorker
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT bookcaseTagList = new ListNBT();
-        for (@NotNull final BlockPos entry : bookCases)
+        @NotNull
+        final ListNBT bookcaseTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos entry : bookCases)
         {
-            @NotNull final CompoundNBT bookCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT bookCompound = new CompoundNBT();
             bookCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             bookcaseTagList.add(bookCompound);
         }
@@ -139,7 +141,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        //todo we might in the future want to add our own oredict tag to this.
+        // todo we might in the future want to add our own oredict tag to this.
         if (block == Blocks.BOOKSHELF)
         {
             bookCases.add(pos);
@@ -180,7 +182,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobResearch(citizen);
     }
@@ -196,7 +198,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     {
         super.onColonyTick(colony);
 
-        final List<ILocalResearch> inProgress= colony.getResearchManager().getResearchTree().getResearchInProgress();
+        final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
 
         int i = 1;
         for (final ILocalResearch research : inProgress)
@@ -206,9 +208,14 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
-            if (colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
+            if (colony.getResearchManager()
+                .getResearchTree()
+                .getResearch(research.getBranch(), research.getId())
+                .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), RESEARCH_CONCLUDED + random.nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                    RESEARCH_CONCLUDED + random.nextInt(3),
+                    IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
             }
             this.markDirty();
             i++;
@@ -222,6 +229,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         * 
          * @param c the colonyView.
          * @param l the location of the block.
          */

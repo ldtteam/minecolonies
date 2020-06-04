@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_MODEL;
 
 /**
@@ -24,6 +23,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
 
     /**
      * Constructor for the experience handler.
+     * 
      * @param citizen the citizen owning the handler.
      */
     public CitizenJobHandler(final AbstractEntityCitizen citizen)
@@ -33,10 +33,11 @@ public class CitizenJobHandler implements ICitizenJobHandler
 
     /**
      * Set Model depending on job.
+     * 
      * @param job the new job.
      */
     @Override
-    public void setModelDependingOnJob(@Nullable final IJob job)
+    public void setModelDependingOnJob(@Nullable final IJob<?> job)
     {
         if (citizen.isChild())
         {
@@ -55,12 +56,15 @@ public class CitizenJobHandler implements ICitizenJobHandler
                     case 3:
                         citizen.setModelId(BipedModelType.CITIZEN);
                         break;
+
                     case 4:
                         citizen.setModelId(BipedModelType.NOBLE);
                         break;
+
                     case 5:
                         citizen.setModelId(BipedModelType.ARISTOCRAT);
                         break;
+
                     default:
                         citizen.setModelId(BipedModelType.SETTLER);
                         break;
@@ -86,13 +90,14 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param job the set job.
      */
     @Override
-    public void onJobChanged(@Nullable final IJob job)
+    public void onJobChanged(@Nullable final IJob<?> job)
     {
-        //  Model
+        // Model
         setModelDependingOnJob(job);
 
-        //  AI Tasks
-        for (@NotNull final PrioritizedGoal task : citizen.getTasks().goals)
+        // AI Tasks
+        for (@NotNull
+        final PrioritizedGoal task : citizen.getTasks().goals)
         {
             if (task.getGoal() instanceof AbstractEntityAIInteract)
             {
@@ -119,18 +124,19 @@ public class CitizenJobHandler implements ICitizenJobHandler
      */
     @Override
     @Nullable
-    public <J extends IJob> J getColonyJob(@NotNull final Class<J> type)
+    public <J extends IJob<?>> J getColonyJob(@NotNull final Class<J> type)
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob(type);
     }
 
     /**
      * Gets the job of the entity.
+     * 
      * @return the job or els enull.
      */
     @Override
     @Nullable
-    public IJob getColonyJob()
+    public IJob<?> getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
     }

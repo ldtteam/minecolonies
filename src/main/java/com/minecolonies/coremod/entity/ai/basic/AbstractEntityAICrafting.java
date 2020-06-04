@@ -11,21 +11,21 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for the principal crafting AIs.
  */
-public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingWorker>
+    extends AbstractEntityAIInteract<J, B>
 {
     /**
      * Time the worker delays until the next hit.
@@ -78,15 +78,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     {
         super(job);
         super.registerTargets(
-          /*
-           * Check if tasks should be executed.
-           */
-          new AITarget(IDLE, () -> START_WORKING, 1),
-          new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
-          new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
-          new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
-          new AITarget(CRAFT, this::craft, HIT_DELAY)
-        );
+            /*
+             * Check if tasks should be executed.
+             */
+            new AITarget(IDLE, () -> START_WORKING, 1),
+            new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
+            new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
+            new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
+            new AITarget(CRAFT, this::craft, HIT_DELAY));
         worker.setCanPickUpLoot(true);
     }
 
@@ -140,7 +139,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
         final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1);
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()),
+            1);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
@@ -150,7 +150,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         currentRequest = currentTask;
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
-        final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
+        final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+            stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int doneOpsCount = currentCount / countPerIteration;
         final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount;
@@ -159,8 +160,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for (final ItemStorage inputStorage : input)
         {
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
-                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
-                  < inputStorage.getAmount() * remainingOpsCount)
+                + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+                    itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
+                < inputStorage.getAmount() * remainingOpsCount)
             {
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -204,9 +206,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
-                  < inputStorage.getAmount() * job.getMaxCraftingCount())
+            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack)
+                && new Stack(stack).matches(inputStorage.getItemStack());
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate)
+                + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -247,13 +250,17 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         job.setProgress(job.getProgress() + 1);
 
         worker.setHeldItem(Hand.MAIN_HAND,
-          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+            currentRecipeStorage.getCleanedInput()
+                .get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size()))
+                .getItemStack()
+                .copy());
         worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         currentRequest = job.getCurrentTask();
 
-        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
+        if (currentRequest != null
+            && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
             currentRequest = null;
             incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -286,7 +293,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
                     if (inventoryNeedsDump())
                     {
-                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
+                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0
+                            && currentRequest != null)
                         {
                             job.finishRequest(true);
                             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);

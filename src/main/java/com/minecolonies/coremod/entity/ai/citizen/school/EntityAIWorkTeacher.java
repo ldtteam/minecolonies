@@ -18,15 +18,13 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
+public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, BuildingSchool>
 {
     /**
      * Qty of paper to request.
@@ -66,12 +64,10 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
     public EntityAIWorkTeacher(@NotNull final JobTeacher job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
-          new AITarget(TEACH, this::teach, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 1),
+            new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+            new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(TEACH, this::teach, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
     }
 
@@ -96,8 +92,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
         }
 
         final List<? extends AbstractEntityCitizen> pupils = world.getEntitiesWithinAABB(ModEntities.CITIZEN,
-          getTargetableArea(),
-          cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
+            getTargetableArea(),
+            cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
             pupilToTeach = pupils.get(worker.getRandom().nextInt(pupils.size()));
@@ -148,16 +144,18 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);
         if (slot != -1)
         {
-            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-              worker.getInventoryCitizen(),
-              PAPER,
-              1, pupilToTeach.getInventoryCitizen()
-            );
+            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(),
+                PAPER,
+                1,
+                pupilToTeach.getInventoryCitizen());
         }
 
         double xp = 1.0 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
-        final MultiplierModifierResearchEffect effect =
-          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler()
+            .getColony()
+            .getResearchManager()
+            .getResearchEffects()
+            .getEffect(TEACHING, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             xp *= (1 + effect.getEffect());
@@ -186,14 +184,14 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
     private void requestPaper()
     {
         if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-          q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
+            q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.PAPER, PAPER_TO_REQUEST)));
         }
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
     }

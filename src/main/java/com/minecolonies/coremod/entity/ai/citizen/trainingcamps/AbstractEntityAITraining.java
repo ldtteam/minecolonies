@@ -3,20 +3,21 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for all training AIs.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public abstract class AbstractEntityAITraining<J extends AbstractJob> extends AbstractEntityAIBasic<J>
+public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker>
+    extends AbstractEntityAIBasic<J, B>
 {
     /**
      * Percentual chance for target search being chosen as target job.
@@ -56,15 +57,13 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      */
     public AbstractEntityAITraining(@NotNull final J job)
     {
-        //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
+        // Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING, 1),
-          new AITarget(START_WORKING, () -> DECIDE, 1),
-          new AITarget(DECIDE, this::decide, 1),
-          new AITarget(TRAINING_WANDER, this::wander, 1),
-          new AITarget(GO_TO_TARGET, this::pathToTarget, 1)
-        );
+        super.registerTargets(new AITarget(IDLE, () -> START_WORKING, 1),
+            new AITarget(START_WORKING, () -> DECIDE, 1),
+            new AITarget(DECIDE, this::decide, 1),
+            new AITarget(TRAINING_WANDER, this::wander, 1),
+            new AITarget(GO_TO_TARGET, this::pathToTarget, 1));
         worker.setCanPickUpLoot(true);
     }
 
@@ -90,6 +89,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
 
     /**
      * Method to check if the worker is ready to start.
+     * 
      * @return true if so.
      */
     protected abstract boolean isSetup();

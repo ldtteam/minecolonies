@@ -15,9 +15,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
-
 import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
 
@@ -49,7 +47,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     /**
      * The index of the currently held items (0-8).
      */
-    private int mainItem    = NO_SLOT;
+    private int mainItem = NO_SLOT;
     private int offhandItem = NO_SLOT;
 
     /**
@@ -304,7 +302,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         }
         else
         {
-
             final ItemStack copy = inSlot.copy();
             copy.setCount(amount);
             if (!simulate)
@@ -376,8 +373,10 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     {
         if (citizen != null && citizen.getColony() != null)
         {
-            final AbstractResearchEffect<Double> researchEffect =
-              citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+            final AbstractResearchEffect<Double> researchEffect = citizen.getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(INV_SLOTS, (Class<AbstractResearchEffect<Double>>) (Class<?>) AbstractResearchEffect.class);
             if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
             {
                 resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));

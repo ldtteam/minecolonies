@@ -25,7 +25,7 @@ import java.util.EnumSet;
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob> extends Goal
+public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
 {
     @NotNull
     protected final J job;
@@ -78,7 +78,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
      *
      * @param targets a number of targets that need registration
      */
-    protected final void registerTargets(final TickingTransition... targets)
+    protected final void registerTargets(final TickingTransition<IAIState>... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);
     }

@@ -29,12 +29,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
@@ -42,7 +40,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS
 /**
  * Enchanter AI class.
  */
-public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter>
+public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter, BuildingEnchanter>
 {
     /**
      * Predicate to define an ancient tome which can be enchanted.
@@ -92,18 +90,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     public EntityAIWorkEnchanter(@NotNull final JobEnchanter job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, TICKS_SECOND),
-          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
-          new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
-          new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, TICKS_SECOND),
+            new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
+            new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
+            new AITarget(ENCHANT, this::enchant, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
     }
 
     /**
-     * Decide method of the enchanter. Check if everything is alright to work and then decide between gathering and draining and actually enchanting.
+     * Decide method of the enchanter. Check if everything is alright to work and then decide between gathering and draining and actually
+     * enchanting.
      *
      * @return the next state to go to.
      */
@@ -115,15 +112,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return DECIDE;
         }
 
-        if (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
+        if (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana)
+            < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
-            final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
+            final BuildingEnchanter enchanterBuilding = getOwnBuilding();
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                      .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                        .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
+                            ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }
@@ -173,7 +172,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     }
 
     /**
-     * Actually do the enchanting. Making some great effects for some time and then apply a random enchantment. Reduce own levels depending on the found enchantment.
+     * Actually do the enchanting. Making some great effects for some time and then apply a random enchantment. Reduce own levels depending
+     * on the found enchantment.
      *
      * @return the next state to go to.
      */
@@ -187,23 +187,20 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
         if (progressTicks++ < MAX_ENCHANTMENT_TICKS / getOwnBuilding().getBuildingLevel())
         {
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 2, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new CircleParticleEffectMessage(worker.getPositionVector().add(0, 2, 0), ParticleTypes.ENCHANT, progressTicks),
+                    worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 1.5, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1.5, 0), ParticleTypes.ENCHANT, progressTicks),
+                    worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 1, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.ENCHANT, progressTicks),
+                    worker);
 
             if (worker.getRandom().nextBoolean())
             {
@@ -225,15 +222,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 final int openSlot = InventoryUtils.getFirstOpenSlotFromItemHandler(worker.getInventoryCitizen());
                 if (openSlot == -1)
                 {
-                    //Dump if there is no open slot.
+                    // Dump if there is no open slot.
                     incrementActionsDone();
                     progressTicks = 0;
                     return IDLE;
                 }
 
-                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
+                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
 
-                //Decrement mana.
+                // Decrement mana.
                 data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -tuple.getB());
                 worker.getCitizenExperienceHandler().updateLevel();
                 worker.getInventoryCitizen().setStackInSlot(openSlot, tuple.getA());
@@ -263,11 +262,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return getState();
         }
 
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony()
+            .getBuildingManager()
+            .getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
         if (buildingWorker == null)
         {
             resetDraining();
-            getOwnBuilding(BuildingEnchanter.class).removeWorker(job.getPosToDrainFrom());
+            getOwnBuilding().removeWorker(job.getPosToDrainFrom());
             return IDLE;
         }
 
@@ -308,7 +309,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         if (progressTicks == 0)
         {
             // If worker is too far away wait.
-            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
+            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition())
+                > MIN_DISTANCE_TO_DRAIN)
             {
                 if (!job.incrementWaitingTicks())
                 {
@@ -325,19 +327,17 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final Vec3d start = worker.getPositionVector().add(0, 2, 0);
             final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new StreamParticleEffectMessage(
-                start,
-                goal,
-                ParticleTypes.ENCHANT,
-                progressTicks % MAX_PROGRESS_TICKS,
-                MAX_PROGRESS_TICKS), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new StreamParticleEffectMessage(start,
+                        goal,
+                        ParticleTypes.ENCHANT,
+                        progressTicks % MAX_PROGRESS_TICKS,
+                        MAX_PROGRESS_TICKS),
+                    worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                start,
-                ParticleTypes.HAPPY_VILLAGER,
-                progressTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(new CircleParticleEffectMessage(start, ParticleTypes.HAPPY_VILLAGER, progressTicks), worker);
 
             WorkerUtil.faceBlock(new BlockPos(goal), worker);
 
@@ -383,10 +383,16 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      */
     private void resetDraining()
     {
-        getOwnBuilding(BuildingEnchanter.class).setAsGathered(job.getPosToDrainFrom());
+        getOwnBuilding().setAsGathered(job.getPosToDrainFrom());
         citizenToGatherFrom = null;
         job.setBuildingToDrainFrom(null);
         progressTicks = 0;
         incrementActionsDoneAndDecSaturation();
+    }
+
+    @Override
+    public Class<BuildingEnchanter> getExpectedBuildingClass()
+    {
+        return BuildingEnchanter.class;
     }
 }

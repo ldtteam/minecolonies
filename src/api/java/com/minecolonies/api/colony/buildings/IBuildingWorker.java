@@ -26,7 +26,7 @@ public interface IBuildingWorker extends IBuilding
      * @return the Job.
      */
     @NotNull
-    IJob createJob(ICitizenData citizen);
+    IJob<?> createJob(ICitizenData citizen);
 
     /**
      * Check if a certain ItemStack is in the request of a worker.

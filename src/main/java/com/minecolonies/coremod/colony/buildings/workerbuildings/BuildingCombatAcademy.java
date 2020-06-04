@@ -28,13 +28,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -51,7 +49,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * The Schematic name.
      */
     private static final String DESC = "combatacademy";
-
 
     /**
      * List of shooting targets in the building.
@@ -76,7 +73,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCombatTraining(citizen);
     }
@@ -94,7 +91,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Combat Academy", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Combat Academy", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -111,10 +110,14 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         fightingPos.clear();
 
         final ListNBT targetList = compound.getList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
-        fightingPos.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+        fightingPos.addAll(NBTUtils.streamCompound(targetList)
+            .map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET))
+            .collect(Collectors.toList()));
 
         final ListNBT partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
-        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
+        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
+            .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1),
+                targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
     }
 
     @Override
@@ -122,10 +125,15 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        final ListNBT targetList = fightingPos.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        final ListNBT targetList = fightingPos.stream()
+            .map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_TARGET, target))
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_TARGET, targetList);
 
-        final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
+        final ListNBT partnersTagList = trainingPartners.entrySet()
+            .stream()
+            .map(BuildingCombatAcademy::writePartnerTupleToNBT)
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_PARTNER, partnersTagList);
 
         return compound;
@@ -133,6 +141,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Writes the partner tuple to NBT
+     * 
      * @param tuple the tuple to write to NBT
      * @return a compound with the data.
      */
@@ -201,6 +210,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Get a random trainings partner in the building.
+     * 
      * @return the entityCitizen partner or null.
      * @param citizen the worker to get the partner for.
      */
@@ -210,11 +220,11 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         if (citizenData != null)
         {
             final ICitizenData partner = getAssignedCitizen().stream()
-                                              .filter(data -> data.getId() != citizenData.getId())
-                                              .filter(data -> !trainingPartners.containsKey(data.getId()))
-                                              .filter(data -> !trainingPartners.containsValue(data.getId()))
-                                              .findFirst()
-                                              .orElse(null);
+                .filter(data -> data.getId() != citizenData.getId())
+                .filter(data -> !trainingPartners.containsKey(data.getId()))
+                .filter(data -> !trainingPartners.containsValue(data.getId()))
+                .findFirst()
+                .orElse(null);
             if (partner != null)
             {
                 trainingPartners.put(citizenData.getId(), partner.getId());
@@ -238,6 +248,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Get the citizen of the combat partner or null if not existing or available.
+     * 
      * @param citizen the citizen.
      * @return the citizen or null.
      */
@@ -260,7 +271,11 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
                 return null;
             }
 
-            final ICitizenData citizenData = getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
+            final ICitizenData citizenData = getAssignedCitizen().stream()
+                .filter(cit -> cit.getId() != data.getId())
+                .filter(cit -> cit.getId() == citizenId)
+                .findFirst()
+                .orElse(null);
             if (citizenData != null)
             {
                 return citizenData.getCitizenEntity().orElse(null);
@@ -271,6 +286,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Reset the combat partner for a worker.
+     * 
      * @param worker the worker to reset it for.
      */
     public void resetPartner(final AbstractEntityCitizen worker)

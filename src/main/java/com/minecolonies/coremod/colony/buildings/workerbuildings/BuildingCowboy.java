@@ -28,7 +28,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String COWBOY          = "cowboy";
+    private static final String COWBOY = "cowboy";
 
     /**
      * NBT Tag for milkCows boolean.
@@ -47,6 +47,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     * 
      * @param c the colony.
      * @param l the location.
      */
@@ -97,7 +98,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCowboy(citizen);
     }
@@ -165,6 +166,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         * 
          * @param c the colonyView.
          * @param l the location of the block.
          */

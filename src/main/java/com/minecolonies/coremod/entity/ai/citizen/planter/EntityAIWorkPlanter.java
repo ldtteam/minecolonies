@@ -16,21 +16,19 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
  * Planter AI class.
  */
-public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation>
 {
     /**
      * Return to chest after this amount of stacks.
      */
-    private static final int    MAX_BLOCKS_MINED    = 64;
+    private static final int MAX_BLOCKS_MINED = 64;
 
     /**
      * The quantity to request.
@@ -47,18 +45,16 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
      *
      * @param job a planter job to use.
      */
-    public EntityAIWorkPlanter(@NotNull final J job)
+    public EntityAIWorkPlanter(@NotNull final JobPlanter job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(PLANTATION_FARM, this::farm, TICKS_20),
-          new AITarget(PLANTATION_PLANT, this::plant, TICKS_20)
-        );
+        super.registerTargets(new AITarget(PLANTATION_FARM, this::farm, TICKS_20), new AITarget(PLANTATION_PLANT, this::plant, TICKS_20));
         worker.setCanPickUpLoot(true);
     }
 
     /**
      * Plant something for the current state.
+     * 
      * @return the next state to go to.
      */
     private IAIState plant()
@@ -73,8 +69,9 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(getOwnBuilding(BuildingPlantation.class).getCurrentPhase());
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
+        final ItemStack currentStack = new ItemStack(getOwnBuilding().getCurrentPhase());
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
+            itemStack -> itemStack.isItemEqual(currentStack));
         if (plantInInv <= 0)
         {
             return START_WORKING;
@@ -90,6 +87,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
 
     /**
      * Farm some of the plants.
+     * 
      * @return next state to go to.
      */
     private IAIState farm()
@@ -115,7 +113,8 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return getState();
         }
 
-        for (final ItemEntity item : world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(worker.getPosition()).expand(4.0F, 1.0F, 4.0F).expand(-4.0F, -1.0F, -4.0F)))
+        for (final ItemEntity item : world.getEntitiesWithinAABB(ItemEntity.class,
+            new AxisAlignedBB(worker.getPosition()).expand(4.0F, 1.0F, 4.0F).expand(-4.0F, -1.0F, -4.0F)))
         {
             if (item != null)
             {
@@ -133,12 +132,12 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
     }
 
-    //todo check on healer
+    // todo check on healer
     @Override
     protected IAIState decide()
     {
@@ -148,7 +147,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return nextState;
         }
 
-        final BuildingPlantation plantation = getOwnBuilding(BuildingPlantation.class);
+        final BuildingPlantation plantation = getOwnBuilding();
 
         final List<BlockPos> list = plantation.getPosForPhase(world);
         for (final BlockPos pos : list)
@@ -162,8 +161,10 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
 
         final Item current = plantation.getCurrentPhase();
 
-        final int plantInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
+        final int plantInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+            itemStack -> itemStack.isItemEqual(new ItemStack(current)));
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
+            itemStack -> itemStack.isItemEqual(new ItemStack(current)));
 
         if (plantInBuilding + plantInInv <= 0)
         {
@@ -173,7 +174,8 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
 
         if (plantInInv == 0 && plantInBuilding > 0)
         {
-            needsCurrently = new Tuple<>(itemStack -> itemStack.isItemEqual(new ItemStack(current)), Math.min(plantInBuilding, PLANT_TO_REQUEST));
+            needsCurrently = new Tuple<>(itemStack -> itemStack.isItemEqual(new ItemStack(current)),
+                Math.min(plantInBuilding, PLANT_TO_REQUEST));
             return GATHERING_REQUIRED_MATERIALS;
         }
 
@@ -191,12 +193,13 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
 
     /**
      * Async request for paper to the colony.
+     * 
      * @param current the current plantable.
      */
     private void requestPlantable(final Item current)
     {
         if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-          q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == current))
+            q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == current))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(current, PLANT_TO_REQUEST)));
         }
@@ -204,13 +207,14 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
 
     /**
      * Check if the plant at pos it at least three high.
+     * 
      * @param pos the pos to check
      * @return true if so.
      */
     private boolean isAtLeastThreeHigh(final BlockPos pos)
     {
         return !(world.getBlockState(pos.up(1)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
+            && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
+            && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
     }
 }

@@ -23,15 +23,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
 
-public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
+public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, BuildingSchool>
 {
     /**
      * How often the kid studies for one recess.
@@ -71,18 +69,17 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     public EntityAIWorkPupil(@NotNull final JobPupil job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
-          new AITarget(STUDY, this::study, TICKS_SECOND),
-          new AITarget(RECESS, this::recess, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 1),
+            new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+            new AITarget(DECIDE, this::decide, TICKS_SECOND),
+            new AITarget(STUDY, this::study, TICKS_SECOND),
+            new AITarget(RECESS, this::recess, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
     }
 
     /**
      * Decide between recess and studying.
+     * 
      * @return next state to go to.
      */
     private IAIState decide()
@@ -97,7 +94,9 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         final BlockPos pos = school.getRandomPlaceToSit();
         if (pos == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(PUPIL_NO_CARPET), ChatPriority.BLOCKING));
+            worker.getCitizenData()
+                .triggerInteraction(
+                    new StandardInteractionResponseHandler(new TranslationTextComponent(PUPIL_NO_CARPET), ChatPriority.BLOCKING));
             return DECIDE;
         }
 
@@ -107,6 +106,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
 
     /**
      * Run around a bit until it's time for studying again.
+     * 
      * @return next state to go to.
      */
     private IAIState recess()
@@ -126,6 +126,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
 
     /**
      * Sit down a bit and study. If has paper consume it.
+     * 
      * @return next state to go to.
      */
     private IAIState study()
@@ -140,7 +141,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
             return getState();
         }
 
-        if (!world.getEntitiesWithinAABB(EntityCitizen.class, new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
+        if (!world
+            .getEntitiesWithinAABB(EntityCitizen.class,
+                new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ()))
+            .isEmpty())
         {
             studyPos = null;
             return DECIDE;
@@ -150,10 +154,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         {
             // Sit for 60-120 seconds.
             final int jobModifier = 120;
-            maxSittingTicks = worker.getRandom().nextInt(jobModifier/2) + jobModifier/2;
+            maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(studyPos.getX(), studyPos.getY() -0.6, studyPos.getZ());
+            entity.setPosition(studyPos.getX(), studyPos.getY() - 0.6, studyPos.getZ());
             entity.setMaxLifeTime(maxSittingTicks * 20);
             world.addEntity(entity);
             worker.startRiding(entity);
@@ -164,11 +168,17 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
 
         if (slot != -1)
         {
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks),
+                    worker);
         }
         else
         {
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(
+                    new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks),
+                    worker);
         }
 
         sittingTicks++;
@@ -187,7 +197,11 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
             double bonus = 25.0;
-            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler()
+                .getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(TEACHING, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 bonus *= (1 + effect.getEffect());
@@ -204,7 +218,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
     }

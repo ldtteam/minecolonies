@@ -13,17 +13,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The Entity AI study class.
  */
-public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
+public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary>
 {
     /**
      * Delay for each subject study.
@@ -44,16 +42,14 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     public EntityAIStudy(@NotNull final JobStudent job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STANDARD_DELAY)
-        );
+        super.registerTargets(new AITarget(IDLE, START_WORKING, 1),
+            new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+            new AITarget(STUDY, this::study, STANDARD_DELAY));
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingLibrary> getExpectedBuildingClass()
     {
         return BuildingLibrary.class;
     }
@@ -70,7 +66,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding(BuildingLibrary.class).getRandomBookShelf();
+            studyPos = getOwnBuilding().getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))
@@ -83,10 +79,10 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         final List<StudyItem> currentItems = new ArrayList<>();
         worker.decreaseSaturationForAction();
 
-        for (final StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+        for (final StudyItem curItem : getOwnBuilding().getStudyItems())
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
-              itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
 
             if (slot != -1)
             {
@@ -102,7 +98,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50, data);
             worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+            for (final StudyItem studyItem : getOwnBuilding().getStudyItems())
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem());
                 if (bSlot > -1)
@@ -116,7 +112,8 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
                 }
                 else
                 {
-                    checkIfRequestForItemExistOrCreateAsynch(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
+                    checkIfRequestForItemExistOrCreateAsynch(
+                        new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
                 }
             }
         }

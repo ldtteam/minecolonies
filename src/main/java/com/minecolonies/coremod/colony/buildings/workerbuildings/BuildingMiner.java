@@ -30,10 +30,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -140,9 +138,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         keepX.put(stack -> stack.getItem().isIn(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> stack.getItem().isIn(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
         keepX.put(stackDirt::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
     }
 
     /**
@@ -191,7 +192,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobMiner(citizen);
     }
@@ -211,7 +212,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         {
             activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
-        else if(compound.keySet().contains(TAG_OLD))
+        else if (compound.keySet().contains(TAG_OLD))
         {
             oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
         }
@@ -270,10 +271,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             BlockPosUtil.write(compound, TAG_LLOCATION, ladderLocation);
         }
 
-        @NotNull final ListNBT levelTagList = new ListNBT();
-        for (@NotNull final Level level : levels)
+        @NotNull
+        final ListNBT levelTagList = new ListNBT();
+        for (@NotNull
+        final Level level : levels)
         {
-            @NotNull final CompoundNBT levelCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT levelCompound = new CompoundNBT();
             level.write(levelCompound);
             levelTagList.add(levelCompound);
         }
@@ -319,7 +323,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull final Level level : levels)
+        for (@NotNull
+        final Level level : levels)
         {
             buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
@@ -363,6 +368,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Find given level in the levels array.
+     * 
      * @param level the level.
      * @return position in the levels array.
      */
@@ -386,6 +392,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     /**
      * Returns the depth limit.
      * Limitted by building level.
+     * 
      * <pre>
      * - Level 1: 50
      * - Level 2: 30
@@ -541,6 +548,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Resets the starting level of the shaft to 0.
+     * 
      * @param level the level o set it to.
      */
     public void setStartingLevelShaft(final int level)
@@ -550,6 +558,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter to check if the shaft has been cleared.
+     * 
      * @return true if so.
      */
     public boolean hasClearedShaft()
@@ -559,6 +568,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Setter if the shaft has been cleared.
+     * 
      * @param clearedShaft true if so.
      */
     public void setClearedShaft(final boolean clearedShaft)
@@ -568,16 +578,19 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter for the active node.
+     * 
      * @return the int id of the active node.
      */
     @NotNull
     public Node getActiveNode()
     {
-        return activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        return activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode)
+            : activeNode;
     }
 
     /**
      * Setter for the active node.
+     * 
      * @param activeNode the int id of the active node.
      */
     public void setActiveNode(final Node activeNode)
@@ -587,6 +600,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter for the old node.
+     * 
      * @return the int id of the old node.
      */
     public Node getOldNode()
@@ -596,6 +610,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Setter for the old node.
+     * 
      * @param oldNode the int id of the old node.
      */
     public void setOldNode(final Node oldNode)
@@ -637,7 +652,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         /**
          * The level the miner currently works on.
          */
-        public int   current;
+        public int current;
 
         /**
          * Public constructor of the view, creates an instance of it.

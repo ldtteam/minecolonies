@@ -5,16 +5,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.enchanter.EntityAIWorkEnchanter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TO_DRAIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAITING_TICKS;
 
-public class JobEnchanter extends AbstractJob
+public class JobEnchanter extends AbstractJob<EntityAIWorkEnchanter, JobEnchanter>
 {
     /**
      * Max waiting ticks.
@@ -66,7 +64,7 @@ public class JobEnchanter extends AbstractJob
     }
 
     @Override
-    public AbstractAISkeleton<? extends AbstractJob> generateAI()
+    public EntityAIWorkEnchanter generateAI()
     {
         return new EntityAIWorkEnchanter(this);
     }
@@ -96,6 +94,7 @@ public class JobEnchanter extends AbstractJob
 
     /**
      * Set the building the worker is currently draining.
+     * 
      * @param pos the pos of the building to drain.
      */
     public void setBuildingToDrainFrom(final BlockPos pos)
@@ -105,6 +104,7 @@ public class JobEnchanter extends AbstractJob
 
     /**
      * Get the current set pos to drain from.
+     * 
      * @return the pos.
      */
     public BlockPos getPosToDrainFrom()
@@ -114,6 +114,7 @@ public class JobEnchanter extends AbstractJob
 
     /**
      * Increment the waiting ticks.
+     * 
      * @return false if limit reached.
      */
     public boolean incrementWaitingTicks()

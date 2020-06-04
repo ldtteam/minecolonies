@@ -28,7 +28,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +92,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobComposter(citizen);
     }
@@ -160,10 +159,13 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT compostBinTagList = new ListNBT();
-        for (@NotNull final BlockPos entry : barrels)
+        @NotNull
+        final ListNBT compostBinTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos entry : barrels)
         {
-            @NotNull final CompoundNBT compostBinCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT compostBinCompound = new CompoundNBT();
             compostBinCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             compostBinTagList.add(compostBinCompound);
         }
@@ -188,6 +190,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     /**
      * If the composter should retrieve dirt and not compost from the compost bin.
+     * 
      * @return true if so.
      */
     public boolean shouldRetrieveDirtFromCompostBin()
@@ -197,6 +200,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     /**
      * Set if the composter should retrieve dirt and not compost from the compost bin.
+     * 
      * @param shouldRetrieveDirt whether or not to retrieve dirt..
      */
     public void setShouldRetrieveDirtFromCompostBin(final boolean shouldRetrieveDirt)
@@ -208,7 +212,9 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Composter", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Composter", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

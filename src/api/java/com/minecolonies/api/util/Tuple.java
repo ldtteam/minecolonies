@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Our own tuple implementation with hashcode and equals.
+ * 
  * @param <A> The first obj.
  * @param <B> The second obj.
  */
@@ -19,12 +20,14 @@ public class Tuple<A, B>
     }
 
     @Nullable
-    public A getA() {
+    public A getA()
+    {
         return this.a;
     }
 
     @Nullable
-    public B getB() {
+    public B getB()
+    {
         return this.b;
     }
 
@@ -39,7 +42,7 @@ public class Tuple<A, B>
     {
         if (o instanceof Tuple)
         {
-            return ((Tuple) o).getA().equals(this.getA()) && ((Tuple) o).getB().equals(this.getB());
+            return ((Tuple<?, ?>) o).getA().equals(this.getA()) && ((Tuple<?, ?>) o).getB().equals(this.getB());
         }
         return false;
     }

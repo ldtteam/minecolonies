@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used for variables regarding his job.
  */
-public class JobMiner extends AbstractJobStructure
+public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMiner>
 {
     /**
      * Creates a new instance of the miner job.
@@ -50,7 +49,7 @@ public class JobMiner extends AbstractJobStructure
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobMiner> generateAI()
+    public EntityAIStructureMiner generateAI()
     {
         return new EntityAIStructureMiner(this);
     }

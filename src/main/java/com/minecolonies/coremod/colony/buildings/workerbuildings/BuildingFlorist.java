@@ -88,7 +88,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobFlorist(citizen);
     }

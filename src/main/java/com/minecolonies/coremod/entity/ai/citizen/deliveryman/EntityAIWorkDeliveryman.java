@@ -38,10 +38,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -51,7 +49,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 /**
  * Delivers item at needs.
  */
-public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman, BuildingDeliveryman>
 {
     /**
      * Min distance the worker should have to the warehouse to make any decisions.
@@ -97,22 +95,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         super(deliveryman);
         super.registerTargets(
-          /*
-           * Check if tasks should be executed.
-           */
-          new AITarget(IDLE, () -> START_WORKING, 1),
-          new AITarget(START_WORKING, this::checkIfExecute, this::decide, DECISION_DELAY),
-          new AITarget(PREPARE_DELIVERY, this::prepareDelivery, STANDARD_DELAY),
-          new AITarget(DELIVERY, this::deliver, STANDARD_DELAY),
-          new AITarget(PICKUP, this::pickup, PICKUP_DELAY),
-          new AITarget(DUMPING, this::dump, TICKS_SECOND)
+            /*
+             * Check if tasks should be executed.
+             */
+            new AITarget(IDLE, () -> START_WORKING, 1),
+            new AITarget(START_WORKING, this::checkIfExecute, this::decide, DECISION_DELAY),
+            new AITarget(PREPARE_DELIVERY, this::prepareDelivery, STANDARD_DELAY),
+            new AITarget(DELIVERY, this::deliver, STANDARD_DELAY),
+            new AITarget(PICKUP, this::pickup, PICKUP_DELAY),
+            new AITarget(DUMPING, this::dump, TICKS_SECOND)
 
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingDeliveryman> getExpectedBuildingClass()
     {
         return BuildingDeliveryman.class;
     }
@@ -212,8 +210,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
-        if (amount <= 0
-              || (building instanceof BuildingCook && CAN_EAT.test(stack)))
+        if (amount <= 0 || (building instanceof BuildingCook && CAN_EAT.test(stack)))
         {
             return false;
         }
@@ -248,7 +245,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
+        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen())
+            >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
     }
 
     /**
@@ -326,7 +324,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
         if (!targetBuildingLocation.isReachableFromLocation(worker.getLocation()))
         {
-            Log.getLogger().info(worker.getCitizenColonyHandler().getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
+            Log.getLogger()
+                .info(worker.getCitizenColonyHandler().getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
             return START_WORKING;
         }
 
@@ -365,14 +364,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (targetBuilding instanceof AbstractBuildingWorker)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, ((IBuildingWorker) targetBuilding)::isItemStackInRequest);
+                    targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                    stack,
+                    ((IBuildingWorker) targetBuilding)::isItemStackInRequest);
             }
             else
             {
-                // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
+                // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items
+                // replaced.
                 // Therefore, the keep-predicate always returns true.
-                insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
+                    targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                     stack,
                     itemStack -> true);
             }
@@ -390,24 +392,26 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     if (targetBuilding instanceof AbstractBuildingWorker)
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
-                            targetBuilding.getMainCitizen().getName()),
-                            ChatPriority.IMPORTANT,
-                            new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
-                            targetBuilding.getID()));
+                            .triggerInteraction(new PosBasedInteractionResponseHandler(
+                                new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
+                                    targetBuilding.getMainCitizen().getName()),
+                                ChatPriority.IMPORTANT,
+                                new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                                targetBuilding.getID()));
                     }
                     else
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                            new StringTextComponent(" :" + targetBuilding.getSchematicName())),
-                            ChatPriority.IMPORTANT,
-                            new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
-                            targetBuildingLocation.getInDimensionLocation()));
+                            .triggerInteraction(new PosBasedInteractionResponseHandler(
+                                new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                                    new StringTextComponent(" :" + targetBuilding.getSchematicName())),
+                                ChatPriority.IMPORTANT,
+                                new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                                targetBuildingLocation.getInDimensionLocation()));
                     }
                 }
 
-                //Insert the result back into the inventory so we do not lose it.
+                // Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
         }
@@ -450,7 +454,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final Delivery delivery = (Delivery) currentTask.getRequest();
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
+            itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
         {
             return DELIVERY;
         }
@@ -504,16 +508,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public boolean gatherIfInTileEntity(final TileEntity entity, final ItemStack is)
     {
-        return is != null
-                 && InventoryFunctions
-                      .matchFirstInProviderWithAction(
-                        entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
-                          index,
-                          is.getCount(),
-                          worker.getInventoryCitizen())
-                      );
+        return is != null && InventoryFunctions.matchFirstInProviderWithAction(entity,
+            stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+            (provider, index) -> InventoryUtils
+                .transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount(), worker.getInventoryCitizen()));
     }
 
     /**
@@ -581,8 +579,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (worker.getCitizenData() != null)
         {
             worker.getCitizenData()
-              .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
-                ChatPriority.BLOCKING));
+                .triggerInteraction(new StandardInteractionResponseHandler(
+                    new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+                    ChatPriority.BLOCKING));
         }
         return false;
     }

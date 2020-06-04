@@ -9,6 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
@@ -25,16 +26,14 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
+public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
 {
     /**
      * Update interval for the guards attack ai
@@ -49,10 +48,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     public EntityAIKnight(@NotNull final JobKnight job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect, GUARD_ATTACK_INTERVAL),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical, GUARD_ATTACK_INTERVAL)
-        );
+        super.registerTargets(new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect, GUARD_ATTACK_INTERVAL),
+            new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical, GUARD_ATTACK_INTERVAL));
         toolsNeeded.add(ToolType.SWORD);
 
         for (final List<GuardGear> list : itemsNeeded)
@@ -76,13 +73,15 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     @Override
     public boolean hasMainWeapon()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel()) != -1;
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel())
+            != -1;
     }
 
     @Override
     public void wearWeapon()
     {
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
+        final int weaponSlot = InventoryUtils
+            .getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
 
         if (weaponSlot != -1)
         {
@@ -119,8 +118,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (target != null && target.isAlive())
         {
-            final UnlockAbilityResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class);
+            final UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
+                .getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class);
             if (effect != null && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
@@ -168,7 +170,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
 
             worker.swingArm(Hand.MAIN_HAND);
-            worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+            worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                (float) BASIC_VOLUME,
+                (float) SoundUtils.getRandomPitch(worker.getRandom()));
 
             double damageToBeDealt = getAttackDamage();
 
@@ -194,10 +198,10 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             if (target instanceof MobEntity)
             {
                 UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
-                                                       .getColony()
-                                                       .getResearchManager()
-                                                       .getResearchEffects()
-                                                       .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class);
+                    .getColony()
+                    .getResearchManager()
+                    .getResearchEffects()
+                    .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class);
                 if (effect != null && effect.getEffect())
                 {
                     ((MobEntity) target).setAttackTarget(worker);
@@ -234,8 +238,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             addDmg += getLevelDamage();
 
-            final AdditionModifierResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MELEE_DAMAGE, AdditionModifierResearchEffect.class);
+            final AdditionModifierResearchEffect effect = worker.getCitizenColonyHandler()
+                .getColony()
+                .getResearchManager()
+                .getResearchEffects()
+                .getEffect(MELEE_DAMAGE, AdditionModifierResearchEffect.class);
             if (effect != null)
             {
                 addDmg += effect.getEffect();
@@ -250,5 +257,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     public void moveInAttackPosition()
     {
         worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+    }
+
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
     }
 }

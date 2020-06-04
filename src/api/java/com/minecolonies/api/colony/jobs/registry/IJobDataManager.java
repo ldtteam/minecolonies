@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IJobDataManager
 {
-
     static IJobDataManager getInstance()
     {
         return IMinecoloniesAPI.getInstance().getJobDataManager();
@@ -23,5 +22,5 @@ public interface IJobDataManager
      * @return New Job created from the data, or null.
      */
     @Nullable
-    IJob createFrom(ICitizenData citizen, @NotNull CompoundNBT compound);
+    IJob<?> createFrom(ICitizenData citizen, @NotNull CompoundNBT compound);
 }

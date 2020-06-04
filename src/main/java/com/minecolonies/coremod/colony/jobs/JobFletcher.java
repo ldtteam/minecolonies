@@ -3,14 +3,13 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fletcher.EntityAIWorkFletcher;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Fletcher job.
  */
-public class JobFletcher extends AbstractJobCrafter
+public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFletcher>
 {
     /**
      * Instantiates the job for the Fletcher.
@@ -42,7 +41,7 @@ public class JobFletcher extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobFletcher> generateAI()
+    public EntityAIWorkFletcher generateAI()
     {
         return new EntityAIWorkFletcher(this);
     }

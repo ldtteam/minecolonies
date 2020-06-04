@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
 import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
 
@@ -18,7 +17,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
  *
  * @author Asherslab
  */
-public class JobKnight extends AbstractJobGuard
+public class JobKnight extends AbstractJobGuard<JobKnight>
 {
     /**
      * Desc of knight job.
@@ -41,7 +40,7 @@ public class JobKnight extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    public AbstractEntityAIGuard generateGuardAI()
+    public EntityAIKnight generateGuardAI()
     {
         return new EntityAIKnight(this);
     }
@@ -58,7 +57,9 @@ public class JobKnight extends AbstractJobGuard
             final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
 
             // +1 half Heart every 3 level
-            final AttributeModifier healthModLevel = new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 3 + KNIGHT_HP_BONUS, AttributeModifier.Operation.ADDITION);
+            final AttributeModifier healthModLevel = new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                getCitizen().getJobModifier() / 3 + KNIGHT_HP_BONUS,
+                AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

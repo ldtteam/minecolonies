@@ -44,9 +44,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_CONFIG_NAME;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
@@ -60,17 +58,17 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TASK           = "TASK";
-    private static final String NBT_JOB            = "guardType";
-    private static final String NBT_ASSIGN         = "assign";
-    private static final String NBT_RETRIEVE       = "retrieve";
-    private static final String NBT_PATROL         = "patrol";
+    private static final String NBT_TASK = "TASK";
+    private static final String NBT_JOB = "guardType";
+    private static final String NBT_ASSIGN = "assign";
+    private static final String NBT_RETRIEVE = "retrieve";
+    private static final String NBT_PATROL = "patrol";
     private static final String NBT_TIGHT_GROUPING = "tightGrouping";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
-    private static final String NBT_TARGET         = "target";
-    private static final String NBT_GUARD          = "guard";
-    private static final String NBT_MOBS           = "mobs";
-    private static final String NBT_MOB_VIEW       = "mobview";
+    private static final String NBT_TARGET = "target";
+    private static final String NBT_GUARD = "guard";
+    private static final String NBT_MOBS = "mobs";
+    private static final String NBT_MOB_VIEW = "mobview";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -89,8 +87,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
-    private final AttributeModifier healthModConfig =
-      new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
+        MineColonies.getConfig().getCommon().guardHealthMult.get() - 1.0,
+        AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     /**
      * Vision range per building level.
@@ -162,21 +161,30 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()),
+            new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.CHEST, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.HEAD, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.LEGS, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
+        keepX
+            .put(
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ArmorItem
+                    && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.CHEST,
+                new Tuple<>(1, true));
+        keepX
+            .put(
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ArmorItem
+                    && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.HEAD,
+                new Tuple<>(1, true));
+        keepX
+            .put(
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ArmorItem
+                    && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.LEGS,
+                new Tuple<>(1, true));
+        keepX
+            .put(
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ArmorItem
+                    && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET,
+                new Tuple<>(1, true));
 
         calculateMobs();
     }
@@ -199,7 +207,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 if (optCitizen.isPresent())
                 {
-                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
+                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME,
+                        getBonusHealth(),
+                        AttributeModifier.Operation.ADDITION);
                     AttributeModifierUtils.addHealthModifier(optCitizen.get(), healthModBuildingHP);
                 }
             }
@@ -218,7 +228,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (optCitizen.isPresent())
             {
                 final AbstractEntityCitizen citizenEntity = optCitizen.get();
-                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
+                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME,
+                    getBonusHealth(),
+                    AttributeModifier.Operation.ADDITION);
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
                 AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
             }
@@ -296,20 +308,26 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         compound.putBoolean(NBT_PATROL, patrolManually);
         compound.putBoolean(NBT_TIGHT_GROUPING, tightGrouping);
 
-        @NotNull final ListNBT wayPointTagList = new ListNBT();
-        for (@NotNull final BlockPos pos : patrolTargets)
+        @NotNull
+        final ListNBT wayPointTagList = new ListNBT();
+        for (@NotNull
+        final BlockPos pos : patrolTargets)
         {
-            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, NBT_TARGET, pos);
 
             wayPointTagList.add(wayPointCompound);
         }
         compound.put(NBT_PATROL_TARGETS, wayPointTagList);
 
-        @NotNull final ListNBT mobsTagList = new ListNBT();
-        for (@NotNull final MobEntryView entry : mobsToAttack.values())
+        @NotNull
+        final ListNBT mobsTagList = new ListNBT();
+        for (@NotNull
+        final MobEntryView entry : mobsToAttack.values())
         {
-            @NotNull final CompoundNBT mobCompound = new CompoundNBT();
+            @NotNull
+            final CompoundNBT mobCompound = new CompoundNBT();
             MobEntryView.write(mobCompound, NBT_MOB_VIEW, entry);
             mobsTagList.add(mobCompound);
         }
@@ -479,7 +497,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 if (curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
                 {
-                    ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                    ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI())
+                        .setNextPatrolTarget(lastPatrolPoint);
                 }
             }
         }
@@ -559,7 +578,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      */
     public static class View extends AbstractBuildingWorker.View
     {
-
         /**
          * Assign the guardType manually, knight, guard, or *Other* (Future usage)
          */
@@ -650,7 +668,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             retrieveOnLowHealth = buf.readBoolean();
             patrolManually = buf.readBoolean();
             tightGrouping = buf.readBoolean();
-
 
             task = GuardTask.values()[buf.readInt()];
             final ResourceLocation jobId = new ResourceLocation(buf.readString(32767));
@@ -823,7 +840,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return getGuardType().getGuardJobProducer().apply(citizen);
     }
@@ -1005,24 +1022,31 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (this.getColony().getWorld() != null)
         {
             this.getColony()
-              .getWorld()
-              .getScoreboard()
-              .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
-            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
+                .getWorld()
+                .getScoreboard()
+                .addPlayerToTeam(player.getScoreboardName(),
+                    new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
+            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));// no
+                                                                                                                                     // reason
+                                                                                                                                     // for
+                                                                                                                                     // particales
 
             if (followPlayer != null)
             {
                 try
                 {
                     this.getColony()
-                      .getWorld()
-                      .getScoreboard()
-                      .removePlayerFromTeam(followPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                        .getWorld()
+                        .getScoreboard()
+                        .removePlayerFromTeam(followPlayer.getScoreboardName(),
+                            this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
                     player.removePotionEffect(GLOW_EFFECT);
                 }
                 catch (final Exception e)
                 {
-                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                    Log.getLogger()
+                        .warn("Unable to remove player " + followPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME
+                            + getColony().getID());
                 }
             }
         }
@@ -1115,12 +1139,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
 
-        getColony().getPackageManager().getCloseSubscribers().forEach(player -> Network
-                                                                                  .getNetwork()
-                                                                                  .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
-                                                                                      getID(),
-                                                                                      new ArrayList<>(mobsToAttack.values())),
-                                                                                    player));
+        getColony().getPackageManager()
+            .getCloseSubscribers()
+            .forEach(player -> Network.getNetwork()
+                .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(), getID(), new ArrayList<>(mobsToAttack.values())), player));
     }
 
     @Override

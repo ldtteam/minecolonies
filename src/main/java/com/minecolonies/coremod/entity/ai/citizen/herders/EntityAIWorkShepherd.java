@@ -15,17 +15,15 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
  */
-public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, SheepEntity>
+public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd, SheepEntity>
 {
     /**
      * Experience given per sheep sheared.
@@ -40,7 +38,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     /**
      * Constants used for sheep dying calculations.
      */
-    private static final int HUNDRED_PERCENT_CHANCE      = 100;
+    private static final int HUNDRED_PERCENT_CHANCE = 100;
     private static final int NUMBER_OF_DYE_POSSIBILITIES = 15;
 
     /**
@@ -52,9 +50,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     public EntityAIWorkShepherd(@NotNull final JobShepherd job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
-        );
+        super.registerTargets(new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND));
     }
 
     @NotNull
@@ -67,7 +63,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingShepherd> getExpectedBuildingClass()
     {
         return BuildingShepherd.class;
     }
@@ -89,11 +85,13 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
     @Override
     public IAIState decideWhatToDo()
     {
-
         final IAIState result = super.decideWhatToDo();
 
         final List<SheepEntity> animals = new ArrayList<>(searchForAnimals());
-        final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
+        final SheepEntity shearingSheep = animals.stream()
+            .filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild())
+            .findFirst()
+            .orElse(null);
 
         if (result.equals(START_WORKING) && shearingSheep != null)
         {
@@ -116,7 +114,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
      */
     private IAIState shearSheep()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
+        worker.getCitizenStatusHandler()
+            .setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
         final List<SheepEntity> sheeps = searchForAnimals();
 
@@ -140,9 +139,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
             }
             worker.swingArm(Hand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
-              worker.getEntityWorld(),
-              worker.getPosition(),
-              net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand()));
+                worker.getEntityWorld(),
+                worker.getPosition(),
+                net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand()));
 
             dyeSheepChance(sheep);
 
@@ -168,7 +167,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Sh
      */
     private void dyeSheepChance(final SheepEntity sheep)
     {
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && ((BuildingShepherd) worker.getCitizenColonyHandler().getWorkBuilding()).isDyeSheeps())
+        if (worker.getCitizenColonyHandler().getWorkBuilding() != null
+            && ((BuildingShepherd) worker.getCitizenColonyHandler().getWorkBuilding()).isDyeSheeps())
         {
             final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
 

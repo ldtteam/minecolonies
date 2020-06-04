@@ -33,13 +33,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -96,7 +94,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobHealer(citizen);
     }
@@ -167,8 +165,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         final CompoundNBT compound = super.serializeNBT();
         if (!bedMap.isEmpty())
         {
-            @NotNull final ListNBT bedTagList = new ListNBT();
-            for (@NotNull final Map.Entry<BlockPos, Integer> entry : bedMap.entrySet())
+            @NotNull
+            final ListNBT bedTagList = new ListNBT();
+            for (@NotNull
+            final Map.Entry<BlockPos, Integer> entry : bedMap.entrySet())
             {
                 final CompoundNBT bedCompound = new CompoundNBT();
                 BlockPosUtil.write(bedCompound, NbtTagConstants.TAG_POS, entry.getKey());
@@ -180,8 +180,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
         if (!patients.isEmpty())
         {
-            @NotNull final ListNBT patientTagList = new ListNBT();
-            for (@NotNull final Patient patient: patients.values())
+            @NotNull
+            final ListNBT patientTagList = new ListNBT();
+            for (@NotNull
+            final Patient patient : patients.values())
             {
                 final CompoundNBT patientCompound = new CompoundNBT();
                 patient.write(patientCompound);
@@ -215,6 +217,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Get the list of beds.
+     * 
      * @return immutable copy
      */
     @NotNull
@@ -225,6 +228,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Get the list of patient files.
+     * 
      * @return immutable copy.
      */
     public List<Patient> getPatients()
@@ -234,6 +238,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Remove a patient from the list.
+     * 
      * @param patient the patient to remove.
      */
     public void removePatientFile(final Patient patient)
@@ -251,6 +256,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Check if any patient requires this.
+     * 
      * @param stack the stack to test.
      * @return true if so.
      */
@@ -280,6 +286,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Add a new patient to the list.
+     * 
      * @param citizenId patient to add.
      */
     public void checkOrCreatePatientFile(final int citizenId)
@@ -292,7 +299,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Register a citizen.
-     * @param bedPos the pos.
+     * 
+     * @param bedPos    the pos.
      * @param citizenId the citizen id.
      */
     public void registerPatient(final BlockPos bedPos, final int citizenId)
@@ -303,7 +311,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Helper method to set bed occupation.
-     * @param bedPos the position of the bed.
+     * 
+     * @param bedPos   the position of the bed.
      * @param occupied if occupied.
      */
     private void setBedOccupation(final BlockPos bedPos, final boolean occupied)
@@ -343,7 +352,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                         if (state.get(BedBlock.OCCUPIED))
                         {
                             if (!citizen.isAsleep() || !citizen.getCitizenEntity().isPresent()
-                                  || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
+                                || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
                             {
                                 setBedOccupation(entry.getKey(), false);
                                 bedMap.put(entry.getKey(), 0);
@@ -351,7 +360,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                         }
                         else
                         {
-                            if (citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                            if (citizen.isAsleep() && citizen.getCitizenEntity().isPresent()
+                                && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
                             {
                                 setBedOccupation(entry.getKey(), true);
                             }
@@ -390,7 +400,9 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Hospital", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffect("Hospital", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

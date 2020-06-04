@@ -12,15 +12,13 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
-public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEntity>
+public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy, CowEntity>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -36,13 +34,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     public EntityAIWorkCowboy(@NotNull final JobCowboy job)
     {
         super(job);
-        super.registerTargets(
-          new AITarget(COWBOY_MILK, this::milkCows, 1)
-        );
+        super.registerTargets(new AITarget(COWBOY_MILK, this::milkCows, 1));
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingCowboy> getExpectedBuildingClass()
     {
         return BuildingCowboy.class;
     }
@@ -86,7 +82,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (getOwnBuilding(BuildingCowboy.class).isMilkingCows())
+        if (getOwnBuilding().isMilkingCows())
         {
             list.add(new ItemStack(Items.BUCKET));
         }
@@ -108,7 +104,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
      */
     private IAIState milkCows()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenStatusHandler()
+            .setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {
