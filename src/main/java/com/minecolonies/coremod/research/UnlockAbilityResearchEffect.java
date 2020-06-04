@@ -17,7 +17,8 @@ public class UnlockAbilityResearchEffect extends AbstractResearchEffect<Boolean>
 
     /**
      * The constructor to create a new unlock research effect.
-     * @param id the id to unlock.
+     * 
+     * @param id       the id to unlock.
      * @param unlocked if unlocked or locked.
      */
     public UnlockAbilityResearchEffect(final String id, final boolean unlocked)
@@ -45,7 +46,7 @@ public class UnlockAbilityResearchEffect extends AbstractResearchEffect<Boolean>
     }
 
     @Override
-    public boolean overrides(@NotNull final IResearchEffect other)
+    public boolean overrides(@NotNull final IResearchEffect<?> other)
     {
         return false;
     }

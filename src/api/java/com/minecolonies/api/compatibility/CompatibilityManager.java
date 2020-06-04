@@ -54,7 +54,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
+    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.

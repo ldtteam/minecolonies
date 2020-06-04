@@ -3,7 +3,6 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +14,12 @@ public class ResearchEffectManager implements IResearchEffectManager
     /**
      * The map of the research effects, from a string identifier to the effect.
      */
-    private final Map<String, IResearchEffect> effectMap = new HashMap<>();
+    private final Map<String, IResearchEffect<?>> effectMap = new HashMap<>();
 
     @Override
-    public <W extends IResearchEffect> W getEffect(final String id, @NotNull final Class<W> type)
+    public <W extends IResearchEffect<?>> W getEffect(final String id, @NotNull final Class<W> type)
     {
-        final IResearchEffect effect = effectMap.get(id);
+        final IResearchEffect<?> effect = effectMap.get(id);
         if (type.isInstance(effect))
         {
             return (W) effect;
@@ -30,11 +29,11 @@ public class ResearchEffectManager implements IResearchEffectManager
     }
 
     @Override
-    public void applyEffect(final IResearchEffect effect)
+    public void applyEffect(final IResearchEffect<?> effect)
     {
         if (effectMap.containsKey(effect.getId()))
         {
-            final IResearchEffect effectInMap = effectMap.get(effect.getId());
+            final IResearchEffect<?> effectInMap = effectMap.get(effect.getId());
             if (effect.overrides(effectInMap))
             {
                 effectMap.put(effect.getId(), effect);

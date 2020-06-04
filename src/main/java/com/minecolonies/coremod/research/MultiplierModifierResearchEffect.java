@@ -17,7 +17,8 @@ public class MultiplierModifierResearchEffect extends AbstractResearchEffect<Dou
 
     /**
      * The constructor to create a new modifier research effect.
-     * @param id the id to unlock.
+     * 
+     * @param id     the id to unlock.
      * @param effect the effect.
      */
     public MultiplierModifierResearchEffect(final String id, final double effect)
@@ -45,7 +46,7 @@ public class MultiplierModifierResearchEffect extends AbstractResearchEffect<Dou
     }
 
     @Override
-    public boolean overrides(@NotNull final IResearchEffect other)
+    public boolean overrides(@NotNull final IResearchEffect<?> other)
     {
         return effect > ((MultiplierModifierResearchEffect) other).effect;
     }

@@ -14,7 +14,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
@@ -38,7 +37,12 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect effect)
+    public IGlobalResearch getNewInstance(final String id,
+        final String parent,
+        final String branch,
+        @NotNull final String desc,
+        final int depth,
+        final IResearchEffect<?> effect)
     {
         return new GlobalResearch(id, branch, desc, depth, effect);
     }
@@ -56,12 +60,12 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putInt(TAG_DEPTH, effect.getDepth());
         compound.putBoolean(TAG_ONLY_CHILD, effect.hasOnlyChild());
 
-        @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
-                                                     {
-                                                         final CompoundNBT childCompound = new CompoundNBT();
-                                                         childCompound.putString(TAG_RESEARCH_CHILD, child);
-                                                         return childCompound;
-                                                     }).collect(NBTUtils.toListNBT());
+        @NotNull
+        final ListNBT childTagList = effect.getChilds().stream().map(child -> {
+            final CompoundNBT childCompound = new CompoundNBT();
+            childCompound.putString(TAG_RESEARCH_CHILD, child);
+            return childCompound;
+        }).collect(NBTUtils.toListNBT());
         compound.put(TAG_CHILDS, childTagList);
 
         return compound;
@@ -79,12 +83,17 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int depth = nbt.getInt(TAG_DEPTH);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
 
-        final IGlobalResearch research = getNewInstance(id, parent, branch, desc, depth, StandardFactoryController.getInstance().deserialize(effect));
+        final IGlobalResearch research = getNewInstance(id,
+            parent,
+            branch,
+            desc,
+            depth,
+            StandardFactoryController.getInstance().deserialize(effect));
         research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(
-          TAG_RESEARCH_CHILD)));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND))
+            .forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(TAG_RESEARCH_CHILD)));
         return research;
     }
 }

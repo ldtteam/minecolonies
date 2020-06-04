@@ -18,7 +18,6 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The research effect of this research.
      */
-    private final IResearchEffect effect;
+    private final IResearchEffect<?> effect;
 
     /**
      * The depth level in the tree.
@@ -79,13 +78,14 @@ public class GlobalResearch implements IGlobalResearch
 
     /**
      * Create the new research.
-     * @param id it's id.
-     * @param desc it's description text.
+     * 
+     * @param id     it's id.
+     * @param desc   it's description text.
      * @param effect it's effect.
-     * @param depth the depth in the tree.
+     * @param depth  the depth in the tree.
      * @param branch the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect effect)
+    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect<?> effect)
     {
         this.id = id;
         this.desc = desc;
@@ -101,7 +101,10 @@ public class GlobalResearch implements IGlobalResearch
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED) && ( parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6 || !localTree.branchFinishedHighestLevel(branch));
+        return localResearch == null && canDisplay(uni_level)
+            && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED)
+            && (parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild())
+            && (depth < 6 || !localTree.branchFinishedHighestLevel(branch));
     }
 
     @Override
@@ -117,14 +120,18 @@ public class GlobalResearch implements IGlobalResearch
         try
         {
             final CommonConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getCommon();
-            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost = (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
+            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost = (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration
+                .getClass()
+                .getDeclaredField(id)
+                .get(configuration);
             for (final String cost : researchCost.get())
             {
                 final String[] tuple = cost.split("\\*");
                 final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(tuple[0]));
                 if (item == null)
                 {
-                    Log.getLogger().warn("Couldn't retrieve research costList from config for " + branch + "/" + id + " for item: " + tuple[0]);
+                    Log.getLogger()
+                        .warn("Couldn't retrieve research costList from config for " + branch + "/" + id + " for item: " + tuple[0]);
                     return;
                 }
                 costList.add(new ItemStorage(new ItemStack(item, 1), Integer.parseInt(tuple[1]), false));
@@ -139,9 +146,10 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasEnoughResources(final IItemHandler inventory)
     {
-        for (final ItemStorage cost: costList)
+        for (final ItemStorage cost : costList)
         {
-            final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(cost.getItemStack()));
+            final int count = InventoryUtils.getItemCountInItemHandler(inventory,
+                stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(cost.getItemStack()));
             if (count < cost.getAmount())
             {
                 return false;
@@ -212,7 +220,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
-        for (final String child: this.childs)
+        for (final String child : this.childs)
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
@@ -256,7 +264,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public IResearchEffect getEffect()
+    public IResearchEffect<?> getEffect()
     {
         return effect;
     }
