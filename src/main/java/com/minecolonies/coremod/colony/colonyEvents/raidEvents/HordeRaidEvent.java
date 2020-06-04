@@ -16,6 +16,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -23,9 +24,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
-
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
@@ -34,7 +33,7 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
- *  Horde raid event for the colony, triggers a horde that spawn and attack the colony.
+ * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
  */
 public abstract class HordeRaidEvent implements IColonyRaidEvent
 {
@@ -61,14 +60,14 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     /**
      * The references to living raiders left
      */
-    protected Map<Entity, UUID> normal  = new WeakHashMap<>();
+    protected Map<Entity, UUID> normal = new WeakHashMap<>();
     protected Map<Entity, UUID> archers = new WeakHashMap<>();
-    protected Map<Entity, UUID> boss    = new WeakHashMap<>();
+    protected Map<Entity, UUID> boss = new WeakHashMap<>();
 
     /**
      * List of respawns to do
      */
-    private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
+    private List<Tuple<EntityType<?>, BlockPos>> respawns = new ArrayList<>();
 
     /**
      * Currently active campfires
@@ -177,7 +176,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     public void unregisterEntity(final Entity entity)
     {
         if (!(archers.containsKey(entity) || boss.containsKey(entity) || normal.containsKey(entity)) || status != EventStatus.PROGRESSING
-              || colony.getState() != ColonyState.ACTIVE)
+            || colony.getState() != ColonyState.ACTIVE)
         {
             return;
         }
@@ -271,7 +270,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     @Override
     public void onStart()
     {
-        final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+        final BlockPos spawnPos = PirateEventUtils
+            .getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
         if (spawnPos == null)
         {
             status = EventStatus.CANCELED;
@@ -292,13 +292,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         spawnHorde(spawnPos, colony, id, horde.numberOfBosses, horde.numberOfArchers, horde.numberOfRaiders);
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE + horde.getMessageID(), colony.getName(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint));
+        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+            RAID_EVENT_MESSAGE + horde.getMessageID(),
+            colony.getName(),
+            BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint));
     }
 
     /**
      * Get the assigned colony.
+     * 
      * @return the colony.
      */
     public IColony getColony()
@@ -323,9 +325,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         if (!respawns.isEmpty())
         {
-            for (final Tuple<EntityType, BlockPos> entry : respawns)
+            for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
             {
-                final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+                final BlockPos spawnPos = PirateEventUtils
+                    .getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
                 if (spawnPos != null)
                 {
                     RaiderMobUtils.spawn(entry.getA(), 1, spawnPos, colony.getWorld(), colony, id);
@@ -337,10 +340,16 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         if (boss.size() + archers.size() + normal.size() < horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers)
         {
-            final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            final BlockPos spawnPos = PirateEventUtils
+                .getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
-                spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders- normal.size());
+                spawnHorde(spawnPos,
+                    colony,
+                    id,
+                    horde.numberOfBosses - boss.size(),
+                    horde.numberOfArchers - archers.size(),
+                    horde.numberOfRaiders - normal.size());
             }
         }
 
@@ -355,14 +364,20 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
     /**
      * Spawn a specific horde.
-     * @param spawnPos the pos to spawn them at.
-     * @param colony the colony to spawn them for.
-     * @param id the raid event id.
+     * 
+     * @param spawnPos        the pos to spawn them at.
+     * @param colony          the colony to spawn them for.
+     * @param id              the raid event id.
      * @param numberOfArchers the archers.
-     * @param numberOfBosses the bosses.
+     * @param numberOfBosses  the bosses.
      * @param numberOfRaiders the normal raiders.
      */
-    protected abstract void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfRaiders, final int numberOfBosses, final int numberOfArchers);
+    protected abstract void spawnHorde(final BlockPos spawnPos,
+        final IColony colony,
+        final int id,
+        final int numberOfRaiders,
+        final int numberOfBosses,
+        final int numberOfArchers);
 
     /**
      * Sends the right horde message.
@@ -405,7 +420,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             campFiresNBT.add(BlockPosUtil.write(new CompoundNBT(), NbtTagConstants.TAG_POS, pos));
         }
 
-        compound.put(TAG_CAMPFIRE_LIST,campFiresNBT);
+        compound.put(TAG_CAMPFIRE_LIST, campFiresNBT);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);

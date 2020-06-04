@@ -37,7 +37,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
      * 
      * @param type the entity type.
      */
-    public TileEntityEnchanter(final TileEntityType type)
+    public TileEntityEnchanter(final TileEntityType<?> type)
     {
         super(type);
     }

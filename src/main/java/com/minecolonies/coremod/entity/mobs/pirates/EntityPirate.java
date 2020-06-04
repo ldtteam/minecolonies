@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.MovementHandler;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.world.World;
 
 /**
@@ -11,13 +12,13 @@ import net.minecraft.world.World;
  */
 public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEntity
 {
-
     /**
      * Constructor of the entity.
-     * @param type the entity type.
+     * 
+     * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPirate(final EntityType type, final World worldIn)
+    public EntityPirate(final EntityType<? extends MobEntity> type, final World worldIn)
     {
         super(type, worldIn);
         this.moveController = new MovementHandler(this);

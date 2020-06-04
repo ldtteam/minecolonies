@@ -13,14 +13,13 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
@@ -62,21 +61,28 @@ public final class PirateEventUtils
      * @param shipRotation     the shiprotation.
      * @return true if successful.
      */
-    public static boolean spawnPirateShip(
-      final BlockPos targetSpawnPoint,
-      final World world,
-      final IColony colony,
-      final String shipSize,
-      final int eventID,
-      final int shipRotation)
+    public static boolean spawnPirateShip(final BlockPos targetSpawnPoint,
+        final World world,
+        final IColony colony,
+        final String shipSize,
+        final int eventID,
+        final int shipRotation)
     {
-        final CreativeBuildingStructureHandler
-          structure = new CreativeBuildingStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        final CreativeBuildingStructureHandler structure = new CreativeBuildingStructureHandler(world,
+            targetSpawnPoint,
+            Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize,
+            new PlacementSettings(),
+            true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
 
         if (!colony.getEventManager()
-               .getStructureManager()
-               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint, eventID, shipRotation, Mirror.NONE))
+            .getStructureManager()
+            .spawnTemporaryStructure(structure.getBluePrint(),
+                Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize,
+                targetSpawnPoint,
+                eventID,
+                shipRotation,
+                Mirror.NONE))
         {
             return false;
         }
@@ -92,18 +98,24 @@ public final class PirateEventUtils
      * @param colony           the attacked colony.
      * @param eventID          the events id.
      */
-    public static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize, final IColony colony, final int eventID)
+    public static void loadSpawners(final World world,
+        final BlockPos targetSpawnPoint,
+        final String shipSize,
+        final IColony colony,
+        final int eventID)
     {
         switch (shipSize)
         {
             case SMALL_PIRATE_SHIP:
                 setupSpawner(targetSpawnPoint.up(2).north(3), world, PIRATE, colony, eventID);
                 break;
+
             case MEDIUM_PIRATE_SHIP:
                 setupSpawner(targetSpawnPoint.up(3).north(12), world, ARCHERPIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(1).north(2), world, PIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(5).south(4), world, ARCHERPIRATE, colony, eventID);
                 break;
+
             case BIG_PIRATE_SHIP:
                 setupSpawner(targetSpawnPoint.up(3).south().north(2), world, PIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(3).north(3), world, PIRATE, colony, eventID);
@@ -119,6 +131,7 @@ public final class PirateEventUtils
                 setupSpawner(targetSpawnPoint.up(22).south().north(2), world, ARCHERPIRATE, colony, eventID);
                 setupSpawner(targetSpawnPoint.up(6).south(9), world, ARCHERPIRATE, colony, eventID);
                 break;
+
             default:
                 Log.getLogger().warn("Invalid ship size detected!");
                 break;
@@ -131,10 +144,14 @@ public final class PirateEventUtils
      * @param location the location to set it up at.
      * @param world    the world to place it in.
      * @param mob      the mob to spawn.
-     * @param colony   the colony to attack.  
+     * @param colony   the colony to attack.
      * @param eventID  the events id.
      */
-    private static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColony colony, final int eventID)
+    private static void setupSpawner(final BlockPos location,
+        final World world,
+        final EntityType<? extends MobEntity> mob,
+        final IColony colony,
+        final int eventID)
     {
         world.setBlockState(location, Blocks.SPAWNER.getDefaultState());
         final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
@@ -151,10 +168,10 @@ public final class PirateEventUtils
     /**
      * Checks whether a pirate event is possible at this place.
      *
-     * @param colony the colony.
+     * @param colony     the colony.
      * @param spawnPoint the spawn point.
-     * @param raidLevel the raid level.
-     * @param rotation the rotation.
+     * @param raidLevel  the raid level.
+     * @param rotation   the rotation.
      * @return true if successful.
      */
     public static boolean canSpawnPirateEventAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation)
@@ -167,11 +184,12 @@ public final class PirateEventUtils
         final World world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicName;
 
-        final CreativeBuildingStructureHandler
-          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
+        final CreativeBuildingStructureHandler structure = new CreativeBuildingStructureHandler(colony
+            .getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
-        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);
+        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world)
+            || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);
     }
 
     /**
@@ -185,28 +203,28 @@ public final class PirateEventUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
-        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world,
-          zeroPos,
-          new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.6);
+        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE),
+            world,
+            zeroPos,
+            new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
+            0.6);
     }
 
     /**
      * Returns true when most parts of the given area are water, more then 90%
      *
-     * @param world Blockacces to use
-     * @param from  First corner of search rectangle
-     * @param to    Second corner of search rectangle
-     * @param materials the materials.
+     * @param world           Blockacces to use
+     * @param from            First corner of search rectangle
+     * @param to              Second corner of search rectangle
+     * @param materials       the materials.
      * @param percentRequired the required percentage.
      * @return true if enough water surface blocks are found
      */
-    public static boolean isSurfaceAreaMostlyMaterial(
-      @NotNull final List<Material> materials,
-      @NotNull final World world,
-      @NotNull final BlockPos from,
-      @NotNull final BlockPos to,
-      final double percentRequired)
+    public static boolean isSurfaceAreaMostlyMaterial(@NotNull final List<Material> materials,
+        @NotNull final World world,
+        @NotNull final BlockPos from,
+        @NotNull final BlockPos to,
+        final double percentRequired)
     {
         final int xDist = Math.abs(from.getX() - to.getX());
         final int zDist = Math.abs(from.getZ() - to.getZ());
@@ -233,7 +251,8 @@ public final class PirateEventUtils
             for (int z = 0; z < zDist; z++)
             {
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial()) || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
+                if (!materials.contains(world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial())
+                    || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -258,13 +277,12 @@ public final class PirateEventUtils
      * @param accuracy       the accuracy of steps to check in percent, min 1.
      * @return the position.
      */
-    public static BlockPos getLoadedPositionTowardsCenter(
-      final BlockPos startPos,
-      final IColony colony,
-      final int maxDistance,
-      final BlockPos maxDistancePos,
-      final int minDistance,
-      final int accuracy)
+    public static BlockPos getLoadedPositionTowardsCenter(final BlockPos startPos,
+        final IColony colony,
+        final int maxDistance,
+        final BlockPos maxDistancePos,
+        final int minDistance,
+        final int accuracy)
     {
         if (accuracy < 1)
         {
@@ -288,7 +306,8 @@ public final class PirateEventUtils
         {
             tempPos = tempPos.add(diff);
 
-            if (BlockPosUtil.getDistanceSquared2D(maxDistancePos, tempPos) > sqMaxDist || BlockPosUtil.getDistanceSquared2D(tempPos, colony.getCenter()) < sqMinDist)
+            if (BlockPosUtil.getDistanceSquared2D(maxDistancePos, tempPos) > sqMaxDist
+                || BlockPosUtil.getDistanceSquared2D(tempPos, colony.getCenter()) < sqMinDist)
             {
                 return null;
             }
@@ -306,7 +325,7 @@ public final class PirateEventUtils
      *
      * @param spawnPos the ships spawnpoint
      * @param world    the world
-     * @param radius the radius to check for.
+     * @param radius   the radius to check for.
      * @return the position.
      */
     public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final World world, final int radius)
@@ -317,7 +336,8 @@ public final class PirateEventUtils
             {
                 for (int z = -radius; z <= radius; z++)
                 {
-                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() instanceof AirBlock)
+                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() instanceof AirBlock
+                        && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() instanceof AirBlock)
                     {
                         return spawnPos.add(x, y, z);
                     }

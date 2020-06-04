@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.mobs.egyptians;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.egyptians.IArcherMummyEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.world.World;
 
 /**
@@ -12,10 +13,11 @@ public class EntityArcherMummy extends AbstractEntityEgyptian implements IArcher
 {
     /**
      * Constructor of the entity.
+     * 
      * @param worldIn world to construct it in.
-     * @param type the entity type.
+     * @param type    the entity type.
      */
-    public EntityArcherMummy(final EntityType type, final World worldIn)
+    public EntityArcherMummy(final EntityType<? extends MobEntity> type, final World worldIn)
     {
         super(type, worldIn);
     }

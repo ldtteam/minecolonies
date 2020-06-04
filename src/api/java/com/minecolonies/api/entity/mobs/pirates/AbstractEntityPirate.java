@@ -4,14 +4,13 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
-
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
@@ -22,10 +21,11 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
     /**
      * Constructor method for Abstract Barbarians.
-     * @param type the type.
+     * 
+     * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final EntityType type, final World world)
+    public AbstractEntityPirate(final EntityType<? extends MobEntity> type, final World world)
     {
         super(type, world);
     }

@@ -19,10 +19,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 import java.util.Random;
-
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -109,7 +107,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType type, final World world)
+    public AbstractEntityMinecoloniesMob(final EntityType<? extends MobEntity> type, final World world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -127,8 +125,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
         if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
-                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+            && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
+                || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
         {
             return;
         }
@@ -319,12 +317,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
-                if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
-                      && MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null
+                    && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
+                    && MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+                        >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.isPotionActive(Effects.SPEED))
-                      .forEach(entity -> entity.addPotionEffect(new EffectInstance(Effects.SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                        .stream()
+                        .filter(entity -> !entity.isPotionActive(Effects.SPEED))
+                        .forEach(entity -> entity
+                            .addPotionEffect(new EffectInstance(Effects.SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
             }
             else
@@ -338,8 +340,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
-    public ILivingEntityData onInitialSpawn(
-      final IWorld worldIn, final DifficultyInstance difficultyIn, final SpawnReason reason, @Nullable final ILivingEntityData spawnDataIn, @Nullable final CompoundNBT dataTag)
+    public ILivingEntityData onInitialSpawn(final IWorld worldIn,
+        final DifficultyInstance difficultyIn,
+        final SpawnReason reason,
+        @Nullable final ILivingEntityData spawnDataIn,
+        @Nullable final CompoundNBT dataTag)
     {
         RaiderMobUtils.setEquipment(this);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);

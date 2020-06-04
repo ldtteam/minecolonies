@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
-
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
@@ -14,13 +13,12 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
  */
 public class TileEntityStash extends TileEntityColonyBuilding
 {
-
     /**
      * Constructor of the stash based on a tile entity type
      *
      * @param type tile entity type
      */
-    public TileEntityStash(final TileEntityType type)
+    public TileEntityStash(final TileEntityType<?> type)
     {
         super(type);
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);

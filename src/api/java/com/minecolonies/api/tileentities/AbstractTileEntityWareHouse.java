@@ -4,13 +4,12 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
-    public AbstractTileEntityWareHouse(final TileEntityType warehouse)
+    public AbstractTileEntityWareHouse(final TileEntityType<?> warehouse)
     {
         super(warehouse);
     }

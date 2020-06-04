@@ -3,9 +3,9 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.world.World;
-
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
 import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARMOR;
@@ -15,13 +15,13 @@ import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARM
  */
 public class EntityChiefBarbarian extends AbstractEntityBarbarian implements IChiefBarbarianEntity
 {
-
     /**
      * Constructor of the entity.
+     * 
      * @param worldIn world to construct it in.
-     * @param type the entity type.
+     * @param type    the entity type.
      */
-    public EntityChiefBarbarian(final EntityType type, final World worldIn)
+    public EntityChiefBarbarian(final EntityType<? extends MobEntity> type, final World worldIn)
     {
         super(type, worldIn);
     }

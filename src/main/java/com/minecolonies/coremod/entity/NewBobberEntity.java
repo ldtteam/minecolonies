@@ -52,7 +52,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private int anglerId = -1;
     private boolean readyToCatch = false;
 
-    public NewBobberEntity(EntityType type, World world)
+    public NewBobberEntity(final EntityType<?> type, final World world)
     {
         super(type, world);
         this.ignoreFrustumCheck = true;

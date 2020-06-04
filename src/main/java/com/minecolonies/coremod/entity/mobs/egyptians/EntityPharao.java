@@ -3,9 +3,9 @@ package com.minecolonies.coremod.entity.mobs.egyptians;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.egyptians.IPharaoEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.world.World;
-
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
 import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARMOR;
@@ -15,13 +15,13 @@ import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARM
  */
 public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntity
 {
-
     /**
      * Constructor of the entity.
-     * @param type the entity type.
+     * 
+     * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPharao(final EntityType type, final World worldIn)
+    public EntityPharao(final EntityType<? extends MobEntity> type, final World worldIn)
     {
         super(type, worldIn);
     }

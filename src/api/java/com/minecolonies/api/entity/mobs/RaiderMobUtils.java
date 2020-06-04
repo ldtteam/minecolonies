@@ -24,10 +24,8 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-
 import java.util.List;
 import java.util.Random;
-
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -36,7 +34,6 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
  */
 public final class RaiderMobUtils
 {
-
     /**
      * Distances in which spawns are spread
      */
@@ -84,17 +81,16 @@ public final class RaiderMobUtils
      */
     public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
-        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
-                                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY);
+        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d)
+            * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+                / (double) DEFAULT_BARBARIAN_DIFFICULTY);
         mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
         mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage
-        final double attackDamage =
-          difficultyModifier * (ATTACK_DAMAGE + Math.min(
-            raidLevel / DAMAGE_PER_X_RAID_LEVEL,
-            MAX_RAID_LEVEL_DAMAGE));
+        final double attackDamage = difficultyModifier
+            * (ATTACK_DAMAGE + Math.min(raidLevel / DAMAGE_PER_X_RAID_LEVEL, MAX_RAID_LEVEL_DAMAGE));
 
         // Base health
         final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;
@@ -123,13 +119,12 @@ public final class RaiderMobUtils
      * @param colony         the colony to spawn them close to.
      * @param eventID        the event id.
      */
-    public static void spawn(
-      final EntityType entityToSpawn,
-      final int numberOfSpawns,
-      final BlockPos spawnLocation,
-      final World world,
-      final IColony colony,
-      final int eventID)
+    public static void spawn(final EntityType<?> entityToSpawn,
+        final int numberOfSpawns,
+        final BlockPos spawnLocation,
+        final World world,
+        final IColony colony,
+        final int eventID)
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
         {
@@ -145,7 +140,11 @@ public final class RaiderMobUtils
 
                 if (entity != null)
                 {
-                    entity.setPositionAndRotation(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.setPositionAndRotation(x + spawnDeviationX,
+                        y + 1.0,
+                        z + spawnDeviationZ,
+                        (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE),
+                        0.0F);
                     CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                     entity.setEventID(eventID);
@@ -221,12 +220,9 @@ public final class RaiderMobUtils
      */
     public static List<AbstractEntityMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(
-          AbstractEntityMinecoloniesMob.class,
-          entity.getBoundingBox().expand(
-            distanceFromEntity,
-            3.0D,
-            distanceFromEntity),
-          Entity::isAlive);
+        return CompatibilityUtils.getWorldFromEntity(entity)
+            .getEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class,
+                entity.getBoundingBox().expand(distanceFromEntity, 3.0D, distanceFromEntity),
+                Entity::isAlive);
     }
 }

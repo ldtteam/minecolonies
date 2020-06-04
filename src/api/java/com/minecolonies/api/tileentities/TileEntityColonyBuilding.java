@@ -37,14 +37,12 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 
@@ -59,7 +57,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      */
     private static final String TAG_COLONY = "colony";
     private static final String TAG_MIRROR = "mirror";
-    private static final String TAG_STYLE  = "style";
+    private static final String TAG_STYLE = "style";
 
     /**
      * The colony id.
@@ -106,9 +104,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Alternative overriden constructor.
+     * 
      * @param type the entity type.
      */
-    public TileEntityColonyBuilding(final TileEntityType type)
+    public TileEntityColonyBuilding(final TileEntityType<?> type)
     {
         super(type);
     }
@@ -158,8 +157,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             // It's most probably previewed building, please don't spam it here.
             if (colony == null && !getWorld().isRemote)
             {
-                //log on the server
-                //Log.getLogger().info(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                // log on the server
+                // Log.getLogger().info(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had
+                // colony.",getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
 
@@ -195,7 +195,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         final Predicate<ItemStack> notEmptyPredicate = itemStackSelectionPredicate.and(ItemStackUtils.NOT_EMPTY_PREDICATE);
-        @Nullable final IBuildingContainer theBuilding = getBuilding();
+        @Nullable
+        final IBuildingContainer theBuilding = getBuilding();
 
         if (theBuilding != null)
         {
@@ -207,9 +208,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             for (final BlockPos pos : theBuilding.getAdditionalCountainers())
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof AbstractTileEntityRack
-                       && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (isInTileEntity(entity, notEmptyPredicate)))
+                if ((entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                    || (isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
                 }
@@ -380,7 +380,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public boolean hasAccessPermission(final PlayerEntity player)
     {
-        //TODO This is called every tick the GUI is open. Is that bad?
+        // TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
@@ -447,29 +447,31 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             if (this.combinedInv == null)
             {
-                //Add additional containers
+                // Add additional containers
                 final Set<ICapabilityProvider> providers = new HashSet<>();
                 final World world = colony.getWorld();
                 if (world != null)
                 {
-                    //Add additional containers
-                    providers.addAll(building.getAdditionalCountainers().stream()
-                                       .map(world::getTileEntity)
-                                       .collect(Collectors.toSet()));
+                    // Add additional containers
+                    providers.addAll(building.getAdditionalCountainers().stream().map(world::getTileEntity).collect(Collectors.toSet()));
                     providers.removeIf(Objects::isNull);
-                    building.getAdditionalCountainers().stream().map(world::getTileEntity).filter(entity -> entity instanceof TileEntityRack).forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
+                    building.getAdditionalCountainers()
+                        .stream()
+                        .map(world::getTileEntity)
+                        .filter(entity -> entity instanceof TileEntityRack)
+                        .forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
                 }
 
                 final List<IItemHandler> handlers = providers.stream()
-                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                      .collect(Collectors.toList());
+                    .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                    .collect(Collectors.toList());
                 handlers.add(getInventory());
-                this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                                          .filter(handler -> handler instanceof IItemHandlerModifiable
-                                                                                                               && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
-                                                                                          .distinct()
-                                                                                          .toArray(IItemHandlerModifiable[]::new));
+                this.combinedInv = new CombinedItemHandler(building.getSchematicName(),
+                    handlers.stream()
+                        .filter(handler -> handler instanceof IItemHandlerModifiable && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                        .map(handler -> (IItemHandlerModifiable) handler)
+                        .distinct()
+                        .toArray(IItemHandlerModifiable[]::new));
             }
 
             return LazyOptional.of(() -> (T) this.combinedInv);

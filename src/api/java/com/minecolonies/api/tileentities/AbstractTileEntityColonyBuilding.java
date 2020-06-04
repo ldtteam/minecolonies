@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
 
-    public AbstractTileEntityColonyBuilding(final TileEntityType type)
+    public AbstractTileEntityColonyBuilding(final TileEntityType<?> type)
     {
         super(type);
     }
@@ -188,7 +187,6 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         tagPosMap = positionedTags;
     }
-
 
     @Override
     public Tuple<BlockPos, BlockPos> getCornerPositions()

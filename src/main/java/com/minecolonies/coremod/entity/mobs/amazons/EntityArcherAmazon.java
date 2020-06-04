@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.mobs.amazons;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.amazons.IArcherAmazon;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.world.World;
 
 /**
@@ -12,10 +13,11 @@ public class EntityArcherAmazon extends AbstractEntityAmazon implements IArcherA
 {
     /**
      * Constructor of the entity.
+     * 
      * @param worldIn world to construct it in.
-     * @param type the entity type.
+     * @param type    the entity type.
      */
-    public EntityArcherAmazon(final EntityType type, final World worldIn)
+    public EntityArcherAmazon(final EntityType<? extends MobEntity> type, final World worldIn)
     {
         super(type, worldIn);
     }
