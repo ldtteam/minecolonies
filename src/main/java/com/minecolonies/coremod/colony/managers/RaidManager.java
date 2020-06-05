@@ -459,19 +459,6 @@ public class RaidManager implements IRaiderManager
           (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
     }
 
-    /**
-     * Check if a certain vector matches two directions.
-     *
-     * @param directionX the direction x.
-     * @param directionZ the direction z.
-     * @param vector     the vector.
-     * @return true if so.
-     */
-    private static boolean isInDirection(final Direction directionX, final Direction directionZ, final BlockPos vector)
-    {
-        return Direction.getFacingFromVector(vector.getX(), 0, 0) == directionX && Direction.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
-    }
-
     @Override
     public boolean isRaided()
     {

@@ -294,6 +294,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param citizen the citizen to create a create a happiness bar for.
      * @param view    the view to add the happiness bar to.
      */
+    /*
     private static void createHappinessBar(final ICitizenDataView citizen, final View view)
     {
         final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
@@ -320,6 +321,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
     }
+    */
 
     /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.

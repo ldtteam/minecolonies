@@ -50,11 +50,6 @@ public abstract class CommonProxy implements IProxy
     public static IRecipeSerializer<?> SPECIAL_REC;
 
     /**
-     * The next entity id.
-     */
-    private int nextEntityId = 0;
-
-    /**
      * Creates instance of proxy.
      */
     public CommonProxy()
@@ -186,18 +181,6 @@ public abstract class CommonProxy implements IProxy
     public File getSchematicsFolder()
     {
         return null;
-    }
-
-    /**
-     * Used for entity IDs, starts at 0 and increments for each call.
-     * <p>
-     * currently unused.
-     * 
-     * @return the next entity id.
-     */
-    private int getNextEntityId()
-    {
-        return nextEntityId++;
     }
 
     @NotNull

@@ -1375,6 +1375,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                  .orElse(null);
     }
 
+    /*
     private Collection<IRequest<? extends IDeliverable>> flattenDeliverableChildRequests(@NotNull final IRequest<? extends IDeliverable> request)
     {
         if (!request.hasChildren())
@@ -1390,6 +1391,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                  .map(request1 -> (IRequest<? extends IDeliverable>) request1)
                  .collect(Collectors.toList());
     }
+    */
 
     @Override
     public IToken<?> getId()
