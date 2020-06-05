@@ -200,7 +200,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         try
         {
-            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getId());
+            final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(request.getId());
             if (resolver == null)
             {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");

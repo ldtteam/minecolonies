@@ -260,7 +260,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         final CompoundNBT compound = super.serializeNBT();
         final ListNBT list = new ListNBT();
-        for (final IRequestResolver requestResolver : getResolvers())
+        for (final IRequestResolver<?> requestResolver : getResolvers())
         {
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
         }

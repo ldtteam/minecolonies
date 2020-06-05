@@ -156,8 +156,7 @@ public class RequestHandler implements IRequestHandler
                                                                .thenComparingInt((IRequestResolver<?> r) -> typeIndexList.indexOf(r.getRequestType())))
                                                      .collect(Collectors.toCollection(LinkedHashSet::new));
 
-
-        for (final IRequestResolver resolver : resolvers)
+        for (@SuppressWarnings(RAWTYPES) final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
             if (resolverTokenBlackList.contains(resolver.getId()))

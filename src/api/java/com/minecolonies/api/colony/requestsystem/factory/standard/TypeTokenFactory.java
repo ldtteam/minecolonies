@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
-public class TypeTokenFactory implements IFactory<Class, TypeToken<?>>
+public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
 {
     @NotNull
     @Override
@@ -21,7 +21,7 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken<?>>
 
     @NotNull
     @Override
-    public TypeToken<? extends Class> getFactoryInputType()
+    public TypeToken<? extends Class<?>> getFactoryInputType()
     {
         return TypeConstants.CLASS;
     }
@@ -29,7 +29,7 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken<?>>
     @NotNull
     @Override
     public TypeToken<?> getNewInstance(
-      @NotNull final IFactoryController factoryController, @NotNull final Class aClass, @NotNull final Object... context) throws IllegalArgumentException
+      @NotNull final IFactoryController factoryController, @NotNull final Class<?> aClass, @NotNull final Object... context) throws IllegalArgumentException
     {
         return TypeToken.of(aClass);
     }

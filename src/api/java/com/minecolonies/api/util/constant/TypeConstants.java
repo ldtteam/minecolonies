@@ -29,7 +29,7 @@ public class TypeConstants
     /////Java types
     public static final TypeToken<Integer>      INTEGER   = TypeToken.of(Integer.class);
     public static final TypeToken<TypeToken<?>> TYPETOKEN = TypeToken.of((Class<TypeToken<?>>) (Class<?>) TypeToken.class);
-    public static final TypeToken<Class>        CLASS     = TypeToken.of(Class.class);
+    public static final TypeToken<Class<?>>     CLASS     = TypeToken.of((Class<Class<?>>) (Class<?>)  Class.class);
 
     /////General purpose
     public static final TypeToken<IToken<?>>        ITOKEN           = TypeToken.of((Class<IToken<?>>) (Class<?>) IToken.class);
