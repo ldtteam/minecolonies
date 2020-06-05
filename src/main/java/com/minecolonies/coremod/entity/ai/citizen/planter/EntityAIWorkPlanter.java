@@ -133,7 +133,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
     }

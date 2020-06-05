@@ -176,6 +176,12 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
 
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
+        if (spawnerCount <= 0 && pirates.size() == 0)
+        {
+            status = EventStatus.WAITING;
+            return;
+        }
+
         if (!respawns.isEmpty())
         {
             for (final Tuple<EntityType, BlockPos> entry : respawns)
@@ -246,7 +252,6 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
             if (spawnerCount <= 0)
             {
                 daysToGo = 1;
-                status = EventStatus.WAITING;
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
