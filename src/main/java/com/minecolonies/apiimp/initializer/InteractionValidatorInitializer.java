@@ -208,7 +208,7 @@ public class InteractionValidatorInitializer
               }
               return false;
           });
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION), citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION), citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic<?, ?>) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS + HOMELESSNESS),
           citizen -> ( citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);

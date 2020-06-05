@@ -77,7 +77,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         {
             if (handlerModifiable instanceof INBTSerializable)
             {
-                final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
+                final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
                 indexList.add(IntNBT.valueOf(index));
             }
@@ -111,7 +111,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
                 final IItemHandlerModifiable modifiable = handlers[indexList.getInt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
-                    final INBTSerializable serializable = (INBTSerializable) modifiable;
+                    final INBTSerializable<CompoundNBT> serializable = (INBTSerializable<CompoundNBT>) modifiable;
                     serializable.deserializeNBT(handlerCompound);
                 }
             }

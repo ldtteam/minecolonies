@@ -107,7 +107,7 @@ public class Tree
     /**
      * The wood variant of the Tree. Can change depending on Mod
      */
-    private IProperty variant;
+    private IProperty<?> variant;
 
     /**
      * If the Tree is a Slime Tree.
@@ -804,7 +804,7 @@ public class Tree
      *
      * @return the EnumType variant.
      */
-    public IProperty getVariant()
+    public IProperty<?> getVariant()
     {
         return variant;
     }

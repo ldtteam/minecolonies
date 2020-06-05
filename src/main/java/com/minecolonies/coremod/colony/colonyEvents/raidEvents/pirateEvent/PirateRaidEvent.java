@@ -365,7 +365,7 @@ public class PirateRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnE
     @Override
     public List<Entity> getEntities()
     {
-        return new ArrayList(pirates.keySet());
+        return new ArrayList<>(pirates.keySet());
     }
 
     @Override

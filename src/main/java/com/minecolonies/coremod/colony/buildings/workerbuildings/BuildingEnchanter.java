@@ -48,7 +48,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     /**
      * List of buildings the enchanter gathers experience from.
      */
-    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap();
+    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap<>();
 
     /**
      * The random variable.

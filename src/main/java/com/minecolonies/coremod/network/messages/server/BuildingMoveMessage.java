@@ -213,7 +213,7 @@ public class BuildingMoveMessage implements IMessage
             world.destroyBlock(buildPos, true);
 
             world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
-            ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+            ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
         }
     }

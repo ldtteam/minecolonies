@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> the statemachine transition.
  * @param <S> the State.
  */
-public interface IStateMachine<T extends IStateMachineTransition, S extends IState>
+public interface IStateMachine<T extends IStateMachineTransition<S>, S extends IState>
 {
     /**
      * Adds a transitions to the machine's transition table

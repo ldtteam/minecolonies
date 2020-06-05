@@ -1319,7 +1319,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             if (citizenData.getJob() instanceof AbstractJobCrafter)
             {
-                final AbstractJobCrafter crafterJob = citizenData.getJob(AbstractJobCrafter.class);
+                final AbstractJobCrafter<?, ?> crafterJob = citizenData.getJob(AbstractJobCrafter.class);
 
                 if (!crafterJob.getAssignedTasks().isEmpty())
                 {

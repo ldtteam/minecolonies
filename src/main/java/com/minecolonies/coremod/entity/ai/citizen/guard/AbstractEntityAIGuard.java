@@ -776,7 +776,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             if (entity instanceof EntityCitizen)
             {
                 final EntityCitizen citizen = (EntityCitizen) entity;
-                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
                 {
                     sleepingGuard = new WeakReference<>(citizen);
                     wakeTimer = 0;
