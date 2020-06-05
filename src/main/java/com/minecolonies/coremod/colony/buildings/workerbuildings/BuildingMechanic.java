@@ -63,7 +63,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobMechanic(citizen);
     }

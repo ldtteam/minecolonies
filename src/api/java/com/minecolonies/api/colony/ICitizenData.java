@@ -141,14 +141,14 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      *
      * @return Job of the citizen.
      */
-    IJob getJob();
+    IJob<?> getJob();
 
     /**
      * Sets the job of this citizen.
      *
      * @param job Job of the citizen.
      */
-    void setJob(IJob job);
+    void setJob(IJob<?> job);
 
     /**
      * Returns the job subclass needed. Returns null on type mismatch.
@@ -158,7 +158,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @return the job this citizen has.
      */
     @Nullable
-    <J extends IJob> J getJob(@NotNull Class<J> type);
+    <J extends IJob<?>> J getJob(@NotNull Class<J> type);
 
     /**
      * Writes the citizen data to a byte buf for transition.

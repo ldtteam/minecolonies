@@ -214,7 +214,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobLumberjack(citizen);
     }

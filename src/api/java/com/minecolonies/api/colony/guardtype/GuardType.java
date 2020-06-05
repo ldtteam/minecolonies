@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.guardtype;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -16,7 +17,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     /**
      * Producer function.
      */
-    private final Function<ICitizenData, IJob> guardJobProducer;
+    private final Function<ICitizenData, AbstractJobGuard> guardJobProducer;
 
     /**
      * Job translation key.
@@ -53,7 +54,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param workerSoundName worker sound name.
      */
     public GuardType(
-      final Function<ICitizenData, IJob> guardJobProducer,
+      final Function<ICitizenData, AbstractJobGuard> guardJobProducer,
       final String jobTranslationKey,
       final String buttonTranslationKey,
       final Skill primarySkill, final Skill secondarySkill, final String workerSoundName)
@@ -71,7 +72,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * Getter for the job producer.
      * @return the producer.
      */
-    public Function<ICitizenData, IJob> getGuardJobProducer()
+    public Function<ICitizenData, AbstractJobGuard> getGuardJobProducer()
     {
         return guardJobProducer;
     }
@@ -126,15 +127,15 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public static class Builder
     {
-        private Function<ICitizenData, IJob> guardJobProducer;
-        private String                       jobTranslationKey;
-        private String                       buttonTranslationKey;
-        private Skill                        primarySkill;
-        private Skill                        secondarySkill;
-        private String                       workerSoundName;
-        private ResourceLocation             registryName;
+        private Function<ICitizenData, AbstractJobGuard> guardJobProducer;
+        private String                                   jobTranslationKey;
+        private String                                   buttonTranslationKey;
+        private Skill                                    primarySkill;
+        private Skill                                    secondarySkill;
+        private String                                   workerSoundName;
+        private ResourceLocation                         registryName;
 
-        public Builder setGuardJobProducer(final Function<ICitizenData, IJob> guardJobProducer)
+        public Builder setGuardJobProducer(final Function<ICitizenData, AbstractJobGuard> guardJobProducer)
         {
             this.guardJobProducer = guardJobProducer;
             return this;

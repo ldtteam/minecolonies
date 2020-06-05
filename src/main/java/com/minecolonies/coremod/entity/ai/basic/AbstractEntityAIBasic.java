@@ -323,7 +323,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName().getFormattedText();
                 final BlockPos workerPosition = worker.getPosition();
-                final IJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
+                final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }

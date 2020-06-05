@@ -90,7 +90,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCook(citizen);
     }

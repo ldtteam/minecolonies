@@ -469,7 +469,7 @@ public class EntityAIEatTask extends Goal
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
-        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null)
         {
             job.setActive(false);

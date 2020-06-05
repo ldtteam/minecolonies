@@ -1476,7 +1476,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final IJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob<?> job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)
