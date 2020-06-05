@@ -66,7 +66,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingFurnaceUser> getExpectedBuildingClass()
     {
         return AbstractBuildingFurnaceUser.class;
     }

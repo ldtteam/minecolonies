@@ -78,7 +78,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingSifter> getExpectedBuildingClass()
     {
         return BuildingSifter.class;
     }

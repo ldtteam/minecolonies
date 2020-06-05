@@ -613,6 +613,9 @@ public class ResearchInitializer
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 
+        final GlobalResearch taunt = new GlobalResearch("taunt", "combat", "Taunt", 2, new UnlockAbilityResearchEffect(KNIGHT_TAUNT, true));
+        taunt.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
+
         final GlobalResearch parry = new GlobalResearch("parry", "combat", "Parry", 2, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.05));
         parry.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
 
@@ -772,6 +775,7 @@ public class ResearchInitializer
         researchTree.addResearch(masterBowman.getBranch(), masterBowman);
 
         researchTree.addResearch(avoidance.getBranch(), avoidance);
+        researchTree.addResearch(taunt.getBranch(), taunt);
 
         researchTree.addResearch(parry.getBranch(), parry);
         researchTree.addResearch(repost.getBranch(), repost);

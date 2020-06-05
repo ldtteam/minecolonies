@@ -15,16 +15,15 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Class of the crafter job.
  */
-public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J extends AbstractJobCrafter<AI, J>> extends AbstractJob
+public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J extends AbstractJobCrafter<AI, J>>
+    extends AbstractJob<AI, J>
 {
     /**
      * The Token of the data store which belongs to this job.
@@ -63,14 +62,12 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
     private void setupRsDataStore()
     {
         rsDataStoreToken = this.getCitizen()
-                             .getColony()
-                             .getRequestManager()
-                             .getDataStoreManager()
-                             .get(
-                               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                               TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE
-                             )
-                             .getId();
+            .getColony()
+            .getRequestManager()
+            .getDataStoreManager()
+            .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE)
+            .getId();
     }
 
     @NotNull
@@ -96,9 +93,10 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
     {
         super.deserializeNBT(compound);
 
-        if(compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
-            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+            rsDataStoreToken = StandardFactoryController.getInstance()
+                .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -123,15 +121,20 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Getter for the data store which belongs to this job.
+     * 
      * @return the crafter data store.
      */
     private IRequestSystemCrafterJobDataStore getDataStore()
     {
-        return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
+        return getCitizen().getColony()
+            .getRequestManager()
+            .getDataStoreManager()
+            .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
     }
 
     /**
      * Retrieve the task queue from the data store.
+     * 
      * @return the linked queue.
      */
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
@@ -156,6 +159,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Returns the {@link IRequest} of the current Task.
+     * 
      * @param <R> the request type.
      * @return {@link IRequest} of the current Task.
      */
@@ -167,9 +171,9 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
             return null;
         }
 
-        //This cleans up the state after something went wrong.
+        // This cleans up the state after something went wrong.
         IRequest<R> request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
-        while(request == null)
+        while (request == null)
         {
             getTaskQueueFromDataStore().remove(getTaskQueueFromDataStore().peekFirst());
             request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
@@ -250,6 +254,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Get the max crafting count for the current recipe.
+     * 
      * @return the count.
      */
     public int getMaxCraftingCount()
@@ -259,6 +264,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Set the max crafting count for the current recipe.
+     * 
      * @param maxCraftingCount the count to set.
      */
     public void setMaxCraftingCount(final int maxCraftingCount)
@@ -268,6 +274,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Get the current craft counter.
+     * 
      * @return the counter.
      */
     public int getCraftCounter()
@@ -277,6 +284,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Set the current craft counter.
+     * 
      * @param craftCounter the counter to set.
      */
     public void setCraftCounter(final int craftCounter)
@@ -286,6 +294,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Get the crafting progress.
+     * 
      * @return the current progress.
      */
     public int getProgress()
@@ -295,6 +304,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
 
     /**
      * Set the crafting progress.
+     * 
      * @param progress the current progress.
      */
     public void setProgress(final int progress)
@@ -312,7 +322,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J 
     {
         for (final IToken<?> t : getTaskQueue())
         {
-            getColony().getRequestManager().updateRequestState(t,  RequestState.FAILED);
+            getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
         }
     }
 }

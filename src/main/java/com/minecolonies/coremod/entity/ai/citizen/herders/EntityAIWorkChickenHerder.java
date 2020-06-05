@@ -29,7 +29,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingChickenHerder> getExpectedBuildingClass()
     {
         return BuildingChickenHerder.class;
     }

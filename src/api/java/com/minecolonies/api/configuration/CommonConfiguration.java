@@ -2,6 +2,7 @@ package com.minecolonies.api.configuration;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -186,6 +187,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterswordsman;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> dodge ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> taunt;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> improveddodge;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> evasion ;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedevasion;
@@ -1303,6 +1305,14 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.deeppockets = defineList(builder, "deeppockets",
           Collections.singletonList("minecraft:emerald*256"),
+          s -> s instanceof String);
+
+        List<String> tauntCosts = new ArrayList<String>();
+        tauntCosts.add("minecraft:rotten_flesh*8");
+        tauntCosts.add("minecraft:bone*8");
+        tauntCosts.add("minecraft:spider_eye*8");
+        taunt = defineList(builder, "taunt",
+          tauntCosts,
           s -> s instanceof String);
 
         finishCategory(builder);
