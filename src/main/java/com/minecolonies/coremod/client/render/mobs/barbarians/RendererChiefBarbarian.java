@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.MobEntity;
@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefBarbarian extends AbstractRendererBarbarian<EntityChiefBarbarian, BipedModel<EntityChiefBarbarian>>
+public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEntityBarbarian, BipedModel<AbstractEntityBarbarian>>
 {
     /**
      * Texture of the entity.
@@ -27,7 +27,7 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<EntityChie
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final EntityChiefBarbarian entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityBarbarian entity)
     {
         return TEXTURE;
     }

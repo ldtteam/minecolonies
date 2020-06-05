@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
-import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.MobEntity;
@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefPirate extends AbstractRendererPirate<EntityCaptainPirate, BipedModel<EntityCaptainPirate>>
+public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPirate, BipedModel<AbstractEntityPirate>>
 {
     /**
      * Texture of the entity.
@@ -27,7 +27,7 @@ public class RendererChiefPirate extends AbstractRendererPirate<EntityCaptainPir
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final EntityCaptainPirate entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityPirate entity)
     {
         return TEXTURE;
     }

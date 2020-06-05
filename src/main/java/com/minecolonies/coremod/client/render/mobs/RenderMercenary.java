@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.client.render.mobs;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 /**
  * Renderer for EntityMercenary.
  */
-public class RenderMercenary extends MobRenderer<EntityMercenary, BipedModel<EntityMercenary>>
+public class RenderMercenary extends MobRenderer<CreatureEntity, BipedModel<CreatureEntity>>
 {
     /**
      * Texture of the entity.
@@ -34,7 +34,7 @@ public class RenderMercenary extends MobRenderer<EntityMercenary, BipedModel<Ent
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final EntityMercenary entity)
+    public ResourceLocation getEntityTexture(final CreatureEntity entity)
     {
         return TEXTURE;
     }
