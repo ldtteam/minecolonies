@@ -4,8 +4,9 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperScepterMessage;
 
 /**
  * Window for the beekeeper hut.
@@ -13,6 +14,11 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBeekeeper.View>
 {
     private static final String BUTTON_HARVEST_HONEYCOMB = "harvestHoneycomb";
+
+    /**
+     * Id of the button to give tool
+     */
+    private static final String BUTTON_GIVE_TOOL = "giveTool";
 
     /**
      * Button for toggling honeycomb harvesting.
@@ -39,6 +45,16 @@ public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBee
         {
             buttonHarvestHoneycombs.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
         }
+
+        registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
+    }
+
+    /**
+     * Send message to player to add scepter to his inventory.
+     */
+    private void givePlayerScepter()
+    {
+        Network.getNetwork().sendToServer(new BeekeeperScepterMessage(building));
     }
 
     private void harvestHoneycombClicked()

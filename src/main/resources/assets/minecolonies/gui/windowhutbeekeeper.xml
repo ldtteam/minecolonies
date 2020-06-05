@@ -8,6 +8,7 @@
         <view id="pageActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <button id="harvestHoneycomb" size="129 17" pos="30 114" label="$(com.minecolonies.coremod.gui.beekeeper.collect)"/>
+            <button id="giveTool" size="129 17" pos="30 140" label="$(com.minecolonies.coremod.gui.beekeeper.addhives)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

@@ -11,28 +11,25 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutBeekeeper;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -43,13 +40,14 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     private static final String BEEKEEPER = "beekeeper";
 
-    private static final String TAG_HIVES = "hives";
+    private static final String TAG_HIVES              = "hives";
+    private static final String TAG_HARVEST_HONEYCOMBS = "harvest_honeycombs";
 
     /**
      * List of hives.
      */
-    private List<BlockPos> hives = new ArrayList<>();
-    private boolean harvestHoneycombs = true;
+    private Set<BlockPos> hives             = new HashSet<>();
+    private boolean       harvestHoneycombs = true;
 
     /**
      * The abstract constructor of the building.
@@ -142,36 +140,21 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull World world)
-    {
-        super.registerBlockPosition(block, pos, world);
-        if (block == Blocks.BEEHIVE)
-        {
-            hives.add(pos);
-        }
-    }
-
-    @Override
     public void deserializeNBT(CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        ListNBT list = compound.getList(TAG_HIVES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++)
-        {
-            hives.add(NBTUtil.readBlockPos(list.getCompound(i)));
-        }
+        NBTUtils.streamCompound(compound.getList(TAG_HIVES, Constants.NBT.TAG_COMPOUND))
+          .map(NBTUtil::readBlockPos)
+          .forEach(this.hives::add);
+        this.harvestHoneycombs = compound.getBoolean(TAG_HARVEST_HONEYCOMBS);
     }
 
     @Override
     public CompoundNBT serializeNBT()
     {
-        CompoundNBT nbt = super.serializeNBT();
-        ListNBT hives = new ListNBT();
-        for (BlockPos hive : this.hives)
-        {
-            hives.add(NBTUtil.writeBlockPos(hive));
-        }
-        nbt.put(TAG_HIVES, hives);
+        final CompoundNBT nbt = super.serializeNBT();
+        nbt.put(TAG_HIVES, this.hives.stream().map(NBTUtil::writeBlockPos).collect(NBTUtils.toListNBT()));
+        nbt.putBoolean(TAG_HARVEST_HONEYCOMBS, this.harvestHoneycombs);
         return nbt;
     }
 
@@ -189,18 +172,27 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
             return false;
         }
 
-        return storage.getPrimaryOutput().getItem() == Items.HONEY_BLOCK ||
-                storage.getPrimaryOutput().getItem() == Items.HONEYCOMB_BLOCK ||
+        return storage.getInput()
+                 .stream()
+                 .map(ItemStack::getItem)
+                 .anyMatch(item -> item == Items.HONEYCOMB || item == Items.HONEY_BOTTLE) ||
                 storage.getPrimaryOutput().getItem() == Items.HONEY_BOTTLE ||
                 storage.getPrimaryOutput().getItem() == Items.HONEYCOMB;
     }
 
-    public List<BlockPos> getHives()
+    @Override
+    public void serializeToView(@NotNull final PacketBuffer buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(harvestHoneycombs);
+    }
+
+    public Set<BlockPos> getHives()
     {
         return hives;
     }
 
-    public void setHives(List<BlockPos> hives)
+    public void setHives(Set<BlockPos> hives)
     {
         this.hives = hives;
     }
@@ -213,6 +205,11 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     public boolean shouldHarvestHoneycombs()
     {
         return harvestHoneycombs;
+    }
+
+    public int getMaximumHives()
+    {
+        return (int) Math.floor(Math.pow(2, getBuildingLevel()-1));
     }
 
     public static class View extends AbstractBuildingWorker.View

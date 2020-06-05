@@ -38,7 +38,7 @@ public class JobBeekeeper extends AbstractJob
     @Override
     public String getName()
     {
-        return null;
+        return "com.minecolonies.coremod.job.Beekeeper";
     }
 
     /**

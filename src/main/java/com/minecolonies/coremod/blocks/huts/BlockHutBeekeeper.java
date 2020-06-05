@@ -12,7 +12,7 @@ public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper> {
      */
     @Override
     public String getName() {
-        return "blockHutBeekeeper";
+        return "blockhutbeekeeper";
     }
 
     /**
