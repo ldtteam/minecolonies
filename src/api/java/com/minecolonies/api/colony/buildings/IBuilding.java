@@ -251,10 +251,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen);
 
     @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequests(@NotNull ICitizenData data);
+    ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenData data);
 
     @SuppressWarnings(RAWTYPES)
-    boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest> selectionPredicate);
+    boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest<?>> selectionPredicate);
 
     <R> boolean hasWorkerOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
@@ -266,7 +266,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean hasCitizenCompletedRequests(@NotNull ICitizenData data);
 
     @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getCompletedRequests(@NotNull ICitizenData data);
+    ImmutableList<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
 
     @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);

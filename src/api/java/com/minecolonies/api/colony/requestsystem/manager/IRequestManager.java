@@ -170,7 +170,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * Method used to indicate that a colony has updated their available items.
      * @param shouldTriggerReassign The request assigned
      */
-    void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign);
+    void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign);
 
     /**
      * Get the player resolve.

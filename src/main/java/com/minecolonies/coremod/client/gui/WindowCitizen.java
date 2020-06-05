@@ -371,7 +371,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequests(citizen);
     }
@@ -414,7 +414,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public void fulfill(@NotNull final IRequest tRequest)
+    public void fulfill(@NotNull final IRequest<?> tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {

@@ -1072,7 +1072,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenData data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
     {
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
@@ -1088,7 +1088,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @Override
     @SuppressWarnings(RAWTYPES)
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
@@ -1139,7 +1139,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getCompletedRequests(@NotNull final ICitizenData data)
+    public ImmutableList<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
         {

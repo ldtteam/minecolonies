@@ -263,7 +263,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests.keySet()).stream()
                 .map(manager::getRequestForToken)

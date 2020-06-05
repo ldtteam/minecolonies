@@ -469,7 +469,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenDataView data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenDataView data)
     {
         if (data == null || getColony() == null || getColony().getRequestManager() == null)
         {
@@ -496,7 +496,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequestsOfBuilding()
+    public ImmutableList<IRequest<?>> getOpenRequestsOfBuilding()
     {
         return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
                                       .filter(Objects::nonNull)

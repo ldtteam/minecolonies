@@ -191,7 +191,7 @@ public class RequestHandler implements IRequestHandler
             for (final IToken<?> childRequestToken :
                             attemptResult)
             {
-                @SuppressWarnings(RAWTYPES) final IRequest childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+                @SuppressWarnings(RAWTYPES) final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
                 childRequest.setParent(request.getId());
                 request.addChild(childRequest.getId());
@@ -200,7 +200,7 @@ public class RequestHandler implements IRequestHandler
             for (final IToken<?> childRequestToken :
                             attemptResult)
             {
-                @SuppressWarnings(RAWTYPES) final IRequest childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+                @SuppressWarnings(RAWTYPES) final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
                 if (!isAssigned(childRequestToken))
                 {
@@ -276,7 +276,7 @@ public class RequestHandler implements IRequestHandler
     @Override
     public void onRequestResolved(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
+        @SuppressWarnings(RAWTYPES) final IRequest<?> request = getRequest(token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
 
         //Retrieve a followup request.
@@ -316,14 +316,14 @@ public class RequestHandler implements IRequestHandler
     @SuppressWarnings(UNCHECKED)
     public void onRequestCompleted(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
+        @SuppressWarnings(RAWTYPES) final IRequest<?> request = getRequest(token);
 
         request.getRequester().onRequestedRequestComplete(manager, request);
 
         //Check if the request has a parent, and if resolving of the parent is needed.
         if (request.hasParent())
         {
-            @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(request.getParent());
+            @SuppressWarnings(RAWTYPES) final IRequest<?> parentRequest = getRequest(request.getParent());
 
             manager.updateRequestState(request.getId(), RequestState.RECEIVED);
             parentRequest.removeChild(request.getId());
@@ -392,7 +392,7 @@ public class RequestHandler implements IRequestHandler
     @SuppressWarnings(UNCHECKED)
     public void onRequestCancelled(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest request = manager.getRequestHandler().getRequest(token);
+        @SuppressWarnings(RAWTYPES) final IRequest<?> request = manager.getRequestHandler().getRequest(token);
 
         if (request == null)
         {
@@ -534,7 +534,7 @@ public class RequestHandler implements IRequestHandler
      */
     @Override
     @SuppressWarnings(RAWTYPES)
-    public IRequest getRequest(final IToken<?> token)
+    public IRequest<?> getRequest(final IToken<?> token)
     {
         if (!manager.getRequestIdentitiesDataStore().getIdentities().containsKey(token))
         {
@@ -552,7 +552,7 @@ public class RequestHandler implements IRequestHandler
      */
     @Override
     @SuppressWarnings(RAWTYPES)
-    public IRequest getRequestOrNull(final IToken<?> token)
+    public IRequest<?> getRequestOrNull(final IToken<?> token)
     {
         manager.getLogger().debug("Retrieving the request for: " + token);
 

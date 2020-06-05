@@ -68,7 +68,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
         return !manager.getColony().getWorld().isRemote;
     }
@@ -81,7 +81,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         if (canResolveRequest(manager, request))
         {
@@ -99,7 +99,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) throws RuntimeException
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
@@ -177,7 +177,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests).stream()
           .map(manager::getRequestForToken)

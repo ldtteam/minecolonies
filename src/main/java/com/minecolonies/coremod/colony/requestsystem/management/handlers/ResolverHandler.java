@@ -359,7 +359,7 @@ public class ResolverHandler implements IResolverHandler
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
     @Override
-    public void onColonyUpdate(final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
     }

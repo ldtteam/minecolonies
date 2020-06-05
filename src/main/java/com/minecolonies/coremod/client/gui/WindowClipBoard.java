@@ -112,13 +112,13 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
-            final ImmutableList<IRequest> openRequests = getOpenRequests();
+            final ImmutableList<IRequest<?>> openRequests = getOpenRequests();
             if (index < 0 || index >= openRequests.size())
             {
                 return;
             }
 
-            final IRequest request = openRequests.get(index);
+            final IRequest<?> request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
@@ -148,7 +148,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      * The requests to display.
      * @return the list of requests.
      */
-    public ImmutableList<IRequest> getOpenRequests()
+    public ImmutableList<IRequest<?>> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
 
@@ -174,9 +174,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
+        requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
                 .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                .thenComparingInt((IRequest request) -> request.getId().hashCode()));
+                .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
@@ -230,7 +230,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequests().get(row);
+            @NotNull final IRequest<?> request = getOpenRequests().get(row);
             Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
         }
     }

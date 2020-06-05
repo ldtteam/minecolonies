@@ -141,9 +141,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to cancel.
      */
-    public void cancel(@NotNull final IRequest tRequest)
+    public void cancel(@NotNull final IRequest<?> request)
     {
-        @NotNull final IRequest<?> request = (IRequest<?>) tRequest;
         building.onRequestedRequestCancelled(colony.getRequestManager(), request);
         Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
 
@@ -215,7 +214,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param building the building to get them from.
      * @return the requests.
      */
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequestsOfBuilding();
     }
@@ -231,7 +230,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             fulfill(request);
         }
         button.disable();
@@ -243,7 +242,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param request the request to fulfill.
      */
-    public void fulfill(@NotNull final IRequest request)
+    public void fulfill(@NotNull final IRequest<?> request)
     {
         /*
          * Override if can fulfill.
@@ -348,7 +347,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to check if it's fulfillable
      */
-    public boolean fulfillable(final IRequest tRequest)
+    public boolean fulfillable(final IRequest<?> tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {
@@ -414,7 +413,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param tRequest the request to check if it's cancellable
      */
-    public boolean cancellable(final IRequest tRequest)
+    public boolean cancellable(final IRequest<?> tRequest)
     {
         List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
         RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().orElse(null);
@@ -441,7 +440,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         /**
          * The request.
          */
-        private final IRequest request;
+        private final IRequest<?> request;
 
         /**
          * The depth in the tree.
@@ -460,7 +459,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          * @param depth        the depth.
          * @param buildingView the building it belongs to.
          */
-        public RequestWrapper(@NotNull final IRequest request, final int depth, @NotNull final IBuildingView buildingView)
+        public RequestWrapper(@NotNull final IRequest<?> request, final int depth, @NotNull final IBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;
@@ -474,7 +473,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          *
          * @return the request.
          */
-        public IRequest getRequest()
+        public IRequest<?> getRequest()
         {
             return request;
         }

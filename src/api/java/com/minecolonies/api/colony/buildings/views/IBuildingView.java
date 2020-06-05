@@ -165,10 +165,10 @@ public interface IBuildingView extends IRequester
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull ICitizenDataView citizenData, Class<R> requestType);
 
     @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequests(@NotNull ICitizenDataView data);
+    ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenDataView data);
 
     @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequestsOfBuilding();
+    ImmutableList<IRequest<?>> getOpenRequestsOfBuilding();
 
     /**
      * Gets the ColonyView that this building belongs to.

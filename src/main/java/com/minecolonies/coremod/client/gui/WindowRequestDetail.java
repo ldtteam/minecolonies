@@ -83,7 +83,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The request itself.
      */
-    private final IRequest request;
+    private final IRequest<?> request;
     /**
      * The colony id.
      */
@@ -114,7 +114,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * @param request    the request.
      * @param colonyId   the colony id.
      */
-    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest request, final int colonyId)
+    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest<?> request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.prevWindow = prevWindow;

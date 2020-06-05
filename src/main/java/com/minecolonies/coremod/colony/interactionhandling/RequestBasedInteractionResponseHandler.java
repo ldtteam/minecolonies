@@ -132,7 +132,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
             if (colony != null)
             {
-                final IRequest request = colony.getRequestManager().getRequestForToken(token);
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
                 if (request != null)
                 {
                     final WindowCitizen windowCitizen = new WindowCitizen(data);

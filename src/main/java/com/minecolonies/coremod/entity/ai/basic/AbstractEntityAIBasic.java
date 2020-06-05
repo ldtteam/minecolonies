@@ -427,7 +427,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
-            for (final IRequest request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
+            for (final IRequest<?> request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
             {
                 final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
                 if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
@@ -541,7 +541,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
             final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
@@ -922,7 +922,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final List<IRequest<? extends Tool>> openRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
-        for (final IRequest token : openRequests)
+        for (final IRequest<?> token : openRequests)
         {
             worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
         }
