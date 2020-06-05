@@ -16,7 +16,7 @@ public enum ShipSize
     BIG(ColonyConstants.BIG_HORDE_SIZE,
       ColonyConstants.BIG_SHIP,
       ColonyConstants.BIG_HORDE_MESSAGE_ID,
-      11,
+      10,
       2, 2, 1);
 
     /**
