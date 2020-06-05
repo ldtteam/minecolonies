@@ -108,8 +108,7 @@ public class CommandListColonies implements IMCCommand
             context.getSource().sendFeedback(teleport, true);
         }
 
-        // TODO: potential bug, wrong name string
-        final ITextComponent prevButton = new StringTextComponent("click").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 
         final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
