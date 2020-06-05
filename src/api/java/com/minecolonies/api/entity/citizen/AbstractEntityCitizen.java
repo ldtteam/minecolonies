@@ -47,7 +47,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider, INPC
+public abstract class AbstractEntityCitizen extends AgeableEntity implements INamedContainerProvider, INPC
 {
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);

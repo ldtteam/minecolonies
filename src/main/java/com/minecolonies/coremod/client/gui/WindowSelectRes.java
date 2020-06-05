@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
 
-public class WindowSelectRes extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowSelectRes extends AbstractWindowSkeleton
 {
     /**
      * Static vars.

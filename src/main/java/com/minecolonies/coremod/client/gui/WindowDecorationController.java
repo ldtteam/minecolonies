@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for a hut name entry.
  */
-public class WindowDecorationController extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowDecorationController extends AbstractWindowSkeleton
 {
     /**
      * The max length of the name.

@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowHireWorker extends AbstractWindowSkeleton
 {
     /**
      * The view of the current building.

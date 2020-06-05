@@ -9,7 +9,7 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B>
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 

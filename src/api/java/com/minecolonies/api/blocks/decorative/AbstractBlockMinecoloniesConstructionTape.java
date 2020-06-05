@@ -9,7 +9,7 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
 {
     /**
      * The variants of the shingle slab.

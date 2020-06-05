@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowHireWorkerSchool extends WindowHireWorker implements ButtonHandler
+public class WindowHireWorkerSchool extends WindowHireWorker
 {
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.

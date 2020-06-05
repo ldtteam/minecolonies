@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface IBuildingWorker extends IBuildingContainer, IBuilding
+public interface IBuildingWorker extends IBuilding
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)

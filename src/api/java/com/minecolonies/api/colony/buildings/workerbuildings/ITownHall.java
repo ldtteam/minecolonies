@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.ICitizenAssignable;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 
-public interface ITownHall extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding
+public interface ITownHall extends IBuilding
 {
     /**
      * Add a colony permission event to the colony.

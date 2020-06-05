@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 
 import java.util.Set;
 
-public interface IWareHouse extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding
+public interface IWareHouse extends IBuilding
 {
     /**
      * Register deliveryman with the warehouse.

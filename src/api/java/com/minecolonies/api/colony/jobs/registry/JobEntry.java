@@ -13,7 +13,7 @@ import java.util.function.Function;
  * Entry for the {@link IJob} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IForgeRegistryEntry<JobEntry>
+public final class JobEntry extends ForgeRegistryEntry<JobEntry>
 {
 
     private final Function<ICitizenData, IJob<?>> jobProducer;

@@ -14,7 +14,7 @@ import java.util.function.Function;
  * Entry for the {@link IInteractionResponseHandler} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<InteractionResponseHandlerEntry> implements IForgeRegistryEntry<InteractionResponseHandlerEntry>
+public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<InteractionResponseHandlerEntry>
 {
 
     private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;

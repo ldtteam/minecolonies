@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.*;
 
-public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IRequestResolverProvider, IRequester
+public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester
 {
     /**
      * Getter for the custom name of a building.

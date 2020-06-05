@@ -8,7 +8,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 
-public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B>
 {
     public static final EnumProperty<RackType> VARIANT
                                                             =

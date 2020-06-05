@@ -11,7 +11,7 @@ import java.util.Random;
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITickableTileEntity
+public class TileEntityEnchanter extends TileEntityColonyBuilding
 {
     public int   tickCount;
     public float pageFlip;
