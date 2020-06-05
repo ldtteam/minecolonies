@@ -42,11 +42,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_RECALL = "recall";
 
     /**
-     * Id of the priority label in the GUI.
-     */
-    private static final String LABEL_PRIO_LABEL = "prioLabel";
-
-    /**
      * Id of the priority value label in the GUI.
      */
     private static final String LABEL_PRIO_VALUE = "prioValue";

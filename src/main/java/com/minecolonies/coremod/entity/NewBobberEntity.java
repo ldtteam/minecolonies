@@ -481,7 +481,6 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                     final double d0 = this.angler.posX - this.posX;
                     final double d1 = this.angler.posY - this.posY;
                     final double d2 = this.angler.posZ - this.posZ;
-                    final double d3 = 0.1D;
                     itementity.setMotion(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
                     this.world.addEntity(itementity);
                     this.angler.world.addEntity(new ExperienceOrbEntity(this.angler.world, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(6) + 1));

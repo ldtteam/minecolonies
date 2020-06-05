@@ -14,11 +14,6 @@ import net.minecraft.util.text.ITextComponent;
 public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInventory>
 {
     /**
-     * The ResourceLocation containing the chest GUI texture.
-     */
-    private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
-
-    /**
      * Offset inside the texture to use.
      */
     private static final int TEXTURE_OFFSET = 126 * 2 - 17;

@@ -66,11 +66,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     private static final int STUCK_WAIT_TICKS = 20;
 
     /**
-     * The amount of time to wait while walking to items.
-     */
-    private static final int WAIT_WHILE_WALKING = 5;
-
-    /**
      * Horizontal range in which the worker picks up items.
      */
     public static final float RANGE_HORIZONTAL_PICKUP = 45.0F;

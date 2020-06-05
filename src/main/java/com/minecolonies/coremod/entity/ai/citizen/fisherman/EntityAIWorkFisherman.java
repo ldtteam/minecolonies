@@ -113,11 +113,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private static final int FISHING_TIMEOUT = 5;
 
     /**
-     * Chance to play a specific fisherman sound.
-     */
-    private static final int    CHANCE_TO_PLAY_SOUND = 20;
-
-    /**
      * Required level for sponge drop.
      */
     private static final int LEVEL_FOR_SPONGE   = 4;

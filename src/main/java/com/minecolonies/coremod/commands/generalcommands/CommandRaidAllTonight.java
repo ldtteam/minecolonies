@@ -18,8 +18,6 @@ public class CommandRaidAllTonight implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             colony.getRaiderManager().setWillRaidTonight(true);

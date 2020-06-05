@@ -57,9 +57,6 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
 
     private int displayListFor(final CommandContext<CommandSource> context, int page)
     {
-
-        final Entity sender = context.getSource().getEntity();
-
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());

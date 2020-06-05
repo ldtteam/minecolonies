@@ -59,8 +59,6 @@ public class CommandListColonies implements IMCCommand
 
     private int executeCommand(final CommandContext<CommandSource> context, final int startpage)
     {
-        final Entity sender = context.getSource().getEntity();
-
         int page = startpage;
         final List<IColony> colonies = IColonyManager.getInstance().getAllColonies();
 
@@ -111,6 +109,7 @@ public class CommandListColonies implements IMCCommand
             context.getSource().sendFeedback(teleport, true);
         }
 
+        // TODO: potential bug, wrong name string
         final ITextComponent prevButton = new StringTextComponent("click").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 

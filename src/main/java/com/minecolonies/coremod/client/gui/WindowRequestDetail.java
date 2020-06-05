@@ -99,15 +99,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private final Window prevWindow;
 
     /**
-     * Player inventory
-     */
-    private final PlayerInventory inventory  = this.mc.player.inventory;
-    /**
-     * Is the player in creative or not.
-     */
-    private final boolean isCreative = this.mc.player.isCreative();
-
-    /**
      * Open the request detail.
      *
      * @param prevWindow the window we're coming from.

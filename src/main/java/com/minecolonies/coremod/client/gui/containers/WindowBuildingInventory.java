@@ -16,8 +16,6 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
     {
         super(container, playerInventory, component);
         this.passEvents = false;
-        int i = 222;
-        int j = 114;
         this.inventoryRows = container.getSize();
         this.ySize = 114 + this.inventoryRows * 18;
     }

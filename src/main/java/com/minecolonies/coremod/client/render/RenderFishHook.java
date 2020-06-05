@@ -76,7 +76,6 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
         double d0 = (double) MathHelper.sin(f2);
         double d1 = (double) MathHelper.cos(f2);
         double d2 = (double) i * 0.35D;
-        double d3 = 0.8D;
         double d4;
         double d5;
         double d6;
@@ -111,7 +110,6 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
         float f6 = (float) (d6 - d8);
         IVertexBuilder ivertexbuilder1 = iRenderTypeBuffer.getBuffer(RenderType.lines());
         Matrix4f matrix4f1 = matrixStack.getLast().getPositionMatrix();
-        int j = 16;
 
         for (int k = 0; k < 16; ++k)
         {

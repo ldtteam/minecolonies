@@ -176,8 +176,6 @@ public class BuildingMoveMessage implements IMessage
             return;
         }
 
-        final String hut = sn.getSection();
-
         final Block block = world.getBlockState(oldBuildingId).getBlock();
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null

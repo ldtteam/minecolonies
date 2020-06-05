@@ -28,8 +28,6 @@ import java.util.EnumSet;
  */
 public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
 {
-
-    private static final Flag                  MUTEX_MASK =  Flag.MOVE;
     @NotNull
     protected final      J                     job;
     @NotNull

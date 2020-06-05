@@ -37,16 +37,6 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
     private static final int MAX_LEVEL = 50;
 
     /**
-     * How often should strength factor into the sifter's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
-     * How often should endurance factor into the sifter's skill modifier.
-     */
-    private static final int ENDURANCE_MULTIPLIER = 2;
-
-    /**
      * Delay for each of the craftings.
      */
     private static final int TICK_DELAY = 10;

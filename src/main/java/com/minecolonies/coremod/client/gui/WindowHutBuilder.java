@@ -40,11 +40,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public static final int BLACK     = Color.getByName("black", 0);
 
     /**
-     * Current Building view
-     */
-    private IBuildingView builder;
-
-    /**
      * List of resources needed.
      */
     @NotNull
@@ -63,7 +58,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        this.builder = building;
         pullResourcesFromHut();
         registerButton(RESOURCE_ADD, this::transferItems);
     }
