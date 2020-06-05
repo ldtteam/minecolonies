@@ -262,8 +262,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE || itemStack.getItem() == Items.CACTUS || itemStack.getItem() == Items.BAMBOO
-              || itemStack.getItem() == Items.SUGAR_CANE)
+        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE)
         {
             return false;
         }
