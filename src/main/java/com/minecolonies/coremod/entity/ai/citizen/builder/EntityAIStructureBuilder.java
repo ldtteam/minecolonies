@@ -202,7 +202,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingBuilder> getExpectedBuildingClass()
     {
         return BuildingBuilder.class;
     }

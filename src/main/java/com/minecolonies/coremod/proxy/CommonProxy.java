@@ -11,16 +11,13 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
-import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -87,14 +84,6 @@ public abstract class CommonProxy implements IProxy
     public static CompoundNBT getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
-    }
-
-    @SubscribeEvent
-    public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipeSerializer<?>> event)
-    {
-        SPECIAL_REC = new SpecialRecipeSerializer<>(TownHallRecipe::new);
-        SPECIAL_REC.setRegistryName(new ResourceLocation(Constants.MOD_ID, "townhall.recipe"));
-        event.getRegistry().register(SPECIAL_REC);
     }
 
     @SubscribeEvent
