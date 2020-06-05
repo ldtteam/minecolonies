@@ -507,7 +507,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation(ench.getA())).get(), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())), ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -882,7 +882,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String enchantment = split[1];
-                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation(enchantment)).isPresent())
+                if (ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(enchantment)) == null)
                 {
                     Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
                     continue;
