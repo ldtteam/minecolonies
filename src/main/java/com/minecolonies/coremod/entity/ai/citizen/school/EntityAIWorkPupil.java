@@ -204,7 +204,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
     }

@@ -53,7 +53,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingLibrary> getExpectedBuildingClass()
     {
         return BuildingLibrary.class;
     }

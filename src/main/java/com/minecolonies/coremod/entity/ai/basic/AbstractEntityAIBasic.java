@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return the building type associated with this AI's worker.
      */
-    public Class getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingWorker> getExpectedBuildingClass()
     {
         return AbstractBuildingWorker.class;
     }
