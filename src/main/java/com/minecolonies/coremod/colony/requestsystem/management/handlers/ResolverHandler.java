@@ -18,8 +18,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-
 /**
  * Class used to handle the inner workings of the request system with regards to resolvers.
  */

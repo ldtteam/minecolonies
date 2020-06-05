@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {

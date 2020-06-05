@@ -1,7 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.state.DirectionProperty;

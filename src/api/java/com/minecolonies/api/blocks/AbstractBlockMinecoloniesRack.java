@@ -1,6 +1,5 @@
 package com.minecolonies.api.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

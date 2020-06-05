@@ -1,7 +1,6 @@
 package com.minecolonies.api.tileentities;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;
 

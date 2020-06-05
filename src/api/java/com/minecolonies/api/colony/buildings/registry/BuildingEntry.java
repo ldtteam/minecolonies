@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.BiFunction;

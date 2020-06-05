@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.render.mobs.amazon;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 

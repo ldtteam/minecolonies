@@ -1,9 +1,6 @@
 package com.minecolonies.api.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingContainer;
-import com.minecolonies.api.colony.buildings.ICitizenAssignable;
-import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import net.minecraft.util.math.Vec3d;

@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.guardtype;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.util.ResourceLocation;

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;

@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import net.minecraft.util.DamageSource;
 

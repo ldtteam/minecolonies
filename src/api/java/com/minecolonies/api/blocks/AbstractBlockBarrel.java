@@ -1,6 +1,5 @@
 package com.minecolonies.api.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import net.minecraft.block.BlockState;

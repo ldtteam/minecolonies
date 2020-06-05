@@ -9,9 +9,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 
 import java.util.Collection;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-
 public interface IRequestHandler
 {
     IRequestManager getManager();

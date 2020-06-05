@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.render.mobs.pirates;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
 
 /**
