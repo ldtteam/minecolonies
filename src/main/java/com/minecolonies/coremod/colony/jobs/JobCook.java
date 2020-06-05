@@ -60,7 +60,7 @@ public class JobCook extends AbstractJobCrafter<EntityAIWorkCook, JobCook>
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobCook> generateAI()
+    public EntityAIWorkCook generateAI()
     {
         return new EntityAIWorkCook(this);
     }
