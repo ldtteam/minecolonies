@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class of the deliveryman job.
  */
-public class JobDeliveryman extends AbstractJob
+public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman>
 {
     private IToken<?> rsDataStoreToken;
 
@@ -139,7 +139,7 @@ public class JobDeliveryman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobDeliveryman> generateAI()
+    public EntityAIWorkDeliveryman generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
     }

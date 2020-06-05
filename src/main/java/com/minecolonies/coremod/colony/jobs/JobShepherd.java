@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Shepherd job
  */
-public class JobShepherd extends AbstractJob
+public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
 {
 
     /**
@@ -46,7 +46,7 @@ public class JobShepherd extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobShepherd> generateAI()
+    public EntityAIWorkShepherd generateAI()
     {
         return new EntityAIWorkShepherd(this);
     }

@@ -26,7 +26,7 @@ import java.util.EnumSet;
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob> extends Goal
+public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
 {
 
     private static final Flag                  MUTEX_MASK =  Flag.MOVE;

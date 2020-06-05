@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 /**
  * Planter AI class.
  */
-public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation>
 {
     /**
      * Return to chest after this amount of stacks.
@@ -47,7 +47,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
      *
      * @param job a planter job to use.
      */
-    public EntityAIWorkPlanter(@NotNull final J job)
+    public EntityAIWorkPlanter(@NotNull final JobPlanter job)
     {
         super(job);
         super.registerTargets(
@@ -73,7 +73,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(getOwnBuilding(BuildingPlantation.class).getCurrentPhase());
+        final ItemStack currentStack = new ItemStack(getOwnBuilding().getCurrentPhase());
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
         if (plantInInv <= 0)
         {
@@ -133,7 +133,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
     }
 
     @Override
-    public Class<? extends BuildingPlantation> getExpectedBuildingClass()
+    public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
     }
@@ -148,7 +148,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return nextState;
         }
 
-        final BuildingPlantation plantation = getOwnBuilding(BuildingPlantation.class);
+        final BuildingPlantation plantation = getOwnBuilding();
 
         final List<BlockPos> list = plantation.getPosForPhase(world);
         for (final BlockPos pos : list)

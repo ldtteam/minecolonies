@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used for variables regarding his job.
  */
-public class JobMiner extends AbstractJobStructure
+public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMiner>
 {
     /**
      * Creates a new instance of the miner job.
@@ -50,7 +50,7 @@ public class JobMiner extends AbstractJobStructure
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobMiner> generateAI()
+    public EntityAIStructureMiner generateAI()
     {
         return new EntityAIStructureMiner(this);
     }

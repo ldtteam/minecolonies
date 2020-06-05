@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Cowboy job
  */
-public class JobCowboy extends AbstractJob
+public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
 {
     /**
      * Instantiates the placeholder job.
@@ -44,7 +44,7 @@ public class JobCowboy extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobCowboy> generateAI()
+    public EntityAIWorkCowboy generateAI()
     {
         return new EntityAIWorkCowboy(this);
     }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job class of the pupil.
  */
-public class JobPupil extends AbstractJob
+public class JobPupil extends AbstractJob<EntityAIWorkPupil, JobPupil>
 {
     /**
      * Public constructor of the pupil job.
@@ -48,7 +48,7 @@ public class JobPupil extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobPupil> generateAI()
+    public EntityAIWorkPupil generateAI()
     {
         return new EntityAIWorkPupil(this);
     }

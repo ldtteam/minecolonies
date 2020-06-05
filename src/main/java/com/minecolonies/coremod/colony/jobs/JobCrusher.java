@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The crusher job class.
  */
-public class JobCrusher extends AbstractJobCrafter
+public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrusher>
 {
     /**
      * Create a crusher job.
@@ -60,7 +60,7 @@ public class JobCrusher extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobCrusher> generateAI()
+    public EntityAIWorkCrusher generateAI()
     {
         return new EntityAIWorkCrusher(this);
     }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The healer job class.
  */
-public class JobHealer extends AbstractJob
+public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
 {
     /**
      * Create a healer job.
@@ -60,7 +60,7 @@ public class JobHealer extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobHealer> generateAI()
+    public EntityAIWorkHealer generateAI()
     {
         return new EntityAIWorkHealer(this);
     }

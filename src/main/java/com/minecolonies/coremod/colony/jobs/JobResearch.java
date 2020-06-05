@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job class of the researcher.
  */
-public class JobResearch extends AbstractJob
+public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch>
 {
     /**
      * Public constructor of the researcher job.
@@ -48,7 +48,7 @@ public class JobResearch extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobResearch> generateAI()
+    public EntityAIWorkResearcher generateAI()
     {
         return new EntityAIWorkResearcher(this);
     }

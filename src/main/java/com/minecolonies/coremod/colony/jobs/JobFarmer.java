@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job class of the farmer, handles his fields.
  */
-public class JobFarmer extends AbstractJob
+public class JobFarmer extends AbstractJob<EntityAIWorkFarmer, JobFarmer>
 {
     /**
      * Public constructor of the farmer job.
@@ -48,7 +48,7 @@ public class JobFarmer extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobFarmer> generateAI()
+    public EntityAIWorkFarmer generateAI()
     {
         return new EntityAIWorkFarmer(this);
     }

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTr
 /**
  * The Archers's Training Job class
  */
-public class JobArcherTraining extends AbstractJob
+public class JobArcherTraining extends AbstractJob<EntityAIArcherTraining, JobArcherTraining>
 {
     /**
      * Initialize citizen data.
@@ -48,7 +48,7 @@ public class JobArcherTraining extends AbstractJob
     }
 
     @Override
-    public AbstractAISkeleton<? extends IJob> generateAI()
+    public EntityAIArcherTraining generateAI()
     {
         return new EntityAIArcherTraining(this);
     }

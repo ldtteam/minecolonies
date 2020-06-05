@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the planter job.
  */
-public class JobPlanter extends AbstractJobCrafter
+public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlanter>
 {
     /**
      * Instantiates the job for the plantation.
@@ -51,7 +51,7 @@ public class JobPlanter extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobPlanter> generateAI()
+    public EntityAIWorkPlanter generateAI()
     {
         return new EntityAIWorkPlanter(this);
     }

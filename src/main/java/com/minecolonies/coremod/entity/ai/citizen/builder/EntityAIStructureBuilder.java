@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS
 /**
  * AI class for the builder. Manages building and repairing buildings.
  */
-public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder>
+public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder, BuildingBuilder>
 {
     /**
      * over this y level the builder will be faster.
@@ -202,7 +202,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public Class<? extends BuildingBuilder> getExpectedBuildingClass()
+    public Class<BuildingBuilder> getExpectedBuildingClass()
     {
         return BuildingBuilder.class;
     }
@@ -216,7 +216,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).searchWorkOrder();
+            getOwnBuilding().searchWorkOrder();
             return false;
         }
 
@@ -225,7 +225,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, null);
+            getOwnBuilding().setProgressPos(null, null);
             return false;
         }
 
@@ -278,10 +278,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void checkForExtraBuildingActions()
     {
-        if (!getOwnBuilding(BuildingBuilder.class).hasPurgedMobsToday())
+        if (!getOwnBuilding().hasPurgedMobsToday())
         {
             killMobs();
-            getOwnBuilding(BuildingBuilder.class).setPurgedMobsToday(true);
+            getOwnBuilding().setPurgedMobsToday(true);
         }
     }
 

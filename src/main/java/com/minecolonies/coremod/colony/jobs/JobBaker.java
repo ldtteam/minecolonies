@@ -14,7 +14,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  * The fisherman's job class.
  * implements some useful things for him.
  */
-public class JobBaker extends AbstractJob
+public class JobBaker extends AbstractJob<EntityAIWorkBaker, JobBaker>
 {
     /**
      * Initializes the job class.
@@ -63,7 +63,7 @@ public class JobBaker extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobBaker> generateAI()
+    public EntityAIWorkBaker generateAI()
     {
         return new EntityAIWorkBaker(this);
     }

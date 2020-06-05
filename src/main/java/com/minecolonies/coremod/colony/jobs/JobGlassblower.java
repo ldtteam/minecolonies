@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Glassblower job.
  */
-public class JobGlassblower extends AbstractJobCrafter
+public class JobGlassblower extends AbstractJobCrafter<EntityAIWorkGlassblower, JobGlassblower>
 {
     /**
      * Instantiates the job for the Glassblower.
@@ -51,7 +51,7 @@ public class JobGlassblower extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobGlassblower> generateAI()
+    public EntityAIWorkGlassblower generateAI()
     {
         return new EntityAIWorkGlassblower(this);
     }

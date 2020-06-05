@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Class of the crafter job.
  */
-public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J>, J extends AbstractJobCrafter<AI, J>>
+public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? extends AbstractBuildingWorker>, J extends AbstractJobCrafter<AI, J>>
     extends AbstractJob<AI, J>
 {
     /**

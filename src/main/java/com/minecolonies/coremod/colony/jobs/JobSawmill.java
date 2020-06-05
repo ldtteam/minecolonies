@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Sawmill job.
  */
-public class JobSawmill extends AbstractJobCrafter
+public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmill>
 {
     /**
      * Instantiates the job for the Sawmill.
@@ -42,7 +42,7 @@ public class JobSawmill extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobSawmill> generateAI()
+    public EntityAIWorkSawmill generateAI()
     {
         return new EntityAIWorkSawmill(this);
     }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The student job class.
  */
-public class JobStudent extends AbstractJob
+public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
 {
     /**
      * Create a cook job.
@@ -48,7 +48,7 @@ public class JobStudent extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobStudent> generateAI()
+    public EntityAIStudy generateAI()
     {
         return new EntityAIStudy(this);
     }

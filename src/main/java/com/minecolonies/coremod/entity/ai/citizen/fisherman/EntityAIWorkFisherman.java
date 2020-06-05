@@ -47,7 +47,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_
  * <p>
  * To keep it immersive he chooses his place at random around the pond.
  */
-public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
+public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, BuildingFisherman>
 {
     /**
      * The render name to render fish.
@@ -173,7 +173,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     @Override
-    public Class<? extends BuildingFisherman> getExpectedBuildingClass()
+    public Class<BuildingFisherman> getExpectedBuildingClass()
     {
         return BuildingFisherman.class;
     }
@@ -215,12 +215,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private void playNeedRodSound()
     {
         SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.MISSING_EQUIPMENT, worker.getCitizenData());
-    }
-
-    @Override
-    public BuildingFisherman getOwnBuilding()
-    {
-        return (BuildingFisherman) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     @Override

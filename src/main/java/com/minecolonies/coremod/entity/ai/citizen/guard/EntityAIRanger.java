@@ -9,6 +9,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
@@ -30,7 +31,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
+public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards>
 {
     private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
@@ -461,5 +462,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         worker.getNavigator()
           .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
+    }
+
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
     }
 }

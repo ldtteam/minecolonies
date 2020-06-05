@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch>
+public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch, BuildingUniversity>
 {
     /**
      * Delay for each subject study.
@@ -40,7 +40,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     }
 
     @Override
-    public Class<? extends BuildingUniversity> getExpectedBuildingClass()
+    public Class<BuildingUniversity> getExpectedBuildingClass()
     {
         return BuildingUniversity.class;
     }
@@ -55,7 +55,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     {
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding(BuildingUniversity.class).getRandomBookShelf();
+            studyPos = getOwnBuilding().getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))

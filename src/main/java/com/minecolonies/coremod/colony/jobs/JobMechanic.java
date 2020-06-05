@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Mechanic job.
  */
-public class JobMechanic extends AbstractJobCrafter
+public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMechanic>
 {
     /**
      * Instantiates the job for the Mechanic.
@@ -42,7 +42,7 @@ public class JobMechanic extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobMechanic> generateAI()
+    public EntityAIWorkMechanic generateAI()
     {
         return new EntityAIWorkMechanic(this);
     }

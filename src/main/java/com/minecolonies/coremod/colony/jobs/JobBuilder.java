@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The job of the builder.
  */
-public class JobBuilder extends AbstractJobStructure
+public class JobBuilder extends AbstractJobStructure<EntityAIStructureBuilder, JobBuilder>
 {
     /**
      * Instantiates builder job.
@@ -46,7 +46,7 @@ public class JobBuilder extends AbstractJobStructure
 
     @NotNull
     @Override
-    public AbstractAISkeleton<JobBuilder> generateAI()
+    public EntityAIStructureBuilder generateAI()
     {
         return new EntityAIStructureBuilder(this);
     }

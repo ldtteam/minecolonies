@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The sifter job class.
  */
-public class JobSifter extends AbstractJobCrafter
+public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
 {
     /**
      * Create a sifter job.
@@ -60,7 +60,7 @@ public class JobSifter extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobSifter> generateAI()
+    public EntityAIWorkSifter generateAI()
     {
         return new EntityAIWorkSifter(this);
     }

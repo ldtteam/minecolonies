@@ -73,7 +73,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  *
  * @param <J> The job this ai has to fulfil
  */
-public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractAISkeleton<J>
 {
     /**
      * The standard delay after each terminated action.
@@ -268,10 +268,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding()
+    public B getOwnBuilding()
     {
-        final IBuildingWorker worker = getOwnBuilding(getExpectedBuildingClass());
-        return worker == null ? null : (W) worker;
+        return getOwnBuilding(getExpectedBuildingClass());
     }
 
     /**
@@ -279,10 +278,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return the building type associated with this AI's worker.
      */
-    public Class<? extends AbstractBuildingWorker> getExpectedBuildingClass()
-    {
-        return AbstractBuildingWorker.class;
-    }
+    public abstract Class<B> getExpectedBuildingClass();
 
     /**
      * Can be overridden in implementations to return the exact building type.
@@ -292,14 +288,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
+    @SuppressWarnings("unchecked")
+    private B getOwnBuilding(@NotNull final Class<B> type)
     {
         if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
         {
-            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+            return (B) worker.getCitizenColonyHandler().getWorkBuilding();
         }
         else
         {
+            Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
+                worker.getCitizenData().getName(),
+                worker.getCitizenColonyHandler().getWorkBuilding().getClass().getSimpleName(),
+                type.getSimpleName());
+
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData().setJob(null);

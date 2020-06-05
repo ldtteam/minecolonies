@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The lumberjack AI class.
  */
-public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberjack>
+public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberjack, BuildingLumberjack>
 {
     /**
      * The render name to render logs.
@@ -178,7 +178,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     @Override
-    public Class<? extends BuildingLumberjack> getExpectedBuildingClass()
+    public Class<BuildingLumberjack> getExpectedBuildingClass()
     {
         return BuildingLumberjack.class;
     }
@@ -425,7 +425,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 return getState();
             }
 
-            final BuildingLumberjack building = getOwnBuilding(BuildingLumberjack.class);
+            final BuildingLumberjack building = getOwnBuilding();
             if (building.shouldReplant())
             {
                 plantSapling();

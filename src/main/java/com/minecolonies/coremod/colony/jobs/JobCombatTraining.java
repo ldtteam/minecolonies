@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAICombatTr
 /**
  * The Knight's Training Job class
  */
-public class JobCombatTraining extends AbstractJob
+public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCombatTraining>
 {
     /**
      * Initialize citizen data.
@@ -48,7 +48,7 @@ public class JobCombatTraining extends AbstractJob
     }
 
     @Override
-    public AbstractAISkeleton<? extends IJob> generateAI()
+    public EntityAICombatTraining generateAI()
     {
         return new EntityAICombatTraining(this);
     }

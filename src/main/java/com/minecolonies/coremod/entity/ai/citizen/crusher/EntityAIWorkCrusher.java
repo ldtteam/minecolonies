@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Crusher AI class.
  */
-public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, BuildingCrusher>
 {
     /**
      * Delay for each of the craftings.
@@ -37,7 +37,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
      *
      * @param job a crusher job to use.
      */
-    public EntityAIWorkCrusher(@NotNull final J job)
+    public EntityAIWorkCrusher(@NotNull final JobCrusher job)
     {
         super(job);
         super.registerTargets(
@@ -48,7 +48,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     }
 
     @Override
-    public Class<? extends BuildingCrusher> getExpectedBuildingClass()
+    public Class<BuildingCrusher> getExpectedBuildingClass()
     {
         return BuildingCrusher.class;
     }
@@ -77,7 +77,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
         job.setProgress(job.getProgress() + TICK_DELAY);
 
-        final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
+        final BuildingCrusher crusherBuilding = getOwnBuilding();
         WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
         if (currentRecipeStorage == null)
         {

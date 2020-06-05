@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Chicken Herder job
  */
-public class JobChickenHerder extends AbstractJob
+public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, JobChickenHerder>
 {
     /**
      * Instantiates the placeholder job.
@@ -44,7 +44,7 @@ public class JobChickenHerder extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobChickenHerder> generateAI()
+    public EntityAIWorkChickenHerder generateAI()
     {
         return new EntityAIWorkChickenHerder(this);
     }

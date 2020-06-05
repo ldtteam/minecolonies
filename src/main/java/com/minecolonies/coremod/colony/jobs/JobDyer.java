@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the dyer job.
  */
-public class JobDyer extends AbstractJobCrafter
+public class JobDyer extends AbstractJobCrafter<EntityAIWorkDyer, JobDyer>
 {
     /**
      * Instantiates the job for the Dyer.
@@ -51,7 +51,7 @@ public class JobDyer extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobDyer> generateAI()
+    public EntityAIWorkDyer generateAI()
     {
         return new EntityAIWorkDyer(this);
     }
