@@ -65,7 +65,7 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private CombinedInvWrapper combinedHandler;
 
-    public TileEntityRack(final TileEntityType type)
+    public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
         super(type);
     }

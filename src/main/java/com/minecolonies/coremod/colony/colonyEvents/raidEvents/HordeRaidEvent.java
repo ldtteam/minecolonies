@@ -16,6 +16,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -68,7 +69,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     /**
      * List of respawns to do
      */
-    private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
+    private List<Tuple<EntityType<?>, BlockPos>> respawns = new ArrayList<>();
 
     /**
      * Currently active campfires
@@ -323,7 +324,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         if (!respawns.isEmpty())
         {
-            for (final Tuple<EntityType, BlockPos> entry : respawns)
+            for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
             {
                 final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
                 if (spawnPos != null)

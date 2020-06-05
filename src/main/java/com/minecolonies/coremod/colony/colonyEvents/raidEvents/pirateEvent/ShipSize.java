@@ -62,9 +62,9 @@ public enum ShipSize
     /**
      * Array of pirates which are spawned for landing, one wave.
      */
-    public final EntityType[] pirates;
+    public final EntityType<?>[] pirates;
 
-    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final EntityType... pirates)
+    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final EntityType<?>... pirates)
     {
         this.raidLevel = raidLevel;
         this.schematicName = schematicName;

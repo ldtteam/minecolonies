@@ -134,7 +134,7 @@ public final class PirateEventUtils
      * @param colony   the colony to attack.  
      * @param eventID  the events id.
      */
-    private static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColony colony, final int eventID)
+    private static void setupSpawner(final BlockPos location, final World world, final EntityType<?> mob, final IColony colony, final int eventID)
     {
         world.setBlockState(location, Blocks.SPAWNER.getDefaultState());
         final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
