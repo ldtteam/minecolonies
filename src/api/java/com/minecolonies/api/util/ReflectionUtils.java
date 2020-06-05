@@ -28,10 +28,10 @@ public final class ReflectionUtils
      * @return A set with the super types of the given type.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
+    public static <T> Set<TypeToken<?>> getSuperClasses(final TypeToken<T> token)
     {
-        final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
-        final Set<TypeToken> resultingSet = new LinkedHashSet<>();
+        final Set<TypeToken<?>> directSet = new LinkedHashSet<>(token.getTypes());
+        final Set<TypeToken<?>> resultingSet = new LinkedHashSet<>();
 
         directSet.forEach(t ->
         {

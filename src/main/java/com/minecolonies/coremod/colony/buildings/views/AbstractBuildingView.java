@@ -460,7 +460,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -524,7 +524,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)

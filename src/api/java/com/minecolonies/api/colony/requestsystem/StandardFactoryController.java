@@ -40,24 +40,24 @@ public final class StandardFactoryController implements IFactoryController
      * Primary (main) INPUT mappings.
      */
     @NotNull
-    private final        Map<TypeToken, Set<IFactory>> primaryInputMappings  = new HashMap<>();
+    private final        Map<TypeToken<?>, Set<IFactory>> primaryInputMappings  = new HashMap<>();
     /**
      * Primary (main) OUTPUT mappings.
      */
     @NotNull
-    private final        Map<TypeToken, Set<IFactory>> primaryOutputMappings = new HashMap<>();
+    private final        Map<TypeToken<?>, Set<IFactory>> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
-    private final Map<TypeToken, Set<IFactory>>                secondaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken<?>, Set<IFactory>>                secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary types.
      */
     @NotNull
-    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
+    private final Cache<Tuple<TypeToken<?>, TypeToken<?>>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
 
     /**
      * List of the override handlers.
@@ -117,16 +117,16 @@ public final class StandardFactoryController implements IFactoryController
         final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
         final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
 
-        final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
-        final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
+        final TypeToken<?> input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
+        final TypeToken<?> output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
         try
         {
             //Request from cache or search.
             return secondaryMappingsCache.get(new Tuple<>(input, output), () ->
             {
-                final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
+                final Set<TypeToken<?>> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
 
-                for (final TypeToken secondaryInputClass : secondaryInputSet)
+                for (final TypeToken<?> secondaryInputClass : secondaryInputSet)
                 {
                     final Set<IFactory> factories = primaryInputMappings.get(secondaryInputClass);
                     if (factories == null || factories.isEmpty())
@@ -136,7 +136,7 @@ public final class StandardFactoryController implements IFactoryController
 
                     for (final IFactory factory : factories)
                     {
-                        final Set<TypeToken> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+                        final Set<TypeToken<?>> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
                         if (secondaryOutputSet.contains(output))
                         {
                             return factory;
@@ -158,11 +158,11 @@ public final class StandardFactoryController implements IFactoryController
     {
         final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
 
-        final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
+        final TypeToken<?> input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
 
-        final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
+        final Set<TypeToken<?>> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
 
-        for (final TypeToken secondaryInputClass : secondaryInputSet)
+        for (final TypeToken<?> secondaryInputClass : secondaryInputSet)
         {
             final Set<IFactory> factories = primaryInputMappings.get(secondaryInputClass);
 
@@ -180,7 +180,7 @@ public final class StandardFactoryController implements IFactoryController
     {
         final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
 
-        final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
+        final TypeToken<?> output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
 
         if (!primaryOutputMappings.containsKey(output) || primaryOutputMappings.get(output).isEmpty())
         {
@@ -213,7 +213,7 @@ public final class StandardFactoryController implements IFactoryController
         primaryInputFactories.add(factory);
         primaryOutputFactories.add(factory);
 
-        final Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+        final Set<TypeToken<?>> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 
