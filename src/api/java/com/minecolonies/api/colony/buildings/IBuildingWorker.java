@@ -119,7 +119,7 @@ public interface IBuildingWorker extends IBuilding
      * @param ignored the token of the recipe.
      * @return true if so.
      */
-    boolean canRecipeBeAdded(IToken ignored);
+    boolean canRecipeBeAdded(IToken<?> ignored);
 
     /**
      * Check if players can change the building's recipe list.
@@ -139,7 +139,7 @@ public interface IBuildingWorker extends IBuilding
      *
      * @return a copy of the tokens of the recipes.
      */
-    List<IToken> getRecipes();
+    List<IToken<?>> getRecipes();
 
     /**
      * Get all handlers accociated with this building.
@@ -156,14 +156,14 @@ public interface IBuildingWorker extends IBuilding
      * @param token the id of the recipe.
      * @return true if successful
      */
-    boolean addRecipe(IToken token);
+    boolean addRecipe(IToken<?> token);
 
     /**
      * Remove a recipe of the building.
      *
      * @param token the id of the recipe.
      */
-    void removeRecipe(IToken token);
+    void removeRecipe(IToken<?> token);
 
     /**
      * The abstract method which returns the name of the job.

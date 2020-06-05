@@ -41,12 +41,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     private final ILocation location;
 
     @NotNull
-    private final IToken token;
+    private final IToken<?> token;
 
     @NotNull
     private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
-    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super();
         this.location = location;
@@ -152,7 +152,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken getId()
+    public IToken<?> getId()
     {
         return token;
     }
@@ -185,7 +185,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
           .filter(Objects::nonNull)
           .forEach(request ->
           {
-              final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
+              final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
 
               if (newResolverToken != null && !newResolverToken.equals(token))
               {

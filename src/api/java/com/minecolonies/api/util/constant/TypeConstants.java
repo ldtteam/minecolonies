@@ -32,7 +32,7 @@ public class TypeConstants
     public static final TypeToken<Class>     CLASS     = TypeToken.of(Class.class);
 
     /////General purpose
-    public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
+    public static final TypeToken<IToken<?>>        ITOKEN           = TypeToken.of((Class<IToken<?>>) (Class<?>) IToken.class);
     public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
     public static final TypeToken<UUID>             UUID             = TypeToken.of(UUID.class);
     public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);

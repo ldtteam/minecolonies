@@ -45,12 +45,12 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     /**
      * The request this is related to.
      */
-    private IToken token = null;
+    private IToken<?> token = null;
 
     /**
      * Specific validator for this one.
      */
-    private BiPredicate<ICitizenData, IToken> validator;
+    private BiPredicate<ICitizenData, IToken<?>> validator;
 
     /**
      * The server interaction response handler.
@@ -63,7 +63,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
       final ITextComponent inquiry,
       final IChatPriority priority,
       final ITextComponent validator,
-      final IToken token)
+      final IToken<?> token)
     {
         super(inquiry, true, priority, null, validator, priority == ChatPriority.BLOCKING ? tuples : tuplesAsync);
         this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(validator);
@@ -79,7 +79,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,
       final IChatPriority priority,
-      final IToken token)
+      final IToken<?> token)
     {
         super(inquiry, true, priority, null, inquiry, tuples);
         this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(inquiry);

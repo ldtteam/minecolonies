@@ -167,7 +167,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
         final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
-        final Set<IToken> requestTokens = new HashSet<>();
+        final Set<IToken<?>> requestTokens = new HashSet<>();
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 

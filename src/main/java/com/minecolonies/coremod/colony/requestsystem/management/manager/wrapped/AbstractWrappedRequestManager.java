@@ -84,7 +84,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         wrappedManager.assignRequest(token);
     }

@@ -271,7 +271,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                 .filter(Objects::nonNull)
                 .forEach(request ->
                 {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+                    final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
 
                     if (newResolverToken != getId())
                     {

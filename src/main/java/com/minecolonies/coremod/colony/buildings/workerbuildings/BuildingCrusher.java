@@ -247,7 +247,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }

@@ -49,14 +49,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public TypeToken<? extends IToken> getFactoryInputType()
+    public TypeToken<? extends IToken<?>> getFactoryInputType()
     {
         return TypeConstants.ITOKEN;
     }
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(@NotNull final IToken token, @NotNull final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage getNewInstance(@NotNull final IToken<?> token, @NotNull final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate);
     }
@@ -100,7 +100,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final ItemStack primaryOutput = ItemStack.read(nbt);
         final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
         final int gridSize = nbt.getInt(TAG_GRID);
-        final IToken token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }

@@ -203,7 +203,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
     }

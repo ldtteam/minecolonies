@@ -319,7 +319,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     IRequester getRequester();
 
-    Optional<ICitizenData> getCitizenForRequest(@NotNull IToken token);
+    Optional<ICitizenData> getCitizenForRequest(@NotNull IToken<?> token);
 
     BuildingEntry getBuildingRegistryEntry();
 

@@ -90,7 +90,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
         ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));

@@ -1005,7 +1005,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final ICitizenData citizenData, @NotNull final R requested, final boolean async)
     {
-        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
@@ -1030,7 +1030,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested, final boolean async)
     {
-        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         addRequestToMaps(-1, requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
@@ -1047,7 +1047,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken requestToken, @NotNull final TypeToken requested)
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1505,7 +1505,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public Optional<ICitizenData> getCitizenForRequest(@NotNull final IToken token)
+    public Optional<ICitizenData> getCitizenForRequest(@NotNull final IToken<?> token)
     {
         if (!getCitizensByRequest().containsKey(token) || getColony() == null)
         {

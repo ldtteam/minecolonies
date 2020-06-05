@@ -204,7 +204,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(!super.canRecipeBeAdded(token))
         {

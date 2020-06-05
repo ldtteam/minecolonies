@@ -53,7 +53,7 @@ public class RequestHandler implements IRequestHandler
     @SuppressWarnings(UNCHECKED)
     public <Request extends IRequestable> IRequest<Request> createRequest(final IRequester requester, final Request request)
     {
-        final IToken<UUID> token = manager.getTokenHandler().generateNewToken();
+        final IToken<?> token = manager.getTokenHandler().generateNewToken();
 
         final IRequest<Request> constructedRequest = manager.getFactoryController()
                                                        .getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings()
