@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * Block that if activated with BoneMeal or Compost by an AI will produce flowers by intervals until it deactivates
  */
-public class BlockCompostedDirt<B extends BlockCompostedDirt<B>> extends AbstractBlockMinecolonies<B>
+public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt>
 {
     private static final String BLOCK_NAME = "composted_dirt";
     private static final float BLOCK_HARDNESS = 5f;
