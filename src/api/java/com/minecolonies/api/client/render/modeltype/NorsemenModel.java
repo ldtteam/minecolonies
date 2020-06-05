@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 /**
  * Norsemen model.
  */
-public class NorsemenModel<T extends AbstractEntityNorsemen> extends BipedModel<AbstractEntityNorsemen>
+public class NorsemenModel extends BipedModel<AbstractEntityNorsemen>
 {
     /**
      * Create a model of a specific size.

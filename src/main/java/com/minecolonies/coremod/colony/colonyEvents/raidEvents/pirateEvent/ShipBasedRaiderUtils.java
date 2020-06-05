@@ -153,7 +153,7 @@ public final class ShipBasedRaiderUtils
         return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.6);
+          0.9);
     }
 
     /**
