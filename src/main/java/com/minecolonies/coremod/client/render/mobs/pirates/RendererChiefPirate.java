@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefPirate extends AbstractRendererPirate
+public class RendererChiefPirate extends AbstractRendererPirate<EntityCaptainPirate, BipedModel<EntityCaptainPirate>>
 {
     /**
      * Texture of the entity.
@@ -23,11 +23,11 @@ public class RendererChiefPirate extends AbstractRendererPirate
      */
     public RendererChiefPirate(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<EntityCaptainPirate>(1.0F), 0.5F);
+        super(renderManagerIn, new BipedModel<>(1.0F), 0.5F);
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final EntityCaptainPirate entity)
     {
         return TEXTURE;
     }

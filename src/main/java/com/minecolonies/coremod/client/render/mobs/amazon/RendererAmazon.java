@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.amazon;
 
+import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.MobEntity;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for archer amazons.
  */
-public class RendererAmazon extends AbstractRendererAmazon
+public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazon>
 {
     /**
      * Texture of the entity.
@@ -28,7 +29,7 @@ public class RendererAmazon extends AbstractRendererAmazon
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityAmazon entity)
     {
         return TEXTURE;
     }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.egyptians;
 
+import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.coremod.client.model.raiders.ModelArcherMummy;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.MobEntity;
@@ -8,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer used for archer mummy.
  */
-public class RendererArcherMummy extends AbstractRendererEgyptian
+public class RendererArcherMummy extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelArcherMummy>
 {
     /**
      * Texture of the entity.
@@ -26,7 +27,7 @@ public class RendererArcherMummy extends AbstractRendererEgyptian
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityEgyptian entity)
     {
         return TEXTURE;
     }

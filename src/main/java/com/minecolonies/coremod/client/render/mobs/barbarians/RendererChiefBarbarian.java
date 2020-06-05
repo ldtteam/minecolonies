@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefBarbarian extends AbstractRendererBarbarian
+public class RendererChiefBarbarian extends AbstractRendererBarbarian<EntityChiefBarbarian, BipedModel<EntityChiefBarbarian>>
 {
     /**
      * Texture of the entity.
@@ -23,11 +23,11 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian
      */
     public RendererChiefBarbarian(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<EntityChiefBarbarian>(1.2F), 0.5F);
+        super(renderManagerIn, new BipedModel<>(1.2F), 0.5F);
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final EntityChiefBarbarian entity)
     {
         return TEXTURE;
     }

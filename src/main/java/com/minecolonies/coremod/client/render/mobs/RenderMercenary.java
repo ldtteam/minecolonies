@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Renderer for EntityMercenary.
  */
-public class RenderMercenary<T extends EntityMercenary, M extends BipedModel<T>> extends MobRenderer
+public class RenderMercenary extends MobRenderer<EntityMercenary, BipedModel<EntityMercenary>>
 {
     /**
      * Texture of the entity.
@@ -27,14 +27,14 @@ public class RenderMercenary<T extends EntityMercenary, M extends BipedModel<T>>
      */
     public RenderMercenary(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<EntityMercenary>(1.0F), 0.5f);
+        super(renderManagerIn, new BipedModel<>(1.0F), 0.5f);
 
-        this.addLayer(new HeldItemLayer<T, M>(this));
-        this.addLayer(new BipedArmorLayer<>(this, new BipedModel(1.0F), new BipedModel(1.0F)));
+        this.addLayer(new HeldItemLayer<>(this));
+        this.addLayer(new BipedArmorLayer<>(this, new BipedModel<>(1.0F), new BipedModel<>(1.0F)));
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final Entity entity)
+    public ResourceLocation getEntityTexture(final EntityMercenary entity)
     {
         return TEXTURE;
     }
