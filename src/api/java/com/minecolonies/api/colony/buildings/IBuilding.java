@@ -250,28 +250,25 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen);
 
-    @SuppressWarnings(RAWTYPES)
     ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenData data);
 
-    @SuppressWarnings(RAWTYPES)
     boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest<?>> selectionPredicate);
 
     <R> boolean hasWorkerOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
       @NotNull ICitizenData citizenData,
       TypeToken<R> requestType);
 
     boolean hasCitizenCompletedRequests(@NotNull ICitizenData data);
 
-    @SuppressWarnings(RAWTYPES)
     ImmutableList<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
 
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
       @NotNull ICitizenData citizenData,
       TypeToken<R> requestType,
@@ -292,7 +289,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     @SuppressWarnings("squid:S135")
     void overruleNextOpenRequestWithStack(@NotNull ItemStack stack);
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull ICitizenData citizenData,
       TypeToken<R> requestType,

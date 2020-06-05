@@ -65,7 +65,6 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         this.defaultName = defaultName;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Override
     public CompoundNBT serializeNBT()
     {
@@ -97,7 +96,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         return compound;
     }
 
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
+    @SuppressWarnings(UNCHECKED)
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {

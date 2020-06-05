@@ -245,7 +245,6 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings(Suppression.UNCHECKED)
     public <OUTPUT> OUTPUT deserialize(@NotNull final CompoundNBT compound) throws IllegalArgumentException
     {
         String className = compound.getString(NBT_TYPE);

@@ -78,7 +78,6 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @VisibleForTesting
-    @SuppressWarnings(Suppression.UNCHECKED)
     void removeProviderInternal(final IToken<?> token)
     {
         manager.getLogger().info(String.format("Removing provider: %s", token));

@@ -108,7 +108,6 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
     public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)

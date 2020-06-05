@@ -87,7 +87,6 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException when the request is already assigned
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void assignRequest(final IRequest<?> request)
     {
         assignRequest(request, Collections.emptyList());
@@ -103,7 +102,6 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public IToken<?> assignRequest(final IRequest<?> request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         switch (request.getStrategy())
@@ -131,8 +129,8 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @Override
-    @SuppressWarnings({UNCHECKED, RAWTYPES})
-    public IToken<?> assignRequestDefault(final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
+    @SuppressWarnings(UNCHECKED)
+    public IToken<?> assignRequestDefault(final IRequest<?> request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         //Check if the request is registered
         getRequest(request.getId());
@@ -141,10 +139,10 @@ public class RequestHandler implements IRequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+        final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
         requestTypes.remove(TypeConstants.OBJECT);
 
-        final List<TypeToken> typeIndexList = new LinkedList<>(requestTypes);
+        final List<TypeToken<?>> typeIndexList = new LinkedList<>(requestTypes);
 
         final Set<IRequestResolver<?>> resolvers = requestTypes.stream()
                                                      .filter(typeToken -> manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().containsKey(typeToken))
@@ -159,7 +157,7 @@ public class RequestHandler implements IRequestHandler
                                                      .collect(Collectors.toCollection(LinkedHashSet::new));
 
 
-        for (final IRequestResolver<?> resolver : resolvers)
+        for (final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
             if (resolverTokenBlackList.contains(resolver.getId()))
@@ -191,7 +189,7 @@ public class RequestHandler implements IRequestHandler
             for (final IToken<?> childRequestToken :
                             attemptResult)
             {
-                @SuppressWarnings(RAWTYPES) final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+                final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
                 childRequest.setParent(request.getId());
                 request.addChild(childRequest.getId());
@@ -200,7 +198,7 @@ public class RequestHandler implements IRequestHandler
             for (final IToken<?> childRequestToken :
                             attemptResult)
             {
-                @SuppressWarnings(RAWTYPES) final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+                final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
                 if (!isAssigned(childRequestToken))
                 {
@@ -276,8 +274,8 @@ public class RequestHandler implements IRequestHandler
     @Override
     public void onRequestResolved(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest<?> request = getRequest(token);
-        @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
+        final IRequest<?> request = getRequest(token);
+        final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
 
         //Retrieve a followup request.
         final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
@@ -313,17 +311,16 @@ public class RequestHandler implements IRequestHandler
      * @param token   The token of the request that got finished successfully.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void onRequestCompleted(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest<?> request = getRequest(token);
+        final IRequest<?> request = getRequest(token);
 
         request.getRequester().onRequestedRequestComplete(manager, request);
 
         //Check if the request has a parent, and if resolving of the parent is needed.
         if (request.hasParent())
         {
-            @SuppressWarnings(RAWTYPES) final IRequest<?> parentRequest = getRequest(request.getParent());
+            final IRequest<?> parentRequest = getRequest(request.getParent());
 
             manager.updateRequestState(request.getId(), RequestState.RECEIVED);
             parentRequest.removeChild(request.getId());
@@ -356,7 +353,7 @@ public class RequestHandler implements IRequestHandler
     @SuppressWarnings(UNCHECKED)
     public void onRequestOverruled(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
+        final IRequest<?> request = getRequest(token);
 
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) == null)
         {
@@ -371,7 +368,7 @@ public class RequestHandler implements IRequestHandler
             currentChildren.forEach(this::onRequestCancelledDirectly);
         }
 
-        final IRequestResolver<?> resolver = manager.getResolverHandler().getResolverForRequest(token);
+        final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
         //Notify the resolver.
         resolver.onAssignedRequestBeingCancelled(manager, request);
 
@@ -389,10 +386,9 @@ public class RequestHandler implements IRequestHandler
      * @param token   The token of the request that got cancelled or overruled
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
     public void onRequestCancelled(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest<?> request = manager.getRequestHandler().getRequest(token);
+        final IRequest<?> request = manager.getRequestHandler().getRequest(token);
 
         if (request == null)
         {
@@ -474,8 +470,8 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
      */
     @Override
-    @SuppressWarnings({UNCHECKED, RAWTYPES})
-    public void resolveRequest(final IRequest request)
+    @SuppressWarnings(UNCHECKED)
+    public void resolveRequest(final IRequest<?> request)
     {
         getRequest(request.getId());
         if (!isAssigned(request.getId()))
@@ -533,7 +529,6 @@ public class RequestHandler implements IRequestHandler
      * @throws IllegalArgumentException when the token is unknown to the given manager.
      */
     @Override
-    @SuppressWarnings(RAWTYPES)
     public IRequest<?> getRequest(final IToken<?> token)
     {
         if (!manager.getRequestIdentitiesDataStore().getIdentities().containsKey(token))
@@ -551,7 +546,6 @@ public class RequestHandler implements IRequestHandler
      * @return The request or null when no request with that token exists.
      */
     @Override
-    @SuppressWarnings(RAWTYPES)
     public IRequest<?> getRequestOrNull(final IToken<?> token)
     {
         manager.getLogger().debug("Retrieving the request for: " + token);

@@ -62,7 +62,6 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
      */
-    @SuppressWarnings(Suppression.UNCHECKED)
     <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
       throws IllegalArgumentException;
 

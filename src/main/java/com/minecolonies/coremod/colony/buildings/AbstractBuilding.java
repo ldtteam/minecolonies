@@ -1071,7 +1071,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
     {
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
@@ -1087,7 +1086,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
     public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
@@ -1100,7 +1098,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType)
@@ -1138,7 +1136,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
@@ -1151,7 +1148,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
@@ -1164,7 +1161,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,
@@ -1292,7 +1289,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,

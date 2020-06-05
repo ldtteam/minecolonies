@@ -52,7 +52,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @NotNull
     @Override
-    @SuppressWarnings(DEPRECATION)
     public BlockRenderType getRenderType(final BlockState state)
     {
         return BlockRenderType.INVISIBLE;

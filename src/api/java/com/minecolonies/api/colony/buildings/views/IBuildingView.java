@@ -161,13 +161,11 @@ public interface IBuildingView extends IRequester
 
     Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull ICitizenDataView citizenData, Class<R> requestType);
 
-    @SuppressWarnings(RAWTYPES)
     ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenDataView data);
 
-    @SuppressWarnings(RAWTYPES)
     ImmutableList<IRequest<?>> getOpenRequestsOfBuilding();
 
     /**
@@ -177,7 +175,7 @@ public interface IBuildingView extends IRequester
      */
     IColonyView getColony();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull ICitizenDataView citizenData,
       Class<R> requestType,
