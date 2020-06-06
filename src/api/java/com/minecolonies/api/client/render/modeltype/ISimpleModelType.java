@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_STYLE;
+
 public interface ISimpleModelType extends IModelType {
 
     /**
@@ -36,7 +38,7 @@ public interface ISimpleModelType extends IModelType {
         String folder = "default/";
         //TODO: We have to add style tags to the townhalls that will be used for this in the future.
         // - This will then become a switch case statement for this sake
-        if (entityCitizen.getCitizenDataView() != null && entityCitizen.getCitizenDataView().getStyle().contains("medieval"))
+        if (entityCitizen.getDataManager().get(DATA_STYLE).contains("medieval"))
         {
             folder = "medieval/";
         }

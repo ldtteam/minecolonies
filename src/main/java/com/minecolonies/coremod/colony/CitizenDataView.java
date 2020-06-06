@@ -115,16 +115,6 @@ public class CitizenDataView implements ICitizenDataView
     private final CitizenHappinessHandler citizenHappinessHandler;
 
     /**
-     * The style.
-     */
-    private String style;
-
-    /**
-     * If the colony style changed.
-     */
-    private boolean styleChanged;
-
-    /**
      * Set View id.
      *
      * @param id
@@ -304,13 +294,6 @@ public class CitizenDataView implements ICitizenDataView
         }
 
         citizenHappinessHandler.read(buf.readCompoundTag());
-
-        String newStyle = buf.readString(32767);
-        if (style != null && !style.equals(newStyle))
-        {
-            styleChanged = true;
-        }
-        this.style = newStyle;
     }
 
     @Override
@@ -354,17 +337,5 @@ public class CitizenDataView implements ICitizenDataView
     public ICitizenHappinessHandler getHappinessHandler()
     {
         return citizenHappinessHandler;
-    }
-
-    @Override
-    public String getStyle()
-    {
-        return this.style;
-    }
-
-    @Override
-    public boolean hasStyleChanged()
-    {
-        return this.styleChanged;
     }
 }

@@ -125,16 +125,4 @@ public interface ICitizenDataView extends ICitizen
      * @return the handler.
      */
     ICitizenHappinessHandler getHappinessHandler();
-
-    /**
-     * Get the style of the citizen.
-     * @return the style string.
-     */
-    String getStyle();
-
-    /**
-     * If the colony style changed.
-     * @return true if so.
-     */
-    boolean hasStyleChanged();
 }
