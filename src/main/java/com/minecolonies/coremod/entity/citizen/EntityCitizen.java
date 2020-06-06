@@ -577,6 +577,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+
         this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
         if (citizenData != null)
@@ -596,6 +597,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(this, healthModLevel);
         }
+
+        getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
     }
 
     private void updateCitizenStatus()

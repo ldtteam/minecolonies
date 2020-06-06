@@ -58,6 +58,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
+    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
@@ -87,7 +88,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     /**
      * Was the texture initiated with the citizen view.
      */
-    private boolean completeTextureInit = false;
+    private boolean textureDirty = true;
 
     private AbstractAdvancedPathNavigate pathNavigate;
 
@@ -203,11 +204,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             return;
         }
 
-        if (getCitizenDataView() != null)
-        {
-            completeTextureInit = true;
-        }
-
         texture = getModelType().getTexture(this);
     }
 
@@ -225,7 +221,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @NotNull
     public ResourceLocation getTexture()
     {
-        if (texture == null || !completeTextureInit || (getCitizenDataView() != null && getCitizenDataView().hasStyleChanged()))
+        if (texture == null || textureDirty || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE)))
         {
             setTexture();
         }
@@ -237,7 +233,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      */
     public void setTextureDirty()
     {
-        this.completeTextureInit = false;
+        this.textureDirty = true;
     }
 
     /**
@@ -269,6 +265,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
         super.registerData();
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
+        dataManager.register(DATA_STYLE, "default");
         dataManager.register(DATA_IS_FEMALE, 0);
         dataManager.register(DATA_MODEL, BipedModelType.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
