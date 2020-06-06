@@ -114,7 +114,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Slot he is currently trying to dump.
      */
-    protected int slotAt = 0;
+    private int slotAt = 0;
 
     /**
      * Indicator if something has actually been dumped.
@@ -139,7 +139,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Already kept items during the dumping cycle.
      */
-    protected final List<ItemStorage> alreadyKept = new ArrayList<>();
+    private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -764,7 +764,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param range how close we need to be
      * @return true while walking to the block
      */
-    protected boolean walkToBlock(@NotNull final BlockPos stand, final int range)
+    private boolean walkToBlock(@NotNull final BlockPos stand, final int range)
     {
         if (proxy == null)
         {
@@ -999,7 +999,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return INVENTORY_FULL | IDLE
      */
     @NotNull
-    protected IAIState dumpInventory()
+    private IAIState dumpInventory()
     {
         final IBuilding building = getOwnBuilding();
         if (building == null)
@@ -1077,7 +1077,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if is has to dump more.
      */
     @SuppressWarnings("PMD.PrematureDeclaration")
-    protected boolean dumpOneMoreSlot()
+    private boolean dumpOneMoreSlot()
     {
         if (walkToBuilding())
         {
@@ -1146,7 +1146,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Clear the actions done counter. Call this when dumping into the chest.
      */
-    protected void clearActionsDone()
+    private void clearActionsDone()
     {
         job.clearActionsDone();
     }
