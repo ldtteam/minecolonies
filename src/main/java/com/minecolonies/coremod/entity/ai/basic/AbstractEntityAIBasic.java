@@ -764,7 +764,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param range how close we need to be
      * @return true while walking to the block
      */
-    private boolean walkToBlock(@NotNull final BlockPos stand, final int range)
+    protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
     {
         if (proxy == null)
         {
@@ -1008,7 +1008,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return afterDump();
         }
 
-        if (walkToBlock(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
         {
             setDelay(WALK_DELAY);
             return INVENTORY_FULL;

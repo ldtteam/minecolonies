@@ -421,7 +421,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
-                if(checkIfStuck()) {
+                if (checkIfStuck())
+                {
                     tryUnstuck();
                 }
                 return getState();
@@ -565,15 +566,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (!worker.getNavigator().noPath())
         {
             Path path = worker.getNavigator().getPath();
-            if(path != null) {
-                if (path.getCurrentPathLength() > path.getCurrentPathIndex()) {
+            if (path != null)
+            {
+                if (path.getCurrentPathLength() > path.getCurrentPathIndex())
+                {
                     return true;
                 }
-                if(path.getCurrentPathLength() == 0){
+                if (path.getCurrentPathLength() == 0)
+                {
                     return true;
                 }
             }
-            else {
+            else
+            {
                 return true;
             }
         }
