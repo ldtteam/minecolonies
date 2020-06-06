@@ -66,7 +66,7 @@ public class EntityInitializer
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
                 .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
-        ModEntities.ARCHERBARBARIAN = build("firearrow",
+        ModEntities.ARCHERBARBARIAN = build("archerbarbarian",
             EntityType.Builder.create(EntityArcherBarbarian::new, EntityClassification.MONSTER)
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
