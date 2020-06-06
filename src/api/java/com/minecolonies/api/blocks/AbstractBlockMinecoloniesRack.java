@@ -21,7 +21,7 @@ public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinec
 
     public AbstractBlockMinecoloniesRack(final Properties properties)
     {
-        super(properties.func_226896_b_());
+        super(properties.notSolid());
     }
 
     /**

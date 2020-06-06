@@ -86,7 +86,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                   && building.getColony() != null
                   && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                building.openGui(player.isShiftKeyDown());
+                building.openGui(player.isSneaking());
             }
             else
             {
