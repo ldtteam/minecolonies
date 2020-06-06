@@ -42,7 +42,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingCowboy> getExpectedBuildingClass()
     {
         return BuildingCowboy.class;
     }

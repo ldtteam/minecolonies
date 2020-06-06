@@ -497,7 +497,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     @Override
-    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    public Class<? extends AbstractBuildingGuards> getExpectedBuildingClass()
     {
         return AbstractBuildingGuards.class;
     }

@@ -161,18 +161,21 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                     final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
                     for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
                     {
-                        boolean hasCureRequested = false;
-                        for (final IRequest<? extends Stack> request : list)
+                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
                         {
-                            if (request.getRequest().getStack().isItemEqual(cure))
+                            boolean hasCureRequested = false;
+                            for (final IRequest<? extends Stack> request : list)
                             {
-                                hasCureRequested = true;
+                                if (request.getRequest().getStack().isItemEqual(cure))
+                                {
+                                    hasCureRequested = true;
+                                }
                             }
-                        }
-                        if (!hasCureRequested)
-                        {
-                            patient.setState(Patient.PatientState.NEW);
-                            break;
+                            if (!hasCureRequested)
+                            {
+                                patient.setState(Patient.PatientState.NEW);
+                                break;
+                            }
                         }
                     }
                 }
@@ -515,7 +518,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingHospital> getExpectedBuildingClass()
     {
         return BuildingHospital.class;
     }
