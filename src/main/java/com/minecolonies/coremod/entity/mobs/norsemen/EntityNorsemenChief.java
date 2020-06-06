@@ -20,7 +20,7 @@ public class EntityNorsemenChief extends AbstractEntityNorsemen implements INors
      * @param worldIn world to construct it in.
      * @param type the entity type.
      */
-    public EntityNorsemenChief(final EntityType type, final World worldIn)
+    public EntityNorsemenChief(final EntityType<? extends EntityNorsemenChief> type, final World worldIn)
     {
         super(type, worldIn);
     }

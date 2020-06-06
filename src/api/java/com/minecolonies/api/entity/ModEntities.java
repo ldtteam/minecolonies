@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -55,13 +56,13 @@ public class ModEntities
     public static EntityType<? extends AbstractEntityEgyptian> ARCHERMUMMY;
 
     @ObjectHolder("norsemenarcher")
-    public static EntityType<?> NORSEMEN_ARCHER;
+    public static EntityType<? extends AbstractEntityNorsemen> NORSEMEN_ARCHER;
 
     @ObjectHolder("shieldmaiden")
-    public static EntityType<?> SHIELDMAIDEN;
+    public static EntityType<? extends AbstractEntityNorsemen> SHIELDMAIDEN;
 
     @ObjectHolder("norsemenchief")
-    public static EntityType<?> NORSEMEN_CHIEF;
+    public static EntityType<? extends AbstractEntityNorsemen> NORSEMEN_CHIEF;
 
     @ObjectHolder("amazon")
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;

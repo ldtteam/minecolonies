@@ -35,7 +35,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityNorsemen(final EntityType type, final World world)
+    public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final World world)
     {
         super(type, world);
         this.textureId = new Random().nextInt(NORSEMEN_TEXTURES);
