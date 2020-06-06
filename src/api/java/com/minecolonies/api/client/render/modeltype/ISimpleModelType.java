@@ -34,6 +34,8 @@ public interface ISimpleModelType extends IModelType {
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
         String folder = "default/";
+        //TODO: We have to add style tags to the townhalls that will be used for this in the future.
+        // - This will then become a switch case statement for this sake
         if (entityCitizen.getCitizenDataView() != null && entityCitizen.getCitizenDataView().getStyle().contains("medieval"))
         {
             folder = "medieval/";
