@@ -590,16 +590,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private void tryUnstuck(){
 
-        if (!worker.getNavigator().noPath()) {
+        if (!worker.getNavigator().noPath())
+        {
             Path path = worker.getNavigator().getPath();
-            if (path != null) {
+            if (path != null)
+            {
                 // Unstuck with path
                 ArrayList<BlockPos> checkPositions = new ArrayList<>();
                 PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
+
                 // Blocks in front of the worker
                 checkPositions.add(new BlockPos(next.x, next.y, next.z));
                 checkPositions.add(new BlockPos(next.x, next.y + 1, next.z));
                 checkPositions.add(new BlockPos(next.x, next.y + 2, next.z));
+
                 // Block above the worker
                 checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 2, worker.getCurrentPosition().getZ()));
 
