@@ -588,8 +588,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * Mines leaves on path and above.
      */
-    private void tryUnstuck(){
-
+    private void tryUnstuck()
+    {
         if (!worker.getNavigator().noPath())
         {
             Path path = worker.getNavigator().getPath();
@@ -600,9 +600,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
 
                 // Blocks in front of the worker
-                checkPositions.add(new BlockPos(next.x, next.y, next.z));
-                checkPositions.add(new BlockPos(next.x, next.y + 1, next.z));
-                checkPositions.add(new BlockPos(next.x, next.y + 2, next.z));
+                for(int i = 0; i <= 2; i++){
+                    checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
+                }
 
                 // Block above the worker
                 checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 2, worker.getCurrentPosition().getZ()));
@@ -642,12 +642,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * @param blockPositions block positions
      * @param tag tag to check
      */
-    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag){
-        for (BlockPos currentPos : blockPositions) {
-            if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > 0) {
+    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag)
+    {
+        for (BlockPos currentPos : blockPositions)
+        {
+            if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > 0)
+            {
                 Log.getLogger().info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s", currentPos.getX(), currentPos.getY(), currentPos.getZ(), tag.toString(), world.getBlockState(currentPos).getBlock().isIn(tag)));
             }
-            if (world.getBlockState(currentPos).getBlock().isIn(tag)) {
+            if (world.getBlockState(currentPos).getBlock().isIn(tag))
+            {
                 mineBlock(currentPos);
                 return true;
             }
