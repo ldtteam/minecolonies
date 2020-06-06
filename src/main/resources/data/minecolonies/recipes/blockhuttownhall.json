@@ -1,3 +1,19 @@
 {
-  "type": "minecolonies:townhall.recipe"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XBX",
+    "XBX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhuttownhall"
+  }
 }
