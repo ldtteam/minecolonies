@@ -58,6 +58,8 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
+    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
