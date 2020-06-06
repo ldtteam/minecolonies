@@ -599,6 +599,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
+        getDataManager().set(DATA_TEXTURE_SUFFIX, citizenData.getTextureSuffix());
     }
 
     private void updateCitizenStatus()
