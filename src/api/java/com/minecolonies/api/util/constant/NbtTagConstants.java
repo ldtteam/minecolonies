@@ -485,7 +485,7 @@ public final class NbtTagConstants
     /**
      * BannerRallyGuards tags
      */
-    public static final String TAG_RALLIED_GUARDTOWERS = "guardtowers";
+    public static final String TAG_RALLIED_GUARDTOWERS = "guardtowerpositions";
 
     // --------------------- Chat handling tags --------------------- //
 

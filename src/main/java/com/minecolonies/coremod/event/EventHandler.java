@@ -396,7 +396,7 @@ public class EventHandler
                 final ItemStack stack = player.inventory.getStackInSlot(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
-                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.world, player);
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getServer(), player);
                 }
             }
         }

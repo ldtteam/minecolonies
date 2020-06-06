@@ -64,9 +64,10 @@ public interface IProxy
     /**
      * Opens a rally banner window.
      *
-     * @param colonyView the colony id.
+     * @param banner The banner to edit in the GUI
+     * @param playerIn The player requesting the GUI
      */
-    void openBannerRallyGuardsWindow(final ItemStack banner, final World worldIn);
+    void openBannerRallyGuardsWindow(final ItemStack banner, final PlayerEntity playerIn);
 
     /**
      * Opens a clipboard window.

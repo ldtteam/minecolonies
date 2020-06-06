@@ -11,18 +11,25 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.server.RemoveFromRallyingListMessage;
+import com.minecolonies.coremod.network.messages.server.ToggleBannerRallyGuardsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,30 +86,34 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      */
     private ItemStack banner = null;
 
-    private World worldIn = null;
+    private PlayerEntity playerIn = null;
 
-    private List<Pair<BlockPos, IGuardBuilding>> guardTowers = new LinkedList<>();
+    private List<Pair<ILocation, IGuardBuilding>> guardTowers = new LinkedList<>();
 
     /**
      * Constructor of the rally banner window
      *
      * @param banner  The banner to be displayed
-     * @param worldIn The world in which the banner is active
+     * @param playerIn The player that opens the window
      */
-    public WindowBannerRallyGuards(final ItemStack banner, final World worldIn)
+    public WindowBannerRallyGuards(final ItemStack banner, final PlayerEntity playerIn)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
         this.banner = banner;
-        this.worldIn = worldIn;
+        this.playerIn = playerIn;
 
-        final ImmutableList<BlockPos> guardTowerPositions = getGuardTowerPositions(banner);
-        for (final BlockPos guardTowerPosition : guardTowerPositions)
+        final ImmutableList<ILocation> guardTowerPositions = getGuardTowerLocations(banner);
+        for (final ILocation guardTowerLocation : guardTowerPositions)
         {
-            final TileEntity entity = worldIn.getTileEntity(guardTowerPosition);
+            final World world = playerIn.getEntityWorld().getServer().getWorld(DimensionType.getById(guardTowerLocation.getDimension()));
+            final TileEntity entity = world.getTileEntity(guardTowerLocation.getInDimensionLocation());
             // Note that getGuardBuildingFromTileEntity will perform the null-check for entity
             final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
-            guardTowers.add(new Pair<>(guardTowerPosition, building));
+            guardTowers.add(new Pair<>(guardTowerLocation, building));
         }
+
+        registerButton(BUTTON_REMOVE, this::removeClicked);
+        registerButton(BUTTON_RALLY, this::rallyClicked);
     }
 
     /**
@@ -130,7 +141,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                 return;
             }
 
-            final Pair<BlockPos, IGuardBuilding> guardTower = guardTowers.get(index);
+            final Pair<ILocation, IGuardBuilding> guardTower = guardTowers.get(index);
 
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
 
@@ -151,7 +162,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                   .setLabelText(LanguageHandler.format(guardTower.getSecond().getGuardType().getJobTranslationKey()) + ": " + guardTower.getSecond().getAssignedCitizen().size());
 
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Label.class)
-                  .setLabelText(BlockPosUtil.getString(guardTower.getFirst()));
+                  .setLabelText(guardTower.getFirst().toString());
             }
             else
             {
@@ -159,38 +170,26 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class)
                   .setLabelText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class).setColor(Color.rgbaToInt(255,0,0,1));
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class).setColor(Color.rgbaToInt(255, 0, 0, 1));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Label.class)
-                  .setLabelText(BlockPosUtil.getString(guardTower.getFirst()));
+                  .setLabelText(guardTower.getFirst().toString());
             }
         });
     }
 
-    private void detailedClicked(@NotNull final Button button)
+    private void removeClicked(@NotNull final Button button)
     {
-        /*
-        final int row = resourceList.getListElementIndexByPane(button);
+        final int row = guardTowerList.getListElementIndexByPane(button);
 
-        if (getOpenRequests().size() > row && row >= 0)
+        if (guardTowers.size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colony.getID());
-            window.open();
+            Network.getNetwork().sendToServer(new RemoveFromRallyingListMessage(banner, guardTowers.get(row).getFirst()));
         }
-
-         */
     }
 
-    private void cancel(@NotNull final Button button)
+    private void rallyClicked(@NotNull final Button button)
     {
-        /*
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequests().size() > row && row >= 0)
-        {
-            @NotNull final IRequest request = getOpenRequests().get(row);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
-        }
-
-         */
+        Network.getNetwork().sendToServer(new ToggleBannerRallyGuardsMessage(banner));
+        this.close();
     }
 }

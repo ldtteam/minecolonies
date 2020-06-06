@@ -8,13 +8,14 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.items.ItemScepterGuard;
+import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -24,7 +25,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -36,10 +36,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Used to handle client events.
@@ -146,19 +148,18 @@ public class ClientEventHandler
     private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final ItemStack stack = player.getHeldItemMainhand();
-        if (!stack.hasTag())
-        {
-            return;
-        }
-        final CompoundNBT compound = stack.getTag();
 
-        final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);// BlockPosUtil.read(compound, TAG_RALLIED_GUARDTOWERS);
-        for (int i = 0; i < guardTowers.size(); i++)
+        final List<ILocation> guardTowers = ItemBannerRallyGuards.getGuardTowerLocations(stack);
+
+        for (final ILocation guardTower : guardTowers)
         {
-            final BlockPos ralliedBlockPos = NBTUtil.readBlockPos(guardTowers.getCompound(i));
+            if (world.getDimension().getType().getId() != guardTower.getDimension())
+            {
+                continue;
+            }
             RenderSystem.disableDepthTest();
             RenderSystem.disableCull();
-            renderBox(ralliedBlockPos, ralliedBlockPos, event, 0, 0, 1);
+            renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
             RenderSystem.enableDepthTest();
             RenderSystem.enableCull();
         }
