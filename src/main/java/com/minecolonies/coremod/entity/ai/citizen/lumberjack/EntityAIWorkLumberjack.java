@@ -600,7 +600,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
 
                 // Blocks in front of the worker
-                for(int i = 0; i <= 2; i++){
+                for(int i = 0; i <= 2; i++)
+                {
                     checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
                 }
 
