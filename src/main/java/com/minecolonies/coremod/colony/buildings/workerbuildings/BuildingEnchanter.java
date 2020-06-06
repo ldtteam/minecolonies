@@ -256,6 +256,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             super.deserialize(buf);
             final int size = buf.readInt();
+            buildingToGatherFrom.clear();
             for (int i = 0; i < size; i++)
             {
                 buildingToGatherFrom.add(buf.readBlockPos());

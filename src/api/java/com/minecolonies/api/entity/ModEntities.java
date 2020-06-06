@@ -54,6 +54,15 @@ public class ModEntities
     @ObjectHolder("archermummy")
     public static EntityType<? extends AbstractEntityEgyptian> ARCHERMUMMY;
 
+    @ObjectHolder("norsemenarcher")
+    public static EntityType<?> NORSEMEN_ARCHER;
+
+    @ObjectHolder("shieldmaiden")
+    public static EntityType<?> SHIELDMAIDEN;
+
+    @ObjectHolder("norsemenchief")
+    public static EntityType<?> NORSEMEN_CHIEF;
+
     @ObjectHolder("amazon")
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 

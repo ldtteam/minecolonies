@@ -16,6 +16,9 @@ import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenArcher;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenChief;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityShieldmaiden;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
@@ -141,6 +144,24 @@ public class EntityInitializer
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                 .size(0.5F, 0.5F)
                 .setShouldReceiveVelocityUpdates(true));
+            
+        ModEntities.SHIELDMAIDEN = build("shieldmaiden",
+            EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+        ModEntities.NORSEMEN_ARCHER = build("norsemenarcher",
+            EntityType.Builder.create(EntityNorsemenArcher::new, EntityClassification.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+        ModEntities.NORSEMEN_CHIEF = build("norsemenchief",
+            EntityType.Builder.create(EntityNorsemenChief::new, EntityClassification.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
     }
 
     private static <T extends Entity> EntityType<T> build(final String key, final EntityType.Builder<T> builder)
@@ -171,6 +192,9 @@ public class EntityInitializer
             ModEntities.PHARAO,
             ModEntities.AMAZON,
             ModEntities.AMAZONCHIEF,
-            ModEntities.FIREARROW);
+            ModEntities.FIREARROW,
+            ModEntities.SHIELDMAIDEN,
+            ModEntities.NORSEMEN_ARCHER,
+            ModEntities.NORSEMEN_CHIEF);
     }
 }

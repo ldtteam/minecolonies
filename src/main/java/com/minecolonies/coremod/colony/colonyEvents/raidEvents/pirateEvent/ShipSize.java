@@ -1,32 +1,23 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.minecolonies.api.util.constant.ColonyConstants;
-import net.minecraft.entity.EntityType;
-
-import static com.minecolonies.api.entity.ModEntities.*;
 
 /**
  * Enum for ship sizes.
  */
 public enum ShipSize
 {
-    SMALL(ColonyConstants.SMALL_HORDE_SIZE, ColonyConstants.SMALL_PIRATE_SHIP, ColonyConstants.SMALL_HORDE_MESSAGE_ID, 1, PIRATE, PIRATE),
+    SMALL(ColonyConstants.SMALL_HORDE_SIZE, ColonyConstants.SMALL_SHIP, ColonyConstants.SMALL_HORDE_MESSAGE_ID, 1, 2, 0, 0),
     MEDIUM(ColonyConstants.MEDIUM_HORDE_SIZE,
-      ColonyConstants.MEDIUM_PIRATE_SHIP,
+      ColonyConstants.MEDIUM_SHIP,
       ColonyConstants.MEDIUM_HORDE_MESSAGE_ID,
-      3,
-      PIRATE,
-      ARCHERPIRATE,
-      CHIEFPIRATE),
+      4,
+      1, 1, 1),
     BIG(ColonyConstants.BIG_HORDE_SIZE,
-      ColonyConstants.BIG_PIRATE_SHIP,
+      ColonyConstants.BIG_SHIP,
       ColonyConstants.BIG_HORDE_MESSAGE_ID,
-      11,
-      PIRATE,
-      PIRATE,
-      ARCHERPIRATE,
-      ARCHERPIRATE,
-      CHIEFPIRATE);
+      10,
+      2, 2, 1);
 
     /**
      * The ships raidlevel
@@ -34,9 +25,9 @@ public enum ShipSize
     public final int raidLevel;
 
     /**
-     * Structure schematic name
+     * Structure schematic prefix
      */
-    public final String schematicName;
+    public final String schematicPrefix;
 
     /**
      * Raid message id
@@ -62,15 +53,19 @@ public enum ShipSize
     /**
      * Array of pirates which are spawned for landing, one wave.
      */
-    public final EntityType<?>[] pirates;
+    public final int normal;
+    public final int archer;
+    public final int boss;
 
-    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final EntityType<?>... pirates)
+    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final int normal, final int archer, final int boss)
     {
         this.raidLevel = raidLevel;
-        this.schematicName = schematicName;
+        this.schematicPrefix = schematicName;
         this.messageID = messageID;
         this.spawnerCount = spawnerCount;
-        this.pirates = pirates;
+        this.normal = normal;
+        this.archer = archer;
+        this.boss = boss;
     }
 
     /**

@@ -81,7 +81,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             {
                 return wareHouses.stream()
                          .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                           requestToCheck.getRequest().getCount()));
+                           requestToCheck.getRequest().getMinimumCount()));
             }
             catch (Exception e)
             {
