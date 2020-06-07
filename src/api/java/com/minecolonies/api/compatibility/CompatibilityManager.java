@@ -462,7 +462,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
+          .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
           .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
