@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -11,12 +9,12 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.pathfinding.AbstractPathJob;
@@ -42,13 +40,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.DEFAULT_RANGE_FOR_DELAY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
-
-import com.minecolonies.api.util.Log;
 
 /**
  * The lumberjack AI class.

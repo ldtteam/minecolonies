@@ -153,8 +153,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     public void setStyle(final String style)
     {
         super.setStyle(style);
-        colony.setStyle(style)
-        ;
+        colony.setStyle(style);
     }
 
     /**

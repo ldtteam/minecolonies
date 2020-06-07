@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
@@ -18,7 +16,6 @@ import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**

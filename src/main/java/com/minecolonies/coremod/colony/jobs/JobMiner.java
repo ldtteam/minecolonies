@@ -8,10 +8,8 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.CallbackI;
 
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
-import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 
 /**
  * Class used for variables regarding his job.
