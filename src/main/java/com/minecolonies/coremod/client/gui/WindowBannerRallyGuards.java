@@ -8,26 +8,20 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.RemoveFromRallyingListMessage;
 import com.minecolonies.coremod.network.messages.server.ToggleBannerRallyGuardsMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -88,12 +82,10 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
     private PlayerEntity playerIn = null;
 
-    private List<Pair<ILocation, IGuardBuilding>> guardTowers = new LinkedList<>();
-
     /**
      * Constructor of the rally banner window
      *
-     * @param banner  The banner to be displayed
+     * @param banner   The banner to be displayed
      * @param playerIn The player that opens the window
      */
     public WindowBannerRallyGuards(final ItemStack banner, final PlayerEntity playerIn)
@@ -102,24 +94,10 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
         this.banner = banner;
         this.playerIn = playerIn;
 
-        final ImmutableList<ILocation> guardTowerPositions = getGuardTowerLocations(banner);
-        for (final ILocation guardTowerLocation : guardTowerPositions)
-        {
-            final World world = playerIn.getEntityWorld().getServer().getWorld(DimensionType.getById(guardTowerLocation.getDimension()));
-            final TileEntity entity = world.getTileEntity(guardTowerLocation.getInDimensionLocation());
-            // Note that getGuardBuildingFromTileEntity will perform the null-check for entity
-            final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
-            guardTowers.add(new Pair<>(guardTowerLocation, building));
-        }
-
         registerButton(BUTTON_REMOVE, this::removeClicked);
         registerButton(BUTTON_RALLY, this::rallyClicked);
     }
 
-    /**
-     * Called when the window is opened.
-     * Sets up the buttons for either hut mode or decoration mode.
-     */
     @Override
     public void onOpened()
     {
@@ -131,24 +109,27 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY, guardTowers.size()));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
-        guardTowerList.setDataProvider(() -> guardTowers.size(), (index, rowPane) ->
+        guardTowerList.setDataProvider(() -> getGuardTowers().size(), (index, rowPane) ->
         {
+            final List<Pair<ILocation, IBuildingView>> guardTowers = getGuardTowers();
+
             if (index < 0 || index >= guardTowers.size())
             {
                 return;
             }
 
-            final Pair<ILocation, IGuardBuilding> guardTower = guardTowers.get(index);
+            final Pair<ILocation, IBuildingView> guardTower = guardTowers.get(index);
 
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
 
 
-            if (guardTower.getSecond() != null)
+            if (guardTower.getSecond() instanceof AbstractBuildingGuards.View)
             {
-                final GuardType guardType = guardTower.getSecond().getGuardType();
+                final AbstractBuildingGuards.View guardTowerView = (AbstractBuildingGuards.View) guardTower.getSecond();
+                final GuardType guardType = guardTowerView.getGuardType();
                 if (ModGuardTypes.knight.equals(guardType))
                 {
                     exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
@@ -159,7 +140,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class)
-                  .setLabelText(LanguageHandler.format(guardTower.getSecond().getGuardType().getJobTranslationKey()) + ": " + guardTower.getSecond().getAssignedCitizen().size());
+                  .setLabelText(LanguageHandler.format(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
 
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Label.class)
                   .setLabelText(guardTower.getFirst().toString());
@@ -177,13 +158,31 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
         });
     }
 
+    private List<Pair<ILocation, IBuildingView>> getGuardTowers()
+    {
+        final LinkedList<Pair<ILocation, IBuildingView>> result = new LinkedList<>();
+        for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
+        {
+            final IBuildingView buildingView = IColonyManager.getInstance().getBuildingView(guardTowerLocation.getDimension(), guardTowerLocation.getInDimensionLocation());
+
+            result.add(new Pair<>(guardTowerLocation, buildingView));
+        }
+        return ImmutableList.copyOf(result);
+    }
+
     private void removeClicked(@NotNull final Button button)
     {
         final int row = guardTowerList.getListElementIndexByPane(button);
 
+        final List<Pair<ILocation, IBuildingView>> guardTowers = getGuardTowers();
         if (guardTowers.size() > row && row >= 0)
         {
-            Network.getNetwork().sendToServer(new RemoveFromRallyingListMessage(banner, guardTowers.get(row).getFirst()));
+            final ILocation locationToRemove = guardTowers.get(row).getFirst();
+            // Server side removal
+            Network.getNetwork().sendToServer(new RemoveFromRallyingListMessage(banner, locationToRemove));
+
+            // Client side removal
+            removeGuardTowerAtLocation(banner, locationToRemove);
         }
     }
 

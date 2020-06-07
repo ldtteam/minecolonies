@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.removeGuardTowerAtLocation;
+import static com.minecolonies.coremod.items.ItemBannerRallyGuards.toggleBanner;
 
 /**
  * Removes a guard tower from the rallying list
@@ -73,9 +75,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         banner = buf.readItemStack();
-        final int dimension = buf.readInt();
-        final BlockPos position = buf.readBlockPos();
-        location = new StaticLocation(position, dimension);
+        location = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
     }
 
     /**
@@ -87,8 +87,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeItemStack(banner);
-        buf.writeInt(location.getDimension());
-        buf.writeBlockPos(location.getInDimensionLocation());
+        buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(location));
     }
 
     @Nullable
@@ -101,6 +100,17 @@ public class RemoveFromRallyingListMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        removeGuardTowerAtLocation(banner, location);
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+          (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
+
+        if (slot == -1)
+        {
+            // TODO: Make constant
+            LanguageHandler.sendPlayerMessage(player, "Error rallying/unrallying guards. Please try again!");
+            return;
+        }
+
+        removeGuardTowerAtLocation(player.inventory.getStackInSlot(slot), location);
     }
 }

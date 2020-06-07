@@ -811,7 +811,7 @@
   "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Shift-Rightlick on guard towers to add them to the rally list.",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing": "Cannot find tower!",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.remove": "Remove",
-  "com.minecolonies.coremod.item.bannerrallyguards.gui.rally": "Rally %d towers",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.rally": "Rally guards",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss": "Dismiss guards",
 
   "block.minecolonies.blockpaperwall": "Paper wall",
