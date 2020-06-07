@@ -31,6 +31,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -615,25 +616,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         // General unstuck
         ArrayList<BlockPos> checkPositions = new ArrayList<>();
-        // Blocks in front of the worker
-        checkPositions.add(new BlockPos(worker.getForward().getX(), worker.getForward().getY(), worker.getForward().getZ()));
-        checkPositions.add(new BlockPos(worker.getForward().getX(), worker.getForward().getY() + 1, worker.getForward().getZ()));
+        List<Direction> directions = new ArrayList<>();
+        directions.add(Direction.NORTH);
+        directions.add(Direction.EAST);
+        directions.add(Direction.WEST);
+        directions.add(Direction.SOUTH);
 
-        // blocks in north of the player
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).north());
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).north());
-
-        // blocks in east of the player
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).east());
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).east());
-
-        // blocks in south of the player
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).south());
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).south());
-
-        // blocks in west of the player
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).west());
-        checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).west());
+        for (Direction direction: directions)
+        {
+            checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).offset(direction));
+            checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).offset(direction));
+        }
 
         mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
     }
