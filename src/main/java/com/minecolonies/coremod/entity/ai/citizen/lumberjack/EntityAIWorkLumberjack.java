@@ -616,13 +616,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         // General unstuck
         ArrayList<BlockPos> checkPositions = new ArrayList<>();
-        List<Direction> directions = new ArrayList<>();
-        directions.add(Direction.NORTH);
-        directions.add(Direction.EAST);
-        directions.add(Direction.WEST);
-        directions.add(Direction.SOUTH);
 
-        for (Direction direction: directions)
+        for (Direction direction: Direction.Plane.HORIZONTAL.values())
         {
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).offset(direction));
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).offset(direction));
