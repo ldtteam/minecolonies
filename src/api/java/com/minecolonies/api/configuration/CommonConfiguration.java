@@ -672,8 +672,6 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:tall_grass",
                      "minecraft:large_fern",
                      "minecraft:fern",
-                     "minecraft:sugar_cane",
-                     "minecraft:cactus",
                      "small_flowers"
                    ),
           s -> s instanceof String);
