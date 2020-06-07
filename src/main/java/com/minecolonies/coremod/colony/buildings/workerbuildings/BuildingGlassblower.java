@@ -79,7 +79,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobGlassblower(citizen);
     }
@@ -106,7 +106,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if (!super.canRecipeBeAdded(token))
         {

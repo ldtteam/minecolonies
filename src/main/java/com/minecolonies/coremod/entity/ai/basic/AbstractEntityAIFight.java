@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -33,7 +34,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
  *
  * @param <J> the generic job.
  */
-public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B extends AbstractBuildingGuards> extends AbstractEntityAIInteract<J, B>
 {
 
     /**

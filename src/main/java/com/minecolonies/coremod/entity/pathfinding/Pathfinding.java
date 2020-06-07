@@ -162,7 +162,7 @@ public final class Pathfinding
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
 
-        final Matrix4f matrix4f = matrixStack.getLast().getPositionMatrix();
+        final Matrix4f matrix4f = matrixStack.getLast().getMatrix();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         RenderSystem.color3f(r, g, b);
 
@@ -246,7 +246,7 @@ public final class Pathfinding
 
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
-        final Matrix4f matrix4f = matrixStack.getLast().getPositionMatrix();
+        final Matrix4f matrix4f = matrixStack.getLast().getMatrix();
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);

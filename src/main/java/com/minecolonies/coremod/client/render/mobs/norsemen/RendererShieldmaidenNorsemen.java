@@ -3,14 +3,13 @@ package com.minecolonies.coremod.client.render.mobs.norsemen;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.coremod.client.model.raiders.ModelShieldmaiden;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for the shieldmaiden.
  */
-public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen
+public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelShieldmaiden>
 {
     /**
      * Texture of the entity.
@@ -30,9 +29,9 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final MobEntity entity)
+    public ResourceLocation getEntityTexture(final AbstractEntityNorsemen entity)
     {
-        if (((AbstractEntityNorsemen) entity).getTextureId() == 1)
+        if (entity.getTextureId() == 1)
         {
             return TEXTURE2;
         }

@@ -18,8 +18,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-
 /**
  * Class used to handle the inner workings of the request system with regards to resolvers.
  */
@@ -85,7 +83,7 @@ public class ResolverHandler implements IResolverHandler
 
         manager.getRequestResolverIdentitiesDataStore().getIdentities().put(resolver.getId(), resolver);
 
-        @SuppressWarnings(RAWTYPES) final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken<?>> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
         resolverTypes.forEach(c -> {
             if (!manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().containsKey(c))
@@ -218,7 +216,7 @@ public class ResolverHandler implements IResolverHandler
     public void removeResolverInternal(final IRequestResolver<?> resolver)
     {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().remove(resolver.getId());
-        @SuppressWarnings(RAWTYPES) final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             manager.getLogger().debug("Removing resolver: " + resolver + " with request type: " + c);
@@ -359,7 +357,7 @@ public class ResolverHandler implements IResolverHandler
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
     @Override
-    public void onColonyUpdate(final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
     }

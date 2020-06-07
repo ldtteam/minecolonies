@@ -147,7 +147,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCrusher(citizen);
     }
@@ -260,7 +260,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }
@@ -297,7 +297,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             super.recipes.clear();
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }

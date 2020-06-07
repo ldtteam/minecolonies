@@ -161,5 +161,5 @@ public interface IResolverHandler
      *
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
-    void onColonyUpdate(Predicate<IRequest> shouldTriggerReassign);
+    void onColonyUpdate(Predicate<IRequest<?>> shouldTriggerReassign);
 }

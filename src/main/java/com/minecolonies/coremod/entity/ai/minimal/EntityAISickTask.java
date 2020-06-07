@@ -164,7 +164,7 @@ public class EntityAISickTask extends Goal
             return;
         }
 
-        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null)
         {
             job.setActive(false);

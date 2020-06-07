@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
@@ -18,13 +16,12 @@ import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Crusher AI class.
  */
-public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, BuildingCrusher>
 {
     /**
      * Delay for each of the craftings.
@@ -37,7 +34,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
      *
      * @param job a crusher job to use.
      */
-    public EntityAIWorkCrusher(@NotNull final J job)
+    public EntityAIWorkCrusher(@NotNull final JobCrusher job)
     {
         super(job);
         super.registerTargets(
@@ -48,7 +45,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     }
 
     @Override
-    public Class<? extends BuildingCrusher> getExpectedBuildingClass()
+    public Class<BuildingCrusher> getExpectedBuildingClass()
     {
         return BuildingCrusher.class;
     }
@@ -77,7 +74,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
         job.setProgress(job.getProgress() + TICK_DELAY);
 
-        final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
+        final BuildingCrusher crusherBuilding = getOwnBuilding();
         WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
         if (currentRecipeStorage == null)
         {

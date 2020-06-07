@@ -221,7 +221,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         final ICitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
-            final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
+            final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
             final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
             if(workOrderBuildDecoration != null)
             {
