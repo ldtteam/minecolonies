@@ -15,5 +15,10 @@ public interface IColonyStructureSpawnEvent extends IColonyEvent
      *
      * @return list of schematics
      */
-    public List<Tuple<String, BlockPos>> getSchematicSpawns();
+    List<Tuple<String, BlockPos>> getSchematicSpawns();
+
+    /**
+     * Get the ship description for the schematic
+     */
+    String getShipDesc();
 }
