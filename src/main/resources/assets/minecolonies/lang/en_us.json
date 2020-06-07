@@ -334,6 +334,8 @@
   "entity.builder.messagenobuilder": "You need a builder in order to build or upgrade this building.",
   "entity.farmer.needseed": "I need %s to plant.",
 
+  "com.minecolonies.command.help.wiki": "Checkout the wiki to learn more: ",
+  "com.minecolonies.command.help.discord": "Join the community at  ",
   "com.minecolonies.command.notop": "Must be OP to use the command",
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony, the closest colony is approx %.2f blocks away.",
@@ -1447,5 +1449,24 @@
   "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
   "com.minecolonies.coremod.job.planter": "Planter",
   "block.minecolonies.blockhutplantation.name": "Plantation",
-  "block.minecolonies.blockhutplantation": "Plantation"
+  "block.minecolonies.blockhutplantation": "Plantation",
+
+  "entity.minecolonies.norsemenchief": "Norsemen Chief",
+  "entity.minecolonies.norsemenarcher": "Norsemen Archer",
+  "entity.minecolonies.shieldmaiden": "Norsemen Shieldmaiden",
+
+  "entity.norsemenchief": "Norsemen Chief",
+  "entity.norsemenarcher": "Norsemen Archer",
+  "entity.shieldmaiden": "Norsemen Shieldmaiden",
+
+  "death.attack.entity.minecolonies.norsemenchief": "%s was grounded by the great Viking King",
+  "death.attack.entity.minecolonies.norsemenarcher": "%s was hit by a Viking Archer!",
+  "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shield-maid!",
+
+  "item.minecolonies.shieldmaidenegg": "Shieldmaiden Egg",
+  "item.minecolonies.norsemenarcheregg": "Norsemen Archer Egg",
+  "item.minecolonies.norsemenchiefegg": "Norsemen Chief Egg",
+
+  "item.minecolonies.amazonegg": "Amazon Egg",
+  "item.minecolonies.amazonchiefegg": "Amazon Chief Egg"
 }

@@ -104,10 +104,15 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
                         incrementActionsDoneAndDecSaturation();
                     }
                 }
+                if (currentRequest != null)
+                {
+                    currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                }
 
                 worker.swingArm(Hand.MAIN_HAND);
                 job.setCraftCounter(job.getCraftCounter()+1);
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
+
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.1);
             }
@@ -139,6 +144,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         return getState();
     }
 
+
     /**
      * The actual crafting logic.
      *
@@ -149,53 +155,63 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     {
         if (currentRecipeStorage == null)
         {
-            setDelay(TICKS_20);
             return START_WORKING;
+        }
+
+        if (currentRequest == null && job.getCurrentTask() != null)
+        {
+            return GET_RECIPE;
         }
 
         if (walkToBuilding())
         {
-            setDelay(STANDARD_DELAY);
             return getState();
         }
 
-        if (job.getMaxCraftingCount() == 0)
-        {
-            final PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
-            job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage));
-        }
+        job.setProgress(job.getProgress() + 1);
 
-        if (job.getMaxCraftingCount() == 0)
+        worker.setHeldItem(Hand.MAIN_HAND,
+          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
+
+        currentRequest = job.getCurrentTask();
+
+        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
         {
-            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.FAILED);
-            job.setMaxCraftingCount(0);
-            job.setCraftCounter(0);
-            setDelay(TICKS_20);
+            currentRequest = null;
+            incrementActionsDone(getActionRewardForCraftingSuccess());
+            currentRecipeStorage = null;
             return START_WORKING;
         }
 
-        currentRequest = job.getCurrentTask();
-        final IAIState nextState = crush();
-        if (nextState == getState())
+        final IAIState check = crush();
+        if (check == getState())
         {
             if (job.getCraftCounter() >= job.getMaxCraftingCount())
             {
-                final ItemStack primaryOutput = currentRecipeStorage.getPrimaryOutput();
-                primaryOutput.setCount(currentRequest.getRequest().getCount());
-                currentRequest.addDelivery(primaryOutput);
-                incrementActionsDoneAndDecSaturation();
-                job.setMaxCraftingCount(0);
-                job.setCraftCounter(0);
+                incrementActionsDone(getActionRewardForCraftingSuccess());
                 currentRecipeStorage = null;
-                return START_WORKING;
+                resetValues();
+
+                if (inventoryNeedsDump())
+                {
+                    if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
+                    {
+                        job.finishRequest(true);
+                        worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+                    }
+                }
             }
         }
         else
         {
-            job.setMaxCraftingCount(0);
-            job.setCraftCounter(0);
-            return START_WORKING;
+            currentRequest = null;
+            job.finishRequest(false);
+            incrementActionsDoneAndDecSaturation();
+            resetValues();
         }
+
         return getState();
     }
 }

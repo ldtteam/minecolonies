@@ -2,17 +2,22 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +27,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -87,12 +94,40 @@ public class EventStructureManager implements IEventStructureManager
 
         final World world = colony.getWorld();
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3);
-        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset());
+        int y = 3;
+
+        final BlockInfo info = structure.getBlockInfoAsMap().getOrDefault(structure.getPrimaryBlockOffset(), null);
+        if (info.getTileEntityData() != null)
+        {
+            final CompoundNBT teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
+            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+            {
+                final TileEntity entity = TileEntity.create(info.getTileEntityData());
+                if (entity instanceof IBlueprintDataProvider)
+                {
+                    for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
+                    {
+                        if (entry.getValue().contains("groundlevel"))
+                        {
+                            y = entry.getKey().getY();
+                        }
+                    }
+                }
+            }
+        }
+
+        final BlockPos spawnPos = targetSpawnPoint.add(0, -y ,0);
+
+        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset()).add(0, -y, 0);
+        final BlockPos cornerPos = new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1);
+
+        final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX()/2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ()/2);
+
+        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + anchor;
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
-          new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1),
+          cornerPos,
           backupPath,
           false))
         {
@@ -100,15 +135,14 @@ public class EventStructureManager implements IEventStructureManager
             Log.getLogger().info("Failed to save schematics for event");
             return false;
         }
+        backupSchematics.put(anchor, eventID);
 
-        backupSchematics.put(targetSpawnPoint.down(3), eventID);
-
-        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(world,
+        CreativeRaiderStructureHandler.loadAndPlaceStructureWithRotation(world,
           schematicPath,
-          targetSpawnPoint.down(3),
+          spawnPos,
           BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
-          true, null);
+          true, colony.getID(), (IColonyRaidEvent) eventManager.getEventByID(eventID), null);
 
         return true;
     }
@@ -136,7 +170,6 @@ public class EventStructureManager implements IEventStructureManager
 
                 try
                 {
-
                     Structurize.proxy.getSchematicsFolder().toPath().resolve(fileName + SCHEMATIC_EXTENSION_NEW).toFile().delete();
                 }
                 catch (Exception e)

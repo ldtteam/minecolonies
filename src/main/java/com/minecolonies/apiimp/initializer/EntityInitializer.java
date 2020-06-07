@@ -17,6 +17,9 @@ import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenArcher;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenChief;
+import com.minecolonies.coremod.entity.mobs.norsemen.EntityShieldmaiden;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
@@ -25,7 +28,6 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -142,6 +144,27 @@ public class EntityInitializer
                                     .build(Constants.MOD_ID + ":pharao")
                                     .setRegistryName("pharao");
 
+        ModEntities.SHIELDMAIDEN = EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
+                              .setTrackingRange(ENTITY_TRACKING_RANGE)
+                              .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                              .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                              .build(Constants.MOD_ID + ":shieldmaiden")
+                              .setRegistryName("shieldmaiden");
+
+        ModEntities.NORSEMEN_ARCHER = EntityType.Builder.create(EntityNorsemenArcher::new, EntityClassification.MONSTER)
+                                    .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                    .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                    .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                    .build(Constants.MOD_ID + ":norsemenarcher")
+                                    .setRegistryName("norsemenarcher");
+
+        ModEntities.NORSEMEN_CHIEF = EntityType.Builder.create(EntityNorsemenChief::new, EntityClassification.MONSTER)
+                               .setTrackingRange(ENTITY_TRACKING_RANGE)
+                               .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                               .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                               .build(Constants.MOD_ID + ":norsemenchief")
+                               .setRegistryName("norsemenchief");
+
         ModEntities.AMAZON = EntityType.Builder.create(EntityArcherAmazon::new, EntityClassification.MONSTER)
                                     .setTrackingRange(ENTITY_TRACKING_RANGE)
                                     .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
@@ -185,6 +208,9 @@ public class EntityInitializer
             ModEntities.PHARAO,
             ModEntities.AMAZON,
             ModEntities.AMAZONCHIEF,
-            ModEntities.FIREARROW);
+            ModEntities.FIREARROW,
+            ModEntities.SHIELDMAIDEN,
+            ModEntities.NORSEMEN_ARCHER,
+            ModEntities.NORSEMEN_CHIEF);
     }
 }
