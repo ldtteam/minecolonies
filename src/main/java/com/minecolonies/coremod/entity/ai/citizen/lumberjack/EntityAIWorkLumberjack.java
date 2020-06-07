@@ -186,7 +186,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingLumberjack> getExpectedBuildingClass()
     {
         return BuildingLumberjack.class;
     }

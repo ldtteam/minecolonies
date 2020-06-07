@@ -48,7 +48,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<? extends BuildingCrusher> getExpectedBuildingClass()
     {
         return BuildingCrusher.class;
     }

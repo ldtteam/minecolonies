@@ -42,8 +42,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     private final static int GUARD_ATTACK_INTERVAL = 8;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -110,8 +109,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     }
 
     /**
-     * Check if the guard can protect himself with a shield
-     * And if so, do it.
+     * Check if the guard can protect himself with a shield And if so, do it.
      *
      * @return The next IAIState.
      */
@@ -138,6 +136,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
     /**
      * attackPhysical tries to launch an attack. Ticked every 8 Ticks
+     *
      * @return the next state to go to.
      */
     protected IAIState attackPhysical()
@@ -192,14 +191,17 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
-            if (target instanceof MobEntity && worker.getCitizenColonyHandler()
-                                                 .getColony()
-                                                 .getResearchManager()
-                                                 .getResearchEffects()
-                                                 .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class)
-                                                 .getEffect())
+            if (target instanceof MobEntity)
             {
-                ((MobEntity) target).setAttackTarget(worker);
+                UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
+                                                       .getColony()
+                                                       .getResearchManager()
+                                                       .getResearchEffects()
+                                                       .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class);
+                if (effect != null && effect.getEffect())
+                {
+                    ((MobEntity) target).setAttackTarget(worker);
+                }
             }
 
             worker.decreaseSaturationForContinuousAction();
