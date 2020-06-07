@@ -3,6 +3,7 @@ package com.minecolonies.api.entity.citizen;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -13,11 +14,9 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
@@ -59,6 +58,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
+    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
@@ -84,6 +84,11 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * The texture.
      */
     private ResourceLocation texture;
+
+    /**
+     * Was the texture initiated with the citizen view.
+     */
+    private boolean textureDirty = true;
 
     private AbstractAdvancedPathNavigate pathNavigate;
 
@@ -203,6 +208,12 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     }
 
     /**
+     * Get the citizen data view.
+     * @return the view.
+     */
+    public abstract ICitizenDataView getCitizenDataView();
+
+    /**
      * Getter of the resource location of the texture.
      *
      * @return location of the texture.
@@ -210,11 +221,19 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @NotNull
     public ResourceLocation getTexture()
     {
-        if (texture == null)
+        if (texture == null || textureDirty || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE)))
         {
             setTexture();
         }
         return texture;
+    }
+
+    /**
+     * Set the texture dirty.
+     */
+    public void setTextureDirty()
+    {
+        this.textureDirty = true;
     }
 
     /**
@@ -246,6 +265,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
         super.registerData();
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
+        dataManager.register(DATA_STYLE, "default");
         dataManager.register(DATA_IS_FEMALE, 0);
         dataManager.register(DATA_MODEL, BipedModelType.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
