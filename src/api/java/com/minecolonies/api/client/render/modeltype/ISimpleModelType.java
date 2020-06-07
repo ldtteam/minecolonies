@@ -3,7 +3,11 @@ package com.minecolonies.api.client.render.modeltype;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_STYLE;
 
 public interface ISimpleModelType extends IModelType {
 
@@ -29,10 +33,24 @@ public interface ISimpleModelType extends IModelType {
      * @param entityCitizen The citizen in question to get the path.
      * @return The path to the citizen.
      */
-    default ResourceLocation getTexture(AbstractEntityCitizen entityCitizen)
+    default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
-        final String textureBase = "textures/entity/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
+        String folder = "default/";
+        //TODO: We have to add style tags to the townhalls that will be used for this in the future.
+        // - This will then become a switch case statement for this sake
+        if (entityCitizen.getDataManager().get(DATA_STYLE).contains("medieval"))
+        {
+            folder = "medieval/";
+        }
+        String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
+        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
+        if (Minecraft.getInstance().getResourceManager().hasResource(modified))
+        {
+            return modified;
+        }
+        textureBase = "textures/entity/citizen/default/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
+
         return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
     }
 }
