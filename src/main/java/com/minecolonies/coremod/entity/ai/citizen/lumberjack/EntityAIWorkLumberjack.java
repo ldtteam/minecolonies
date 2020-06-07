@@ -42,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.DEFAULT_RANGE_FOR_DELAY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -617,7 +616,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         // General unstuck
         ArrayList<BlockPos> checkPositions = new ArrayList<>();
 
-        for (Direction direction: Direction.Plane.HORIZONTAL.values())
+        for (Direction direction: Direction.Plane.HORIZONTAL)
         {
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).offset(direction));
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).offset(direction));
