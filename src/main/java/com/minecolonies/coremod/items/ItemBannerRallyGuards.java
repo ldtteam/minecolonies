@@ -10,15 +10,15 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import mezz.jei.network.Network;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.play.server.SHeldItemChangePacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -27,14 +27,15 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
 
 /**
@@ -61,6 +62,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Override
     public ActionResultType onItemUse(final ItemUseContext context)
     {
+        if (context.getWorld().isRemote)
+        {
+            return ActionResultType.SUCCESS;
+        }
+
         final ItemStack banner = context.getPlayer().getHeldItem(context.getHand());
 
         final CompoundNBT compound = checkForCompound(banner);
@@ -69,23 +75,20 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
         if (building != null)
         {
-            String message = null;
             final ILocation location = building.getLocation();
             if (removeGuardTowerAtLocation(banner, location))
             {
-                message = TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED;
+                LanguageHandler.sendPlayerMessage(context.getPlayer(),
+                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED,
+                  building.getSchematicName(), location.toString());
             }
             else
             {
                 final ListNBT guardTowers = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
                 guardTowers.add(StandardFactoryController.getInstance().serialize(location));
-                message = TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED;
-            }
-
-            if (!context.getWorld().isRemote)
-            {
+                // ((ServerPlayerEntity) (context.getPlayer())).connection.sendPacket(new SHeldItemChangePacket(context.getPlayer().inventory.currentItem));
                 LanguageHandler.sendPlayerMessage(context.getPlayer(),
-                  message,
+                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED,
                   building.getSchematicName(), location.toString());
             }
         }
@@ -103,7 +106,10 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     {
         final ItemStack banner = playerIn.getHeldItem(handIn);
 
-        handleRightClick(banner, playerIn);
+        if (!worldIn.isRemote)
+        {
+            handleRightClick(banner, playerIn);
+        }
 
         return ActionResult.func_226248_a_(banner);
     }
@@ -127,9 +133,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Override
     public boolean onDroppedByPlayer(final ItemStack item, final PlayerEntity player)
     {
-        final CompoundNBT compound = checkForCompound(item);
-        compound.putBoolean(TAG_IS_ACTIVE, false);
-        broadcastPlayerToRally(item, player.getServer(), null);
+        if (!player.getEntityWorld().isRemote())
+        {
+            final CompoundNBT compound = checkForCompound(item);
+            compound.putBoolean(TAG_IS_ACTIVE, false);
+            broadcastPlayerToRally(item, player.getEntityWorld(), null);
+        }
+
         return super.onDroppedByPlayer(item, player);
     }
 
@@ -143,6 +153,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public static void toggleBanner(final ItemStack banner, final PlayerEntity playerIn)
     {
+        if (playerIn.getEntityWorld().isRemote())
+        {
+            Log.getLogger().error("ItemBannerRallyGuards#toggleBanner is not supposed to be run on the client-side! Returning 0.");
+            return;
+        }
         final CompoundNBT compound = checkForCompound(banner);
         final ListNBT guardTowers = (ListNBT) compound.get(TAG_RALLIED_GUARDTOWERS);
         if (guardTowers == null)
@@ -158,13 +173,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         else if (compound.getBoolean(TAG_IS_ACTIVE))
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
-            broadcastPlayerToRally(banner, playerIn.getServer(), null);
+            broadcastPlayerToRally(banner, playerIn.getEntityWorld(), null);
             LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.deactivated");
         }
         else
         {
             compound.putBoolean(TAG_IS_ACTIVE, true);
-            final int numGuards = broadcastPlayerToRally(banner, playerIn.getServer(), playerIn);
+            final int numGuards = broadcastPlayerToRally(banner, playerIn.getEntityWorld(), playerIn);
 
             if (numGuards > 0)
             {
@@ -177,12 +192,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
     }
 
-    @Override
-    public boolean updateItemStackNBT(final CompoundNBT nbt)
-    {
-        return true;
-    }
-
     /**
      * Broadcasts the player all the guardtowers rallied by the item are supposed to follow.
      *
@@ -191,12 +200,14 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      * @return The number of guards rallied
      */
 
-    public static int broadcastPlayerToRally(final ItemStack banner, final MinecraftServer server, @Nullable final PlayerEntity playerIn)
+    public static int broadcastPlayerToRally(final ItemStack banner, final World worldIn, @Nullable final PlayerEntity playerIn)
     {
-        if (server == null)
+        if (worldIn.isRemote())
         {
+            Log.getLogger().error("ItemBannerRallyGuards#broadcastPlayerToRally is not supposed to be run on the client-side! Returning 0.");
             return 0;
         }
+
         final CompoundNBT compound = checkForCompound(banner);
         @Nullable PlayerEntity rallyTarget = playerIn;
         if (!compound.getBoolean(TAG_IS_ACTIVE))
@@ -207,8 +218,8 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         int numGuards = 0;
         for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
         {
-            final World world = server.getWorld(DimensionType.getById(guardTowerLocation.getDimension()));
-            final TileEntity entity = world.getTileEntity(guardTowerLocation.getInDimensionLocation());
+
+            final TileEntity entity = worldIn.getTileEntity(guardTowerLocation.getInDimensionLocation());
             // Note that getGuardBuildingFromTileEntity will perform the null-check for entity
             final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
             if (building != null)
@@ -292,6 +303,12 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         return compound.getBoolean(TAG_IS_ACTIVE);
     }
 
+    private static UUID getID(final ItemStack banner)
+    {
+        final CompoundNBT compound = checkForCompound(banner);
+        return compound.getUniqueId(TAG_ID);
+    }
+
     /**
      * Removes the guard tower from the rallying list based on its position
      *
@@ -313,6 +330,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 return true;
             }
         }
+
         return false;
     }
 
@@ -325,10 +343,10 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public static CompoundNBT checkForCompound(final ItemStack banner)
     {
-        if (!banner.hasTag() || banner.getTag().get(TAG_IS_ACTIVE) == null || banner.getTag().get(TAG_RALLIED_GUARDTOWERS) == null)
+        if (!banner.hasTag())
         {
             final CompoundNBT compound = new CompoundNBT();
-
+            compound.putUniqueId(TAG_ID, UUID.randomUUID());
             compound.putBoolean(TAG_IS_ACTIVE, false);
 
             @NotNull final ListNBT guardTowerList = new ListNBT();
