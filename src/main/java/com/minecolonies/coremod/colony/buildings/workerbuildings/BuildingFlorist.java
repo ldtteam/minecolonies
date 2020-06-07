@@ -200,6 +200,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     /**
      * Get the plantables from the compatibility manager the florist can build at the current level.
+     *
      * @param level the building level.
      * @return the restricted list.
      */

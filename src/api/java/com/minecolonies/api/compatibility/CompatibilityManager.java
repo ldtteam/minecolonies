@@ -564,15 +564,18 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compostable items.
+     * Create complete list of plantable items.
      */
     private void discoverPlantables()
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isPlantable).map(ItemStorage::new).collect(Collectors.toList())));
+            plantables.addAll(ImmutableList.copyOf(allBlocks.stream()
+                                                     .filter(this::isPlantable)
+                                                     .map(ItemStorage::new)
+                                                     .collect(Collectors.toList())));
         }
-        Log.getLogger().info("Finished discovering compostables");
+        Log.getLogger().info("Finished discovering plantables");
     }
 
     /**

@@ -8,6 +8,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
@@ -138,7 +140,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         return BuildingPlantation.class;
     }
 
-    //todo check on healer
     @Override
     protected IAIState decide()
     {
@@ -184,6 +185,12 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 this.workPos = pos;
                 return PLANTATION_PLANT;
             }
+        }
+
+        final UnlockAbilityResearchEffect researchEffect = plantation.getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
+        if (researchEffect != null && researchEffect.getEffect())
+        {
+            plantation.nextPhase();
         }
 
         return START_WORKING;

@@ -1331,6 +1331,7 @@ public class Colony implements IColony
     public void setStyle(final String style)
     {
         this.style = style;
+        this.markDirty();
     }
 
     /**

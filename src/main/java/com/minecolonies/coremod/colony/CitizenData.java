@@ -376,6 +376,7 @@ public class CitizenData implements ICitizenData
         citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
         citizen.getDataManager().set(DATA_IS_CHILD, isChild());
         citizen.getDataManager().set(DATA_BED_POS, getBedPos());
+        citizen.getDataManager().set(DATA_STYLE, colony.getStyle());
 
         citizen.getCitizenExperienceHandler().updateLevel();
 

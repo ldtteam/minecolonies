@@ -1,12 +1,14 @@
 package com.minecolonies.api.entity.mobs.vikings;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -79,5 +81,14 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     public int getTextureId()
     {
         return this.textureId;
+    }
+
+    @NotNull
+    @Override
+    public AbstractAdvancedPathNavigate getNavigator()
+    {
+        AbstractAdvancedPathNavigate navigator = super.getNavigator();
+        navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
+        return navigator;
     }
 }
