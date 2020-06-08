@@ -922,7 +922,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public BlockPos getPositionToFollow()
     {
-        if (rallyPlayer != null && rallyPlayer.getPosition() != BlockPos.ZERO)
+        if (rallyPlayer != null && rallyPlayer.getPosition() != BlockPos.ZERO && rallyPlayer.dimension.getId() == getLocation().getDimension())
         {
             return rallyPlayer.getPosition();
         }

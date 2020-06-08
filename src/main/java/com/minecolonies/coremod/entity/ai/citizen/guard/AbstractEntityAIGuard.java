@@ -435,12 +435,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState rally()
     {
-        this.world.getScoreboard()
-          .addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
-
-        worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
-        buildingGuards.getPlayerToRally().addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
-
         if (!worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
                                              .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                                0,
