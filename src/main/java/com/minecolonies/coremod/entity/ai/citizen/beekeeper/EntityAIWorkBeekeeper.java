@@ -121,8 +121,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 return getState();
             }
         }
-
-        checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
+        else
+        {
+            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
+        }
         checkIfRequestForTagExistOrCreateAsynch(ItemTags.field_226159_I_, 16, FLOWERS);
 
         return DECIDE;

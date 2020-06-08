@@ -62,14 +62,14 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
             if (positions.contains(pos))
             {
                 LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.removehive");
-                positions.remove(pos);
+                building.removeHive(pos);
             }
             else
             {
                 if (positions.size() < building.getMaximumHives())
                 {
                     LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.addhive");
-                    positions.add(pos);
+                    building.addHive(pos);
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {

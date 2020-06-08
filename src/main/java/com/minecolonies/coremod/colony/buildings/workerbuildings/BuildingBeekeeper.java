@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -170,7 +171,27 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     public Set<BlockPos> getHives()
     {
-        return hives;
+        return Collections.unmodifiableSet(hives);
+    }
+
+    /**
+     * Remove a hive/nest position from this beekeper
+     *
+     * @param pos the position to remove
+     */
+    public void removeHive(final BlockPos pos)
+    {
+        hives.remove(pos);
+    }
+
+    /**
+     * Add a hive/nest position to this beekeper
+     *
+     * @param pos the position to add
+     */
+    public void addHive(final BlockPos pos)
+    {
+        hives.add(pos);
     }
 
     /**
