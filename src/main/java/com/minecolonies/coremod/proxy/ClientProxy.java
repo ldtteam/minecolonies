@@ -98,9 +98,9 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBannerRallyGuardsWindow(final ItemStack banner, final PlayerEntity playerIn)
+    public void openBannerRallyGuardsWindow(final ItemStack banner)
     {
-        @Nullable final WindowBannerRallyGuards window = new WindowBannerRallyGuards(banner, playerIn);
+        @Nullable final WindowBannerRallyGuards window = new WindowBannerRallyGuards(banner);
         window.open();
     }
 

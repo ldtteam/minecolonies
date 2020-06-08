@@ -168,7 +168,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openBannerRallyGuardsWindow(final ItemStack banner, final PlayerEntity playerIn)
+    public void openBannerRallyGuardsWindow(final ItemStack banner)
     {
         /*
          * Intentionally left empty.

@@ -47,7 +47,8 @@ public interface IProxy
 
     /**
      * Open the suggestion window.
-     * @param pos the position to open it at.
+     *
+     * @param pos   the position to open it at.
      * @param state the state trying to place.
      * @param stack the itemStack.
      */
@@ -55,9 +56,10 @@ public interface IProxy
 
     /**
      * Opens a build tool window for a specific structure.
-     * @param pos the position.
+     *
+     * @param pos           the position.
      * @param structureName the structure name.
-     * @param rotation the rotation.
+     * @param rotation      the rotation.
      */
     void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation);
 
@@ -65,9 +67,8 @@ public interface IProxy
      * Opens a rally banner window.
      *
      * @param banner The banner to edit in the GUI
-     * @param playerIn The player requesting the GUI
      */
-    void openBannerRallyGuardsWindow(final ItemStack banner, final PlayerEntity playerIn);
+    void openBannerRallyGuardsWindow(final ItemStack banner);
 
     /**
      * Opens a clipboard window.
@@ -80,7 +81,7 @@ public interface IProxy
      * Opens the resource scroll window.
      *
      * @param colonyId the colony id.
-     * @param pos the position of the builder.
+     * @param pos      the position of the builder.
      */
     void openResourceScrollWindow(final int colonyId, final BlockPos pos);
 
@@ -94,6 +95,7 @@ public interface IProxy
 
     /**
      * Returns the recipe book from the player.
+     *
      * @param player THe player.
      * @return The recipe book.
      */
@@ -102,12 +104,14 @@ public interface IProxy
 
     /**
      * Open the Window of the decoration controller.
+     *
      * @param pos the position of the block.
      */
     void openDecorationControllerWindow(@NotNull final BlockPos pos);
 
     /**
      * Get the world for a dimension.
+     *
      * @param dimension the dimension.
      * @return the world.
      */

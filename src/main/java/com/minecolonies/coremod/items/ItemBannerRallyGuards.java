@@ -2,7 +2,9 @@ package com.minecolonies.coremod.items;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -10,6 +12,8 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -29,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -107,6 +112,25 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         return ActionResult.func_226248_a_(banner);
     }
 
+    @Override
+    public boolean onDroppedByPlayer(final ItemStack item, final PlayerEntity player)
+    {
+        if (!player.getEntityWorld().isRemote())
+        {
+            final CompoundNBT compound = checkForCompound(item);
+            compound.putBoolean(TAG_IS_ACTIVE, false);
+            broadcastPlayerToRally(item, player.getEntityWorld(), null);
+        }
+
+        return super.onDroppedByPlayer(item, player);
+    }
+
+    /**
+     * Handles a rightclick or shift-rightclick that's *not* adding/removing a guard tower from the list
+     *
+     * @param banner   The banner with which the player rightclicked.
+     * @param playerIn The player that rightclicked.
+     */
     private void handleRightClick(final ItemStack banner, final PlayerEntity playerIn)
     {
         if (playerIn.isShiftKeyDown() && !playerIn.getEntityWorld().isRemote())
@@ -122,22 +146,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             }
             else
             {
-                MineColonies.proxy.openBannerRallyGuardsWindow(banner, playerIn);
+                MineColonies.proxy.openBannerRallyGuardsWindow(banner);
             }
         }
-    }
-
-    @Override
-    public boolean onDroppedByPlayer(final ItemStack item, final PlayerEntity player)
-    {
-        if (!player.getEntityWorld().isRemote())
-        {
-            final CompoundNBT compound = checkForCompound(item);
-            compound.putBoolean(TAG_IS_ACTIVE, false);
-            broadcastPlayerToRally(item, player.getEntityWorld(), null);
-        }
-
-        return super.onDroppedByPlayer(item, player);
     }
 
     /**
@@ -216,17 +227,18 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         int numGuards = 0;
         for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
         {
-
             final TileEntity entity = worldIn.getTileEntity(guardTowerLocation.getInDimensionLocation());
+
             // Note that getGuardBuildingFromTileEntity will perform the null-check for entity
             final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
+
+            // If the building is null, it means that guardtower has been moved/destroyed since being added.
+            // Safely ignore this case, the player must remove the tower from the rallying list manually.
             if (building != null)
             {
                 building.setPlayerToRally(rallyTarget);
                 numGuards += building.getAssignedCitizen().size();
             }
-            // If the building is null, it means that guardtower has been moved/destroyed since being added.
-            // Safely ignore this case, the player must remove the tower from the rallying list manually.
         }
         return numGuards;
     }
@@ -293,6 +305,30 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
+     * Fetches the (client-side) Views of the guard towers rallied by the banner.
+     * If a rallied position is not a guard tower anymore (tower was moved or destroyed), the corresponding entry will be null.
+     *
+     * @return A list of maps. Map's key is the position, Map's value is a guard tower or null.
+     */
+    public static List<Pair<ILocation, AbstractBuildingGuards.View>> getGuardTowers(final ItemStack banner)
+    {
+        final LinkedList<Pair<ILocation, AbstractBuildingGuards.View>> result = new LinkedList<>();
+        for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
+        {
+            final IBuildingView buildingView = IColonyManager.getInstance().getBuildingView(guardTowerLocation.getDimension(), guardTowerLocation.getInDimensionLocation());
+            if (buildingView instanceof AbstractBuildingGuards.View)
+            {
+                result.add(new Pair<>(guardTowerLocation, (AbstractBuildingGuards.View) buildingView));
+            }
+            else
+            {
+                result.add(new Pair<>(guardTowerLocation, null));
+            }
+        }
+        return ImmutableList.copyOf(result);
+    }
+
+    /**
      * Checks if the given banner is active and valid for the given guardtower.
      *
      * @param banner     The banner to check
@@ -317,16 +353,16 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         return false;
     }
 
+    /**
+     * Checks if the banner is active
+     *
+     * @param banner The banner that should be checked
+     * @return true if the banner is active
+     */
     public static boolean isActive(final ItemStack banner)
     {
         final CompoundNBT compound = checkForCompound(banner);
         return compound.getBoolean(TAG_IS_ACTIVE);
-    }
-
-    private static UUID getID(final ItemStack banner)
-    {
-        final CompoundNBT compound = checkForCompound(banner);
-        return compound.getUniqueId(TAG_ID);
     }
 
     /**
