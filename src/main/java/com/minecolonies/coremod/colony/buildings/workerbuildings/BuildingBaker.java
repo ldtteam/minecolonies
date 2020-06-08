@@ -166,7 +166,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobBaker(citizen);
     }
@@ -273,7 +273,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
 
         Optional<Boolean> isRecipeAllowed;
@@ -518,7 +518,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             }
         }
 
-        for (final IToken token : getRecipes())
+        for (final IToken<?> token : getRecipes())
         {
             final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))

@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Sifter AI class.
  */
-public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
+public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, BuildingSifter>
 {
     /**
      * Max level which should have an effect on the speed of the worker.
@@ -68,7 +68,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     }
 
     @Override
-    public Class<? extends BuildingSifter> getExpectedBuildingClass()
+    public Class<BuildingSifter> getExpectedBuildingClass()
     {
         return BuildingSifter.class;
     }
@@ -126,7 +126,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
 
         progress++;
 
-        final BuildingSifter sifterBuilding = getOwnBuilding(BuildingSifter.class);
+        final BuildingSifter sifterBuilding = getOwnBuilding();
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {

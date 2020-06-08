@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
-    public AbstractTileEntityWareHouse(final TileEntityType warehouse)
+    public AbstractTileEntityWareHouse(final TileEntityType<? extends AbstractTileEntityWareHouse> warehouse)
     {
         super(warehouse);
     }

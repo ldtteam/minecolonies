@@ -126,7 +126,7 @@ public final class RaiderMobUtils
      * @param eventID        the event id.
      */
     public static void spawn(
-      final EntityType entityToSpawn,
+      final EntityType<?> entityToSpawn,
       final int numberOfSpawns,
       final BlockPos spawnLocation,
       final World world,

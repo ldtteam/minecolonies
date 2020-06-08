@@ -8,25 +8,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
 {
 
     private static DynamicTreeCompat instance = new DynamicTreeCompat();
 
-    private static final String DYNAMIC_MODID = "dynamictrees";
-
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
-
-    /**
-     * Hashmap of fakeplayers, dimension-id as key
-     */
-    private static Map<Integer, FakePlayer> fakePlayers = new HashMap<>();
 
     private DynamicTreeCompat()
     {

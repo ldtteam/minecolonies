@@ -277,7 +277,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
-            if (player.isShiftKeyDown())
+            if (player.isSneaking())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
             }
@@ -914,7 +914,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void spawnEatingParticle()
     {
-        super.func_226293_b_(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
+        super.triggerItemUseEffects(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     /**
@@ -1417,7 +1417,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
-                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                      && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1427,7 +1427,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 
@@ -1480,7 +1480,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final IJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob<?> job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)

@@ -20,7 +20,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
      *
      * @param type tile entity type
      */
-    public TileEntityStash(final TileEntityType type)
+    public TileEntityStash(final TileEntityType<? extends TileEntityStash> type)
     {
         super(type);
         inventory = new NotifyingRackInventory(DEFAULT_SIZE);

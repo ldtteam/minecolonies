@@ -2,9 +2,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
@@ -17,18 +15,14 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 
@@ -97,7 +91,7 @@ public final class ShipBasedRaiderUtils
      * @param event    the event.
      * @param colonyId the colony id.
      */
-    public static void setupSpawner(final BlockPos location, final World world, final EntityType mob, final IColonyRaidEvent event, final int colonyId)
+    public static void setupSpawner(final BlockPos location, final World world, final EntityType<?> mob, final IColonyRaidEvent event, final int colonyId)
     {
         world.removeBlock(location, false);
         world.setBlockState(location, Blocks.SPAWNER.getDefaultState());

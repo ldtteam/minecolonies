@@ -561,6 +561,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 case SOUTH:
                     forward = Math.min(Math.max(motion.getZ() - 1 * 0.01D, -1), 0);
                     entity.ridingEntity.setMotion(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -1 * 0.01D));
+                    break;
+
+                case DOWN:
+                case UP:
+                    // unreachable
+                    break;
             }
         }
         return false;

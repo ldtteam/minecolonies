@@ -98,8 +98,8 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     }
 
     @Override
-    public void render(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         float f = 0.05F * MathHelper.sin((float) Math.PI * ageInTicks/ 30.0F) % 2.0F;
         setRotateAngle(this.stripLeftA,
                 - 1.1F * this.bipedLeftArm.rotateAngleX + f,

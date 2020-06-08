@@ -29,7 +29,7 @@ public class TokenHandler implements ITokenHandler
      * @return The new token.
      */
     @Override
-    public IToken generateNewToken()
+    public IToken<?> generateNewToken()
     {
         //Force generic type to be correct.
         return manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());

@@ -16,7 +16,7 @@ public class EntityNorsemenArcher extends AbstractEntityNorsemen implements IArc
      * @param worldIn world to construct it in.
      * @param type the entity type.
      */
-    public EntityNorsemenArcher(final EntityType type, final World worldIn)
+    public EntityNorsemenArcher(final EntityType<? extends EntityNorsemenArcher> type, final World worldIn)
     {
         super(type, worldIn);
     }

@@ -88,7 +88,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCook(citizen);
     }
@@ -143,7 +143,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
                 final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
-                for (final IToken taskToken : assignedTasks)
+                for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
@@ -176,7 +176,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
 

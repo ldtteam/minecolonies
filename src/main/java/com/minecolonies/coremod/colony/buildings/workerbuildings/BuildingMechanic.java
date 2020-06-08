@@ -63,7 +63,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobMechanic(citizen);
     }
@@ -90,7 +90,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
 

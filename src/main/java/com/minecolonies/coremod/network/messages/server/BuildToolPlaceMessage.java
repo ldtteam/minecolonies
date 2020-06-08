@@ -225,7 +225,7 @@ public class BuildToolPlaceMessage implements IMessage
 
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, state);
-                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
                 int level = 0;

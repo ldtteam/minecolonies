@@ -200,7 +200,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobPlanter(citizen);
     }
@@ -227,7 +227,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
 
         Optional<Boolean> isRecipeAllowed;

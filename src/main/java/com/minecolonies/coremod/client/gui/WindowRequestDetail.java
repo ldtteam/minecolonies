@@ -14,13 +14,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -83,7 +81,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The request itself.
      */
-    private final IRequest request;
+    private final IRequest<?> request;
     /**
      * The colony id.
      */
@@ -99,22 +97,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private final Window prevWindow;
 
     /**
-     * Player inventory
-     */
-    private final PlayerInventory inventory  = this.mc.player.inventory;
-    /**
-     * Is the player in creative or not.
-     */
-    private final boolean isCreative = this.mc.player.isCreative();
-
-    /**
      * Open the request detail.
      *
      * @param prevWindow the window we're coming from.
      * @param request    the request.
      * @param colonyId   the colony id.
      */
-    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest request, final int colonyId)
+    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest<?> request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.prevWindow = prevWindow;
@@ -200,7 +189,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         try
         {
-            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getId());
+            final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(request.getId());
             if (resolver == null)
             {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");

@@ -16,7 +16,7 @@ public class EntityArcherBarbarian extends AbstractEntityBarbarian implements IA
      * @param worldIn world to construct it in.
      * @param type the entity type.
      */
-    public EntityArcherBarbarian(final EntityType type, final World worldIn)
+    public EntityArcherBarbarian(final EntityType<? extends EntityArcherBarbarian> type, final World worldIn)
     {
         super(type, worldIn);
     }

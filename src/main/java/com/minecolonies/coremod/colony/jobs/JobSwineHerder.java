@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkSwineHerder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The SwineHerder job
  */
-public class JobSwineHerder extends AbstractJob
+public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwineHerder>
 {
     /**
      * Instantiates the placeholder job.
@@ -44,7 +43,7 @@ public class JobSwineHerder extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobSwineHerder> generateAI()
+    public EntityAIWorkSwineHerder generateAI()
     {
         return new EntityAIWorkSwineHerder(this);
     }

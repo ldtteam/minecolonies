@@ -61,7 +61,7 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackRequest getNewInstance(
           @NotNull final Stack input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
@@ -134,7 +134,7 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackListRequest getNewInstance(
           @NotNull final StackList input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackListRequest(location, token, initialState, input);
@@ -258,7 +258,7 @@ public final class StandardRequestFactories
         public StandardRequests.DeliveryRequest getNewInstance(
           @NotNull final Delivery input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
@@ -332,7 +332,7 @@ public final class StandardRequestFactories
         public StandardRequests.PickupRequest getNewInstance(
           @NotNull final Pickup input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.PickupRequest(location, token, initialState, input);
@@ -438,7 +438,7 @@ public final class StandardRequestFactories
         public StandardRequests.ToolRequest getNewInstance(
           @NotNull final Tool input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ToolRequest(location, token, initialState, input);
@@ -486,7 +486,7 @@ public final class StandardRequestFactories
         public StandardRequests.FoodRequest getNewInstance(
           @NotNull final Food input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.FoodRequest(location, token, initialState, input);
@@ -534,7 +534,7 @@ public final class StandardRequestFactories
         public StandardRequests.SmeltAbleOreRequest getNewInstance(
           @NotNull final SmeltableOre input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.SmeltAbleOreRequest(location, token, initialState, input);
@@ -582,7 +582,7 @@ public final class StandardRequestFactories
         public StandardRequests.BurnableRequest getNewInstance(
           @NotNull final Burnable input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.BurnableRequest(location, token, initialState, input);
@@ -642,7 +642,7 @@ public final class StandardRequestFactories
         final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
-        for (final IToken token : request.getChildren())
+        for (final IToken<?> token : request.getChildren())
         {
             childrenCompound.add(controller.serialize(token));
         }
@@ -679,11 +679,11 @@ public final class StandardRequestFactories
       final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
-        final IToken token = controller.deserialize(compound.getCompound(NBT_TOKEN));
+        final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
         final RequestState state = RequestState.deserializeNBT((IntNBT) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
-        final List<IToken> childTokens = new ArrayList<>();
+        final List<IToken<?>> childTokens = new ArrayList<>();
         final ListNBT childCompound = compound.getList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
@@ -731,6 +731,6 @@ public final class StandardRequestFactories
     @FunctionalInterface
     public interface IObjectConstructor<T, O>
     {
-        O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
+        O construct(@NotNull final T requested, @NotNull final IToken<?> token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
     }
 }

@@ -43,6 +43,7 @@ public class PlayMusicMessage implements IMessage
     @Override
     public void toBytes(final PacketBuffer buf)
     {
+        // TODO: switch to proper registry
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
     }
 
