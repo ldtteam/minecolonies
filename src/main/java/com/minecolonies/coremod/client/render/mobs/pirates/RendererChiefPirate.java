@@ -13,7 +13,7 @@ public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPi
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/pirate_nude.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/pirate_nude.png");
 
     /**
      * Constructor method for renderer

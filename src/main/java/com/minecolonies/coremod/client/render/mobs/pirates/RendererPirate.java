@@ -13,7 +13,9 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/pirate1.png");
+    private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate1.png");
+    private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate2.png");
+    private static final ResourceLocation TEXTURE3 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate3.png");
 
     /**
      * Constructor method for renderer
@@ -28,7 +30,14 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
     @Override
     public ResourceLocation getEntityTexture(final AbstractEntityPirate entity)
     {
-        1 + 2 + 3
-        return TEXTURE;
+        switch (entity.getTextureId())
+        {
+            case 0:
+                return TEXTURE1;
+            case 1:
+                return TEXTURE2;
+            default:
+                return TEXTURE3;
+        }
     }
 }

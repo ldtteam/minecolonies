@@ -44,18 +44,6 @@ public interface ISimpleModelType extends IModelType {
             folder = "medieval/";
         }
 
-        //todo test code remove!
-        if (true)
-        {
-            String textureBase = "textures/entity/citizen/" + "mixed/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
-            final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
-            final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata()  + entityCitizen.getDataManager().get(DATA_TEXTURE_SUFFIX) + ".png");
-            if (Minecraft.getInstance().getResourceManager().hasResource(modified))
-            {
-                return modified;
-            }
-        }
-
         String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
@@ -63,8 +51,9 @@ public interface ISimpleModelType extends IModelType {
         {
             return modified;
         }
+
         textureBase = "textures/entity/citizen/default/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
 
-        return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
+        return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata()  + entityCitizen.getDataManager().get(DATA_TEXTURE_SUFFIX) + ".png");
     }
 }
