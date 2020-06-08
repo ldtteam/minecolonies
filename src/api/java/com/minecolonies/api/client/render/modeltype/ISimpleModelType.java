@@ -53,7 +53,6 @@ public interface ISimpleModelType extends IModelType {
         }
 
         textureBase = "textures/entity/citizen/default/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
-
         return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata()  + entityCitizen.getDataManager().get(DATA_TEXTURE_SUFFIX) + ".png");
     }
 }
