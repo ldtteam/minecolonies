@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
+import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
 
 /**
  * Window for the request detail.
@@ -208,13 +209,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request))
+        if ((this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
         {
             fulfillButton.hide();
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
+        if ((this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request)) || this.prevWindow instanceof WindowClipBoard)
         {
             cancelButton.hide();
         }
