@@ -14,7 +14,7 @@ public class RendererArcherPirate extends AbstractRendererPirate
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/pirate2.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/pirate2.png");
 
     /**
      * Constructor method for renderer
@@ -29,6 +29,8 @@ public class RendererArcherPirate extends AbstractRendererPirate
     @Override
     public ResourceLocation getEntityTexture(final MobEntity entity)
     {
+        4,5,6
+          
         return TEXTURE;
     }
 }
