@@ -31,7 +31,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
 
-public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
+public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, BuildingSchool>
 {
     /**
      * How often the kid studies for one recess.
@@ -204,7 +204,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil>
     }
 
     @Override
-    public Class<? extends BuildingSchool> getExpectedBuildingClass()
+    public Class<BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
     }

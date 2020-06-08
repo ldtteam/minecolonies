@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the replace block GUI.
  */
-public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHandler
+public class WindowPostBox extends AbstractWindowRequestTree
 {
     /**
      * List of all item stacks in the game.

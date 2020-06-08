@@ -3,7 +3,6 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import net.minecraft.block.AirBlock;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;

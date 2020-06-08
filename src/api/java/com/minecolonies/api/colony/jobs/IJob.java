@@ -59,7 +59,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return a set of ITokens.
      */
-    Set<IToken> getAsyncRequests();
+    Set<IToken<?>> getAsyncRequests();
 
     /**
      * Override to add Job-specific AI tasks to the given EntityAITask list.

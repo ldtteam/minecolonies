@@ -29,7 +29,6 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.Direction.NORTH;
 import static net.minecraft.util.Direction.fromAngle;
 
@@ -52,7 +51,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @NotNull
     @Override
-    @SuppressWarnings(DEPRECATION)
     public BlockRenderType getRenderType(final BlockState state)
     {
         return BlockRenderType.INVISIBLE;

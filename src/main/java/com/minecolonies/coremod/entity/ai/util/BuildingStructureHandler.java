@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -36,7 +37,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED
  * <p>
  * It internally uses a structure it transparently loads.
  */
-public class BuildingStructureHandler extends AbstractStructureHandler
+public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> extends AbstractStructureHandler
 {
     /**
      * Amount of xp the builder gains for placing a block.
@@ -46,7 +47,7 @@ public class BuildingStructureHandler extends AbstractStructureHandler
     /**
      * The structure AI handling this task.
      */
-    private final AbstractEntityAIStructure<? extends AbstractJobStructure> structureAI;
+    private final AbstractEntityAIStructure<J, B> structureAI;
 
     /**
      * The total number of stages.
@@ -71,7 +72,7 @@ public class BuildingStructureHandler extends AbstractStructureHandler
      * @param settings the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
-    public BuildingStructureHandler(final World world, final BlockPos worldPos, final String structureName, final PlacementSettings settings, final AbstractEntityAIStructure<? extends AbstractJobStructure> entityAIStructure, final Stage[] stages)
+    public BuildingStructureHandler(final World world, final BlockPos worldPos, final String structureName, final PlacementSettings settings, final AbstractEntityAIStructure<J, B> entityAIStructure, final Stage[] stages)
     {
         super(world, worldPos, structureName, settings);
         setupBuilding();
@@ -88,7 +89,7 @@ public class BuildingStructureHandler extends AbstractStructureHandler
      * @param settings the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
-    public BuildingStructureHandler(final World world, final BlockPos worldPos, final Blueprint blueprint, final PlacementSettings settings, final AbstractEntityAIStructure<? extends AbstractJobStructure> entityAIStructure, final Stage[] stages)
+    public BuildingStructureHandler(final World world, final BlockPos worldPos, final Blueprint blueprint, final PlacementSettings settings, final AbstractEntityAIStructure<J, B> entityAIStructure, final Stage[] stages)
     {
         super(world, worldPos, blueprint, settings);
         setupBuilding();
@@ -219,7 +220,7 @@ public class BuildingStructureHandler extends AbstractStructureHandler
             itemList.add(structureAI.getTotalAmount(stack));
         }
 
-        return structureAI.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1);
+        return AbstractEntityAIStructure.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1);
     }
 
     @Override

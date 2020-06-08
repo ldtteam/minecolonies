@@ -77,7 +77,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobFletcher(citizen);
     }
@@ -104,7 +104,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(!super.canRecipeBeAdded(token))
         {

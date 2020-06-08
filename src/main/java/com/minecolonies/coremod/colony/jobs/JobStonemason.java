@@ -3,14 +3,13 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.stonemason.EntityAIWorkStonemason;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Stonemason job.
  */
-public class JobStonemason extends AbstractJobCrafter
+public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, JobStonemason>
 {
     /**
      * Instantiates the job for the Stonemason.
@@ -42,7 +41,7 @@ public class JobStonemason extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobStonemason> generateAI()
+    public EntityAIWorkStonemason generateAI()
     {
         return new EntityAIWorkStonemason(this);
     }

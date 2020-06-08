@@ -73,7 +73,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobSawmill(citizen);
     }
@@ -100,7 +100,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(!super.canRecipeBeAdded(token))
         {

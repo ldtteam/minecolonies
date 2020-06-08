@@ -25,7 +25,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final EntityType type, final World world)
+    public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final World world)
     {
         super(type, world);
     }

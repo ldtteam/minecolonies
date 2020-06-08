@@ -1,12 +1,16 @@
 package com.minecolonies.api.entity;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
+import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
+import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -16,58 +20,58 @@ public class ModEntities
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
 
     @ObjectHolder("fishhook")
-    public static EntityType<?> FISHHOOK;
+    public static EntityType<? extends Entity> FISHHOOK;
 
     @ObjectHolder("barbarian")
-    public static EntityType<?> BARBARIAN;
+    public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
 
     @ObjectHolder("mercenary")
     public static EntityType<? extends CreatureEntity> MERCENARY;
 
     @ObjectHolder("archerbarbarian")
-    public static EntityType<?> ARCHERBARBARIAN;
+    public static EntityType<? extends AbstractEntityBarbarian> ARCHERBARBARIAN;
 
     @ObjectHolder("chiefbarbarian")
-    public static EntityType<?> CHIEFBARBARIAN;
+    public static EntityType<? extends AbstractEntityBarbarian> CHIEFBARBARIAN;
 
     @ObjectHolder("pirate")
-    public static EntityType<?> PIRATE;
+    public static EntityType<? extends AbstractEntityPirate> PIRATE;
 
     @ObjectHolder("chiefpirate")
-    public static EntityType<?> CHIEFPIRATE;
+    public static EntityType<? extends AbstractEntityPirate> CHIEFPIRATE;
 
     @ObjectHolder("archerpirate")
-    public static EntityType<?> ARCHERPIRATE;
+    public static EntityType<? extends AbstractEntityPirate> ARCHERPIRATE;
 
     @ObjectHolder("sittingentity")
-    public static EntityType<?> SITTINGENTITY;
+    public static EntityType<? extends Entity> SITTINGENTITY;
 
     @ObjectHolder("mummy")
-    public static EntityType<?> MUMMY;
+    public static EntityType<? extends AbstractEntityEgyptian> MUMMY;
 
     @ObjectHolder("pharao")
-    public static EntityType<?> PHARAO;
+    public static EntityType<? extends AbstractEntityEgyptian> PHARAO;
 
     @ObjectHolder("archermummy")
-    public static EntityType<?> ARCHERMUMMY;
+    public static EntityType<? extends AbstractEntityEgyptian> ARCHERMUMMY;
 
     @ObjectHolder("norsemenarcher")
-    public static EntityType<?> NORSEMEN_ARCHER;
+    public static EntityType<? extends AbstractEntityNorsemen> NORSEMEN_ARCHER;
 
     @ObjectHolder("shieldmaiden")
-    public static EntityType<?> SHIELDMAIDEN;
+    public static EntityType<? extends AbstractEntityNorsemen> SHIELDMAIDEN;
 
     @ObjectHolder("norsemenchief")
-    public static EntityType<?> NORSEMEN_CHIEF;
+    public static EntityType<? extends AbstractEntityNorsemen> NORSEMEN_CHIEF;
 
     @ObjectHolder("amazon")
-    public static EntityType<?> AMAZON;
+    public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 
     @ObjectHolder("amazonchief")
-    public static EntityType<?> AMAZONCHIEF;
+    public static EntityType<? extends AbstractEntityAmazon> AMAZONCHIEF;
 
     @ObjectHolder("minecart")
-    public static EntityType<AbstractMinecartEntity> MINECART;
+    public static EntityType<MinecoloniesMinecart> MINECART;
 
     @ObjectHolder("firearrow")
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;

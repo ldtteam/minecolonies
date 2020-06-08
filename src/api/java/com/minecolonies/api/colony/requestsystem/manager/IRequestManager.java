@@ -96,7 +96,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * @throws IllegalArgumentException when the token is not known to this manager.
      */
     @Nullable
-    IToken reassignRequest(@NotNull IToken<?> token, @NotNull Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException;
+    IToken<?> reassignRequest(@NotNull IToken<?> token, @NotNull Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.
@@ -170,7 +170,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * Method used to indicate that a colony has updated their available items.
      * @param shouldTriggerReassign The request assigned
      */
-    void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign);
+    void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign);
 
     /**
      * Get the player resolve.

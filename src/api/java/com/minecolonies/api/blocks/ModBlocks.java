@@ -1,5 +1,7 @@
 package com.minecolonies.api.blocks;
 
+import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,14 +64,14 @@ public final class ModBlocks
     /**
      * Utility blocks.
      */
-    public static AbstractBlockMinecoloniesFalling    blockConstructionTape;
-    public static AbstractBlockMinecolonies           blockRack;
-    public static AbstractBlockMinecolonies           blockWayPoint;
-    public static AbstractBlockBarrel                 blockBarrel;
-    public static AbstractBlockMinecoloniesHorizontal blockDecorationPlaceholder;
-    public static AbstractBlockMinecolonies           blockScarecrow;
-    public static AbstractBlockMinecolonies           blockBarracksTowerSubstitution;
-    public static AbstractBlockMinecolonies           blockCompostedDirt;
+    public static AbstractBlockMinecoloniesConstructionTape<? extends AbstractBlockMinecoloniesConstructionTape<?>> blockConstructionTape;
+    public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>> blockRack;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockWayPoint;
+    public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>> blockBarrel;
+    public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;
+    public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>> blockScarecrow;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockBarracksTowerSubstitution;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockCompostedDirt;
 
     /**
      * Private constructor to hide the implicit public one.

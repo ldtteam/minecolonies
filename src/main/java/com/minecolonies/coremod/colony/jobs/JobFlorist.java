@@ -4,11 +4,10 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.florist.EntityAIWorkFlorist;
 import org.jetbrains.annotations.NotNull;
 
-public class JobFlorist extends AbstractJob
+public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>
 {
     /**
      * Initialize citizen data.
@@ -40,7 +39,7 @@ public class JobFlorist extends AbstractJob
     }
 
     @Override
-    public AbstractAISkeleton<? extends AbstractJob> generateAI()
+    public EntityAIWorkFlorist generateAI()
     {
         return new EntityAIWorkFlorist(this);
     }

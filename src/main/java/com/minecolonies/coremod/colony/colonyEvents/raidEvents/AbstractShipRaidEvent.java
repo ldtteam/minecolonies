@@ -105,7 +105,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Entities which are to be respawned in a loaded chunk.
      */
-    private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
+    private List<Tuple<EntityType<?>, BlockPos>> respawns = new ArrayList<>();
 
     /**
      * If a citizen was killed during the raid.
@@ -171,7 +171,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         if (!respawns.isEmpty())
         {
-            for (final Tuple<EntityType, BlockPos> entry : respawns)
+            for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
             {
                 final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
                 if (spawnPos != null)
@@ -351,7 +351,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public List<Entity> getEntities()
     {
-        return new ArrayList(raiders.keySet());
+        return new ArrayList<>(raiders.keySet());
     }
 
     @Override

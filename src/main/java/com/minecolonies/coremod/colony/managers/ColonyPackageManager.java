@@ -30,11 +30,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 public class ColonyPackageManager implements IColonyPackageManager
 {
     /**
-     * 1 in x chance to update the permissions.
-     */
-    private static final int CHANCE_TO_UPDATE = 1000;
-
-    /**
      * List of players close to the colony receiving updates. Populated by chunk entry events
      */
     @NotNull

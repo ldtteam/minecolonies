@@ -22,7 +22,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -56,7 +55,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
+    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.
@@ -463,7 +462,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
+          .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
           .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
@@ -507,7 +506,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(Registry.ENCHANTMENT.getValue(new ResourceLocation(ench.getA())).get(), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())), ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -885,7 +884,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String enchantment = split[1];
-                if (!Registry.ENCHANTMENT.getValue(new ResourceLocation(enchantment)).isPresent())
+                if (ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(enchantment)) == null)
                 {
                     Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
                     continue;
