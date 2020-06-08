@@ -121,7 +121,6 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
             // End Additional recipe rules
         }
 
-        //return false;
     }
 
     @Override

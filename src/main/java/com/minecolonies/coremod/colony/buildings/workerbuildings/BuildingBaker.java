@@ -308,7 +308,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             // End Additional recipe rules
         }
 
-        //return false;
     }
 
     /**

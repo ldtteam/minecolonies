@@ -203,8 +203,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             // End Additional recipe rules
         }
 
-        //return false;
-
     }
 
     @NotNull

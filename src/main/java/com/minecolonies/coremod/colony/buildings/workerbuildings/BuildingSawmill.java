@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.blocks.decorative.BlockShingle;
-import com.ldtteam.structurize.blocks.decorative.BlockShingleSlab;
-import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -20,8 +17,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
@@ -121,15 +116,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             // Additional recipe rules
 
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            final Item item = storage.getPrimaryOutput().getItem();
-
-            // TODO: Add tags to structurize and remove this code.
-            if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab
-                                                || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
-            {
-                return true;
-            }
-
 
             double amountOfValidBlocks = 0;
             double blocks = 0;
@@ -159,7 +145,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             // End Additional recipe rules
         }
 
-        //return false;
     }
 
     @Override
