@@ -79,7 +79,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).func_226896_b_());
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).notSolid());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -99,7 +99,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut(final Properties properties)
     {
-        super(properties.func_226896_b_());
+        super(properties.notSolid());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -174,7 +174,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 return ActionResultType.FAIL;
             }
 
-            building.openGui(player.isShiftKeyDown());
+            building.openGui(player.isSneaking());
         }
         return ActionResultType.SUCCESS;
     }

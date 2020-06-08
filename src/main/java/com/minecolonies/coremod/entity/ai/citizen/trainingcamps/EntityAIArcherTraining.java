@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
+public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery>
 {
     /**
      * Xp per successful shot.
@@ -222,5 +222,11 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         return true;
+    }
+
+    @Override
+    public Class<BuildingArchery> getExpectedBuildingClass()
+    {
+        return BuildingArchery.class;
     }
 }

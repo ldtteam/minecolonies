@@ -18,6 +18,7 @@ import com.minecolonies.coremod.client.gui.WindowHutPlantation;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -37,8 +38,10 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -63,6 +66,16 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      * The current phase (default sugarcane).
      */
     private Item currentPhase = Items.SUGAR_CANE;
+
+    /**
+     * The setting in the hut. If it's in the "pick 2 mode" this is the disabled mode else this is the only used one.
+     */
+    private Item setting = Items.SUGAR_CANE;
+
+    /**
+     * All the possible settings.
+     */
+    private final List<Item> settings = Arrays.asList(Items.SUGAR_CANE, Items.CACTUS, Items.BAMBOO);
 
     /**
      * Instantiates a new plantation building.
@@ -113,6 +126,14 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             sand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
         }
         this.currentPhase = ItemStack.read(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
+        if (compound.keySet().contains(TAG_SETTING))
+        {
+            this.setting = ItemStack.read(compound.getCompound(TAG_SETTING)).getItem();
+        }
+        else
+        {
+            this.setting = this.currentPhase;
+        }
     }
 
     @Override
@@ -128,6 +149,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
         compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).write(new CompoundNBT()));
+        compound.put(TAG_SETTING, new ItemStack(setting).write(new CompoundNBT()));
         return compound;
     }
 
@@ -177,7 +199,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobPlanter(citizen);
     }
@@ -204,7 +226,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(!super.canRecipeBeAdded(token))
         {
@@ -242,16 +264,16 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      * Set the current phase.
      * @param phase the phase to set.
      */
-    public void setPhase(final Item phase)
+    public void setSetting(final Item phase)
     {
-        this.currentPhase = phase;
+        this.setting = phase;
     }
 
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeItemStack(new ItemStack(currentPhase));
+        buf.writeItemStack(new ItemStack(setting));
     }
 
     /**
@@ -260,7 +282,38 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public Item getCurrentPhase()
     {
+        if (currentPhase == setting)
+        {
+            final UnlockAbilityResearchEffect
+              researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
+            if (researchEffect != null && researchEffect.getEffect())
+            {
+                nextPhase();
+            }
+        }
         return currentPhase;
+    }
+
+    /**
+     * Switch the current phase.
+     */
+    public void nextPhase()
+    {
+        int nextIndex = settings.indexOf(currentPhase) + 1;
+        if (nextIndex >= settings.size())
+        {
+            nextIndex = 0;
+        }
+
+        if (settings.get(nextIndex) == setting)
+        {
+            nextIndex++;
+            if (nextIndex >= settings.size())
+            {
+                nextIndex = 0;
+            }
+        }
+        currentPhase = settings.get(nextIndex);
     }
 
     /**
@@ -271,7 +324,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         /**
          * All possible phases.
          */
-        private List<Item> phases = new ArrayList<>();
+        private final List<Item> phases = Arrays.asList(Items.SUGAR_CANE, Items.CACTUS, Items.BAMBOO);
 
         /**
          * The current phase.
@@ -287,9 +340,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
-            phases.add(Items.SUGAR_CANE);
-            phases.add(Items.CACTUS);
-            phases.add(Items.BAMBOO);
         }
 
         /**

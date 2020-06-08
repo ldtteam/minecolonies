@@ -149,7 +149,7 @@ public class CitizenData implements ICitizenData
     /**
      * The job of the citizen.
      */
-    private IJob job;
+    private IJob<?> job;
 
     /**
      * If the citizen is dirty (Has to be updated on client side).
@@ -589,13 +589,13 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public IJob getJob()
+    public IJob<?> getJob()
     {
         return job;
     }
 
     @Override
-    public void setJob(final IJob job)
+    public void setJob(final IJob<?> job)
     {
         if (this.job != null && job == null)
         {
@@ -610,7 +610,7 @@ public class CitizenData implements ICitizenData
 
     @Override
     @Nullable
-    public <J extends IJob> J getJob(@NotNull final Class<J> type)
+    public <J extends IJob<?>> J getJob(@NotNull final Class<J> type)
     {
         if (type.isInstance(job))
         {
@@ -1049,19 +1049,19 @@ public class CitizenData implements ICitizenData
     // --------------------------- Request Handling --------------------------- //
 
     @Override
-    public <R extends IRequestable> IToken createRequest(@NotNull final R requested)
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, false);
     }
 
     @Override
-    public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
+    public <R extends IRequestable> IToken<?> createRequestAsync(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, true);
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         if (isRequestAsync(token))
         {
@@ -1070,7 +1070,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public boolean isRequestAsync(@NotNull final IToken token)
+    public boolean isRequestAsync(@NotNull final IToken<?> token)
     {
         if (job != null)
         {

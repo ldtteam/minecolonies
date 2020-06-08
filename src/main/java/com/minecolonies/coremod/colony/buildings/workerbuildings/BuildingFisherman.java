@@ -92,7 +92,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobFisherman(citizen);
     }

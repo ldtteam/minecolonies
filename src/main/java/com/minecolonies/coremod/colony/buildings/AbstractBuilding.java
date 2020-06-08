@@ -260,7 +260,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         final CompoundNBT compound = super.serializeNBT();
         final ListNBT list = new ListNBT();
-        for (final IRequestResolver requestResolver : getResolvers())
+        for (final IRequestResolver<?> requestResolver : getResolvers())
         {
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
         }
@@ -1005,7 +1005,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final ICitizenData citizenData, @NotNull final R requested, final boolean async)
     {
-        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
@@ -1030,7 +1030,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested, final boolean async)
     {
-        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         addRequestToMaps(-1, requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
@@ -1047,7 +1047,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken requestToken, @NotNull final TypeToken requested)
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1071,8 +1071,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenData data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
     {
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
@@ -1087,8 +1086,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
@@ -1100,14 +1098,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1138,8 +1136,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getCompletedRequests(@NotNull final ICitizenData data)
+    public ImmutableList<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
         {
@@ -1151,12 +1148,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1164,7 +1161,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,
@@ -1172,7 +1169,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1292,7 +1289,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,
@@ -1300,7 +1297,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1322,7 +1319,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             if (citizenData.getJob() instanceof AbstractJobCrafter)
             {
-                final AbstractJobCrafter crafterJob = citizenData.getJob(AbstractJobCrafter.class);
+                final AbstractJobCrafter<?, ?> crafterJob = citizenData.getJob(AbstractJobCrafter.class);
 
                 if (!crafterJob.getAssignedTasks().isEmpty())
                 {
@@ -1378,6 +1375,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                  .orElse(null);
     }
 
+    /*
     private Collection<IRequest<? extends IDeliverable>> flattenDeliverableChildRequests(@NotNull final IRequest<? extends IDeliverable> request)
     {
         if (!request.hasChildren())
@@ -1393,6 +1391,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                  .map(request1 -> (IRequest<? extends IDeliverable>) request1)
                  .collect(Collectors.toList());
     }
+    */
 
     @Override
     public IToken<?> getId()
@@ -1505,7 +1504,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public Optional<ICitizenData> getCitizenForRequest(@NotNull final IToken token)
+    public Optional<ICitizenData> getCitizenForRequest(@NotNull final IToken<?> token)
     {
         if (!getCitizensByRequest().containsKey(token) || getColony() == null)
         {

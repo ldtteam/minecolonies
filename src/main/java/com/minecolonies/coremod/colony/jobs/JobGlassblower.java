@@ -5,14 +5,13 @@ import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.glassblower.EntityAIWorkGlassblower;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Glassblower job.
  */
-public class JobGlassblower extends AbstractJobCrafter
+public class JobGlassblower extends AbstractJobCrafter<EntityAIWorkGlassblower, JobGlassblower>
 {
     /**
      * Instantiates the job for the Glassblower.
@@ -51,7 +50,7 @@ public class JobGlassblower extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobGlassblower> generateAI()
+    public EntityAIWorkGlassblower generateAI()
     {
         return new EntityAIWorkGlassblower(this);
     }

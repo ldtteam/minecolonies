@@ -1,7 +1,6 @@
 package com.minecolonies.api.tileentities;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;
 
@@ -11,7 +10,7 @@ import java.util.Random;
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITickableTileEntity
+public class TileEntityEnchanter extends TileEntityColonyBuilding
 {
     public int   tickCount;
     public float pageFlip;
@@ -38,7 +37,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding implements ITi
      * Alternative overriden constructor.
      * @param type the entity type.
      */
-    public TileEntityEnchanter(final TileEntityType type)
+    public TileEntityEnchanter(final TileEntityType<? extends TileEntityEnchanter> type)
     {
         super(type);
     }

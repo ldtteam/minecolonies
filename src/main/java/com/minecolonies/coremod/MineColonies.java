@@ -26,6 +26,9 @@ import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
+import com.minecolonies.coremod.client.render.mobs.norsemen.RendererArcherNorsemen;
+import com.minecolonies.coremod.client.render.mobs.norsemen.RendererChiefNorsemen;
+import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaidenNorsemen;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -38,9 +41,7 @@ import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -83,7 +84,7 @@ public class MineColonies
     /**
      * The proxy.
      */
-    public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final IProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public MineColonies()
     {
@@ -92,8 +93,8 @@ public class MineColonies
 
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
@@ -120,7 +121,7 @@ public class MineColonies
     @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
-        if (!event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        if (!event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
         {
             return;
         }
@@ -184,6 +185,10 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
 
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_ARCHER, RendererArcherNorsemen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
+
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZON, RendererAmazon::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
 
@@ -195,14 +200,14 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.getCutout());
     }
 
     /**

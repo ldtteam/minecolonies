@@ -479,7 +479,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 if (curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
                 {
-                    ((AbstractEntityAIGuard) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                    ((AbstractEntityAIGuard<?, ?>) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
                 }
             }
         }
@@ -823,7 +823,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return getGuardType().getGuardJobProducer().apply(citizen);
     }

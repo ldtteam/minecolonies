@@ -64,6 +64,7 @@ public final class NbtTagConstants
     public static final String TAG_POS                    = "pos";
     public static final String TAG_PLANTGROUND            = "plantGround";
     public static final String TAG_CURRENT_PHASE          = "currentPhase";
+    public static final String TAG_SETTING                = "setting";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";

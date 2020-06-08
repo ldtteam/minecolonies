@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The student job class.
  */
-public class JobStudent extends AbstractJob
+public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
 {
     /**
      * Create a cook job.
@@ -48,7 +47,7 @@ public class JobStudent extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobStudent> generateAI()
+    public EntityAIStudy generateAI()
     {
         return new EntityAIStudy(this);
     }
