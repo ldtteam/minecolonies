@@ -1024,10 +1024,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             if (block.getMaterial().blocksMovement())
             {
                 return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock
-                                                            || block.getBlock() instanceof FenceGateBlock
+                                                            || block.getBlock() instanceof FenceGateBlock)
                                                             || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                                                             || block.getBlock() instanceof PressurePlateBlock
-                                                            || block.getBlock() instanceof BlockDecorationController);
+                                                            || block.getBlock() instanceof BlockDecorationController
+                                                            || block.getBlock() instanceof AbstractSignBlock
+                                                            || block.getBlock() instanceof VineBlock;
             }
             else
             {
