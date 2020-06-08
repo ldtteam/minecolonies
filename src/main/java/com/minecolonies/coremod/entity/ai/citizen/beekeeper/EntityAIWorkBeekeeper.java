@@ -80,7 +80,13 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         );
     }
 
-    public boolean maxAnimals(final List<BeeEntity> allAnimals)
+    /**
+     * Checks the beehives/beenests and their surroundings if the maximum number of bees is reached
+     *
+     * @param allBees all bees in the area around the beehives/beenests
+     * @return true if the maximum nuber of bees is reached els false
+     */
+    private boolean hasMaxAnimals(final List<BeeEntity> allBees)
     {
         if (getOwnBuilding() != null)
         {
@@ -92,7 +98,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                                           .map(BeehiveTileEntity.class::cast)
                                           .mapToInt(BeehiveTileEntity::func_226971_j_)
                                           .sum();
-            final int numOfAnimals = allAnimals.size();
+            final int numOfAnimals = allBees.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * BEES_PER_LEVEL;
 
             return (numOfAnimals + numOfBeesInHive) > maxAnimals;
@@ -174,7 +180,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
           InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
             (ItemStack stack) -> stack.getItem().isIn(ItemTags.field_226159_I_));
 
-        if (!maxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        if (!hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }

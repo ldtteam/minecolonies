@@ -94,7 +94,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     @Override
     public Skill getPrimarySkill()
     {
-        return Skill.Stamina; //TODO
+        return Skill.Dexterity;
     }
 
     /**
@@ -106,7 +106,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     @Override
     public Skill getSecondarySkill()
     {
-        return Skill.Focus; //TODO
+        return Skill.Adaptability;
     }
 
     @Override

@@ -4,6 +4,9 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
+/**
+ * Hut for the beekeeper. No different from {@link AbstractBlockHut}
+ */
 public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
 {
     /**
@@ -12,7 +15,8 @@ public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
      * @return Name of the block.
      */
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "blockhutbeekeeper";
     }
 
@@ -22,7 +26,8 @@ public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
      * @return The building entry.
      */
     @Override
-    public BuildingEntry getBuildingEntry() {
+    public BuildingEntry getBuildingEntry()
+    {
         return ModBuildings.beekeeper;
     }
 }

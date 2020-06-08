@@ -7,6 +7,9 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.beekeeper.EntityAIWorkBeekeeper;
 import net.minecraft.nbt.INBT;
 
+/**
+ * Class of the Beekeeper job.
+ */
 public class JobBeekeeper extends AbstractJob
 {
     /**
