@@ -99,7 +99,6 @@ public final class ModBlocks
           blockHutCook,
           blockHutCowboy,
           blockHutCrusher,
-          blockHutArchery,
           blockHutDeliveryman,
           blockHutFarmer,
           blockHutFisherman,
