@@ -109,15 +109,21 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
     private void handleRightClick(final ItemStack banner, final PlayerEntity playerIn)
     {
-
         if (playerIn.isShiftKeyDown() && !playerIn.getEntityWorld().isRemote())
         {
             toggleBanner(banner, playerIn);
         }
         else if (!playerIn.isShiftKeyDown() && playerIn.getEntityWorld().isRemote())
         {
-            // TODO: Open configuration window here.
-            MineColonies.proxy.openBannerRallyGuardsWindow(banner, playerIn);
+            if (getGuardTowerLocations(banner).isEmpty())
+            {
+                LanguageHandler.sendPlayerMessage(playerIn,
+                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            }
+            else
+            {
+                MineColonies.proxy.openBannerRallyGuardsWindow(banner, playerIn);
+            }
         }
     }
 
@@ -381,6 +387,14 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     public void addInformation(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
+        final ITextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
+        guiHint.setStyle(new Style().setColor(TextFormatting.GRAY));
+        tooltip.add(guiHint);
+
+        final ITextComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
+        rallyHint.setStyle(new Style().setColor(TextFormatting.GRAY));
+        tooltip.add(rallyHint);
+
         final List<ILocation> guardTowerPositions = getGuardTowerLocations(stack);
 
         // The isEmpty is in there because the tooltip is sometimes loaded before NBT is loaded.
@@ -388,7 +402,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (guardTowerPositions.isEmpty())
         {
             final ITextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
-            emptyTooltip.setStyle(new Style().setItalic(true).setColor(TextFormatting.DARK_AQUA));
+            emptyTooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
