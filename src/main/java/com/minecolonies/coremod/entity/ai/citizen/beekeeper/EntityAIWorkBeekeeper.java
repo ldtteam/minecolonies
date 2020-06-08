@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING;
 import static com.minecolonies.api.util.constant.TranslationConstants.FLOWERS;
 
-public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper>
+public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper, BuildingBeekeeper>
 {
     /**
      * Amount of animals needed to bread.
@@ -90,7 +90,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         if (getOwnBuilding() != null)
         {
-            final int numOfBeesInHive = getOwnBuilding(BuildingBeekeeper.class)
+            final int numOfBeesInHive = getOwnBuilding()
                                           .getHives()
                                           .stream()
                                           .map(world::getTileEntity)
@@ -114,7 +114,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private IAIState prepareForHerding()
     {
         setDelay(DECIDING_DELAY);
-        if (getOwnBuilding(BuildingBeekeeper.class).shouldHarvestHoneycombs())
+        if (getOwnBuilding().shouldHarvestHoneycombs())
         {
             if (checkForToolOrWeapon(ToolType.SHEARS))
             {
@@ -152,7 +152,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         setDelay(DECIDING_DELAY);
 
-        final Optional<BlockPos> hive = getOwnBuilding(BuildingBeekeeper.class)
+        final Optional<BlockPos> hive = getOwnBuilding()
                                           .getHives()
                                           .stream()
                                           .filter(pos -> BeehiveTileEntity.func_226964_a_(world.getBlockState(pos)) >= 5)
@@ -245,7 +245,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING));
 
-        final List<BlockPos> hives = getOwnBuilding(BuildingBeekeeper.class)
+        final List<BlockPos> hives = getOwnBuilding()
                                  .getHives()
                                  .stream()
                                  .filter(pos -> BeehiveTileEntity.func_226964_a_(world.getBlockState(pos)) >= 5)
@@ -255,7 +255,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         {
             return DECIDE;
         }
-        if (getOwnBuilding(BuildingBeekeeper.class).shouldHarvestHoneycombs())
+        if (getOwnBuilding().shouldHarvestHoneycombs())
         {
             if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
             {
@@ -276,7 +276,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         }
         worker.swingArm(Hand.MAIN_HAND);
         final ItemStack itemStack = worker.getHeldItemMainhand();
-        if (getOwnBuilding(BuildingBeekeeper.class).shouldHarvestHoneycombs())
+        if (getOwnBuilding().shouldHarvestHoneycombs())
         {
             if (ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
             {
@@ -439,7 +439,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     public List<BeeEntity> searchForAnimals()
     {
-        final BuildingBeekeeper ownBuilding = getOwnBuilding(BuildingBeekeeper.class);
+        final BuildingBeekeeper ownBuilding = getOwnBuilding();
         if (ownBuilding == null)
         {
             return new ArrayList<>();
@@ -462,5 +462,16 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private int getHoneycombsPerHarvest()
     {
         return 3;
+    }
+
+    /**
+     * Can be overridden in implementations to return the exact building type the worker expects.
+     *
+     * @return the building type associated with this AI's worker.
+     */
+    @Override
+    public Class<BuildingBeekeeper> getExpectedBuildingClass()
+    {
+        return BuildingBeekeeper.class;
     }
 }

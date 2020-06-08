@@ -3,14 +3,12 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.beekeeper.EntityAIWorkBeekeeper;
-import net.minecraft.nbt.INBT;
 
 /**
  * Class of the Beekeeper job.
  */
-public class JobBeekeeper extends AbstractJob
+public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeeper>
 {
     /**
      * Initialize citizen data.
@@ -53,11 +51,8 @@ public class JobBeekeeper extends AbstractJob
      * @return your personal AI instance.
      */
     @Override
-    public AbstractAISkeleton generateAI()
+    public EntityAIWorkBeekeeper generateAI()
     {
         return new EntityAIWorkBeekeeper(this);
     }
-
-    @Override
-    public void deserializeNBT(final INBT nbt) {}
 }
