@@ -536,7 +536,7 @@ public enum AIWorkerState implements IAIState
     PLANTATION_PLANT(true),
 
     /*
-### Plantation related ###
+### Beekeeper ###
      */
     BEEKEEPER_HARVEST(true);
 

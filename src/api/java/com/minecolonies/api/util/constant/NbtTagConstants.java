@@ -483,6 +483,12 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
     public static final String TAG_WAITING_TICKS = "waitingticks";
 
+    /**
+     * Beekeeper tags
+     */
+    public static final String TAG_HIVES              = "hives";
+    public static final String TAG_HARVEST_HONEYCOMBS = "harvest_honeycombs";
+
     // --------------------- Chat handling tags --------------------- //
 
     /**

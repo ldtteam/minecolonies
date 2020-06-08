@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.beekeeper;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+/**
+ * Message to set the wether the beekeeper should harvest honeycombs.
+ */
 public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServerMessage<BuildingBeekeeper>
 {
     private boolean harvestHoneycombs;

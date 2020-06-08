@@ -4,7 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
-public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper> {
+public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
+{
     /**
      * Method to return the name of the block.
      *

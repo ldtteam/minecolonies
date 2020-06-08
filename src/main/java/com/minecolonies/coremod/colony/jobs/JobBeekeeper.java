@@ -14,7 +14,7 @@ public class JobBeekeeper extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public JobBeekeeper(ICitizenData entity)
+    public JobBeekeeper(final ICitizenData entity)
     {
         super(entity);
     }
@@ -44,9 +44,8 @@ public class JobBeekeeper extends AbstractJob
     /**
      * Generate your AI class to register.
      * <p>
-     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters"
-     * But in this case the rule does not apply because
-     * We are fine with all AbstractJob implementations and need generics only for java
+     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters" But in this case the rule does not apply because We are
+     * fine with all AbstractJob implementations and need generics only for java
      *
      * @return your personal AI instance.
      */
@@ -57,8 +56,5 @@ public class JobBeekeeper extends AbstractJob
     }
 
     @Override
-    public void deserializeNBT(INBT nbt)
-    {
-
-    }
+    public void deserializeNBT(final INBT nbt) {}
 }

@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
- * Message to set the lumberjack scepter in the player inventory.
+ * Message to set the beekeeper scepter in the player inventory.
  */
 public class BeekeeperScepterMessage extends AbstractBuildingServerMessage<BuildingBeekeeper>
 {
