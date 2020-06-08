@@ -15,6 +15,9 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
@@ -1031,6 +1034,10 @@ public abstract class AbstractPathJob implements Callable<Path>
                                                             || block.getBlock() instanceof AbstractSignBlock
                                                             || block.getBlock() instanceof VineBlock;
             }
+            else if (block.getBlock() instanceof FireBlock)
+            {
+                return false;
+            }
             else
             {
                 return !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1);
@@ -1064,6 +1071,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof FenceBlock
               || block instanceof FenceGateBlock
               || block instanceof WallBlock
+              || block instanceof FireBlock
+              || block instanceof CampfireBlock
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof AbstractBlockBarrel
               || block instanceof BambooBlock
@@ -1072,7 +1081,13 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof AbstractBlockMinecoloniesConstructionTape)
+        final IFluidState fluid = world.getFluidState(pos);
+        if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA ||fluid.getFluid() == Fluids.FLOWING_LAVA))
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof AbstractSignBlock)
         {
             return SurfaceType.DROPABLE;
         }
