@@ -24,6 +24,7 @@ public class Tag implements IDeliverable
     /**
      * The tag.
      */
+    @NotNull
     private final net.minecraft.tags.Tag<Item> theTag;
 
     /**
@@ -48,7 +49,7 @@ public class Tag implements IDeliverable
      * @param tag   the required containing tag.
      * @param count the count.
      */
-    public Tag(final net.minecraft.tags.Tag<Item> tag, final int count)
+    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, final int count)
     {
         this(tag, count, count);
     }
@@ -60,7 +61,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(final net.minecraft.tags.Tag<Item> tag, final int count, final int minCount)
+    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, final int count, final int minCount)
     {
         this(tag, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -73,7 +74,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(final net.minecraft.tags.Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
+    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
     {
         this.theTag = tag;
         this.result = result;
