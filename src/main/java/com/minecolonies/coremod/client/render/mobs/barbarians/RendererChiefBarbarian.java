@@ -22,7 +22,7 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
      */
     public RendererChiefBarbarian(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(1.2F), 0.5F);
+        super(renderManagerIn, new BipedModel<>(0.0F), 0.5F);
     }
 
     @Override

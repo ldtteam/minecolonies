@@ -22,7 +22,7 @@ public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPi
      */
     public RendererChiefPirate(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(1.0F), 0.5F);
+        super(renderManagerIn, new BipedModel<>(0.0F), 0.5F);
     }
 
     @Override
