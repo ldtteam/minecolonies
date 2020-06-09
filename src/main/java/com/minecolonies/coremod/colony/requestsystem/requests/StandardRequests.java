@@ -133,6 +133,32 @@ public final class StandardRequests
     }
 
     /**
+     * Request for a single ItemStack.
+     */
+    public static class ItemTagRequest extends AbstractRequest<Tag>
+    {
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
+        {
+            super(requester, token, requested);
+        }
+
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tag requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent combined = new NonSiblingFormattingTextComponent();
+            combined.appendSibling(new StringTextComponent(getRequest().getCount() + " "));
+            combined.appendSibling(new StringTextComponent("#" + getRequest().getTag().getId().toString()));
+            return combined;
+        }
+    }
+
+    /**
      * Generic delivery request.
      */
     public static class DeliveryRequest extends AbstractRequest<Delivery>
