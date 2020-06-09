@@ -103,9 +103,9 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
-        guardTowerList.setDataProvider(() -> getGuardTowers(banner).size(), (index, rowPane) ->
+        guardTowerList.setDataProvider(() -> getGuardTowerViews(banner).size(), (index, rowPane) ->
         {
-            final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowers(banner);
+            final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner);
 
             if (index < 0 || index >= guardTowers.size())
             {
@@ -157,7 +157,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
     {
         final int row = guardTowerList.getListElementIndexByPane(button);
 
-        final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowers(banner);
+        final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner);
         if (guardTowers.size() > row && row >= 0)
         {
             final ILocation locationToRemove = guardTowers.get(row).getFirst();

@@ -4,11 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -21,14 +19,16 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -68,16 +68,15 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final ItemStack banner = context.getPlayer().getHeldItem(context.getHand());
 
         final CompoundNBT compound = checkForCompound(banner);
-        final TileEntity entity = context.getWorld().getTileEntity(context.getPos());
 
-        if (isGuardBuilding(entity))
+        if (isGuardBuilding(context.getWorld(), context.getPos()))
         {
             if (context.getWorld().isRemote())
             {
                 return ActionResultType.SUCCESS;
             }
 
-            final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
+            final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
 
             final ILocation location = building.getLocation();
             if (removeGuardTowerAtLocation(banner, location))
@@ -163,7 +162,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     {
         if (playerIn.getEntityWorld().isRemote())
         {
-            Log.getLogger().error("ItemBannerRallyGuards#toggleBanner is not supposed to be run on the client-side! Returning 0.");
+            Log.getLogger().error("Tried to run server-side function #toggleBanner() on the client-side!");
             return;
         }
         final CompoundNBT compound = checkForCompound(banner);
@@ -213,7 +212,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote())
         {
-            Log.getLogger().error("ItemBannerRallyGuards#broadcastPlayerToRally is not supposed to be run on the client-side! Returning 0.");
+            Log.getLogger().error("Tried to run server-side function #broadcastPlayerToRally() on the client-side!");
             return 0;
         }
 
@@ -227,10 +226,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         int numGuards = 0;
         for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
         {
-            final TileEntity entity = worldIn.getTileEntity(guardTowerLocation.getInDimensionLocation());
-
-            // Note that getGuardBuildingFromTileEntity will perform the null-check for entity
-            final IGuardBuilding building = getGuardBuildingFromTileEntity(entity);
+            // Note: getCurrentServer().getWorld() must be used here because MineColonies.proxy.getWorld() fails on single player worlds
+            // We are sure we are on the server-side in this function though, so it's fine.
+            final IGuardBuilding building =
+              getGuardBuilding(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(guardTowerLocation.getDimension())),
+                guardTowerLocation.getInDimensionLocation());
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
             // Safely ignore this case, the player must remove the tower from the rallying list manually.
@@ -255,8 +255,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final ListNBT guardTowersListNBT = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
         if (guardTowersListNBT == null)
         {
-            // Log this error, but since this should never happen, let's just
-            // return an empty list in this case.
             Log.getLogger().error("Compound corrupt, missing TAG_RALLIED_GUARDTOWERS");
             return ImmutableList.of();
         }
@@ -270,38 +268,62 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
-     * Checks if the tile entity is a guard building.
+     * Checks if the position is a guard building
      *
-     * @param entity The tile entity that's hopefully a guard building
-     * @return true if the tile entity is a guard building, false if not.
+     * @param worldIn  The world in which to check
+     * @param position The position to check
+     * @return true if there is a guard building at the position
      */
-    public static boolean isGuardBuilding(final TileEntity entity)
+    public static boolean isGuardBuilding(final World worldIn, final BlockPos position)
     {
-        if (entity instanceof TileEntityColonyBuilding)
+        if (worldIn.isRemote())
         {
-            final String registryPath = ((TileEntityColonyBuilding) entity).registryName.getPath();
-            if (registryPath.equalsIgnoreCase("guardtower") || registryPath.equalsIgnoreCase("barrackstower"))
-            {
-                return true;
-            }
+            return IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), position) instanceof AbstractBuildingGuards.View;
         }
-        return false;
+        else
+        {
+            return IColonyManager.getInstance().getBuilding(worldIn, position) instanceof IGuardBuilding;
+        }
     }
 
     /**
-     * Gets the guard building from the tile entity.
-     * This method is only meaningful on the server-side! Client-side will always return null!
+     * Fetches the (client-side) View for the guard tower at a specific position.
      *
-     * @param entity The tile entity that's hopefully a guard building
-     * @return The guard building, or null if not found, or null if run on client-side.
+     * @param worldIn  The world in which to search for the guard tower.
+     * @param position The position of the guard tower.
+     * @return The Guard tower View, or null if no guard tower present at the location.
      */
-    public static IGuardBuilding getGuardBuildingFromTileEntity(final TileEntity entity)
+    @Nullable
+    public static AbstractBuildingGuards.View getGuardBuildingView(final World worldIn, final BlockPos position)
     {
-        if (isGuardBuilding(entity))
+        if (!worldIn.isRemote())
         {
-            return (IGuardBuilding) ((TileEntityColonyBuilding) entity).getBuilding();
+            Log.getLogger().error("Tried to run client-side function #getGuardBuildingView() on the server-side!");
+            return null;
         }
-        return null;
+
+        return isGuardBuilding(worldIn, position)
+                 ? (AbstractBuildingGuards.View) IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), position)
+                 : null;
+    }
+
+    /**
+     * Fetches the (server-side) buildings for the guard tower at a specific position.
+     *
+     * @param worldIn  The world in which to search for the guard tower.
+     * @param position The position of the guard tower.
+     * @return The building, or null if no guard tower present at the location.
+     */
+    @Nullable
+    public static IGuardBuilding getGuardBuilding(final World worldIn, final BlockPos position)
+    {
+        if (worldIn.isRemote())
+        {
+            Log.getLogger().error("Tried to run server-side function #getGuardBuilding() on the client-side!");
+            return null;
+        }
+
+        return isGuardBuilding(worldIn, position) ? (IGuardBuilding) IColonyManager.getInstance().getBuilding(worldIn, position) : null;
     }
 
     /**
@@ -310,20 +332,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @return A list of maps. Map's key is the position, Map's value is a guard tower or null.
      */
-    public static List<Pair<ILocation, AbstractBuildingGuards.View>> getGuardTowers(final ItemStack banner)
+    public static List<Pair<ILocation, AbstractBuildingGuards.View>> getGuardTowerViews(final ItemStack banner)
     {
         final LinkedList<Pair<ILocation, AbstractBuildingGuards.View>> result = new LinkedList<>();
         for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
         {
-            final IBuildingView buildingView = IColonyManager.getInstance().getBuildingView(guardTowerLocation.getDimension(), guardTowerLocation.getInDimensionLocation());
-            if (buildingView instanceof AbstractBuildingGuards.View)
-            {
-                result.add(new Pair<>(guardTowerLocation, (AbstractBuildingGuards.View) buildingView));
-            }
-            else
-            {
-                result.add(new Pair<>(guardTowerLocation, null));
-            }
+            result.add(new Pair<>(guardTowerLocation,
+              getGuardBuildingView(MineColonies.proxy.getWorld(guardTowerLocation.getDimension()), guardTowerLocation.getInDimensionLocation())));
         }
         return ImmutableList.copyOf(result);
     }
