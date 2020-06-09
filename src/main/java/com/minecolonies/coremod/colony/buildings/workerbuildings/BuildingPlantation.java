@@ -282,15 +282,20 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public Item getCurrentPhase()
     {
-        if (currentPhase == setting)
+        final UnlockAbilityResearchEffect
+          researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
+        if (researchEffect != null && researchEffect.getEffect())
         {
-            final UnlockAbilityResearchEffect
-              researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
-            if (researchEffect != null && researchEffect.getEffect())
+            if (currentPhase == setting)
             {
                 nextPhase();
             }
         }
+        else
+        {
+            currentPhase = setting;
+        }
+
         return currentPhase;
     }
 
