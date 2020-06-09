@@ -215,7 +215,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if ((this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request)) || this.prevWindow instanceof WindowClipBoard)
+        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
         {
             cancelButton.hide();
         }
