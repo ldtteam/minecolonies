@@ -13,6 +13,7 @@ import com.minecolonies.api.network.IMessage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -363,6 +364,9 @@ public interface IColonyView extends IColony
 
     @Override
     boolean hasWarehouse();
+
+    @Override
+    ScorePlayerTeam getTeam();
 
     @Override
     int getLastContactInHours();

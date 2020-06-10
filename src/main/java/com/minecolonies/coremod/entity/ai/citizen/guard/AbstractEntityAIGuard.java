@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -433,9 +434,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return the next state to run into.
      */
-    private IAIState rally()
+    private IAIState rally(ILocation location)
     {
-        if (!worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow()
+        if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
                                              .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                                0,
                                                randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
@@ -592,9 +593,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
 
-        if (buildingGuards.getPlayerToRally() != null)
+        final ILocation rallyLocation = buildingGuards.getRallyLocation();
+        if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))
         {
-            return rally();
+            return rally(rallyLocation);
         }
 
         switch (buildingGuards.getTask())
@@ -914,9 +916,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private BlockPos getTaskReferencePoint()
     {
-        if (buildingGuards.getPlayerToFollowOrRally() != null)
+        final ILocation location = buildingGuards.getRallyLocation();
+        if (location != null)
         {
-            return buildingGuards.getPositionToFollow();
+            return buildingGuards.getRallyLocation().getInDimensionLocation();
         }
         switch (buildingGuards.getTask())
         {
@@ -936,7 +939,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private int getPersecutionDistance()
     {
-        if (buildingGuards.getPlayerToFollowOrRally() != null)
+        if (buildingGuards.getRallyLocation() != null)
         {
             return MAX_FOLLOW_DERIVATION;
         }

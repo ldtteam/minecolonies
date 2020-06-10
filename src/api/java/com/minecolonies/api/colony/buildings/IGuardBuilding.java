@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.PlayerEntity;
@@ -193,13 +194,6 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     PlayerEntity getPlayerToFollowOrRally();
 
     /**
-     * Entity of player to rally.
-     *
-     * @return the PlayerEntity reference.
-     */
-    PlayerEntity getPlayerToRally();
-
-    /**
      * Sets the player to follow.
      *
      * @param player the player to follow.
@@ -207,15 +201,21 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     void setPlayerToFollow(PlayerEntity player);
 
     /**
-     * Sets the player to rally.
+     * Location to to rally to.
      *
-     * @param player the player to rally.
+     * @return the ILocation reference.
      */
-    void setPlayerToRally(PlayerEntity player);
+    ILocation getRallyLocation();
+
+    /**
+     * Sets the location to rally.
+     *
+     * @param location The location to rally to.
+     */
+    void setRallyLocation(ILocation location);
 
     /**
      * Gets the position to follow.
-     * This is a utility helper for {@link #getPlayerToFollowOrRally()}
      *
      * @return the position the guard is supposed to be while following.
      */

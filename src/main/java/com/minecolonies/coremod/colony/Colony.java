@@ -39,6 +39,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -493,16 +494,24 @@ public class Colony implements IColony
         }
     }
 
+    @Override
+    public ScorePlayerTeam getTeam()
+    {
+        // This getter will create the team if it doesn't exist. Could do something different though in the future.
+        return checkOrCreateTeam();
+    }
+
     /**
      * Check or create the team.
      */
-    private void checkOrCreateTeam()
+    private ScorePlayerTeam checkOrCreateTeam()
     {
         if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
         {
             this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
         }
+        return this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id);
     }
 
     /**

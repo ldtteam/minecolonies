@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.items;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -11,8 +13,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -65,17 +69,25 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Override
     public ActionResultType onItemUse(final ItemUseContext context)
     {
+        final World worldIn = context.getWorld();
+        final PlayerEntity player = context.getPlayer();
+
+        if (player == null)
+        {
+            return ActionResultType.FAIL;
+        }
+
+        if (context.getWorld().isRemote())
+        {
+            return ActionResultType.SUCCESS;
+        }
+
         final ItemStack banner = context.getPlayer().getHeldItem(context.getHand());
 
         final CompoundNBT compound = checkForCompound(banner);
 
         if (isGuardBuilding(context.getWorld(), context.getPos()))
         {
-            if (context.getWorld().isRemote())
-            {
-                return ActionResultType.SUCCESS;
-            }
-
             final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
 
             final ILocation location = building.getLocation();
@@ -207,7 +219,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      * @param playerIn The player to follow. Can be null, if the towers should revert to "normal" mode
      * @return The number of guards rallied
      */
-
     public static int broadcastPlayerToRally(final ItemStack banner, final World worldIn, @Nullable final PlayerEntity playerIn)
     {
         if (worldIn.isRemote())
@@ -216,11 +227,15 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             return 0;
         }
 
-        final CompoundNBT compound = checkForCompound(banner);
-        @Nullable PlayerEntity rallyTarget = playerIn;
-        if (!compound.getBoolean(TAG_IS_ACTIVE))
+        @Nullable ILocation rallyTarget = null;
+        if (!isActive(banner) || playerIn == null)
         {
             rallyTarget = null;
+        }
+        else
+        {
+            rallyTarget = new EntityLocation(playerIn.getUniqueID());
+            //rallyTarget = StandardFactoryController.getInstance().getFactoryForOutput(ILocation.class) EntityLocation.Factory new EntityLocation(playerIn.getUniqueID());
         }
 
         int numGuards = 0;
@@ -236,7 +251,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             // Safely ignore this case, the player must remove the tower from the rallying list manually.
             if (building != null)
             {
-                building.setPlayerToRally(rallyTarget);
+                building.setRallyLocation(rallyTarget);
                 numGuards += building.getAssignedCitizen().size();
             }
         }

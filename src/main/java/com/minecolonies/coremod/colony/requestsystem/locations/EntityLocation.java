@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -27,7 +28,7 @@ public class EntityLocation implements ILocation
     @Nullable
     private WeakReference<Entity> entity;
 
-    EntityLocation(@NotNull final UUID uuid)
+    public EntityLocation(@NotNull final UUID uuid)
     {
         this.uuid = uuid;
         checkEntity();
@@ -108,6 +109,16 @@ public class EntityLocation implements ILocation
     {
         checkEntity();
         return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
+    }
+
+    /**
+     * Returns the *player* entity the location is tracking.
+     * @return player entity being tracked, or null if the tracked entity is not a player.
+     */
+    public PlayerEntity getPlayerEntity()
+    {
+        checkEntity();
+        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity)entity.get() : null;
     }
 
     @SuppressWarnings("squid:S2972")

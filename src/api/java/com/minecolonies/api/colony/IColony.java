@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -104,6 +105,12 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Retrieves the team of the colony
+     * @return Team of the colony
+     */
+    ScorePlayerTeam getTeam();
 
     /**
      * Get the last contact of a player to the colony in hours.

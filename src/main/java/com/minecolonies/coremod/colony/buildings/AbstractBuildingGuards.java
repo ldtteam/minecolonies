@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
@@ -24,10 +25,13 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -49,6 +53,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
@@ -152,9 +157,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private PlayerEntity followPlayer;
 
     /**
-     * The player the guard has been set to rally to.
+     * The location the guard has been set to rally to.
      */
-    private PlayerEntity rallyPlayer;
+    private ILocation rallyLocation;
 
     /**
      * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
@@ -410,33 +415,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
+    @Nullable
     public PlayerEntity getPlayerToFollowOrRally()
     {
-        return getPlayerToRally() != null ? getPlayerToRally() : followPlayer;
-    }
-
-    @Override
-    public PlayerEntity getPlayerToRally()
-    {
-        if (rallyPlayer == null)
-        {
-            return null;
-        }
-
-        int size = rallyPlayer.inventory.getSizeInventory();
-        for (int i = 0; i < size; i++)
-        {
-            ItemStack stack = rallyPlayer.inventory.getStackInSlot(i);
-            if (stack.getItem() instanceof ItemBannerRallyGuards)
-            {
-                if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))
-                {
-                    return rallyPlayer;
-                }
-            }
-        }
-
-        return null;
+        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : null;
     }
 
     /**
@@ -922,17 +904,59 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public BlockPos getPositionToFollow()
     {
-        if (rallyPlayer != null && rallyPlayer.getPosition() != BlockPos.ZERO && rallyPlayer.dimension.getId() == getLocation().getDimension())
-        {
-            return rallyPlayer.getPosition();
-        }
-
         if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
         {
             return followPlayer.getPosition();
         }
 
         return this.getPosition();
+    }
+
+    @Override
+    @Nullable
+    public ILocation getRallyLocation()
+    {
+        if (rallyLocation instanceof EntityLocation)
+        {
+            final PlayerEntity player = ((EntityLocation) rallyLocation).getPlayerEntity();
+            if (player == null)
+            {
+                rallyLocation = null;
+                return null;
+            }
+
+            int size = player.inventory.getSizeInventory();
+            for (int i = 0; i < size; i++)
+            {
+                final ItemStack stack = player.inventory.getStackInSlot(i);
+                if (stack.getItem() instanceof ItemBannerRallyGuards)
+                {
+                    if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))
+                    {
+                        return rallyLocation;
+                    }
+                }
+            }
+            rallyLocation = null;
+            return null;
+        }
+
+        return rallyLocation;
+    }
+
+    @Override
+    public void setRallyLocation(final ILocation location)
+    {
+        this.rallyLocation = location;
+
+        for (final ICitizenData iCitizenData : getAssignedCitizen())
+        {
+            AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
+            if (job != null && job.getWorkerAI() != null)
+            {
+                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
+            }
+        }
     }
 
     @Override
@@ -969,21 +993,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
             if (job != null)
-            {
-                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
-            }
-        }
-    }
-
-    @Override
-    public void setPlayerToRally(final PlayerEntity player)
-    {
-        this.rallyPlayer = player;
-
-        for (final ICitizenData iCitizenData : getAssignedCitizen())
-        {
-            AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
-            if (job != null && job.getWorkerAI() != null)
             {
                 job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
             }
