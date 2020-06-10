@@ -25,7 +25,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
     /**
      * Amount of unique pirate textures.
      */
-    private static final int PIRATE_TEXTURES = 3;
+    private static final int PIRATE_TEXTURES = 4;
 
     /**
      * Texture id of the pirates.

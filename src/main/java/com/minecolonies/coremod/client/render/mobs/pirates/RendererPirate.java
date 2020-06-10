@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for Barbarians And Archer Barbarians.
@@ -16,6 +17,7 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
     private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate1.png");
     private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate2.png");
     private static final ResourceLocation TEXTURE3 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate3.png");
+    private static final ResourceLocation TEXTURE4 = new ResourceLocation("minecolonies:textures/entity/raiders/pirate4.png");
 
     /**
      * Constructor method for renderer
@@ -27,6 +29,7 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
         super(renderManagerIn, new BipedModel<>(1.0F), 0.5F);
     }
 
+    @NotNull
     @Override
     public ResourceLocation getEntityTexture(final AbstractEntityPirate entity)
     {
@@ -36,8 +39,10 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
                 return TEXTURE1;
             case 1:
                 return TEXTURE2;
-            default:
+            case 2:
                 return TEXTURE3;
+            default:
+                return TEXTURE4;
         }
     }
 }
