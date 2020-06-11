@@ -13,6 +13,16 @@ import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_TEX
 public interface ISimpleModelType extends IModelType {
 
     /**
+     * Base folder for textures.
+     */
+    String BASE_FOLDER = "textures/entity/citizen/";
+
+    /**
+     * Default folder.
+     */
+    String DEFAULT_FOLDER = "default/";
+    
+    /**
      * The base name of the texture.
      * Is by default appended by a random textureId as well as the render info.
      *
@@ -36,7 +46,10 @@ public interface ISimpleModelType extends IModelType {
      */
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
-        String folder = "default/";
+        String folder = DEFAULT_FOLDER;
+        final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
+        final String textureIdentifier = getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getDataManager().get(DATA_TEXTURE_SUFFIX);
+
         //TODO: We have to add style tags to the townhalls that will be used for this in the future.
         // - This will then become a switch case statement for this sake
         if (entityCitizen.getDataManager().get(DATA_STYLE).contains("medieval"))
@@ -44,15 +57,12 @@ public interface ISimpleModelType extends IModelType {
             folder = "medieval/";
         }
 
-        String textureBase = "textures/entity/citizen/" + folder + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
-        final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
-        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata() + ".png");
+        ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + folder + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().hasResource(modified))
         {
             return modified;
         }
 
-        textureBase = "textures/entity/citizen/default/" + getTextureBase() + (entityCitizen.isFemale() ? "female" : "male");
-        return new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + entityCitizen.getRenderMetadata()  + entityCitizen.getDataManager().get(DATA_TEXTURE_SUFFIX) + ".png");
+        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + textureIdentifier + ".png");
     }
 }
