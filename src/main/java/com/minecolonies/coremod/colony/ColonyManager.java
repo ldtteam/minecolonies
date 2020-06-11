@@ -120,8 +120,6 @@ public final class ColonyManager implements IColonyManager
         }
 
         ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-
-        colony.getWorld().getScoreboard().addPlayerToTeam(player.getScoreboardName(), colony.getTeam());
     }
 
     /**

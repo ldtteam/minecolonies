@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -32,7 +33,6 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -46,7 +46,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
@@ -315,7 +314,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return null;
     }
 
-
     /**
      * Regen at the building and continue when more than half health.
      *
@@ -400,10 +398,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState follow()
     {
-        worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
-        this.world.getScoreboard()
-          .addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
-
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
         {
             TeleportHelper.teleportCitizen(worker, worker.getEntityWorld(), buildingGuards.getPositionToFollow());
@@ -434,7 +428,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return the next state to run into.
      */
-    private IAIState rally(ILocation location)
+    private IAIState rally(final ILocation location)
     {
         if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
                                              .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
@@ -594,6 +588,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
 
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
+
+        if (rallyLocation != null || buildingGuards.getTask() == GuardTask.FOLLOW)
+        {
+            worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
+        }
+        else
+        {
+            worker.removeActivePotionEffect(GLOW_EFFECT);
+        }
+
         if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))
         {
             return rally(rallyLocation);

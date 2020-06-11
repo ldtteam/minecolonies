@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -16,7 +14,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -77,33 +74,35 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             return ActionResultType.FAIL;
         }
 
-        if (context.getWorld().isRemote())
-        {
-            return ActionResultType.SUCCESS;
-        }
-
         final ItemStack banner = context.getPlayer().getHeldItem(context.getHand());
 
         final CompoundNBT compound = checkForCompound(banner);
 
         if (isGuardBuilding(context.getWorld(), context.getPos()))
         {
-            final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
-
-            final ILocation location = building.getLocation();
-            if (removeGuardTowerAtLocation(banner, location))
+            if (context.getWorld().isRemote())
             {
-                LanguageHandler.sendPlayerMessage(context.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED,
-                  building.getSchematicName(), location.toString());
+                return ActionResultType.SUCCESS;
             }
             else
             {
-                final ListNBT guardTowers = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
-                guardTowers.add(StandardFactoryController.getInstance().serialize(location));
-                LanguageHandler.sendPlayerMessage(context.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED,
-                  building.getSchematicName(), location.toString());
+                final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
+
+                final ILocation location = building.getLocation();
+                if (removeGuardTowerAtLocation(banner, location))
+                {
+                    LanguageHandler.sendPlayerMessage(context.getPlayer(),
+                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED,
+                      building.getSchematicName(), location.toString());
+                }
+                else
+                {
+                    final ListNBT guardTowers = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
+                    guardTowers.add(StandardFactoryController.getInstance().serialize(location));
+                    LanguageHandler.sendPlayerMessage(context.getPlayer(),
+                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED,
+                      building.getSchematicName(), location.toString());
+                }
             }
         }
         else

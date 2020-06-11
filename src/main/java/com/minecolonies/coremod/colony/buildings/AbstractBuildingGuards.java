@@ -418,7 +418,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Nullable
     public PlayerEntity getPlayerToFollowOrRally()
     {
-        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : null;
+        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : followPlayer;
     }
 
     /**
@@ -925,7 +925,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 return null;
             }
 
-            int size = player.inventory.getSizeInventory();
+            final int size = player.inventory.getSizeInventory();
             for (int i = 0; i < size; i++)
             {
                 final ItemStack stack = player.inventory.getStackInSlot(i);
@@ -962,31 +962,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void setPlayerToFollow(final PlayerEntity player)
     {
-        if (this.getColony().getWorld() != null)
-        {
-            this.getColony()
-              .getWorld()
-              .getScoreboard()
-              .addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
-            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER, false, false));//no reason for particales
-
-            if (followPlayer != null)
-            {
-                try
-                {
-                    this.getColony()
-                      .getWorld()
-                      .getScoreboard()
-                      .removePlayerFromTeam(followPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
-                    player.removePotionEffect(GLOW_EFFECT);
-                }
-                catch (final Exception e)
-                {
-                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName().getFormattedText() + " from team " + TEAM_COLONY_NAME + getColony().getID());
-                }
-            }
-        }
-
         this.followPlayer = player;
 
         for (final ICitizenData iCitizenData : getAssignedCitizen())

@@ -293,6 +293,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         return true;
     }
 
+    @Override
+    public String getScoreboardName()
+    {
+        return getName().getFormattedText() + " (" + getCitizenId() + ")";
+    }
+
     /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
@@ -350,6 +356,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (isServerWorld())
         {
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+
+            getEntityWorld().getScoreboard().addPlayerToTeam(getScoreboardName(), getCitizenColonyHandler().getColony().getTeam());
         }
 
         isDay = compound.getBoolean(TAG_DAY);

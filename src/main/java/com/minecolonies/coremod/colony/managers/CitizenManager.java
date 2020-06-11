@@ -107,6 +107,8 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
+        colony.getWorld().getScoreboard().addPlayerToTeam(citizen.getScoreboardName(), colony.getTeam());
+
         final ICitizenData data = citizens.get(citizen.getCitizenId());
         final Optional<AbstractEntityCitizen> existingCitizen = data.getCitizenEntity();
 
@@ -140,6 +142,7 @@ public class CitizenManager implements ICitizenManager
         if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get() == citizen)
         {
             citizens.get(citizen.getCitizenId()).setCitizenEntity(null);
+            colony.getWorld().getScoreboard().removePlayerFromTeam(citizen.getScoreboardName(), colony.getTeam());
         }
     }
 
