@@ -128,7 +128,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Count of spawners.
      */
-    private int spawnerCount;
+    private int spawnerCount = 0;
 
     /**
      * Create a new ship based raid event.
