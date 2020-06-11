@@ -789,7 +789,7 @@ public class InventoryUtils
             if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (!(entity instanceof TileEntityRack))
+                if (!(entity instanceof TileEntityRack) && entity != null)
                 {
                     for (final IItemHandler handler : getItemHandlersFromProvider(entity))
                     {
