@@ -488,7 +488,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return (getOwnBuilding().getTask() == GuardTask.FOLLOW || target != null)
+        return (target != null || buildingGuards.getTask() == GuardTask.FOLLOW || buildingGuards.getRallyLocation() != null)
                  ? Integer.MAX_VALUE
                  : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
     }
