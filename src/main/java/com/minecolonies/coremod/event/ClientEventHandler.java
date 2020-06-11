@@ -161,13 +161,13 @@ public class ClientEventHandler
             }
             RenderSystem.disableDepthTest();
             RenderSystem.disableCull();
+
             renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
             RenderSystem.enableDepthTest();
             RenderSystem.enableCull();
         }
     }
 
-    // TODO: Use the Structurize function for this!
     private static void renderBox(
       final BlockPos posA,
       final BlockPos posB,
@@ -219,7 +219,7 @@ public class ClientEventHandler
         matrix.push();
         matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);
 
-        final Matrix4f matrix4f = matrix.getLast().getPositionMatrix();
+        final Matrix4f matrix4f = matrix.getLast().getMatrix();
         final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
         BoxRenderer.drawSelectionBoundingBox(matrix4f, axisalignedbb.grow(0.002D), red, green, blue, 1.0F);
         matrix.pop();

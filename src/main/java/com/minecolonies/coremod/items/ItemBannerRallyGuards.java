@@ -30,6 +30,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,7 +125,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     {
         final ItemStack banner = playerIn.getHeldItem(handIn);
         handleRightClick(banner, playerIn);
-        return ActionResult.func_226248_a_(banner);
+        return ActionResult.resultSuccess(banner);
     }
 
     @Override
@@ -141,18 +142,18 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
-     * Handles a rightclick or shift-rightclick that's *not* adding/removing a guard tower from the list
+     * Handles a rightclick or rightclick-while-sneaking that's *not* adding/removing a guard tower from the list
      *
      * @param banner   The banner with which the player rightclicked.
      * @param playerIn The player that rightclicked.
      */
     private void handleRightClick(final ItemStack banner, final PlayerEntity playerIn)
     {
-        if (playerIn.isShiftKeyDown() && !playerIn.getEntityWorld().isRemote())
+        if (playerIn.isSneaking() && !playerIn.getEntityWorld().isRemote())
         {
             toggleBanner(banner, playerIn);
         }
-        else if (!playerIn.isShiftKeyDown() && playerIn.getEntityWorld().isRemote())
+        else if (!playerIn.isSneaking() && playerIn.getEntityWorld().isRemote())
         {
             if (getGuardTowerLocations(banner).isEmpty())
             {

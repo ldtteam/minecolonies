@@ -743,7 +743,6 @@
   "com.minecolonies.coremod.gui.workerhuts.spies": "Hire spies",
 
   "com.minecolonies.coremod.permission.teleport_to_colony": "Teleport to Colony",
-  "com.minecolonies.coremod.permission.rally_guards": "Rally guards",
 
   "com.minecolonies.coremod.gui.hiring.buttonfire": "Fire",
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
@@ -811,8 +810,8 @@
   "com.minecolonies.coremod.item.bannerrallyguards.selected": "Added %s at %s to rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.tooltip": "Rallied guard towers: %d",
-  "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Shift-Rightclick on guard towers to add them to the rally list.",
-  "com.minecolonies.coremod.item.bannerrallyguards.rally": "Shift-Rightclick in the air or the ground to rally or dismiss your guards.",
+  "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Sneak-Rightclick on guard towers to add them to the rally list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.rally": "Sneak-Rightclick in the air or the ground to rally or dismiss your guards.",
   "com.minecolonies.coremod.item.bannerrallyguards.gui": "Rightclick to open the GUI window.",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing": "Cannot find tower!",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.remove": "Remove",
