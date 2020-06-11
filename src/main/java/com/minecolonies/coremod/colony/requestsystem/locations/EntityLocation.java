@@ -113,12 +113,13 @@ public class EntityLocation implements ILocation
 
     /**
      * Returns the *player* entity the location is tracking.
+     *
      * @return player entity being tracked, or null if the tracked entity is not a player.
      */
     public PlayerEntity getPlayerEntity()
     {
         checkEntity();
-        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity)entity.get() : null;
+        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity) entity.get() : null;
     }
 
     @SuppressWarnings("squid:S2972")

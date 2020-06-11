@@ -1,26 +1,14 @@
 package com.minecolonies.coremod.network.messages.server;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -28,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.removeGuardTowerAtLocation;
-import static com.minecolonies.coremod.items.ItemBannerRallyGuards.toggleBanner;
 
 /**
  * Removes a guard tower from the rallying list
@@ -56,7 +43,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     /**
      * Toggle the banner
      *
-     * @param banner The banner to be modified.
+     * @param banner   The banner to be modified.
      * @param location The position of the guard tower
      */
     public RemoveFromRallyingListMessage(final ItemStack banner, final ILocation location)

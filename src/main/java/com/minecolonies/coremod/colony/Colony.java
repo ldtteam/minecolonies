@@ -201,7 +201,8 @@ public class Colony implements IColony
     /**
      * The request manager assigned to the colony.
      */
-    private IResearchManager researchManager = new ResearchManager();;
+    private IResearchManager researchManager = new ResearchManager();
+    ;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -302,7 +303,7 @@ public class Colony implements IColony
                     freeBlocks.add(block);
                 }
             }
-            catch(final Exception ex)
+            catch (final Exception ex)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
                 if (pos != null)
@@ -318,7 +319,10 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> {
+            this.getCitizenManager().tickCitizenData();
+            return null;
+        }, TICKS_SECOND));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -535,7 +539,7 @@ public class Colony implements IColony
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
-     * @param world the world to load it for.
+     * @param world    the world to load it for.
      * @return loaded colony.
      */
     @Nullable
@@ -970,7 +974,7 @@ public class Colony implements IColony
      * Calculate randomly if the colony should update the citizens.
      * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
-     * @param world the world.
+     * @param world        the world.
      * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */

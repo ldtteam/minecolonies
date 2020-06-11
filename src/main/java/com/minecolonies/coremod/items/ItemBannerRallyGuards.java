@@ -30,7 +30,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,7 +89,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
                 if (!building.getColony().getPermissions().hasPermission(player, Action.RALLY_GUARDS))
                 {
-                    LanguageHandler.sendPlayerMessage(player,"com.minecolonies.coremod.permission.no");
+                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
                     return ActionResultType.FAIL;
                 }
 

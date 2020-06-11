@@ -108,6 +108,7 @@ public interface IColony
 
     /**
      * Retrieves the team of the colony
+     *
      * @return Team of the colony
      */
     ScorePlayerTeam getTeam();
@@ -158,6 +159,7 @@ public interface IColony
 
     /**
      * Remove a visiting player.
+     *
      * @param player the player.
      */
     void removeVisitingPlayer(final PlayerEntity player);
@@ -222,24 +224,28 @@ public interface IColony
 
     /**
      * Add a visiting player.
+     *
      * @param player the player.
      */
     void addVisitingPlayer(final PlayerEntity player);
 
     /**
      * Get the colony dimension.
+     *
      * @return the dimension id.
      */
     int getDimension();
 
     /**
      * Check if the colony is on the server or client.
+     *
      * @return true if so.
      */
     boolean isRemote();
 
     /**
      * Get the research manager.
+     *
      * @return the research manager object.
      */
     IResearchManager getResearchManager();
@@ -251,10 +257,10 @@ public interface IColony
 
     /**
      * Get the last time mercenaries were used.
+     *
      * @return the mercenary use time.
      */
     long getMercenaryUseTime();
-
 
     CompoundNBT getColonyTag();
 

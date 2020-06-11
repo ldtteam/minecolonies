@@ -4,7 +4,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;

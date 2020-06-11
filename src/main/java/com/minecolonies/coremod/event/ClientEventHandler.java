@@ -25,7 +25,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -58,6 +57,7 @@ public class ClientEventHandler
      * Cached wayPointBlueprint.
      */
     private static Blueprint partolPointTemplate;
+
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
@@ -102,10 +102,10 @@ public class ClientEventHandler
                         wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
                     }
                     BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()),
-                        event.getPartialTicks(),
-                        // hashcode is safe unless the template needs different rotations/mirrors
-                        Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
-                        event.getMatrixStack());
+                      event.getPartialTicks(),
+                      // hashcode is safe unless the template needs different rotations/mirrors
+                      Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
+                      event.getMatrixStack());
                 }
                 BlueprintHandler.getInstance()
                   .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
