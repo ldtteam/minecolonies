@@ -3,12 +3,18 @@ package com.minecolonies.api.util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -737,6 +743,67 @@ public class InventoryUtils
         return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
+    }
+
+    /**
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
+     *
+     * @param provider building to check in.
+     * @param stack the stack to check.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
+    {
+        int totalCount = 0;
+        if (provider.getTileEntity() != null)
+        {
+            totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
+        }
+
+        if (totalCount > count)
+        {
+            return Integer.MAX_VALUE;
+        }
+
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos: provider.getAdditionalCountainers())
+        {
+            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                }
+            }
+        }
+
+        if (totalCount >= count)
+        {
+            return totalCount;
+        }
+
+        for (final BlockPos pos: provider.getAdditionalCountainers())
+        {
+            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (!(entity instanceof TileEntityRack))
+                {
+                    for (final IItemHandler handler : getItemHandlersFromProvider(entity))
+                    {
+                        totalCount += getItemCountInItemHandler(handler, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                        if (totalCount > count)
+                        {
+                            return Integer.MAX_VALUE;
+                        }
+                    }
+                }
+            }
+        }
+
+        return totalCount;
     }
 
     /**
