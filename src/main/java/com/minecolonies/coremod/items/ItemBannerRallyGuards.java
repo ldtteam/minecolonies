@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -66,7 +67,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Override
     public ActionResultType onItemUse(final ItemUseContext context)
     {
-        final World worldIn = context.getWorld();
         final PlayerEntity player = context.getPlayer();
 
         if (player == null)
@@ -87,6 +87,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             else
             {
                 final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
+                if (!building.getColony().getPermissions().hasPermission(player, Action.RALLY_GUARDS))
+                {
+                    LanguageHandler.sendPlayerMessage(player,"com.minecolonies.coremod.permission.no");
+                    return ActionResultType.FAIL;
+                }
 
                 final ILocation location = building.getLocation();
                 if (removeGuardTowerAtLocation(banner, location))
@@ -248,7 +253,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
             // Safely ignore this case, the player must remove the tower from the rallying list manually.
-            if (building != null)
+            if (building != null && (playerIn == null || building.getColony().getPermissions().hasPermission(playerIn, Action.RALLY_GUARDS)))
             {
                 building.setRallyLocation(rallyTarget);
                 numGuards += building.getAssignedCitizen().size();

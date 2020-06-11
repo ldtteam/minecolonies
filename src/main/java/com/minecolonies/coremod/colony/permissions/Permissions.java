@@ -136,7 +136,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
         this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
         this.setPermission(Rank.OWNER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
-
+        this.setPermission(Rank.OWNER, Action.RALLY_GUARDS);
 
         //Officer
         permissionMap.put(Rank.OFFICER, 0);

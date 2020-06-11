@@ -654,6 +654,7 @@
   "com.minecolonies.coremod.permission.rightclick_entity": "Rightclick entities",
   "com.minecolonies.coremod.permission.throw_potion": "Throw potions",
   "com.minecolonies.coremod.permission.shoot_arrow": "Shoot arrows",
+  "com.minecolonies.coremod.permission.rally_guards": "Rally guards",
   "com.minecolonies.coremod.permission.attack_citizen": "Attack citizens",
   "com.minecolonies.coremod.permission.attack_entity": "Attack entities",
   "com.minecolonies.coremod.permission.access_free_blocks": "Access free-blocks",
