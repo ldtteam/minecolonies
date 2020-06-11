@@ -99,7 +99,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                     {
                         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
-                            int amount = itemStorage.getAmount();
+                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
                             if (recipeOutputs.containsKey(itemStorage))
                             {
                                 amount = recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount() * request.getRequest().getCount();
@@ -108,11 +108,12 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                         }
 
                         final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
+                        int amount = output.getAmount() * request.getRequest().getCount();
                         if (recipeOutputs.containsKey(output))
                         {
-                            output.setAmount(recipeOutputs.get(output).getA() + output.getAmount() * request.getRequest().getCount());
+                            amount = recipeOutputs.get(output).getA() + output.getAmount() * request.getRequest().getCount();
                         }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
+                        recipeOutputs.put(output, new Tuple<>(amount, false));
                     }
                 }
             }
