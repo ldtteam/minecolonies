@@ -208,7 +208,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken ignored)
+    public boolean canRecipeBeAdded(final IToken<?> ignored)
     {
         return hasSpaceForMoreRecipes();
     }
@@ -240,7 +240,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
 
     @Override
-    public List<IToken> getRecipes()
+    public List<IToken<?>> getRecipes()
     {
         return new ArrayList<>(recipes);
     }
@@ -381,7 +381,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public boolean addRecipe(final IToken token)
+    public boolean addRecipe(final IToken<?> token)
     {
         if (canRecipeBeAdded(token))
         {
@@ -398,7 +398,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void removeRecipe(final IToken token)
+    public void removeRecipe(final IToken<?> token)
     {
         recipes.remove(token);
         markDirty();

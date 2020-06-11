@@ -15,7 +15,7 @@ public class EntityArcherPirate extends AbstractEntityPirate implements IArcherP
      * @param worldIn world to construct it in.
      * @param type the entity type.
      */
-    public EntityArcherPirate(final EntityType type, final World worldIn)
+    public EntityArcherPirate(final EntityType<? extends EntityArcherPirate> type, final World worldIn)
     {
         super(type, worldIn);
     }

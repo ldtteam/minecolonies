@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The AI behind the {@link JobSwineHerder} for Breeding and Killing Pigs.
  */
-public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, PigEntity>
+public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, BuildingSwineHerder, PigEntity>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -29,7 +29,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
-    public Class<? extends BuildingSwineHerder> getExpectedBuildingClass()
+    public Class<BuildingSwineHerder> getExpectedBuildingClass()
     {
         return BuildingSwineHerder.class;
     }

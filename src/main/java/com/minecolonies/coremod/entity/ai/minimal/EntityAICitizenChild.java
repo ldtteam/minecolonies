@@ -316,6 +316,7 @@ public class EntityAICitizenChild extends Goal
                   child.getName().getFormattedText());
                 // Grow up
                 child.setIsChild(false);
+                child.setTextureDirty();
                 child.getCitizenData().setIsChild(false);
                 return true;
             }

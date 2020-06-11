@@ -338,6 +338,8 @@
   "entity.builder.messagenobuilder": "You need a builder in order to build or upgrade this building.",
   "entity.farmer.needseed": "I need %s to plant.",
 
+  "com.minecolonies.command.help.wiki": "Checkout the wiki to learn more: ",
+  "com.minecolonies.command.help.discord": "Join the community at  ",
   "com.minecolonies.command.notop": "Must be OP to use the command",
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony, the closest colony is approx %.2f blocks away.",

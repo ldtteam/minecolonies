@@ -40,7 +40,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * List of permission events of the colony.
      */
-    private final LinkedList<PermissionEvent> permissionEvents = new LinkedList();
+    private final LinkedList<PermissionEvent> permissionEvents = new LinkedList<>();
 
     /**
      * Instantiates the building.
@@ -145,6 +145,18 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     /**
+     * Sets the style of the building.
+     *
+     * @param style String value of the style.
+     */
+    @Override
+    public void setStyle(final String style)
+    {
+        super.setStyle(style);
+        colony.setStyle(style);
+    }
+
+    /**
      * ClientSide representation of the building.
      */
     public static class View extends AbstractBuildingView implements ITownHallView
@@ -152,7 +164,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         /**
          * List of permission events of the colony.
          */
-        private final List<PermissionEvent> permissionEvents = new LinkedList();
+        private final List<PermissionEvent> permissionEvents = new LinkedList<>();
 
         /**
          * If the player is allowed to do townHall teleport.

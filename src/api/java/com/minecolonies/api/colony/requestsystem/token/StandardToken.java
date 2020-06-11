@@ -61,7 +61,7 @@ public class StandardToken implements IToken<UUID>
             return false;
         }
 
-        final IToken that = (IToken) o;
+        final IToken<?> that = (IToken<?>) o;
 
         return id.equals(that.getIdentifier());
     }

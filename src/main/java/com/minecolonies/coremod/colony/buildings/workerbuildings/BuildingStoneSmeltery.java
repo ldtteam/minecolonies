@@ -67,7 +67,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobStoneSmeltery(citizen);
     }
@@ -94,7 +94,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if (!super.canRecipeBeAdded(token))
         {

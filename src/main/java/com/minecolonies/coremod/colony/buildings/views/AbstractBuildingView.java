@@ -455,12 +455,12 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -468,8 +468,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenDataView data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenDataView data)
     {
         if (data == null || getColony() == null || getColony().getRequestManager() == null)
         {
@@ -495,8 +494,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequestsOfBuilding()
+    public ImmutableList<IRequest<?>> getOpenRequestsOfBuilding()
     {
         return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
                                       .filter(Objects::nonNull)
@@ -516,7 +514,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull final ICitizenDataView citizenData,
       final Class<R> requestType,
@@ -524,7 +522,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
+                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)

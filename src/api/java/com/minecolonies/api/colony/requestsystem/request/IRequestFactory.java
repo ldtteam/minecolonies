@@ -51,7 +51,7 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
         if (context.length == NUMBER_OF_PROPERTIES)
         {
             final IRequester requester = (IRequester) context[1];
-            final IToken token = (IToken) context[0];
+            final IToken<?> token = (IToken<?>) context[0];
 
             return this.getNewInstance(t, requester, token);
         }
@@ -62,7 +62,7 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
         }
 
         final IRequester requester = (IRequester) context[1];
-        final IToken token = (IToken) context[0];
+        final IToken<?> token = (IToken<?>) context[0];
         final RequestState state = (RequestState) context[2];
 
         return this.getNewInstance(t, requester, token, state);

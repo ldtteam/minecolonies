@@ -122,6 +122,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
           Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
           IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
+
+        updateJobPage(citizen, this, colony);
     }
 
     public ICitizenDataView getCitizen()
@@ -150,10 +152,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
         createSkillContent(citizen, this);
         updateHappiness(citizen, this);
 
-        if (citizen.getWorkBuilding() != null)
-        {
-            updateJobPage(citizen, this, colony);
-        }
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
         if (citizen.isFemale())
@@ -294,6 +292,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param citizen the citizen to create a create a happiness bar for.
      * @param view    the view to add the happiness bar to.
      */
+    /*
     private static void createHappinessBar(final ICitizenDataView citizen, final View view)
     {
         final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
@@ -320,6 +319,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
     }
+    */
 
     /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
@@ -371,7 +371,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequests(citizen);
     }
@@ -414,7 +414,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public void fulfill(@NotNull final IRequest tRequest)
+    public void fulfill(@NotNull final IRequest<?> tRequest)
     {
         if (!(tRequest.getRequest() instanceof IDeliverable))
         {
@@ -534,14 +534,14 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
     {
-        windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class)
-          .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(citizen.getJob())));
-        windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
-
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
         if (building instanceof AbstractBuildingWorker.View)
         {
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
+              LanguageHandler.format(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+
             final Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Label.class)
               .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
@@ -583,6 +583,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
+        }
+        else
+        {
+            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class).hide();
+            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class).hide();
+            windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class).hide();
+            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class).hide();
+            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class).hide();
+            windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class).hide();
         }
     }
 }

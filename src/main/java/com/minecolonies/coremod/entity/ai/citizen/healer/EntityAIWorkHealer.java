@@ -40,7 +40,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FU
 /**
  * Healer AI class.
  */
-public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
+public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, BuildingHospital>
 {
     /**
      * Base xp gain for the smelter.
@@ -111,7 +111,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
             return DECIDE;
         }
 
-        final BuildingHospital hospital = getOwnBuilding(BuildingHospital.class);
+        final BuildingHospital hospital = getOwnBuilding();
         for (final AbstractEntityCitizen citizen : world.getEntitiesWithinAABB(ModEntities.CITIZEN, getTargetableArea(), cit -> cit.getCitizenDiseaseHandler().isSick()))
         {
             hospital.checkOrCreatePatientFile(citizen.getCitizenId());
@@ -518,7 +518,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
     }
 
     @Override
-    public Class<? extends BuildingHospital> getExpectedBuildingClass()
+    public Class<BuildingHospital> getExpectedBuildingClass()
     {
         return BuildingHospital.class;
     }

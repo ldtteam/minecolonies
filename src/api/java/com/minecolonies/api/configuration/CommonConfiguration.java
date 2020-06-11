@@ -350,6 +350,10 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> loaded;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> heavilyloaded;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> gildedhammer;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> doubletrouble;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotboots;
+
     /**
      * Builds common configuration.
      *
@@ -672,8 +676,6 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:tall_grass",
                      "minecraft:large_fern",
                      "minecraft:fern",
-                     "minecraft:sugar_cane",
-                     "minecraft:cactus",
                      "small_flowers"
                    ),
           s -> s instanceof String);
@@ -1315,6 +1317,16 @@ public class CommonConfiguration extends AbstractConfiguration
         tauntCosts.add("minecraft:spider_eye*8");
         taunt = defineList(builder, "taunt",
           tauntCosts,
+          s -> s instanceof String);
+
+        this.gildedhammer = defineList(builder, "gildedhammer",
+          Arrays.asList("minecraft:gravel*64", "minecraft:sand*64", "minecraft:clay*64"),
+          s -> s instanceof String);
+        this.doubletrouble = defineList(builder, "doubletrouble",
+          Arrays.asList("minecraft:bamboo*64", "minecraft:sugar_cane*64", "minecraft:cactus*64"),
+          s -> s instanceof String);
+        this.hotboots = defineList(builder, "hotboots",
+          Arrays.asList("minecraft:leather*32", "minecraft:iron_ingot*16"),
           s -> s instanceof String);
 
         finishCategory(builder);

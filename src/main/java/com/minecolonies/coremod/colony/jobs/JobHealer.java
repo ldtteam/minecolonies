@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.healer.EntityAIWorkHealer;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The healer job class.
  */
-public class JobHealer extends AbstractJob
+public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
 {
     /**
      * Create a healer job.
@@ -60,7 +59,7 @@ public class JobHealer extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobHealer> generateAI()
+    public EntityAIWorkHealer generateAI()
     {
         return new EntityAIWorkHealer(this);
     }

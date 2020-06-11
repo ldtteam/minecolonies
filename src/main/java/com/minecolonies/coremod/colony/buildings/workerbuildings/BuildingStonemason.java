@@ -76,7 +76,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobStonemason(citizen);
     }
@@ -103,7 +103,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(!super.canRecipeBeAdded(token))
         {

@@ -26,7 +26,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
+public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, BuildingSchool>
 {
     /**
      * Qty of paper to request.
@@ -193,7 +193,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher>
     }
 
     @Override
-    public Class<? extends BuildingSchool> getExpectedBuildingClass()
+    public Class<BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
     }

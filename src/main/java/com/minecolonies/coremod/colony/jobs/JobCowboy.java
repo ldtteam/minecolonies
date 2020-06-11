@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkCowboy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Cowboy job
  */
-public class JobCowboy extends AbstractJob
+public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
 {
     /**
      * Instantiates the placeholder job.
@@ -44,7 +43,7 @@ public class JobCowboy extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobCowboy> generateAI()
+    public EntityAIWorkCowboy generateAI()
     {
         return new EntityAIWorkCowboy(this);
     }

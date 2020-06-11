@@ -58,12 +58,6 @@ public class ClientEventHandler
      * Cached wayPointBlueprint.
      */
     private static Blueprint partolPointTemplate;
-
-    /**
-     * The colony view required here.
-     */
-    private final IColonyView view = null;
-
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
@@ -103,7 +97,15 @@ public class ClientEventHandler
             {
                 if (wayPointTemplate == null)
                 {
-                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                    if (wayPointTemplate == null)
+                    {
+                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                    }
+                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()),
+                        event.getPartialTicks(),
+                        // hashcode is safe unless the template needs different rotations/mirrors
+                        Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
+                        event.getMatrixStack());
                 }
                 BlueprintHandler.getInstance()
                   .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());

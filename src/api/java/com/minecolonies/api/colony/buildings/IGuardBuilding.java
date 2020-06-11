@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, IBuildingContainer, IBuilding, IBuildingWorker
+public interface IGuardBuilding extends IBuildingWorker
 {
     /**
      * Worker gets this distance times building level away from his/her hut to

@@ -318,7 +318,7 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -1340,6 +1340,7 @@ public class Colony implements IColony
     public void setStyle(final String style)
     {
         this.style = style;
+        this.markDirty();
     }
 
     /**
