@@ -46,6 +46,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
@@ -142,6 +143,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int GUARD_REGEN_INTERVAL = 40;
 
     /**
+     * Interval between saturation losses during rallying. 1 saturation loss per interval.
+     */
+    private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 10;
+
+    /**
      * The timer for sleeping.
      */
     private int sleepTimer = 0;
@@ -184,6 +190,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(GUARD_RALLY, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_RALLY, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
+          new AITarget(GUARD_RALLY, this::decreaseSaturation, RALLY_SATURATION_LOSS_INTERVAL),
           new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_GUARD, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
@@ -452,6 +459,24 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         return GUARD_RALLY;
+    }
+
+    /**
+     * Decrease the saturation while rallying.
+     * Rallying is hard work for the guards, so make sure they suffer from it.
+     *
+     * @return The next state
+     */
+    protected IAIState decreaseSaturation()
+    {
+        final ICitizenData citizenData = worker.getCitizenData();
+
+        if (citizenData != null)
+        {
+            citizenData.decreaseSaturation(citizenData.getSaturation() * BIG_SATURATION_FACTOR);
+        }
+
+        return getState();
     }
 
     /**

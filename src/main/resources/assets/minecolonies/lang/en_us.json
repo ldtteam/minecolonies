@@ -307,6 +307,7 @@
   "item.minecolonies.banner_rally_guards.activated": "You have rallied your army. %d guards are answering your call!",
   "item.minecolonies.banner_rally_guards.activated.noguards": "You have rallied your army ... of 0 guards. Good luck!",
   "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your guards will return to regular duty.",
+  "item.minecolonies.banner_rally_guards.outofrange": "Your guards will not rally so far away to your position, they are sworn to protect their families! The disappointed guards are going home now.",
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 

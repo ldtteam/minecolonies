@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -908,12 +910,31 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Nullable
     public ILocation getRallyLocation()
     {
+        if (rallyLocation == null)
+        {
+            return null;
+        }
+
+        boolean outOfRange = false;
+        final IColony colonyAtPosition = IColonyManager.getInstance().getColonyByPosFromDim(rallyLocation.getDimension(), rallyLocation.getInDimensionLocation());
+        if (colonyAtPosition == null || colonyAtPosition.getID() != colony.getID())
+        {
+            outOfRange = true;
+        }
+
         if (rallyLocation instanceof EntityLocation)
         {
             final PlayerEntity player = ((EntityLocation) rallyLocation).getPlayerEntity();
             if (player == null)
             {
-                rallyLocation = null;
+                setRallyLocation(null);
+                return null;
+            }
+
+            if (outOfRange)
+            {
+                LanguageHandler.sendPlayerMessage(player, "item.minecolonies.banner_rally_guards.outofrange");
+                setRallyLocation(null);
                 return null;
             }
 
@@ -942,10 +963,23 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void setRallyLocation(final ILocation location)
     {
-        this.rallyLocation = location;
+        boolean reduceSaturation = false;
+        if (rallyLocation != null && location == null)
+        {
+            reduceSaturation = true;
+        }
+
+        rallyLocation = location;
 
         for (final ICitizenData iCitizenData : getAssignedCitizen())
         {
+            if (reduceSaturation && iCitizenData.getSaturation() <= 2)
+            {
+                // In addition to the scaled saturation reduction during rallying, stopping a rally
+                // will - if only 2 saturation are left - remove those two, forcing the guard to go eat.
+                iCitizenData.decreaseSaturation(2);
+            }
+
             final AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
             if (job != null && job.getWorkerAI() != null)
             {
