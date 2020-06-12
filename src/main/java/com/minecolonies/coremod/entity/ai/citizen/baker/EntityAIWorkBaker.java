@@ -412,6 +412,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
         }
         else
         {
+            currentBakingProduct = null;
         	setDelay(UNABLE_TO_CRAFT_DELAY);
         	return NEEDS_ITEM;
         }
