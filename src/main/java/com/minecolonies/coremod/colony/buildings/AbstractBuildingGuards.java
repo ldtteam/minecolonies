@@ -929,7 +929,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     }
                 }
             }
-            rallyLocation = null;
+            // Note: We do not reset the rallyLocation here.
+            // So, if the player doesn't properly deactivate the banner, this will cause relatively minor lag.
+            // But, in exchange, the player does not have to reactivate the banner so often, and it also works
+            // if the user moves the banner around in the inventory.
             return null;
         }
 
