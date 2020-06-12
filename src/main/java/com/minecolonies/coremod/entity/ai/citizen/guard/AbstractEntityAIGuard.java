@@ -424,17 +424,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Rally to a player.
+     * Rally to a location.
+     * This function assumes that the given location is reachable by the worker.
      *
      * @return the next state to run into.
      */
     private IAIState rally(final ILocation location)
     {
+        final ICitizenData citizenData = worker.getCitizenData();
         if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
                                              .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                                0,
                                                randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
-          GUARD_FOLLOW_TIGHT_RANGE))
+          GUARD_FOLLOW_TIGHT_RANGE) && citizenData != null)
         {
             if (!worker.isPotionActive(Effects.SPEED))
             {
@@ -443,7 +445,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
                 worker.addPotionEffect(new EffectInstance(Effects.SPEED,
                   5 * TICKS_SECOND,
-                  MathHelper.clamp((worker.getCitizenData().getJobModifier() / 20) + 2, 2, 5),
+                  MathHelper.clamp((citizenData.getJobModifier() / 20) + 2, 2, 5),
                   false,
                   false));
             }
@@ -573,7 +575,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Decide what we should do next! Ticked once every 20 Ticks
+     * Decide what we should do next! Ticked once every GUARD_TASK_INTERVAL Ticks
      *
      * @return the next IAIState.
      */

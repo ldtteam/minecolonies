@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -28,7 +29,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     private ItemStack banner;
 
     /**
-     * The position of the guard tower
+     * The position of the guard tower that should be removed.
      */
     private ILocation location;
 
@@ -41,7 +42,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     }
 
     /**
-     * Toggle the banner
+     * Remove the guard tower from the rallying list
      *
      * @param banner   The banner to be modified.
      * @param location The position of the guard tower
@@ -53,11 +54,6 @@ public class RemoveFromRallyingListMessage implements IMessage
         this.location = location;
     }
 
-    /**
-     * Reads this packet from a {@link PacketBuffer}.
-     *
-     * @param buf The buffer begin read from.
-     */
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
@@ -65,11 +61,6 @@ public class RemoveFromRallyingListMessage implements IMessage
         location = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
     }
 
-    /**
-     * Writes this packet to a {@link PacketBuffer}.
-     *
-     * @param buf The buffer being written to.
-     */
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
@@ -93,8 +84,7 @@ public class RemoveFromRallyingListMessage implements IMessage
 
         if (slot == -1)
         {
-            // TODO: Make constant
-            LanguageHandler.sendPlayerMessage(player, "Error rallying/unrallying guards. Please try again!");
+            LanguageHandler.sendPlayerMessage(player, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR);
             return;
         }
 

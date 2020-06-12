@@ -87,6 +87,13 @@ public class ClientEventHandler
         }
     }
 
+    /**
+     * Renders structures into the client code
+     *
+     * @param event  The caught event
+     * @param world  The world in which to render
+     * @param player The player for which to render
+     */
     private static void handleRenderStructure(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
@@ -113,6 +120,13 @@ public class ClientEventHandler
         }
     }
 
+    /**
+     * Renders the guard scepter objects into the world.
+     *
+     * @param event  The caught event
+     * @param world  The world in which to render
+     * @param player The player for which to render
+     */
     private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
@@ -147,6 +161,13 @@ public class ClientEventHandler
         }
     }
 
+    /**
+     * Renders the rallying banner guard tower indicators into the world.
+     *
+     * @param event  The caught event
+     * @param world  The world in which to render
+     * @param player The player for which to render
+     */
     private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final ItemStack stack = player.getHeldItemMainhand();
@@ -162,13 +183,25 @@ public class ClientEventHandler
             RenderSystem.disableDepthTest();
             RenderSystem.disableCull();
 
-            renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
+            renderRalliedGuardbuildingIndicator(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
             RenderSystem.enableDepthTest();
             RenderSystem.enableCull();
         }
     }
 
-    private static void renderBox(
+    /**
+     * Renders an indicator that a guard building is rallied by the banner in the player's hand.
+     * Note: This current implementation is taken from the Structurize Mod.
+     * In future iterations of the banner, it might be interesting to have a more spectacular effect than just a box.
+     *
+     * @param posA  First corner of the indicator
+     * @param posB  Second corner of the indicator
+     * @param event The caught event
+     * @param red   Red component
+     * @param green Green component
+     * @param blue  Blue component
+     */
+    private static void renderRalliedGuardbuildingIndicator(
       final BlockPos posA,
       final BlockPos posB,
       final RenderWorldLastEvent event,

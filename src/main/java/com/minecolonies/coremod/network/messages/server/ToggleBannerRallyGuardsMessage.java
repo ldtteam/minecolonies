@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -44,22 +45,12 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
         this.banner = banner;
     }
 
-    /**
-     * Reads this packet from a {@link PacketBuffer}.
-     *
-     * @param buf The buffer begin read from.
-     */
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         banner = buf.readItemStack();
     }
 
-    /**
-     * Writes this packet to a {@link PacketBuffer}.
-     *
-     * @param buf The buffer being written to.
-     */
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
@@ -82,8 +73,7 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
 
         if (slot == -1)
         {
-            // TODO: Make constant
-            LanguageHandler.sendPlayerMessage(player, "Error rallying/unrallying guards. Please try again!");
+            LanguageHandler.sendPlayerMessage(player, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR);
             return;
         }
 

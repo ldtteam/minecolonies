@@ -219,7 +219,7 @@ public interface IGuardBuilding extends IBuildingWorker
      *
      * @param location The location to rally to.
      */
-    void setRallyLocation(ILocation location);
+    void setRallyLocation(final ILocation location);
 
     /**
      * Gets the position to follow.

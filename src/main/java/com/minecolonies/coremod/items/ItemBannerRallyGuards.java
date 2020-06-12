@@ -239,7 +239,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         else
         {
             rallyTarget = new EntityLocation(playerIn.getUniqueID());
-            //rallyTarget = StandardFactoryController.getInstance().getFactoryForOutput(ILocation.class) EntityLocation.Factory new EntityLocation(playerIn.getUniqueID());
         }
 
         int numGuards = 0;
@@ -467,8 +466,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
         final List<ILocation> guardTowerPositions = getGuardTowerLocations(stack);
 
-        // The isEmpty is in there because the tooltip is sometimes loaded before NBT is loaded.
-        // Worst case, the 0-towers-tooltip spams allocations, but compared to the rest of Minecraft, that's negligible.
         if (guardTowerPositions.isEmpty())
         {
             final ITextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);

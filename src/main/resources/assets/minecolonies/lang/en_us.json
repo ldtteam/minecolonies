@@ -817,7 +817,7 @@
   "com.minecolonies.coremod.item.bannerrallyguards.gui.remove": "Remove",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.rally": "Rally guards",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss": "Dismiss guards",
-
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
   "block.minecolonies.blockpaperwall": "Paper wall",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
