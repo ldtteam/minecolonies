@@ -399,6 +399,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
 	        }
 
             InventoryUtils.removeStacksFromItemHandler(worker.getInventoryCitizen(), list);
+	        for (final ItemStack stack : list)
+            {
+                if (stack.hasContainerItem())
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(stack.getContainerItem().getItem(), stack.getCount()));
+                }
+            }
             currentBakingProduct.nextState();
             getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
             getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
