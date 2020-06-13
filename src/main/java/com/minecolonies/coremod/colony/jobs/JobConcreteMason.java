@@ -3,12 +3,13 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.coremod.entity.ai.concrete.EntityAIConcreteMason;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Concrete Mason job.
  */
-public class JobConcreteMason extends AbstractJobCrafter<EntityAIWorkConcreteMason, JobConcreteMason>
+public class JobConcreteMason extends AbstractJobCrafter<EntityAIConcreteMason, JobConcreteMason>
 {
     /**
      * Instantiates the job for the Concrete Mason.
@@ -40,8 +41,8 @@ public class JobConcreteMason extends AbstractJobCrafter<EntityAIWorkConcreteMas
      */
     @NotNull
     @Override
-    public EntityAIWorkConcreteMason generateAI()
+    public EntityAIConcreteMason generateAI()
     {
-        return new EntityAIWorkConcreteMason(this);
+        return new EntityAIConcreteMason(this);
     }
 }
