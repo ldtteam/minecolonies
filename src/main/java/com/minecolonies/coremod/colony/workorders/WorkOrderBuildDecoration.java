@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC;
 
 /**
  * A work order that the build can take to build decorations.
@@ -226,13 +227,38 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             final int level = ((WorkOrderBuildBuilding) this).getUpgradeLevel();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
         else
         {
+
+
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE,getStructureName());
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+
+            String builder = "";
+            for (ICitizenData citizen : colony.getCitizenManager().getCitizens())
+            {
+                try
+                {
+                    if (citizen.getWorkBuilding().getPosition().equals(this.getClaimedBy()))
+                    {
+                        builder = citizen.getName();
+                    }
+                }
+                catch (final Exception ex)
+                {
+                }
+            }
+
+            if (builder.equals(""))
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, getStructureName());
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC, builder, getStructureName());
+            }
         }
 
         if (this.levelUp)
