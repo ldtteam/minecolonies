@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -44,5 +46,12 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
     public EntityAIWorkFletcher generateAI()
     {
         return new EntityAIWorkFletcher(this);
+    }
+
+    @NotNull
+    @Override
+    public IModelType getModel()
+    {
+        return BipedModelType.FLETCHER;
     }
 }
