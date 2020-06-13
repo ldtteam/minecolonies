@@ -21,7 +21,7 @@ public class WorkOrderBuildRemoval extends WorkOrderBuild
     /**
      * Create a new WorkOrder.
      *
-     * @param building the building to build.
+     * @param building the building to remove.
      * @param level    the level it should have.
      */
     public WorkOrderBuildRemoval(@NotNull final IBuilding building, final int level)

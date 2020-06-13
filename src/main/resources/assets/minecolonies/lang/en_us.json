@@ -308,6 +308,7 @@
 
   "entity.builder.messagebuildstart": "Started building %s",
   "entity.builder.messagebuildcomplete": "Finished building %s",
+  "entity.builder.messageremovalcomplete": "Finished deconstructing building %s",
   "entity.builder.messagebuildtoohigh": "%s is too high, Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low, Please raise the building above Y 0.",
   "entity.builder.messageneedmaterial": "I need %s (Amount: %d)",
@@ -416,6 +417,7 @@
   "com.minecolonies.coremod.gui.warehouse.tohuards": "Deliver to Guards:",
 
   "com.minecolonies.coremod.gui.buildtool.nodecoration": "No Decorations",
+  "com.minecolonies.coremod.gui.buildtool.wrongcolony": "Building was picked up in other colony, can only place in colony %d !",
   "com.minecolonies.coremod.gui.buildtool.hut": "Huts",
   "com.minecolonies.coremod.gui.buildtool.decoration": "Decorations",
   "com.minecolonies.coremod.gui.buildtool.nohut": "No Huts",
@@ -608,6 +610,7 @@
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "Cancel Build",
   "com.minecolonies.coremod.gui.workerhuts.cancelupgrade": "Cancel Upgrade",
   "com.minecolonies.coremod.gui.workerhuts.cancelrepair": "Cancel Repair",
+  "com.minecolonies.coremod.gui.workerhuts.canceldeconstruction": "Cancel Removal",
   "com.minecolonies.coremod.network.messages.schematicsavemassage.toobig": "Schematic size is too big, can not be bigger than %s bytes",
 
   "com.minecolonies.coremod.gui.structure.edit.title": "Edit Structure",
@@ -928,7 +931,8 @@
   "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
   "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
   "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
-  "com.minecolonies.coremod.gui.workerhuts.reposition": "Reposition",
+  "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
+  "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick up",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away.",
   "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away.",
@@ -1468,5 +1472,6 @@
   "item.minecolonies.norsemenchiefegg": "Norsemen Chief Egg",
 
   "item.minecolonies.amazonegg": "Amazon Egg",
-  "item.minecolonies.amazonchiefegg": "Amazon Chief Egg"
+  "item.minecolonies.amazonchiefegg": "Amazon Chief Egg",
+  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!"
 }
