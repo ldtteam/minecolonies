@@ -204,6 +204,16 @@ public final class ModJobsInitializer
                                 .setRegistryName(ModJobs.PLANTER_ID)
                                 .createJobEntry();
 
+        ModJobs.rabbitHerder = new JobEntry.Builder()
+                               .setJobProducer(JobRabbitHerder::new)
+                               .setRegistryName(ModJobs.RABBIT_ID)
+                               .createJobEntry();
+
+        ModJobs.concreteMason = new JobEntry.Builder()
+                               .setJobProducer(JobConcreteMason::new)
+                               .setRegistryName(ModJobs.CONCRETE_ID)
+                               .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);

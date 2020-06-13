@@ -47,6 +47,8 @@ public final class ModBuildings
     public static final String        MECHANIC_ID       = "mechanic";
     public static final String        PLANTATION_ID     = "plantation";
     public static final String        TAVERN_ID         = "tavern";
+    public static final String        CONCRETE_ID       = "concretemason";
+    public static final String        RABBIT_ID         = "rabbithutch";
 
     public static       BuildingEntry archery;
     public static       BuildingEntry bakery;
@@ -90,6 +92,8 @@ public final class ModBuildings
     public static       BuildingEntry mechanic;
     public static       BuildingEntry plantation;
     public static       BuildingEntry tavern;
+    public static       BuildingEntry concreteMason;
+    public static       BuildingEntry rabbitHutch;
 
     private ModBuildings()
     {
