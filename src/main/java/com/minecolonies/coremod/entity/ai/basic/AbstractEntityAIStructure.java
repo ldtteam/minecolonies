@@ -264,11 +264,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
                 break;
+            case REMOVE_WATER:
+                //water
+                placer.getIterator().setRemoving();
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
+                  () -> placer.getIterator().decrement((info, pos, handler) -> info.getBlockInfo().getState().getFluidState().isEmpty()), false);
+                break;
             case REMOVE:
-
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
                   () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
                                                                                                          || info.getBlockInfo().getState().getBlock() instanceof AirBlock
+                                                                                                         || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()
                                                                                                          || info.getBlockInfo().getState().getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                                                                                                          || info.getBlockInfo().getState().getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)),
                   true);
@@ -351,7 +357,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               position,
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[]{REMOVE});
+              this, new BuildingStructureHandler.Stage[]{REMOVE_WATER, REMOVE});
         }
         else if ((colonyBuilding != null && colonyBuilding.getBuildingLevel() > 0) ||
                    (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getLevel() > 0))
