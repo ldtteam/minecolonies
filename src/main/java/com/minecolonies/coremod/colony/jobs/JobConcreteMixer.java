@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.concrete.EntityAIConcreteMixer;
+import com.minecolonies.coremod.entity.ai.citizen.concrete.EntityAIConcreteMixer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,5 +46,12 @@ public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, 
     public EntityAIConcreteMixer generateAI()
     {
         return new EntityAIConcreteMixer(this);
+    }
+
+    @NotNull
+    @Override
+    public IModelType getModel()
+    {
+        return BipedModelType.CONCRETE_MIXER;
     }
 }

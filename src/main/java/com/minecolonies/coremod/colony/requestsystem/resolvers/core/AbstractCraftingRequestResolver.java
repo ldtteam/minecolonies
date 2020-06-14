@@ -66,11 +66,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return Optional.empty();
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-	//Noop
+	    //Noop
     }
 
     @Override

@@ -2597,6 +2597,25 @@ public class InventoryUtils
                 return;
             }
         }
+    }
 
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     * @param invWrapper the inventory item handler.
+     * @param itemStack the itemStack to decrease.
+     * @param quantity the quantity.
+     * @return true if successfully.
+     */
+    public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
+    {
+        for (int i = 0; i < invWrapper.getSlots(); i++)
+        {
+            if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
+            {
+                invWrapper.getStackInSlot(i).shrink(quantity);
+                return true;
+            }
+        }
+        return false;
     }
 }

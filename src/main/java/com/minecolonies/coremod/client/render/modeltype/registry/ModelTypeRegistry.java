@@ -14,7 +14,7 @@ import java.util.Map;
 public class ModelTypeRegistry implements IModelTypeRegistry
 {
     private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> maleMap   = Maps.newHashMap();
-    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>>                        femaleMap = Maps.newHashMap();
+    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> femaleMap = Maps.newHashMap();
 
     public ModelTypeRegistry()
     {
@@ -47,7 +47,8 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.PLANTER, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
         register(BipedModelType.FLETCHER, new ModelEntityFletcherMale(), new ModelEntityFletcherFemale());
         register(BipedModelType.MECHANIST, new ModelEntityMechanistMale(), new ModelEntityMechanistFemale());
-
+        register(BipedModelType.RABBIT_HERDER, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
+        register(BipedModelType.CONCRETE_MIXER, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
     }
 
     @Override
