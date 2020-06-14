@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.jobs.JobConcreteMason;
+import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -23,12 +23,12 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the concrete mason building.
  */
-public class BuildingConcreteMason extends AbstractBuildingCrafter
+public class BuildingConcreteMixer extends AbstractBuildingCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String CONCRETE_MASON = "mechanic";
+    private static final String CONCRETE_MIXER = "concretemixer";
 
     /**
      * Instantiates a new concrete mason building.
@@ -36,7 +36,7 @@ public class BuildingConcreteMason extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location
      */
-    public BuildingConcreteMason(final IColony c, final BlockPos l)
+    public BuildingConcreteMixer(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -45,7 +45,7 @@ public class BuildingConcreteMason extends AbstractBuildingCrafter
     @Override
     public String getSchematicName()
     {
-        return CONCRETE_MASON;
+        return CONCRETE_MIXER;
     }
 
     @Override
@@ -58,14 +58,14 @@ public class BuildingConcreteMason extends AbstractBuildingCrafter
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        return new JobConcreteMason(citizen);
+        return new JobConcreteMixer(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return CONCRETE_MASON;
+        return CONCRETE_MIXER;
     }
 
     @NotNull
@@ -92,14 +92,14 @@ public class BuildingConcreteMason extends AbstractBuildingCrafter
     @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
-        return ModBuildings.concreteMason;
+        return ModBuildings.concreteMixer;
     }
 
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         //todo add research
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Concrete Mason", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Concrete Mixer", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -129,7 +129,7 @@ public class BuildingConcreteMason extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, CONCRETE_MASON);
+            return new WindowHutWorkerPlaceholder<>(this, CONCRETE_MIXER);
         }
     }
 }

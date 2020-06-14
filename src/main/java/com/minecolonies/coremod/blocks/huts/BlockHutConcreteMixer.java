@@ -9,18 +9,18 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the concrete mason.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutConcreteMason extends AbstractBlockHut<BlockHutConcreteMason>
+public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixer>
 {
     @NotNull
     @Override
     public String getName()
     {
-        return "blockhutconcretemason";
+        return "blockhutconcretemixer";
     }
 
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.concreteMason;
+        return ModBuildings.concreteMixer;
     }
 }

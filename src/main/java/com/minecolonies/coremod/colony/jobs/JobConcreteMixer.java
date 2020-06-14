@@ -3,20 +3,20 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.concrete.EntityAIConcreteMason;
+import com.minecolonies.coremod.entity.ai.concrete.EntityAIConcreteMixer;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Concrete Mason job.
  */
-public class JobConcreteMason extends AbstractJobCrafter<EntityAIConcreteMason, JobConcreteMason>
+public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, JobConcreteMixer>
 {
     /**
      * Instantiates the job for the Concrete Mason.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobConcreteMason(final ICitizenData entity)
+    public JobConcreteMixer(final ICitizenData entity)
     {
         super(entity);
     }
@@ -24,14 +24,14 @@ public class JobConcreteMason extends AbstractJobCrafter<EntityAIConcreteMason, 
     @Override
     public JobEntry getJobRegistryEntry()
     {
-        return ModJobs.concreteMason;
+        return ModJobs.concreteMixer;
     }
 
     @NotNull
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.concretemason";
+        return "com.minecolonies.coremod.job.concretemixer";
     }
 
     /**
@@ -41,8 +41,8 @@ public class JobConcreteMason extends AbstractJobCrafter<EntityAIConcreteMason, 
      */
     @NotNull
     @Override
-    public EntityAIConcreteMason generateAI()
+    public EntityAIConcreteMixer generateAI()
     {
-        return new EntityAIConcreteMason(this);
+        return new EntityAIConcreteMixer(this);
     }
 }

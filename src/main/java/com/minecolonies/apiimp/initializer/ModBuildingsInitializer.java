@@ -324,10 +324,10 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
                                     .createBuildingEntry();
 
-        ModBuildings.concreteMason = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutConcreteMason)
-                                    .setBuildingProducer(BuildingConcreteMason::new)
-                                    .setBuildingViewProducer(() -> BuildingConcreteMason.View::new)
+        ModBuildings.concreteMixer = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
+                                    .setBuildingProducer(BuildingConcreteMixer::new)
+                                    .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
                                     .createBuildingEntry();
 
@@ -374,6 +374,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.plantation);
         reg.register(ModBuildings.tavern);
         reg.register(ModBuildings.rabbitHutch);
-        reg.register(ModBuildings.concreteMason);
+        reg.register(ModBuildings.concreteMixer);
     }
 }

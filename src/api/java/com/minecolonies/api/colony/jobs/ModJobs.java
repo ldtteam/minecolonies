@@ -45,7 +45,7 @@ public final class ModJobs
     public static final ResourceLocation MECHANIC_ID       = new ResourceLocation(Constants.MOD_ID,"mechanic");
     public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID,"planter");
     public static final ResourceLocation RABBIT_ID     = new ResourceLocation(Constants.MOD_ID,"rabbitherder");
-    public static final ResourceLocation CONCRETE_ID    = new ResourceLocation(Constants.MOD_ID,"concretemason");
+    public static final ResourceLocation CONCRETE_ID    = new ResourceLocation(Constants.MOD_ID,"concretemixer");
 
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
@@ -85,7 +85,7 @@ public final class ModJobs
     public static       JobEntry         mechanic;
     public static       JobEntry         planter;
     public static       JobEntry         rabbitHerder;
-    public static       JobEntry         concreteMason;
+    public static       JobEntry         concreteMixer;
 
     private ModJobs()
     {

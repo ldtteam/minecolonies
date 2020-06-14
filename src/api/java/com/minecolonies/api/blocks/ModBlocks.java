@@ -60,7 +60,7 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutPlantation;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutTavern;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutRabbitHutch;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutConcreteMason;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutConcreteMixer;
 
     /**
      * Utility blocks.
@@ -126,6 +126,6 @@ public final class ModBlocks
           blockHutPlantation,
           blockHutTavern,
           blockHutRabbitHutch,
-          blockHutConcreteMason};
+          blockHutConcreteMixer};
     }
 }

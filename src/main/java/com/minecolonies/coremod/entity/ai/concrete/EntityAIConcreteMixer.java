@@ -2,8 +2,8 @@ package com.minecolonies.coremod.entity.ai.concrete;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcreteMason;
-import com.minecolonies.coremod.colony.jobs.JobConcreteMason;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcreteMixer;
+import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +15,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.S
 /**
  * Concrete mason AI class.
  */
-public class EntityAIConcreteMason extends AbstractEntityAICrafting<JobConcreteMason, BuildingConcreteMason>
+public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteMixer, BuildingConcreteMixer>
 {
     /**
      * Constructor for the Concrete mason.
@@ -23,15 +23,15 @@ public class EntityAIConcreteMason extends AbstractEntityAICrafting<JobConcreteM
      *
      * @param job a Concrete mason job to use.
      */
-    public EntityAIConcreteMason(@NotNull final JobConcreteMason job)
+    public EntityAIConcreteMixer(@NotNull final JobConcreteMixer job)
     {
         super(job);
     }
 
     @Override
-    public Class<BuildingConcreteMason> getExpectedBuildingClass()
+    public Class<BuildingConcreteMixer> getExpectedBuildingClass()
     {
-        return BuildingConcreteMason.class;
+        return BuildingConcreteMixer.class;
     }
 
     @Override
