@@ -66,8 +66,8 @@ public final class WorkerUtil
     /**
      * A list of all the path blocks on which the citizen walks faster.
      */
-    private static final List<Block> pathBlocks = Arrays.asList(new Block[] {Blocks.GRAVEL, Blocks.GRASS_PATH,
-          Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB});
+    private static final List<Block> pathBlocks = Arrays.asList(Blocks.GRAVEL, Blocks.GRASS_PATH,
+          Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB);
 
     private WorkerUtil()
     {
