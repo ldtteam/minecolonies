@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcret
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.ConcretePowderBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -87,6 +86,12 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         return GET_RECIPE;
     }
 
+    @Override
+    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    {
+        return getOwnBuilding().outputBlockCountInWorld(primaryOutput);
+    }
+
     /**
      * Mix the concrete and mine it.
      *
@@ -105,14 +110,14 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             {
                 if (walkToBlock(posToPlace))
                 {
-                    return getState();
+                    return START_WORKING;
                 }
 
                 if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
                 {
                     world.setBlockState(posToPlace, block.getDefaultState().updatePostPlacement(Direction.DOWN, block.getDefaultState(), world, posToPlace, posToPlace), 0x03);
                 }
-                return getState();
+                return START_WORKING;
             }
         }
 
@@ -121,14 +126,15 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         {
             if (walkToBlock(pos))
             {
-                return getState();
+                return START_WORKING;
             }
 
             if (mineBlock(pos))
             {
+                this.resetActionsDone();
                 return CRAFT;
             }
-            return getState();
+            return START_WORKING;
         }
 
         if (InventoryUtils.hasItemInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), CONCRETE))
@@ -136,8 +142,12 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
+        else
+        {
+            incrementActionsDone();
+        }
 
-        return getState();
+        return START_WORKING;
     }
 
     @Override
@@ -177,12 +187,10 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         final IAIState mixState = mixConcrete();
         if (mixState == getState())
         {
-            currentRequest.addDelivery(concrete);
-
+            currentRequest.addDelivery(new ItemStack(concrete.getItem(), 1));
+            job.setCraftCounter(job.getCraftCounter() + 1);
             if (job.getCraftCounter() >= job.getMaxCraftingCount())
             {
-                currentRequest.addDelivery(new ItemStack(concrete.getItem(), 1));
-
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 currentRecipeStorage = null;
                 resetValues();
@@ -194,22 +202,6 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
                         job.finishRequest(true);
                         worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
                     }
-                }
-            }
-            else
-            {
-                final IAIState check = checkForItems(currentRecipeStorage);
-                if (check == CRAFT)
-                {
-                    job.setCraftCounter(job.getCraftCounter() + 1);
-                    return GET_RECIPE;
-                }
-                else
-                {
-                    currentRequest = null;
-                    job.finishRequest(false);
-                    incrementActionsDoneAndDecSaturation();
-                    resetValues();
                 }
             }
         }

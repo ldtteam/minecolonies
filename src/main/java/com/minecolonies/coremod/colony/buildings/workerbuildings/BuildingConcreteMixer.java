@@ -60,7 +60,12 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
      * Resource location for concrete tag.
      */
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation("minecolonies", "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation("minecolonies", "concrete");
+    private static final ResourceLocation CONCRETE_BLOCK = new ResourceLocation("minecolonies", "concrete");
+
+    /**
+     * How deep the water can max be to place concrete in it.
+     */
+    private static final int WATER_DEPTH_SUPPORT = 3;
 
     /**
      * Water position list.
@@ -110,9 +115,9 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 final IRecipeStorage storage2 = StandardFactoryController.getInstance().getNewInstance(
                   TypeConstants.RECIPE,
                   StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  Collections.singletonList(new ItemStack(item, 8)),
+                  Collections.singletonList(new ItemStack(item, 1)),
                   3,
-                  new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 8),
+                  new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
                 final IToken<?> token2 = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2);
@@ -129,7 +134,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         if (!blockState.getFluidState().isEmpty())
         {
-            if (blockState.getFluidState().getFluid() == Fluids.FLOWING_WATER && blockState.getFluidState().getLevel() <= 3)
+            if (blockState.getFluidState().getFluid() == Fluids.FLOWING_WATER && blockState.getFluidState().getLevel() <= WATER_DEPTH_SUPPORT)
             {
                 final List<BlockPos> fluidPos = waterPos.getOrDefault(blockState.getFluidState().getLevel(), new ArrayList<>());
                 if (!fluidPos.contains(pos))
@@ -183,7 +188,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
             final List<BlockPos> water = new ArrayList<>();
             for (int j = 0; j < waterTagList.size(); ++j)
             {
-                final CompoundNBT waterSubCompound = waterTagList.getCompound(i);
+                final CompoundNBT waterSubCompound = waterTagList.getCompound(j);
 
                 final BlockPos waterPos = NBTUtil.readBlockPos(waterSubCompound);
                 if (!water.contains(waterPos))
@@ -267,7 +272,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     @Nullable
     public BlockPos getBlockToMine()
     {
-        for (int i = 1; i <= 3; i++)
+        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -288,7 +293,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     @Nullable
     public BlockPos getBlockToPlace()
     {
-        for (int i = 1; i <= 3; i++)
+        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -300,6 +305,31 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         }
 
         return null;
+    }
+
+    /**
+     * Get how much of an itemStack we already placed in the world.
+     * @param primaryOutput the block to check for.
+     * @return the total count.
+     */
+    public int outputBlockCountInWorld(final ItemStack primaryOutput)
+    {
+        int count = 0;
+        if (primaryOutput.getItem() instanceof BlockItem)
+        {
+            for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+            {
+                for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
+                {
+                    if (((BlockItem) primaryOutput.getItem()).getBlock() == colony.getWorld().getBlockState(pos).getBlock())
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
     }
 
     /**
