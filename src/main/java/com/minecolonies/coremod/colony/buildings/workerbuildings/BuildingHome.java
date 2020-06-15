@@ -32,6 +32,7 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OCCUPIED_BEDS;
 
 /**
  * The class of the citizen hut.
@@ -44,7 +45,7 @@ public class BuildingHome extends AbstractBuilding
     private static final String CITIZEN = "citizen";
 
     /**
-     * List of all bedList.
+     * List of all beds.
      */
     @NotNull
     private final List<BlockPos> bedList = new ArrayList<>();
@@ -74,6 +75,11 @@ public class BuildingHome extends AbstractBuilding
      * The timer counting ticks to the next time creating a child
      */
     private int childCreationTimer;
+
+    /**
+     * A list of the occupied beds.
+     */
+    private final List<BlockPos> occupiedBeds = new ArrayList<>();
 
     /**
      * Instantiates a new citizen hut.
@@ -117,6 +123,17 @@ public class BuildingHome extends AbstractBuilding
                 bedList.add(bedPos);
             }
         }
+        final ListNBT fullBedTagList = compound.getList(TAG_OCCUPIED_BEDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < fullBedTagList.size(); ++i)
+        {
+            occupiedBeds.clear();
+            final CompoundNBT bedCompound = bedTagList.getCompound(i);
+            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
+            if (!occupiedBeds.contains(bedPos))
+            {
+                occupiedBeds.add(bedPos);
+            }
+        }
     }
 
     @Override
@@ -140,6 +157,15 @@ public class BuildingHome extends AbstractBuilding
                 bedTagList.add(NBTUtil.writeBlockPos(pos));
             }
             compound.put(TAG_BEDS, bedTagList);
+        }
+        if (!occupiedBeds.isEmpty())
+        {
+            @NotNull final ListNBT fullBedTagList = new ListNBT();
+            for (@NotNull final BlockPos pos : bedList)
+            {
+                fullBedTagList.add(NBTUtil.writeBlockPos(pos));
+            }
+            compound.put(TAG_OCCUPIED_BEDS, fullBedTagList);
         }
 
         return compound;
@@ -512,10 +538,45 @@ public class BuildingHome extends AbstractBuilding
         getColony().getCitizenManager().calculateMaxCitizens();
     }
 
+    /**
+     * Gets a list of all beds in this building.
+     * 
+     * @return a list of all beds in this building.
+     */
     @NotNull
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);
+    }
+
+    /**
+     * Checks whether the given bed is occupied.
+     * 
+     * @param bed the head of the bed to check.
+     * @return whether the given bed is occupied.
+     */
+    public boolean isBedOccupied(BlockPos bed)
+    {
+        return occupiedBeds.contains(bed);
+    }
+
+    /**
+     * Sets whether the given bed is occupied.
+     * 
+     * @param bed the head of the bed to set.
+     * @param occupied whether the bed is occupied.
+     */
+    public void setBedOccupied(BlockPos bed, boolean occupied) {
+        if(occupied)
+        {
+            if (bedList.contains(bed))
+            {
+                occupiedBeds.add(bed);
+            }
+        } else if(occupiedBeds.contains(bed))
+        {
+            occupiedBeds.remove(bed);
+        }
     }
 
     @Override

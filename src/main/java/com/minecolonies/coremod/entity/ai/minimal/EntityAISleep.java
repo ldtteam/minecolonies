@@ -117,15 +117,14 @@ public class EntityAISleep extends Goal
             final BlockState state = citizen.world.getBlockState(usedBed);
             if (state.getBlock().isIn(BlockTags.BEDS))
             {
-                final BlockState headState = citizen.world.getBlockState(usedBed);
-                citizen.world.setBlockState(usedBed, headState.with(BedBlock.OCCUPIED, false), 0x03);
-
-                final BlockPos feetPos = usedBed.offset(headState.get(BedBlock.HORIZONTAL_FACING).getOpposite());
-                final BlockState feetState = citizen.world.getBlockState(feetPos);
-
-                if (feetState.getBlock().isIn(BlockTags.BEDS))
+            	final IColony colony = citizen.getCitizenColonyHandler().getColony();
+                if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
                 {
-                    citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, false), 0x03);
+            	    final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                    if (hut instanceof BuildingHome)
+                    {
+                        setBedOccupied((BuildingHome) hut, false);
+                    }
                 }
             }
             usedBed = null;
@@ -205,17 +204,11 @@ public class EntityAISleep extends Goal
                         if (state.getBlock().isIn(BlockTags.BEDS)
                               && !state.get(BedBlock.OCCUPIED)
                               && state.get(BedBlock.PART).equals(BedPart.HEAD)
+                              && !((BuildingHome) hut).isBedOccupied(pos)
                               && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
-                            citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
-
-                            final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
-                            final BlockState feetState = citizen.world.getBlockState(feetPos);
-                            if (feetState.getBlock().isIn(BlockTags.BEDS))
-                            {
-                                citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
-                            }
+                            setBedOccupied((BuildingHome) hut, true);
                             return;
                         }
                     }
@@ -277,5 +270,26 @@ public class EntityAISleep extends Goal
             SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getPosition(), EventType.OFF_TO_BED, citizen.getCitizenData());
             //add further workers as soon as available.
         }
+    }
+
+    /**
+     * Sets the used beds occupied state.
+     * 
+     * @param hut      the hut in which the citizen is sleeping.
+     * @param occupied whether the bed should be occupied.
+     */
+    private void setBedOccupied(BuildingHome hut, boolean occupied) {
+        final BlockState headState = citizen.world.getBlockState(usedBed);
+        citizen.world.setBlockState(usedBed, headState.with(BedBlock.OCCUPIED, occupied), 0x03);
+
+        final BlockPos feetPos = usedBed.offset(headState.get(BedBlock.HORIZONTAL_FACING).getOpposite());
+        final BlockState feetState = citizen.world.getBlockState(feetPos);
+
+        if (feetState.getBlock().isIn(BlockTags.BEDS))
+        {
+            citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, occupied), 0x03);
+        }
+
+        hut.setBedOccupied(usedBed, occupied);
     }
 }
