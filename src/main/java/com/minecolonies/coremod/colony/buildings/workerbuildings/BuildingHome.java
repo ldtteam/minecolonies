@@ -191,6 +191,7 @@ public class BuildingHome extends AbstractBuilding
                 world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
             }
         }
+        occupiedBeds.clear();
     }
 
     @NotNull
@@ -566,7 +567,8 @@ public class BuildingHome extends AbstractBuilding
      * @param bed the head of the bed to set.
      * @param occupied whether the bed is occupied.
      */
-    public void setBedOccupied(BlockPos bed, boolean occupied) {
+    public void setBedOccupied(BlockPos bed, boolean occupied)
+    {
         if(occupied)
         {
             if (bedList.contains(bed))

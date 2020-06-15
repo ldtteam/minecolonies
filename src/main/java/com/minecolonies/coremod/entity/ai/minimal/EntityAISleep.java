@@ -278,7 +278,8 @@ public class EntityAISleep extends Goal
      * @param hut      the hut in which the citizen is sleeping.
      * @param occupied whether the bed should be occupied.
      */
-    private void setBedOccupied(BuildingHome hut, boolean occupied) {
+    private void setBedOccupied(BuildingHome hut, boolean occupied)
+    {
         final BlockState headState = citizen.world.getBlockState(usedBed);
         citizen.world.setBlockState(usedBed, headState.with(BedBlock.OCCUPIED, occupied), 0x03);
 
