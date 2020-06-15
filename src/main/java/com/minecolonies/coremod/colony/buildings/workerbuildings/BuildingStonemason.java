@@ -11,26 +11,16 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -105,75 +95,29 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            // End Additional recipe rules
         }
 
-        double amountOfValidBlocks = 0;
-        double blocks = 0;
-
-
-        if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
-        {
-            final Item item = storage.getPrimaryOutput().getItem();
-            if (item.isIn(Tags.Items.STONE) ||
-                    item.isIn(Tags.Items.COBBLESTONE) ||
-                    item.isIn(ItemTags.STONE_BRICKS) ||
-                    item.getRegistryName().getPath().contains("prismarine") ||
-                    item.getRegistryName().getPath().contains("end_stone") ||
-                    item.getRegistryName().getPath().contains("brick"))
-            {
-                return true;
-            }
-        }
-        else if (storage.getPrimaryOutput().getItem() == Items.FLOWER_POT)
-        {
-            return true;
-        }
-
-        for(final ItemStack stack : storage.getInput())
-        {
-            if(!ItemStackUtils.isEmpty(stack))
-            {
-                blocks++;
-                if (stack.getItem() instanceof BlockItem)
-                {
-                    final Block block = ((BlockItem) stack.getItem()).getBlock();
-                    if (block.isIn(Tags.Blocks.STONE) ||
-                            block.isIn(Tags.Blocks.COBBLESTONE) ||
-                            block.isIn(BlockTags.STONE_BRICKS) ||
-                            block.asItem().getRegistryName().getPath().contains("smooth_stone") ||
-                            block.asItem().getRegistryName().getPath().contains("sandstone_slab") ||
-                            block.asItem().getRegistryName().getPath().contains("brick"));
-                    {
-                        amountOfValidBlocks++;
-                        continue;
-                    }
-                }
-
-                for (final ResourceLocation tag : stack.getItem().getTags())
-                {
-                    if(tag.getPath().contains("stone"))
-                    {
-                        amountOfValidBlocks++;
-                        break;
-                    }
-                    else if(tag.getPath().contains("stick") || tag.getPath().contains("wood") || tag.getPath().toLowerCase(Locale.US).contains("redstone") || tag.getPath().contains("string") || tag.getPath().contains("gunpowder"))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+        return false;
     }
 
     @Override
