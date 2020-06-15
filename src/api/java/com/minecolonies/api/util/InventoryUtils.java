@@ -2688,7 +2688,7 @@ public class InventoryUtils
             {
                 if (stack.getCount() >= qty)
                 {
-                    stack.shrink(qty);
+                    invWrapper.extractItem(i, qty, false);
                     return true;
                 }
                 else
