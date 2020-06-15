@@ -338,6 +338,18 @@ public class BuildingHome extends AbstractBuilding
                     }
                 }
             }
+
+            final List<String> possibleSuffixes = new ArrayList<>();
+            possibleSuffixes.add(mom.getTextureSuffix());
+            possibleSuffixes.add(dad.getTextureSuffix());
+
+            if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d"))
+            {
+                possibleSuffixes.add("_b");
+            }
+
+            newCitizen.setSuffix(possibleSuffixes.get(rand.nextInt(possibleSuffixes.size())));
+
             final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
