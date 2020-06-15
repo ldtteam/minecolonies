@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -117,10 +118,10 @@ public class EntityAISleep extends Goal
             final BlockState state = citizen.world.getBlockState(usedBed);
             if (state.getBlock().isIn(BlockTags.BEDS))
             {
-            	final IColony colony = citizen.getCitizenColonyHandler().getColony();
+                final IColony colony = citizen.getCitizenColonyHandler().getColony();
                 if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
                 {
-            	    final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                    final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                     if (hut instanceof BuildingHome)
                     {
                         setBedOccupied((BuildingHome) hut, false);
@@ -204,7 +205,7 @@ public class EntityAISleep extends Goal
                         if (state.getBlock().isIn(BlockTags.BEDS)
                               && !state.get(BedBlock.OCCUPIED)
                               && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                              && !((BuildingHome) hut).isBedOccupied(pos)
+                              && !isBedOccupied((BuildingHome) hut, pos)
                               && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
@@ -290,7 +291,27 @@ public class EntityAISleep extends Goal
         {
             citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, occupied), 0x03);
         }
-
-        hut.setBedOccupied(usedBed, occupied);
+    }
+    
+    /**
+     * Checks whether any of the citizens living in this hut are sleeping in the given bed.
+     * 
+     * @param hut the hut this citizen is living in.
+     * @param bed the bed to check.
+     * @return whether any of the citizens living in this hut are sleeping in the given bed.
+     */
+    private boolean isBedOccupied(BuildingHome hut, BlockPos bed)
+    {
+        for (ICitizenData citizen: hut.getAssignedCitizen())
+        {
+            if (this.citizen.getCitizenId() != citizen.getId())
+            {
+                if (citizen.getBedPos().equals(bed))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

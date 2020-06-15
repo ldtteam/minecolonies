@@ -303,11 +303,6 @@ public final class NbtTagConstants
     public static final String TAG_BEDS = "beds";
 
     /**
-     * List storing all beds in which a citizen is sleeping.
-     */
-    public static final String TAG_OCCUPIED_BEDS = "occupied_beds";
-
-    /**
      * Patients tags.
      */
     public static final String TAG_PATIENTS = "patients";
