@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
@@ -61,6 +62,12 @@ public final class WorkerUtil
      * List of tools to test blocks against, used for finding right tool.
      */
     public static List<Tuple<ToolType, ItemStack>> tools;
+    
+    /**
+     * A list of all the path blocks on which the citizen walks faster.
+     */
+    private static final List<Block> pathBlocks = Arrays.asList(Blocks.GRAVEL, Blocks.GRASS_PATH,
+          Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB);
 
     private WorkerUtil()
     {
@@ -92,7 +99,7 @@ public final class WorkerUtil
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONE_BRICKS || block == Blocks.GRASS_PATH;
+        return pathBlocks.contains(block);
     }
 
     /**
