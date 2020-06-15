@@ -7,7 +7,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -59,8 +58,6 @@ public class CommandListColonies implements IMCCommand
 
     private int executeCommand(final CommandContext<CommandSource> context, final int startpage)
     {
-        final Entity sender = context.getSource().getEntity();
-
         int page = startpage;
         final List<IColony> colonies = IColonyManager.getInstance().getAllColonies();
 
@@ -111,7 +108,7 @@ public class CommandListColonies implements IMCCommand
             context.getSource().sendFeedback(teleport, true);
         }
 
-        final ITextComponent prevButton = new StringTextComponent("click").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 
         final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(

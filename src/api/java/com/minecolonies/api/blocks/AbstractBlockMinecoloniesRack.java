@@ -1,6 +1,5 @@
 package com.minecolonies.api.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -8,7 +7,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 
-public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B>
 {
     public static final EnumProperty<RackType> VARIANT
                                                             =
@@ -22,7 +21,7 @@ public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinec
 
     public AbstractBlockMinecoloniesRack(final Properties properties)
     {
-        super(properties.func_226896_b_());
+        super(properties.notSolid());
     }
 
     /**

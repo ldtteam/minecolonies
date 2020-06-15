@@ -60,16 +60,17 @@ public final class ResearchConstants
     public static final String ARCHER_ARMOR = "Archer Armour";
     public static final String MELEE_ARMOR = "Melee Armour";
     public static final String ARMOR_DURABILITY = "Armor Durability";
-    public static final String FLEEING_DAMAGE = "Fleeing Damage";
-    public static final String FLEEING_SPEED = "Fleeing Speed";
-    public static final String MELEE_DAMAGE = "Melee Damage";
-    public static final String ARCHER_DAMAGE = "Archer Damage";
-    public static final String RETREAT       = "Retreat";
-    public static final String NONE          = "None";
-    public static final String SHIELD_USAGE  = "Shield Usage";
-    public static final String DOUBLE_ARROWS = "Double Arrows";
-    public static final String BLOCK_ATTACKS = "Block Attacks";
-    public static final String SLEEP_LESS    = "Sleep Less";
+    public static final String FLEEING_DAMAGE   = "Fleeing Damage";
+    public static final String FLEEING_SPEED    = "Fleeing Speed";
+    public static final String MELEE_DAMAGE     = "Melee Damage";
+    public static final String ARCHER_DAMAGE    = "Archer Damage";
+    public static final String RETREAT          = "Retreat";
+    public static final String NONE             = "None";
+    public static final String SHIELD_USAGE     = "Shield Usage";
+    public static final String KNIGHT_TAUNT     = "Knight taunt mobs";
+    public static final String DOUBLE_ARROWS    = "Double Arrows";
+    public static final String BLOCK_ATTACKS    = "Block Attacks";
+    public static final String SLEEP_LESS       = "Sleep Less";
 
     public static final String TEACHING = "Teaching";
     public static final String GROWTH = "Growth";
@@ -92,6 +93,10 @@ public final class ResearchConstants
     public static final String WORKING_IN_RAIN = "Working in Rain";
     public static final String TOOL_DURABILITY = "Tool Durability";
     public static final String INV_SLOTS       = "Citizen Inv Slots";
+
+    public static final String PLANT_2       = "Plant 2";
+    public static final String CRUSHING_11   = "1:1 Crushing";
+    public static final String FIRE_RES      = "Miner Fire Res";
 
     /**
      * Private constructor to hide implicit public one.

@@ -13,8 +13,6 @@ import java.util.List;
  */
 public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
 {
-    private static final String CANDB = "chiselsandbits";
-
     /**
      * Check if tileEntity is candb block.
      *

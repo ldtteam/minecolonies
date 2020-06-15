@@ -36,7 +36,7 @@ import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 /**
  * Class which handles the miner behaviour.
  */
-public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrder<JobMiner>
+public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrder<JobMiner, BuildingMiner>
 {
     /**
      * Main shaft location.
@@ -137,7 +137,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public Class<? extends BuildingMiner> getExpectedBuildingClass()
+    public Class<BuildingMiner> getExpectedBuildingClass()
     {
         return BuildingMiner.class;
     }
@@ -152,12 +152,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         //Miner is at building
         return PREPARING;
-    }
-
-    @Override
-    public BuildingMiner getOwnBuilding()
-    {
-        return getOwnBuilding(BuildingMiner.class);
     }
 
     /**
@@ -637,7 +631,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState searchANodeToMine(@NotNull final Level currentLevel)
     {
-        final BuildingMiner buildingMiner = getOwnBuilding(BuildingMiner.class);
+        final BuildingMiner buildingMiner = getOwnBuilding();
         if (buildingMiner == null)
         {
             return IDLE;
@@ -895,8 +889,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             final Level currentLevel = minerBuilding.getCurrentLevel();
 
             currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), getOwnBuilding().getActiveNode());
-            getOwnBuilding(BuildingMiner.class).setActiveNode(null);
-            getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
+            getOwnBuilding().setActiveNode(null);
+            getOwnBuilding().setOldNode(workingNode);
             WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         else if (job.getBlueprint() != null)

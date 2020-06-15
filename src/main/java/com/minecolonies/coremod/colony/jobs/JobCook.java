@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +59,7 @@ public class JobCook extends AbstractJobCrafter<EntityAIWorkCook, JobCook>
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobCook> generateAI()
+    public EntityAIWorkCook generateAI()
     {
         return new EntityAIWorkCook(this);
     }

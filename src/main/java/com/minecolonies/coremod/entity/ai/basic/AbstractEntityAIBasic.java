@@ -58,11 +58,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.scaledPriority;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -72,7 +72,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  *
  * @param <J> The job this ai has to fulfil
  */
-public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractAISkeleton<J>
 {
     /**
      * The standard delay after each terminated action.
@@ -114,6 +114,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Slot he is currently trying to dump.
      */
     private int slotAt = 0;
+
+    /**
+     * Indicator if something has actually been dumped.
+     */
+    private boolean hasDumpedItems = false;
 
     /**
      * Delay for walking.
@@ -262,10 +267,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding()
+    public B getOwnBuilding()
     {
-        final IBuildingWorker worker = getOwnBuilding(getExpectedBuildingClass());
-        return worker == null ? null : (W) worker;
+        return getOwnBuilding(getExpectedBuildingClass());
     }
 
     /**
@@ -273,10 +277,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return the building type associated with this AI's worker.
      */
-    public Class getExpectedBuildingClass()
-    {
-        return AbstractBuildingWorker.class;
-    }
+    public abstract Class<B> getExpectedBuildingClass();
 
     /**
      * Can be overridden in implementations to return the exact building type.
@@ -286,14 +287,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
+    @SuppressWarnings("unchecked")
+    private B getOwnBuilding(@NotNull final Class<B> type)
     {
         if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
         {
-            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+            return (B) worker.getCitizenColonyHandler().getWorkBuilding();
         }
         else
         {
+            Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
+                worker.getCitizenData().getName(),
+                worker.getCitizenColonyHandler().getWorkBuilding().getClass().getSimpleName(),
+                type.getSimpleName());
+
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData().setJob(null);
@@ -317,7 +324,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName().getFormattedText();
                 final BlockPos workerPosition = worker.getPosition();
-                final IJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
+                final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
@@ -421,7 +428,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
-            for (final IRequest request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
+            for (final IRequest<?> request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
             {
                 final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
                 if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
@@ -535,7 +542,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            final ImmutableList<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
             final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
@@ -916,7 +923,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final List<IRequest<? extends Tool>> openRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
-        for (final IRequest token : openRequests)
+        for (final IRequest<?> token : openRequests)
         {
             worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
         }
@@ -1022,7 +1029,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             // Note that this will not create a pickup request when another request is already in progress.
             if (building.getPickUpPriority() > 0)
             {
-                building.createPickupRequest(MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                building.createPickupRequest(getMaxBuildingPriority(true));
+                hasDumpedItems = false;
             }
             alreadyKept.clear();
             slotAt = 0;
@@ -1038,11 +1046,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         slotAt = 0;
         this.clearActionsDone();
 
-        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0)
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && hasDumpedItems)
         {
             // Worker is not currently crafting, pickup is allowed.
             // Note that this will not create a pickup request when another request is already in progress.
-            building.createPickupRequest(building.getPickUpPriority());
+            building.createPickupRequest(scaledPriority(building.getPickUpPriority()));
+            hasDumpedItems = false;
         }
         return afterDump();
     }
@@ -1115,6 +1124,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
+                hasDumpedItems = true;
             }
         }
         slotAt++;

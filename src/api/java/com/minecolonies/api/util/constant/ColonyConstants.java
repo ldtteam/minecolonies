@@ -101,9 +101,9 @@ public final class ColonyConstants
     /**
      * Pirate Constants.
      */
-    public static final String SMALL_PIRATE_SHIP = "small_pirate_ship";
-    public static final String MEDIUM_PIRATE_SHIP = "medium_pirate_ship";
-    public static final String BIG_PIRATE_SHIP = "big_pirate_ship";
+    public static final String SMALL_SHIP      = "small_";
+    public static final String MEDIUM_SHIP = "medium_";
+    public static final String BIG_SHIP    = "big_";
 
     /**
      * Turn off the help manager when one of these applies.

@@ -6,6 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.AirBlock;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_S
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAISkill<J>
+public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAISkill<J, B>
 {
     /**
      * The amount of xp the entity gains per block mined.
@@ -63,11 +64,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * Ticks to wait until discovering that is stuck.
      */
     private static final int STUCK_WAIT_TICKS = 20;
-
-    /**
-     * The amount of time to wait while walking to items.
-     */
-    private static final int WAIT_WHILE_WALKING = 5;
 
     /**
      * Horizontal range in which the worker picks up items.
@@ -122,7 +118,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, worker.getCurrentPosition());
+        return mineBlock(blockToMine, worker.getPosition());
     }
 
     /**

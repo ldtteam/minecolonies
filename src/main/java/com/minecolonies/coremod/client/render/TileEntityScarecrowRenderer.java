@@ -114,7 +114,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
             }
         }
 
-        final IVertexBuilder vertexConsumer = getMaterial(te).getBuffer(iRenderTypeBuffer, RenderType::entitySolid);
+        final IVertexBuilder vertexConsumer = getMaterial(te).getBuffer(iRenderTypeBuffer, RenderType::getEntitySolid);
         this.model.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
     }

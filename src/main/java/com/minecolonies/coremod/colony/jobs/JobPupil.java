@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.school.EntityAIWorkPupil;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Job class of the pupil.
  */
-public class JobPupil extends AbstractJob
+public class JobPupil extends AbstractJob<EntityAIWorkPupil, JobPupil>
 {
     /**
      * Public constructor of the pupil job.
@@ -48,7 +47,7 @@ public class JobPupil extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobPupil> generateAI()
+    public EntityAIWorkPupil generateAI()
     {
         return new EntityAIWorkPupil(this);
     }

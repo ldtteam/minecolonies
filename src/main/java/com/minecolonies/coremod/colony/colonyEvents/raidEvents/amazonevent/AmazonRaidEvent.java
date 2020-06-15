@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Hor
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -119,5 +120,23 @@ public class AmazonRaidEvent extends HordeRaidEvent
         AmazonRaidEvent event = new AmazonRaidEvent(colony);
         event.readFromNBT(compound);
         return event;
+    }
+
+    @Override
+    public EntityType<?> getNormalRaiderType()
+    {
+        return AMAZON;
+    }
+
+    @Override
+    public EntityType<?> getArcherRaiderType()
+    {
+        return AMAZON;
+    }
+
+    @Override
+    public EntityType<?> getBossRaiderType()
+    {
+        return AMAZONCHIEF;
     }
 }

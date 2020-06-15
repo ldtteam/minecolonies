@@ -5,14 +5,13 @@ import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.dyer.EntityAIWorkDyer;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the dyer job.
  */
-public class JobDyer extends AbstractJobCrafter
+public class JobDyer extends AbstractJobCrafter<EntityAIWorkDyer, JobDyer>
 {
     /**
      * Instantiates the job for the Dyer.
@@ -51,7 +50,7 @@ public class JobDyer extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobDyer> generateAI()
+    public EntityAIWorkDyer generateAI()
     {
         return new EntityAIWorkDyer(this);
     }

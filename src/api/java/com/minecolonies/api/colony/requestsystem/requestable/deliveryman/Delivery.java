@@ -27,6 +27,14 @@ public class Delivery extends AbstractDeliverymanRequestable
     @NotNull
     private final ItemStack stack;
 
+    /**
+     * Constructor for Delivery requests
+     *
+     * @param start    The location of the source inventory
+     * @param target   The location of the target inventory
+     * @param stack    The stack to be delivered
+     * @param priority The priority of the request
+     */
     public Delivery(@NotNull final ILocation start, @NotNull final ILocation target, @NotNull final ItemStack stack, final int priority)
     {
         super(priority);

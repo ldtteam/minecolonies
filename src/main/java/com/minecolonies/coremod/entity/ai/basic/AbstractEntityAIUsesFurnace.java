@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -33,7 +32,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  *
  * @param <J> the job it is for.
  */
-public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
+public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B extends AbstractBuildingFurnaceUser> extends AbstractEntityAISkill<J, B>
 {
     /**
      * Base xp gain for the basic xp.
@@ -63,12 +62,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
           new AITarget(START_WORKING, this::startWorking, TICKS_SECOND),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY));
-    }
-
-    @Override
-    public Class getExpectedBuildingClass()
-    {
-        return AbstractBuildingFurnaceUser.class;
     }
 
     /**
@@ -104,7 +97,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     protected BlockPos getPositionOfOvenToRetrieveFrom()
     {
-        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof FurnaceTileEntity)
@@ -137,7 +130,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
-        if (getOwnBuilding(AbstractBuildingFurnaceUser.class).getAllowedFuel().isEmpty())
+        if (getOwnBuilding().getAllowedFuel().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -146,7 +139,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
-        if (getOwnBuilding(AbstractBuildingFurnaceUser.class).getFurnaces().isEmpty())
+        if (getOwnBuilding().getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -175,19 +168,20 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isSmeltable);
         final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), this::isSmeltable);
 
-        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
+        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), getOwnBuilding()::isAllowedFuel);
         final int amountOfFuelInInv =
-          InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
+          InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), getOwnBuilding()::isAllowedFuel);
 
         if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0 && !reachedMaxToKeep())
         {
             requestSmeltable();
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+
+        if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
           req -> req.getShortDisplayString().getString().equals(
             LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE))))
         {
-            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingFurnaceUser.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
+            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding().getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
         }
 
         if (amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)
@@ -197,7 +191,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         }
         else if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
         {
-            needsCurrently = new Tuple<>(getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel, STACKSIZE);
+            needsCurrently = new Tuple<>(getOwnBuilding()::isAllowedFuel, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 
@@ -218,7 +212,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private IAIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
     {
-        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
 
@@ -240,7 +234,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             {
                 if (!(world.getBlockState(pos).getBlock() instanceof FurnaceBlock))
                 {
-                    ((AbstractBuildingFurnaceUser) getOwnBuilding()).removeFromFurnaces(pos);
+                    getOwnBuilding().removeFromFurnaces(pos);
                 }
             }
         }
@@ -323,7 +317,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private IAIState fillUpFurnace()
     {
-        if (((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces().isEmpty())
+        if (getOwnBuilding().getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -357,11 +351,11 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                   new InvWrapper(furnace), SMELTABLE_SLOT);
             }
 
-            if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel)
+            if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), getOwnBuilding()::isAllowedFuel)
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  (worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel, STACKSIZE,
+                  (worker.getInventoryCitizen()), getOwnBuilding()::isAllowedFuel, STACKSIZE,
                   new InvWrapper(furnace), FUEL_SLOT);
             }
         }

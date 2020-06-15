@@ -277,7 +277,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
-            if (player.isShiftKeyDown())
+            if (player.isSneaking())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
             }
@@ -298,6 +298,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the view.
      */
+    @Override
     public ICitizenDataView getCitizenDataView()
     {
         if (this.citizenDataView == null)
@@ -332,7 +333,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         compound.putBoolean(TAG_DAY, isDay);
-        compound.putBoolean(TAG_CHILD, child);
         compound.putBoolean(TAG_MOURNING, mourning);
 
         citizenDiseaseHandler.write(compound);
@@ -353,7 +353,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         isDay = compound.getBoolean(TAG_DAY);
-        setIsChild(compound.getBoolean(TAG_CHILD));
 
         if (compound.keySet().contains(TAG_MOURNING))
         {
@@ -364,7 +363,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
-
 
         citizenDiseaseHandler.read(compound);
     }
@@ -576,6 +574,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+
         this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
         if (citizenData != null)
@@ -595,6 +594,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(this, healthModLevel);
         }
+
+        getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
+        getDataManager().set(DATA_TEXTURE_SUFFIX, citizenData.getTextureSuffix());
     }
 
     private void updateCitizenStatus()
@@ -910,7 +912,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void spawnEatingParticle()
     {
-        super.func_226293_b_(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
+        super.triggerItemUseEffects(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     /**
@@ -1413,7 +1415,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
-                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                      && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1423,7 +1425,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 
@@ -1476,7 +1478,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final IJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob<?> job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)
@@ -1719,6 +1721,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         buffer.writeVarInt(citizenColonyHandler.getColonyId());
         buffer.writeVarInt(citizenId);
         return new ContainerCitizenInventory(id, inv, buffer);
+    }
+
+    @Override
+    public void setTexture()
+    {
+        super.setTexture();
     }
 
     /**

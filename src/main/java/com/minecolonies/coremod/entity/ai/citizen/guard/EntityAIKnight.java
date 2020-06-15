@@ -9,12 +9,14 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -29,12 +31,11 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
-import static com.minecolonies.api.research.util.ResearchConstants.MELEE_DAMAGE;
-import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
+public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
 {
     /**
      * Update interval for the guards attack ai
@@ -42,8 +43,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     private final static int GUARD_ATTACK_INTERVAL = 8;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -110,8 +110,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     }
 
     /**
-     * Check if the guard can protect himself with a shield
-     * And if so, do it.
+     * Check if the guard can protect himself with a shield And if so, do it.
      *
      * @return The next IAIState.
      */
@@ -138,6 +137,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
     /**
      * attackPhysical tries to launch an attack. Ticked every 8 Ticks
+     *
      * @return the next state to go to.
      */
     protected IAIState attackPhysical()
@@ -192,6 +192,19 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
+            if (target instanceof MobEntity)
+            {
+                UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
+                                                       .getColony()
+                                                       .getResearchManager()
+                                                       .getResearchEffects()
+                                                       .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class);
+                if (effect != null && effect.getEffect())
+                {
+                    ((MobEntity) target).setAttackTarget(worker);
+                }
+            }
+
             worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
@@ -238,5 +251,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     public void moveInAttackPosition()
     {
         worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+    }
+
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
     }
 }

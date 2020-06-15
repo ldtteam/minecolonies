@@ -91,7 +91,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
                 final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
-                for (final IToken taskToken : assignedTasks)
+                for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
@@ -130,7 +130,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
@@ -172,5 +172,11 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
     {
         return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
+    }
+
+    @Override
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    {
+        return super.canRecipeBeAddedBasedOnTags(token);
     }
 }

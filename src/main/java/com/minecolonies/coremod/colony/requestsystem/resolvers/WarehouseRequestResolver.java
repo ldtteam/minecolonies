@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
 
 /**
@@ -81,7 +81,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             {
                 return wareHouses.stream()
                          .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                           requestToCheck.getRequest().getCount()));
+                           requestToCheck.getRequest().getMinimumCount()));
             }
             catch (Exception e)
             {
@@ -204,8 +204,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 final ILocation itemStackLocation =
                   manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
 
-                // Deliveries from the warehouse to some location requesting stuff from the warehouse always have MAX_DELIVERYMAN_STANDARD_PRIORITY.
-                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);

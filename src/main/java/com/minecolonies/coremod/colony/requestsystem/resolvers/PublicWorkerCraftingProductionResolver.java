@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_STANDARD_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 
 public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PublicCrafting>
 {
@@ -80,8 +80,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
             completedRequest.getDeliveries().forEach(itemStack -> {
-                // Followup-Deliveries for crafting requests have the highest possible priority. They are important after all!
-                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, MAX_DELIVERYMAN_STANDARD_PRIORITY);
+                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(this,
@@ -100,14 +99,14 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
                                               .stream()
                                               .filter(c -> c.getJob() instanceof AbstractJobCrafter && (
-                                                ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(completedRequest.getId())
-                                                  || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
+                                                ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().contains(completedRequest.getId())
+                                                  || ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
                                               .findFirst()
                                               .orElse(null);
 
         if (holdingCrafter != null)
         {
-            final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
+            final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) holdingCrafter.getJob();
             job.onTaskDeletion(completedRequest.getId());
         }
     }
@@ -155,7 +154,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         final ICitizenData freeCrafter = building.getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                           .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob())
+                                           .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter<?, ?>) c.getJob())
                                                                                                                                                      .getAssignedTasks()
                                                                                                                                                      .size()))
                                            .orElse(null);
@@ -166,7 +165,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
+        final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) freeCrafter.getJob();
         job.onTaskBeingScheduled(request.getId());
     }
 
@@ -180,7 +179,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         final ICitizenData freeCrafter = building.getAssignedCitizen()
                                            .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
+                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(request.getId()))
                                            .findFirst()
                                            .orElse(null);
 
@@ -190,7 +189,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
+        final AbstractJobCrafter<?, ?> job = (AbstractJobCrafter<?, ?>) freeCrafter.getJob();
         job.onTaskBeingResolved(request.getId());
     }
 }

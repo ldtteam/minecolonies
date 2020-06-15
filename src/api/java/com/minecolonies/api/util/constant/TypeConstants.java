@@ -27,12 +27,12 @@ import java.util.UUID;
 public class TypeConstants
 {
     /////Java types
-    public static final TypeToken<Integer>   INTEGER   = TypeToken.of(Integer.class);
-    public static final TypeToken<TypeToken> TYPETOKEN = TypeToken.of(TypeToken.class);
-    public static final TypeToken<Class>     CLASS     = TypeToken.of(Class.class);
+    public static final TypeToken<Integer>      INTEGER   = TypeToken.of(Integer.class);
+    public static final TypeToken<TypeToken<?>> TYPETOKEN = TypeToken.of((Class<TypeToken<?>>) (Class<?>) TypeToken.class);
+    public static final TypeToken<Class<?>>     CLASS     = TypeToken.of((Class<Class<?>>) (Class<?>)  Class.class);
 
     /////General purpose
-    public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
+    public static final TypeToken<IToken<?>>        ITOKEN           = TypeToken.of((Class<IToken<?>>) (Class<?>) IToken.class);
     public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
     public static final TypeToken<UUID>             UUID             = TypeToken.of(UUID.class);
     public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);

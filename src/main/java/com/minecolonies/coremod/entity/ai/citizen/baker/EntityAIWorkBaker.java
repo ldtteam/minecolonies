@@ -36,7 +36,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_
 /**
  * Baker AI class.
  */
-public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
+public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingBaker>
 {
     /**
      * Times the dough needs to be kneaded.
@@ -56,7 +56,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Make this amount of products until dumping
      */
-    private static final int UNTIL_DUMP = 3;
+    private static final int UNTIL_DUMP = 6;
 
     /**
      * Increase this value to make the product creation progress way slower.
@@ -117,7 +117,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     @Override
-    public Class<? extends BuildingBaker> getExpectedBuildingClass()
+    public Class<BuildingBaker> getExpectedBuildingClass()
     {
         return BuildingBaker.class;
     }
@@ -456,17 +456,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         progress++;
         return getState();
-    }
-
-    /**
-     * Returns the bakery's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    public BuildingBaker getOwnBuilding()
-    {
-        return (BuildingBaker) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**

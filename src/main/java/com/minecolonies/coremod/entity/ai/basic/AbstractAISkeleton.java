@@ -26,10 +26,8 @@ import java.util.EnumSet;
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob> extends Goal
+public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
 {
-
-    private static final Flag                  MUTEX_MASK =  Flag.MOVE;
     @NotNull
     protected final      J                     job;
     @NotNull
@@ -81,7 +79,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
      *
      * @param targets a number of targets that need registration
      */
-    protected final void registerTargets(final TickingTransition... targets)
+    protected final void registerTargets(final TickingTransition<IAIState>... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);
     }

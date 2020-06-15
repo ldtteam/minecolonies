@@ -334,6 +334,8 @@
   "entity.builder.messagenobuilder": "You need a builder in order to build or upgrade this building.",
   "entity.farmer.needseed": "I need %s to plant.",
 
+  "com.minecolonies.command.help.wiki": "Checkout the wiki to learn more: ",
+  "com.minecolonies.command.help.discord": "Join the community at  ",
   "com.minecolonies.command.notop": "Must be OP to use the command",
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony, the closest colony is approx %.2f blocks away.",
@@ -451,6 +453,7 @@
   "com.minecolonies.coremod.job.guard": "GuardTower",
 
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a supply ship or supply camp!",
+  "com.minecolonies.coremod.supplyneed": "Start off MineColonies by crafting a Supply Camp or Ship and placing it via right clicking the item on the ground before trying to create a colony!",
 
   "com.minecolonies.coremod.gui.citizen.skills": "Skills",
   "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
@@ -784,6 +787,7 @@
   "com.minecolonies.coremod.tooltype.leggings": "Leggings",
   "com.minecolonies.coremod.tooltype.chestplate": "Chest Plate",
   "com.minecolonies.coremod.tooltype.boots": "Boots",
+  "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
 
   "com.minecolonies.coremod.gui.citizen.requests": "Open requests:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "Requests",
@@ -1415,6 +1419,7 @@
   "block.minecolonies.blockhutdyer.name": "Dyer",
   "block.minecolonies.blockhutdyer": "Dyer",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
+  "com.minecolonies.coremod.gui.workerhuts.deliveryman.priority": "Priority: ",
 
   "entity.mummy": "Mummy",
   "entity.archermummy": "Mummy Archer",
@@ -1444,5 +1449,24 @@
   "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
   "com.minecolonies.coremod.job.planter": "Planter",
   "block.minecolonies.blockhutplantation.name": "Plantation",
-  "block.minecolonies.blockhutplantation": "Plantation"
+  "block.minecolonies.blockhutplantation": "Plantation",
+
+  "entity.minecolonies.norsemenchief": "Norsemen Chief",
+  "entity.minecolonies.norsemenarcher": "Norsemen Archer",
+  "entity.minecolonies.shieldmaiden": "Norsemen Shieldmaiden",
+
+  "entity.norsemenchief": "Norsemen Chief",
+  "entity.norsemenarcher": "Norsemen Archer",
+  "entity.shieldmaiden": "Norsemen Shieldmaiden",
+
+  "death.attack.entity.minecolonies.norsemenchief": "%s was grounded by the great Viking King",
+  "death.attack.entity.minecolonies.norsemenarcher": "%s was hit by a Viking Archer!",
+  "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shield-maid!",
+
+  "item.minecolonies.shieldmaidenegg": "Shieldmaiden Egg",
+  "item.minecolonies.norsemenarcheregg": "Norsemen Archer Egg",
+  "item.minecolonies.norsemenchiefegg": "Norsemen Chief Egg",
+
+  "item.minecolonies.amazonegg": "Amazon Egg",
+  "item.minecolonies.amazonchiefegg": "Amazon Chief Egg"
 }

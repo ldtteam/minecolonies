@@ -17,7 +17,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -167,7 +166,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobBaker(citizen);
     }
@@ -274,37 +273,41 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if (!super.canRecipeBeAdded(token) || !AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
         }
-
-        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
+        else
         {
-            if (recipe.getPrimaryOutput().isItemEqual(storage.getPrimaryOutput()))
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            boolean hasWheat = false;
+            for (final ItemStorage input : storage.getCleanedInput())
             {
-                return false;
+                if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
+                {
+                    hasWheat = true;
+                }
             }
+
+            return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
+
+            // End Additional recipe rules
         }
 
-        boolean hasWheat = false;
-        for (final ItemStorage input : storage.getCleanedInput())
-        {
-            if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
-            {
-                hasWheat = true;
-            }
-        }
-
-        return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
     }
 
     /**
@@ -514,7 +517,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             }
         }
 
-        for (final IToken token : getRecipes())
+        for (final IToken<?> token : getRecipes())
         {
             final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))

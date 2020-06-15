@@ -51,7 +51,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 /**
  * Delivers item at needs.
  */
-public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
+public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman, BuildingDeliveryman>
 {
     /**
      * Min distance the worker should have to the warehouse to make any decisions.
@@ -112,7 +112,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingDeliveryman> getExpectedBuildingClass()
     {
         return BuildingDeliveryman.class;
     }

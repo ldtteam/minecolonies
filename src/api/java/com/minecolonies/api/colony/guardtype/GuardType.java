@@ -16,7 +16,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     /**
      * Producer function.
      */
-    private final Function<ICitizenData, IJob> guardJobProducer;
+    private final Function<ICitizenData, IJob<?>> guardJobProducer;
 
     /**
      * Job translation key.
@@ -53,7 +53,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param workerSoundName worker sound name.
      */
     public GuardType(
-      final Function<ICitizenData, IJob> guardJobProducer,
+      final Function<ICitizenData, IJob<?>> guardJobProducer,
       final String jobTranslationKey,
       final String buttonTranslationKey,
       final Skill primarySkill, final Skill secondarySkill, final String workerSoundName)
@@ -71,7 +71,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * Getter for the job producer.
      * @return the producer.
      */
-    public Function<ICitizenData, IJob> getGuardJobProducer()
+    public Function<ICitizenData, IJob<?>> getGuardJobProducer()
     {
         return guardJobProducer;
     }
@@ -126,15 +126,15 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public static class Builder
     {
-        private Function<ICitizenData, IJob> guardJobProducer;
-        private String                       jobTranslationKey;
-        private String                       buttonTranslationKey;
-        private Skill                        primarySkill;
-        private Skill                        secondarySkill;
-        private String                       workerSoundName;
-        private ResourceLocation             registryName;
+        private Function<ICitizenData, IJob<?>> guardJobProducer;
+        private String                          jobTranslationKey;
+        private String                          buttonTranslationKey;
+        private Skill                           primarySkill;
+        private Skill                           secondarySkill;
+        private String                          workerSoundName;
+        private ResourceLocation                registryName;
 
-        public Builder setGuardJobProducer(final Function<ICitizenData, IJob> guardJobProducer)
+        public Builder setGuardJobProducer(final Function<ICitizenData, IJob<?>> guardJobProducer)
         {
             this.guardJobProducer = guardJobProducer;
             return this;

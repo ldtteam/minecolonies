@@ -29,22 +29,12 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Sifter AI class.
  */
-public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
+public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, BuildingSifter>
 {
     /**
      * Max level which should have an effect on the speed of the worker.
      */
     private static final int MAX_LEVEL = 50;
-
-    /**
-     * How often should strength factor into the sifter's skill modifier.
-     */
-    private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
-     * How often should endurance factor into the sifter's skill modifier.
-     */
-    private static final int ENDURANCE_MULTIPLIER = 2;
 
     /**
      * Delay for each of the craftings.
@@ -78,7 +68,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingSifter> getExpectedBuildingClass()
     {
         return BuildingSifter.class;
     }
@@ -118,7 +108,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 1;
+        return 10;
     }
 
     /**
@@ -136,12 +126,11 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
 
         progress++;
 
-        final BuildingSifter sifterBuilding = getOwnBuilding(BuildingSifter.class);
+        final BuildingSifter sifterBuilding = getOwnBuilding();
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
-            incrementActionsDone();
-            return START_WORKING;
+            return DUMPING;
         }
 
         if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())

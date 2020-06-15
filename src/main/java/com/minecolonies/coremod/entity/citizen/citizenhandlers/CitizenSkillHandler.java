@@ -88,11 +88,14 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         @NotNull final ListNBT levelTagList = new ListNBT();
         for (@NotNull final Map.Entry<Skill, Tuple<Integer, Double>> entry : skillMap.entrySet())
         {
-            @NotNull final CompoundNBT levelCompound = new CompoundNBT();
-            levelCompound.putInt(TAG_SKILL, entry.getKey().ordinal());
-            levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
-            levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
-            levelTagList.add(levelCompound);
+            if (entry.getKey() != null && entry.getValue() != null)
+            {
+                @NotNull final CompoundNBT levelCompound = new CompoundNBT();
+                levelCompound.putInt(TAG_SKILL, entry.getKey().ordinal());
+                levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
+                levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
+                levelTagList.add(levelCompound);
+            }
         }
         compoundNBT.put(TAG_LEVEL_MAP, levelTagList);
 

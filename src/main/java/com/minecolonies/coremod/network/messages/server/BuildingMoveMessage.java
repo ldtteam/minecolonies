@@ -176,8 +176,6 @@ public class BuildingMoveMessage implements IMessage
             return;
         }
 
-        final String hut = sn.getSection();
-
         final Block block = world.getBlockState(oldBuildingId).getBlock();
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
@@ -213,7 +211,7 @@ public class BuildingMoveMessage implements IMessage
             world.destroyBlock(buildPos, true);
 
             world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
-            ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+            ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
         }
     }

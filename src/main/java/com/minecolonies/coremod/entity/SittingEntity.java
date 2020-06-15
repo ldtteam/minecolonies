@@ -18,7 +18,7 @@ public class SittingEntity extends Entity
      */
     int maxLifeTime = 100;
 
-    public SittingEntity(final EntityType type, final World worldIn)
+    public SittingEntity(final EntityType<?> type, final World worldIn)
     {
         super(type, worldIn);
 
@@ -28,7 +28,7 @@ public class SittingEntity extends Entity
         this.setNoGravity(true);
     }
 
-    public SittingEntity(final EntityType type, final World worldIn, double x, double y, double z, int lifeTime)
+    public SittingEntity(final EntityType<?> type, final World worldIn, double x, double y, double z, int lifeTime)
     {
         super(type, worldIn);
 
