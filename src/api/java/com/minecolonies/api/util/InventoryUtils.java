@@ -2675,12 +2675,27 @@ public class InventoryUtils
      */
     public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
     {
+        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && stack.isItemEqual(itemStack)) < quantity)
+        {
+            return false;
+        }
+
+        int qty = quantity;
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
-            if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
+            final ItemStack stack = invWrapper.getStackInSlot(i);
+            if(stack.isItemEqual(itemStack))
             {
-                invWrapper.getStackInSlot(i).shrink(quantity);
-                return true;
+                if (stack.getCount() >= qty)
+                {
+                    stack.shrink(qty);
+                    return true;
+                }
+                else
+                {
+                    qty -= stack.getCount();
+                    invWrapper.extractItem(i, stack.getCount(), false);
+                }
             }
         }
         return false;
