@@ -62,6 +62,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -605,33 +606,43 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onColonyTick(final IColony colony)
     {
         super.onColonyTick(colony);
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
 
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        if (colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(getPosition().getX() >> 4, getPosition().getZ() >> 4)))
         {
-            final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
-            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
-            final IToken<?> request = getMatchingRequest(itemStack, list);
-            if (delta > 0)
+            final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+
+            for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
             {
-                if (request == null)
+                final ItemStack itemStack = entry.getKey().getItemStack().copy();
+
+                if (itemStack.isEmpty())
                 {
-                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                    final Stack stack = new Stack(itemStack);
-                    if (getMainCitizen() != null)
+                    continue;
+                }
+
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack), entry.getValue() * itemStack.getMaxStackSize());
+                final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
+                final IToken<?> request = getMatchingRequest(itemStack, list);
+                if (delta > 0)
+                {
+                    if (request == null)
                     {
-                        getMainCitizen().createRequestAsync(stack);
-                    }
-                    else
-                    {
-                        createRequest(stack, false);
+                        itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
+                        final Stack stack = new Stack(itemStack);
+                        if (getMainCitizen() != null)
+                        {
+                            getMainCitizen().createRequestAsync(stack);
+                        }
+                        else
+                        {
+                            createRequest(stack, false);
+                        }
                     }
                 }
-            }
-            else if (request != null)
-            {
-                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                else if (request != null)
+                {
+                    getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                }
             }
         }
     }

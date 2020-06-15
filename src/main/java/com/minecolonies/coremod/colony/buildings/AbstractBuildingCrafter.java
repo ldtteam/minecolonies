@@ -178,4 +178,10 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     {
         return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
     }
+
+    @Override
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    {
+        return super.canRecipeBeAddedBasedOnTags(token);
+    }
 }
