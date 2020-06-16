@@ -12,7 +12,10 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -50,9 +53,16 @@ public class ContainerField extends Container
     public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
     {
         super(ModContainers.field, windowId);
-        final BlockPos pos = extra.readBlockPos();
-        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(playerInventory.player.world, pos);
-        this.tileEntity = ((AbstractScarescrowTileEntity) playerInventory.player.world.getTileEntity(pos));
+
+        final World world = playerInventory.player.world;
+        BlockPos pos = extra.readBlockPos();
+
+        if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.down();
+        }
+
+        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        this.tileEntity = ((AbstractScarescrowTileEntity) world.getTileEntity(pos));
         this.inventory = this.tileEntity.getInventory();
         final int extraOffset = 0;
 

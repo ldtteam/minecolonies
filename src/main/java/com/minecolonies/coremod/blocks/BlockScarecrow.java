@@ -7,11 +7,17 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -21,10 +27,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +41,7 @@ import static net.minecraft.util.Direction.fromAngle;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
 {
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     /**
      * Constructor called on block placement.
@@ -46,7 +50,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
         setRegistryName(REGISTRY_NAME);
-        this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
+        this.setDefaultState(this.getDefaultState().with(FACING, NORTH).with(HALF, DoubleBlockHalf.LOWER));
     }
 
     @NotNull
@@ -87,7 +91,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
-            final TileEntity entity = worldIn.getTileEntity(pos);
+            // Get the entity of the bottom half
+            DoubleBlockHalf half = state.get(HALF);
+            final TileEntity entity = worldIn.getTileEntity(
+                half == DoubleBlockHalf.UPPER? pos.down() : pos
+            );
+
             if (entity instanceof ScarecrowTileEntity)
             {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (ScarecrowTileEntity) entity, pos);
@@ -102,7 +111,17 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
         @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
-        return this.getDefaultState().with(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction).with(HALF, DoubleBlockHalf.LOWER);
+    }
+
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+        BlockPos blockpos = pos.down();
+        BlockState blockstate = worldIn.getBlockState(blockpos);
+        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+            return blockstate.isSolidSide(worldIn, blockpos, Direction.UP);
+        } else {
+            return blockstate.getBlock() == this;
+        }
     }
 
     @Override
@@ -125,6 +144,10 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         }
     }
 
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
+    }
+
     @Override
     public void onExplosionDestroy(final World worldIn, final BlockPos pos, final Explosion explosionIn)
     {
@@ -135,17 +158,27 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public void onBlockHarvested(final World worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final PlayerEntity player)
     {
+        DoubleBlockHalf half = state.get(HALF);
+        BlockPos otherpos = half == DoubleBlockHalf.LOWER? pos.up() : pos.down();
+        BlockState otherstate = worldIn.getBlockState(otherpos);
+
+        // just double check the other block is also the scarecrow and not the same half,
+        // then destroy it (make it air)
+        if (otherstate.getBlock() == this && otherstate.get(HALF) != half) {
+            worldIn.setBlockState(otherpos, Blocks.AIR.getDefaultState(), 35);
+        }
+
         notifyColonyAboutDestruction(worldIn, pos);
         super.onBlockHarvested(worldIn, pos, state, player);
     }
-
+/*
     @Override
     public void onPlayerDestroy(final IWorld worldIn, final BlockPos pos, final BlockState state)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onPlayerDestroy(worldIn, pos, state);
     }
-
+*/
     /**
      * Notify the colony about the destruction of the field.
      * @param worldIn the world.
@@ -165,12 +198,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(HALF, FACING);
     }
 
     @Override
     public boolean hasTileEntity(final BlockState state)
     {
-        return true;
+        return state.get(HALF) == DoubleBlockHalf.LOWER;
     }
 }
