@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -60,7 +59,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.scaledPriority;
@@ -1505,29 +1503,28 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param tag the requested tag.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count, final String description)
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), s -> s.getItem().isIn(tag) && s.getCount() >= count))
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().isIn(tag) && stack.getCount() >= count))
         {
             return true;
         }
 
         if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
-                itemStack -> itemStack.getItem().isIn(tag)) >= count &&
-                InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                        getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
+          itemStack -> itemStack.getItem().isIn(tag)) >= count &&
+              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
                         count,
                         worker.getInventoryCitizen()))
         {
             return true;
         }
 
-        List<ItemStack> stacks = tag.getAllElements().stream().map(itemIn -> new ItemStack(itemIn, count)).collect(Collectors.toList());
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> stacks.stream().anyMatch(r.getRequest()::matches)).isEmpty())
+          (IRequest<? extends IDeliverable> r) -> r.getRequest().getResult().getItem().isIn(tag)).isEmpty())
         {
-            final StackList stackRequest = new StackList(stacks, description, count, count);
-            worker.getCitizenData().createRequestAsync(stackRequest);
+            final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
+            worker.getCitizenData().createRequestAsync(tagRequest);
         }
 
         return false;
