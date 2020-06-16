@@ -563,6 +563,7 @@ public final class NbtTagConstants
     public static final String TAG_PONDS   = "newPonds";
     public static final String TAG_WATER_POND = "waterpond";
     public static final String TAG_PARENT_POND = "parentpond";
+    public static final String TAG_DECONSTRUCTED = "deconstructed";
 
     /**
      * Private constructor to hide the implicit one.

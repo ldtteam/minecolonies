@@ -30,6 +30,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC       = "entity.builder.messagebuildcomplete_generic";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE     = "entity.builder.messageremovalcomplete";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP             = "entity.deliveryman.forcepickup";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED      = "entity.deliveryman.forcepickupfailed";
