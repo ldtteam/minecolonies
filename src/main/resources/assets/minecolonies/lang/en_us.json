@@ -308,6 +308,7 @@
 
   "entity.builder.messagebuildstart": "Started building %s",
   "entity.builder.messagebuildcomplete": "Finished building %s",
+  "entity.builder.messagebuildcomplete_generic": "Builder %s finished building %s",
   "entity.builder.messageremovalcomplete": "Finished deconstructing building %s",
   "entity.builder.messagebuildtoohigh": "%s is too high, Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low, Please raise the building above Y 0.",

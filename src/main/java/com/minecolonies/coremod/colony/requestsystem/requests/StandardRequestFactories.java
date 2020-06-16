@@ -192,6 +192,79 @@ public final class StandardRequestFactories
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class ItemTagRequestFactory implements IRequestFactory<Tag, StandardRequests.ItemTagRequest>
+    {
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.ItemTagRequest getNewInstance(
+          @NotNull final Tag input,
+          @NotNull final IRequester location,
+          @NotNull final IToken<?> token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.ItemTagRequest(location, token, initialState, input);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.ItemTagRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.ItemTagRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<Tag> getFactoryInputType()
+        {
+            return TypeToken.of(Tag.class);
+        }
+
+        /**
+         * Method to serialize a given Request.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
+        {
+            return serializeToNBT(controller, request, Tag::serialize);
+        }
+
+        /**
+         * Method to deserialize a given Request.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        {
+            return deserializeFromNBT(controller, nbt, Tag::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class DeliveryRequestFactory implements IRequestFactory<Delivery, StandardRequests.DeliveryRequest>
     {
 
