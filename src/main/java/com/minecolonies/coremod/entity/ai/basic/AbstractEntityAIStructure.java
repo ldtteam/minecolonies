@@ -271,6 +271,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   () -> placer.getIterator().decrement((info, pos, handler) -> info.getBlockInfo().getState().getFluidState().isEmpty()), false);
                 break;
             case REMOVE:
+                placer.getIterator().setRemoving();
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
                   () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
                                                                                                          || info.getBlockInfo().getState().getBlock() instanceof AirBlock
