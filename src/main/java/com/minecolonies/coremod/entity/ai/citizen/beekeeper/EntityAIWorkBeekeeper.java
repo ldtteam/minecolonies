@@ -20,15 +20,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.BeehiveTileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +32,9 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING;
 
+/**
+ * Beekeeper AI class.
+ */
 public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper, BuildingBeekeeper>
 {
     /**
@@ -262,7 +256,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                                        .getHives()
                                        .stream()
                                        .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
-                                 .collect(Collectors.toList());
+                                       .collect(Collectors.toList());
 
         if (hives.isEmpty())
         {
