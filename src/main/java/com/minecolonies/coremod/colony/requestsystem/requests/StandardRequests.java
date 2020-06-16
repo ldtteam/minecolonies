@@ -18,12 +18,14 @@ import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,6 +131,51 @@ public final class StandardRequests
                 return ImmutableList.of();
             }
             return displayList;
+        }
+    }
+
+    /**
+     * Request for a single ItemStack.
+     */
+    public static class ItemTagRequest extends AbstractRequest<Tag>
+    {
+
+        private List<ItemStack> stacks;
+
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
+        {
+            super(requester, token, requested);
+            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemGroup(item.getGroup(), list);
+                return list.stream();
+            }).collect(Collectors.toList());
+        }
+
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tag requested)
+        {
+            super(requester, token, state, requested);
+            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemGroup(item.getGroup(), list);
+                return list.stream();
+            }).collect(Collectors.toList());
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent combined = new NonSiblingFormattingTextComponent();
+            combined.appendSibling(new StringTextComponent(getRequest().getCount() + " "));
+            combined.appendSibling(new StringTextComponent("#" + getRequest().getTag().getId().toString()));
+            return combined;
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return Collections.unmodifiableList(this.stacks);
         }
     }
 
