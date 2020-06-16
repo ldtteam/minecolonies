@@ -5,19 +5,20 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
-import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.block.CropsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -32,7 +33,7 @@ public class ContainerField extends Container
     /**
      * The inventory.
      */
-    private final IItemHandler inventory;
+    private final IInventory inventory;
 
     /**
      * The colony.
@@ -63,10 +64,20 @@ public class ContainerField extends Container
 
         this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         this.tileEntity = ((AbstractScarescrowTileEntity) world.getTileEntity(pos));
-        this.inventory = this.tileEntity.getInventory();
+        this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
-        addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
+        // New anonymous slot type for stack validation
+        addSlot(new Slot(inventory, 0, X_OFFSET, Y_OFFSET) {
+            @Override
+            public boolean isItemValid(@NotNull final ItemStack stack)
+            {
+                return Tags.Items.SEEDS.contains(stack.getItem()) || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
+            }
+
+            @Override
+            public int getSlotStackLimit() { return 1; }
+        });
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -97,28 +108,26 @@ public class ContainerField extends Container
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int index)
     {
-        if (slotIndex == 0)
-        {
-            playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.insertItem(0, ItemStackUtils.EMPTY, false);
-        }
-        else if (inventory.getStackInSlot(0) == ItemStackUtils.EMPTY || ItemStackUtils.getSize(inventory.getStackInSlot(0)) == 0)
-        {
-            final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStackUtils.EMPTY)
-            {
-                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).split(1);
-                inventory.insertItem(0, stack, false);
-                if (ItemStackUtils.getSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
-                {
-                    playerIn.inventory.removeStackFromSlot(playerIndex);
-                }
+        ItemStack transfer = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+
+        if (slot == null || !slot.getHasStack()) return transfer;
+
+        transfer = slot.getStack();
+
+        if (index == 0) {
+            if (!mergeItemStack(transfer, 1, 37, true)) {
+                return ItemStack.EMPTY;
+            }
+        } else {
+            if (!this.mergeItemStack(transfer, 0, 1, false)) {
+                return ItemStack.EMPTY;
             }
         }
 
-        return ItemStackUtils.EMPTY;
+        return transfer;
     }
 
     @Override

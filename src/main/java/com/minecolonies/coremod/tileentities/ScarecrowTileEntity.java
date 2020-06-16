@@ -14,8 +14,9 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -27,12 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -119,79 +117,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     /**
      * Inventory of the field.
      */
-    private final IItemHandlerModifiable inventory = new IItemHandlerModifiable() {
-
-        private ItemStack stack = ItemStack.EMPTY;
-
-        @Override
-        public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
-        {
-            if (slot == 0)
-            {
-                this.stack = stack;
-            }
-        }
-
-        @Override
-        public int getSlots()
-        {
-            return 1;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack getStackInSlot(final int slot)
-        {
-            if (slot == 0)
-            {
-                return this.stack;
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
-        {
-            if (slot == 0)
-            {
-                final ItemStack output = stack.copy();
-                output.setCount(output.getCount() - 1);
-
-                if (!simulate)
-                {
-                    this.stack = stack.copy();
-                    this.stack.setCount(1);
-                }
-
-                return output;
-            }
-            return stack;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-        {
-            if (slot == 0)
-            {
-                return stack;
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public int getSlotLimit(final int slot)
-        {
-            return 1;
-        }
-
-        @Override
-        public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
-        {
-            return Tags.Items.SEEDS.contains(stack.getItem()) || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
-        }
-    };
+    private final IInventory inventory;
 
     /**
      * Creates an instance of the tileEntity.
@@ -199,7 +125,8 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public ScarecrowTileEntity()
     {
         super();
-        name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
+        this.name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
+        this.inventory = new Inventory(1);
     }
 
     /**
@@ -529,7 +456,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
      * @return the IItemHandler.
      */
     @Override
-    public IItemHandlerModifiable getInventory()
+    public IInventory getInventory()
     {
         return inventory;
     }
@@ -578,11 +505,11 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
             final ItemStack stack = ItemStack.read(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
-                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
+                inventory.setInventorySlotContents(i, ItemStack.EMPTY);
             }
             else
             {
-                inventory.setStackInSlot(i, stack);
+                inventory.setInventorySlotContents(i, stack);
             }
         }
 
@@ -603,7 +530,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public CompoundNBT write(final CompoundNBT compound)
     {
         @NotNull final ListNBT inventoryTagList = new ListNBT();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
             @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
