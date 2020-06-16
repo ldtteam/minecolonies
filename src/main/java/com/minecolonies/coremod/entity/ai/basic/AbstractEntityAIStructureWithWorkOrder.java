@@ -14,10 +14,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.*;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -235,6 +232,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
         }
+        else if (wo instanceof WorkOrderBuildRemoval)
+        {
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+        }
 
         if (wo == null)
         {
@@ -246,8 +247,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         else
         {
             job.complete();
-            final WorkOrderBuildBuilding woh = (wo instanceof WorkOrderBuildBuilding) ? (WorkOrderBuildBuilding) wo : null;
-            if (woh != null)
+
+            if (wo instanceof WorkOrderBuildBuilding)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
@@ -255,11 +256,26 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
                             worker.getCitizenColonyHandler().getColony().getID(),
                             worker.getCitizenData().getId(),
-                            woh.getBuildingLocation()));
+                            wo.getBuildingLocation()));
                 }
                 else
                 {
-                    building.setBuildingLevel(woh.getUpgradeLevel());
+                    building.setBuildingLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+                }
+            }
+            else if (wo instanceof WorkOrderBuildRemoval)
+            {
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+                if (building == null)
+                {
+                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                      worker.getCitizenColonyHandler().getColony().getID(),
+                      worker.getCitizenData().getId(),
+                      wo.getBuildingLocation()));
+                }
+                else
+                {
+                    building.setDeconstructed();
                 }
             }
         }

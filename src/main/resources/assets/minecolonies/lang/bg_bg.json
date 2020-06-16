@@ -840,7 +840,7 @@
   "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
   "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
   "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
-  "com.minecolonies.coremod.gui.workerhuts.reposition": "Reposition",
+  "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away.",
   "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away.",
   "com.minecolonies.coremod.gui.scantool.showres": "Show Resources",
