@@ -510,12 +510,12 @@ public class Colony implements IColony
      */
     private ScorePlayerTeam checkOrCreateTeam()
     {
-        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
         {
-            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+            this.world.getScoreboard().createTeam(getTeamName());
+            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
         }
-        return this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id);
+        return this.world.getScoreboard().getTeam(getTeamName());
     }
 
     /**
@@ -529,8 +529,8 @@ public class Colony implements IColony
         {
             checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(new StringTextComponent(colonyColor.toString()));
+            this.world.getScoreboard().getTeam(getTeamName()).setColor(colonyColor);
+            this.world.getScoreboard().getTeam(getTeamName()).setPrefix(new StringTextComponent(colonyColor.toString()));
             this.markDirty();
         }
     }

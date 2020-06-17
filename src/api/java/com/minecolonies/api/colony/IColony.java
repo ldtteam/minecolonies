@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+
 /**
  * Interface of the Colony and ColonyView which will have to implement the
  * following methods.
@@ -107,10 +109,21 @@ public interface IColony
     boolean hasWarehouse();
 
     /**
+     * Defines the team name for all colonies (both Colony and ColonyView)
+     *
+     * @return The team name
+     */
+    default String getTeamName()
+    {
+        return TEAM_COLONY_NAME + ":" + getDimension() + ":" + getID();
+    }
+
+    /**
      * Retrieves the team of the colony
      *
      * @return Team of the colony
      */
+    @NotNull
     ScorePlayerTeam getTeam();
 
     /**

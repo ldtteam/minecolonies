@@ -45,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -1083,7 +1082,7 @@ public final class ColonyView implements IColonyView
     @Override
     public ScorePlayerTeam getTeam()
     {
-        return world.getScoreboard().getTeam(TEAM_COLONY_NAME + id);
+        return world.getScoreboard().getTeam(getTeamName());
     }
 
     @Override

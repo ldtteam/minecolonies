@@ -88,7 +88,6 @@ import java.util.Objects;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
@@ -1616,9 +1615,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
+    @NotNull
     public Team getTeam()
     {
-        return this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.getCitizenColonyHandler().getColonyId());
+        return getCitizenColonyHandler().getColony().getTeam();
     }
 
     @Override
