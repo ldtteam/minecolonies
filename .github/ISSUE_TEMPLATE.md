@@ -30,6 +30,6 @@ Version:
 4. ... Profit
 
 ### Logs: Latest.log and crashlog at https://gist.github.com/
-<!-- Add your latest.log and crashlog(if you got one) to https://gist.github.com/ and put the link below. Those are often important in figuring out where issues are. -->
-- latest.log:
-- crashlog:
+<!-- Add your latest.log and crashlog (if you got one) to https://gist.github.com/ and put the link below. Those are often important in figuring out where issues are. -->
+- latest.log: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
+- crashlog: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
