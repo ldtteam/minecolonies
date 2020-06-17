@@ -115,7 +115,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
         @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw + 180);
-        return this.getDefaultState().with(FACING, Direction).with(HALF, DoubleBlockHalf.LOWER);
+
+        if (context.getPos().getY() < 255 && context.getWorld().getBlockState(context.getPos().up()).isReplaceable(context)) {
+            return this.getDefaultState().with(FACING, Direction).with(HALF, DoubleBlockHalf.LOWER);
+        } else {
+            return null;
+        }
     }
 
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
