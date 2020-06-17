@@ -99,7 +99,7 @@ public class Permissions implements IPermissions
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private static final int permissionsVersion = 1;
+    private static final int permissionsVersion = 2;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -165,6 +165,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
         this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
         this.setPermission(Rank.OFFICER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
+        this.setPermission(Rank.OFFICER, Action.RALLY_GUARDS);
 
 
         //Friend
