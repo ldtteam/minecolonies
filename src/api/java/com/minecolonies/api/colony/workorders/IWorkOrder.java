@@ -137,8 +137,9 @@ public interface IWorkOrder
      * Override this when something need to be done when the work order is completed
      *
      * @param colony in which the work order exist
+     * @param citizen citizen that completed the work order
      */
-    void onCompleted(IColony colony);
+    void onCompleted(IColony colony, ICitizenData citizen);
 
     /**
      * Executed when a work order is removed.

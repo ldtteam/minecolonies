@@ -338,7 +338,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         compound.putBoolean(TAG_DAY, isDay);
-        compound.putBoolean(TAG_CHILD, child);
         compound.putBoolean(TAG_MOURNING, mourning);
 
         citizenDiseaseHandler.write(compound);
@@ -359,7 +358,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         isDay = compound.getBoolean(TAG_DAY);
-        setIsChild(compound.getBoolean(TAG_CHILD));
 
         if (compound.keySet().contains(TAG_MOURNING))
         {
@@ -370,7 +368,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
-
 
         citizenDiseaseHandler.read(compound);
     }
@@ -610,6 +607,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
+        getDataManager().set(DATA_TEXTURE_SUFFIX, citizenData.getTextureSuffix());
     }
 
     private void updateCitizenStatus()

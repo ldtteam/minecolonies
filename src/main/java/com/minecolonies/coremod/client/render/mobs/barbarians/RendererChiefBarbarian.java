@@ -13,7 +13,7 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/barbarianchief1.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/barbarianchief1.png");
 
     /**
      * Constructor method for renderer
@@ -22,7 +22,7 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
      */
     public RendererChiefBarbarian(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(1.2F), 0.5F);
+        super(renderManagerIn, new BipedModel<>(0.0F), 0.5F);
     }
 
     @Override

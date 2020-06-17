@@ -347,7 +347,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     public void gatherItems()
     {
         worker.setCanPickUpLoot(true);
-        if (worker.getNavigator().noPath())
+        if (worker.getNavigator().noPath() || worker.getNavigator().getPath() == null)
         {
             final BlockPos pos = getAndRemoveClosestItemPosition();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);

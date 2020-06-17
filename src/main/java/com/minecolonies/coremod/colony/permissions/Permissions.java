@@ -733,7 +733,7 @@ public class Permissions implements IPermissions
             }
         }
 
-        return gameprofile != null && ownerUUID != gameprofile.getId() && addPlayer(gameprofile, rank);
+        return gameprofile != null && !ownerUUID.equals(gameprofile.getId()) && addPlayer(gameprofile, rank);
     }
 
     /**
