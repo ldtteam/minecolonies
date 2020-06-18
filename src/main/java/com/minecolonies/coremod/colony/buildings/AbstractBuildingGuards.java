@@ -52,8 +52,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
-import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_CONFIG_NAME;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -973,17 +972,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         for (final ICitizenData iCitizenData : getAssignedCitizen())
         {
-            if (reduceSaturation && iCitizenData.getSaturation() <= 2)
+            if (reduceSaturation && iCitizenData.getSaturation() < LOW_SATURATION)
             {
                 // In addition to the scaled saturation reduction during rallying, stopping a rally
-                // will - if only 2 saturation are left - remove those two, forcing the guard to go eat.
-                iCitizenData.decreaseSaturation(2);
+                // will - if only LOW_SATURATION is left - set the saturation level to 0.
+                iCitizenData.decreaseSaturation(LOW_SATURATION);
             }
 
             final AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
             if (job != null && job.getWorkerAI() != null)
             {
-                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
+                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.GUARD_DECIDE));
             }
         }
     }

@@ -16,7 +16,7 @@ public final class ColonyConstants
     /**
      * The colony name prefix. Use {@link IColony#getTeamName()} to access the full name.
      */
-    public static final String TEAM_COLONY_NAME = "teamcolony";
+    public static final String TEAM_COLONY_NAME = "colony";
 
     /**
      * Default average randomization for onWorldTick() methods

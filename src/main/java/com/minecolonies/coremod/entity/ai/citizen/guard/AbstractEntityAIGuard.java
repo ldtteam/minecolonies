@@ -143,9 +143,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int GUARD_REGEN_INTERVAL = 40;
 
     /**
-     * Interval between saturation losses during rallying. 1 saturation loss per interval.
+     * Interval between saturation losses during rallying. BIG_SATURATION_FACTOR loss per interval.
      */
-    private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 10;
+    private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 12;
 
     /**
      * The timer for sleeping.
@@ -176,7 +176,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         super(job);
         super.registerTargets(
+          // Note that DECIDE is only here for compatibility purposes. The guards should use GUARD_DECIDE internally.
           new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_DECIDE, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_PATROL, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_PATROL, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
@@ -213,7 +215,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                                                                                                                                           .getColonyJob(AbstractJobGuard.class)
                                                                                                                                           .isAsleep())
         {
-            return DECIDE;
+            return GUARD_DECIDE;
         }
 
         wakeTimer++;
@@ -233,7 +235,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             worker.swingArm(Hand.OFF_HAND);
             sleepingGuard.get().attackEntityFrom(new NamedDamageSource("wakeywakey", worker).setDamageBypassesArmor(), 1);
             sleepingGuard.get().setRevengeTarget(worker);
-            return DECIDE;
+            return GUARD_DECIDE;
         }
 
         return getState();
@@ -309,7 +311,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             worker.stopRiding();
             worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
             worker.getCitizenExperienceHandler().addExperience(1);
-            return DECIDE;
+            return GUARD_DECIDE;
         }
 
         worker.getLookController()
@@ -573,7 +575,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
         if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
         {
-            return DECIDE;
+            return GUARD_DECIDE;
         }
 
         if (target == null || !target.isAlive())
@@ -581,7 +583,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             target = helpCitizen.get().getRevengeTarget();
             if (target == null || !target.isAlive())
             {
-                return DECIDE;
+                return GUARD_DECIDE;
             }
         }
 
@@ -809,7 +811,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (!checkForTarget())
         {
-            return DECIDE;
+            return GUARD_DECIDE;
         }
 
         wearWeapon();

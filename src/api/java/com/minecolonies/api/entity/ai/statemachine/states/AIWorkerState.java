@@ -165,6 +165,11 @@ public enum AIWorkerState implements IAIState
     */
 
     /**
+     * Decision state for guards.
+     */
+    GUARD_DECIDE(false),
+
+    /**
      * Physically attack the target.
      */
     GUARD_ATTACK_PHYSICAL(false),

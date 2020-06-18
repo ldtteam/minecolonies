@@ -115,7 +115,7 @@ public interface IColony
      */
     default String getTeamName()
     {
-        return TEAM_COLONY_NAME + ":" + getDimension() + ":" + getID();
+        return TEAM_COLONY_NAME + "_" + getDimension() + "_" + getID();
     }
 
     /**
@@ -123,7 +123,6 @@ public interface IColony
      *
      * @return Team of the colony
      */
-    @NotNull
     ScorePlayerTeam getTeam();
 
     /**

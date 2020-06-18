@@ -1613,10 +1613,17 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    @NotNull
     public Team getTeam()
     {
-        return getCitizenColonyHandler().getColony().getTeam();
+        if (getCitizenColonyHandler().getColony() != null)
+        {
+            return getCitizenColonyHandler().getColony().getTeam();
+        }
+        else
+        {
+            // Note: This function has always returned null on the client-side when the colony is not available yet.
+            return null;
+        }
     }
 
     @Override
