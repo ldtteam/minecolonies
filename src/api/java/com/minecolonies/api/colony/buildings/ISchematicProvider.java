@@ -139,4 +139,15 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * @return Max building level.
      */
     int getMaxBuildingLevel();
+
+    /**
+     * Check if the building was deconstructed.
+     * @return true if so.
+     */
+    boolean isDeconstructed();
+
+    /**
+     * Set the building as deconstructed.
+     */
+    void setDeconstructed();
 }
