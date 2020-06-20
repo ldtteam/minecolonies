@@ -230,7 +230,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState craft()
     {
-        if (currentRecipeStorage == null)
+        if (currentRecipeStorage == null || job.getCurrentTask() == null)
         {
             return START_WORKING;
         }
