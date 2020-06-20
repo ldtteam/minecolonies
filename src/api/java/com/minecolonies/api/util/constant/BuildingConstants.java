@@ -13,7 +13,7 @@ public final class BuildingConstants
     /**
      * Tag if the building has no workOrder.
      */
-    public static final int NO_WORK_ORDER = 0;
+    public static final int NO_WORK_ORDER = -1;
 
     /**
      * Max priority of a building.

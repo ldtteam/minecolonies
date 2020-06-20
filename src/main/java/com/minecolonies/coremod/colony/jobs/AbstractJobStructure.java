@@ -123,7 +123,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      */
     public void complete()
     {
-        getWorkOrder().onCompleted(getCitizen().getColony());
+        getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
         final TileEntity tileEntity = getColony().getWorld().getTileEntity(getWorkOrder().getBuildingLocation());
 
