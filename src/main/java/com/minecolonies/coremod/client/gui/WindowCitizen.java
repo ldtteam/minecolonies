@@ -474,7 +474,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
         }
         Network.getNetwork().sendToServer(
           new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
+
+        final ItemStack copy = itemStack.copy();
+        copy.setCount(isCreative ? amount : Math.min(amount, count));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
     }
 
     /**
