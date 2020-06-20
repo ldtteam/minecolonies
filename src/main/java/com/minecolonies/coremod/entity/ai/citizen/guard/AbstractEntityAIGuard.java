@@ -53,7 +53,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
  *
  * @param <J> the generic job.
  */
-public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIFight<J>
+public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B extends AbstractBuildingGuards> extends AbstractEntityAIFight<J, B>
 {
     /**
      * Entities to kill before dumping into chest.
@@ -450,15 +450,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     @Override
-    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
-    {
-        return AbstractBuildingGuards.class;
-    }
-
-    @Override
     protected int getActionsDoneUntilDumping()
     {
-        return (getOwnBuilding(AbstractBuildingGuards.class).getTask() == GuardTask.FOLLOW || target != null)
+        return (getOwnBuilding().getTask() == GuardTask.FOLLOW || target != null)
                  ? Integer.MAX_VALUE
                  : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
     }
@@ -782,7 +776,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             if (entity instanceof EntityCitizen)
             {
                 final EntityCitizen citizen = (EntityCitizen) entity;
-                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
                 {
                     sleepingGuard = new WeakReference<>(citizen);
                     wakeTimer = 0;

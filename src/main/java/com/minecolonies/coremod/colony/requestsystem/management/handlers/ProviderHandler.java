@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +77,6 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @VisibleForTesting
-    @SuppressWarnings(Suppression.UNCHECKED)
     void removeProviderInternal(final IToken<?> token)
     {
         manager.getLogger().info(String.format("Removing provider: %s", token));

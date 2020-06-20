@@ -54,6 +54,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     private int height;
 
     /**
+     * If the building was deconstructed by the builder.
+     */
+    private boolean isDeconstructed;
+
+    /**
      * Corners of the building.
      */
     private int cornerX1;
@@ -95,6 +100,18 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     }
 
     @Override
+    public boolean isDeconstructed()
+    {
+        return isDeconstructed;
+    }
+
+    @Override
+    public void setDeconstructed()
+    {
+        this.isDeconstructed = true;
+    }
+
+    @Override
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = new CompoundNBT();
@@ -119,6 +136,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         compound.putInt(TAG_ROTATION, getRotation());
 
+        compound.putBoolean(TAG_DECONSTRUCTED, isDeconstructed);
+
         return compound;
     }
 
@@ -141,7 +160,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
             this.cornerZ2 = compound.getInt(TAG_CORNER4);
         }
 
-        if (compound.keySet().contains(TAG_HEIGHT))
+        if (compound.contains(TAG_HEIGHT))
         {
             this.height = compound.getInt(TAG_HEIGHT);
         }
@@ -149,6 +168,15 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.contains(TAG_ROTATION))
         {
             this.cachedRotation = compound.getInt(TAG_ROTATION);
+        }
+
+        if (compound.contains(TAG_DECONSTRUCTED))
+        {
+            this.isDeconstructed = compound.getBoolean(TAG_DECONSTRUCTED);
+        }
+        else
+        {
+            this.isDeconstructed = false;
         }
     }
 
@@ -370,6 +398,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
             return;
         }
 
+        isDeconstructed = false;
         buildingLevel = level;
         markDirty();
     }

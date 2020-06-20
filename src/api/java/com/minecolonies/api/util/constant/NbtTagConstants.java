@@ -5,8 +5,9 @@ package com.minecolonies.api.util.constant;
  */
 public final class NbtTagConstants
 {
-    public static final String TAG_ID                     = "id";
-    public static final String TAG_NAME                   = "name";
+    public static final String TAG_ID                = "id";
+    public static final String TAG_NAME              = "name";
+    public static final String TAG_SUFFIX            = "suffix";
     public static final String TAG_DIMENSION         = "dimension";
     public static final String TAG_CENTER            = "center";
     public static final String TAG_BUILDINGS         = "buildings";
@@ -63,6 +64,7 @@ public final class NbtTagConstants
     public static final String TAG_POS                    = "pos";
     public static final String TAG_PLANTGROUND            = "plantGround";
     public static final String TAG_CURRENT_PHASE          = "currentPhase";
+    public static final String TAG_SETTING                = "setting";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
@@ -561,6 +563,7 @@ public final class NbtTagConstants
     public static final String TAG_PONDS   = "newPonds";
     public static final String TAG_WATER_POND = "waterpond";
     public static final String TAG_PARENT_POND = "parentpond";
+    public static final String TAG_DECONSTRUCTED = "deconstructed";
 
     /**
      * Private constructor to hide the implicit one.

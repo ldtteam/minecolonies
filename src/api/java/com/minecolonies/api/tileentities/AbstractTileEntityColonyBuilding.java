@@ -39,7 +39,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
 
-    public AbstractTileEntityColonyBuilding(final TileEntityType type)
+    public AbstractTileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
     {
         super(type);
     }

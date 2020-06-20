@@ -129,7 +129,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             return;
         }
 
-        @SuppressWarnings("rawtypes") final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
+        final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
 
         if (remove)
         {

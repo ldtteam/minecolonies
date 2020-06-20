@@ -29,28 +29,28 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 {
     private static final String TOKEN_TAG = "token";
 
-    private static final Tuple[] tuples  = {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)
-    };
+    @SuppressWarnings("unchecked")
+    private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
 
-    private static final Tuple[] tuplesAsync  = {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)
-    };
+    @SuppressWarnings("unchecked")
+    private static final Tuple<ITextComponent, ITextComponent>[] tuplesAsync = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The request this is related to.
      */
-    private IToken token = null;
+    private IToken<?> token = null;
 
     /**
      * Specific validator for this one.
      */
-    private BiPredicate<ICitizenData, IToken> validator;
+    private BiPredicate<ICitizenData, IToken<?>> validator;
 
     /**
      * The server interaction response handler.
@@ -63,7 +63,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
       final ITextComponent inquiry,
       final IChatPriority priority,
       final ITextComponent validator,
-      final IToken token)
+      final IToken<?> token)
     {
         super(inquiry, true, priority, null, validator, priority == ChatPriority.BLOCKING ? tuples : tuplesAsync);
         this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(validator);
@@ -79,7 +79,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,
       final IChatPriority priority,
-      final IToken token)
+      final IToken<?> token)
     {
         super(inquiry, true, priority, null, inquiry, tuples);
         this.validator = InteractionValidatorRegistry.getTokenBasedInteractionValidatorPredicate(inquiry);
@@ -132,7 +132,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
             if (colony != null)
             {
-                final IRequest request = colony.getRequestManager().getRequestForToken(token);
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
                 if (request != null)
                 {
                     final WindowCitizen windowCitizen = new WindowCitizen(data);

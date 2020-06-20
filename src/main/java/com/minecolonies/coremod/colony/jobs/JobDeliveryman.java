@@ -17,7 +17,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
@@ -27,7 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_DELIVERYMAN_PLAYER_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -36,7 +35,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class of the deliveryman job.
  */
-public class JobDeliveryman extends AbstractJob
+public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman>
 {
     private IToken<?> rsDataStoreToken;
 
@@ -138,7 +137,7 @@ public class JobDeliveryman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobDeliveryman> generateAI()
+    public EntityAIWorkDeliveryman generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
     }
@@ -199,7 +198,7 @@ public class JobDeliveryman extends AbstractJob
         }
         getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
 
-        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == MAX_DELIVERYMAN_PLAYER_PRIORITY)
+        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
         {
             getCitizen().getCitizenEntity()
               .get()
@@ -213,7 +212,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(@NotNull final boolean successful)
+    public void finishRequest(final boolean successful)
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
@@ -221,6 +220,15 @@ public class JobDeliveryman extends AbstractJob
         }
 
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
+
+        if (getColony().getRequestManager().getRequestForToken(current) == null)
+        {
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+            {
+                getTaskQueueFromDataStore().removeFirst();
+            }
+            return;
+        }
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 

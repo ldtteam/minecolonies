@@ -39,7 +39,11 @@ public class ResearchInitializer
         final GlobalResearch letitgrow = new GlobalResearch("letitgrow", "technology", "Let it Grow", 2, new UnlockBuildingResearchEffect("Plantation", true));
         letitgrow.setRequirement(new BuildingResearchRequirement(3, "farmer"));
 
+        final GlobalResearch doubletrouble = new GlobalResearch("doubletrouble", "technology", "Double Trouble", 3, new UnlockAbilityResearchEffect(PLANT_2, true));
+        doubletrouble.setRequirement(new BuildingResearchRequirement(3, "plantation"));
+
         biodegradable.addChild(letitgrow);
+        letitgrow.addChild(doubletrouble);
 
         final GlobalResearch bonemeal = new GlobalResearch("bonemeal", "technology", "Bonemeal", 2, new MultiplierModifierResearchEffect(FARMING, 0.1));
         bonemeal.setRequirement(new BuildingResearchRequirement(4, "farmer"));
@@ -90,8 +94,12 @@ public class ResearchInitializer
         final GlobalResearch rockingroll = new GlobalResearch("rockingroll", "technology", "Rocking Roll", 3, new UnlockBuildingResearchEffect("Crusher", true));
         rockingroll.setRequirement(new BuildingResearchRequirement(1, "stonemason"));
 
+        final GlobalResearch gildedhammer = new GlobalResearch("gildedhammer", "technology", "Gilded Hammer", 4, new UnlockAbilityResearchEffect(CRUSHING_11, true));
+        gildedhammer.setRequirement(new BuildingResearchRequirement(3, "crusher"));
+
         hot.addChild(theflintstones);
         theflintstones.addChild(rockingroll);
+        rockingroll.addChild(gildedhammer);
 
         final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect("Glassblower", true));
         thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
@@ -116,7 +124,11 @@ public class ResearchInitializer
         final GlobalResearch stringwork = new GlobalResearch("stringwork", "technology", "Stringwork", 2, new UnlockBuildingResearchEffect("Fletcher", true));
         stringwork.setRequirement(new BuildingResearchRequirement(1, "sawmill"));
 
+        final GlobalResearch hotboots = new GlobalResearch("hotboots", "technology", "Hot Boots", 3, new UnlockAbilityResearchEffect(FIRE_RES, true));
+        hotboots.setRequirement(new BuildingResearchRequirement(1, "fletcher"));
+
         woodwork.addChild(stringwork);
+        stringwork.addChild(hotboots);
 
         woodwork.addChild(sieving);
         sieving.addChild(space);
@@ -223,6 +235,12 @@ public class ResearchInitializer
         whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
 
         hittingiron.addChild(whatyaneed);
+
+        researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
+
+        researchTree.addResearch(hotboots.getBranch(), hotboots);
+
+        researchTree.addResearch(doubletrouble.getBranch(), doubletrouble);
 
         researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
         researchTree.addResearch(stringwork.getBranch(), stringwork);
@@ -613,6 +631,9 @@ public class ResearchInitializer
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 
+        final GlobalResearch taunt = new GlobalResearch("taunt", "combat", "Taunt", 2, new UnlockAbilityResearchEffect(KNIGHT_TAUNT, true));
+        taunt.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
+
         final GlobalResearch parry = new GlobalResearch("parry", "combat", "Parry", 2, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.05));
         parry.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
 
@@ -772,6 +793,7 @@ public class ResearchInitializer
         researchTree.addResearch(masterBowman.getBranch(), masterBowman);
 
         researchTree.addResearch(avoidance.getBranch(), avoidance);
+        researchTree.addResearch(taunt.getBranch(), taunt);
 
         researchTree.addResearch(parry.getBranch(), parry);
         researchTree.addResearch(repost.getBranch(), repost);

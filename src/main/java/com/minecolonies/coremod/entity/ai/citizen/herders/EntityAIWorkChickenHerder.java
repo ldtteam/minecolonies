@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The AI behind the {@link JobChickenHerder} for Breeding and Killing Chickens.
  */
-public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, ChickenEntity>
+public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, BuildingChickenHerder, ChickenEntity>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -29,7 +29,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingChickenHerder> getExpectedBuildingClass()
     {
         return BuildingChickenHerder.class;
     }

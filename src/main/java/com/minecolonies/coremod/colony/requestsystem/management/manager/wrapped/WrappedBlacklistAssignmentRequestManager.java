@@ -29,7 +29,7 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         wrappedManager.getRequestHandler().assignRequest(wrappedManager.getRequestHandler().getRequest(token), blackListedResolvers);
     }

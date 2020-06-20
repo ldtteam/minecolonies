@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC;
 
 /**
  * A work order that the build can take to build decorations.
@@ -38,13 +40,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
     private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
-    protected boolean  isBuildingMirrored;
-    protected int      buildingRotation;
-    protected String   structureName;
-    protected boolean  cleared;
-    protected String   workOrderName;
-    protected int      amountOfRes;
-    protected boolean levelUp = false;
+    protected boolean isBuildingMirrored;
+    protected int     buildingRotation;
+    protected String  structureName;
+    protected boolean cleared;
+    protected String  workOrderName;
+    protected int     amountOfRes;
+    protected boolean levelUp                        = false;
     protected boolean hasSentMessageForThisWorkOrder = false;
     private   boolean requested;
 
@@ -152,46 +154,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         return structureName != null && super.isValid(colony);
     }
 
-    /**
-     * Checks if a builder may accept this workOrder.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does "Unused method parameters should be removed"
-     * But in this case extending class may need to use the citizen parameter
-     *
-     * @param citizen which could build it or not
-     * @return true if he is able to.
-     */
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected boolean canBuild(@NotNull final ICitizenData citizen)
-    {
-        return true;
-    }
-
-    /**
-     * send a message from the builder.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does "Unused method parameters should be removed"
-     * But in this case extending class may need to use the sendMessage parameter
-     *
-     * @param colony      which the work order belong to
-     * @param hasBuilder  true if we have a builder for this work order
-     * @param sendMessage true if we need to send the message
-     */
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
-    {
-        if (hasSentMessageForThisWorkOrder || hasBuilder)
-        {
-            return;
-        }
-
-        hasSentMessageForThisWorkOrder = true;
-        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-          "entity.builder.messageNoBuilder");
-    }
-
     @NotNull
     @Override
     protected WorkOrderType getType()
@@ -216,21 +178,78 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onCompleted(final IColony colony)
+    public void onRemoved(final IColony colony)
     {
-        super.onCompleted(colony);
+        super.onRemoved(colony);
+        ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder.
+     * <p>
+     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the citizen parameter
+     *
+     * @param citizen which could build it or not
+     * @return true if he is able to.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    protected boolean canBuild(@NotNull final ICitizenData citizen)
+    {
+        return true;
+    }
+
+    /**
+     * send a message from the builder.
+     * <p>
+     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the sendMessage parameter
+     *
+     * @param colony      which the work order belong to
+     * @param hasBuilder  true if we have a builder for this work order
+     * @param sendMessage true if we need to send the message
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
+    {
+        if (hasSentMessageForThisWorkOrder || hasBuilder)
+        {
+            return;
+        }
+
+        hasSentMessageForThisWorkOrder = true;
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+          "entity.builder.messageNoBuilder");
+    }
+
+    @Override
+    public void onCompleted(final IColony colony, ICitizenData citizen)
+    {
+        super.onCompleted(colony, citizen);
 
         final StructureName structureName = new StructureName(getStructureName());
         if (this instanceof WorkOrderBuildBuilding)
         {
             final int level = ((WorkOrderBuildBuilding) this).getUpgradeLevel();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
         else
         {
+
+
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+
+            if (citizen.getName().isEmpty())
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, getStructureName());
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC,
+                  citizen.getName(),
+                  getStructureName());
+            }
         }
 
         if (this.levelUp)
@@ -241,23 +260,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                 ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
             }
         }
-    }
-
-    @Override
-    public void onRemoved(final IColony colony)
-    {
-        super.onRemoved(colony);
-        ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
-    }
-
-    /**
-     * Returns the ID of the building (aka ChunkCoordinates).
-     *
-     * @return ID of the building.
-     */
-    public BlockPos getBuildingLocation()
-    {
-        return buildingLocation;
     }
 
     /**
@@ -271,11 +273,19 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
+     * Returns the ID of the building (aka ChunkCoordinates).
+     *
+     * @return ID of the building.
+     */
+    public BlockPos getBuildingLocation()
+    {
+        return buildingLocation;
+    }
+
+    /**
      * Gets how many times this structure should be rotated.
      * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does "Unused method parameters should be removed"
-     * But in this case extending class may need to use the world parameter
+     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the world parameter
      *
      * @param world where the decoration is
      * @return building rotation.
@@ -337,20 +347,22 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
-     * Set the amount of resources this building requires.
-     * @param amountOfRes the amount.
-     */
-    public void setAmountOfRes(final int amountOfRes)
-    {
-        this.amountOfRes = amountOfRes;
-    }
-
-    /**
      * Amount of resources this building requires.
+     *
      * @return the amount.
      */
     public int getAmountOfRes()
     {
         return amountOfRes;
+    }
+
+    /**
+     * Set the amount of resources this building requires.
+     *
+     * @param amountOfRes the amount.
+     */
+    public void setAmountOfRes(final int amountOfRes)
+    {
+        this.amountOfRes = amountOfRes;
     }
 }

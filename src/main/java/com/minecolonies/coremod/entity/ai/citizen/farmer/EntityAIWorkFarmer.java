@@ -60,7 +60,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Farmer AI class. Created: December 20, 2014
  */
-public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, BuildingFarmer>
 {
     /**
      * The standard delay the farmer should have.
@@ -153,14 +153,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @NotNull
     private IAIState prepareForFarming()
     {
-        @Nullable final BuildingFarmer building = getWorkBuilding();
+        @Nullable final BuildingFarmer building = getOwnBuilding();
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
         }
 
         building.syncWithColony(world);
-        if (building.getFarmerFields().size() < getWorkBuilding().getBuildingLevel() && !building.assignManually())
+        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
         {
             searchAndAddFields();
         }
@@ -223,7 +223,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            getWorkBuilding().setCurrentField(null);
+            getOwnBuilding().setCurrentField(null);
         }
         return PREPARING;
     }
@@ -244,16 +244,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Returns the farmer's work building.
-     *
-     * @return building instance
-     */
-    public BuildingFarmer getWorkBuilding()
-    {
-        return getOwnBuilding(BuildingFarmer.class);
-    }
-
-    /**
      * Searches and adds a field that has not been taken yet for the farmer and then adds it to the list.
      */
     private void searchAndAddFields()
@@ -263,12 +253,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             @Nullable final AbstractScarescrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
-            if (newField != null && getWorkBuilding() != null)
+            if (newField != null && getOwnBuilding() != null)
             {
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
                 newField.markDirty();
-                getWorkBuilding().addFarmerFields(newField.getPosition());
+                getOwnBuilding().addFarmerFields(newField.getPosition());
             }
         }
     }
@@ -426,7 +416,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private IAIState workAtField()
     {
-        @Nullable final BuildingFarmer buildingFarmer = getWorkBuilding();
+        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
         if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
         {
@@ -757,7 +747,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getWorkBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
     /**

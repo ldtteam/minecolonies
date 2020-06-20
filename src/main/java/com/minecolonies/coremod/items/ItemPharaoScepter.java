@@ -33,7 +33,7 @@ public class ItemPharaoScepter extends BowItem
      */
     public ItemPharaoScepter(final Properties properties)
     {
-        super(properties.group(ModCreativeTabs.MINECOLONIES));
+        super(properties.group(ModCreativeTabs.MINECOLONIES).maxDamage(384));
         setRegistryName("pharaoscepter");
     }
 
@@ -48,7 +48,7 @@ public class ItemPharaoScepter extends BowItem
             return ret;
 
         playerIn.setActiveHand(handIn);
-        return ActionResult.func_226249_b_(itemstack);
+        return ActionResult.resultConsume(itemstack);
     }
 
     @Override

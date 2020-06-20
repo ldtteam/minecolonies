@@ -183,6 +183,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
      * Add one pond to our list of ponds.
      *
      * @param pond the pond to add.
+     * @param parent the parent position.
      */
     public void addToPonds(final BlockPos pond, final BlockPos parent)
     {
@@ -192,7 +193,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     /**
      * remove one pond from the ponds list.
      *
-     * @param pond the coordinates matching one pond.
+     * @param pond the coordinate pair matching one pond.
      */
     public void removeFromPonds(final Tuple<BlockPos, BlockPos> pond)
     {

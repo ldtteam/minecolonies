@@ -20,6 +20,7 @@ import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,12 +32,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.research.util.ResearchConstants.CRUSHING_11;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -80,6 +79,11 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     private ItemStorage crusherMode = null;
 
     /**
+     * If one by one recipes are enabled.
+     */
+    private boolean oneByOne = false;
+
+    /**
      * Instantiates a new crusher building.
      *
      * @param c the colony.
@@ -96,18 +100,25 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     private void loadCrusherMode()
     {
+        this.crusherRecipes.clear();
+        final UnlockAbilityResearchEffect researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(CRUSHING_11, UnlockAbilityResearchEffect.class);
+        final boolean oneOne = researchEffect != null && researchEffect.getEffect();
+
         for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
         {
             if (this.crusherMode == null)
             {
                 this.crusherMode = mode.getKey();
             }
-            final List<ItemStack> input = new ArrayList<>();
-            input.add(mode.getKey().getItemStack());
+            final ItemStack input = mode.getKey().getItemStack();
+            if (oneOne)
+            {
+                input.setCount(1);
+            }
             final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
               TypeConstants.RECIPE,
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input, 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
+              Collections.singletonList(input), 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
     }
@@ -136,7 +147,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCrusher(citizen);
     }
@@ -243,11 +254,13 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             this.crusherMode = new ItemStorage(ItemStack.read(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
+        this.oneByOne = compound.getBoolean(CRUSHING_11);
+
         if (super.recipes.isEmpty())
         {
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }
@@ -265,6 +278,8 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             crusherMode.getItemStack().write(crusherModeNBT);
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
+
+        compound.putBoolean(CRUSHING_11, oneByOne);
         return compound;
     }
 
@@ -272,9 +287,19 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        if (crusherRecipes.isEmpty())
+        final UnlockAbilityResearchEffect researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(CRUSHING_11, UnlockAbilityResearchEffect.class);
+        final boolean oneOne = researchEffect != null && researchEffect.getEffect();
+
+        if (crusherRecipes.isEmpty() || oneOne && !oneByOne)
         {
             loadCrusherMode();
+
+            super.recipes.clear();
+            for (final IRecipeStorage recipe : crusherRecipes.values())
+            {
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+                addRecipe(token);
+            }
         }
 
         if (crusherMode == null)

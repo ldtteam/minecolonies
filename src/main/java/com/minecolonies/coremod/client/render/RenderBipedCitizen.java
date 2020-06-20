@@ -117,7 +117,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             if (distance <= 4096.0D)
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;
-                boolean isSneaking = entityIn.isShiftKeyDown();
+                boolean isSneaking = entityIn.isSneaking();
                 double height = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
 
@@ -130,7 +130,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                final Matrix4f matrix = matrixStack.getLast().getPositionMatrix();
+                final Matrix4f matrix = matrixStack.getLast().getMatrix();
                 final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
                 r.pos(matrix,0, 0, 0).tex(0, 0).lightmap(250).endVertex();

@@ -27,25 +27,35 @@ public class StandardRecipeManager implements IRecipeManager
     /**
      * Map of all recipes which have been discovered globally already.
      */
-    private final BiMap<IToken, IRecipeStorage> recipes = HashBiMap.create();
+    private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create();
+
+    /**
+     * Immutable cache.
+     */
+    private ImmutableMap<IToken<?>, IRecipeStorage> cache = null;
 
     @Override
-    public ImmutableMap<IToken, IRecipeStorage> getRecipes()
+    public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
     {
-        return ImmutableMap.copyOf(recipes);
+         if (cache == null)
+        {
+            cache = ImmutableMap.copyOf(recipes);
+        }
+        return cache;
     }
 
     @Override
-    public IToken addRecipe(final IRecipeStorage storage)
+    public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
+        cache = null;
         return storage.getToken();
     }
 
     @Override
-    public IToken checkOrAddRecipe(final IRecipeStorage storage)
+    public IToken<?> checkOrAddRecipe(final IRecipeStorage storage)
     {
-        final IToken token = getRecipeId(storage);
+        final IToken<?> token = getRecipeId(storage);
         if(token == null)
         {
             return addRecipe(storage);
@@ -54,9 +64,9 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public IToken getRecipeId(final IRecipeStorage storage)
+    public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        for(final Map.Entry<IToken, IRecipeStorage> tempStorage: recipes.entrySet())
+        for(final Map.Entry<IToken<?>, IRecipeStorage> tempStorage: recipes.entrySet())
         {
             if(tempStorage.getValue().equals(storage))
             {
@@ -81,5 +91,6 @@ public class StandardRecipeManager implements IRecipeManager
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
+        cache = null;
     }
 }

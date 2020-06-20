@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The Entity AI study class.
  */
-public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
+public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary>
 {
     /**
      * Delay for each subject study.
@@ -53,7 +53,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     }
 
     @Override
-    public Class getExpectedBuildingClass()
+    public Class<BuildingLibrary> getExpectedBuildingClass()
     {
         return BuildingLibrary.class;
     }
@@ -70,7 +70,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding(BuildingLibrary.class).getRandomBookShelf();
+            studyPos = getOwnBuilding().getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))
@@ -83,7 +83,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         final List<StudyItem> currentItems = new ArrayList<>();
         worker.decreaseSaturationForAction();
 
-        for (final StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+        for (final StudyItem curItem : getOwnBuilding().getStudyItems())
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
               itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
@@ -102,7 +102,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50, data);
             worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+            for (final StudyItem studyItem : getOwnBuilding().getStudyItems())
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem());
                 if (bSlot > -1)

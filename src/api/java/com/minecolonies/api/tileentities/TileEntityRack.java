@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -65,7 +64,7 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private CombinedInvWrapper combinedHandler;
 
-    public TileEntityRack(final TileEntityType type)
+    public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
         super(type);
     }

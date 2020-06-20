@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.blacksmith.EntityAIWorkBlacksmith;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,9 +47,8 @@ public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, Jo
      *
      * @return your personal AI instance.
      */
-    @NotNull
     @Override
-    public AbstractAISkeleton<JobBlacksmith> generateAI()
+    public EntityAIWorkBlacksmith generateAI()
     {
         return new EntityAIWorkBlacksmith(this);
     }

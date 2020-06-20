@@ -39,8 +39,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OTHER_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building. Created: August 13, 2015
@@ -53,6 +52,7 @@ public class BuildToolPlaceMessage implements IMessage
      * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
+    private static final String WRONG_COLONY = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
 
     /**
      * The state at the offset position.
@@ -210,6 +210,13 @@ public class BuildToolPlaceMessage implements IMessage
             return;
         }
 
+        final CompoundNBT compound = stack.getTag();
+        if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
+        {
+            LanguageHandler.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
+            return;
+        }
+
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
@@ -225,12 +232,11 @@ public class BuildToolPlaceMessage implements IMessage
 
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, state);
-                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
                 int level = 0;
 
-                final CompoundNBT compound = stack.getTag();
                 if (compound != null)
                 {
                     if (compound.keySet().contains(TAG_OTHER_LEVEL))

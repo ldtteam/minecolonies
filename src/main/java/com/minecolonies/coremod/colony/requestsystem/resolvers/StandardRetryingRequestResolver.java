@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
@@ -108,7 +107,6 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
     public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
@@ -263,7 +261,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests.keySet()).stream()
                 .map(manager::getRequestForToken)
@@ -271,7 +269,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                 .filter(Objects::nonNull)
                 .forEach(request ->
                 {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+                    final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
 
                     if (newResolverToken != getId())
                     {

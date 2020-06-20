@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
+public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining, BuildingCombatAcademy>
 {
     /**
      * How many actions on one target are done per building level.
@@ -92,7 +92,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private IAIState decideOnTrainingType()
     {
         setDelay(STANDARD_DELAY);
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
+        if (getOwnBuilding().hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
         {
             return FIND_TRAINING_PARTNER;
         }
@@ -102,7 +102,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     @Override
     public IAIState decide()
     {
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        if (getOwnBuilding().hasCombatPartner(worker))
         {
             setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
@@ -205,7 +205,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
             {
-                getOwnBuilding(BuildingCombatAcademy.class).resetPartner(worker);
+                getOwnBuilding().resetPartner(worker);
                 targetCounter = 0;
                 return START_WORKING;
             }
@@ -236,7 +236,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return DECIDE;
         }
 
-        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        if (getOwnBuilding().hasCombatPartner(worker))
         {
             setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
@@ -327,5 +327,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
         }
         return true;
+    }
+
+    @Override
+    public Class<BuildingCombatAcademy> getExpectedBuildingClass()
+    {
+        return BuildingCombatAcademy.class;
     }
 }

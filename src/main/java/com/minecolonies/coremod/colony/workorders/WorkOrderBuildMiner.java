@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -90,7 +91,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onCompleted(final IColony colony)
+    public void onCompleted(final IColony colony, final ICitizenData citizen)
     {
         /*
          * Override this to avoid action!

@@ -38,5 +38,5 @@ public interface IResearchEffect<T>
      * @param other the effect to check.
      * @return true if so.
      */
-    boolean overrides(@NotNull final IResearchEffect other);
+    boolean overrides(@NotNull final IResearchEffect<?> other);
 }
