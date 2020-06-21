@@ -439,7 +439,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                                                                                                  .getCurrentPathIndex() + 1)
                                                 : null;
 
-            if (pEx.isOnLadder() && (pExNext != null && pEx.y != pExNext.y))
+            if (pEx.isOnLadder() && pExNext != null)
             {
                 return handlePathPointOnLadder(pEx);
             }
