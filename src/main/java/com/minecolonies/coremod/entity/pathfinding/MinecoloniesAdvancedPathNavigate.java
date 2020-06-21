@@ -453,7 +453,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            if (pEx.isOnLadder() && pExNext != null)
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || entity.posY > pEx.y))
             {
                 return handlePathPointOnLadder(pEx);
             }
