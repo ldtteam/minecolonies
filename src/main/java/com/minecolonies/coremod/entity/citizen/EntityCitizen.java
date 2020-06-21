@@ -1321,6 +1321,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void move(final MoverType typeIn, final Vec3d pos)
     {
+        //todo someaddons: removse this on the minimum AI rework.
         if (pos.x != 0 || pos.z != 0)
         {
             if (getCitizenData() != null && getCitizenData().isAsleep())
