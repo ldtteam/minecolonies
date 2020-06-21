@@ -284,7 +284,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @param <W>  the building type.
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
@@ -1524,14 +1523,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
           itemStack -> itemStack.getItem().isIn(tag)) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
-                        count,
-                        worker.getInventoryCitizen()))
+                count,
+                worker.getInventoryCitizen()))
         {
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-          (IRequest<? extends IDeliverable> r) -> r.getRequest().getResult().getItem().isIn(tag)).isEmpty())
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().getId().equals(tag.getId())).isEmpty())
         {
             final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
             worker.getCitizenData().createRequestAsync(tagRequest);

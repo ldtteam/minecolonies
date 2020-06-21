@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.util.Hand;
@@ -104,7 +105,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             final int numOfAnimals = allBees.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * BEES_PER_LEVEL;
 
-            return (numOfAnimals + numOfBeesInHive) > maxAnimals;
+            return (numOfAnimals + numOfBeesInHive) >= maxAnimals;
         }
         return true;
     }
@@ -277,6 +278,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
         final BlockPos hive = hives.get(0);
+        if (world.getBlockState(hive).isIn(BlockTags.BEEHIVES))
+        {
+            getOwnBuilding().removeHive(hive);
+        }
         if (walkToBlock(hive))
         {
             return getState();
