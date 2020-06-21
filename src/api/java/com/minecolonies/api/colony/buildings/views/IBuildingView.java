@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuildingView extends IRequester
 {
@@ -37,6 +38,14 @@ public interface IBuildingView extends IRequester
      */
     @NotNull
     BlockPos getPosition();
+
+    /**
+     * Gets the box corners of the building.
+     *
+     * @return the AxisAlignedBB representing the box of the building.
+     */
+    @NotNull
+    AxisAlignedBB getBoxCorners();
 
     /**
      * Get the current level of the building.
@@ -207,6 +216,7 @@ public interface IBuildingView extends IRequester
 
     /**
      * Check if the building was deconstructed.
+     *
      * @return true if so.
      */
     boolean isDeconstructed();

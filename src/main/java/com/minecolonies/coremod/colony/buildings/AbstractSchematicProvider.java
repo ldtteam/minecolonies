@@ -72,6 +72,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public int cachedRotation = -1;
 
     /**
+     * The targetable area box of this building
+     */
+    private AxisAlignedBB targetableArea = null;
+
+    /**
      * The building area box of this building
      */
     private AxisAlignedBB buildingArea = null;
@@ -268,18 +273,22 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         return location;
     }
 
-    /**
-     * Calculates the area of the building.
-     *
-     * @param world the world.
-     * @return the AxisAlignedBB.
-     */
     @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
+        if (targetableArea == null)
+        {
+            targetableArea = BuildingUtils.getTargetAbleArea(world, this);
+        }
+        return targetableArea;
+    }
+
+    @Override
+    public AxisAlignedBB getBuildingArea(final World world)
+    {
         if (buildingArea == null)
         {
-            buildingArea = BuildingUtils.getTargetAbleArea(world, this);
+            buildingArea = BuildingUtils.getBuildingArea(world, this);
         }
         return buildingArea;
     }

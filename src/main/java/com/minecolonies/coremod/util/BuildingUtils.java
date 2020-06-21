@@ -35,6 +35,59 @@ public final class BuildingUtils
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
+    public static AxisAlignedBB getBuildingArea(final World world, final AbstractSchematicProvider building)
+    {
+        final BlockPos location = building.getPosition();
+        final int x1;
+        final int z1;
+        final int x2;
+        final int z2;
+        final int y1 = location.getY();
+        final int y2;
+
+        if(building.getHeight() == 0)
+        {
+            final StructureName sn =
+              new StructureName(Structures.SCHEMATICS_PREFIX,
+                building.getStyle(),
+                building.getSchematicName() + building.getBuildingLevel());
+
+            final String structureName = sn.toString();
+
+            final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
+            wrapper.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
+
+            final BlockPos zeroPos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());
+
+            x1 = zeroPos.getX();
+            z1 = zeroPos.getZ();
+            x2 = zeroPos.getX() + wrapper.getBluePrint().getSizeX();
+            z2 = zeroPos.getZ() + wrapper.getBluePrint().getSizeZ();
+            y2 = location.getY() + wrapper.getBluePrint().getSizeY();
+
+            building.setCorners(x1, x2, z1, z2);
+            building.setHeight(wrapper.getBluePrint().getSizeY());
+        }
+        else
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
+            x1 = corners.getA().getA();
+            x2 = corners.getA().getB();
+            z1 = corners.getB().getA();
+            z2 = corners.getB().getB();
+            y2 = location.getY() + building.getHeight();
+        }
+
+        final AxisAlignedBB result = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        return result.grow(-1, 0, -1);
+    }
+
+    /**
+     * Calculate the targetable Size of the building given a world and a building.
+     * @param world the world.
+     * @param building the building.
+     * @return the AxisAlignedBB box.
+     */
     public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
     {
         final BlockPos location = building.getPosition();

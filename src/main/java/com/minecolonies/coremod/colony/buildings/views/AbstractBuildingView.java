@@ -15,14 +15,17 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -35,7 +38,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
@@ -53,6 +57,8 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
     @NotNull
     private final BlockPos location;
+
+    private AxisAlignedBB boxCorners;
 
     /**
      * The building level.
@@ -176,6 +182,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     public BlockPos getPosition()
     {
         return location;
+    }
+
+    @Override
+    @NotNull
+    public AxisAlignedBB getBoxCorners()
+    {
+        return boxCorners;
     }
 
     /**
@@ -378,6 +391,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
+        boxCorners = NBTUtils.readBoundingBox(buf.readCompoundTag());
         claimRadius = buf.readInt();
 
         final List<IToken<?>> list = new ArrayList<>();

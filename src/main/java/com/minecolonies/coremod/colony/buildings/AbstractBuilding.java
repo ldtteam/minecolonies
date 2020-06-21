@@ -57,10 +57,12 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
@@ -523,6 +525,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
+        buf.writeCompoundTag(NBTUtils.writeBoundingBox(getBuildingArea(colony.getWorld())));
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundNBT requestSystemCompound = new CompoundNBT();

@@ -77,13 +77,19 @@ public class ClientEventHandler
         {
             handleRenderStructure(event, world, player);
         }
-        else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
+
+        if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
             handleRenderScepterGuard(event, world, player);
         }
         else if (player.getHeldItemMainhand().getItem() == ModItems.bannerRallyGuards)
         {
             handleRenderBannerRallyGuards(event, world, player);
+        }
+        else if (player.getHeldItemMainhand().getItem() == com.ldtteam.structurize.items.ModItems.buildTool)
+        {
+            // TODO: Move to Structurize
+            handleRenderBuildTool(event, world, player);
         }
     }
 
@@ -117,6 +123,37 @@ public class ClientEventHandler
                 BlueprintHandler.getInstance()
                   .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
             }
+        }
+    }
+
+    /**
+     * Renders the colony's building's bounding boxes into the client code
+     *
+     * @param event  The caught event
+     * @param world  The world in which to render
+     * @param player The player for which to render
+     */
+    private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    {
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        if (colony == null)
+        {
+            return;
+        }
+
+        for (final IBuildingView buildingView : colony.getBuildings())
+        {
+            RenderSystem.disableDepthTest();
+            RenderSystem.disableCull();
+
+            final AxisAlignedBB boxCorners = buildingView.getBoxCorners();
+            final BlockPos minCorner = new BlockPos(boxCorners.minX, boxCorners.minY, boxCorners.minZ);
+            final BlockPos maxCorner = new BlockPos(boxCorners.maxX, boxCorners.maxY, boxCorners.maxZ);
+
+            renderBox(minCorner, maxCorner, event, 0, 0, 1);
+
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableCull();
         }
     }
 
@@ -183,7 +220,7 @@ public class ClientEventHandler
             RenderSystem.disableDepthTest();
             RenderSystem.disableCull();
 
-            renderRalliedGuardbuildingIndicator(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
+            renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
             RenderSystem.enableDepthTest();
             RenderSystem.enableCull();
         }
@@ -201,7 +238,7 @@ public class ClientEventHandler
      * @param green Green component
      * @param blue  Blue component
      */
-    private static void renderRalliedGuardbuildingIndicator(
+    private static void renderBox(
       final BlockPos posA,
       final BlockPos posB,
       final RenderWorldLastEvent event,

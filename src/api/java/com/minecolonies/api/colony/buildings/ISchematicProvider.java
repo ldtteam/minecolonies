@@ -48,12 +48,20 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     BlockPos getID();
 
     /**
-     * Calculates the area of the building.
+     * Calculates the targetable area of the building.
      *
      * @param world the world.
      * @return the AxisAlignedBB.
      */
     AxisAlignedBB getTargetableArea(World world);
+
+    /**
+     * Calculates the area of the building.
+     *
+     * @param world the world.
+     * @return the AxisAlignedBB.
+     */
+    AxisAlignedBB getBuildingArea(World world);
 
     /**
      * Returns the rotation of the current building.
