@@ -130,6 +130,13 @@ public interface IBuildingView extends IRequester
     boolean isRepairing();
 
     /**
+     * Check if the building is currently being deconstructed..
+     *
+     * @return true if so.
+     */
+    boolean isDeconstructing();
+
+    /**
      * Get the claim radius for the building.
      *
      * @return the radius.
@@ -197,4 +204,10 @@ public interface IBuildingView extends IRequester
      * @param name the new name.
      */
     void setCustomName(String name);
+
+    /**
+     * Check if the building was deconstructed.
+     * @return true if so.
+     */
+    boolean isDeconstructed();
 }

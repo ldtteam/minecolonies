@@ -300,7 +300,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
                 worker.getCitizenData().getName(),
-                worker.getCitizenColonyHandler().getWorkBuilding().getClass().getSimpleName(),
+                getExpectedBuildingClass().getSimpleName(),
                 type.getSimpleName());
 
             if (worker.getCitizenData() != null)
@@ -403,7 +403,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Nullable
     private IAIState initSafetyChecks()
     {
-        if (null == getOwnBuilding() || worker.getCitizenData() == null)
+        if (null == worker.getCitizenJobHandler().getColonyJob() || null == getOwnBuilding() || worker.getCitizenData() == null)
         {
             return INIT;
         }
@@ -1311,6 +1311,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected final void incrementActionsDone()
     {
         job.incrementActionsDone();
+    }
+
+    /**
+     * Reset the done actions of the AI.
+     *
+     * @see #incrementActionsDone(int)
+     */
+    protected final void resetActionsDone()
+    {
+        job.clearActionsDone();
     }
 
     /**
