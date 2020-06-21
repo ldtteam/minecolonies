@@ -10,6 +10,7 @@ import com.minecolonies.coremod.entity.ai.citizen.beekeeper.EntityAIWorkBeekeepe
  */
 public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeeper>
 {
+    private int counter = 0;
     /**
      * Initialize citizen data.
      *
@@ -54,5 +55,34 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
     public EntityAIWorkBeekeeper generateAI()
     {
         return new EntityAIWorkBeekeeper(this);
+    }
+
+    /**
+     * Tick the bee interaction counter to determine the time when the interaction gets triggered.
+     */
+    public void tickNoBees()
+    {
+        if (counter < 100) // to prevent unnecessary high counter when ignored by player
+        {
+            counter++;
+        }
+    }
+
+    /**
+     * Reset the bee interaction counter.
+     */
+    public void resetCounter()
+    {
+        counter = 0;
+    }
+
+    /**
+     * Check if the interaction is valid/should be triggered.
+     *
+     * @return true if the interaction is valid/should be triggered.
+     */
+    public boolean checkForBeeInteraction()
+    {
+        return counter > 4;
     }
 }

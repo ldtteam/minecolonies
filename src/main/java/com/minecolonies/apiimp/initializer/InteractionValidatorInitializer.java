@@ -16,15 +16,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.entity.ai.citizen.beekeeper.EntityAIWorkBeekeeper;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -180,17 +175,10 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HIVES),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && ((BuildingBeekeeper) citizen.getWorkBuilding()).getHives().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_BEES),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper &&
-                       EntityAIWorkBeekeeper.searchForAnimals(citizen.getColony().getWorld(), (BuildingBeekeeper) citizen.getWorkBuilding()).isEmpty() &&
-                       ((BuildingBeekeeper) citizen.getWorkBuilding())
-                         .getHives()
-                         .stream()
-                         .map(citizen.getColony().getWorld()::getTileEntity)
-                         .filter(tileEntity -> tileEntity instanceof BeehiveTileEntity)
-                         .map(tileEntity -> (BeehiveTileEntity) tileEntity)
-                         .mapToInt(BeehiveTileEntity::getBeeCount)
-                         .sum() <= 0);
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && citizen.getJob(JobBeekeeper.class).checkForBeeInteraction());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
           citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());

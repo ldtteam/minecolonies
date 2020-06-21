@@ -394,6 +394,8 @@ public final class TranslationConstants
     @NonNls
     public static final String WATER_TOO_FAR                           = "entity.fisherman.messagewatertoofar";
     @NonNls
+    public static final String NO_HIVES                                = "entity.beekeeper.messagenohives";
+    @NonNls
     public static final String NO_BEES                                 = "entity.beekeeper.messagenobees";
     @NonNls
     public static final String NO_COMPOST                              = "com.minecolonies.coremod.florist.nocompost";

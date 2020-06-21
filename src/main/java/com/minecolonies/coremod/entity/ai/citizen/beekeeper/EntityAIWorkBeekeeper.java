@@ -34,8 +34,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_BEES;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Beekeeper AI class.
@@ -68,6 +67,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private static final int DECIDING_DELAY   = 40;
     private static final int NO_ANIMALS_DELAY = 100;
+    private static final int NO_HIVES_DELAY   = 100;
     private static final int BREEDING_DELAY   = 40;
 
     /**
@@ -98,20 +98,30 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         if (getOwnBuilding() != null)
         {
-            final int numOfBeesInHive = getOwnBuilding()
-                                          .getHives()
-                                          .stream()
-                                          .map(world::getTileEntity)
-                                          .filter(Objects::nonNull)
-                                          .map(BeehiveTileEntity.class::cast)
-                                          .mapToInt(BeehiveTileEntity::getBeeCount)
-                                          .sum();
+            final int numOfBeesInHive = getBeesInHives();
             final int numOfAnimals = allBees.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * BEES_PER_LEVEL;
 
             return (numOfAnimals + numOfBeesInHive) >= maxAnimals;
         }
         return true;
+    }
+
+    /**
+     * Get the number of bees in assigned hives.
+     *
+     * @return the number of bees in assigned hives.
+     */
+    private int getBeesInHives()
+    {
+        return getOwnBuilding()
+                 .getHives()
+                 .stream()
+                 .map(world::getTileEntity)
+                 .filter(Objects::nonNull)
+                 .map(BeehiveTileEntity.class::cast)
+                 .mapToInt(BeehiveTileEntity::getBeeCount)
+                 .sum();
     }
 
     /**
@@ -163,11 +173,20 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         setDelay(DECIDING_DELAY + (99 / worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill())) - 1);
 
-        final Optional<BlockPos> hive = getOwnBuilding()
-                                          .getHives()
+        final Set<BlockPos> hives = getOwnBuilding().getHives();
+
+        if (hives.isEmpty())
+        {
+            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HIVES), ChatPriority.BLOCKING));
+            setDelay(NO_HIVES_DELAY);
+            return DECIDE;
+        }
+
+        final Optional<BlockPos> hive = hives
                                           .stream()
                                           .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
                                           .findFirst();
+
         if (hive.isPresent())
         {
             return BEEKEEPER_HARVEST;
@@ -177,16 +196,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         if (bees.isEmpty())
         {
-            if (getOwnBuilding()
-                  .getHives()
-                  .stream()
-                  .map(world::getTileEntity)
-                  .filter(tileEntity -> tileEntity instanceof BeehiveTileEntity)
-                  .map(tileEntity -> (BeehiveTileEntity) tileEntity)
-                  .mapToInt(BeehiveTileEntity::getBeeCount)
-                  .sum() <= 0)
+            if (getBeesInHives() <= 0)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_BEES), ChatPriority.BLOCKING));
+                final JobBeekeeper job = worker.getCitizenJobHandler().getColonyJob(JobBeekeeper.class);
+                job.tickNoBees();
+                if (job.checkForBeeInteraction())
+                {
+                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_BEES), ChatPriority.BLOCKING));
+                }
             }
             setDelay(NO_ANIMALS_DELAY);
             return DECIDE;
