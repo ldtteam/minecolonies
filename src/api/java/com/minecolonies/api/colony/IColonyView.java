@@ -13,6 +13,7 @@ import com.minecolonies.api.network.IMessage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -223,7 +224,7 @@ public interface IColonyView extends IColony
      *
      * @param buf               {@link PacketBuffer} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
-     * @param world the world it is in.
+     * @param world             the world it is in.
      * @return null == no response.
      */
     @Nullable
@@ -329,6 +330,7 @@ public interface IColonyView extends IColony
 
     /**
      * Getter for the team colony color.
+     *
      * @return the color.
      */
     TextFormatting getTeamColonyColor();
@@ -365,6 +367,9 @@ public interface IColonyView extends IColony
     boolean hasWarehouse();
 
     @Override
+    ScorePlayerTeam getTeam();
+
+    @Override
     int getLastContactInHours();
 
     @Override
@@ -399,6 +404,7 @@ public interface IColonyView extends IColony
 
     /**
      * Get if progress should be printed.
+     *
      * @return true if so.
      */
     boolean isPrintingProgress();
@@ -408,36 +414,42 @@ public interface IColonyView extends IColony
 
     /**
      * Get a list of all buildings.
+     *
      * @return a list of their views.
      */
     List<IBuildingView> getBuildings();
 
     /**
      * Get the cost multiplier of buying a citizen.
+     *
      * @return the current cost.
      */
     int getBoughtCitizenCost();
 
     /**
      * Get the style of the colony.
+     *
      * @return the current default style.
      */
     String getStyle();
 
     /**
      * If currently being raided.
+     *
      * @return true if so.
      */
     boolean isRaiding();
 
     /**
      * Get a compact list of all allies.
+     *
      * @return the list.
      */
     List<CompactColonyReference> getAllies();
 
     /**
      * Get a compact list of all feuds.
+     *
      * @return the list.
      */
     List<CompactColonyReference> getFeuds();

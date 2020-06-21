@@ -310,6 +310,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         CLEAR_WATER,
         DECORATE,
         SPAWN,
-        REMOVE
+        REMOVE,
+        REMOVE_WATER
     }
 }

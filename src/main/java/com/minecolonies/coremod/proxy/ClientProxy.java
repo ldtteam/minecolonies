@@ -98,6 +98,13 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
+    public void openBannerRallyGuardsWindow(final ItemStack banner)
+    {
+        @Nullable final WindowBannerRallyGuards window = new WindowBannerRallyGuards(banner);
+        window.open();
+    }
+
+    @Override
     public void openClipBoardWindow(final IColonyView colonyView)
     {
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyView);

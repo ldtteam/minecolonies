@@ -11,7 +11,7 @@ import net.minecraftforge.common.ForgeHooks;
 public class CommandHelp implements IMCCommand
 {
 
-    private static final String wikiUrl    = "https://wiki.minecolonies.com";
+    private static final String wikiUrl    = "https://wiki.minecolonies.ldtteam.com";
     private static final String discordUrl = "https://discord.minecolonies.com";
 
     /**
