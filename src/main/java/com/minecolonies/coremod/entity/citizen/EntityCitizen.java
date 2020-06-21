@@ -108,6 +108,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The amount of damage a guard takes on blocking.
      */
     private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+
+    /**
+     * Max speed factor.
+     */
+    private static final double MAX_SPEED_FACTOR     = 0.5;
+
     /**
      * The citizen status handler.
      */
@@ -1289,6 +1295,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
         }
         return false;
+    }
+
+    @Override
+    public float getAIMoveSpeed()
+    {
+        return (float) Math.min(MAX_SPEED_FACTOR, super.getAIMoveSpeed());
     }
 
     private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage, final Entity sourceEntity)

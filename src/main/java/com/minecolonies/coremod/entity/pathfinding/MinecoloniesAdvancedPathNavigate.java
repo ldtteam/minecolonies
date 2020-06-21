@@ -439,6 +439,20 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                                                                                                  .getCurrentPathIndex() + 1)
                                                 : null;
 
+            for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 3); i++)
+            {
+                final PathPointExtended nextPoints =  (PathPointExtended) this.getPath().getPathPointFromIndex(i);
+                if (nextPoints.isOnLadder())
+                {
+                    Vec3d motion = this.entity.getMotion();
+                    double x = motion.x < -0.1 ? -0.1 : Math.min(motion.x, 0.1);
+                    double z = motion.x < -0.1 ? -0.1 : Math.min(motion.z, 0.1);
+
+                    this.ourEntity.setMotion(x, motion.y, z);
+                    break;
+                }
+            }
+
             if (pEx.isOnLadder() && pExNext != null)
             {
                 return handlePathPointOnLadder(pEx);
@@ -690,7 +704,31 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        super.pathFollow();
+        Vec3d vec3d = this.getEntityPosition();
+        this.maxDistanceToWaypoint = this.entity.getWidth() > 0.75F ? this.entity.getWidth() / 2.0F : 0.75F - this.entity.getWidth() / 2.0F;
+        Vec3d vec3d1 = this.currentPath.getVectorFromIndex(this.entity, this.currentPath.getCurrentPathIndex());
+        // Forge: fix MC-94054
+        if (Math.abs(this.entity.getPosX() - vec3d1.x) < (double)this.maxDistanceToWaypoint
+              && Math.abs(this.entity.getPosZ() - vec3d1.z) < (double)this.maxDistanceToWaypoint &&
+              Math.abs(this.entity.getPosY() - vec3d1.y) < 1.0D) {
+            this.currentPath.incrementPathIndex();
+        }
+        else
+        {
+            // Look ahead if we were too fast.
+            for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
+            {
+                Vec3d vec3d2 = this.currentPath.getVectorFromIndex(this.entity, i);
+                if (Math.abs(this.entity.getPosX() - vec3d2.x) < (double)this.maxDistanceToWaypoint
+                      && Math.abs(this.entity.getPosZ() - vec3d2.z) < (double)this.maxDistanceToWaypoint &&
+                      Math.abs(this.entity.getPosY() - vec3d2.y) < 1.0D) {
+                    this.currentPath.setCurrentPathIndex(i);
+                    break;
+                }
+            }
+        }
+
+        this.checkForStuck(vec3d);
     }
 
     public void updatePath() {}
