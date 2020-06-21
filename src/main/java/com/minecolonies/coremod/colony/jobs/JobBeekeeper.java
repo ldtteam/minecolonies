@@ -10,7 +10,16 @@ import com.minecolonies.coremod.entity.ai.citizen.beekeeper.EntityAIWorkBeekeepe
  */
 public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeeper>
 {
+    /**
+     * The value where when reached the counter check returns true. 100 ticks * 4 = 1 ingame day.
+     */
+    public static final int COUNTER_TRIGGER = 4;
+
+    /**
+     * The counting variable.
+     */
     private int counter = 0;
+
     /**
      * Initialize citizen data.
      *
@@ -83,6 +92,6 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
      */
     public boolean checkForBeeInteraction()
     {
-        return counter > 4;
+        return counter > COUNTER_TRIGGER;
     }
 }
