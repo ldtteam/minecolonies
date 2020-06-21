@@ -165,6 +165,11 @@ public enum AIWorkerState implements IAIState
     */
 
     /**
+     * Decision state for guards.
+     */
+    GUARD_DECIDE(false),
+
+    /**
      * Physically attack the target.
      */
     GUARD_ATTACK_PHYSICAL(false),
@@ -203,6 +208,11 @@ public enum AIWorkerState implements IAIState
      * Guard a position.
      */
     GUARD_GUARD(true),
+
+    /**
+     * Rally to a player.
+     */
+    GUARD_RALLY(false),
 
     /**
      * Regen at the building.

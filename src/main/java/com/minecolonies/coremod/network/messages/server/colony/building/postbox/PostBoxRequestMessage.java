@@ -20,6 +20,11 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      */
     private ItemStack itemStack;
 
+    /*
+     * Whether to deliver what's currently available or entire request
+     */
+    private boolean deliverAvailable;
+
     /**
      * Empty constructor used when registering the
      */
@@ -35,18 +40,12 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      * @param itemStack to be take from the player for the building
      * @param quantity  of item needed to be transfered
      */
-    public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity)
+    public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable)
     {
         super(building);
         this.itemStack = itemStack;
         this.itemStack.setCount(quantity);
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        itemStack = buf.readItemStack();
+        this.deliverAvailable = deliverAvailable;
     }
 
     @Override
@@ -54,12 +53,25 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     {
 
         buf.writeItemStack(itemStack);
+        buf.writeBoolean(deliverAvailable);
+    }
+
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        itemStack = buf.readItemStack();
+        deliverAvailable = buf.readBoolean();
     }
 
     @Override
     protected void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final PostBox building)
     {
-        building.createRequest(new Stack(itemStack), false);
+
+        int minCount = (deliverAvailable) ? 1 : itemStack.getCount();
+        Stack requestStack = new Stack(itemStack, itemStack.getCount(), minCount);
+
+        building.createRequest(requestStack, false);
     }
 }
