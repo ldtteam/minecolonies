@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.beekeeper;
 
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -7,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.Entity;
@@ -23,6 +25,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -32,6 +35,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_BEES;
 
 /**
  * Beekeeper AI class.
@@ -169,10 +173,21 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return BEEKEEPER_HARVEST;
         }
 
-        final List<BeeEntity> bees = new ArrayList<>(searchForAnimals());
+        final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
 
         if (bees.isEmpty())
         {
+            if (getOwnBuilding()
+                  .getHives()
+                  .stream()
+                  .map(world::getTileEntity)
+                  .filter(tileEntity -> tileEntity instanceof BeehiveTileEntity)
+                  .map(tileEntity -> (BeehiveTileEntity) tileEntity)
+                  .mapToInt(BeehiveTileEntity::getBeeCount)
+                  .sum() <= 0)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_BEES), ChatPriority.BLOCKING));
+            }
             setDelay(NO_ANIMALS_DELAY);
             return DECIDE;
         }
@@ -204,7 +219,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         setDelay(BREEDING_DELAY);
 
-        final List<BeeEntity> animals = searchForAnimals();
+        final List<BeeEntity> animals = searchForAnimals(world, getOwnBuilding());
 
         final AnimalEntity animalOne = animals
                                          .stream()
@@ -461,9 +476,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      *
      * @return the {@link List} of animals in the area.
      */
-    public List<BeeEntity> searchForAnimals()
+    public static List<BeeEntity> searchForAnimals(final World world, final BuildingBeekeeper ownBuilding)
     {
-        final BuildingBeekeeper ownBuilding = getOwnBuilding();
         if (ownBuilding == null)
         {
             return new ArrayList<>();
