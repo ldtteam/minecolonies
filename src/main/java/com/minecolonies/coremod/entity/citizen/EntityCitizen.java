@@ -1323,7 +1323,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (pos.x != 0 || pos.z != 0)
         {
-            if (getCitizenSleepHandler().isAsleep())
+            if (getCitizenData() != null && getCitizenData().isAsleep())
             {
                 getCitizenSleepHandler().onWakeUp();
             }
