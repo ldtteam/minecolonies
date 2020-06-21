@@ -1492,5 +1492,15 @@
 
   "item.minecolonies.amazonegg": "Amazon Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Chief Egg",
-  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!"
+  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!",
+
+  "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer",
+  "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",
+  "block.minecolonies.blockhutconcretemixer.name": "Concrete Mixer",
+  "block.minecolonies.blockhutconcretemixer": "Concrete Mixer",
+
+  "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
+  "com.minecolonies.coremod.job.rabbitherder": "Rabbit Herder",
+  "block.minecolonies.blockhutrabbithutch.name": "Rabbit hutch",
+  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch"
 }
