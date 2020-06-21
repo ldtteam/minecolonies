@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
 /**
@@ -59,7 +59,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
                     if (!freeStacks())
                     {
                         // Note that createPickupRequest will make sure to only create on request per building.
-                        building.createPickupRequest(getMaxBuildingPriority(true));
+                        building.createPickupRequest(getPlayerActionPriority(true));
                     }
                 }
             }

@@ -40,6 +40,9 @@
         </box>
     </list>
 
+    <button id="deliverAvailable" pos="-40 195" size="40 15"/>
+    <label id="test" pos="-10 195" size="158 11" textalign="MIDDLE" color="black"
+           label="Deliver what's available"/>
     <buttonimage id="inventory" size="86 17" pos="52 210" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(container.inventory)"/>
