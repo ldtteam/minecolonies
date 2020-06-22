@@ -101,6 +101,10 @@ public class DefaultSoundProvider implements IDataProvider
         desertRaidEndProperties.addProperty("stream", true);
         sounds.add("raid.desert.desert_raid_victory", createSoundJson("music", desertRaidEndProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid_victory")));
 
+        JsonObject amazonRaidProperties = getDefaultProperties();
+        amazonRaidProperties.addProperty("stream", true);
+        sounds.add("raid.amazon.amazon_raid", createSoundJson("music", amazonRaidProperties, ImmutableList.of("minecolonies:raid/amazon/amazon_raid")));
+
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
         IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
     }

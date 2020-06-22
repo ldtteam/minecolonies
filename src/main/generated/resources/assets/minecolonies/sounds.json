@@ -22260,5 +22260,14 @@
         "stream": true
       }
     ]
+  },
+  "raid.amazon.amazon_raid": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/amazon/amazon_raid",
+        "stream": true
+      }
+    ]
   }
 }

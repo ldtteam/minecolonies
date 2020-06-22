@@ -69,6 +69,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -106,7 +107,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The amount of damage a guard takes on blocking.
      */
-    private static final float                     GUARD_BLOCK_DAMAGE  = 0.5f;
+    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+    /**
+     * Max speed factor.
+     */
+    private static final double MAX_SPEED_FACTOR     = 0.5;
+
     /**
      * The citizen status handler.
      */
@@ -1310,6 +1316,26 @@ public class EntityCitizen extends AbstractEntityCitizen
             return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
         }
         return false;
+    }
+
+    @Override
+    public void move(final MoverType typeIn, final Vec3d pos)
+    {
+        //todo someaddons: removse this on the minimum AI rework.
+        if (pos.x != 0 || pos.z != 0)
+        {
+            if (getCitizenData() != null && getCitizenData().isAsleep())
+            {
+                getCitizenSleepHandler().onWakeUp();
+            }
+        }
+        super.move(typeIn, pos);
+    }
+
+    @Override
+    public float getAIMoveSpeed()
+    {
+        return (float) Math.min(MAX_SPEED_FACTOR, super.getAIMoveSpeed());
     }
 
     private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage, final Entity sourceEntity)
