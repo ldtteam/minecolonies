@@ -1,12 +1,12 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColonyView;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,7 +180,7 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
      * Get the inventory of the scarecrow.
      * @return the IItemHandler.
      */
-    public abstract IInventory getInventory();
+    public abstract IItemHandler getInventory();
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).

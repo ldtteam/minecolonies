@@ -5,20 +5,18 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
-import net.minecraft.block.CropsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -33,7 +31,7 @@ public class ContainerField extends Container
     /**
      * The inventory.
      */
-    private final IInventory inventory;
+    private final IItemHandler inventory;
 
     /**
      * The colony.
@@ -58,7 +56,8 @@ public class ContainerField extends Container
         final World world = playerInventory.player.world;
         BlockPos pos = extra.readBlockPos();
 
-        if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+        if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
+        {
             pos = pos.down();
         }
 
@@ -67,17 +66,7 @@ public class ContainerField extends Container
         this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
-        // New anonymous slot type for stack validation
-        addSlot(new Slot(inventory, 0, X_OFFSET, Y_OFFSET) {
-            @Override
-            public boolean isItemValid(@NotNull final ItemStack stack)
-            {
-                return Tags.Items.SEEDS.contains(stack.getItem()) || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
-            }
-
-            @Override
-            public int getSlotStackLimit() { return 1; }
-        });
+        addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -117,12 +106,14 @@ public class ContainerField extends Container
 
         transfer = slot.getStack();
 
-        if (index == 0) {
+        if (index == 0)
+        {
             if (!mergeItemStack(transfer, 1, 37, true)) {
                 return ItemStack.EMPTY;
             }
         } else {
-            if (!this.mergeItemStack(transfer, 0, 1, false)) {
+            if (!this.mergeItemStack(transfer, 0, 1, false))
+            {
                 return ItemStack.EMPTY;
             }
         }

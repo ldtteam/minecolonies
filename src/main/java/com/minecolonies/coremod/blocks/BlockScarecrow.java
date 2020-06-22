@@ -116,17 +116,21 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw + 180);
 
-        if (context.getPos().getY() < 255 && context.getWorld().getBlockState(context.getPos().up()).isReplaceable(context)) {
+        if (context.getPos().getY() < 255 && context.getWorld().getBlockState(context.getPos().up()).isReplaceable(context))
+        {
             return this.getDefaultState().with(FACING, Direction).with(HALF, DoubleBlockHalf.LOWER);
         } else {
             return null;
         }
     }
 
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    @Override
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    {
         BlockPos blockpos = pos.down();
         BlockState blockstate = worldIn.getBlockState(blockpos);
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+        if (state.get(HALF) == DoubleBlockHalf.LOWER)
+        {
             return blockstate.isSolidSide(worldIn, blockpos, Direction.UP);
         } else {
             return blockstate.getBlock() == this;
@@ -153,7 +157,9 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         }
     }
 
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    {
         worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
     }
 
@@ -173,7 +179,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
         // just double check the other block is also the scarecrow and not the same half,
         // then destroy it (make it air)
-        if (otherstate.getBlock() == this && otherstate.get(HALF) != half) {
+        if (otherstate.getBlock() == this && otherstate.get(HALF) != half)
+        {
             worldIn.setBlockState(otherpos, Blocks.AIR.getDefaultState(), 35);
         }
 
@@ -206,7 +213,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(HALF, FACING);
     }
 
