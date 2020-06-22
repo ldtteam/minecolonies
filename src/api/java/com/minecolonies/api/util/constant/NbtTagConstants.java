@@ -484,6 +484,17 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
     public static final String TAG_WAITING_TICKS = "waitingticks";
 
+    /**
+     * Beekeeper tags
+     */
+    public static final String TAG_HIVES              = "hives";
+    public static final String TAG_HARVEST_HONEYCOMBS = "harvest_honeycombs";
+
+    /**
+     * BannerRallyGuards tags
+     */
+    public static final String TAG_RALLIED_GUARDTOWERS = "guardtowerpositions";
+
     // --------------------- Chat handling tags --------------------- //
 
     /**
@@ -563,6 +574,7 @@ public final class NbtTagConstants
     public static final String TAG_PONDS   = "newPonds";
     public static final String TAG_WATER_POND = "waterpond";
     public static final String TAG_PARENT_POND = "parentpond";
+    public static final String TAG_DECONSTRUCTED = "deconstructed";
 
     /**
      * Private constructor to hide the implicit one.

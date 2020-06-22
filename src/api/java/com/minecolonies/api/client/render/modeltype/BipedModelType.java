@@ -34,6 +34,10 @@ public enum BipedModelType implements ISimpleModelType
     TEACHER("teacher", 1),
     GLASSBLOWER("glassblower", 3),
     DYER("dyer", 3),
+    MECHANIST("mechanist", 1),
+    FLETCHER("fletcher", 1),
+    CONCRETE_MIXER("concretemixer", 1),
+    RABBIT_HERDER("rabbitherder", 1),
     PLANTER("planter", 1);
 
     /**

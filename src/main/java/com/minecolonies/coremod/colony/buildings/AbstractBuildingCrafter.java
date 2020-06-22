@@ -90,7 +90,11 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
-                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
+                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
+                if (((AbstractJobCrafter) citizen.getJob()).getCurrentTask() != null)
+                {
+                    assignedTasks.add(((AbstractJobCrafter) citizen.getJob()).getCurrentTask().getId());
+                }
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
@@ -99,20 +103,21 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                     {
                         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
-                            int amount = itemStorage.getAmount();
+                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
                             if (recipeOutputs.containsKey(itemStorage))
                             {
-                                amount = recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount();
+                                amount += recipeOutputs.get(itemStorage).getA();
                             }
                             recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                         }
 
                         final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
+                        int amount = output.getAmount() * request.getRequest().getCount();
                         if (recipeOutputs.containsKey(output))
                         {
-                            output.setAmount(recipeOutputs.get(output).getA() + output.getAmount());
+                            amount += recipeOutputs.get(output).getA();
                         }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
+                        recipeOutputs.put(output, new Tuple<>(amount, false));
                     }
                 }
             }
@@ -172,5 +177,11 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
     {
         return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
+    }
+
+    @Override
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    {
+        return super.canRecipeBeAddedBasedOnTags(token);
     }
 }

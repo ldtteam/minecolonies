@@ -44,7 +44,7 @@ public class BuildingHome extends AbstractBuilding
     private static final String CITIZEN = "citizen";
 
     /**
-     * List of all bedList.
+     * List of all beds.
      */
     @NotNull
     private final List<BlockPos> bedList = new ArrayList<>();
@@ -512,6 +512,11 @@ public class BuildingHome extends AbstractBuilding
         getColony().getCitizenManager().calculateMaxCitizens();
     }
 
+    /**
+     * Gets a list of all beds in this building.
+     * 
+     * @return a list of all beds in this building.
+     */
     @NotNull
     public List<BlockPos> getBedList()
     {

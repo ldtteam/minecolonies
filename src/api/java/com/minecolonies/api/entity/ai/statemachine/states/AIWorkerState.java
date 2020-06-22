@@ -165,6 +165,11 @@ public enum AIWorkerState implements IAIState
     */
 
     /**
+     * Decision state for guards.
+     */
+    GUARD_DECIDE(false),
+
+    /**
      * Physically attack the target.
      */
     GUARD_ATTACK_PHYSICAL(false),
@@ -203,6 +208,11 @@ public enum AIWorkerState implements IAIState
      * Guard a position.
      */
     GUARD_GUARD(true),
+
+    /**
+     * Rally to a player.
+     */
+    GUARD_RALLY(false),
 
     /**
      * Regen at the building.
@@ -533,7 +543,12 @@ public enum AIWorkerState implements IAIState
      */
     PLANTATION_FARM(true),
 
-    PLANTATION_PLANT(true);
+    PLANTATION_PLANT(true),
+
+    /*
+### Beekeeper ###
+     */
+    BEEKEEPER_HARVEST(true);
 
     /**
      * Is it okay to eat.

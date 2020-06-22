@@ -87,6 +87,8 @@ public final class ModSoundEvents
         registry.register(BarbarianSounds.barbarianDeath);
         registry.register(BarbarianSounds.barbarianSay);
 
+        registry.register(RaidSounds.AMAZON_RAID);
+
         registry.register(RaidSounds.DESERT_RAID);
         registry.register(RaidSounds.DESERT_RAID_VICTORY);
         registry.register(RaidSounds.DESERT_RAID_WARNING);
