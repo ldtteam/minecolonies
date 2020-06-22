@@ -185,15 +185,23 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         int insertionIndex = taskQueue.size();
         while (iterator.hasNext())
         {
-            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(iterator.next()));
-            if (request.getRequest().getPriority() < newRequest.getRequest().getPriority())
+            final IToken theToken = iterator.next();
+            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
+            if (request == null)
             {
-                request.getRequest().incrementPriorityDueToAging();
-                insertionIndex--;
+                taskQueue.remove(theToken);
             }
             else
             {
-                break;
+                if (request.getRequest().getPriority() < newRequest.getRequest().getPriority())
+                {
+                    request.getRequest().incrementPriorityDueToAging();
+                    insertionIndex--;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
         getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);

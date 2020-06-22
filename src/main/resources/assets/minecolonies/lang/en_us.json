@@ -492,6 +492,8 @@
   "com.minecolonies.coremod.gui.townhall.hirecitizen1": "Choose which recruitment package you want to send.",
   "com.minecolonies.coremod.gui.townhall.hirecitizen2": "Citizens stats increase from Hay - Books - Emeralds to Diamonds.",
   "com.minecolonies.coremod.gui.townhall.hirecitizen3": "Using one package increases the price of all with each purchase.",
+  "com.minecolonies.coremod.gui.townhall.hirecitizen4": "(Only possible if there is an open bed in the colony)",
+
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
 
@@ -762,6 +764,8 @@
   "com.minecolonies.coremod.ai.nochairs": "Restaurant does not have any chairs for me to eat something!",
   "com.minecolonies.coremod.ai.norestaurant": "Please build a restaurant or get me something to eat!",
   "com.minecolonies.coremod.ai.nohospital": "Please build a hospital I have the %s and need to be cured with: %s",
+  "com.minecolonies.coremod.ai.waitingforcure": "I'm waiting to be cured of %s and need to be cured with: %s",
+
   "com.minecolonies.coremod.ai.nowarehouse": "Build a warehouse or bring me food to serve to my clients!",
   "com.minecolonies.coremod.ai.nofood": "I can't find any food in the warehouse.",
   "com.minecolonies.coremod.status.cooking": "Cooking",

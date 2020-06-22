@@ -398,6 +398,8 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_HOSPITAL                                                         = "com.minecolonies.coremod.ai.nohospital";
     @NonNls
+    public static final String WAITING_FOR_CURE                                                    = "com.minecolonies.coremod.ai.waitingforcure";
+    @NonNls
     public static final String ASYNC_REQUEST                                                       = "com.minecolonies.requestsystem.playerresolver.async";
     @NonNls
     public static final String NORMAL_REQUEST                                                      = "com.minecolonies.requestsystem.playerresolver.normal";
