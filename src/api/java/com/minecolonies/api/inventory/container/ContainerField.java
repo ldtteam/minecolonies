@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -99,7 +100,7 @@ public class ContainerField extends Container
     @Override
     public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int index)
     {
-        ItemStack transfer = ItemStack.EMPTY;
+        ItemStack transfer = ItemStackUtils.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot == null || !slot.getHasStack()) return transfer;
@@ -109,12 +110,14 @@ public class ContainerField extends Container
         if (index == 0)
         {
             if (!mergeItemStack(transfer, 1, 37, true)) {
-                return ItemStack.EMPTY;
+                return ItemStackUtils.EMPTY;
             }
-        } else {
+        }
+        else
+        {
             if (!this.mergeItemStack(transfer, 0, 1, false))
             {
-                return ItemStack.EMPTY;
+                return ItemStackUtils.EMPTY;
             }
         }
 

@@ -518,7 +518,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
             final ItemStack stack = ItemStack.read(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
-                inventory.setStackInSlot(i, ItemStack.EMPTY);
+                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
             }
             else
             {
