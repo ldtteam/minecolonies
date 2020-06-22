@@ -35,6 +35,9 @@ public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBee
         super(building, Constants.MOD_ID + ":gui/windowhutbeekeeper.xml");
         registerButton(BUTTON_HARVEST_HONEYCOMB, this::harvestHoneycombClicked);
 
+        //TODO add button for automatic beehive placement
+        //TODO add list of managed hives
+
         buttonHarvestHoneycombs = findPaneOfTypeByID(BUTTON_HARVEST_HONEYCOMB, Button.class);
 
         if (building.isHarvestHoneycombs())
