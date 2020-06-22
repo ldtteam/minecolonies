@@ -150,64 +150,64 @@ public final class ModJobsInitializer
                            .createJobEntry();
 
         ModJobs.florist = new JobEntry.Builder()
-                           .setJobProducer(JobFlorist::new)
-                           .setRegistryName(ModJobs.FLORIST_ID)
-                           .createJobEntry();
-
-        ModJobs.enchanter = new JobEntry.Builder()
-                            .setJobProducer(JobEnchanter::new)
-                            .setRegistryName(ModJobs.ENCHANTER_ID)
+                            .setJobProducer(JobFlorist::new)
+                            .setRegistryName(ModJobs.FLORIST_ID)
                             .createJobEntry();
 
-        ModJobs.researcher = new JobEntry.Builder()
-                              .setJobProducer(JobResearch::new)
-                              .setRegistryName(ModJobs.RESEARCHER_ID)
+        ModJobs.enchanter = new JobEntry.Builder()
+                              .setJobProducer(JobEnchanter::new)
+                              .setRegistryName(ModJobs.ENCHANTER_ID)
                               .createJobEntry();
 
-        ModJobs.healer     = new JobEntry.Builder()
-                               .setJobProducer(JobHealer::new)
-                               .setRegistryName(ModJobs.HEALER_ID)
+        ModJobs.researcher = new JobEntry.Builder()
+                               .setJobProducer(JobResearch::new)
+                               .setRegistryName(ModJobs.RESEARCHER_ID)
                                .createJobEntry();
 
-        ModJobs.pupil     = new JobEntry.Builder()
-                               .setJobProducer(JobPupil::new)
-                               .setRegistryName(ModJobs.PUPIL_ID)
-                               .createJobEntry();
+        ModJobs.healer = new JobEntry.Builder()
+                           .setJobProducer(JobHealer::new)
+                           .setRegistryName(ModJobs.HEALER_ID)
+                           .createJobEntry();
 
-        ModJobs.teacher     = new JobEntry.Builder()
-                               .setJobProducer(JobTeacher::new)
-                               .setRegistryName(ModJobs.TEACHER_ID)
-                               .createJobEntry();
+        ModJobs.pupil = new JobEntry.Builder()
+                          .setJobProducer(JobPupil::new)
+                          .setRegistryName(ModJobs.PUPIL_ID)
+                          .createJobEntry();
 
-        ModJobs.glassblower  = new JobEntry.Builder()
+        ModJobs.teacher = new JobEntry.Builder()
+                            .setJobProducer(JobTeacher::new)
+                            .setRegistryName(ModJobs.TEACHER_ID)
+                            .createJobEntry();
+
+        ModJobs.glassblower = new JobEntry.Builder()
                                 .setJobProducer(JobGlassblower::new)
                                 .setRegistryName(ModJobs.GLASSBLOWER_ID)
                                 .createJobEntry();
 
-        ModJobs.dyer        = new JobEntry.Builder()
-                                    .setJobProducer(JobDyer::new)
-                                    .setRegistryName(ModJobs.DYER_ID)
-                                    .createJobEntry();
+        ModJobs.dyer = new JobEntry.Builder()
+                         .setJobProducer(JobDyer::new)
+                         .setRegistryName(ModJobs.DYER_ID)
+                         .createJobEntry();
 
-        ModJobs.fletcher    = new JobEntry.Builder()
-                                .setJobProducer(JobFletcher::new)
-                                .setRegistryName(ModJobs.FLETCHER_ID)
-                                .createJobEntry();
+        ModJobs.fletcher = new JobEntry.Builder()
+                             .setJobProducer(JobFletcher::new)
+                             .setRegistryName(ModJobs.FLETCHER_ID)
+                             .createJobEntry();
 
-        ModJobs.mechanic    = new JobEntry.Builder()
-                                .setJobProducer(JobMechanic::new)
-                                .setRegistryName(ModJobs.MECHANIC_ID)
-                                .createJobEntry();
+        ModJobs.mechanic = new JobEntry.Builder()
+                             .setJobProducer(JobMechanic::new)
+                             .setRegistryName(ModJobs.MECHANIC_ID)
+                             .createJobEntry();
 
-        ModJobs.planter    = new JobEntry.Builder()
-                                .setJobProducer(JobPlanter::new)
-                                .setRegistryName(ModJobs.PLANTER_ID)
-                                .createJobEntry();
+        ModJobs.planter = new JobEntry.Builder()
+                            .setJobProducer(JobPlanter::new)
+                            .setRegistryName(ModJobs.PLANTER_ID)
+                            .createJobEntry();
 
         ModJobs.rabbitHerder = new JobEntry.Builder()
-                               .setJobProducer(JobRabbitHerder::new)
-                               .setRegistryName(ModJobs.RABBIT_ID)
-                               .createJobEntry();
+                                 .setJobProducer(JobRabbitHerder::new)
+                                 .setRegistryName(ModJobs.RABBIT_ID)
+                                 .createJobEntry();
 
         ModJobs.concreteMixer = new JobEntry.Builder()
                                   .setJobProducer(JobConcreteMixer::new)

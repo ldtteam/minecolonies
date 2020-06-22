@@ -290,11 +290,11 @@ public final class ModBuildingsInitializer
                               .createBuildingEntry();
 
         ModBuildings.fletcher = new BuildingEntry.Builder()
-                              .setBuildingBlock(ModBlocks.blockHutFletcher)
-                              .setBuildingProducer(BuildingFletcher::new)
-                              .setBuildingViewProducer(() -> BuildingFletcher.View::new)
-                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
-                              .createBuildingEntry();
+                                  .setBuildingBlock(ModBlocks.blockHutFletcher)
+                                  .setBuildingProducer(BuildingFletcher::new)
+                                  .setBuildingViewProducer(() -> BuildingFletcher.View::new)
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
+                                  .createBuildingEntry();
 
         ModBuildings.tavern = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutTavern)
@@ -311,23 +311,23 @@ public final class ModBuildingsInitializer
                                   .createBuildingEntry();
 
         ModBuildings.plantation = new BuildingEntry.Builder()
-                                  .setBuildingBlock(ModBlocks.blockHutPlantation)
-                                  .setBuildingProducer(BuildingPlantation::new)
-                                  .setBuildingViewProducer(() -> BuildingPlantation.View::new)
-                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
-                                  .createBuildingEntry();
-
-        ModBuildings.rabbitHutch = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutRabbitHutch)
-                                    .setBuildingProducer(BuildingRabbitHutch::new)
-                                    .setBuildingViewProducer(() -> BuildingRabbitHutch.View::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
+                                    .setBuildingBlock(ModBlocks.blockHutPlantation)
+                                    .setBuildingProducer(BuildingPlantation::new)
+                                    .setBuildingViewProducer(() -> BuildingPlantation.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .createBuildingEntry();
 
+        ModBuildings.rabbitHutch = new BuildingEntry.Builder()
+                                     .setBuildingBlock(ModBlocks.blockHutRabbitHutch)
+                                     .setBuildingProducer(BuildingRabbitHutch::new)
+                                     .setBuildingViewProducer(() -> BuildingRabbitHutch.View::new)
+                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
+                                     .createBuildingEntry();
+
         ModBuildings.concreteMixer = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
-                                    .setBuildingProducer(BuildingConcreteMixer::new)
-                                    .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
+                                       .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
+                                       .setBuildingProducer(BuildingConcreteMixer::new)
+                                       .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
                                        .createBuildingEntry();
 
