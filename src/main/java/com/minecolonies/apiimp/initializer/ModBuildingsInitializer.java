@@ -328,15 +328,22 @@ public final class ModBuildingsInitializer
                                     .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
                                     .setBuildingProducer(BuildingConcreteMixer::new)
                                     .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
-                                    .createBuildingEntry();
+                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
+                                       .createBuildingEntry();
 
         ModBuildings.beekeeper = new BuildingEntry.Builder()
-                                  .setBuildingBlock(ModBlocks.blockHutBeekeeper)
-                                  .setBuildingProducer(BuildingBeekeeper::new)
-                                  .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
-                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
-                                  .createBuildingEntry();
+                                   .setBuildingBlock(ModBlocks.blockHutBeekeeper)
+                                   .setBuildingProducer(BuildingBeekeeper::new)
+                                   .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
+                                   .createBuildingEntry();
+
+        ModBuildings.alchemist = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockHutAlchemist)
+                                   .setBuildingProducer(BuildingAlchemist::new)
+                                   .setBuildingViewProducer(() -> BuildingAlchemist.View::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ALCHEMIST_ID))
+                                   .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -383,5 +390,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.rabbitHutch);
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
+        reg.register(ModBuildings.alchemist);
     }
 }

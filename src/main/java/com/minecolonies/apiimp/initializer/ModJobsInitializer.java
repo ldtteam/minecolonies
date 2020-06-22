@@ -210,14 +210,19 @@ public final class ModJobsInitializer
                                .createJobEntry();
 
         ModJobs.concreteMixer = new JobEntry.Builder()
-                               .setJobProducer(JobConcreteMixer::new)
-                               .setRegistryName(ModJobs.CONCRETE_ID)
-                               .createJobEntry();
+                                  .setJobProducer(JobConcreteMixer::new)
+                                  .setRegistryName(ModJobs.CONCRETE_ID)
+                                  .createJobEntry();
 
-        ModJobs.beekeeper  = new JobEntry.Builder()
-                                .setJobProducer(JobBeekeeper::new)
-                                .setRegistryName(ModJobs.BEEKEEPER_ID)
-                                .createJobEntry();
+        ModJobs.beekeeper = new JobEntry.Builder()
+                              .setJobProducer(JobBeekeeper::new)
+                              .setRegistryName(ModJobs.BEEKEEPER_ID)
+                              .createJobEntry();
+
+        ModJobs.alchemist = new JobEntry.Builder()
+                              .setJobProducer(JobAlchemist::new)
+                              .setRegistryName(ModJobs.ALCHEMIST_ID)
+                              .createJobEntry();
 
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
@@ -259,5 +264,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.concreteMixer);
         reg.register(ModJobs.rabbitHerder);
         reg.register(ModJobs.beekeeper);
+        reg.register(ModJobs.alchemist);
     }
 }
