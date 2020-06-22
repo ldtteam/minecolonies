@@ -104,10 +104,13 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             if (entity instanceof ScarecrowTileEntity)
             {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (ScarecrowTileEntity) entity, pos);
-                return ActionResultType.SUCCESS;
+            } else {
+                return ActionResultType.FAIL;
             }
         }
-        return ActionResultType.FAIL;
+
+        // This must succeed in Remote to stop more right click interactions like placing blocks
+        return ActionResultType.SUCCESS;
     }
 
     @javax.annotation.Nullable
