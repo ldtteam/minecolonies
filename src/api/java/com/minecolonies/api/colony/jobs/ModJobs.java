@@ -37,17 +37,18 @@ public final class ModJobs
     public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation(Constants.MOD_ID, "enchanter");
     public static final ResourceLocation RESEARCHER_ID     = new ResourceLocation(Constants.MOD_ID, "researcher");
     public static final ResourceLocation HEALER_ID         = new ResourceLocation(Constants.MOD_ID, "healer");
-    public static final ResourceLocation PUPIL_ID          = new ResourceLocation(Constants.MOD_ID, "pupil");
-    public static final ResourceLocation TEACHER_ID        = new ResourceLocation(Constants.MOD_ID, "teacher");
-    public static final ResourceLocation GLASSBLOWER_ID    = new ResourceLocation(Constants.MOD_ID, "glassblower");
-    public static final ResourceLocation DYER_ID           = new ResourceLocation(Constants.MOD_ID, "dyer");
-    public static final ResourceLocation FLETCHER_ID       = new ResourceLocation(Constants.MOD_ID, "fletcher");
-    public static final ResourceLocation MECHANIC_ID       = new ResourceLocation(Constants.MOD_ID, "mechanic");
-    public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID, "planter");
-    public static final ResourceLocation RABBIT_ID         = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
-    public static final ResourceLocation CONCRETE_ID       = new ResourceLocation(Constants.MOD_ID, "concretemixer");
-    public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
-    public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
+    public static final ResourceLocation PUPIL_ID       = new ResourceLocation(Constants.MOD_ID, "pupil");
+    public static final ResourceLocation TEACHER_ID     = new ResourceLocation(Constants.MOD_ID, "teacher");
+    public static final ResourceLocation GLASSBLOWER_ID = new ResourceLocation(Constants.MOD_ID, "glassblower");
+    public static final ResourceLocation DYER_ID        = new ResourceLocation(Constants.MOD_ID, "dyer");
+    public static final ResourceLocation FLETCHER_ID    = new ResourceLocation(Constants.MOD_ID, "fletcher");
+    public static final ResourceLocation MECHANIC_ID    = new ResourceLocation(Constants.MOD_ID, "mechanic");
+    public static final ResourceLocation PLANTER_ID     = new ResourceLocation(Constants.MOD_ID, "planter");
+    public static final ResourceLocation RABBIT_ID      = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
+    public static final ResourceLocation CONCRETE_ID    = new ResourceLocation(Constants.MOD_ID, "concretemixer");
+    public static final ResourceLocation BEEKEEPER_ID   = new ResourceLocation(Constants.MOD_ID, "beekeeper");
+    public static final ResourceLocation ALCHEMIST_ID   = new ResourceLocation(Constants.MOD_ID, "alchemist");
+    public static final ResourceLocation WITCH_ID       = new ResourceLocation(Constants.MOD_ID, "witch");
 
     public static JobEntry placeHolder;
     public static JobEntry builder;
@@ -90,6 +91,7 @@ public final class ModJobs
     public static JobEntry concreteMixer;
     public static JobEntry beekeeper;
     public static JobEntry alchemist;
+    public static JobEntry witch;
 
     private ModJobs()
     {
