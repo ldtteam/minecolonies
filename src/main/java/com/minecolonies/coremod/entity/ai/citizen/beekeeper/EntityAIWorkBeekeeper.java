@@ -194,19 +194,27 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
 
+        final JobBeekeeper job = worker.getCitizenJobHandler().getColonyJob(JobBeekeeper.class);
         if (bees.isEmpty())
         {
             if (getBeesInHives() <= 0)
             {
-                final JobBeekeeper job = worker.getCitizenJobHandler().getColonyJob(JobBeekeeper.class);
                 job.tickNoBees();
                 if (job.checkForBeeInteraction())
                 {
                     worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_BEES), ChatPriority.BLOCKING));
                 }
             }
+            else
+            {
+                job.resetCounter();
+            }
             setDelay(NO_ANIMALS_DELAY);
             return DECIDE;
+        }
+        else
+        {
+            job.resetCounter();
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
