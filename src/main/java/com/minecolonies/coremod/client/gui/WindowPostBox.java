@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
@@ -27,27 +30,41 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowPostBox extends AbstractWindowRequestTree
 {
     /**
+     * Id of the deliver available button inside the GUI.
+     */
+    private static final String TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
+    /**
+     * String which displays full delivery.
+     */
+    private static final String RED_X = "§n§4X";
+    /**
+     * String which displays partial delivery..
+     */
+    private static final String APPROVE = "✓";
+    /**
      * List of all item stacks in the game.
      */
     private final List<ItemStack> allItems = new ArrayList<>();
-
     /**
      * Resource scrolling list.
      */
     private final ScrollingList stackList;
-
-    /**
-     * The filter for the resource list.
-     */
-    private String filter = "";
-
     /**
      * The building view of this window.
      */
     private final AbstractBuildingView buildingView;
+    /**
+     * The filter for the resource list.
+     */
+    private String filter = "";
+    /**
+     * Whether to deliver what's currently in the warehouse and then cancel order.
+     */
+    private boolean deliverAvailable;
 
     /**
      * Create the postBox GUI.
+     *
      * @param buildingView the building view.
      */
     public WindowPostBox(final AbstractBuildingView buildingView)
@@ -57,10 +74,20 @@ public class WindowPostBox extends AbstractWindowRequestTree
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_REQUEST, this::requestClicked);
+        registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
+    }
+
+    /**
+     * Action when a button opening an inventory is clicked.
+     */
+    private void inventoryClicked()
+    {
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
     }
 
     /**
      * Action executed when request is clicked.
+     *
      * @param button the clicked button.
      */
     private void requestClicked(final Button button)
@@ -87,7 +114,22 @@ public class WindowPostBox extends AbstractWindowRequestTree
         {
             final int requestSize = qty > stack.getMaxStackSize() ? stack.getMaxStackSize() : qty;
             qty -= requestSize;
-            Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize));
+            Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize, deliverAvailable));
+        }
+    }
+
+    private void deliverPartialClicked(@NotNull final Button button)
+    {
+
+        if (button.getLabel().equals(RED_X))
+        {
+            button.setLabel(APPROVE);
+            this.deliverAvailable = true;
+        }
+        else
+        {
+            button.setLabel(RED_X);
+            this.deliverAvailable = false;
         }
     }
 
@@ -95,6 +137,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
     public void onOpened()
     {
         super.onOpened();
+        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE,Button.class).setLabel(RED_X);
+
         updateResources();
     }
 
@@ -124,14 +168,6 @@ public class WindowPostBox extends AbstractWindowRequestTree
             return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
         }
         return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
-    }
-
-    /**
-     * Action when a button opening an inventory is clicked.
-     */
-    private void inventoryClicked()
-    {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
     }
 
     /**

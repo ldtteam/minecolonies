@@ -33,8 +33,12 @@ public class ResearchInitializer
         final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "technology", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect("Dyer", true));
         rainbowheaven.setRequirement(new BuildingResearchRequirement(3, "florist"));
 
+        final GlobalResearch pavetheroad = new GlobalResearch("pavetheroad", "technology", "Pave the Road", 4, new UnlockBuildingResearchEffect("Concrete Mixer", true));
+        pavetheroad.setRequirement(new BuildingResearchRequirement(1, "dyer"));
+
         biodegradable.addChild(flowerpower);
         flowerpower.addChild(rainbowheaven);
+        rainbowheaven.addChild(pavetheroad);
 
         final GlobalResearch letitgrow = new GlobalResearch("letitgrow", "technology", "Let it Grow", 2, new UnlockBuildingResearchEffect("Plantation", true));
         letitgrow.setRequirement(new BuildingResearchRequirement(3, "farmer"));
@@ -236,10 +240,9 @@ public class ResearchInitializer
 
         hittingiron.addChild(whatyaneed);
 
+        researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
         researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
-
         researchTree.addResearch(hotboots.getBranch(), hotboots);
-
         researchTree.addResearch(doubletrouble.getBranch(), doubletrouble);
 
         researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);

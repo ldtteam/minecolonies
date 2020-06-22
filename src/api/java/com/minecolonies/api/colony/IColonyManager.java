@@ -56,7 +56,7 @@ public interface IColonyManager
     /**
      * Removes a colony view
      *
-     * @param id the id of the colony.
+     * @param id        the id of the colony.
      * @param dimension the dimension it is in.
      */
     void removeColonyView(int id, int dimension);
@@ -64,7 +64,7 @@ public interface IColonyManager
     /**
      * Get Colony by UUID.
      *
-     * @param id ID of colony.
+     * @param id    ID of colony.
      * @param world the world it is in.
      * @return Colony with given ID.
      */
@@ -74,7 +74,7 @@ public interface IColonyManager
     /**
      * Get Colony by UUID.
      *
-     * @param id ID of colony.
+     * @param id        ID of colony.
      * @param dimension the dimension it is in.
      * @return Colony with given ID.
      */
@@ -97,6 +97,7 @@ public interface IColonyManager
      * @param pos coordinates.
      * @return Colony at the given location.
      */
+    @Nullable
     IColony getColonyByPosFromWorld(@NotNull World w, @NotNull BlockPos pos);
 
     /**
@@ -146,7 +147,7 @@ public interface IColonyManager
     /**
      * Get a AbstractBuilding by position.
      *
-     * @param pos Block position.
+     * @param pos       Block position.
      * @param dimension the dimension it is in.
      * @return Returns the view belonging to the building at (x, y, z).
      */
@@ -307,7 +308,7 @@ public interface IColonyManager
      * @param colonyData        {@link PacketBuffer} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
-     * @param world the world it is in.
+     * @param world             the world it is in.
      */
     void handleColonyViewMessage(int colonyId, @NotNull PacketBuffer colonyData, @NotNull World world, boolean isNewSubscription, int dim);
 

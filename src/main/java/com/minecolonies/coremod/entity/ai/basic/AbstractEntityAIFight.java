@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
@@ -84,9 +84,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(IDLE, PREPARING, 1),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 100),
-          new AITarget(PREPARING, this::prepare, 1)
+          new AITarget(PREPARING, this::prepare, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
 
@@ -136,7 +136,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState prepare()
     {
-        setDelay(Constants.TICKS_SECOND * PREPARE_DELAY_SECONDS);
+        setDelay(TICKS_SECOND * PREPARE_DELAY_SECONDS);
 
         @Nullable final IGuardBuilding building = getOwnBuilding();
         if (building == null || worker.getCitizenData() == null)
@@ -244,6 +244,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                         armorToWear.put(entry.getKey(), armorStack);
                     }
 
+                    if (walkToBuilding())
+                    {
+                        return getState();
+                    }
                     InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlotChest, worker.getInventoryCitizen());
                     if (bestSlot != -1)
                     {
@@ -265,6 +269,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
 
                 for (final int slot : nonOptimalSlots)
                 {
+                    if (walkToBuilding())
+                    {
+                        return getState();
+                    }
                     InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
                 }
             }
