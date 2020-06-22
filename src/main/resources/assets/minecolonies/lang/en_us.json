@@ -1405,7 +1405,7 @@
   "com.minecolonies.coremod.info.baker.1.name": "Restrictions",
   "com.minecolonies.coremod.info.baker.1": "The baker can not make any food with items that are not consumed in the making such as pots and pans (these are usually from other mods such as Pam's).",
   "com.minecolonies.coremod.info.baker.2.name": "FAQ",
-  "com.minecolonies.coremod.info.baker.2": "Now let's cover some frequently asked questions:\n\n Q 1. My baker is using more items than they are producing, why?\n   A 1. The baker has a higher probability to fail at lower levels. As the hut is leveled up and as the baker levels up they have better chances to make items without failure and even better than one item per recipe.",
+  "com.minecolonies.coremod.info.baker.2": "Now let's cover some frequently asked questions:\n\n Q 1. My baker is using more items than they are producing, why?\n   A 1. The baker may be consuming some product when they get hungry. Also, while the wheat may not be visible, the product may still be in the process of being produced.",
   "com.minecolonies.coremod.info.baker.3.name": "Leveling",
   "com.minecolonies.coremod.info.baker.3": "As all workers the baker levels up while working.\n With higher levels the baker's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
