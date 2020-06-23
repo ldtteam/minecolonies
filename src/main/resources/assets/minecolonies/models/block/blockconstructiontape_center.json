@@ -1,0 +1,21 @@
+{
+    "textures": {
+        "tape": "block/white_wool",
+        "particle": "block/white_wool"
+    },
+    "elements": [
+        {
+            "name": "center",
+            "from": [7, 13, 7],
+            "to": [9, 14, 9],
+            "faces": {
+                "north": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+                "east":  {"uv": [0, 0, 2, 1], "texture": "#tape"},
+                "south": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+                "west":  {"uv": [0, 0, 2, 1], "texture": "#tape"},
+                "up":    {"uv": [6, 0, 8, 2], "texture": "#tape"},
+                "down":  {"uv": [0, 0, 2, 2], "texture": "#tape"}
+            }
+        }
+    ]
+}

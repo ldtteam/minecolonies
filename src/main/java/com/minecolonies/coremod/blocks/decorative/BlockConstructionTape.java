@@ -1,11 +1,17 @@
 package com.minecolonies.coremod.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -15,6 +21,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static net.minecraft.util.Direction.*;
 
@@ -165,6 +173,12 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     private static final VoxelShape EAST_WEST   = VoxelShapes.create(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
     private static final VoxelShape NORTH_SOUTH = VoxelShapes.create(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
 
+    public static final BooleanProperty NORTHBLOCK = SixWayBlock.NORTH;
+    public static final BooleanProperty EASTBLOCK = SixWayBlock.EAST;
+    public static final BooleanProperty SOUTHBLOCK = SixWayBlock.SOUTH;
+    public static final BooleanProperty WESTBLOCK = SixWayBlock.WEST;
+    protected static final BooleanProperty[] ADJACENT = new BooleanProperty[]{SOUTHBLOCK, WESTBLOCK, NORTHBLOCK, EASTBLOCK};
+
     /**
      * Constructor for the Substitution block.
      * sets the creative tab, as well as the resistance and the hardness.
@@ -173,7 +187,12 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     {
         super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
         setRegistryName(BLOCK_NAME);
-        this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
+        this.setDefaultState(this.getDefaultState().with(FACING, NORTH)
+                .with(NORTHBLOCK, false)
+                .with(EASTBLOCK, false)
+                .with(SOUTHBLOCK, false)
+                .with(WESTBLOCK, false)
+        );
     }
 
     @NotNull
@@ -208,12 +227,20 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         }
     }
 
+    protected BooleanProperty getAdjacencyProperty (Direction face) {
+        return face.getHorizontalIndex() >= 0 ? ADJACENT[face.getHorizontalIndex()] : null;
+    }
+
     @NotNull
     @Override
     public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction dir, final BlockState state, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos pos)
     {
-        super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos);
-        return getOptimalStateForPlacement(stateIn, worldIn, currentPos);
+        BooleanProperty side = getAdjacencyProperty(dir);
+        if (side != null) {
+            return stateIn.with(side, canConnect(worldIn, currentPos, dir));
+        }
+        //return getOptimalStateForPlacement(stateIn, worldIn, currentPos);
+        return stateIn;
     }
 
     /**
@@ -247,12 +274,33 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
+        IBlockReader world = context.getWorld();
+        BlockPos blockpos = context.getPos();
+        IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+
+        return super.getStateForPlacement(context)
+                .with(NORTHBLOCK, this.canConnect(world, blockpos, Direction.NORTH))
+                .with(EASTBLOCK,  this.canConnect(world, blockpos, Direction.EAST))
+                .with(SOUTHBLOCK, this.canConnect(world, blockpos, Direction.SOUTH))
+                .with(WESTBLOCK,  this.canConnect(world, blockpos, Direction.WEST));
+        //return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
+    }
+
+    public Boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
+        BlockPos adjacent;
+        switch (face) {
+            default:
+            case NORTH: adjacent = pos.north(); break;
+            case EAST:  adjacent = pos.east(); break;
+            case SOUTH: adjacent = pos.south(); break;
+            case WEST:  adjacent = pos.west(); break;
+        }
+        return world.getBlockState(adjacent).getBlock() instanceof BlockConstructionTape;
     }
 
     @Override
     protected void fillStateContainer(final StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(FACING, VARIANT);
+        builder.add(NORTHBLOCK, EASTBLOCK, SOUTHBLOCK, WESTBLOCK, FACING, VARIANT);
     }
 }
