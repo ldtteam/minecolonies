@@ -303,6 +303,11 @@
   "item.minecolonies.iron_scimitar": "Iron Scimitar",
   "item.minecolonies.pharaoscepter": "Pharao Scepter",
   "item.minecolonies.firearrow": "Fire Arrow",
+  "item.minecolonies.banner_rally_guards": "Rallying Banner",
+  "item.minecolonies.banner_rally_guards.activated": "You have rallied your army. %d guards are answering your call!",
+  "item.minecolonies.banner_rally_guards.activated.noguards": "You have rallied your army ... of 0 guards. Good luck!",
+  "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your guards will return to regular duty.",
+  "item.minecolonies.banner_rally_guards.outofrange": "Your guards will not rally so far away to your position, they are sworn to protect their families! The disappointed guards are going home now.",
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 
@@ -656,6 +661,7 @@
   "com.minecolonies.coremod.permission.rightclick_entity": "Rightclick entities",
   "com.minecolonies.coremod.permission.throw_potion": "Throw potions",
   "com.minecolonies.coremod.permission.shoot_arrow": "Shoot arrows",
+  "com.minecolonies.coremod.permission.rally_guards": "Rally guards",
   "com.minecolonies.coremod.permission.attack_citizen": "Attack citizens",
   "com.minecolonies.coremod.permission.attack_entity": "Attack entities",
   "com.minecolonies.coremod.permission.access_free_blocks": "Access free-blocks",
@@ -742,6 +748,7 @@
   "com.minecolonies.coremod.gui.workerhuts.spies": "Hire spies",
 
   "com.minecolonies.coremod.permission.teleport_to_colony": "Teleport to Colony",
+
   "com.minecolonies.coremod.gui.hiring.buttonfire": "Fire",
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
@@ -805,6 +812,17 @@
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
+  "com.minecolonies.coremod.item.bannerrallyguards.selected": "Added %s at %s to rallying list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.tooltip": "Rallied guard towers: %d",
+  "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty": "Sneak-Rightclick on guard towers to add them to the rally list.",
+  "com.minecolonies.coremod.item.bannerrallyguards.rally": "Sneak-Rightclick in the air or the ground to rally or dismiss your guards.",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui": "Rightclick to open the GUI window.",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing": "Cannot find tower!",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.remove": "Remove",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.rally": "Rally guards",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss": "Dismiss guards",
+  "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
   "block.minecolonies.blockpaperwall": "Paper wall",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
@@ -1387,7 +1405,7 @@
   "com.minecolonies.coremod.info.baker.1.name": "Restrictions",
   "com.minecolonies.coremod.info.baker.1": "The baker can not make any food with items that are not consumed in the making such as pots and pans (these are usually from other mods such as Pam's).",
   "com.minecolonies.coremod.info.baker.2.name": "FAQ",
-  "com.minecolonies.coremod.info.baker.2": "Now let's cover some frequently asked questions:\n\n Q 1. My baker is using more items than they are producing, why?\n   A 1. The baker has a higher probability to fail at lower levels. As the hut is leveled up and as the baker levels up they have better chances to make items without failure and even better than one item per recipe.",
+  "com.minecolonies.coremod.info.baker.2": "Now let's cover some frequently asked questions:\n\n Q 1. My baker is using more items than they are producing, why?\n   A 1. The baker may be consuming some product when they get hungry. Also, while the wheat may not be visible, the product may still be in the process of being produced.",
   "com.minecolonies.coremod.info.baker.3.name": "Leveling",
   "com.minecolonies.coremod.info.baker.3": "As all workers the baker levels up while working.\n With higher levels the baker's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
@@ -1620,5 +1638,15 @@
 
   "item.minecolonies.amazonegg": "Amazon Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Chief Egg",
-  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!"
+  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!",
+
+  "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer",
+  "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",
+  "block.minecolonies.blockhutconcretemixer.name": "Concrete Mixer",
+  "block.minecolonies.blockhutconcretemixer": "Concrete Mixer",
+
+  "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
+  "com.minecolonies.coremod.job.rabbitherder": "Rabbit Herder",
+  "block.minecolonies.blockhutrabbithutch.name": "Rabbit hutch",
+  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch"
 }

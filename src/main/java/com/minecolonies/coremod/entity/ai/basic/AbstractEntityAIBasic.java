@@ -1312,6 +1312,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Reset the done actions of the AI.
+     *
+     * @see #incrementActionsDone(int)
+     */
+    protected final void resetActionsDone()
+    {
+        job.clearActionsDone();
+    }
+
+    /**
      * Tell the ai that you have done numberOfActions more actions.
      * <p>
      * if the actions exceed a certain number, the ai will dump it's inventory.

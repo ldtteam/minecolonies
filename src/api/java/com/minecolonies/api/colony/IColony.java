@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -106,6 +109,23 @@ public interface IColony
     boolean hasWarehouse();
 
     /**
+     * Defines the team name for all colonies (both Colony and ColonyView)
+     *
+     * @return The team name
+     */
+    default String getTeamName()
+    {
+        return TEAM_COLONY_NAME + "_" + getDimension() + "_" + getID();
+    }
+
+    /**
+     * Retrieves the team of the colony
+     *
+     * @return Team of the colony
+     */
+    ScorePlayerTeam getTeam();
+
+    /**
      * Get the last contact of a player to the colony in hours.
      *
      * @return an integer with a describing value.
@@ -151,6 +171,7 @@ public interface IColony
 
     /**
      * Remove a visiting player.
+     *
      * @param player the player.
      */
     void removeVisitingPlayer(final PlayerEntity player);
@@ -215,24 +236,28 @@ public interface IColony
 
     /**
      * Add a visiting player.
+     *
      * @param player the player.
      */
     void addVisitingPlayer(final PlayerEntity player);
 
     /**
      * Get the colony dimension.
+     *
      * @return the dimension id.
      */
     int getDimension();
 
     /**
      * Check if the colony is on the server or client.
+     *
      * @return true if so.
      */
     boolean isRemote();
 
     /**
      * Get the research manager.
+     *
      * @return the research manager object.
      */
     IResearchManager getResearchManager();
@@ -244,10 +269,10 @@ public interface IColony
 
     /**
      * Get the last time mercenaries were used.
+     *
      * @return the mercenary use time.
      */
     long getMercenaryUseTime();
-
 
     CompoundNBT getColonyTag();
 
