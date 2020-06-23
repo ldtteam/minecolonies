@@ -1701,4 +1701,33 @@ public class Colony implements IColony
     {
         return colonyStateMachine.getState();
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final Colony colony = (Colony) o;
+
+        if (id != colony.id)
+        {
+            return false;
+        }
+        return dimensionId == colony.dimensionId;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = id;
+        result = 31 * result + dimensionId;
+        return result;
+    }
 }
