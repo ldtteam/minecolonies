@@ -10,6 +10,8 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
@@ -22,6 +24,7 @@ import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.util.Direction.*;
@@ -173,11 +176,13 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     private static final VoxelShape EAST_WEST   = VoxelShapes.create(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
     private static final VoxelShape NORTH_SOUTH = VoxelShapes.create(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
 
-    public static final BooleanProperty NORTHBLOCK = SixWayBlock.NORTH;
-    public static final BooleanProperty EASTBLOCK = SixWayBlock.EAST;
-    public static final BooleanProperty SOUTHBLOCK = SixWayBlock.SOUTH;
-    public static final BooleanProperty WESTBLOCK = SixWayBlock.WEST;
-    protected static final BooleanProperty[] ADJACENT = new BooleanProperty[]{SOUTHBLOCK, WESTBLOCK, NORTHBLOCK, EASTBLOCK};
+    public static final BooleanProperty NORTHTAPE = SixWayBlock.NORTH;
+    public static final BooleanProperty EASTTAPE = SixWayBlock.EAST;
+    public static final BooleanProperty SOUTHTAPE = SixWayBlock.SOUTH;
+    public static final BooleanProperty WESTTAPE = SixWayBlock.WEST;
+    protected static final BooleanProperty[] ADJACENT = new BooleanProperty[]{SOUTHTAPE, WESTTAPE, NORTHTAPE, EASTTAPE};
+    public static final EnumProperty<Axis> ORIENTATION = BlockStateProperties.AXIS;
+    public Axis orientation = Axis.X;
 
     /**
      * Constructor for the Substitution block.
@@ -188,10 +193,11 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
         setRegistryName(BLOCK_NAME);
         this.setDefaultState(this.getDefaultState().with(FACING, NORTH)
-                .with(NORTHBLOCK, false)
-                .with(EASTBLOCK, false)
-                .with(SOUTHBLOCK, false)
-                .with(WESTBLOCK, false)
+                .with(NORTHTAPE, false)
+                .with(EASTTAPE, false)
+                .with(SOUTHTAPE, false)
+                .with(WESTTAPE, false)
+                .with(ORIENTATION, this.orientation)
         );
     }
 
@@ -227,20 +233,18 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         }
     }
 
-    protected BooleanProperty getAdjacencyProperty (Direction face) {
-        return face.getHorizontalIndex() >= 0 ? ADJACENT[face.getHorizontalIndex()] : null;
-    }
-
     @NotNull
     @Override
     public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction dir, final BlockState state, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos pos)
     {
-        BooleanProperty side = getAdjacencyProperty(dir);
-        if (side != null) {
-            return stateIn.with(side, canConnect(worldIn, currentPos, dir));
-        }
-        //return getOptimalStateForPlacement(stateIn, worldIn, currentPos);
-        return stateIn;
+        this.orientation = stateIn.get(ORIENTATION);
+        List<Direction> connections = getConnections(worldIn, currentPos);
+
+        return super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos)
+                .with(NORTHTAPE, connections.contains(NORTH))
+                .with(EASTTAPE,  connections.contains(EAST))
+                .with(SOUTHTAPE, connections.contains(SOUTH))
+                .with(WESTTAPE,  connections.contains(WEST));
     }
 
     /**
@@ -278,12 +282,39 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         BlockPos blockpos = context.getPos();
         IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
 
+        // Get the closest horizontal axis for the default orientation
+        Direction[] faces = context.getNearestLookingDirections();
+        this.orientation = faces[0].getAxis().isHorizontal() ? faces[0].getAxis() : faces[1].getAxis();
+
+        List<Direction> connections = getConnections(world, blockpos);
+
         return super.getStateForPlacement(context)
-                .with(NORTHBLOCK, this.canConnect(world, blockpos, Direction.NORTH))
-                .with(EASTBLOCK,  this.canConnect(world, blockpos, Direction.EAST))
-                .with(SOUTHBLOCK, this.canConnect(world, blockpos, Direction.SOUTH))
-                .with(WESTBLOCK,  this.canConnect(world, blockpos, Direction.WEST));
+                .with(NORTHTAPE, connections.contains(NORTH))
+                .with(EASTTAPE,  connections.contains(EAST))
+                .with(SOUTHTAPE, connections.contains(SOUTH))
+                .with(WESTTAPE,  connections.contains(WEST))
+                .with(ORIENTATION, this.orientation);
         //return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
+    }
+
+    public List<Direction> getConnections (IBlockReader world, BlockPos pos) {
+        List<Direction> connections = new ArrayList<>();
+        for (int i = 0; i < ADJACENT.length; i++) {
+            if (canConnect(world, pos, Direction.byHorizontalIndex(i))) {
+                connections.add(Direction.byHorizontalIndex(i));
+            }
+        }
+
+        // When the tape is isolated, set it to its default orientation
+        if (connections.size() == 0) {
+            connections.add(orientation == Axis.X? SOUTH : WEST);
+            connections.add(orientation == Axis.X? NORTH : EAST);
+        }
+        else if (connections.size() == 1) {
+            connections.add(connections.get(0).getOpposite());
+        }
+
+        return connections;
     }
 
     public Boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
@@ -301,6 +332,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     protected void fillStateContainer(final StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(NORTHBLOCK, EASTBLOCK, SOUTHBLOCK, WESTBLOCK, FACING, VARIANT);
+        builder.add(NORTHTAPE, EASTTAPE, SOUTHTAPE, WESTTAPE, ORIENTATION);
     }
 }
