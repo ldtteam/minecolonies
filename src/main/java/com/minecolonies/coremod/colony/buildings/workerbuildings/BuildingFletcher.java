@@ -21,6 +21,7 @@ import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -48,19 +49,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     public BuildingFletcher(final IColony c, final BlockPos l)
     {
         super(c, l);
-        if (recipes.isEmpty())
-        {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-                      1,
-                      new ItemStack(Items.STRING, 4),
-                      Blocks.AIR);
-            recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-        }
     }
-
 
     @NotNull
     @Override
@@ -123,19 +112,29 @@ public class BuildingFletcher extends AbstractBuildingCrafter
             // Additional recipe rules
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-            boolean hasValidItem = false;
-
-            if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
-                  || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-                        && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
-            {
-                return true;
-            }
+            return storage.getPrimaryOutput().getItem() instanceof ArrowItem
+                     || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
+                           && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER);
 
             // End Additional recipe rules
         }
+    }
 
-        return false;
+    @Override
+    public void deserializeNBT(final CompoundNBT compound)
+    {
+        super.deserializeNBT(compound);
+        if (recipes.isEmpty())
+        {
+            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+              TypeConstants.RECIPE,
+              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
+              1,
+              new ItemStack(Items.STRING, 4),
+              Blocks.AIR);
+            recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+        }
     }
 
     @Override

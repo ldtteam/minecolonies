@@ -87,10 +87,15 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
-        recipes.putAll(NBTUtils.streamCompound(compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
-                .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
+        final ListNBT list = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++)
+        {
+            IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
+            if (recipe != null)
+            {
+                recipes.put(recipe.getToken(), recipe);
+            }
+        }
         cache = null;
     }
 }
