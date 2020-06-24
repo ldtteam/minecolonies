@@ -1,6 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFallingFourWay;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.state.DirectionProperty;
@@ -8,7 +8,7 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFallingFourWay<B>
 {
     /**
      * The variants of the shingle slab.
