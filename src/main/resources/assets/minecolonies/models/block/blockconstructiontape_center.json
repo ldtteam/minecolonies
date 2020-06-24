@@ -1,7 +1,7 @@
 {
     "textures": {
         "tape": "block/white_wool",
-        "particle": "block/white_wool"
+        "particle": "block/oak_planks"
     },
     "elements": [
         {

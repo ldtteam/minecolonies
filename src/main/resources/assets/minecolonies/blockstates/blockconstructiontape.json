@@ -1,17 +1,36 @@
 {
   "multipart": [
-    {  "apply": { "model": "minecolonies:block/blockconstructiontape_center"}},
-    {   "when": { "north": "true" },
-       "apply": { "model": "minecolonies:block/blockconstructiontape", "uvlock": true }
+    {
+      "apply": { "model": "minecolonies:block/blockconstructiontape_center" }
     },
-    {   "when": { "east": "true" },
-       "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 90, "uvlock": true }
+    {
+       "when": { "north": "false", "east": "false", "south": "true", "west": "true" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
     },
-    {   "when": { "south": "true" },
-       "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 180, "uvlock": true }
+    {
+       "when": { "north": "true", "east": "false", "south": "false", "west": "true" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
     },
-    {   "when": { "west": "true" },
-       "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
+    {
+       "when": { "north": "true", "east": "true", "south": "false", "west": "false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+    },
+    {
+       "when": { "north": "false", "east": "true", "south": "true", "west": "false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+    },
+
+    {  "when": { "north": "true"},
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "uvlock": true }
+    },
+    {  "when": { "east": "true"},
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 90, "uvlock": true }
+    },
+    {  "when": { "south": "true"},
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 180, "uvlock": true }
+    },
+    {  "when": { "west": "true"},
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
     }
   ]
 }

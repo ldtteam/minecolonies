@@ -1,52 +1,49 @@
 {
-	"credit": "Adapted from Blockbench",
-	"textures": {
-		"post": "block/oak_planks",
-		"tape": "block/white_wool",
-		"particle": "block/oak_planks"
-	},
-	"elements": [
-		{
-			"name": "post",
-			"from": [6, 0, 0],
-			"to": [10, 16, 1],
-			"rotation": {"angle": 0, "axis": "x", "origin": [14, 8, 8]},
-			"faces": {
-				"north": {"uv": [0, 0, 4, 16], 	"texture": "#post"},
-				"east":  {"uv": [0, 0, 4, 16], 	"texture": "#post"},
-				"south": {"uv": [0, 0, 4, 16], 	"texture": "#post"},
-				"west":  {"uv": [0, 0, 4, 16], 	"texture": "#post"},
-				"up":    {"uv": [4, 13, 8, 14], "texture": "#post"},
-				"down":  {"uv": [0, 0, 4, 4], 	"texture": "#post"}
-			}
-		},
-		{
-			"name": "chain_outer",
-			"from": [7, 14, 1],
-			"to": [9, 15, 4],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1, -7]},
-			"faces": {
-				"north": {"uv": [0, 0, 2, 1], "texture": "#tape"},
-				"east":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
-				"south": {"uv": [0, 0, 2, 1], "texture": "#tape"},
-				"west":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
-				"up":    {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"},
-				"down":  {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"}
-			}
-		},
-		{
-			"name": "chain_mid",
-			"from": [7, 13, 4],
-			"to": [9, 14, 7],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1, 4]},
-			"faces": {
-				"north": {"uv": [0, 0, 2, 1], "texture": "#tape"},
-				"east":  {"uv": [0, 0, 4, 1], "texture": "#tape"},
-				"south": {"uv": [0, 0, 2, 1], "texture": "#tape"},
-				"west":  {"uv": [0, 0, 4, 1], "texture": "#tape"},
-				"up":    {"uv": [0, 0, 2, 4], "rotation": 180, "texture": "#tape"},
-				"down":  {"uv": [0, 0, 2, 4], "rotation": 180, "texture": "#tape"}
-			}
-		}
-	]
+  "credit": "Adapted from Blockbench",
+  "textures": {
+    "post": "block/oak_planks",
+    "tape": "block/white_wool",
+    "particle": "block/oak_planks"
+  },
+  "elements": [
+    {
+      "name": "post",
+      "from": [6, 0, 0],
+      "to": [10, 16, 1],
+      "faces": {
+        "north": {"uv": [ 1,  0,  5, 16], "texture": "#post"},
+        "east":  {"uv": [ 5,  0,  6, 16], "texture": "#post"},
+        "south": {"uv": [ 6,  0, 10, 16], "texture": "#post"},
+        "west":  {"uv": [10,  0, 11, 16], "texture": "#post"},
+        "up":    {"uv": [ 0,  0,  1,  4], "texture": "#post", "rotation": 90},
+        "down":  {"uv": [ 0,  4,  1,  8], "texture": "#post", "rotation": 90}
+      }
+    },
+    {
+      "name": "chain_outer",
+      "from": [7, 14, 1],
+      "to": [9, 15, 4],
+      "faces": {
+        "north": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+        "east":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
+        "south": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+        "west":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
+        "up":    {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"},
+        "down":  {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"}
+      }
+    },
+    {
+      "name": "chain_mid",
+      "from": [7, 13, 4],
+      "to": [9, 14, 7],
+      "faces": {
+        "north": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+        "east":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
+        "south": {"uv": [0, 0, 2, 1], "texture": "#tape"},
+        "west":  {"uv": [0, 0, 3, 1], "texture": "#tape"},
+        "up":    {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"},
+        "down":  {"uv": [0, 0, 2, 3], "rotation": 180, "texture": "#tape"}
+      }
+    }
+  ]
 }

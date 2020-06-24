@@ -18,6 +18,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.common.extensions.IForgeBlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,7 +180,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     public static final BooleanProperty WEST = SixWayBlock.WEST;
     // Implies that the tape should revert to a corner if there are no connections. Must be set explicitly. For use by the builder handler.
     public static final BooleanProperty CORNER = BooleanProperty.create("corner");
-    public static final EnumProperty<Direction> ORIENTATION = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public Direction orientation = Direction.NORTH;
     private final VoxelShape EMPTY_SHAPE = VoxelShapes.empty();
 
@@ -200,7 +201,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .with(EAST, false)
                 .with(SOUTH, false)
                 .with(WEST, false)
-                .with(ORIENTATION, this.orientation)
+                .with(FACING, this.orientation)
                 .with(WATERLOGGED, false)
                 .with(CORNER, false)
         );
@@ -227,7 +228,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
 
-        this.orientation = stateIn.get(ORIENTATION);
+        this.orientation = stateIn.get(FACING);
         List<Direction> connections = getConnections(worldIn, currentPos);
 
         return super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos)
@@ -283,7 +284,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .with(EAST,  connections.contains(Direction.EAST))
                 .with(SOUTH, connections.contains(Direction.SOUTH))
                 .with(WEST,  connections.contains(Direction.WEST))
-                .with(ORIENTATION, this.orientation)
+                .with(FACING, this.orientation)
                 .with(WATERLOGGED, fluid == Fluids.WATER);
         //return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
     }
@@ -304,11 +305,23 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         else if (connections.size() == 1) {
             connections.add(connections.get(0).getOpposite());
         }
+        else if (connections.size() == 3) {
+            Direction stem = Direction.NORTH;
+
+            for (int i = 0; i < 4; i++)
+                if (!connections.contains(Direction.byHorizontalIndex(i)))
+                    stem = Direction.byHorizontalIndex(i).getOpposite();
+
+            // If the block in the direction of the stem also has three connections
+            // with it's stem facing this block, remove this block's stem
+            if (canRemoveTStem(world, pos, stem))
+                connections.remove(connections.indexOf(stem));
+        }
 
         return connections;
     }
 
-    public Boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
+    public boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
         BlockPos adjacent;
         switch (face) {
             default:
@@ -320,10 +333,25 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return world.getBlockState(adjacent).getBlock() instanceof BlockConstructionTape;
     }
 
+    public boolean canRemoveTStem (IBlockReader world, BlockPos pos, Direction face) {
+        BlockState neighbor = world.getBlockState(pos.offset(face));
+        switch (face) {
+            case NORTH:
+                return !neighbor.get(NORTH) && neighbor.get(EAST) && neighbor.get(WEST);
+            case EAST:
+                return !neighbor.get(EAST) && neighbor.get(NORTH) && neighbor.get(SOUTH);
+            case SOUTH:
+                return !neighbor.get(SOUTH) && neighbor.get(EAST) && neighbor.get(WEST);
+            case WEST:
+                return !neighbor.get(WEST) && neighbor.get(NORTH) && neighbor.get(SOUTH);
+        }
+        return false;
+    }
+
     @Override
     public void onEndFalling(World worldIn, BlockPos pos, BlockState fallingState, BlockState hitState)
     {
-        this.orientation = fallingState.get(ORIENTATION);
+        this.orientation = fallingState.get(FACING);
         List<Direction> connections = getConnections(worldIn, pos);
 
         worldIn.setBlockState(pos, fallingState
@@ -339,6 +367,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     protected void fillStateContainer(final StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(NORTH, EAST, SOUTH, WEST, ORIENTATION, CORNER, WATERLOGGED);
+        builder.add(NORTH, EAST, SOUTH, WEST, FACING, CORNER, WATERLOGGED);
     }
 }
