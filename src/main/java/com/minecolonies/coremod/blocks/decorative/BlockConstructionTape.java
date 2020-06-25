@@ -281,7 +281,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
     public static BlockState getPlacementState (@Nullable BlockState state, IBlockReader world, BlockPos pos, Direction face) {
         Fluid fluid = world.getFluidState(pos).getFluid();
-        List<Direction> connections = getConnections(world, pos, face);
+        List<Direction> connections = getConnections(world, pos, face, state.get(CORNER));
 
         assert state != null;
         return state
@@ -293,7 +293,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .with(WATERLOGGED, fluid == Fluids.WATER);
     }
 
-    public static List<Direction> getConnections (IBlockReader world, BlockPos pos, Direction face) {
+    public static List<Direction> getConnections (IBlockReader world, BlockPos pos, Direction face, boolean corner) {
         List<Direction> connections = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             if (canConnect(world, pos, Direction.byHorizontalIndex(i))) {
@@ -302,9 +302,16 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         }
 
         // When the tape is isolated, set it to its default orientation
-        if (connections.size() == 0) {
-            connections.add(face.getAxis() == Axis.X? Direction.SOUTH : Direction.EAST);
-            connections.add(face.getAxis() == Axis.X? Direction.NORTH : Direction.WEST);
+        // considering whether it is a corner
+        if (connections.size() == 0 || (connections.size() == 1 && corner)) {
+            if (corner) {
+                connections.clear();
+                connections.add(face);
+                connections.add(face.rotateY());
+            } else {
+                connections.add(face.getAxis() == Axis.X ? Direction.SOUTH : Direction.EAST);
+                connections.add(face.getAxis() == Axis.X ? Direction.NORTH : Direction.WEST);
+            }
         }
         else if (connections.size() == 1) {
             connections.add(connections.get(0).getOpposite());

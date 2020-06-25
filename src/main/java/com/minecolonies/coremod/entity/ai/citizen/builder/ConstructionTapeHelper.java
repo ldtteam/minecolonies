@@ -76,24 +76,24 @@ public final class ConstructionTapeHelper
             if (place.getX() < X+W) {
                 working = firstValidPosition(new BlockPos(place.getX(), Y, Z), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.NORTH)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.SOUTH)
                 );
 
                 working = firstValidPosition(new BlockPos(place.getX(), Y, Z+H), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.SOUTH)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.NORTH)
                 );
             }
 
             if (place.getZ() < Z+H) {
                 working = firstValidPosition(new BlockPos(X, Y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape, world, working, Direction.WEST)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, Direction.EAST)
                 );
 
                 working = firstValidPosition(new BlockPos(X+W, Y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, Direction.EAST)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, place.getZ() == Z? Direction.SOUTH : Direction.WEST)
                 );
             }
 
@@ -102,7 +102,7 @@ public final class ConstructionTapeHelper
 
         working = firstValidPosition(new BlockPos(X+W, Y, Z+H), world);
         world.setBlockState(working,
-                BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.EAST)
+                BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.WEST)
         );
     }
 
