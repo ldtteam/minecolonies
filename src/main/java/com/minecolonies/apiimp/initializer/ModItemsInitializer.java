@@ -65,6 +65,7 @@ public final class ModItemsInitializer
         ModItems.resourceScroll = new ItemResourceScroll(new Item.Properties());
         ModItems.pharaoscepter = new ItemPharaoScepter(new Item.Properties());
         ModItems.firearrow = new ItemFireArrow(new Item.Properties());
+        ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
 
@@ -92,6 +93,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.scepterLumberjack);
         registry.register(ModItems.pharaoscepter);
         registry.register(ModItems.firearrow);
+        registry.register(ModItems.scepterBeekeeper);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);

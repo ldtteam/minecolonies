@@ -4,10 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
@@ -41,6 +38,7 @@ public class TypeConstants
     public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
     public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
     public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
+    public static final TypeToken<Tag>              TAG_REQUEST      = TypeToken.of(Tag.class);
     public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
 
     /////Request system specific

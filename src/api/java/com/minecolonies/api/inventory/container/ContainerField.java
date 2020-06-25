@@ -12,7 +12,10 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +53,18 @@ public class ContainerField extends Container
     public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
     {
         super(ModContainers.field, windowId);
-        final BlockPos pos = extra.readBlockPos();
-        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(playerInventory.player.world, pos);
-        this.tileEntity = ((AbstractScarescrowTileEntity) playerInventory.player.world.getTileEntity(pos));
-        this.inventory = this.tileEntity.getInventory();
+
+        final World world = playerInventory.player.world;
+        BlockPos pos = extra.readBlockPos();
+
+        if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
+        {
+            pos = pos.down();
+        }
+
+        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        this.tileEntity = ((AbstractScarescrowTileEntity) world.getTileEntity(pos));
+        this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
         addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
@@ -87,33 +98,37 @@ public class ContainerField extends Container
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int index)
     {
-        if (slotIndex == 0)
+        ItemStack transfer = ItemStackUtils.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+
+        if (slot == null || !slot.getHasStack()) return transfer;
+
+        transfer = slot.getStack();
+
+        if (index == 0)
         {
-            playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.insertItem(0, ItemStackUtils.EMPTY, false);
+            if (!mergeItemStack(transfer, 1, 37, true)) {
+                return ItemStackUtils.EMPTY;
+            }
         }
-        else if (inventory.getStackInSlot(0) == ItemStackUtils.EMPTY || ItemStackUtils.getSize(inventory.getStackInSlot(0)) == 0)
+        else
         {
-            final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStackUtils.EMPTY)
+            if (!this.mergeItemStack(transfer, 0, 1, false))
             {
-                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).split(1);
-                inventory.insertItem(0, stack, false);
-                if (ItemStackUtils.getSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
-                {
-                    playerIn.inventory.removeStackFromSlot(playerIndex);
-                }
+                return ItemStackUtils.EMPTY;
             }
         }
 
-        return ItemStackUtils.EMPTY;
+        return transfer;
     }
 
     @Override
     public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
+        if (colony == null)
+            return false;
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }
 
