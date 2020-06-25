@@ -126,9 +126,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     @NotNull
     public List<ItemStack> getExtraItemsNeeded()
     {
-        final List<ItemStack> itemsNeeded = new ArrayList<>();
-        itemsNeeded.add(getRequestBreedingItems());
-        return itemsNeeded;
+        return new ArrayList<>();
     }
 
     /**
@@ -201,6 +199,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 return getState();
             }
         }
+
+        final ItemStack breedingItem = getBreedingItem();
+        checkIfRequestForItemExistOrCreateAsynch(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
 
         for (final ItemStack item : getExtraItemsNeeded())
         {

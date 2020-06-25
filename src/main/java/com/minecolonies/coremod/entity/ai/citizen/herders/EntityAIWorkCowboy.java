@@ -93,13 +93,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         return list;
     }
 
-    @NotNull
-    @Override
-    protected List<ItemStack> itemsNiceToHave()
-    {
-        return getExtraItemsNeeded();
-    }
-
     /**
      * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty
      * bucket for a milk bucket, there's no actual "Milk" method in {@link CowEntity}
