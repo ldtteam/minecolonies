@@ -228,23 +228,20 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
 
-        this.orientation = stateIn.get(FACING);
-        List<Direction> connections = getConnections(worldIn, currentPos);
-
-        return super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos)
-                .with(NORTH, connections.contains(Direction.NORTH))
-                .with(EAST,  connections.contains(Direction.EAST))
-                .with(SOUTH, connections.contains(Direction.SOUTH))
-                .with(WEST,  connections.contains(Direction.WEST));
+        return BlockConstructionTape.getPlacementState(
+                super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos),
+                worldIn, currentPos, stateIn.get(FACING)
+        );
     }
 
-    /**
+    /*
      * Get the step shape of the slab
      * @param state the state.
      * @param world the world.
      * @param position the position.Re
      * @return the blockState to use.
      */
+    /*
     public static BlockState getOptimalStateForPlacement(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
     {
         final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
@@ -258,6 +255,8 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         }
         return state.with(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.STRAIGHT);
     }
+    */
+
 
     @Override
     public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos)
@@ -269,27 +268,32 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        IBlockReader world = context.getWorld();
-        BlockPos blockpos = context.getPos();
-        Fluid fluid = world.getFluidState(context.getPos()).getFluid();
-
         // Get the closest horizontal axis for the default orientation
         Direction[] faces = context.getNearestLookingDirections();
-        this.orientation = faces[0].getHorizontalIndex() >= 0 ? faces[0] : faces[1];
 
-        List<Direction> connections = getConnections(world, blockpos);
+        return BlockConstructionTape.getPlacementState(
+                super.getStateForPlacement(context),
+                context.getWorld(),
+                context.getPos(),
+                faces[0].getHorizontalIndex() >= 0 ? faces[0] : faces[1]
+        );
+    }
 
-        return super.getStateForPlacement(context)
+    public static BlockState getPlacementState (@Nullable BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        Fluid fluid = world.getFluidState(pos).getFluid();
+        List<Direction> connections = getConnections(world, pos, face);
+
+        assert state != null;
+        return state
                 .with(NORTH, connections.contains(Direction.NORTH))
                 .with(EAST,  connections.contains(Direction.EAST))
                 .with(SOUTH, connections.contains(Direction.SOUTH))
                 .with(WEST,  connections.contains(Direction.WEST))
-                .with(FACING, this.orientation)
+                .with(FACING, face)
                 .with(WATERLOGGED, fluid == Fluids.WATER);
-        //return getOptimalStateForPlacement(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
     }
 
-    public List<Direction> getConnections (IBlockReader world, BlockPos pos) {
+    public static List<Direction> getConnections (IBlockReader world, BlockPos pos, Direction face) {
         List<Direction> connections = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             if (canConnect(world, pos, Direction.byHorizontalIndex(i))) {
@@ -299,8 +303,8 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
         // When the tape is isolated, set it to its default orientation
         if (connections.size() == 0) {
-            connections.add(orientation.getAxis() == Axis.X? Direction.SOUTH : Direction.EAST);
-            connections.add(orientation.getAxis() == Axis.X? Direction.NORTH : Direction.WEST);
+            connections.add(face.getAxis() == Axis.X? Direction.SOUTH : Direction.EAST);
+            connections.add(face.getAxis() == Axis.X? Direction.NORTH : Direction.WEST);
         }
         else if (connections.size() == 1) {
             connections.add(connections.get(0).getOpposite());
@@ -321,7 +325,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return connections;
     }
 
-    public boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
+    public static boolean canConnect (IBlockReader world, BlockPos pos, Direction face) {
         BlockPos adjacent;
         switch (face) {
             default:
@@ -333,7 +337,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return world.getBlockState(adjacent).getBlock() instanceof BlockConstructionTape;
     }
 
-    public boolean canRemoveTStem (IBlockReader world, BlockPos pos, Direction face) {
+    public static boolean canRemoveTStem (IBlockReader world, BlockPos pos, Direction face) {
         BlockState neighbor = world.getBlockState(pos.offset(face));
         switch (face) {
             case NORTH:
@@ -351,15 +355,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public void onEndFalling(World worldIn, BlockPos pos, BlockState fallingState, BlockState hitState)
     {
-        this.orientation = fallingState.get(FACING);
-        List<Direction> connections = getConnections(worldIn, pos);
-
-        worldIn.setBlockState(pos, fallingState
-                .with(NORTH, connections.contains(Direction.NORTH))
-                .with(EAST,  connections.contains(Direction.EAST))
-                .with(SOUTH, connections.contains(Direction.SOUTH))
-                .with(WEST,  connections.contains(Direction.WEST))
-        );
+        worldIn.setBlockState(pos, BlockConstructionTape.getPlacementState(
+                fallingState, worldIn, pos, fallingState.get(FACING)
+        ));
 
         updateNeighbors(fallingState, worldIn, pos, 3);
     }
