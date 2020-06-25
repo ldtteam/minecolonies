@@ -80,7 +80,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * After this amount of ticks not seeing an entity stop persecution.
      */
-    private static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
+    protected static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
 
     /**
      * How many more ticks we have until next attack.
@@ -155,12 +155,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Timer for the wakeup AI.
      */
-    private int wakeTimer = 0;
+    protected int wakeTimer = 0;
 
     /**
      * The sleeping guard we found
      */
-    private WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
+    protected WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
 
     /**
      * Random generator for this AI.
@@ -986,7 +986,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the {@link AxisAlignedBB}
      */
-    private AxisAlignedBB getSearchArea()
+    protected AxisAlignedBB getSearchArea()
     {
         final IGuardBuilding building = getOwnBuilding();
         final int buildingBonus = building.getBonusVision();

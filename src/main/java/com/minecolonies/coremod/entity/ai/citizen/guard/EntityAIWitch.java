@@ -90,6 +90,18 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private double lastDistance = 0.0f;
 
     /**
+     * The current buffing target.
+     */
+    private LivingEntity buffTarget;
+    private int          lastSeenBuff;
+
+    /**
+     * The current healing target.
+     */
+    private LivingEntity healTarget;
+    private int          lastSeenHeal;
+
+    /**
      * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
@@ -98,9 +110,9 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, this::attackEnemy, GUARD_ATTACK_INTERVAL),
-          new AITarget(GUARD_ATTACK_HEAL, this::healAllies, GUARD_ATTACK_INTERVAL),
-          new AITarget(GUARD_ATTACK_BUFF, this::buffAllies, GUARD_ATTACK_INTERVAL)
+          new AITarget(GUARD_ATTACK_RANGED, () -> true, this::attackEnemy, GUARD_ATTACK_INTERVAL),
+          new AITarget(GUARD_ATTACK_HEAL, () -> true, this::healAllies, GUARD_ATTACK_INTERVAL),
+          new AITarget(GUARD_ATTACK_BUFF, () -> true, this::buffAllies, GUARD_ATTACK_INTERVAL)
         );
     }
 
@@ -149,7 +161,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         {
             final List<LivingEntity> allies = world.getEntitiesWithinAABB(LivingEntity.class,
               new AxisAlignedBB(worker.getPosition()).grow(getPersecutionDistance() + getAttackRange()),
-              livingEntity -> !livingEntity.equals(worker) && isAlly(livingEntity, true));
+              livingEntity -> !livingEntity.equals(worker) && isAlly(livingEntity));
             LivingEntity target = null;
             for (final LivingEntity ally : allies)
             {
@@ -190,34 +202,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return START_WORKING;
         }
 
-        if (!movingToTarget && !fleeing)
-        {
-            final List<LivingEntity> allies = world.getEntitiesWithinAABB(LivingEntity.class,
-              new AxisAlignedBB(worker.getPosition()).grow(getPersecutionDistance() + getAttackRange()),
-              livingEntity -> !livingEntity.equals(worker) && isAlly(livingEntity, true));
-            final Potion potion = PotionUtils.getPotionFromItem(worker.getHeldItem(Hand.MAIN_HAND));
-            LivingEntity target = null;
-            for (final LivingEntity ally : allies)
-            {
-                Collection<EffectInstance> effects = ally.getActivePotionEffects();
-                if (effects.isEmpty())
-                {
-                    target = ally;
-                    break;
-                }
-                if (effects.stream().map(EffectInstance::getPotion).noneMatch(effect -> potion.getEffects().stream().map(EffectInstance::getPotion).anyMatch(effect::equals)))
-                {
-                    target = ally;
-                    break;
-                }
-            }
-            if (target == null)
-            {
-                return getAttackState();
-            }
-            this.target = target;
-        }
-        return targetAndThrowAtEntity(this.target, GUARD_ATTACK_BUFF);
+        return targetAndThrowAtEntity(buffTarget, GUARD_ATTACK_BUFF);
     }
 
     @Override
@@ -256,34 +241,97 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         return HELP_CITIZEN;
     }
 
-    /*
-    final List<LivingEntity> enemeis = new ArrayList<>();
-
-        boolean heal = false;
-        for (final LivingEntity livingEntity : world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(worker.getPosition()).grow(getAttackRange())))
+    /**
+     * Get a target for the guard. First check if we're under attack by anything and switch target if necessary.
+     *
+     * @return The next IAIState to go to.
+     */
+    @Override
+    protected LivingEntity searchNearbyTarget()
+    {
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony == null)
         {
-            if (livingEntity.equals(worker))
+            resetTarget();
+            return null;
+        }
+
+        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+
+        boolean isBuff = false;
+        int closest = Integer.MAX_VALUE;
+        LivingEntity closestTarget = null;
+        LivingEntity closestHeal = null;
+
+        for (final LivingEntity entity : entities)
+        {
+            if (!worker.canEntityBeSeen(entity) || !entity.isAlive())
             {
                 continue;
             }
-            if (isAlly(livingEntity, false))
+            final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
+
+            if (isAlly(entity))
             {
-                if (livingEntity.getMaxHealth() / livingEntity.getHealth() < .15)
+                /*if (entity instanceof EntityCitizen)
                 {
-                    heal = true;
+                    final EntityCitizen citizen = (EntityCitizen) entity;
+
+                    // Found a sleeping guard nearby
+                    if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                    {
+                        sleepingGuard = new WeakReference<>(citizen);
+                        wakeTimer = 0;
+                        registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
+                        return null;
+                    }
+                }*///TODO should witch wake up other guards?
+                if (tempDistance < closest)
+                {
+                    if (entity.getMaxHealth() / entity.getHealth() < HEALTH_PERCENTAGE_MIN)
+                    {
+                        closest = tempDistance;
+                        closestHeal = entity;
+                    }
+                    else
+                    {
+                        closest = tempDistance;
+                        closestTarget = entity;
+                        isBuff = true;
+                    }
                 }
             }
-            else if (isEnemy(livingEntity))
+            else if (isEntityValidTarget(entity))
             {
-                enemeis.add(livingEntity);
+                // Find closest
+                if (tempDistance < closest)
+                {
+                    closest = tempDistance;
+                    closestTarget = entity;
+                    isBuff = false;
+                }
             }
         }
 
-        if (heal)
+        if (closestHeal != null)
         {
-            return GUARD_ATTACK_HEAL;
+            healTarget = closestTarget;
+            return healTarget;
         }
-     */
+
+        if (isBuff && buffTarget != null)
+        {
+            buffTarget = closestTarget;
+            return buffTarget;
+        }
+        else if (closestTarget != null)
+        {
+            target = closestTarget;
+            return target;
+        }
+
+        return null;
+    }
 
     private IAIState targetAndThrowAtEntity(final LivingEntity target, final IAIState returnOnSuccess)
     {
@@ -395,45 +443,35 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             }
         }
 
-        if (worker.isHandActive())
+        if (canSee && sqDistanceToEntity <= sqAttackRange)
         {
-            if (!canSee && timeCanSee < -6)
-            {
-                worker.resetActiveHand();
-            }
-            else if (canSee && sqDistanceToEntity <= sqAttackRange)
-            {
-                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.swingArm(Hand.MAIN_HAND);
+            worker.setActiveHand(Hand.MAIN_HAND);
+            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.swingArm(Hand.MAIN_HAND);
 
-                throwPotionAt(target);
+            throwPotionAt(target);
 
-                timeCanSee = 0;
-                if (returnOnSuccess == GUARD_ATTACK_RANGED)
-                {
-                    target.setRevengeTarget(worker);
-                }
-                currentAttackDelay = getAttackDelay();
-                worker.resetActiveHand();
-                worker.decreaseSaturationForContinuousAction();
-            }
-            else
+            timeCanSee = 0;
+            if (returnOnSuccess == GUARD_ATTACK_RANGED)
             {
-                /*
-                 * It is possible the object is higher than guard and guard can't get there.
-                 * Guard will try to back up to get some distance to be able to shoot target.
-                 */
-                if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
-                {
-                    fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
-                    fleeing = true;
-                    worker.getMoveHelper().strafe(0, 0);
-                }
+                target.setRevengeTarget(worker);
             }
+            currentAttackDelay = getAttackDelay();
+            worker.resetActiveHand();
+            worker.decreaseSaturationForContinuousAction();
         }
         else
         {
-            worker.setActiveHand(Hand.MAIN_HAND);
+            /*
+             * It is possible the object is higher than guard and guard can't get there.
+             * Guard will try to back up to get some distance to be able to shoot target.
+             */
+            if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
+            {
+                fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
+                fleeing = true;
+                worker.getMoveHelper().strafe(0, 0);
+            }
         }
         lastDistance = sqDistanceToEntity;
         return returnOnSuccess;
@@ -451,36 +489,123 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         worker.getActiveItemStack().shrink(1);
     }
 
-    /*/**
-     * Checks tf the given {@link LivingEntity} is an enemy (raider, mob, ...)
+    /**
+     * Checks if the current targets is still valid, if not searches a new target. Adds experience if the current target died.
      *
-     * @param entity the {@link LivingEntity} to check
-     * @return true if the {@link LivingEntity} is an enemy
-     *//*
-    protected boolean isEnemy(final LivingEntity entity)
+     * @return true if we found a target, false if no target.
+     */
+    @Override
+    protected boolean checkForTarget()
     {
-        if (entity instanceof IMob)
+        switch ((AIWorkerState) getState())
         {
-            return true;
+            case GUARD_ATTACK_BUFF:
+                return checkForBuffTarget();
+            case GUARD_ATTACK_HEAL:
+                return checkForHealTarget();
+            case GUARD_ATTACK_RANGED:
+            default:
+                return super.checkForTarget();
         }
-        else if (entity instanceof PlayerEntity)
-        {
-            return worker.getCitizenData().getColony().isValidAttackingPlayer((PlayerEntity) entity);
-        }
-        else
+    }
+
+    private boolean checkForHealTarget()
+    {
+        if (healTarget == null || !healTarget.isAlive())
         {
             return false;
         }
-    }*/
+
+        if (!(healTarget.getMaxHealth() / healTarget.getHealth() > HEALTH_PERCENTAGE_MIN))
+        {
+            // Check sight
+            if (!worker.canEntityBeSeen(healTarget))
+            {
+                lastSeenHeal += GUARD_TASK_INTERVAL;
+            }
+            else
+            {
+                lastSeenHeal = 0;
+            }
+
+            if (lastSeenHeal > STOP_PERSECUTION_AFTER)
+            {
+                resetTarget();
+                return false;
+            }
+
+            // Move into range
+            if (!isInAttackDistance(healTarget.getPosition()))
+            {
+                if (worker.getNavigator().noPath())
+                {
+                    moveInAttackPosition();
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            resetTarget();
+        }
+        return false;
+    }
+
+    private boolean checkForBuffTarget()
+    {
+        if (buffTarget == null || !buffTarget.isAlive())
+        {
+            return false;
+        }
+
+        final Potion potion = PotionUtils.getPotionFromItem(worker.getHeldItemMainhand());
+        final Collection<EffectInstance> effects = buffTarget.getActivePotionEffects();
+        if (effects.isEmpty() || effects.stream()
+                                   .map(EffectInstance::getPotion)
+                                   .noneMatch(effect -> potion.getEffects().stream().map(EffectInstance::getPotion).anyMatch(effect::equals)))
+        {
+            // Check sight
+            if (!worker.canEntityBeSeen(buffTarget))
+            {
+                lastSeenBuff += GUARD_TASK_INTERVAL;
+            }
+            else
+            {
+                lastSeenBuff = 0;
+            }
+
+            if (lastSeenBuff > STOP_PERSECUTION_AFTER)
+            {
+                resetTarget();
+                return false;
+            }
+
+            // Move into range
+            if (!isInAttackDistance(buffTarget.getPosition()))
+            {
+                if (worker.getNavigator().noPath())
+                {
+                    moveInAttackPosition();
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            resetTarget();
+        }
+        return false;
+    }
 
     /**
      * Checks if the given {@link LivingEntity} is an ally.
      *
-     * @param entity   the {@link LivingEntity} to check
-     * @param fighting if the ally is a fighting ally
+     * @param entity the {@link LivingEntity} to check
      * @return true if the {@link LivingEntity} is an ally
      */
-    protected boolean isAlly(final LivingEntity entity, final boolean fighting)
+    protected boolean isAlly(final LivingEntity entity)
     {
         if (entity instanceof PlayerEntity)
         {
@@ -492,14 +617,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             final IColony ownColony = worker.getCitizenData().getColony();
             if (ownColony.equals(colony))
             {
-                if (fighting)
-                {
-                    return ((AbstractEntityCitizen) entity).getCitizenData().getJob() instanceof AbstractJobGuard;
-                }
-                else
-                {
-                    return true;
-                }
+                return ((AbstractEntityCitizen) entity).getCitizenData().getJob() instanceof AbstractJobGuard;
             }
         }
         return false;
@@ -533,9 +651,42 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     public void moveInAttackPosition()
     {
+        final LivingEntity target;
+        switch ((AIWorkerState) getState())
+        {
+            case GUARD_ATTACK_BUFF:
+                target = buffTarget;
+                break;
+            case GUARD_ATTACK_HEAL:
+                target = healTarget;
+                break;
+            case GUARD_ATTACK_RANGED:
+            default:
+                target = this.target;
+        }
         worker.getNavigator().tryMoveToBlockPos(
           worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8),
           getCombatMovementSpeed());
+    }
+
+    /**
+     * Resets the current target and removes it from all saved targets.
+     */
+    @Override
+    public void resetTarget()
+    {
+        switch ((AIWorkerState) getState())
+        {
+            case GUARD_ATTACK_BUFF:
+                buffTarget = null;
+                break;
+            case GUARD_ATTACK_HEAL:
+                healTarget = null;
+                break;
+            case GUARD_ATTACK_RANGED:
+            default:
+                super.resetTarget();
+        }
     }
 
     /**
