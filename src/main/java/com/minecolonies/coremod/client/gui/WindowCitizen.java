@@ -23,6 +23,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
@@ -474,7 +475,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
         }
         Network.getNetwork().sendToServer(
           new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
+
+        final ItemStack copy = itemStack.copy();
+        copy.setCount(isCreative ? amount : Math.min(amount, count));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
     }
 
     /**
@@ -536,7 +540,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingWorker.View)
+        if (building instanceof AbstractBuildingWorker.View && ! (building instanceof BuildingLibrary.View))
         {
             windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
               LanguageHandler.format(citizen.getJob())));

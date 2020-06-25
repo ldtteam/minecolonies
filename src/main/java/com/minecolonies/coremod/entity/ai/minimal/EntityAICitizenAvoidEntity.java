@@ -24,6 +24,7 @@ import java.util.Random;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.RUNNING;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SAFE;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
+import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
 /**
  * AI task to avoid an Entity class.
@@ -39,6 +40,13 @@ public class EntityAICitizenAvoidEntity extends Goal
      * The amount of area checks before the citizen assumes it is safe. 40 are done in 10seconds.
      */
     private static final int CHECKS_BEFORE_SAFE = 40;
+
+    /**
+     * Move away distances.
+     */
+    private static final float MIN_MOVE_AWAY_DIST = 5;
+    private static final float MED_MOVE_AWAY_DIST = 10;
+    private static final float MAX_MOVE_AWAY_DIST = 20;
 
     /**
      * The entity we are attached to.
@@ -179,11 +187,29 @@ public class EntityAICitizenAvoidEntity extends Goal
     {
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigator().noPath())
         {
-            moveAwayPath = citizen.getNavigator().moveAwayFromXYZ(citizen.getPosition().add(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + 5, nearSpeed);
+            moveAwayPath = citizen.getNavigator().moveAwayFromXYZ(citizen.getPosition().add(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
             citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }
         return false;
+    }
+
+    /**
+     * The range to move away.
+     * @param citizen the citizen doing the action.
+     * @return the distance to run away.
+     */
+    private float getMoveAwayDist(final EntityCitizen citizen)
+    {
+        if (citizen.getHealth() >= citizen.getMaxHealth() - 4)
+        {
+            return MIN_MOVE_AWAY_DIST;
+        }
+        else if (citizen.getHealth() >= citizen.getMaxHealth() / 2)
+        {
+            return MED_MOVE_AWAY_DIST;
+        }
+        return MAX_MOVE_AWAY_DIST;
     }
 
     /**
@@ -236,7 +262,9 @@ public class EntityAICitizenAvoidEntity extends Goal
         {
             startingPos = citizen.getPosition();
             fleeingCounter = 0;
-            return true;
+
+            return !(citizen.getHealth() <= SEEK_DOCTOR_HEALTH) || citizen.getCitizenColonyHandler().getColony() == null
+                     || citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen) == null;
         }
         return false;
     }
@@ -248,6 +276,11 @@ public class EntityAICitizenAvoidEntity extends Goal
     public boolean shouldContinueExecuting()
     {
         stateMachine.tick();
+        if (citizen.getHealth() <= SEEK_DOCTOR_HEALTH && citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen) != null)
+        {
+            return false;
+        }
+
         return citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance();
     }
 

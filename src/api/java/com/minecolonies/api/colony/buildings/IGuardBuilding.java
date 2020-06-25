@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,11 +28,18 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param player  the player.
      * @return false if in follow mode and following the player.
      */
-    static boolean checkIfGuardShouldTakeDamage(AbstractEntityCitizen citizen, PlayerEntity player)
+    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final PlayerEntity player)
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
-        return !(buildingWorker instanceof IGuardBuilding) || ((IGuardBuilding) buildingWorker).getTask() != GuardTask.FOLLOW
-                 || !player.equals(((IGuardBuilding) buildingWorker).getFollowPlayer());
+        if (!(buildingWorker instanceof IGuardBuilding))
+        {
+            return true;
+        }
+        if (player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally()))
+        {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -49,14 +57,8 @@ public interface IGuardBuilding extends IBuildingWorker
     void setTask(GuardTask task);
 
     /**
-     * Entity of player to follow.
-     *
-     * @return the PlayerEntity reference.
-     */
-    PlayerEntity getFollowPlayer();
-
-    /**
      * Returns a patrolTarget to patrol to.
+     *
      * @param newTarget whether to search a new target
      * @return the position of the next target.
      */
@@ -192,11 +194,11 @@ public interface IGuardBuilding extends IBuildingWorker
     void setMobsToAttack(List<MobEntryView> list);
 
     /**
-     * Gets the player to follow.
+     * Entity of player to follow or rally.
      *
-     * @return the entity player.
+     * @return the PlayerEntity reference.
      */
-    BlockPos getPlayerToFollow();
+    PlayerEntity getPlayerToFollowOrRally();
 
     /**
      * Sets the player to follow.
@@ -204,6 +206,27 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param player the player to follow.
      */
     void setPlayerToFollow(PlayerEntity player);
+
+    /**
+     * Location to to rally to.
+     *
+     * @return the ILocation reference.
+     */
+    ILocation getRallyLocation();
+
+    /**
+     * Sets the location to rally.
+     *
+     * @param location The location to rally to.
+     */
+    void setRallyLocation(final ILocation location);
+
+    /**
+     * Gets the position to follow.
+     *
+     * @return the position the guard is supposed to be while following.
+     */
+    BlockPos getPositionToFollow();
 
     /**
      * Adds new patrolTargets.
