@@ -105,7 +105,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The citizen this guard is helping out.
      */
-    private WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
+    protected WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
 
     /**
      * The guard building assigned to this job.
@@ -135,7 +135,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Interval between guard task updates
      */
-    private static final int GUARD_TASK_INTERVAL = 100;
+    protected static final int GUARD_TASK_INTERVAL = 100;
 
     /**
      * Interval between guard regen updates
@@ -570,7 +570,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the next state to go into
      */
-    private IAIState helping()
+    protected IAIState helping()
     {
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
         if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
@@ -916,7 +916,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * @param entityPos the position to check.
      * @return true if so.
      */
-    private boolean isWithinPersecutionDistance(final BlockPos entityPos)
+    protected boolean isWithinPersecutionDistance(final BlockPos entityPos)
     {
         return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + getAttackRange(), 2);
     }
@@ -964,7 +964,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the block distance at which a guard should chase his target
      */
-    private int getPersecutionDistance()
+    protected int getPersecutionDistance()
     {
         if (buildingGuards.getRallyLocation() != null)
         {

@@ -45,8 +45,8 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.witch = new GuardType.Builder()
                                 .setJobTranslationKey("com.minecolonies.coremod.job.Witch")
                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.witch")
-                                .setPrimarySkill(Skill.Mana)//TODO
-                                .setSecondarySkill(Skill.Intelligence)//TODO
+                                .setPrimarySkill(Skill.Mana)
+                                .setSecondarySkill(Skill.Focus)
                                 .setWorkerSoundName("witch")
                                 .setGuardJobProducer(JobWitch::new)
                                 .setRegistryName(ModGuardTypes.WITCH_ID)
