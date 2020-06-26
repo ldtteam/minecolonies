@@ -24,7 +24,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Health at which citizens seek a doctor.
      */
-    public static final double SEEK_DOCTOR_HEALTH = 4.0;
+    public static final double SEEK_DOCTOR_HEALTH = 6.0;
 
     /**
      * Base likelihood of a citizen getting a disease.

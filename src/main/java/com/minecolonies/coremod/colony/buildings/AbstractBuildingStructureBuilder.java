@@ -101,7 +101,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, false), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;

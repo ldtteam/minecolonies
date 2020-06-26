@@ -11,7 +11,6 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
     }
 }
 
@@ -33,7 +32,6 @@ repositories {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
@@ -289,7 +287,7 @@ task("createChangelog") {
     group = 'upload'
 
     doLast {
-        def teamCityURL = "https://teamcity.minecolonies.com/"
+        def teamCityURL = "https://buildsystem.ldtteam.com/"
         def file = new FileOutputStream("build/changelog.md")
         def out = new BufferedOutputStream(file)
         def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")
@@ -408,18 +406,6 @@ publishing {
                     }
                 }
             }
-        }
-    }
-}
-
-//Notify artifactory of what to publish.
-artifactory {
-    publish {
-        defaults {
-            publications('maven')
-            publishBuildInfo = true   //Publish build-info to Artifactory (true by default)
-            publishArtifacts = true   //Publish artifacts to Artifactory (true by default)
-            publishPom = true   //Publish generated POM files to Artifactory (true by default).
         }
     }
 }

@@ -18,49 +18,50 @@ public final class ModBlocks
      * References can be made to here.
      */
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutTownHall;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutHome;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutMiner;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutLumberjack;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutBaker;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutBuilder;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutDeliveryman;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutBlacksmith;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutStonemason;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutFarmer;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutFisherman;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutGuardTower;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutWareHouse;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutShepherd;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutCowboy;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutSwineHerder;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutChickenHerder;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutBarracks;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutBarracksTower;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutCook;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutSmeltery;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutComposter;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutLibrary;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutArchery;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutCombatAcademy;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutSawmill;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutStoneSmeltery;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutCrusher;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutSifter;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockPostBox;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutFlorist;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutEnchanter;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutUniversity;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutHospital;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockStash;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutSchool;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutGlassblower;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutDyer;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutFletcher;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutMechanic;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>>  blockHutPlantation;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutHome;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutMiner;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutLumberjack;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBaker;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBuilder;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutDeliveryman;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBlacksmith;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutStonemason;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutFarmer;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutFisherman;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGuardTower;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutWareHouse;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutShepherd;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutCowboy;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSwineHerder;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutChickenHerder;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBarracks;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBarracksTower;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutCook;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSmeltery;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutComposter;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutLibrary;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutArchery;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutCombatAcademy;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSawmill;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutStoneSmeltery;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutCrusher;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSifter;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockPostBox;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutFlorist;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutEnchanter;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutUniversity;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutHospital;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockStash;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSchool;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGlassblower;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutDyer;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutFletcher;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutMechanic;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutPlantation;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutTavern;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutRabbitHutch;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutConcreteMixer;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBeekeeper;
 
     /**
      * Utility blocks.
@@ -102,7 +103,6 @@ public final class ModBlocks
           blockHutCook,
           blockHutCowboy,
           blockHutCrusher,
-          blockHutArchery,
           blockHutDeliveryman,
           blockHutFarmer,
           blockHutFisherman,
@@ -126,6 +126,7 @@ public final class ModBlocks
           blockHutPlantation,
           blockHutTavern,
           blockHutRabbitHutch,
-          blockHutConcreteMixer};
+          blockHutConcreteMixer,
+          blockHutBeekeeper};
     }
 }
