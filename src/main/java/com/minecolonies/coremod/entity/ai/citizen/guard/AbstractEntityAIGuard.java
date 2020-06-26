@@ -369,7 +369,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return next state
      */
-    private IAIState checkAndAttackTarget()
+    protected IAIState checkAndAttackTarget()
     {
         if (checkForTarget())
         {
