@@ -21,6 +21,8 @@ public class ModelEntityBeekeeperFemale extends CitizenModel<AbstractEntityCitiz
         textureWidth = 128;
         textureHeight = 64;
 
+        bipedHeadwear.showModel = false;
+
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
