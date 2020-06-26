@@ -31,6 +31,26 @@
     },
     {  "when": { "west": "true"},
       "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
+    },
+    {
+      "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
+      "when": { "facing": "east|west", "north":"false","east":"false","south":"false","west":"false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "uvlock": true }
+    },
+    {
+      "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
+      "when": { "facing": "east|west", "north":"false","east":"false","south":"false","west":"false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 180, "uvlock": true }
+    },
+    {
+      "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
+      "when": { "facing": "north|south", "north":"false","east":"false","south":"false","west":"false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 90, "uvlock": true }
+    },
+    {
+      "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
+      "when": { "facing": "north|south", "north":"false","east":"false","south":"false","west":"false" },
+      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
     }
   ]
 }
