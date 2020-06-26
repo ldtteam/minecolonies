@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -60,44 +61,44 @@ public final class ConstructionTapeHelper
 
         final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
-        final int X = Math.min(corners.getA().getA(), corners.getA().getB());
-        final int Y = pos.getY();
-        final int Z = Math.min(corners.getB().getA(), corners.getB().getB());
-        int W = Math.abs(corners.getA().getB() - corners.getA().getA());
-        int H = Math.abs(corners.getB().getB() - corners.getB().getA());
+        final int x = Math.min(corners.getA().getA(), corners.getA().getB());
+        final int y = pos.getY();
+        final int z = Math.min(corners.getB().getA(), corners.getB().getB());
+        final int sizeX = Math.abs(corners.getA().getB() - corners.getA().getA());
+        final int sizeZ = Math.abs(corners.getB().getB() - corners.getB().getA());
         BlockPos working;
 
-        for (BlockPos place = new BlockPos(X,Y,Z); place.getX() < X+W || place.getZ() < Z+H;) {
-            if (place.getX() < X+W)
+        for (BlockPos place = new BlockPos(x,y,z); place.getX() < x+sizeX || place.getZ() < z+sizeZ;) {
+            if (place.getX() < x+sizeX)
             {
-                working = firstValidPosition(new BlockPos(place.getX(), Y, Z), world);
+                working = firstValidPosition(new BlockPos(place.getX(), y, z), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.SOUTH)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.SOUTH)
                 );
 
-                working = firstValidPosition(new BlockPos(place.getX(), Y, Z+H), world);
+                working = firstValidPosition(new BlockPos(place.getX(), y, z+sizeZ), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.NORTH)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.NORTH)
                 );
             }
 
-            if (place.getZ() < Z+H)
+            if (place.getZ() < z+sizeZ)
             {
-                working = firstValidPosition(new BlockPos(X, Y, place.getZ()), world);
+                working = firstValidPosition(new BlockPos(x, y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, Direction.EAST)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, Direction.EAST)
                 );
 
-                working = firstValidPosition(new BlockPos(X+W, Y, place.getZ()), world);
+                working = firstValidPosition(new BlockPos(x+sizeX, y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, place.getZ() == Z? Direction.SOUTH : Direction.WEST)
+                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, place.getZ() == z? Direction.SOUTH : Direction.WEST)
                 );
             }
 
             place = place.south().east();
         }
 
-        working = firstValidPosition(new BlockPos(X+W, Y, Z+H), world);
+        working = firstValidPosition(new BlockPos(x+sizeX, y, z+sizeZ), world);
         world.setBlockState(working,
                 BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.WEST)
         );
@@ -119,9 +120,17 @@ public final class ConstructionTapeHelper
         while (target.getY() > 0)
         {
             target = target.down();
+
+            if (world.getBlockState(target).getBlock() instanceof LeavesBlock)
+                for (BlockPos seeker = new BlockPos(target.down()); seeker.getY() > 0; seeker = seeker.down())
+                    if (world.getBlockState(seeker).getMaterial().isReplaceable() || world.isAirBlock(seeker))
+                    {
+                        target = seeker;
+                        break;
+                    }
+
             
-            if (!world.getBlockState(target).getMaterial().isReplaceable() 
-             && !(world.getBlockState(target).getBlock() instanceof LeavesBlock)
+            if (!world.getBlockState(target).getMaterial().isReplaceable()
              && !(world.getBlockState(target).getBlock() instanceof FlowerBlock)) 
                 break;
         }
