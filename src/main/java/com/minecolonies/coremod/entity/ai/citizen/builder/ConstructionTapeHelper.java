@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -30,13 +29,9 @@ public final class ConstructionTapeHelper
 
     /**
      * Private Constructor to hide implicit one.
+     * Intentionally empty.
      */
-    private ConstructionTapeHelper()
-    {
-        /**
-         * Intentionally left empty.
-         */
-    }
+    private ConstructionTapeHelper() {}
 
     /**
      * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
@@ -73,7 +68,8 @@ public final class ConstructionTapeHelper
         BlockPos working;
 
         for (BlockPos place = new BlockPos(X,Y,Z); place.getX() < X+W || place.getZ() < Z+H;) {
-            if (place.getX() < X+W) {
+            if (place.getX() < X+W)
+            {
                 working = firstValidPosition(new BlockPos(place.getX(), Y, Z), world);
                 world.setBlockState(working,
                         BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == X), world, working, Direction.SOUTH)
@@ -85,7 +81,8 @@ public final class ConstructionTapeHelper
                 );
             }
 
-            if (place.getZ() < Z+H) {
+            if (place.getZ() < Z+H)
+            {
                 working = firstValidPosition(new BlockPos(X, Y, place.getZ()), world);
                 world.setBlockState(working,
                         BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == Z), world, working, Direction.EAST)
@@ -111,7 +108,7 @@ public final class ConstructionTapeHelper
      *
      * @param target the target position for the block
      * @param world the world.
-     * @return The new Y position.
+     * @return The new block position.
      */
     public static BlockPos firstValidPosition(@NotNull BlockPos target, @NotNull World world)
     {
@@ -119,7 +116,8 @@ public final class ConstructionTapeHelper
 
         target = new BlockPos(target.getX(), chunk.getTopFilledSegment() + 16, target.getZ());
                 
-        while (target.getY() > 0) {
+        while (target.getY() > 0)
+        {
             target = target.down();
             
             if (!world.getBlockState(target).getMaterial().isReplaceable() 
