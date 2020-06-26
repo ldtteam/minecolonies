@@ -57,23 +57,19 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
     protected int getIndex(BlockState state)
     {
-        return this.stateShapeMap.computeIntIfAbsent(state, (p_223007_0_) -> {
+        return this.stateShapeMap.computeIntIfAbsent(state, (computeState) -> {
             int i = 0;
-            if (p_223007_0_.get(NORTH)) {
+            if (computeState.get(NORTH))
                 i |= getMask(Direction.NORTH);
-            }
 
-            if (p_223007_0_.get(EAST)) {
+            if (computeState.get(EAST))
                 i |= getMask(Direction.EAST);
-            }
 
-            if (p_223007_0_.get(SOUTH)) {
+            if (computeState.get(SOUTH))
                 i |= getMask(Direction.SOUTH);
-            }
 
-            if (p_223007_0_.get(WEST)) {
+            if (computeState.get(WEST))
                 i |= getMask(Direction.WEST);
-            }
 
             return i;
         });
@@ -102,7 +98,8 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         VoxelShape cornerse = VoxelShapes.or(south, west);
 
         // All 16 possible block combinations, in a specific index to be retrieved by getIndex
-        VoxelShape[] avoxelshape = new VoxelShape[]{
+        VoxelShape[] avoxelshape = new VoxelShape[]
+        {
                 VoxelShapes.empty(),    south,   west, cornerse, north,
                 VoxelShapes.or(south,   north),
                 VoxelShapes.or(west,    north),
@@ -116,9 +113,8 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         };
 
         // Combine the arm voxel shapes with the main node for all combinations
-        for(int i = 0; i < 16; ++i) {
+        for(int i = 0; i < 16; ++i)
             avoxelshape[i] = VoxelShapes.or(node, avoxelshape[i]);
-        }
 
         return avoxelshape;
     }
