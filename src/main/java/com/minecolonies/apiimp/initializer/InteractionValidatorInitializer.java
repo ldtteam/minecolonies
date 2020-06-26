@@ -16,10 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -60,6 +57,8 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent() && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOSPITAL),
           citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && citizen.getColony().getBuildingManager().getBestHospital(citizen.getCitizenEntity().get()) == null );
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WAITING_FOR_CURE),
+          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && !citizen.getCitizenEntity().get().getCitizenDiseaseHandler().getDisease().isEmpty());
 
         InteractionValidatorRegistry.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
@@ -123,8 +122,6 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_RECIPES),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST), citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorRegistry.registerPosBasedPredicate(
@@ -167,7 +164,8 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PUPIL_NO_CARPET),
-          citizen -> citizen.getCitizenEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
+          citizen -> citizen.getCitizenEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
+                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
@@ -176,6 +174,11 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HIVES),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && ((BuildingBeekeeper) citizen.getWorkBuilding()).getHives().isEmpty());
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_BEES),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && citizen.getJob(JobBeekeeper.class).checkForBeeInteraction());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
           citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());

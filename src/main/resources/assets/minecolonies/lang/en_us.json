@@ -492,6 +492,8 @@
   "com.minecolonies.coremod.gui.townhall.hirecitizen1": "Choose which recruitment package you want to send.",
   "com.minecolonies.coremod.gui.townhall.hirecitizen2": "Citizens stats increase from Hay - Books - Emeralds to Diamonds.",
   "com.minecolonies.coremod.gui.townhall.hirecitizen3": "Using one package increases the price of all with each purchase.",
+  "com.minecolonies.coremod.gui.townhall.hirecitizen4": "(Only possible if there is an open bed in the colony)",
+
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
 
@@ -762,6 +764,8 @@
   "com.minecolonies.coremod.ai.nochairs": "Restaurant does not have any chairs for me to eat something!",
   "com.minecolonies.coremod.ai.norestaurant": "Please build a restaurant or get me something to eat!",
   "com.minecolonies.coremod.ai.nohospital": "Please build a hospital I have the %s and need to be cured with: %s",
+  "com.minecolonies.coremod.ai.waitingforcure": "I'm waiting to be cured of %s and need to be cured with: %s",
+
   "com.minecolonies.coremod.ai.nowarehouse": "Build a warehouse or bring me food to serve to my clients!",
   "com.minecolonies.coremod.ai.nofood": "I can't find any food in the warehouse.",
   "com.minecolonies.coremod.status.cooking": "Cooking",
@@ -1338,7 +1342,7 @@
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research to unlock this Building!",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
-  "com.minecolonies.coremod.info.builder.0": "The Builder is the heart of your colony. Without them you wouldn't be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the Builder. If the Builder has a hut at level 0 (no hut), they can only build one thing, their own hut.\n\n For your Builder to build, upgrade, reposition, or repair a hut that isn't their own, their hut must be at least the same level as the other hut. For example, the Builder's Hut must be level 3 or above to build a level 3 hut.",
+  "com.minecolonies.coremod.info.builder.0": "The Builder is the heart of your colony. Without them, you wouldn't be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the Builder. If the Builder has a hut at level 0 (no hut), they can only build one thing, their own hut.\n\n For your Builder to build, upgrade, reposition, or repair a hut that isn't their own, their hut must be at least the same level as the other hut. For example, the Builder's Hut must be level 3 or above to build a level 3 hut.",
   "com.minecolonies.coremod.info.builder.1.name": "Restrictions",
   "com.minecolonies.coremod.info.builder.1": "Let's cover builder restrictions:\n\n 1. Builders (and most other workers) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. Builders have a maximum range of 100 blocks for buildings for automatic assignment. If your building is outside that range, in the top right of the build options GUI (for the hut you want to be built) you can select which Builder to assign to that building.",
   "com.minecolonies.coremod.info.builder.2.name": "FAQ",

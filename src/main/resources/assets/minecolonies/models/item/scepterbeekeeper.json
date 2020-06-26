@@ -1,7 +1,7 @@
 {
-  "parent": "minecolonies:block/blockhutfield",
+  "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/scarecrow"
+    "layer0": "minecolonies:items/scepterbeekeeper"
   },
   "display": {
     "thirdperson": {

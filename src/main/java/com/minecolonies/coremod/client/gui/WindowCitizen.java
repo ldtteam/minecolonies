@@ -287,43 +287,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
-     * <p>
-     * currently unused.
-     *
-     * @param citizen the citizen to create a create a happiness bar for.
-     * @param view    the view to add the happiness bar to.
-     */
-    /*
-    private static void createHappinessBar(final ICitizenDataView citizen, final View view)
-    {
-        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
-
-
-        @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
-
-        if (experienceRatio > 0)
-        {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
-        }
-    }
-    */
-
-    /**
-     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      *
      * @param citizen pointer to the citizen data view
      * @param window  pointer to the current window
@@ -475,7 +438,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
         }
         Network.getNetwork().sendToServer(
           new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, itemStack));
+
+        final ItemStack copy = itemStack.copy();
+        copy.setCount(isCreative ? amount : Math.min(amount, count));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
     }
 
     /**
